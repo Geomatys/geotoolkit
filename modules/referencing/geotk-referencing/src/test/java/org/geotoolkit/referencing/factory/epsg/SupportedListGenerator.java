@@ -38,9 +38,9 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.test.ReportGenerator;
-import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -143,7 +143,7 @@ public final class SupportedListGenerator extends ReportGenerator {
         }
         if (crs instanceof VerticalCRS) {
             final VerticalDatumType type = ((VerticalCRS) crs).getDatum().getVerticalDatumType();
-            return StringUtilities.makeSentence(type.name().toLowerCase(LOCALE)) + " height";
+            return Strings.camelCaseToSentence(type.name().toLowerCase(LOCALE)) + " height";
         }
         if (crs instanceof CompoundCRS) {
             final StringBuilder buffer = new StringBuilder();

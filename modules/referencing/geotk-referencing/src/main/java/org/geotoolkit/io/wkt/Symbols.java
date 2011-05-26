@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.InternalUtilities;
 
 
 /**
@@ -169,7 +169,7 @@ public class Symbols implements Serializable {
          * rounding error for the 0 value. For semi-major and semi-minor axis, we
          * often want to avoid exponential notation as well.
          */
-        separator = StringUtilities.getSeparator(numberFormat);
+        separator = InternalUtilities.getSeparator(numberFormat);
     }
 
     /**

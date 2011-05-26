@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * Tests the {@link ScriptRunner} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -118,5 +118,17 @@ public final class ScriptRunnerTest {
             "EPSG_v6_18.mdb_Data_PostgreSQL.sql",
             "EPSG_v6_18.mdb_FKeys_PostgreSQL.sql"
         }, runner.getFiles());
+    }
+
+    /**
+     * Tests the {@link ScriptRunner#removeLF} method.
+     *
+     * @since 3.18 (derived from 3.00)
+     */
+    @Test
+    public void testRemoveLF() {
+        final StringBuilder buffer = new StringBuilder(" \nOne,\nTwo, \n Three Four\nFive \nSix \n");
+        ScriptRunner.removeLF(buffer);
+        assertEquals("One,Two,Three Four Five Six", buffer.toString());
     }
 }

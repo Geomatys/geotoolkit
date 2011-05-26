@@ -60,6 +60,15 @@ public final class Strings extends Static {
     }
 
     /**
+     * Letters in the range 00C0 (192) to 00FF (255) inclusive with their accent removed,
+     * when possible.
+     *
+     * @since 3.18
+     */
+    private static final String ASCII = "AAAAAAÆCEEEEIIIIDNOOOOO*OUUUUYÞsaaaaaaæceeeeiiiionooooo/ouuuuyþy";
+    // Original letters (with accent) = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+
+    /**
      * Do not allow instantiation of this class.
      */
     private Strings() {
@@ -341,6 +350,111 @@ public final class Strings extends Static {
                 default : return;
             }
         }
+    }
+
+    /**
+     * Replaces some unicode characters by ASCII characters on a "best effort basis".
+     * For example the {@code 'é'} character is replaced by {@code 'e'} (without accent).
+     * <p>
+     * The current implementation replaces only the characters in the range {@code 00C0}
+     * to {@code 00FF}, inclusive. Other characters are left unchanged.
+     * <p>
+     * Note that if the given character sequence is an instance of {@link StringBuilder},
+     * then the replacement will be performed in-place.
+     *
+     * @param  text The text to scan for unicode characters to replace by ASCII characters.
+     * @return The given text with substitution applied, or {@code text} if no replacement
+     *         has been applied.
+     *
+     * @since 3.18
+     */
+    public static CharSequence toASCII(CharSequence text) {
+        StringBuilder buffer = null;
+        final int length = text.length();
+        for (int i=0; i<length; i++) {
+            char c = text.charAt(i);
+            final int r = c - 0xC0;
+            if (r >= 0 && r<ASCII.length()) {
+                c = ASCII.charAt(r);
+                if (buffer == null) {
+                    if (text instanceof StringBuilder) {
+                        buffer = (StringBuilder) text;
+                    } else {
+                        buffer = new StringBuilder(text);
+                        text = buffer;
+                    }
+                }
+                buffer.setCharAt(i, c);
+            }
+        }
+        return text;
+    }
+
+    /**
+     * Returns {@code true} if the given string contains only upper case letters or digits.
+     * A few punctuation characters like {@code '_'} and {@code '.'} are also accepted.
+     * <p>
+     * This method is used for identifying character strings that are likely to be code
+     * like {@code "UTF-8"} or {@code "ISO-LATIN-1"}.
+     *
+     * @since 3.18 (derived from 3.17)
+     */
+    private static boolean isCode(final CharSequence identifier) {
+        for (int i=identifier.length(); --i>=0;) {
+            final char c = identifier.charAt(i);
+            if (!((c >= 'A' && c <= 'Z') || (c >= '-' && c <= ':') || c == '_')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Given a string in camel cases (typically a Java identifier), returns a string formatted
+     * like an English sentence. This heuristic method performs the following steps:
+     *
+     * <ol>
+     *   <li><p>Invoke {@link #camelCaseToSentence(CharSequence)}, which separate the words on
+     *     the basis of character case. For example {@code "transferFunctionType"} become
+     *     {@code "transfer function type"}. This works fine for ISO 19115 identifiers.</p></li>
+     *
+     *   <li><p>Next replace all occurrence of {@code '_'} by spaces in order to take in account
+     *     an other common naming convention, which uses {@code '_'} as a word separator. This
+     *     convention is used by NetCDF attributes like {@code "project_name"}.</p></li>
+     *
+     *   <li><p>Finally ensure that the first character is upper-case.</p></li>
+     * </ol>
+     *
+     * {@section Exception to the above rules}
+     * If the given identifier contains only upper-case letters, digits and the {@code '_'}
+     * character, then the identifier is returned "as is" except for the {@code '_'} characters
+     * which are replaced by {@code '-'}. This work well for identifiers like {@code "UTF-8"} or
+     * {@code "ISO-LATIN-1"} for example.
+     * <p>
+     * Note that those heuristic rules may be modified in future Geotk versions,
+     * depending on the practical experience gained.
+     *
+     * @param  identifier An identifier with no space, words begin with an upper-case character.
+     * @return The identifier with spaces inserted after what looks like words.
+     * @throws NullPointerException if the {@code identifier} argument is null.
+     *
+     * @since 3.18 (derived from 3.09)
+     */
+    public static String camelCaseToSentence(final CharSequence identifier) {
+        if (isCode(identifier)) {
+            return identifier.toString().replace('_', '-');
+        }
+        final StringBuilder buffer = camelCaseToWords(identifier, true);
+        final int length = buffer.length();
+        for (int i=0; i<length; i++) {
+            if (buffer.charAt(i) == '_') {
+                buffer.setCharAt(i, ' ');
+            }
+        }
+        if (length != 0) {
+            buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
+        }
+        return buffer.toString().trim();
     }
 
     /**
@@ -660,6 +774,58 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns the token starting at the given offset in the given text. For the purpose of this
+     * method, a "token" is any sequence of consecutive characters of the same type, as defined
+     * below.
+     * <p>
+     * Let define <var>c</var> as the first non-blank character located at an index equals or
+     * greater than the given offset. Then the characters that are considered of the same type
+     * are:
+     * <p>
+     * <ul>
+     *   <li>If <var>c</var> is a
+     *       {@linkplain Character#isJavaIdentifierStart(char) Java identifier start},
+     *       then any following character that are
+     *       {@linkplain Character#isJavaIdentifierPart(char) Java identifier part}.</li>
+     *   <li>Otherwise any character for which {@link Character#getType(char)} returns
+     *       the same value than for <var>c</var>.</li>
+     * </ul>
+     *
+     * @param  text The text for which to get the token.
+     * @param  offset Index of the fist character to consider in the given text.
+     * @return A sub-sequence of {@code text} starting at the given offset, or an empty string
+     *         if there is no non-blank character at or after the given offset.
+     *
+     * @since 3.18 (derived from 3.06)
+     */
+    public static CharSequence token(final CharSequence text, int offset) {
+        final int length = text.length();
+        int upper = offset;
+        /*
+         * Skip whitespaces. At the end of this loop,
+         * 'c' will be the first non-blank character.
+         */
+        char c;
+        do if (upper >= length) return "";
+        while (Character.isWhitespace(c = text.charAt(upper++)));
+        /*
+         * Advance over all characters "of the same type".
+         */
+        offset = upper - 1;
+        if (Character.isJavaIdentifierStart(c)) {
+            while (upper<length && Character.isJavaIdentifierPart(text.charAt(upper))) {
+                upper++;
+            }
+        } else {
+            final int type = Character.getType(text.charAt(offset));
+            while (upper<length && Character.getType(text.charAt(upper)) == type) {
+                upper++;
+            }
+        }
+        return text.subSequence(offset, upper);
     }
 
     /**

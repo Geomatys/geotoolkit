@@ -28,6 +28,7 @@ import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -153,7 +154,7 @@ public final class CodeLists extends Static implements CodeList.Filter {
                 id = candidate;
             }
         }
-        return StringUtilities.makeSentence(id);
+        return Strings.camelCaseToSentence(id);
     }
 
     /**

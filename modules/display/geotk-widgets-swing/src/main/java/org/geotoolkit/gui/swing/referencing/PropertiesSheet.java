@@ -43,7 +43,6 @@ import org.geotoolkit.io.wkt.Colors;
 import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -152,7 +151,7 @@ public class PropertiesSheet extends JComponent {
         while (classe != null) {
             for (final Class<?> inter : classe.getInterfaces()) {
                 if (IdentifiedObject.class.isAssignableFrom(inter)) {
-                    return StringUtilities.makeSentence(inter.getSimpleName());
+                    return Strings.camelCaseToSentence(inter.getSimpleName());
                 }
             }
             classe = classe.getSuperclass();

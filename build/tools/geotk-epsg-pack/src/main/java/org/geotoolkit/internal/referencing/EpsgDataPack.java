@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.sql.ScriptRunner;
 
 
@@ -108,7 +107,7 @@ final class EpsgDataPack extends ScriptRunner {
      */
     @Override
     protected int execute(final StringBuilder sql) throws IOException {
-        StringUtilities.removeLF(sql);
+        removeLF(sql);
         String line = sql.toString().trim();
         for (int i=sql.length(); --i>=0;) {
             sql.setCharAt(i, Character.toUpperCase(sql.charAt(i)));

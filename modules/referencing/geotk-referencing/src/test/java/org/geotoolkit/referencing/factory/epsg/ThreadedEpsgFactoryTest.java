@@ -47,7 +47,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.util.ComparisonMode;
 
 import org.junit.*;
@@ -610,8 +610,8 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
                     "The following contains more information about a JUnit test failure.\n" +
                     "See the JUnit report for the stack trace. Below is a cache dump.\n" +
                     "See the operation method EPSG:9807 and compare with:\n" +
-                    "  - Method obtained directly:   " + StringUtilities.identity(copMethod) + "\n" +
-                    "  - Method obtained indirectly: " + StringUtilities.identity(crsMethod));
+                    "  - Method obtained directly:   " + InternalUtilities.identity(copMethod) + "\n" +
+                    "  - Method obtained indirectly: " + InternalUtilities.identity(crsMethod));
             ((ThreadedEpsgFactory) factory).printCacheContent(null);
             throw error;
         }

@@ -32,7 +32,7 @@ import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.InternalUtilities;
 
 
 /**
@@ -63,7 +63,7 @@ final class CacheRecord implements Comparable<CacheRecord> {
      * Creates a new record for the given key-value pair.
      */
     private CacheRecord(final Object key, Object value) {
-        identity = StringUtilities.identity(value);
+        identity = InternalUtilities.identity(value);
         String text;
         if (value instanceof Collection<?>) {
             final Iterator<?> it = ((Collection<?>) value).iterator();

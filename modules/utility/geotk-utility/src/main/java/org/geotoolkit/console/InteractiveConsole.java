@@ -26,7 +26,7 @@ import javax.vecmath.MismatchedSizeException;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.InternalUtilities;
 
 import static org.geotoolkit.io.X364.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -224,7 +224,7 @@ public abstract class InteractiveConsole implements Runnable {
         numberFormat.setGroupingUsed(false);
         numberFormat.setMinimumFractionDigits(6);
         numberFormat.setMaximumFractionDigits(6);
-        return String.valueOf(StringUtilities.getSeparator(numberFormat)).intern();
+        return String.valueOf(InternalUtilities.getSeparator(numberFormat)).intern();
     }
 
     /**

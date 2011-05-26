@@ -25,11 +25,11 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
@@ -219,7 +219,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      */
     public String getLabel() {
         if (label == null) {
-            label = StringUtilities.makeSentence(getName());
+            label = Strings.camelCaseToSentence(getName());
         }
         return label;
     }

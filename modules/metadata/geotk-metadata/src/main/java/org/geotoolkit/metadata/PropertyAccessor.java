@@ -35,6 +35,7 @@ import org.opengis.annotation.UML;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
@@ -45,7 +46,6 @@ import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.internal.CollectionUtilities;
-import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -566,7 +566,7 @@ final class PropertyAccessor {
                     return getters[index].getName();
                 }
                 case SENTENCE: {
-                    return StringUtilities.makeSentence(names[index]);
+                    return Strings.camelCaseToSentence(names[index]);
                 }
             }
         }

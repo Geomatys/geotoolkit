@@ -112,6 +112,29 @@ public final class StringsTest {
     }
 
     /**
+     * Tests the {@link InternalUtilities#token} method.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testToken() {
+        assertEquals("Id4", token("..Id4  56B..", 2));
+        assertEquals("56",  token("..Id4  56B..", 6));
+    }
+
+    /**
+     * Tests the {@link Strings#toASCII} method.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testToASCII() {
+        final String metre = "metre";
+        assertSame  (metre, toASCII(metre));
+        assertEquals(metre, toASCII("mètre").toString());
+    }
+
+    /**
      * Tests the {@link Strings#camelCaseToWords} method.
      */
     @Test
