@@ -58,6 +58,9 @@ package org.geotoolkit.xml;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
+ * @see NilReason#createEmptyObject(Class)
+ * @see ObjectLinker#resolve(Class, NilReason)
+ *
  * @since 3.18
  * @module
  */

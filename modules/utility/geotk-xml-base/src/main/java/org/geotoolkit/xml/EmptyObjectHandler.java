@@ -156,6 +156,9 @@ final class EmptyObjectHandler implements InvocationHandler {
         if (other == proxy) return true;
         if (other == null) return false;
         if (proxy.getClass() == other.getClass()) {
+            if (mode.ordinal() >= ComparisonMode.IGNORE_METADATA.ordinal()) {
+                return true;
+            }
             final EmptyObjectHandler h = (EmptyObjectHandler) Proxy.getInvocationHandler(other);
             return attribute.equals(h.attribute);
         }

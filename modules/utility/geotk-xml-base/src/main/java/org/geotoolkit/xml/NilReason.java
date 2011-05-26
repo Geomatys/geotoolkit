@@ -20,7 +20,13 @@ package org.geotoolkit.xml;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.Serializable;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.InvocationHandler;
 import net.jcip.annotations.Immutable;
+
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.collection.WeakHashSet;
 
 
@@ -43,6 +49,8 @@ import org.geotoolkit.util.collection.WeakHashSet;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
+ *
+ * @see EmptyObject
  *
  * @since 3.18
  * @module
@@ -120,10 +128,42 @@ public final class NilReason implements Serializable {
     private final Object reason;
 
     /**
+     * The invocation handler for empty objects, created when first needed.
+     * The same handler can be shared for all objects.
+     */
+    private transient InvocationHandler handler;
+
+    /**
      * Creates a new enum for the given XML enum or the given URI.
      */
     private NilReason(final Object reason) {
         this.reason = reason;
+    }
+
+    /**
+     * Returns an array containing every instances of this type that have not yet been
+     * garbage collected. The first elements of the returned array are the enumeration
+     * constants, in declaration order. All other elements are the instances created
+     * by the {@link #valueOf(String)} method, in no particular order.
+     *
+     * @return An array containing the instances of this type.
+     */
+    public static NilReason[] values() {
+        final int predefinedCount = PREDEFINED.length;
+        NilReason[] reasons;
+        synchronized (POOL) {
+            reasons = POOL.toArray(new NilReason[predefinedCount + POOL.size()]);
+        }
+        int count = reasons.length;
+        while (count != 0 && reasons[count-1] == null) count--;
+        count += predefinedCount;
+        final NilReason[] source = reasons;
+        if (count != reasons.length) {
+            reasons = new NilReason[count];
+        }
+        System.arraycopy(source, 0, reasons, predefinedCount, count - predefinedCount);
+        System.arraycopy(PREDEFINED, 0, reasons, 0, predefinedCount);
+        return reasons;
     }
 
     /**
@@ -149,12 +189,12 @@ public final class NilReason implements Serializable {
      * @throws URISyntaxException If the given string is not one of the predefined enumeration
      *         values and can not be parsed as a URI.
      */
-    public static NilReason valueOf(final String reason) throws URISyntaxException {
+    public static NilReason valueOf(String reason) throws URISyntaxException {
+        reason = reason.trim();
         int i = reason.indexOf(':');
         if (i < 0) {
-            final String search = reason.trim();
             for (final NilReason candidate : PREDEFINED) {
-                if (search.equalsIgnoreCase((String) candidate.reason)) {
+                if (reason.equalsIgnoreCase((String) candidate.reason)) {
                     return candidate;
                 }
             }
@@ -277,7 +317,19 @@ public final class NilReason implements Serializable {
      *         This is usually a <a href="http://www.geoapi.org">GeoAPI</a> interface.
      * @return An {@link EmptyObject} of the given type.
      */
+    @SuppressWarnings("unchecked")
     public <T> T createEmptyObject(final Class<T> type) {
-        return ObjectLinker.DEFAULT.resolve(type, this);
+        ArgumentChecks.ensureNonNull("type", type);
+        if (EmptyObjectHandler.isIgnoredInterface(type)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+        }
+        InvocationHandler h;
+        synchronized (this) {
+            if ((h = handler) == null) {
+                handler = h = new EmptyObjectHandler(this);
+            }
+        }
+        return (T) Proxy.newProxyInstance(NilReason.class.getClassLoader(),
+                new Class<?>[] {type, EmptyObject.class, LenientComparable.class}, h);
     }
 }

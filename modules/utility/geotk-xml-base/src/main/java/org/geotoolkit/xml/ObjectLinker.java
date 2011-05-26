@@ -96,12 +96,7 @@ public class ObjectLinker {
      */
     @SuppressWarnings("unchecked")
     public <T> T resolve(final Class<T> type, final NilReason nilReason) {
-        ArgumentChecks.ensureNonNull("type", type);
         ArgumentChecks.ensureNonNull("nilReason", nilReason);
-        if (EmptyObjectHandler.isIgnoredInterface(type)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
-        }
-        return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
-                new Class<?>[] {type, EmptyObject.class}, new EmptyObjectHandler(nilReason));
+        return nilReason.createEmptyObject(type);
     }
 }
