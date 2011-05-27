@@ -1188,6 +1188,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNKNOWN_COMMAND_$1 = 218;
 
         /**
+         * Unknown enumeration value: {0}.
+         */
+        public static final int UNKNOWN_ENUM_$1 = 260;
+
+        /**
          * File suffix “{0}” is unknown.
          */
         public static final int UNKNOWN_FILE_SUFFIX_$1 = 219;

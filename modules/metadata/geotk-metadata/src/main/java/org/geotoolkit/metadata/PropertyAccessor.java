@@ -46,6 +46,8 @@ import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
+import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
+
 
 /**
  * The getter methods declared in a GeoAPI interface, together with setter methods (if any)
@@ -945,6 +947,9 @@ final class PropertyAccessor {
                 continue;
             }
             if (!Utilities.deepEquals(value1, value2, mode)) {
+                if (mode == ComparisonMode.APPROXIMATIVE && floatEpsilonEqual(value1, value2)) {
+                    continue; // Accept this slight difference.
+                }
                 if (!skipNulls || (!empty1 && !empty2)) {
                     return false;
                 }

@@ -36,6 +36,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
@@ -47,9 +48,9 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
 /**
  * A two dimensional array of numbers. Row and column numbering begins with zero.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.18
  *
  * @see javax.vecmath.GMatrix
  * @see java.awt.geom.AffineTransform
@@ -480,6 +481,14 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
     @Override
     public boolean equals(final Matrix matrix, final double tolerance) {
         return MatrixUtilities.epsilonEqual(this, matrix, tolerance, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object matrix, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, matrix, mode);
     }
 
     /**

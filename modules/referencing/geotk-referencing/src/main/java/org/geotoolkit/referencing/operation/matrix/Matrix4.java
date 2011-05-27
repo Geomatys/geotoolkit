@@ -21,6 +21,7 @@ import javax.vecmath.Matrix4d;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 
@@ -29,8 +30,8 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * better accuracy than {@link GeneralMatrix} for matrix inversion and multiplication. It is used
  * primarily for supporting datum shifts.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -194,6 +195,16 @@ public class Matrix4 extends Matrix4d implements XMatrix {
     @Override
     public boolean equals(final Matrix matrix, final double tolerance) {
         return MatrixUtilities.epsilonEqual(this, matrix, tolerance, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.18
+     */
+    @Override
+    public boolean equals(final Object matrix, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, matrix, mode);
     }
 
     /**

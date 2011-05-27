@@ -68,7 +68,7 @@ import static org.geotoolkit.util.Utilities.hash;
  *       a {@code "Geocentric_To_Ellipsoid"} transform is concatenated after this transform.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
  * @since 2.2
@@ -198,7 +198,7 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
      * Creates an inverse transform using the specified matrix.
      */
     @Override
-    GeocentricAffineTransform createInverse(final Matrix matrix) {
+    final GeocentricAffineTransform createInverse(final Matrix matrix) {
         return new GeocentricAffineTransform(matrix, type);
     }
 
@@ -211,10 +211,16 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
     }
 
     /**
-     * Compares the specified object with this math transform for equality.
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) { // Slight optimization
+            return true;
+        }
+        if (mode != ComparisonMode.STRICT) {
+            return equals(this, object, mode);
+        }
         if (super.equals(object, mode)) {
             final GeocentricAffineTransform that = (GeocentricAffineTransform) object;
             return this.type == that.type;

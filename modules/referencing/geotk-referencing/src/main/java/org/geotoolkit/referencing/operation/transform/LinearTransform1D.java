@@ -56,7 +56,7 @@ import static org.geotoolkit.util.Utilities.hash;
  *   <li>{@link org.geotoolkit.referencing.operation.provider.Affine}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
  * @see LogarithmicTransform1D
@@ -304,13 +304,15 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
     }
 
     /**
-     * Compares the specified object with this math transform for equality.
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            // Slight optimization
+        if (object == this) { // Slight optimization
             return true;
+        }
+        if (mode != ComparisonMode.STRICT) {
+            return equals(this, object, mode);
         }
         if (super.equals(object, mode)) {
             final LinearTransform1D that = (LinearTransform1D) object;

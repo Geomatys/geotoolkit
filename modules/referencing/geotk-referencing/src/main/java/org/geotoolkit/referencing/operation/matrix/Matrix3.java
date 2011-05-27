@@ -22,6 +22,8 @@ import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 
@@ -29,8 +31,8 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * A matrix of fixed {@value #SIZE}&times;{@value #SIZE} size. This specialized matrix provides
  * better accuracy than {@link GeneralMatrix} for matrix inversion and multiplication.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -240,9 +242,13 @@ public class Matrix3 extends Matrix3d implements XMatrix {
      * @since 2.3
      */
     public boolean equalsAffine(final AffineTransform transform) {
-        return m00==transform.getScaleX() && m01==transform.getShearX() && m02==transform.getTranslateX() &&
-               m10==transform.getShearY() && m11==transform.getScaleY() && m12==transform.getTranslateY() &&
-               m20==0                     && m21==0                     && m22==1;
+        return m20==0 && m21==0 && m22==1 &&
+               Utilities.equals(m00, transform.getScaleX()) &&
+               Utilities.equals(m11, transform.getScaleY()) &&
+               Utilities.equals(m01, transform.getShearX()) &&
+               Utilities.equals(m10, transform.getShearY()) &&
+               Utilities.equals(m02, transform.getTranslateX()) &&
+               Utilities.equals(m12, transform.getTranslateY());
     }
 
     /**
@@ -251,6 +257,16 @@ public class Matrix3 extends Matrix3d implements XMatrix {
     @Override
     public boolean equals(final Matrix matrix, final double tolerance) {
         return MatrixUtilities.epsilonEqual(this, matrix, tolerance, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.18
+     */
+    @Override
+    public boolean equals(final Object matrix, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, matrix, mode);
     }
 
     /**

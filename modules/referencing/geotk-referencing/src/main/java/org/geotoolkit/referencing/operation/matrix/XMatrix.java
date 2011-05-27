@@ -20,26 +20,28 @@ package org.geotoolkit.referencing.operation.matrix;
 import javax.vecmath.SingularMatrixException;
 import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.util.Cloneable;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 
 
 /**
- * A matrix capables to perform some operations. The basic {@link Matrix} interface is
- * basically a two dimensional array of numbers. The {@code XMatrix} interface add
- * {@linkplain #invert inversion} and {@linkplain #multiply multiplication} capabilities.
- * It is used as a bridge across various matrix implementations in Java3D
+ * A matrix capables to perform some operations. The GeoAPI {@link Matrix} interface is
+ * basically a two dimensional array of numbers. The {@code XMatrix} interface adds
+ * {@linkplain #invert inversion} and {@linkplain #multiply multiplication} capabilities
+ * among others. It is used as a bridge across various matrix implementations in Java3D
  * ({@link javax.vecmath.Matrix3f}, {@link javax.vecmath.Matrix3d}, {@link javax.vecmath.Matrix4f},
  * {@link javax.vecmath.Matrix4d}, {@link javax.vecmath.GMatrix}).
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.18
  *
  * @see MatrixFactory#toXMatrix(Matrix)
  *
  * @since 2.2
  * @module
  */
-public interface XMatrix extends Matrix, Cloneable {
+public interface XMatrix extends Matrix, LenientComparable, Cloneable {
     /**
      * Sets all the values in this matrix to zero.
      */
@@ -115,6 +117,32 @@ public interface XMatrix extends Matrix, Cloneable {
      * @since 2.5
      */
     boolean equals(Matrix matrix, double tolerance);
+
+    /**
+     * Compares this matrix with the given object for equality. To be considered equal, the two
+     * objects must meet the conditions documented below, which depend on the comparison mode
+     * argument:
+     * <p>
+     * <ul>
+     *   <li>{@link ComparisonMode#STRICT}: the two matrixes must be of the same class,
+     *       have the same size and the same element values.</li>
+     *   <li>{@link ComparisonMode#BY_CONTRACT} and {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}:
+     *       the two matrixes must have the same size and the same element values, but are not
+     *       required to be the same implementation class (any {@link Matrix} is okay).</li>
+     *   <li>{@link ComparisonMode#APPROXIMATIVE}: the two matrixes must have the same size,
+     *       but the element values can differ up to some threshold. The threshold value is
+     *       determined empirically and may change in future Geotk versions. The current
+     *       threshold value is proportional to each matrix element being compared.</li>
+     * </ul>
+     *
+     * @param  object The object to compare to {@code this}.
+     * @param  mode The strictness level of the comparison.
+     * @return {@code true} if both objects are equal.
+     *
+     * @since 3.18
+     */
+    @Override
+    boolean equals(Object object, ComparisonMode mode);
 
     /**
      * Returns a clone of this matrix.

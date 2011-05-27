@@ -902,8 +902,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 return true;
             }
             default: {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "mode", mode));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_$1, mode));
             }
         }
     }

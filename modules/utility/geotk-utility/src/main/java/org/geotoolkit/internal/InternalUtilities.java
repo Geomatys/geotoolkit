@@ -24,18 +24,15 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
 
+import static java.lang.Math.*;
+
 
 /**
- * Various utility methods.
- *
- * {@section Strings}
- * Utility methods working on {@link String} or {@link CharSequence}. Some methods duplicate
- * functionalities already provided in {@code String}, but working on {@code CharSequence}.
- * This avoid the need to convert a {@code CharSequence} to a {@code String} for some simple
- * tasks that do not really need such conversion.
+ * Various utility methods not to be put in public API.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
@@ -44,6 +41,31 @@ import org.geotoolkit.util.collection.XCollections;
  * @module
  */
 public final class InternalUtilities extends Static {
+    /**
+     * Relative difference tolerated when comparing floating point numbers using
+     * {@link ComparisonMode#APPROXIMATIVE}.
+     * <p>
+     * Historically, this was the relative tolerance threshold for considering two matrixes
+     * as {@linkplain org.geotoolkit.referencing.operation.matrix.XMatrix#equals(Object,
+     * ComparisonMode) equal}. This value has been determined empirically in order to allow
+     * {@link org.geotoolkit.referencing.operation.transform.ConcatenatedTransform} to detect the
+     * cases where two {@link org.geotoolkit.referencing.operation.transform.LinearTransform}
+     * are equal for practical purpose. This threshold can be used as below:
+     *
+     * {@preformat java
+     *     Matrix m1 = ...;
+     *     Matrix m2 = ...;
+     *     if (MatrixUtilities.epsilonEqual(m1, m2, EQUIVALENT_THRESHOLD, true)) {
+     *         // Consider that matrixes are equal.
+     *     }
+     * }
+     *
+     * By extension, the same threshold value is used for comparing other floating point values.
+     *
+     * @since 3.18
+     */
+    public static final double COMPARISON_THRESHOLD = 1E-14;
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -62,6 +84,42 @@ public final class InternalUtilities extends Static {
      */
     public static String identity(final Object value) {
         return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
+    }
+
+    /**
+     * Returns {@code true} if the given values are approximatively equal, up to the
+     * {@linkplain #COMPARISON_THRESHOLD comparison threshold}.
+     *
+     * @param  v1 The first value to compare.
+     * @param  v2 The second value to compare.
+     * @return {@code true} If both values are approximatively equal.
+     *
+     * @since 3.18
+     */
+    public static boolean epsilonEqual(final double v1, final double v2) {
+        final double threshold = COMPARISON_THRESHOLD * max(abs(v1), abs(v2));
+        if (threshold == Double.POSITIVE_INFINITY || Double.isNaN(threshold)) {
+            return Double.doubleToLongBits(v1) == Double.doubleToLongBits(v2);
+        }
+        return abs(v1 - v2) <= threshold;
+    }
+
+    /**
+     * Returns {@code true} if the following objects are floating point numbers ({@link Float} or
+     * {@link Double} types) and approximatively equal. If the given object are not floating point
+     * numbers, then this method returns {@code false} unconditionally on the assumption that
+     * strict equality has already been checked before this method call.
+     *
+     * @param  v1 The first value to compare.
+     * @param  v2 The second value to compare.
+     * @return {@code true} If both values are real number and approximatively equal.
+     *
+     * @since 3.18
+     */
+    public static boolean floatEpsilonEqual(final Object v1, final Object v2) {
+        return (v1 instanceof Float || v1 instanceof Double) &&
+               (v2 instanceof Float || v2 instanceof Double) &&
+               epsilonEqual(((Number) v1).doubleValue(), ((Number) v2).doubleValue());
     }
 
     /**

@@ -437,13 +437,15 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     }
 
     /**
-     * Compares the specified object with this math transform for equality.
+     * {@inheritDoc}
      */
     @Override
     public final boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            // Slight optimization
+        if (object == this) { // Slight optimization
             return true;
+        }
+        if (mode != ComparisonMode.STRICT) {
+            return equals(this, object, mode);
         }
         if (super.equals(object, mode)) {
             final CopyTransform that = (CopyTransform) object;

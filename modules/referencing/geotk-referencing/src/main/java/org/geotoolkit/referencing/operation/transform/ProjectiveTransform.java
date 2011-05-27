@@ -643,13 +643,15 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     }
 
     /**
-     * Compares the specified object with this math transform for equality.
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            // Slight optimization
+        if (object == this) { // Slight optimization
             return true;
+        }
+        if (mode != ComparisonMode.STRICT) {
+            return equals(this, object, mode);
         }
         if (super.equals(object, mode)) {
             final ProjectiveTransform that = (ProjectiveTransform) object;

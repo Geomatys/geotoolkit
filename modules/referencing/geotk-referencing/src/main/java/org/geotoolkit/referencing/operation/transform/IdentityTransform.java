@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * transforms, {@link LinearTransform1D} and {@link AffineTransform2D} already provide their own
  * optimizations.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
  * @since 2.0
@@ -264,13 +264,15 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
     }
 
     /**
-     * Compares the specified object with this math transform for equality.
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            // Slight optimization
+        if (object == this) { // Slight optimization
             return true;
+        }
+        if (mode != ComparisonMode.STRICT) {
+            return equals(this, object, mode);
         }
         if (super.equals(object, mode)) {
             final IdentityTransform that = (IdentityTransform) object;

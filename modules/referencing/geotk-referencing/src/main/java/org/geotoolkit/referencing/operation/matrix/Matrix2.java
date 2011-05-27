@@ -22,14 +22,16 @@ import javax.vecmath.SingularMatrixException;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 
 /**
  * A matrix of fixed {@value #SIZE}&times;{@value #SIZE} size.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -286,6 +288,16 @@ public class Matrix2 implements XMatrix, Serializable {
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @since 3.18
+     */
+    @Override
+    public boolean equals(final Object matrix, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, matrix, mode);
+    }
+
+    /**
      * Returns {@code true} if the specified object is of type {@code Matrix2} and
      * all of the data members are equal to the corresponding data members in this matrix.
      *
@@ -296,10 +308,10 @@ public class Matrix2 implements XMatrix, Serializable {
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final Matrix2 that = (Matrix2) object;
-            return Double.doubleToLongBits(this.m00) == Double.doubleToLongBits(that.m00) &&
-                   Double.doubleToLongBits(this.m01) == Double.doubleToLongBits(that.m01) &&
-                   Double.doubleToLongBits(this.m10) == Double.doubleToLongBits(that.m10) &&
-                   Double.doubleToLongBits(this.m11) == Double.doubleToLongBits(that.m11);
+            return Utilities.equals(this.m00, that.m00) &&
+                   Utilities.equals(this.m01, that.m01) &&
+                   Utilities.equals(this.m10, that.m10) &&
+                   Utilities.equals(this.m11, that.m11);
         }
         return false;
     }
@@ -309,10 +321,12 @@ public class Matrix2 implements XMatrix, Serializable {
      */
     @Override
     public int hashCode() {
-        return (int) ((((Double.doubleToLongBits(m00)  +
-                    31 * Double.doubleToLongBits(m01)) +
-                    31 * Double.doubleToLongBits(m10)) +
-                    31 * Double.doubleToLongBits(m11)) ^ serialVersionUID);
+        final long code = serialVersionUID ^
+                (((Double.doubleToLongBits(m00)  +
+              31 * Double.doubleToLongBits(m01)) +
+              31 * Double.doubleToLongBits(m10)) +
+              31 * Double.doubleToLongBits(m11));
+        return ((int) code) ^ ((int) (code >>> 32));
     }
 
     /**

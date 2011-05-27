@@ -22,6 +22,8 @@ import javax.vecmath.SingularMatrixException;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 
@@ -29,8 +31,8 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * A matrix of fixed {@value #SIZE}&times;{@value #SIZE} size. This trivial matrix is returned as a
  * result of {@linkplain org.opengis.referencing.operation.MathTransform1D} derivative computation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -210,6 +212,14 @@ public class Matrix1 implements XMatrix, Serializable {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object matrix, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, matrix, mode);
+    }
+
+    /**
      * Returns {@code true} if the specified object is of type {@code Matrix1} and
      * all of the data members are equal to the corresponding data members in this matrix.
      *
@@ -220,7 +230,7 @@ public class Matrix1 implements XMatrix, Serializable {
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final Matrix1 that = (Matrix1) object;
-            return Double.doubleToLongBits(this.m00) == Double.doubleToLongBits(that.m00);
+            return Utilities.equals(m00, that.m00);
         }
         return false;
     }
@@ -230,7 +240,8 @@ public class Matrix1 implements XMatrix, Serializable {
      */
     @Override
     public int hashCode() {
-        return (int)(Double.doubleToLongBits(m00) ^ serialVersionUID);
+        final long code = Double.doubleToLongBits(m00) ^ serialVersionUID;
+        return ((int) code) ^ ((int) (code >>> 32));
     }
 
     /**

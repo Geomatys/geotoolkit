@@ -29,18 +29,21 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.*;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
+import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
 
 
 /**
  * Utilities methods working on matrix. Those methods are not in public package (for now)
- * because they are unsafe: either they may returns one of the argument without cloning
- * (for efficiency), or the apply the operation directly on one of the argument (for
+ * because they are unsafe: either they may return one of the argument without cloning
+ * (for efficiency), or they apply the operation directly on one of the argument (for
  * example multiplication) for efficiency again.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -486,7 +489,7 @@ search:     for (int j=numRow; --j>=0;) {
                     tolerance *= Math.max(Math.abs(v1), Math.abs(v2));
                 }
                 if (!(Math.abs(v1 - v2) <= tolerance)) {
-                    if (Double.doubleToLongBits(v1) == Double.doubleToLongBits(v2)) {
+                    if (Utilities.equals(v1, v2)) {
                         // Special case for NaN and infinite values.
                         continue;
                     }
@@ -495,5 +498,25 @@ search:     for (int j=numRow; --j>=0;) {
             }
         }
         return true;
+    }
+
+    /**
+     * Helper method for implementation of {@link XMatrix#equals(Object, ComparisonMode)}.
+     *
+     * @param  m1  The first matrix to compare.
+     * @param  m2  The second matrix to compare, or {@code null} if none.
+     * @param  mode The strictness level of the comparison.
+     * @return {@code true} if both matrixes are equal.
+     *
+     * @since 3.18
+     */
+    public static boolean equals(final Matrix m1, final Object m2, final ComparisonMode mode) {
+        switch (mode) {
+            case STRICT:          return Utilities.equals(m1, m2);
+            case BY_CONTRACT:     // Fall through
+            case IGNORE_METADATA: return (m2 instanceof Matrix) && epsilonEqual(m1, (Matrix) m2, 0, false);
+            case APPROXIMATIVE:   return (m2 instanceof Matrix) && epsilonEqual(m1, (Matrix) m2, COMPARISON_THRESHOLD, true);
+            default: throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_$1, mode));
+        }
     }
 }

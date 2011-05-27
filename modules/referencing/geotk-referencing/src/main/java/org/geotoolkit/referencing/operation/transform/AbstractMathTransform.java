@@ -51,6 +51,7 @@ import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -1123,8 +1124,59 @@ public abstract class AbstractMathTransform extends FormattableObject
                     }
                 }
             }
+            // See the policy documented in the LenientComparable javadoc.
+            if (mode.ordinal() >= ComparisonMode.IGNORE_METADATA.ordinal()) {
+                return true;
+            }
             return Utilities.deepEquals(this.getParameterDescriptors(),
                                         that.getParameterDescriptors(), mode);
+        }
+        return false;
+    }
+
+    /**
+     * Helper method for implementation of {@link #equals(Object, ComparisonMode)} methods in
+     * {@link LinearTransform} implementations. Those implementations shall replace completely the
+     * {@link #equals(Object, ComparisonMode)} default implementation, <strong>except</strong> for
+     * {@link ComparisonMode#STRICT} which should continue to rely on the default implementation.
+     * The pattern is:
+     *
+     * {@preformat java
+     *     public boolean equals(Object object, ComparisonMode mode) {
+     *         if (object == this) { // Slight optimization
+     *             return true;
+     *         }
+     *         if (mode != ComparisonMode.STRICT) {
+     *             return equals(this, object, mode);
+     *         }
+     *         if (super.equals(object, mode)) {
+     *             // Compare the internal fields here.
+     *         }
+     *         return false;
+     *     }
+     * }
+     *
+     * Note that this pattern considers {@link ComparisonMode#BY_CONTRACT} as synonymous to
+     * {@code IGNORE_METADATA} rather than {@code STRICT}. This is valid if we consider that
+     * the behavior of the math transform is completely specified by its matrix.
+     *
+     * @param  t1  The first transform to compare.
+     * @param  t2  The second transform to compare, or {@code null} if none.
+     * @param  mode The strictness level of the comparison.
+     * @return {@code true} if both transforms are equal.
+     *
+     * @since 3.18
+     */
+    static boolean equals(final LinearTransform t1, final Object t2, final ComparisonMode mode) {
+        if (t2 instanceof LinearTransform) {
+            final Matrix m1 = t1.getMatrix();
+            if (m1 != null) {
+                final Matrix m2 = ((LinearTransform) t2).getMatrix();
+                if (m1 instanceof LenientComparable) {
+                    return ((LenientComparable) m1).equals(m2, mode);
+                }
+                return MatrixUtilities.equals(m1, m2, mode);
+            }
         }
         return false;
     }

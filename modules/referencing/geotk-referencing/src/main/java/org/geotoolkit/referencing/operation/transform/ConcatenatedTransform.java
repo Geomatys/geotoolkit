@@ -73,19 +73,6 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     private static final long serialVersionUID = 5772066656987558634L;
 
     /**
-     * {@code true} if math transform comparisons for {@linkplain #equals(Object, ComparisonMode)
-     * equivalence} should be strict. A value of {@code false} cause this class to tolerate small
-     * departure due to rounding errors.
-     */
-    private static final boolean STRICT = false;
-
-    /**
-     * Relative tolerance threshold for considering two matrix as
-     * {@linkplain #equals(Object, ComparisonMode) equivalent}.
-     */
-    private static final double EQUIVALENT_THRESHOLD = STRICT ? 0 : 1E-14;
-
-    /**
      * Tolerance level for deciding if an affine transform is an identity transform.
      * The 1E-9 value has been determined empirically using some "real world" values
      * of map projection parameters (scale factor, false easting/northing) and looking
@@ -95,7 +82,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * If this value is changed, running the tests again should tell us if it cause
      * identity transforms to not be recognized anymore.
      */
-    static final double IDENTITY_TOLERANCE = STRICT ? 0 : 1E-9;
+    static final double IDENTITY_TOLERANCE = 1E-9;
 
     /**
      * The first math transform.
@@ -146,12 +133,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
             return true;
         }
         if (tr1 instanceof LenientComparable) {
-            return ((LenientComparable) tr1).equals(tr2,
-                    STRICT ? ComparisonMode.IGNORE_METADATA : ComparisonMode.APPROXIMATIVE);
+            return ((LenientComparable) tr1).equals(tr2, ComparisonMode.APPROXIMATIVE);
         }
         if (tr2 instanceof LenientComparable) {
-            return ((LenientComparable) tr2).equals(tr1,
-                    STRICT ? ComparisonMode.IGNORE_METADATA : ComparisonMode.APPROXIMATIVE);
+            return ((LenientComparable) tr2).equals(tr1, ComparisonMode.APPROXIMATIVE);
         }
         return tr1.equals(tr2);
     }
@@ -963,8 +948,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      */
     @Override
     public final boolean equals(final Object object, final ComparisonMode mode) {
-        if (object == this) {
-            // Slight optimization
+        if (object == this) { // Slight optimization
             return true;
         }
         /*
@@ -974,42 +958,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
          */
         if (object instanceof ConcatenatedTransform) {
             final ConcatenatedTransform that = (ConcatenatedTransform) object;
-            final List<MathTransform> s1 = this.getSteps();
-            final List<MathTransform> s2 = that.getSteps();
-            if (mode != ComparisonMode.APPROXIMATIVE) {
-                return Utilities.deepEquals(s1, s2, mode);
-            }
-            /*
-             * TODO: The remaining of this method could be deleted (the above call to
-             * 'deepEquals' would be unconditional) if we decide that Geotk matrix
-             * implementations should implement LenientComparable.
-             */
-            final int size = s1.size();
-            if (size == s2.size()) {
-                for (int i=0; i<size; i++) {
-                    final MathTransform mt1 = s1.get(i);
-                    final MathTransform mt2 = s2.get(i);
-                    if (Utilities.deepEquals(mt1, mt2, mode)) {
-                        continue;
-                    }
-                    /*
-                     * Before to gives up, maybe the math transform are affine transforms.
-                     * Because the later may not implement LenientComparable, if we want a
-                     * tolerant comparison we need to check ourself.
-                     */
-                    final Matrix m1 = getMatrix(mt1);
-                    if (m1 != null) {
-                        final Matrix m2 = getMatrix(mt2);
-                        if (m2 != null) {
-                            if (epsilonEqual(m1, m2, EQUIVALENT_THRESHOLD, true)) {
-                                continue;
-                            }
-                        }
-                    }
-                    return false;
-                }
-                return true;
-            }
+            return Utilities.deepEquals(this.getSteps(), that.getSteps(), mode);
         }
         return false;
     }

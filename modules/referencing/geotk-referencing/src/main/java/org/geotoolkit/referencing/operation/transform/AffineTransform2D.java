@@ -35,12 +35,14 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -57,8 +59,8 @@ import org.geotoolkit.util.Cloneable;
  *   <li>{@link org.geotoolkit.referencing.operation.provider.LongitudeRotation}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @see ProjectiveTransform
  *
@@ -312,6 +314,28 @@ public class AffineTransform2D extends XAffineTransform
             }
         }
         return inverse;
+    }
+
+    /**
+     * Compares this affine transform with the given object for equality. This method behaves as
+     * documented in the {@link LinearTransform#equals(Object, ComparisonMode) LinearTransform}
+     * interface, except for the following case: if the given mode is {@link ComparisonMode#STRICT},
+     * then this method delegates to {@link #equals(Object)}. The later method has different rules
+     * than the ones documented in the {@code LinearTransform} interface, because of the
+     * {@code AffineTransform} inheritance.
+     *
+     * @param  object The object to compare to {@code this}.
+     * @param  mode The strictness level of the comparison.
+     * @return {@code true} if both objects are equal.
+     *
+     * @since 3.18
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (mode == ComparisonMode.STRICT) {
+            return equals(object);
+        }
+        return (object == this) || AbstractMathTransform.equals(this, object, mode);
     }
 
     /**

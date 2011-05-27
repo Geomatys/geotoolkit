@@ -22,6 +22,8 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
+import org.geotoolkit.util.LenientComparable;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -33,13 +35,13 @@ import org.opengis.referencing.operation.MathTransform;
  * {@linkplain Matrix#getNumRow number of rows} is equal to the number of
  * {@linkplain #getTargetDimensions target dimensions} plus 1.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.0
  * @module
  */
-public interface LinearTransform extends MathTransform {
+public interface LinearTransform extends MathTransform, LenientComparable {
     /**
      * Returns this transform as an affine transform matrix.
      *
@@ -65,4 +67,28 @@ public interface LinearTransform extends MathTransform {
      * @since 2.4
      */
     boolean isIdentity(double tolerance);
+
+    /**
+     * Compares this linear transform with the given object for equality. To be considered equal,
+     * the two objects must meet the conditions documented below, which depend on the comparison
+     * mode argument:
+     * <p>
+     * <ul>
+     *   <li>{@link ComparisonMode#STRICT}: the two transforms must be of the same class and have
+     *       the same parameter values.</li>
+     *   <li>For all other modes, this {@code equals} method shall compare only the
+     *       {@linkplain #getMatrix() matrixes} as documented in the
+     *       {@link org.geotoolkit.referencing.operation.matrix.XMatrix#equals(Object, ComparisonMode)
+     *       XMatrix#equals(&hellip;)} javadoc. This rule is based on the assumption that the
+     *       transform behavior is fully determined by its matrix.</li>
+     * </ul>
+     *
+     * @param  object The object to compare to {@code this}.
+     * @param  mode The strictness level of the comparison.
+     * @return {@code true} if both objects are equal.
+     *
+     * @since 3.18
+     */
+    @Override
+    boolean equals(Object object, ComparisonMode mode);
 }

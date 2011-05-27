@@ -162,7 +162,7 @@ public class Molodensky extends MathTransformProvider {
     /**
      * Helper method for parameter descriptor creation.
      */
-    private static final NamedIdentifier[] identifiers(final ParameterDescriptor<Double> parameter) {
+    private static NamedIdentifier[] identifiers(final ParameterDescriptor<Double> parameter) {
         final Collection<GenericName> id = parameter.getAlias();
         return id.toArray(new NamedIdentifier[id.size()]);
     }
