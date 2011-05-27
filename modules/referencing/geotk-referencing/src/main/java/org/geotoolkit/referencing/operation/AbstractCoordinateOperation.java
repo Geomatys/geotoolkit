@@ -46,12 +46,12 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
-import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.measure.Units;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 
 
 /**
@@ -232,7 +232,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                 ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, i, positionalAccuracy);
             }
         }
-        this.coordinateOperationAccuracy = CollectionUtilities.nonEmptySet(positionalAccuracy);
+        this.coordinateOperationAccuracy = nonEmptySet(positionalAccuracy);
         this.sourceCRS = sourceCRS;
         this.targetCRS = targetCRS;
         this.transform = transform;

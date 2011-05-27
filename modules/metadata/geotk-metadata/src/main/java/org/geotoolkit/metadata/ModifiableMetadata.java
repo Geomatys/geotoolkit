@@ -36,7 +36,6 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
@@ -275,7 +274,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 final Map.Entry entry = it.next();
                 entry.setValue(unmodifiable(entry.getValue()));
             }
-            return CollectionUtilities.unmodifiableMap(map);
+            return XCollections.unmodifiableMap(map);
         }
         /*
          * CASE 4 - The object is cloneable.

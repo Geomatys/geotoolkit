@@ -31,7 +31,7 @@ import javax.xml.validation.Schema;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.CollectionUtilities;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 import static org.geotoolkit.internal.jaxb.MarshalContext.*;
@@ -215,7 +215,7 @@ abstract class Pooled {
                 return;
             }
             if (name.equals(XML.SCHEMAS)) {
-                schemas = CollectionUtilities.subset((Map<?,?>) value, String.class, "gmd");
+                schemas = InternalUtilities.subset((Map<?,?>) value, String.class, "gmd");
                 return;
             }
             if (name.equals(XML.LOCALE)) {

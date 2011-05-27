@@ -17,11 +17,15 @@
  */
 package org.geotoolkit.internal;
 
+import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -58,6 +62,57 @@ public final class InternalUtilities extends Static {
      */
     public static String identity(final Object value) {
         return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
+    }
+
+    /**
+     * Returns a copy of the given array as a non-empty immutable set.
+     * If the given array is empty, then this method returns {@code null}.
+     * <p>
+     * This method is not public provided in the public API because the recommended
+     * practice is usually to return an empty collection rather than {@code null}.
+     *
+     * @param  <T> The type of elements.
+     * @param  elements The elements to copy in a set.
+     * @return An unmodifiable set which contains all the given elements.
+     *
+     * @since 3.17
+     */
+    public static <T> Set<T> nonEmptySet(final T... elements) {
+        final Set<T> asSet = XCollections.immutableSet(elements);
+        return (asSet != null && asSet.isEmpty()) ? null : asSet;
+    }
+
+    /**
+     * Returns an unmodifiable map which contains a copy of the given map, only for the given keys.
+     * The value for the given keys shall be of the given type. Other values can be of any types,
+     * since they will be ignored.
+     *
+     * @param  <K>  The type of keys in the map.
+     * @param  <V>  The type of values in the map.
+     * @param  map  The map to copy, or {@code null}.
+     * @param  valueType The base type of retained values.
+     * @param  keys The keys of values to retain.
+     * @return A copy of the given map containing only the given keys, or {@code null}
+     *         if the given map was null.
+     * @throws ClassCastException If at least one retained value is not of the expected type.
+     *
+     * @since 3.17
+     */
+    public static <K,V> Map<K,V> subset(final Map<?,?> map, final Class<V> valueType, final K... keys)
+            throws ClassCastException
+    {
+        Map<K,V> copy = null;
+        if (map != null) {
+            copy = new HashMap<K,V>(XCollections.hashMapCapacity(Math.min(map.size(), keys.length)));
+            for (final K key : keys) {
+                final V value = valueType.cast(map.get(key));
+                if (value != null) {
+                    copy.put(key, value);
+                }
+            }
+            copy = XCollections.unmodifiableMap(copy);
+        }
+        return copy;
     }
 
     /**

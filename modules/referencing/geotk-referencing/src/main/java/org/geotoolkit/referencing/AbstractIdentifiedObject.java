@@ -53,7 +53,6 @@ import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.Citations;
-import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
@@ -65,6 +64,7 @@ import org.geotoolkit.xml.Namespaces;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
 
 
 /**
@@ -496,10 +496,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             this.name = (ReferenceIdentifier) (value = name);
 
             key = ALIAS_KEY;
-            this.alias = CollectionUtilities.nonEmptySet((GenericName[]) (value = alias));
+            this.alias = nonEmptySet((GenericName[]) (value = alias));
 
             key = IDENTIFIERS_KEY;
-            this.identifiers = CollectionUtilities.nonEmptySet((ReferenceIdentifier[]) (value = identifiers));
+            this.identifiers = nonEmptySet((ReferenceIdentifier[]) (value = identifiers));
 
             key = REMARKS_KEY;
             this.remarks = (InternationalString) (value = remarks);

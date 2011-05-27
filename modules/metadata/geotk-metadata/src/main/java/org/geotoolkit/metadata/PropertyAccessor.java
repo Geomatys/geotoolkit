@@ -45,7 +45,6 @@ import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.internal.CollectionUtilities;
 
 
 /**
@@ -686,7 +685,10 @@ final class PropertyAccessor {
     }
 
     /**
-     * Sets a value for the specified metadata.
+     * Sets a value for the specified metadata and returns the old value if {@code getOld} is
+     * {@code true}. If the old value was a collection or a map, then this value is copied in
+     * a new collection or map before the new value is set, because the setter methods typically
+     * copy the new collection in their existing instance.
      *
      * @param  index The index of the property to set.
      * @param  metadata The metadata object on which to set the value.
@@ -707,7 +709,11 @@ final class PropertyAccessor {
                 Object old;
                 if (getOld) {
                     old = get(getter, metadata);
-                    old = CollectionUtilities.copy(old);
+                    if (old instanceof Collection<?>) {
+                        old = XCollections.copy((Collection<?>) old);
+                    } else if (old instanceof Map<?,?>) {
+                        old = XCollections.copy((Map<?,?>) old);
+                    }
                 } else {
                     old = null;
                 }

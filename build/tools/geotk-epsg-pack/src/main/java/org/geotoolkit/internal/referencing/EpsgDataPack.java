@@ -272,4 +272,60 @@ final class EpsgDataPack extends ScriptRunner {
         }
         return length;
     }
+
+    /**
+     * Reformats a multi-line text as a single line text. More specifically, for each
+     * occurrence of line feed (the {@code '\n'} character) found in the given buffer,
+     * this method performs the following steps:
+     * <p>
+     * <ol>
+     *   <li>Remove the line feed character and the {@linkplain Character#isWhitespace(char)
+     *       white spaces} around them.</li>
+     *   <li>If the last character before the line feed and the first character after the
+     *       line feed are both {@linkplain Character#isLetterOrDigit(char) letter or digit},
+     *       then a space will be inserted between them. Otherwise they will be no space.</li>
+     * </ol>
+     * <p>
+     * This method is provided for {@link #execute(StringBuilder)} implementations, in order to
+     * "compress" a multi-lines SQL statement on a single line before further processing by the
+     * caller.
+     *
+     * @since 3.18 (derived from 3.00)
+     *
+     * @param buffer The string in which to perform the removal.
+     */
+    protected static void removeLF(final StringBuilder buffer) {
+        int i = buffer.length();
+        while ((i = buffer.lastIndexOf("\n", i)) >= 0) {
+            final int length = buffer.length();
+            int nld = 0;
+            int upper = i;
+            while (++upper < length) {
+                final char c = buffer.charAt(upper);
+                if (!Character.isWhitespace(c)) {
+                    if (Character.isLetterOrDigit(c)) {
+                        nld++;
+                    }
+                    break;
+                }
+            }
+            while (i != 0) {
+                final char c = buffer.charAt(--i);
+                if (!Character.isWhitespace(c)) {
+                    if (Character.isLetterOrDigit(c)) {
+                        nld++;
+                    }
+                    i++;
+                    break;
+                }
+            }
+            if (nld == 2) {
+                upper--;
+            }
+            buffer.delete(i, upper);
+            if (nld == 2) {
+                buffer.setCharAt(i, ' ');
+            }
+        }
+    }
 }

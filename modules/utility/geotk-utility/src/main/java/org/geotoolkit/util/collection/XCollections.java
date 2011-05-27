@@ -17,17 +17,25 @@
  */
 package org.geotoolkit.util.collection;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Queue;
 import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.SortedSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.SortedMap;
+import java.util.LinkedHashMap;
 import java.io.Serializable;
 
 import org.geotoolkit.lang.Static;
@@ -158,6 +166,40 @@ public final class XCollections extends Static {
     }
 
     /**
+     * Returns a unmodifiable version of the given map. This method is different than the
+     * standard {@link Collections#unmodifiableMap(Map)} in that it tries to returns a more
+     * efficient object when there is zero or one element. <strong>The map returned by this
+     * method may or may not be a view of the given map</strong>. Consequently this method
+     * shall be used <strong>only</strong> if the given map will not be modified after this
+     * method call. In case of doubt, use the standard {@link Collections#unmodifiableMap(Map)}.
+     *
+     * @param  <K>  The type of keys in the map.
+     * @param  <V>  The type of values in the map.
+     * @param  map  The map to make unmodifiable, or {@code null}.
+     * @return A unmodifiable version of the given map, or {@code null} if the given map was null.
+     *
+     * @since 3.18 (derived from 3.17)
+     */
+    public static <K,V> Map<K,V> unmodifiableMap(Map<K,V> map) {
+        if (map != null) switch (map.size()) {
+            case 0: {
+                map = Collections.emptyMap();
+                break;
+            }
+            case 1: {
+                final Map.Entry<K,V> entry = map.entrySet().iterator().next();
+                map = Collections.singletonMap(entry.getKey(), entry.getValue());
+                break;
+            }
+            default: {
+                map = Collections.unmodifiableMap(map);
+                break;
+            }
+        }
+        return map;
+    }
+
+    /**
      * The comparator to be returned by {@code #listComparator} and similar methods. Can not be
      * public because of parameterized types: we need a method for casting to the expected type.
      * This is the same trick than {@link Collections#emptySet()} for example.
@@ -268,5 +310,101 @@ public final class XCollections extends Static {
             elements++;
         }
         return elements + r;
+    }
+
+    /**
+     * Copies the content of the given collection to a standard Java collection. This method can be
+     * used when a in-memory, unsynchronized and modifiable copy of a collection is desired without
+     * prior knowledge of the collection type. The following table gives the type mapping applied
+     * by the method:
+     * <p>
+     * <table border="1" cellspacing="0" cellpadding="2">
+     * <tr bgcolor="lightblue"><th>Input type</th><th>Output type</th></tr>
+     * <tr><td>{@link SortedSet}</td><td>{@link TreeSet}</td></tr>
+     * <tr><td>{@link HashSet}</td><td>{@link HashSet}</td></tr>
+     * <tr><td>Other {@link Set}</td><td>{@link LinkedHashSet}</td></tr>
+     * <tr><td>{@link Queue}</td><td>{@link LinkedList}</td></tr>
+     * <tr><td>{@link List} or other {@link Collection}</td><td>{@link ArrayList}</td></tr>
+     * </table>
+     *
+     * @param  <E> The type of elements in the collection.
+     * @param  collection The collection to copy, or {@code null}.
+     * @return A copy of the given collection, or {@code null} if the given collection was null.
+     *
+     * @since 3.18 (derived from 3.00)
+     */
+    @SuppressWarnings("unchecked")
+    public static <E> Collection<E> copy(final Collection<E> collection) {
+        if (collection == null) {
+            return null;
+        }
+        /*
+         * We will use the clone() method when possible because they are
+         * implemented in a more efficient way than the copy constructors.
+         */
+        final Class<?> type = collection.getClass();
+        if (collection instanceof Set<?>) {
+            if (collection instanceof SortedSet<?>) {
+                if (type == TreeSet.class) {
+                    return (Collection<E>) ((TreeSet<E>) collection).clone();
+                }
+                return new TreeSet<E>(collection);
+            }
+            if (type == HashSet.class || type == LinkedHashSet.class) {
+                return (Collection<E>) ((HashSet<E>) collection).clone();
+            }
+            return new LinkedHashSet<E>(collection);
+        }
+        if (collection instanceof Queue<?>) {
+            if (type == LinkedList.class) {
+                return (Collection<E>) ((LinkedList<E>) collection).clone();
+            }
+            return new LinkedList<E>(collection);
+        }
+        if (type == ArrayList.class) {
+            return (Collection<E>) ((ArrayList<E>) collection).clone();
+        }
+        return new ArrayList<E>(collection);
+    }
+
+    /**
+     * Copies the content of the given map to a standard Java map. This method can be used when a
+     * in-memory, unsynchronized and modifiable copy of a map is desired without prior knowledge
+     * of the map type. The following table gives the type mapping applied by the method:
+     * <p>
+     * <table border="1" cellspacing="0" cellpadding="2">
+     * <tr bgcolor="lightblue"><th>Input type</th><th>Output type</th></tr>
+     * <tr><td>{@link SortedMap}</td><td>{@link TreeMap}</td></tr>
+     * <tr><td>{@link HashMap}</td><td>{@link HashMap}</td></tr>
+     * <tr><td>Other {@link Map}</td><td>{@link LinkedHashMap}</td></tr>
+     * </table>
+     *
+     * @param  <K> The type of keys in the map.
+     * @param  <V> The type of values in the map.
+     * @param  map The map to copy, or {@code null}.
+     * @return A copy of the given map, or {@code null} if the given map was null.
+     *
+     * @since 3.18 (derived from 3.00)
+     */
+    @SuppressWarnings("unchecked")
+    public static <K,V> Map<K,V> copy(final Map<K,V> map) {
+        if (map == null) {
+            return null;
+        }
+        /*
+         * We will use the clone() method when possible because they are
+         * implemented in a more efficient way than the copy constructors.
+         */
+        final Class<?> type = map.getClass();
+        if (map instanceof SortedMap<?,?>) {
+            if (type == TreeMap.class) {
+                return (Map<K,V>) ((TreeMap<K,V>) map).clone();
+            }
+            return new TreeMap<K,V>(map);
+        }
+        if (type == HashMap.class || type == LinkedHashMap.class) {
+            return (Map<K,V>) ((HashMap<K,V>) map).clone();
+        }
+        return new LinkedHashMap<K,V>(map);
     }
 }

@@ -26,9 +26,9 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
@@ -211,7 +211,7 @@ public final class PropertyAccessorTest {
         assertEquals (source, target);
         assertTrue(containsEPSG(target));
 
-        assertEquals(CollectionUtilities.copy(target), accessor.set(index, citation, null, true));
+        assertEquals(XCollections.copy((Collection<?>) target), accessor.set(index, citation, null, true));
         final Object value = accessor.get(index, citation);
         assertNotNull(value);
         assertTrue(((Collection<?>) value).isEmpty());

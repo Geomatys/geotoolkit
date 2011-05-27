@@ -414,9 +414,9 @@ public final class Strings extends Static {
      * like an English sentence. This heuristic method performs the following steps:
      *
      * <ol>
-     *   <li><p>Invoke {@link #camelCaseToSentence(CharSequence)}, which separate the words on
-     *     the basis of character case. For example {@code "transferFunctionType"} become
-     *     {@code "transfer function type"}. This works fine for ISO 19115 identifiers.</p></li>
+     *   <li><p>Invoke {@link #camelCaseToWords(CharSequence, boolean)}, which separate the words
+     *     on the basis of character case. For example {@code "transferFunctionType"} become
+     *     "<cite>transfer function type</cite>". This works fine for ISO 19115 identifiers.</p></li>
      *
      *   <li><p>Next replace all occurrence of {@code '_'} by spaces in order to take in account
      *     an other common naming convention, which uses {@code '_'} as a word separator. This
@@ -476,7 +476,8 @@ public final class Strings extends Static {
      * @param  identifier An identifier with no space, words begin with an upper-case character.
      * @param  toLowerCase {@code true} for changing the first character of words to lower case,
      *         except for the first word and acronyms.
-     * @return The identifier with spaces inserted after what looks like words.
+     * @return The identifier with spaces inserted after what looks like words, returned
+     *         as a {@link StringBuilder} in order to allow modifications by the caller.
      * @throws NullPointerException if the {@code identifier} argument is null.
      */
     public static StringBuilder camelCaseToWords(final CharSequence identifier, final boolean toLowerCase) {
