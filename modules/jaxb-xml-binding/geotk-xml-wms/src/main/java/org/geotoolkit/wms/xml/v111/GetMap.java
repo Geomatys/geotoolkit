@@ -70,6 +70,19 @@ public class GetMap extends AbstractOperation {
         }
         return this.format;
     }
+    
+    /**
+     * Gets the string values of the available formats.
+     */
+    public List<String> getFormats() {
+        final List<String> formats = new ArrayList<String>();
+        final List<Format> list = getFormat();
+        
+        for (final Format curr : list) {
+            formats.add(curr.getvalue());
+        }
+        return formats;
+    }
 
     /**
      * Gets the value of the dcpType property.

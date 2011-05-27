@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlTransient;
 public abstract class AbstractOperation {
     
     
+    public abstract List<String> getFormats();
+    
     public abstract List<? extends AbstractDCP> getDCPType();
 
 }

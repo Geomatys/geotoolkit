@@ -88,6 +88,12 @@ public class OperationType extends AbstractOperation {
     }
 
     /**
+     * Gets the string values of the available formats.
+     */
+    public List<String> getFormats() {
+        return getFormat();
+    }
+    /**
      * Gets the value of the dcpType property.
      */
     public List<DCPType> getDCPType() {
