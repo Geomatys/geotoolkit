@@ -25,39 +25,39 @@ package org.geotoolkit.util;
  * coordinates calculation.
  *
  * {@section Conditions for equality}
- * <p>{@link org.geotoolkit.metadata.iso.MetadataEntity} subclasses</p>
- * <table border="1" cellspacing="0" cellpadding="2">
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#STRICT STRICT}</th>
+ * <p><b>{@link org.geotoolkit.metadata.iso.MetadataEntity} subclasses:</b></p>
+ * <table>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#STRICT STRICT}:</th>
  * <td>Objects must be of the same class and all attributes must be equal, including
  * {@linkplain org.geotoolkit.metadata.iso.MetadataEntity#getIdentifiers() identifiers}
  * and {@linkplain org.geotoolkit.metadata.iso.MetadataEntity#getXLink() xlinks}.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}:</th>
  * <td>The same attributes than the above {@code STRICT} mode must be equal, but the metadata
  * object don't need to be implemented by the same class, provided that they implement the
  * same GeoAPI interface.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}:</th>
  * <td>Only the attributes defined in the GeoAPI interfaces are compared. The above-cited identifiers
  * and {@code xlinks} attributes are ignored.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}:</th>
  * <td>The same attributes than the above {@code IGNORE_METADATA} mode are compared, but a slight
  * (implementation dependant) difference is tolerated in floating point numbers.</td></tr>
  * </table>
  *
  * <p>&nbsp;</p>
- * <p>{@link org.geotoolkit.referencing.AbstractIdentifiedObject} subclasses</p>
- * <table border="1" cellspacing="0" cellpadding="2">
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#STRICT STRICT}</th>
+ * <p><b>{@link org.geotoolkit.referencing.AbstractIdentifiedObject} subclasses:</b></p>
+ * <table>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#STRICT STRICT}:</th>
  * <td>Objects must be of the same class and all attributes must be equal.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}:</th>
  * <td>The same attributes than the above {@code STRICT} mode must be equal, but the referencing
  * object don't need to be implemented by the same class, provided that they implement the
  * same GeoAPI interface.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}:</th>
  * <td>The
  * {@linkplain org.geotoolkit.referencing.crs.AbstractCRS#getIdentifiers() identifiers},
  * {@linkplain org.geotoolkit.referencing.crs.AbstractCRS#getAlias() aliases},
@@ -68,29 +68,25 @@ package org.geotoolkit.util;
  * {@linkplain org.opengis.referencing.operation.ConcatenatedOperation coordinate operations}.
  * All other attributes that are relevant to coordinate calculations, must be equal.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}:</th>
  * <td>The same attributes than the above {@code IGNORE_METADATA} mode are compared, but a slight
  * (implementation dependant) difference is tolerated in floating point numbers.</td></tr>
  * </table>
  *
  * <p>&nbsp;</p>
- * <p>{@link org.geotoolkit.referencing.operation.transform.AbstractMathTransform} subclasses</p>
- * If the transforms implement the {@link org.geotoolkit.referencing.operation.transform.LinearTransform}
- * interface and the comparison mode is anything else than {@code STRICT}, then the transform
- * {@linkplain org.geotoolkit.referencing.operation.transform.LinearTransform#getMatrix() matrixes}
- * are compared as documented in the next section below. Otherwise:
- *
- * <table border="1" cellspacing="0" cellpadding="2">
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#STRICT STRICT}</th>
+ * <p><b>{@link org.geotoolkit.referencing.operation.transform.AbstractMathTransform} subclasses
+ * except {@link org.geotoolkit.referencing.operation.transform.LinearTransform}:</b></p>
+ * <table>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#STRICT STRICT}:</th>
  * <td>Objects must be of the same class and all attributes must be equal, including the
  * {@linkplain org.geotoolkit.referencing.operation.transform.AbstractMathTransform#getParameterValues()
  * parameter values}.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}:</th>
  * <td>Synonymous to the {@code STRICT} mode, because there is no GeoAPI interfaces for the various
  * kind of math transforms.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}:</th>
  * <td>Objects must be of the same class, but the parameter values can be different if they are
  * different way to formulate the same transform. For example a {@code "Mercator (2SP)"} projection
  * with a {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#standardParallels
@@ -98,27 +94,28 @@ package org.geotoolkit.util;
  * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor scale
  * factor} value of 0.5</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}:</th>
  * <td>The same attributes than the above {@code IGNORE_METADATA} mode are compared, but a slight
  * (implementation dependant) difference is tolerated in floating point numbers.</td></tr>
  * </table>
  *
  * <p>&nbsp;</p>
- * <p>{@link org.geotoolkit.referencing.operation.matrix.XMatrix} implementations</p>
- * <table border="1" cellspacing="0" cellpadding="2">
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#STRICT STRICT}</th>
+ * <p><b>{@link org.geotoolkit.referencing.operation.matrix.XMatrix} and
+ * {@link org.geotoolkit.referencing.operation.transform.LinearTransform} implementations:</b></p>
+ * <table>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#STRICT STRICT}:</th>
  * <td>Objects must be of the same class, matrixes must have the same size and all matrix
  * elements must be equal.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}:</th>
  * <td>Matrixes must have the same size and all matrix elements must be equal, but the matrixes
  * are not required to be the same implementation class
  * (any {@link org.opengis.referencing.operation.Matrix} is okay).</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}:</th>
  * <td>Synonymous to the {@code BY_CONTRACT} mode, because matrixes don't have metadata.</td></tr>
  *
- * <tr><th bgcolor="lightblue" align="left">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}</th>
+ * <tr><th align="left" valign="top">{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}:</th>
  * <td>The same attributes than the above {@code BY_CONTRACT} mode are compared, but a slight
  * (implementation dependant) difference is tolerated in floating point numbers.</td></tr>
  * </table>

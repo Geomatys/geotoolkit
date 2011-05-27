@@ -168,8 +168,8 @@ public final class XCollections extends Static {
     /**
      * Returns a unmodifiable version of the given map. This method is different than the
      * standard {@link Collections#unmodifiableMap(Map)} in that it tries to returns a more
-     * efficient object when there is zero or one element. <strong>The map returned by this
-     * method may or may not be a view of the given map</strong>. Consequently this method
+     * efficient object when there is zero or one element. <em>The map returned by this
+     * method may or may not be a view of the given map</em>. Consequently this method
      * shall be used <strong>only</strong> if the given map will not be modified after this
      * method call. In case of doubt, use the standard {@link Collections#unmodifiableMap(Map)}.
      *
@@ -279,7 +279,7 @@ public final class XCollections extends Static {
      * Returns a comparator for arbitrary collections of comparable elements. The elements are
      * compared in iteration order as for the {@linkplain #listComparator list comparator}.
      *
-     * <strong>This comparator make sense only for collections having determinist order</strong>
+     * <em>This comparator make sense only for collections having determinist order</em>
      * like {@link java.util.TreeSet}, {@link java.util.LinkedHashSet} or queues.
      * Do <strong>not</strong> use it with {@link java.util.HashSet}.
      *

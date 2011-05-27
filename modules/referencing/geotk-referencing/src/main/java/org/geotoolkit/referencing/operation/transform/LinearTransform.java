@@ -70,17 +70,17 @@ public interface LinearTransform extends MathTransform, LenientComparable {
 
     /**
      * Compares this linear transform with the given object for equality. To be considered equal,
-     * the two objects must meet the conditions documented below, which depend on the comparison
-     * mode argument:
+     * the two objects must meet the following conditions, which depend on the {@code mode}
+     * argument:
      * <p>
      * <ul>
-     *   <li>{@link ComparisonMode#STRICT}: the two transforms must be of the same class and have
-     *       the same parameter values.</li>
-     *   <li>For all other modes, this {@code equals} method shall compare only the
+     *   <li><b>{@link ComparisonMode#STRICT STRICT}:</b> the two transforms must be of the
+     *       same class and have the same parameter values.</li>
+     *   <li><b>All other modes:</b> the two transforms shall compare only their
      *       {@linkplain #getMatrix() matrixes} as documented in the
      *       {@link org.geotoolkit.referencing.operation.matrix.XMatrix#equals(Object, ComparisonMode)
-     *       XMatrix#equals(&hellip;)} javadoc. This rule is based on the assumption that the
-     *       transform behavior is fully determined by its matrix.</li>
+     *       XMatrix.equals(&hellip;)} javadoc. This rule is based on the assumption that the
+     *       linear transforms behavior are fully determined by their matrix.</li>
      * </ul>
      *
      * @param  object The object to compare to {@code this}.
