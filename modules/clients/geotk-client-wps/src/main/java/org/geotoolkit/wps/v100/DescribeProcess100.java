@@ -18,7 +18,6 @@ package org.geotoolkit.wps.v100;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import org.geotoolkit.wps.AbstractDescribeProcess;
 
 /**
@@ -43,10 +42,9 @@ public class DescribeProcess100 extends AbstractDescribeProcess {
         }
         
         String ids = new String();
-        String[] idArray = identifiers.toArray(new String[identifiers.size()]);
-        for(int i=0 ; i<idArray.length;i++){
-            ids += idArray[i];
-            if(i != idArray.length)
+        for(int i=0 ; i<identifiers.size();i++){
+            ids += identifiers.get(i);
+            if(i != identifiers.size()-1)
                 ids += ",";
         }
         

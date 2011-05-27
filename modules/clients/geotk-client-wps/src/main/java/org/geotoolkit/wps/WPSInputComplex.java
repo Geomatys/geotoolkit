@@ -35,7 +35,7 @@ public class WPSInputComplex extends AbstractWPSInput{
      * @param href
      */
     public WPSInputComplex(final String identifier, final Object obj) {
-        super(identifier, "complex");
+        super(identifier);
         this.data = obj;
         this.encoding = null;
         this.schema = null;
@@ -52,7 +52,7 @@ public class WPSInputComplex extends AbstractWPSInput{
      */
     public WPSInputComplex(final String identifier, final Object data, final String encoding, 
             final String schema, final String mime) {
-        super(identifier, "complex");
+        super(identifier);
         this.data = data;
         this.encoding = encoding;
         this.schema = schema;

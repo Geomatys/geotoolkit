@@ -24,7 +24,7 @@ public class WPSInputReference extends AbstractWPSInput{
      * @param href
      */
     public WPSInputReference(final String identifier, final String href) {
-        super(identifier, "reference");
+        super(identifier);
         this.href = href;
         this.encoding = null;
         this.schema = null;
@@ -43,7 +43,7 @@ public class WPSInputReference extends AbstractWPSInput{
      */
     public WPSInputReference(final String identifier, final String href, final String encoding, 
             final String schema, final String mime, final String method) {
-        super(identifier, "reference");
+        super(identifier);
         this.href = href;
         this.encoding = encoding;
         this.schema = schema;

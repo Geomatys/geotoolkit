@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -48,7 +49,7 @@ import org.geotoolkit.wps.xml.v100.ResponseFormType;
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class AbstractExecute extends AbstractRequest implements GetCapabilitiesRequest{
+public abstract class AbstractExecute extends AbstractRequest implements ExecuteRequest{
     
     protected final String version;
     protected String identifier;
@@ -60,47 +61,133 @@ public abstract class AbstractExecute extends AbstractRequest implements GetCapa
     protected List<AbstractWPSInput> inputs;
     
     
+    /**
+     * Constructor, initialize status, lineage and storage to false and output form to "document"
+     * @param serverURL
+     * @param version 
+     */
     protected AbstractExecute(final String serverURL,final String version){
         super(serverURL);
         this.version = version;
+        this.status = false;
+        this.lineage = false;
+        this.storage = false;
+        this.outputForm = "document";
+        this.outputs = new ArrayList<WPSOutput>();
+        this.inputs = new ArrayList<AbstractWPSInput>();
     }
     
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getIdentifier(){
+        return identifier;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setIdentifier(String identifiers){
+        this.identifier = identifiers;
+    }
     
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    protected void prepareParameters() {
-//        super.prepareParameters();
-//        requestParameters.put("SERVICE",    "WPS");
-//        requestParameters.put("REQUEST", "Execute");
-//        requestParameters.put("VERSION",    "1.0.0");
-//        if (identifiers == null) {
-//            throw new IllegalArgumentException("Identifiers are not defined");
-//        }
-//        
-//        String ids = new String();
-//        String[] idArray = identifiers.toArray(new String[identifiers.size()]);
-//        for(int i=0 ; i<idArray.length;i++){
-//            ids += idArray[i];
-//            if(i != idArray.length)
-//                ids += ",";
-//        }
-//        
-//        requestParameters.put("IDENTIFIER", ids );
-//
-//    }
-//    
-//    
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    public URL getURL() throws MalformedURLException {
-//          
-//        return super.getURL();
-//    }
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getOutputForm(){
+        return outputForm;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOutputForm(String outForm){
+        this.outputForm = outForm;
+    }
     
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean getOutputStorage(){
+        return storage;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOutputStorage(boolean outStrorage){
+        this.storage = outStrorage;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean getOutputLineage(){
+        return lineage;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOutputLineage(boolean outLineage){
+        this.lineage = outLineage;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean getOutputStatus(){
+        return status;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOutputStatus(boolean outStatus){
+        this.status = outStatus;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<WPSOutput> getOutputs(){
+        return outputs;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setOutputs(List<WPSOutput> outForm){
+        this.outputs = outForm;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<AbstractWPSInput> getInputs(){
+        return inputs;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setInputs(List<AbstractWPSInput> inputs){
+        this.inputs = inputs;
+    }
     
     /**
      * {@inheritDoc }
@@ -108,13 +195,8 @@ public abstract class AbstractExecute extends AbstractRequest implements GetCapa
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final Execute request = new Execute();
-        request.setService("WPS");
-        request.setVersion(version);
-        request.setIdentifier(new CodeType(identifier));
-        request.setResponseForm(getRespForm());
-        request.setDataInputs(getInputs());
-
+        final Execute request = makeRequest();
+        
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
 
@@ -136,6 +218,17 @@ public abstract class AbstractExecute extends AbstractRequest implements GetCapa
         }
         stream.close();
         return conec.getInputStream();
+    }
+    
+    public Execute makeRequest(){
+        final Execute request = new Execute();
+        request.setService("WPS");
+        request.setVersion(version);
+        request.setIdentifier(new CodeType(identifier));
+        request.setResponseForm(getRespForm());
+        request.setDataInputs(getDataInputs());
+        
+        return request;
     }
     
     /**
@@ -215,11 +308,10 @@ public abstract class AbstractExecute extends AbstractRequest implements GetCapa
      * @param in
      * @return 
      */
-    private DataInputsType getInputs() {
+    private DataInputsType getDataInputs() {
         
         final DataInputsType input = new DataInputsType();
-        //input.getInput()
-                
+                        
         for(AbstractWPSInput in :inputs){
             if(in instanceof WPSInputBoundingBox){
                 input.getInput().add(getInputBbox((WPSInputBoundingBox)in));

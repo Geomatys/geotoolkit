@@ -34,7 +34,7 @@ public class WPSInputLiteral extends AbstractWPSInput{
      * @param href
      */
     public WPSInputLiteral(final String identifier, final String obj) {
-        super(identifier, "literal");
+        super(identifier);
         this.data = obj;
         this.dataType = null;
         this.uom = null;
@@ -50,7 +50,7 @@ public class WPSInputLiteral extends AbstractWPSInput{
      */
     public WPSInputLiteral(final String identifier, final String data, final String dataType, 
             final String uom) {
-        super(identifier, "literal");
+        super(identifier);
         this.data = data;
         this.dataType = dataType;
         this.uom = uom;

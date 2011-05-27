@@ -62,9 +62,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final GetCapabilities request = new GetCapabilities();
-        request.setService("WPS");
-        request.setAcceptVersions(new AcceptVersionsType(version));
+        final GetCapabilities request = makeRequest();
 
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
@@ -77,7 +75,6 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         try {
             marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request, stream);
-            //marshaller.marshal(request, System.out);
         } catch (JAXBException ex) {
             throw new IOException(ex);
         } finally {
@@ -87,5 +84,13 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         }
         stream.close();
         return conec.getInputStream();
+    }
+    
+    public GetCapabilities makeRequest(){
+        
+        final GetCapabilities request = new GetCapabilities();
+        request.setService("WPS");
+        request.setAcceptVersions(new AcceptVersionsType(version));
+        return request;
     }
 }

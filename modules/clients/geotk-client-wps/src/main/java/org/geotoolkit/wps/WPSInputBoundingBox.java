@@ -17,7 +17,6 @@
 package org.geotoolkit.wps;
 
 import java.util.List;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Bounding box Input for WPS
@@ -43,7 +42,7 @@ public class WPSInputBoundingBox extends AbstractWPSInput{
      */
     public WPSInputBoundingBox(final String identifier, final List<Double> lowerCorner, final List<Double> upperCorner, 
             final String crs, final int dimension) {
-        super(identifier, "bbox");
+        super(identifier);
         this.lowerCorner = lowerCorner;
         this.upperCorner = upperCorner;
         this.crs = crs;

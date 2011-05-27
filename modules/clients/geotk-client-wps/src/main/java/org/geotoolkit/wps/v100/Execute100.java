@@ -17,39 +17,17 @@
 package org.geotoolkit.wps.v100;
 
 import org.geotoolkit.wps.AbstractDescribeProcess;
+import org.geotoolkit.wps.AbstractExecute;
 
 /**
  *
  * @author Quentin Boileau
  * @module pending
  */
-public class Execute100 extends AbstractDescribeProcess {
+public class Execute100 extends AbstractExecute {
     
     public Execute100(final String serverURL){
         super(serverURL, "1.0.0");
     }
-    
-//    /**
-//     * {@inheritDoc }
-//     */
-//    @Override
-//    public URL getURL() throws MalformedURLException {
-//        
-//        if (identifiers == null) {
-//            throw new IllegalArgumentException("Identifiers are not defined");
-//        }
-//        
-//        String ids = new String();
-//        String[] idArray = identifiers.toArray(new String[identifiers.size()]);
-//        for(int i=0 ; i<idArray.length;i++){
-//            ids += idArray[i];
-//            if(i != idArray.length)
-//                ids += ",";
-//        }
-//        
-//        requestParameters.put("IDENTIFIER", ids );
-//        return super.getURL();
-//    }
-    
-    
+      
 }

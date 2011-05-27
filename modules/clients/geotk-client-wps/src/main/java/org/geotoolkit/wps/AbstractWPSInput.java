@@ -23,19 +23,14 @@ package org.geotoolkit.wps;
 public abstract class AbstractWPSInput {
     
     protected String identifier ;
-    protected String type;
 
-    protected AbstractWPSInput(String identifier, String type) {
+    protected AbstractWPSInput(String identifier) {
         this.identifier = identifier;
-        this.type = type;
     }
-
+        
     protected String getIdentifier() {
         return identifier;
     }
 
-    protected String getType() {
-        return type;
-    }
     
 }

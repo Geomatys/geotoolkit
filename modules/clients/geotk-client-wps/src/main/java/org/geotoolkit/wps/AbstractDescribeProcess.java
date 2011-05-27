@@ -48,11 +48,17 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
         this.version = version;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<String> getIdentifiers() {
         return identifiers;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setIdentifiers(List<String> identifiers) {
        this.identifiers = identifiers;
@@ -67,9 +73,7 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
         requestParameters.put("SERVICE",    "WPS");
         requestParameters.put("REQUEST", "DescribeProcess");
         requestParameters.put("VERSION",    "1.0.0");
-        
     }
-    
     
     /**
      * {@inheritDoc }
@@ -77,14 +81,7 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final DescribeProcess request = new DescribeProcess();
-        request.setService("WPS");
-        request.setVersion(version);
-        final List<CodeType> listId = new ArrayList<CodeType>();
-        for(String str : identifiers){
-            listId.add(new CodeType(str));
-        }
-        request.getIdentifier().addAll(listId);
+        final DescribeProcess request = makeRequest();
 
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
@@ -107,5 +104,20 @@ public abstract class AbstractDescribeProcess extends AbstractRequest implements
         }
         stream.close();
         return conec.getInputStream();
+    }
+    
+    public DescribeProcess makeRequest(){
+        
+        final DescribeProcess request = new DescribeProcess();
+        request.setService("WPS");
+        request.setVersion(version);
+        final List<CodeType> listId = new ArrayList<CodeType>();
+        
+        for(String str : identifiers){
+            listId.add(new CodeType(str));
+        }
+        request.getIdentifier().addAll(listId);
+        
+        return request;
     }
 }
