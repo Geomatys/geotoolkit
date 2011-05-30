@@ -217,7 +217,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
                 if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
 
                     final Geometry  geomOut = (Geometry) propertyOut.getValue();
-                    assertTrue(geomOut == null);
+                    assertTrue(geomOut == null || geomOut.isEmpty());
                 }
             }
         }
