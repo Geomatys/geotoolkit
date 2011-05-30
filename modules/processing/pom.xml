@@ -55,6 +55,8 @@
   <modules>
     <module>geotk-processing-core</module>
     <module>geotk-processing-coverage</module>
+    <module>geotk-processing-vector</module>
+    <module>geotk-processing-raster</module>
   </modules>
 
 </project>
