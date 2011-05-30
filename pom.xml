@@ -802,9 +802,9 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
-    <module>build</module>
     <module>modules</module>
     <module>demos</module>
+    <module>build</module>
   </modules>
 </project>
 
