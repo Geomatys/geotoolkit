@@ -35,6 +35,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 
 /**
@@ -289,8 +290,7 @@ public class Orthographic extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final Orthographic that = (Orthographic) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(latitudeOfOrigin, that.latitudeOfOrigin, strict);
+            return epsilonEqual(latitudeOfOrigin, that.latitudeOfOrigin, mode);
             // All other fields are derived from the latitude of origin.
         }
         return false;

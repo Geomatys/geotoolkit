@@ -36,6 +36,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
@@ -460,9 +461,8 @@ public class AlbersEqualArea extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final AlbersEqualArea that = (AlbersEqualArea) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(n, that.n, strict) &&
-                   equals(c, that.c, strict);
+            return epsilonEqual(n, that.n, mode) &&
+                   epsilonEqual(c, that.c, mode);
         }
         return false;
     }

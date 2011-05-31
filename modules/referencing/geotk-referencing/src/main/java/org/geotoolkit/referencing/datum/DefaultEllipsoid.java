@@ -53,6 +53,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 
 /**
@@ -713,6 +714,14 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         }
         if (super.equals(object, mode)) {
             switch (mode) {
+                case STRICT: {
+                    final DefaultEllipsoid that = (DefaultEllipsoid) object;
+                    return ivfDefinitive == that.ivfDefinitive &&
+                           Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
+                           Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
+                           Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&
+                           Utilities.equals(this.unit,              that.unit);
+                }
                 case BY_CONTRACT: {
                     if (isIvfDefinitive() != ((Ellipsoid) object).isIvfDefinitive()) {
                         return false;
@@ -721,18 +730,10 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                 }
                 default: {
                     final Ellipsoid that = (Ellipsoid) object;
-                    return Utilities.equals(getSemiMajorAxis(),     that.getSemiMajorAxis())     &&
-                           Utilities.equals(getSemiMinorAxis(),     that.getSemiMinorAxis())     &&
-                           Utilities.equals(getInverseFlattening(), that.getInverseFlattening()) &&
-                           Utilities.equals(getAxisUnit(),          that.getAxisUnit());
-                }
-                case STRICT: {
-                    final DefaultEllipsoid that = (DefaultEllipsoid) object;
-                    return ivfDefinitive == that.ivfDefinitive &&
-                           Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
-                           Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
-                           Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&
-                           Utilities.equals(this.unit,              that.unit);
+                    return epsilonEqual(getSemiMajorAxis(),     that.getSemiMajorAxis(),     mode) &&
+                           epsilonEqual(getSemiMinorAxis(),     that.getSemiMinorAxis(),     mode) &&
+                           epsilonEqual(getInverseFlattening(), that.getInverseFlattening(), mode) &&
+                           Utilities.equals(getAxisUnit(),      that.getAxisUnit());
                 }
             }
         }

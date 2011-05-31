@@ -836,8 +836,8 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
      * A {@link IdentifiedObjectFinder} which tests every factories declared in the
      * {@linkplain MultiAuthoritiesFactory#getFactories() collection of factories}.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.02
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.18
      *
      * @since 2.4
      * @module
@@ -877,7 +877,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
          * using the {@code AllAuthoritiesFactory.Finder.fromFactoryRegistry()} method.
          */
         final Collection<AuthorityFactory> getFactories() {
-            return ((MultiAuthoritiesFactory) proxy.getAuthorityFactory()).getFactories();
+            return ((MultiAuthoritiesFactory) factory).getFactories();
         }
 
         /**
@@ -902,7 +902,9 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
         }
 
         /**
-         * Lookups for the specified object.
+         * Delegates to every factories registered in the enclosing {@link MultiAuthoritiesFactory},
+         * in iteration order. This method does <strong>not</strong> delegate the job to the parent
+         * class.
          */
         @Override
         public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
@@ -932,53 +934,6 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                 }
             }
             return candidate;
-        }
-
-        /**
-         * Returns the identifier of the specified object, or {@code null} if none.
-         */
-        @Override
-        public String findIdentifier(final IdentifiedObject object) throws FactoryException {
-            /*
-             * Try to create from the identifier for the same reason than find(IdentifiedObject).
-             * Note that we returns directly the primary name; we don't try to locate a name for
-             * a given authority since the "All" authority do not really exists.
-             */
-            IdentifiedObject candidate = createFromIdentifiers(object);
-            if (candidate != null) {
-                ReferenceIdentifier name = null;
-                final Set<ReferenceIdentifier> identifiers = candidate.getIdentifiers();
-                if (identifiers != null) {
-                    for (final Iterator<ReferenceIdentifier> it=identifiers.iterator(); it.hasNext();) {
-                        if ((name = it.next()) != null) {
-                            break;
-                        }
-                    }
-                }
-                if (name == null) {
-                    name = candidate.getName();
-                }
-                if (name != null) {
-                    return name.toString();
-                }
-            }
-            /*
-             * Try every known factories, stopping the search on the first factory
-             * that recognized the given object. The collection of factories should
-             * exclude URN or HTTP wrappers in order to avoid duplicated search.
-             */
-            final Collection<AuthorityFactory> factories = getFactories();
-            if (factories != null) {
-                IdentifiedObjectFinder finder;
-                final Iterator<AuthorityFactory> it = factories.iterator();
-                while ((finder = next(it)) != null) {
-                    final String id = finder.findIdentifier(object);
-                    if (id != null) {
-                        return id;
-                    }
-                }
-            }
-            return null;
         }
     }
 }

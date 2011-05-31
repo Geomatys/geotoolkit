@@ -27,6 +27,7 @@ import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 
@@ -41,7 +42,7 @@ import static java.util.Collections.singleton;
  * referenced in the Geotk library, and handling citations requires some convenience methods.
  * They are factored out in this {@code Citations} class for clarity.
  * <p>
- * Citations may be about an <cite>organisation</cite> (e.g. {@linkplain #OPEN_GIS OpenGIS}),
+ * Citations may be about an <cite>organization</cite> (e.g. {@linkplain #OPEN_GIS OpenGIS}),
  * a <cite>specification</cite> (e.g. {@linkplain #WMS}) or an <cite>authority</cite> that
  * maintains definitions of codes (e.g. {@linkplain #EPSG}). In the later case, the citation
  * contains an {@linkplain Citation#getIdentifiers identifier} which is the namespace of the
@@ -529,6 +530,8 @@ public final class Citations extends Static {
      * @return {@code true} if at least one title or alternate title matches.
      */
     public static boolean titleMatches(final Citation c1, final Citation c2) {
+        ArgumentChecks.ensureNonNull("c1", c1);
+        ArgumentChecks.ensureNonNull("c2", c2);
         return org.geotoolkit.internal.Citations.titleMatches(c1, c2);
     }
 
@@ -543,6 +546,8 @@ public final class Citations extends Static {
      * @return {@code true} if the title or alternate title matches the given string.
      */
     public static boolean titleMatches(final Citation citation, String title) {
+        ArgumentChecks.ensureNonNull("citation", citation);
+        ArgumentChecks.ensureNonNull("title", title);
         return org.geotoolkit.internal.Citations.titleMatches(citation, title);
     }
 
@@ -560,7 +565,9 @@ public final class Citations extends Static {
      * @param  c2 the second citation to compare.
      * @return {@code true} if at least one identifier, title or alternate title matches.
      */
-    public static boolean identifierMatches(Citation c1, Citation c2) {
+    public static boolean identifierMatches(final Citation c1, final Citation c2) {
+        ArgumentChecks.ensureNonNull("c1", c1);
+        ArgumentChecks.ensureNonNull("c2", c2);
         return org.geotoolkit.internal.Citations.identifierMatches(c1, c2);
     }
 
@@ -576,7 +583,9 @@ public final class Citations extends Static {
      * @param  identifier The identifier to compare.
      * @return {@code true} if the title or alternate title matches the given string.
      */
-    public static boolean identifierMatches(final Citation citation, String identifier) {
+    public static boolean identifierMatches(final Citation citation, final String identifier) {
+        ArgumentChecks.ensureNonNull("citation", citation);
+        ArgumentChecks.ensureNonNull("identifier", identifier);
         return org.geotoolkit.internal.Citations.identifierMatches(citation, identifier);
     }
 

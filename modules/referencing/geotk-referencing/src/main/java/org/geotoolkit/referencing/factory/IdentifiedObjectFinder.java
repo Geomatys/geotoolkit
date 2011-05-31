@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.factory;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.FactoryException;
@@ -33,12 +34,14 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.util.Utilities.deepEquals;
 
 
 /**
@@ -54,7 +57,7 @@ import org.geotoolkit.util.logging.Logging;
  * <ol>
  *   <li>Get a new instance by calling
  *       {@link AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)}.</li>
- *   <li>Optionaly configure that instance by calling its setter methods.</li>
+ *   <li>Optionally configure that instance by calling its setter methods.</li>
  *   <li>Perform a search by invoking the {@link #find(IdentifiedObject)} or
  *       {@link #findIdentifier(IdentifiedObject)} methods.</li>
  *   <li>Reuse the same {@code IdentifiedObjectFinder} instance for consecutive searches.</li>
@@ -66,7 +69,7 @@ import org.geotoolkit.util.logging.Logging;
  * then a new instance should be created for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.18
  *
  * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
  * @see CRS#lookupIdentifier(IdentifiedObject, boolean)
@@ -74,7 +77,18 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.4
  * @module
  */
+@NotThreadSafe
 public class IdentifiedObjectFinder {
+    /**
+     * The factory to use for creating objects. This is the factory specified at construction time.
+     * We don't put this field in public API because the factory may not be the one the user would
+     * expect. Some of our {@link AbstractAuthorityFactory} implementations will use the a wrapper
+     * factory rather than the factory on which {@code getIdentifiedObjectFinder()} was invoked.
+     *
+     * @since 3.18
+     */
+    final AuthorityFactory factory;
+
     /**
      * The proxy for objects creation. This is usually set at construction time.
      * But in the particular case of {@link CachingAuthorityFactory#Finder}, this
@@ -92,21 +106,29 @@ public class IdentifiedObjectFinder {
      * </ul>
      * <p>
      * Note: the {@code find} methods do not need to be overridden if all other methods
-     * are overrided and the {@link #create} method in overrided too.
+     * are overridden and the {@link #create} method in overridden too.
      */
-    AuthorityFactoryProxy proxy;
+    private AuthorityFactoryProxy<?> proxy;
+
+    /**
+     * The parent finder, or {@code null} if none. This field is non-null only if this
+     * finder is wrapped by an other finder like {@link CachingAuthorityFactory.Finder}.
+     *
+     * @since 3.18
+     */
+    private IdentifiedObjectFinder parent;
+
+    /**
+     * The comparison mode.
+     *
+     * @since 3.18
+     */
+    private ComparisonMode comparisonMode = ComparisonMode.IGNORE_METADATA;
 
     /**
      * {@code true} for performing full scans, or {@code false} otherwise.
      */
     private boolean fullScan = true;
-
-    /**
-     * Creates a finder using no proxy. The {@link #proxy} field must be
-     * assigned by the sub-class before any method in this class is used.
-     */
-    IdentifiedObjectFinder() {
-    }
 
     /**
      * Creates a finder using the specified factory. This constructor is
@@ -121,28 +143,19 @@ public class IdentifiedObjectFinder {
     protected IdentifiedObjectFinder(final AuthorityFactory factory,
             final Class<? extends IdentifiedObject> type)
     {
-        proxy = AuthorityFactoryProxy.getInstance(factory, type);
+        this.factory = factory;
+        proxy = AuthorityFactoryProxy.getInstance(type);
     }
 
     /**
      * Returns the type of the objects to be created by the proxy instance.
      * This method needs to be overridden by the sub-classes that do not define a proxy.
+     *
+     * @return The type of object to be created, as a GeoAPI interface.
      */
     Class<? extends IdentifiedObject> getObjectType() {
-        return proxy.getObjectType();
+        return proxy.type.asSubclass(IdentifiedObject.class);
     }
-
-    /*
-     * Do NOT provide the following method:
-     *
-     *     public AuthorityFactory getAuthorityFactory() {
-     *         return proxy.getAuthorityFactory();
-     *     }
-     *
-     * because the returned factory may not be the one the user would expect. Some of our
-     * AbstractAuthorityFactory implementations create proxy to the underlying backing
-     * store rather than to the factory on which 'getIdentifiedObjectFinder()' was invoked.
-     */
 
     /**
      * Returns the authority of the factory examined by this finder.
@@ -151,15 +164,58 @@ public class IdentifiedObjectFinder {
      * @throws FactoryException If an error occurred while fetching the authority.
      */
     public Citation getAuthority() throws FactoryException {
-        return proxy.getAuthorityFactory().getAuthority();
+        return factory.getAuthority();
+    }
+
+    /**
+     * Sets the given finder as the parent of this finder. The parent is typically a
+     * {@link CachingAuthorityFactory} which will be used by {@link #findFromParent}.
+     *
+     * @param other The new parent.
+     *
+     * @since 3.18
+     */
+    final void setParent(final IdentifiedObjectFinder other) {
+        parent = other;
     }
 
     /**
      * Copies the configuration of the given finder. This method provides a central place
      * where to add call to setters methods if such methods are added in a future version.
+     *
+     * {@section Maintenance note}
+     * Adding properties to this method is not sufficient. See also the classes that override
+     * {@link #setFullScanAllowed(boolean)} - some of them may be defined in other packages.
      */
     final void copyConfiguration(final IdentifiedObjectFinder other) {
+        setComparisonMode (other.getComparisonMode());
         setFullScanAllowed(other.isFullScanAllowed());
+    }
+
+    /**
+     * Returns the criterion used for determining if a candidate found by this
+     * {@code IdentifiedObjectFinder} shall be considered equals to the requested object.
+     * The default value is {@link ComparisonMode#IGNORE_METADATA}.
+     *
+     * @return The criterion to use for comparing objects.
+     *
+     * @since 3.18
+     */
+    public ComparisonMode getComparisonMode() {
+        return comparisonMode;
+    }
+
+    /**
+     * Sets the criterion used for determining if a candidate found by this
+     * {@code IdentifiedObjectFinder} shall be considered equals to the requested object.
+     *
+     * @param mode The criterion to use for comparing objects.
+     *
+     * @since 3.18
+     */
+    public void setComparisonMode(final ComparisonMode mode) {
+        ArgumentChecks.ensureNonNull("mode", mode);
+        comparisonMode = mode;
     }
 
     /**
@@ -214,6 +270,7 @@ public class IdentifiedObjectFinder {
      * @throws FactoryException if an error occurred while creating an object.
      */
     public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
+        ArgumentChecks.ensureNonNull("object", object);
         /*
          * First check if one of the identifiers can be used to spot directly an
          * identified object (and check it's actually equal to one in the factory).
@@ -248,17 +305,9 @@ public class IdentifiedObjectFinder {
      */
     public String findIdentifier(final IdentifiedObject object) throws FactoryException {
         final IdentifiedObject candidate = find(object);
-        return (candidate != null) ? getIdentifier(candidate) : null;
-    }
-
-    /**
-     * Returns the identifier for the specified object. This method is invoked only from
-     * {@link #findIdentifier(IdentifiedObject)}, either the method defined above or its
-     * overridden implementation defined in {@link CachingAuthorityFactory}.
-     *
-     * @throws FactoryException If an error occurred while fetching the identifier.
-     */
-    final String getIdentifier(final IdentifiedObject object) throws FactoryException {
+        if (candidate == null) {
+            return null;
+        }
         Citation authority = getAuthority();
         if (ReferencingFactory.ALL.equals(authority)) {
             /*
@@ -268,10 +317,13 @@ public class IdentifiedObjectFinder {
              */
             authority = null;
         }
-        ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(object, authority);
+        ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(candidate, authority);
         if (identifier == null) {
-            identifier = object.getName();
-            // Should never be null past this point, since 'name' is a mandatory attribute.
+            identifier = candidate.getName();
+            if (identifier == null) {
+                // Paranoiac check, since 'name' is a mandatory attribute.
+                return null;
+            }
         }
         final String code      = identifier.getCode();
         final String codespace = identifier.getCodeSpace();
@@ -279,6 +331,55 @@ public class IdentifiedObjectFinder {
             return codespace + DefaultNameSpace.DEFAULT_SEPARATOR + code;
         } else {
             return code;
+        }
+    }
+
+    /**
+     * Lookups an object from the parent finder, of from this finder if there is no parent.
+     * A parent finder exists only if this finder is wrapped by an other finder. The parent
+     * can be the {@link CachingAuthorityFactory} finder or {@link AuthorityFactoryAdapter}
+     * finder.
+     * <p>
+     * This method should be considered as an implementation details. It is visible because it
+     * is needed by {@link org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory}, which is
+     * defined in an other package. User should not rely on this method.
+     * <p>
+     * The main purpose of this method is to allow {@link DirectAuthorityFactory} implementations
+     * to look for dependencies while leveraging the cache managed by their
+     * {@link CachingAuthorityFactory} wrappers.
+     *
+     * @param  object The object looked up.
+     * @param  type The type of object to look for. It doesn't need to be the type specified at
+     *         construction time. This relaxation exists in order to allow dependencies lookup,
+     *         since the dependencies may be of different kinds.
+     * @return The identified object, or {@code null} if not found.
+     * @throws FactoryException if an error occurred while creating an object.
+     *
+     * @since 3.18
+     */
+    protected final IdentifiedObject findFromParent(final IdentifiedObject object,
+            final Class<? extends IdentifiedObject> type) throws FactoryException
+    {
+        return findFromParent(object, AuthorityFactoryProxy.getInstance(type));
+    }
+
+    /**
+     * Implementation of {@link #findFromParent(IdentifiedObject, Class)}, which may invoke itself
+     * recursively.  This method delegates to the parent if there is one, but still save and setup
+     * the proxy for this context frame. This is because {@link CachingAuthorityFactory} delegates
+     * to {@link DirectAuthorityFactory}, which delegate back to {@link CachingAuthorityFactory}
+     * through this method (for object dependencies lookup), etc.
+     */
+    private IdentifiedObject findFromParent(final IdentifiedObject object,
+            final AuthorityFactoryProxy<?> type) throws FactoryException
+    {
+        final IdentifiedObjectFinder parent = this.parent;
+        final AuthorityFactoryProxy<?> old = proxy;
+        proxy = type;
+        try {
+            return (parent != null) ? parent.findFromParent(object, type) : find(object);
+        } finally {
+            proxy = old;
         }
     }
 
@@ -315,7 +416,7 @@ public class IdentifiedObjectFinder {
                     break;
                 }
                 if (candidate == null) break;
-                if (CRS.equalsIgnoreMetadata(candidate, object)) {
+                if (deepEquals(candidate, object, comparisonMode)) {
                     return candidate;
                 }
             }
@@ -357,7 +458,7 @@ public class IdentifiedObjectFinder {
                 break;
             }
             if (candidate == null) break;
-            if (CRS.equalsIgnoreMetadata(candidate, object)) {
+            if (deepEquals(candidate, object, comparisonMode)) {
                 return candidate;
             }
         }
@@ -372,7 +473,7 @@ public class IdentifiedObjectFinder {
                     break;
                 }
                 if (candidate == null) break;
-                if (CRS.equalsIgnoreMetadata(candidate, object)) {
+                if (deepEquals(candidate, object, comparisonMode)) {
                     return candidate;
                 }
             }
@@ -389,7 +490,7 @@ public class IdentifiedObjectFinder {
      * This method may be used in order to get a fully {@linkplain IdentifiedObject identified
      * object} from an object without {@linkplain IdentifiedObject#getIdentifiers identifiers}.
      * <p>
-     * Scaning the whole set of authority codes may be slow. Users should try
+     * Scanning the whole set of authority codes may be slow. Users should try
      * <code>{@linkplain #createFromIdentifiers createFromIdentifiers}(object)</code> and/or
      * <code>{@linkplain #createFromNames createFromNames}(object)</code> before to fallback
      * on this method.
@@ -413,7 +514,7 @@ public class IdentifiedObjectFinder {
                         break;
                     }
                     if (candidate == null) break;
-                    if (CRS.equalsIgnoreMetadata(candidate, object)) {
+                    if (deepEquals(candidate, object, comparisonMode)) {
                         return candidate;
                     }
                 }
@@ -457,7 +558,7 @@ public class IdentifiedObjectFinder {
      * @since 3.10
      */
     protected IdentifiedObject create(final String code, final int attempt) throws FactoryException {
-        return (attempt == 0) ? proxy.create(code) : null;
+        return (attempt == 0) ? (IdentifiedObject) proxy.createFromAPI(factory, code) : null;
     }
 
     /**
@@ -484,18 +585,6 @@ public class IdentifiedObjectFinder {
      * @throws FactoryException if an error occurred while fetching the set of code candidates.
      */
     protected Set<String> getCodeCandidates(final IdentifiedObject object) throws FactoryException {
-        return proxy.getAuthorityCodes();
-    }
-
-    /**
-     * Returns a string representation of this finder, for debugging purpose only.
-     */
-    @Override
-    public String toString() {
-        if (proxy != null) {
-            return proxy.toString(getClass());
-        } else {
-            return Classes.getShortClassName(this);
-        }
+        return factory.getAuthorityCodes(getObjectType());
     }
 }

@@ -29,6 +29,7 @@ import org.geotoolkit.internal.referencing.Identifiers;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.Krovak.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.*;
 
@@ -276,16 +277,15 @@ public class Krovak extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final Krovak that = (Krovak) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(sinAzim, that.sinAzim, strict) &&
-                   equals(cosAzim, that.cosAzim, strict) &&
-                   equals(n,       that.n,       strict) &&
-                   equals(tanS2,   that.tanS2,   strict) &&
-                   equals(alfa,    that.alfa,    strict) &&
-                   equals(hae,     that.hae,     strict) &&
-                   equals(k1,      that.k1,      strict) &&
-                   equals(ka,      that.ka,      strict) &&
-                   equals(ro0,     that.ro0,     strict);
+            return epsilonEqual(sinAzim, that.sinAzim, mode) &&
+                   epsilonEqual(cosAzim, that.cosAzim, mode) &&
+                   epsilonEqual(n,       that.n,       mode) &&
+                   epsilonEqual(tanS2,   that.tanS2,   mode) &&
+                   epsilonEqual(alfa,    that.alfa,    mode) &&
+                   epsilonEqual(hae,     that.hae,     mode) &&
+                   epsilonEqual(k1,      that.k1,      mode) &&
+                   epsilonEqual(ka,      that.ka,      mode) &&
+                   epsilonEqual(ro0,     that.ro0,     mode);
         }
         return false;
     }

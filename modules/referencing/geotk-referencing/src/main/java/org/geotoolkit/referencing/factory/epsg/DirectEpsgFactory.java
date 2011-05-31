@@ -91,6 +91,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
 
+import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
+
 
 /**
  * A CRS authority factory backed by the EPSG database tables.
@@ -98,7 +100,7 @@ import org.geotoolkit.util.Version;
  * Current version of this class requires EPSG database version 6.6 or above.
  * <p>
  * This factory accepts names as well as numerical identifiers. For example
- * "<cite>NTF (Paris) / France I</cite>" and {@code "27581"} both fetchs the same object.
+ * "<cite>NTF (Paris) / France I</cite>" and {@code "27581"} both fetch the same object.
  * However, names may be ambiguous since the same name may be used for more than one object.
  * This is the case of "WGS 84" for example. If such an ambiguity is found, an exception
  * will be thrown. If names are not wanted as a legal EPSG code, subclasses can override the
@@ -2758,10 +2760,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 if (searchTransformations) {
                     key = "TransformationFromCRS";
                     sql = "SELECT COORD_OP_CODE" +
-                          " FROM [Coordinate_Operation]" +
+                          " FROM [Coordinate_Operation] AS CO" +
+                          " JOIN [Area] ON AREA_OF_USE_CODE = AREA_CODE" +
                           " WHERE SOURCE_CRS_CODE = ?" +
                             " AND TARGET_CRS_CODE = ?" +
-                       " ORDER BY ABS(DEPRECATED), COORD_OP_ACCURACY";
+                       " ORDER BY ABS(CO.DEPRECATED), COORD_OP_ACCURACY, " +
+                       " ABS((AREA_NORTH_BOUND_LAT - AREA_SOUTH_BOUND_LAT) *" +
+                            " (AREA_EAST_BOUND_LON - AREA_WEST_BOUND_LON)) DESC";
                 } else {
                     key = "ConversionFromCRS";
                     sql = "SELECT PROJECTION_CONV_CODE" +
@@ -2888,12 +2893,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         protected Set<String> getCodeCandidates(final IdentifiedObject object) throws FactoryException {
             String select = "COORD_REF_SYS_CODE";
             String from   = "[Coordinate Reference System]";
-            String where, code;
+            final String where;
+            final Comparable<?> code;
             if (object instanceof Ellipsoid) {
                 select = "ELLIPSOID_CODE";
                 from   = "[Ellipsoid]";
                 where  = "SEMI_MAJOR_AXIS";
-                code   = Double.toString(((Ellipsoid) object).getSemiMajorAxis());
+                code   = ((Ellipsoid) object).getSemiMajorAxis();
             } else {
                 IdentifiedObject dependency;
                 if (object instanceof GeneralDerivedCRS) {
@@ -2911,7 +2917,17 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     // Not a supported type. Returns all codes.
                     return super.getCodeCandidates(object);
                 }
-                dependency = buffered.getIdentifiedObjectFinder(dependency.getClass()).find(dependency);
+                /*
+                 * Get the dependency from the parent finder, typically a CachingAuthorityFactory.
+                 * We do that in order to get the dependency from the cache if possible. Note that
+                 * the dependency, if found, will also be stored in the cache. This is desirable
+                 * since this method may be invoked (indirectly) in a loop for many CRS objects
+                 * sharing the same CS or Datum dependencies for instance.
+                 *
+                 * Note: an older Geotk version created a new finder from the 'buffered' factory.
+                 * However this had the side effect of creating new JDBC connections.
+                 */
+                dependency = findFromParent(dependency, dependency.getClass());
                 if (dependency == null) {
                     // Dependency not found.
                     return Collections.emptySet();
@@ -2923,9 +2939,32 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     return super.getCodeCandidates(object);
                 }
             }
-            String sql = "SELECT " + select + " FROM " + from + " WHERE " + where + '=' + code +
-                    " ORDER BY ABS(DEPRECATED), " + select; // 'select' is only for making order determinist.
-            sql = adaptSQL(sql);
+            /*
+             * Build the SQL statement. The code can be any of the following type:
+             *
+             * - A String, which represent a foreigner key as an integer value.
+             *   The search will require an exact match.
+             *
+             * - A floating point number, in which case the search will be performed
+             *   with some tolerance threshold.
+             */
+            final StringBuilder buffer = new StringBuilder(60);
+            buffer.append("SELECT ").append(select).append(" FROM ").append(from).append(" WHERE ").append(where);
+            if (code instanceof Number) {
+                final double value = ((Number) code).doubleValue();
+                final double tolerance = Math.abs(value * COMPARISON_THRESHOLD);
+                buffer.append(">=").append(value - tolerance).append(" AND ").append(where)
+                      .append("<=").append(value + tolerance);
+            } else {
+                buffer.append('=').append(code);
+            }
+            buffer.append(" ORDER BY ABS(DEPRECATED), ");
+            if (code instanceof Number) {
+                buffer.append("ABS(").append(select).append('-').append(code).append(')');
+            } else {
+                buffer.append(select); // Only for making order determinist.
+            }
+            final String sql = adaptSQL(buffer.toString());
             final Set<String> result = new LinkedHashSet<String>();
             try {
                 final Statement s = connection.createStatement();
@@ -2936,7 +2975,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 r.close();
                 s.close();
             } catch (SQLException exception) {
-                throw databaseFailure(Identifier.class, code, exception);
+                throw databaseFailure(Identifier.class, String.valueOf(code), exception);
             }
             return result;
         }

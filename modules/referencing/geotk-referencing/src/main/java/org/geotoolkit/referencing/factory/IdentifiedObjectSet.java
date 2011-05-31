@@ -53,12 +53,15 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * A lazy set of {@linkplain IdentifiedObject identified objects}. This set creates
  * {@link IdentifiedObject}s from authority codes only when first needed. This class
  * is typically used as the set returned by implementations of the
- * {@link CoordinateOperationAuthorityFactory#createFromCoordinateReferenceSystemCodes
- * createFromCoordinateReferenceSystemCodes} method. Deferred creation in this case may
- * have great performance impact since a set can contains about 40 entries (e.g.
- * transformations from "ED50" (EPSG:4230) to "WGS 84" (EPSG:4326)) while some users
- * only want to look for the first entry (e.g. the default
+ * {@link CoordinateOperationAuthorityFactory#createFromCoordinateReferenceSystemCodes(String, String)}
+ * method. Deferred creation in this case may have great performance impact since a set can contains
+ * about 40 entries (e.g. transformations from "<cite>ED50</cite>" (EPSG:4230) to "<cite>WGS 84</cite>"
+ * (EPSG:4326)) while some users only want to look for the first entry (e.g. the default
  * {@link org.geotoolkit.referencing.operation.AuthorityBackedFactory} implementation).
+ *
+ * {@note This is mostly a helper class for implementors, especially the
+ *        <code>org.geotoolkit.referencing.factory.epsg</code> package.
+ *        This class is not expected to be useful to users.}
  *
  * {@section Exception handling}
  * If the underlying factory failed to creates an object because of an unsupported
@@ -74,13 +77,10 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * {@linkplain IdentifiedObject identified objects} not yet created.
  * The serialized set is disconnected from the {@linkplain #getAuthorityFactory underlying factory}.
  *
- * {@section Thread safety}
- * This class is <strong>not</strong> thread-safe.
- *
  * @param <T> The type of objects to be included in this set.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.12
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -99,10 +99,15 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     private final Map<String,T> objects = new LinkedHashMap<String,T>();
 
     /**
+     * The authority factory given at construction time.
+     */
+    private final AuthorityFactory factory;
+
+    /**
      * The factory to use for creating {@linkplain IdentifiedObject identified objects}
      * when first needed.
      */
-    private final AuthorityFactoryProxy proxy;
+    private final AuthorityFactoryProxy<? super T> proxy;
 
     /**
      * The type of objects included in this set.
@@ -119,7 +124,8 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @param type The type of objects included in this set.
      */
     public IdentifiedObjectSet(final AuthorityFactory factory, final Class<T> type) {
-        proxy = AuthorityFactoryProxy.getInstance(factory, type);
+        proxy = AuthorityFactoryProxy.getInstance(type);
+        this.factory = factory;
         this.type = type;
     }
 
@@ -252,9 +258,12 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * Returns an iterator over the objects in this set. If the iteration encounter any
      * kind of {@link FactoryException} other than {@link NoSuchIdentifierException}, then
      * the exception will be rethrown as an unchecked {@link BackingStoreException}.
+     *
+     * @throws BackingStoreException if the underlying factory failed to creates the
+     *         first coordinate operation in the set.
      */
     @Override
-    public Iterator<T> iterator() {
+    public Iterator<T> iterator() throws BackingStoreException {
         return new Iter(objects.entrySet().iterator());
     }
 
@@ -273,11 +282,12 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      */
     public void resolve(int n) throws FactoryException {
         if (n > 0) try {
+            // Note: iterator creation resolves the first element.
             for (final Iterator<T> it=iterator(); it.hasNext();) {
-                it.next();
                 if (--n == 0) {
                     break;
                 }
+                it.next();
             }
         } catch (BackingStoreException exception) {
             throw exception.unwrapOrRethrow(FactoryException.class);
@@ -351,21 +361,19 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @since 3.00
      */
     protected AuthorityFactory getAuthorityFactory() {
-        return proxy.getAuthorityFactory();
+        return factory;
     }
 
     /**
      * Creates an object for the specified authority code. This method is invoked during the
-     * iteration process if an object was not already created. The default implementation invokes
-     * <code>{@linkplain #getAuthorityFactory}.{@link AuthorityFactory#createObject createObject}(code)</code>.
-     * Subclasses may override this method if they want to invoke a more specific method.
+     * iteration process if an object was not already created.
      *
      * @param  code The code for which to create the identified object.
      * @return The identified object created from the given code.
      * @throws FactoryException If the object creation failed.
      */
     protected T createObject(final String code) throws FactoryException {
-        return type.cast(getAuthorityFactory().createObject(code));
+        return type.cast(proxy.createFromAPI(factory, code));
     }
 
     /**
@@ -408,7 +416,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
 
     /**
      * Returns a serializable copy of this set. This method is invoked automatically during
-     * serialization. The serialised set of identified objects is disconnected from the
+     * serialization. The serialized set of identified objects is disconnected from the
      * {@linkplain #getAuthorityFactory underlying factory}.
      *
      * @return The object to write in replacement of this set.
@@ -441,8 +449,11 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
 
         /**
          * Creates a new instance of this iterator.
+         *
+         * @throws BackingStoreException if the underlying factory failed to creates the
+         *         first coordinate operation in the set.
          */
-        public Iter(final Iterator<Map.Entry<String,T>> iterator) {
+        public Iter(final Iterator<Map.Entry<String,T>> iterator) throws BackingStoreException {
             this.iterator = iterator;
             toNext();
         }

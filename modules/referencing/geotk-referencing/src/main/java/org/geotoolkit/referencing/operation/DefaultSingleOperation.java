@@ -46,7 +46,6 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 
-import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -302,13 +301,10 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected int computeHashCode() {
-        return hash(method, super.computeHashCode());
-    }
+    // Do NOT override 'computeHashCode()', since we don't want to include the 'method' field in
+    // hash code calculation. See the comment inside the above 'equals(Object, ComparisonMode)'
+    // method for more information. Note that the parent class uses the 'transform' hash code,
+    // which should be suffisient.
 
     /**
      * {@inheritDoc}

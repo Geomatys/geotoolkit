@@ -21,25 +21,32 @@
  * {@linkplain org.opengis.referencing.AuthorityFactory authority factories}.
  *
  * {@section Authority factories}
- * The authority factories can be divised in three categories:
+ * The authority factories can be divided in three categories:
  *
  * <ul>
  *   <li><p>Subclasses of {@link org.geotoolkit.referencing.factory.DirectAuthorityFactory}
  *       do the real work of creating Coordinate Reference System objects from authority
  *       codes. They differ in the way their data are stored:
- *       {@link org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory} uses a connection
- *       to an EPSG database, {@link org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory}
- *       uses a connection to a PostGIS {@code "spatial_ref_sys"} table and
- *       {@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory} uses static
- *       WKT strings in a property file.</p></li>
+ *       <ul>
+ *         <li>{@link org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory} uses a connection
+ *             to an EPSG database,</li>
+ *         <li>{@link org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory} uses a
+ *             connection to a PostGIS {@code "spatial_ref_sys"} table, and</li>
+ *         <li>{@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory} uses static
+ *             WKT strings in a property file.</li>
+ *       </ul></p></li>
  *
  *   <li><p>Subclasses of {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory}
  *       wrap the above {@code DirectAuthorityFactories} and cache their results, which lead
  *       to significant performance improvement. They may also use more than one direct
  *       authority factory instance for concurrency in multi-thread environment. Subclasses
- *       include {@link org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory} which wraps a
- *       {@code DirectEpsgFactory} and {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory}
- *       which wraps a {@code PropertyAuthorityFactory}.</p></li>
+ *       include:
+ *       <ul>
+ *         <li>{@link org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory}
+ *             which wraps a {@code DirectEpsgFactory} and</li>
+ *         <li>{@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory}
+ *              which wraps a {@code PropertyAuthorityFactory}.</li>
+ *       </ul></p></li>
  *
  *   <li><p>Subclasses of {@link org.geotoolkit.referencing.factory.AuthorityFactoryAdapter}
  *       wraps the above {@code CachingAuthorityFactories} and apply some changes on the result
@@ -48,7 +55,7 @@
  *       <cite>Web Map Service</cite> (WMS) 1.3 objects to WMS 1.0 objects.</p></li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.01
  *
  * @since 2.0

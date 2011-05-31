@@ -327,11 +327,12 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     protected int computeHashCode() {
         /*
          * Do not invoke 'conversionFromBase.hashCode()' in order to avoid a never-ending loop.
-         * This is because Conversion has a 'sourceCRS' field (in the AbstractCoordinateOperation
-         * super-class), which is set to this AbstractDerivedCRS. Checking the identifier should
-         * be enough.
+         * This is because Conversion inherits a 'sourceCRS' field from the CoordinateOperation
+         * parent type, which is set to this DerivedCRS. Checking the OperationMethod does not
+         * work neither for the reason documented inside the DefaultSingleOperation.equals(...)
+         * method body. The MathTransform is our best discriminant.
          */
-        return hash(baseCRS, hash(conversionFromBase.getName(), super.computeHashCode()));
+        return hash(baseCRS, hash(conversionFromBase.getMathTransform(), super.computeHashCode()));
     }
 
     /**

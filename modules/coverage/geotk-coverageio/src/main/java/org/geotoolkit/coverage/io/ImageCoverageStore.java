@@ -27,7 +27,6 @@ import java.awt.Dimension;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridEnvelope;
-import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -211,7 +210,7 @@ final class ImageCoverageStore extends Static {
             if (t != null) {
                 buffer.append(t);
             }
-            final ReferenceIdentifier id = IdentifiedObjects.getIdentifier(crs, null);
+            final String id = IdentifiedObjects.getDeclaredIdentifier(crs);
             if (id != null) {
                 buffer.append(" (").append(id).append(')');
             }

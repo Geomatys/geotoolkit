@@ -276,7 +276,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
     }
 
     /**
-     * Creates geodetic datum from ellipsoid and (optionaly) Bursa-Wolf parameters.
+     * Creates geodetic datum from ellipsoid and (optionally) Bursa-Wolf parameters.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  ellipsoid Ellipsoid to use in new geodetic datum.

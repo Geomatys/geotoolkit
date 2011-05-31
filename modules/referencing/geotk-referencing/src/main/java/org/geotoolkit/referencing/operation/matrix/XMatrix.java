@@ -120,19 +120,18 @@ public interface XMatrix extends Matrix, LenientComparable, Cloneable {
 
     /**
      * Compares this matrix with the given object for equality. To be considered equal, the two
-     * objects must meet the conditions documented below, which depend on the comparison mode
-     * argument:
+     * objects must meet the following conditions, which depend on the {@code mode} argument:
      * <p>
      * <ul>
-     *   <li>{@link ComparisonMode#STRICT}: the two matrixes must be of the same class,
-     *       have the same size and the same element values.</li>
-     *   <li>{@link ComparisonMode#BY_CONTRACT} and {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}:
-     *       the two matrixes must have the same size and the same element values, but are not
-     *       required to be the same implementation class (any {@link Matrix} is okay).</li>
-     *   <li>{@link ComparisonMode#APPROXIMATIVE}: the two matrixes must have the same size,
-     *       but the element values can differ up to some threshold. The threshold value is
-     *       determined empirically and may change in future Geotk versions. The current
-     *       threshold value is proportional to each matrix element being compared.</li>
+     *   <li><b>{@link ComparisonMode#STRICT STRICT}:</b> the two matrixes must be of the same
+     *       class, have the same size and the same element values.</li>
+     *   <li><b>{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}/{@link ComparisonMode#IGNORE_METADATA
+     *       IGNORE_METADATA}:</b> the two matrixes must have the same size and the same element
+     *       values, but are not required to be the same implementation class (any {@link Matrix}
+     *       is okay).</li>
+     *   <li><b>{@link ComparisonMode#APPROXIMATIVE APPROXIMATIVE}:</b> the two matrixes must have
+     *       the same size, but the element values can differ up to some threshold. The threshold
+     *       value is determined empirically and may change in future Geotk versions.</li>
      * </ul>
      *
      * @param  object The object to compare to {@code this}.

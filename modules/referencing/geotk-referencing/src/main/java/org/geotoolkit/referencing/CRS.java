@@ -43,6 +43,7 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
@@ -1135,7 +1136,7 @@ compare:    for (final SingleCRS component : actualComponents) {
     /**
      * Looks up an {@linkplain ReferenceIdentifier identifier}, such as {@code "EPSG:4326"},
      * of the specified object. This method searches in registered factories for an object
-     * {@linkplain #equalsIgnoreMetadata equal, ignoring metadata}, to the specified
+     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
      * object. If such an object is found, then its first identifier is returned. Otherwise
      * this method returns {@code null}.
      * <p>
@@ -1145,7 +1146,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * comparison fails, then this method returns {@code null}. Consequently this method may
      * returns {@code null} even if the given object declares explicitly its identifier. If
      * the declared identifier is wanted unconditionally, use
-     * {@link IdentifiedObjects#getDeclaredIdentifier getDeclaredIdentifier(...)} instead.
+     * {@link IdentifiedObjects#getDeclaredIdentifier(IdentifiedObject)} instead.
      *
      * {@section Recommanded alternatives}
      * This convenience method delegates its work to {@link IdentifiedObjectFinder}. If you
@@ -1181,6 +1182,7 @@ compare:    for (final SingleCRS component : actualComponents) {
          */
         final AbstractAuthorityFactory xyFactory = (AbstractAuthorityFactory) getAuthorityFactory(true);
         final IdentifiedObjectFinder finder = xyFactory.getIdentifiedObjectFinder(object.getClass());
+        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
         finder.setFullScanAllowed(fullScan);
         return finder.findIdentifier(object);
     }
@@ -1199,6 +1201,10 @@ compare:    for (final SingleCRS component : actualComponents) {
      * result formatted in a {@code "urn:ogc:def:"} or
      * {@value org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory#BASE_URL} namespace.
      *
+     * {@note The type in the method signature is restricted to <code>CoordinateReferenceSystem</code>
+     *        instead than <code>IdentifiedObject</code> because current implementation searches
+     *        using only CRS authority factory.}
+     *
      * @param  authority The authority for the code to search.
      * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
      * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
@@ -1210,12 +1216,9 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @category information
      * @since 2.5
      */
-    // Note on method signature: the type is restricted to CoordinateReferenceSystem instead than
-    // IdentifiedObject because current implementation searches using only CRS authority factory.
     public static String lookupIdentifier(final Citation authority,
-                                          final CoordinateReferenceSystem crs,
-                                          final boolean fullScan)
-            throws FactoryException
+            final CoordinateReferenceSystem crs, // Not IdentifiedObject, see javadoc comment.
+            final boolean fullScan) throws FactoryException
     {
         ensureNonNull("authority", authority);
         if (crs == null) {
@@ -1235,6 +1238,7 @@ compare:    for (final SingleCRS component : actualComponents) {
             }
             final AbstractAuthorityFactory f = (AbstractAuthorityFactory) factory;
             final IdentifiedObjectFinder finder = f.getIdentifiedObjectFinder(crs.getClass());
+            finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
             finder.setFullScanAllowed(fullScan);
             final String code = finder.findIdentifier(crs);
             if (code != null) {
@@ -1290,10 +1294,9 @@ compare:    for (final SingleCRS component : actualComponents) {
      * {@code true}, then:
      *
      * <ul>
-     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming a
-     *       set of coordinate values using one transform will produce <em>approximatively</em>
-     *       (see below) the same results than transforming the same coordinates with the other
-     *       transform.</p></li>
+     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming
+     *       a set of coordinate values using one transform will produce the same results than
+     *       transforming the same coordinates with the other transform.</p></li>
      *
      *   <li><p>If the two given objects are {@link CoordinateReferenceSystem} instances,
      *       then a call to <code>{@linkplain #findMathTransform(CoordinateReferenceSystem,
@@ -1301,38 +1304,70 @@ compare:    for (final SingleCRS component : actualComponents) {
      *       an identity transform.</p></li>
      * </ul>
      *
+     * If a more lenient comparison - allowing slight differences in numerical values - is wanted,
+     * then {@link #equalsApproximatively(Object, Object)} can be used instead.
+     *
      * {@section Implementation note}
-     * If at least one object is an instance of {@link LenientComparable}, then this method
-     * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(...,
-     * {@linkplain ComparisonMode#APPROXIMATIVE})</code>. The {@code APPROXIMATIVE} boolean
-     * argument value explains why the comparison of math transforms is only approximative.
-     * <strong>Note that it may change in a future release</strong>
-     * (see <a href="http://jira.geotoolkit.org/browse/GEOTK-62">GEOTK-62</a>).
+     * If at least one object implements the {@link LenientComparable} interface, then this method
+     * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(&hellip;,
+     * {@linkplain ComparisonMode#IGNORE_METADATA})</code>. The actual work of this convenience
+     * method is performed by the following method call:
+     *
+     * {@preformat java
+     *     return Utilities.deepEquals(object1, object2, ComparisonMode.IGNORE_METADATA);
+     * }
      *
      * @param  object1 The first object to compare (may be null).
      * @param  object2 The second object to compare (may be null).
-     * @return {@code true} if both objects are equals.
+     * @return {@code true} if both objects are equal, ignoring metadata.
      *
-     * @see org.geotoolkit.util.Utilities#deepEquals(Object, Object, ComparisonMode)
-     * @see ComparisonMode#APPROXIMATIVE
+     * @see Utilities#deepEquals(Object, Object, ComparisonMode)
+     * @see ComparisonMode#IGNORE_METADATA
      *
      * @category information
      * @since 2.2
      */
     public static boolean equalsIgnoreMetadata(final Object object1, final Object object2) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            return false;
-        }
-        if (object1 instanceof LenientComparable) {
-            return ((LenientComparable) object1).equals(object2, ComparisonMode.APPROXIMATIVE);
-        }
-        if (object2 instanceof LenientComparable) {
-            return ((LenientComparable) object2).equals(object1, ComparisonMode.APPROXIMATIVE);
-        }
-        return object1.equals(object2);
+        return Utilities.deepEquals(object1, object2, ComparisonMode.IGNORE_METADATA);
+    }
+
+    /**
+     * Compares the specified objects for equality, ignoring metadata and slight differences
+     * in numerical values. If this method returns {@code true}, then:
+     *
+     * <ul>
+     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming a
+     *       set of coordinate values using one transform will produce <em>approximatively</em>
+     *       the same results than transforming the same coordinates with the other transform.</p></li>
+     *
+     *   <li><p>If the two given objects are {@link CoordinateReferenceSystem} instances,
+     *       then a call to <code>{@linkplain #findMathTransform(CoordinateReferenceSystem,
+     *       CoordinateReferenceSystem) findMathTransform}(crs1, crs2)</code> will return
+     *       a transform close to the identity transform.</p></li>
+     * </ul>
+     *
+     * {@section Implementation note}
+     * If at least one object implements the {@link LenientComparable} interface, then this method
+     * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(&hellip;,
+     * {@linkplain ComparisonMode#APPROXIMATIVE})</code>. The actual work of this convenience
+     * method is performed by the following method call:
+     *
+     * {@preformat java
+     *     return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
+     * }
+     *
+     * @param  object1 The first object to compare (may be null).
+     * @param  object2 The second object to compare (may be null).
+     * @return {@code true} if both objects are approximatively equal.
+     *
+     * @see Utilities#deepEquals(Object, Object, ComparisonMode)
+     * @see ComparisonMode#APPROXIMATIVE
+     *
+     * @category information
+     * @since 3.18
+     */
+    public static boolean equalsApproximatively(final Object object1, final Object object2) {
+        return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
     }
 
     /**

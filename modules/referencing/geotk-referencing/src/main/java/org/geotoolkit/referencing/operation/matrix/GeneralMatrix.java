@@ -487,8 +487,8 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object matrix, final ComparisonMode mode) {
-        return MatrixUtilities.equals(this, matrix, mode);
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, object, mode);
     }
 
     /**

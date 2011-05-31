@@ -20,8 +20,9 @@
  */
 package org.geotoolkit.referencing.factory;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.Map;
+import java.util.EnumMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.WeakHashMap;
@@ -31,6 +32,7 @@ import javax.measure.unit.Unit;
 import java.lang.ref.WeakReference;
 import java.awt.RenderingHints;
 import java.io.PrintWriter;
+import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
@@ -55,8 +57,10 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Exceptions;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.Cache;
+import org.geotoolkit.internal.referencing.NullReferencingObject;
 
 
 /**
@@ -120,11 +124,14 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     private final Cache<Object,Object> cache;
 
     /**
-     * The pool of objects identified by {@link #find}. Every access to this pool
-     * must be synchronized on {@code findPool}.
+     * The pool of objects identified by {@link #find} for each comparison modes. Values may be
+     * {@link NullReferencingObject} if an object has been searched but has not been found.
+     * <p>
+     * Every access to this pool must be synchronized on {@code findPool}.
      */
-    private final Map<IdentifiedObject,IdentifiedObject> findPool =
-            new WeakHashMap<IdentifiedObject,IdentifiedObject>();
+    @GuardedBy("self")
+    private final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> findPool =
+            new WeakHashMap<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>>();
 
     /**
      * Constructs an instance wrapping the specified factory with a default number
@@ -562,7 +569,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * @return The object extracted from the cache or created.
      * @throws FactoryException If an error occurred while creating the object.
      */
-    private <T> T create(final AbstractAuthorityFactoryProxy<T> proxy, final String code)
+    private <T> T create(final AuthorityFactoryProxy<T> proxy, final String code)
             throws FactoryException
     {
         final Class<T> type = proxy.type;
@@ -597,7 +604,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public IdentifiedObject createObject(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.OBJECT, code);
+        return create(AuthorityFactoryProxy.OBJECT, code);
     }
 
     /**
@@ -607,7 +614,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public Datum createDatum(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.DATUM, code);
+        return create(AuthorityFactoryProxy.DATUM, code);
     }
 
     /**
@@ -617,7 +624,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public EngineeringDatum createEngineeringDatum(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.ENGINEERING_DATUM, code);
+        return create(AuthorityFactoryProxy.ENGINEERING_DATUM, code);
     }
 
     /**
@@ -627,7 +634,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public ImageDatum createImageDatum(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.IMAGE_DATUM, code);
+        return create(AuthorityFactoryProxy.IMAGE_DATUM, code);
     }
 
     /**
@@ -637,7 +644,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public VerticalDatum createVerticalDatum(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.VERTICAL_DATUM, code);
+        return create(AuthorityFactoryProxy.VERTICAL_DATUM, code);
     }
 
     /**
@@ -647,7 +654,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public TemporalDatum createTemporalDatum(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.TEMPORAL_DATUM, code);
+        return create(AuthorityFactoryProxy.TEMPORAL_DATUM, code);
     }
 
     /**
@@ -657,7 +664,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public GeodeticDatum createGeodeticDatum(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.GEODETIC_DATUM, code);
+        return create(AuthorityFactoryProxy.GEODETIC_DATUM, code);
     }
 
     /**
@@ -667,7 +674,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public Ellipsoid createEllipsoid(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.ELLIPSOID, code);
+        return create(AuthorityFactoryProxy.ELLIPSOID, code);
     }
 
     /**
@@ -677,7 +684,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public PrimeMeridian createPrimeMeridian(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.PRIME_MERIDIAN, code);
+        return create(AuthorityFactoryProxy.PRIME_MERIDIAN, code);
     }
 
     /**
@@ -687,7 +694,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public Extent createExtent(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.EXTENT, code);
+        return create(AuthorityFactoryProxy.EXTENT, code);
     }
 
     /**
@@ -697,7 +704,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CoordinateSystem createCoordinateSystem(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.COORDINATE_SYSTEM, code);
+        return create(AuthorityFactoryProxy.COORDINATE_SYSTEM, code);
     }
 
     /**
@@ -707,7 +714,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CartesianCS createCartesianCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.CARTESIAN_CS, code);
+        return create(AuthorityFactoryProxy.CARTESIAN_CS, code);
     }
 
     /**
@@ -717,7 +724,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public PolarCS createPolarCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.POLAR_CS, code);
+        return create(AuthorityFactoryProxy.POLAR_CS, code);
     }
 
     /**
@@ -727,7 +734,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CylindricalCS createCylindricalCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.CYLINDRICAL_CS, code);
+        return create(AuthorityFactoryProxy.CYLINDRICAL_CS, code);
     }
 
     /**
@@ -737,7 +744,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public SphericalCS createSphericalCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.SPHERICAL_CS, code);
+        return create(AuthorityFactoryProxy.SPHERICAL_CS, code);
     }
 
     /**
@@ -747,7 +754,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public EllipsoidalCS createEllipsoidalCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.ELLIPSOIDAL_CS, code);
+        return create(AuthorityFactoryProxy.ELLIPSOIDAL_CS, code);
     }
 
     /**
@@ -757,7 +764,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public VerticalCS createVerticalCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.VERTICAL_CS, code);
+        return create(AuthorityFactoryProxy.VERTICAL_CS, code);
     }
 
     /**
@@ -767,7 +774,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public TimeCS createTimeCS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.TIME_CS, code);
+        return create(AuthorityFactoryProxy.TIME_CS, code);
     }
 
     /**
@@ -777,7 +784,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CoordinateSystemAxis createCoordinateSystemAxis(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.AXIS, code);
+        return create(AuthorityFactoryProxy.AXIS, code);
     }
 
     /**
@@ -787,7 +794,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public Unit<?> createUnit(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.UNIT, code);
+        return create(AuthorityFactoryProxy.UNIT, code);
     }
 
     /**
@@ -797,7 +804,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CoordinateReferenceSystem createCoordinateReferenceSystem(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.CRS, code);
+        return create(AuthorityFactoryProxy.CRS, code);
     }
 
     /**
@@ -807,7 +814,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CompoundCRS createCompoundCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.COMPOUND_CRS, code);
+        return create(AuthorityFactoryProxy.COMPOUND_CRS, code);
     }
 
     /**
@@ -817,7 +824,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public DerivedCRS createDerivedCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.DERIVED_CRS, code);
+        return create(AuthorityFactoryProxy.DERIVED_CRS, code);
     }
 
     /**
@@ -827,7 +834,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public EngineeringCRS createEngineeringCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.ENGINEERING_CRS, code);
+        return create(AuthorityFactoryProxy.ENGINEERING_CRS, code);
     }
 
     /**
@@ -837,7 +844,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public GeographicCRS createGeographicCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.GEOGRAPHIC_CRS, code);
+        return create(AuthorityFactoryProxy.GEOGRAPHIC_CRS, code);
     }
 
     /**
@@ -847,7 +854,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public GeocentricCRS createGeocentricCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.GEOCENTRIC_CRS, code);
+        return create(AuthorityFactoryProxy.GEOCENTRIC_CRS, code);
     }
 
     /**
@@ -857,7 +864,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public ImageCRS createImageCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.IMAGE_CRS, code);
+        return create(AuthorityFactoryProxy.IMAGE_CRS, code);
     }
 
     /**
@@ -867,7 +874,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public ProjectedCRS createProjectedCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.PROJECTED_CRS, code);
+        return create(AuthorityFactoryProxy.PROJECTED_CRS, code);
     }
 
     /**
@@ -877,7 +884,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public TemporalCRS createTemporalCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.TEMPORAL_CRS, code);
+        return create(AuthorityFactoryProxy.TEMPORAL_CRS, code);
     }
 
     /**
@@ -887,7 +894,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public VerticalCRS createVerticalCRS(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.VERTICAL_CRS, code);
+        return create(AuthorityFactoryProxy.VERTICAL_CRS, code);
     }
 
     /**
@@ -899,7 +906,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public ParameterDescriptor<?> createParameterDescriptor(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.PARAMETER, code);
+        return create(AuthorityFactoryProxy.PARAMETER, code);
     }
 
     /**
@@ -911,7 +918,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public OperationMethod createOperationMethod(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.METHOD, code);
+        return create(AuthorityFactoryProxy.METHOD, code);
     }
 
     /**
@@ -923,7 +930,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     public CoordinateOperation createCoordinateOperation(final String code) throws FactoryException {
-        return create(AbstractAuthorityFactoryProxy.OPERATION, code);
+        return create(AuthorityFactoryProxy.OPERATION, code);
     }
 
     /**
@@ -1019,24 +1026,28 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     /**
      * An implementation of {@link IdentifiedObjectFinder} which delegates
      * the work to the underlying backing store and caches the result.
-     * <p>
-     * <b>Implementation note:</b> we will create objects using directly the underlying backing
-     * store, not using the cache. This is because hundred of objects may be created during a
-     * scan while only one will be typically retained. We don't want to overload the cache with
-     * every false candidates that we encounter during the scan.
+     *
+     * {@section Implementation note}
+     * we will create objects using directly the underlying backing store, not using the cache.
+     * This is because hundred of objects may be created during a scan while only one will be
+     * typically retained. We don't want to flood the cache with every false candidates that we
+     * encounter during the scan.
+     *
+     * {section Synchronization note}
+     * our public API claims that {@link IdentifiedObjectFinder}s are not thread-safe. Nevertheless
+     * we synchronize this particular implementation for safety, because the consequence of misuse
+     * are more dangerous than other implementations. Furthermore this is also a way to assert that
+     * no code path go to the {@link #create(AuthorityFactoryProxy, String)} method from a
+     * non-overridden public method.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.06
+     * @version 3.18
      *
      * @since 2.4
      * @module
      */
+    @ThreadSafe
     private final class Finder extends IdentifiedObjectFinder {
-        /**
-         * The type of objects to be created.
-         */
-        private final Class<? extends IdentifiedObject> type;
-
         /**
          * The finder on which to delegate the work. This is acquired by {@link #acquire()}
          * <strong>and must be released</strong> by call to {@link #release()} once finished.
@@ -1053,24 +1064,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
          * Creates a finder for the given type of objects.
          */
         Finder(final Class<? extends IdentifiedObject> type) {
-            this.type = type;
+            super(null, type);
         }
-
-        /**
-         * Returns the type of the objects to be created by the proxy instance.
-         */
-        @Override
-        final Class<? extends IdentifiedObject> getObjectType() {
-            return type;
-        }
-
-        /*
-         * Note on synchronization: our public API claims that IdentifiedObjectFinder are not
-         * thread-safe. Nevertheless we synchronize this particular implementation for safety,
-         * because the consequence of misuse are more dangerous than other implementations.
-         * Furthermore this is also a way to assert that no code path go to the 'create' method
-         * from a non-overrided public method.
-         */
 
         /**
          * Acquires a new {@linkplain #finder}. The {@link #release()} method must
@@ -1099,9 +1094,9 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                  * happen after this point.
                  */
                 acquireCount = 1;
-                finder = factory.getIdentifiedObjectFinder(type);
-                proxy  = finder.proxy;
+                finder = factory.getIdentifiedObjectFinder(getObjectType());
                 finder.copyConfiguration(this);
+                finder.setParent(this);
             } else {
                 acquireCount++;
             }
@@ -1117,7 +1112,6 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 return;
             }
             if (--acquireCount == 0) {
-                proxy  = null;
                 finder = null;
                 CachingAuthorityFactory.this.release();
             }
@@ -1177,22 +1171,24 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
          * Looks up an object from this authority factory which is equal, ignoring metadata,
          * to the specified object. The default implementation performs the same lookup than
          * the backing store and caches the result.
-         *
-         * @todo avoid to search for the same object twice. For now we consider that this
-         *       is not a big deal if the same object is searched twice; it is "just" a
-         *       waste of CPU.
          */
         @Override
         public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
-            IdentifiedObject candidate;
-            synchronized (findPool) {
-                candidate = findPool.get(object);
-                // A null value may be explicitly stored if a
-                // previous search failed for the given object.
-                if (candidate != null || findPool.containsKey(object)) {
-                    return candidate;
+            final ComparisonMode mode = getComparisonMode();
+            final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> pool = findPool;
+            synchronized (pool) {
+                final Map<ComparisonMode,IdentifiedObject> byMode = pool.get(object);
+                if (byMode != null) {
+                    final IdentifiedObject candidate = byMode.get(mode);
+                    if (candidate != null) {
+                        return (candidate == NullReferencingObject.INSTANCE) ? null : candidate;
+                    }
                 }
             }
+            /*
+             * Nothing has been found in the cache. Delegates the search to the backing store.
+             */
+            final IdentifiedObject candidate;
             synchronized (this) {
                 try {
                     acquire();
@@ -1208,38 +1204,16 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
              * we can remember that no object has been found for the given argument.
              */
             if (candidate != null || isFullScanAllowed()) {
-                synchronized (findPool) {
-                    findPool.put(object, candidate);
+                synchronized (pool) {
+                    Map<ComparisonMode,IdentifiedObject> byMode = pool.get(object);
+                    if (byMode == null) {
+                        byMode = new EnumMap<ComparisonMode,IdentifiedObject>(ComparisonMode.class);
+                        pool.put(object, byMode);
+                    }
+                    byMode.put(mode, (candidate == null) ? NullReferencingObject.INSTANCE : candidate);
                 }
             }
             return candidate;
-        }
-
-        /**
-         * Returns the identifier for the specified object.
-         */
-        @Override
-        public String findIdentifier(final IdentifiedObject object) throws FactoryException {
-            IdentifiedObject candidate;
-            synchronized (findPool) {
-                candidate = findPool.get(object);
-                if (candidate == null && findPool.containsKey(object)) {
-                    return null;
-                }
-            }
-            if (candidate != null) {
-                return getIdentifier(candidate);
-            }
-            synchronized (this) {
-                try {
-                    acquire();
-                    // We don't rely on super-class implementation, because we want to
-                    // take advantage of the method overridden by AllAuthoritiesFactory.
-                    return finder.findIdentifier(object);
-                } finally {
-                    release();
-                }
-            }
         }
     }
 

@@ -39,11 +39,11 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.internal.Citations;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.Citations.identifierMatches;
 
 
 /**
@@ -201,18 +201,18 @@ public final class IdentifiedObjects extends Static {
      */
     public static String getDeclaredIdentifier(final IdentifiedObject object) {
         if (object != null) {
-            ReferenceIdentifier name = null;
             final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
             if (identifiers != null) {
-                for (final Iterator<ReferenceIdentifier> it=identifiers.iterator(); it.hasNext();) {
-                    if ((name = it.next()) != null) {
-                        break;
+                for (final ReferenceIdentifier identifier : identifiers) {
+                    if (identifier != null) { // Paranoiac check.
+                        final String code = identifier.toString();
+                        if (code != null) { // Paranoiac check.
+                            return code;
+                        }
                     }
                 }
             }
-            if (name == null) {
-                name = object.getName();
-            }
+            final ReferenceIdentifier name = object.getName();
             if (name != null) {
                 return name.toString();
             }
@@ -227,7 +227,7 @@ public final class IdentifiedObjects extends Static {
      * citation {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
      * Citation) matching} the specified authority.
      *
-     * @param  info The object to get the identifier from.
+     * @param  object The object to get the identifier from, or {@code null}.
      * @param  authority The authority for the identifier to return, or {@code null} for
      *         the first identifier regardless its authority.
      * @return The object's identifier, or {@code null} if no identifier matching the specified
@@ -235,37 +235,39 @@ public final class IdentifiedObjects extends Static {
      *
      * @see AbstractIdentifiedObject#getIdentifier(Citation)
      */
-    public static ReferenceIdentifier getIdentifier(final IdentifiedObject info, final Citation authority) {
-        if (info instanceof AbstractIdentifiedObject) {
+    public static ReferenceIdentifier getIdentifier(final IdentifiedObject object, final Citation authority) {
+        if (object instanceof AbstractIdentifiedObject) {
             // Gives a chances to subclasses to get their overridden method invoked.
-            return ((AbstractIdentifiedObject) info).getIdentifier(authority);
+            return ((AbstractIdentifiedObject) object).getIdentifier(authority);
         }
-        return identifier(info, authority);
+        return identifier(object, authority);
     }
 
     /**
      * Returns an identifier according the given authority.
      *
-     * @param  info The object to get the identifier from.
+     * @param  object The object to get the identifier from, or {@code null}.
      * @param  authority The authority for the identifier to return, or {@code null}.
      * @return The object's identifier, or {@code null} if none.
      */
-    static ReferenceIdentifier identifier(final IdentifiedObject info, final Citation authority) {
-        if (info == null) {
-            return null;
-        }
-        for (final ReferenceIdentifier identifier : info.getIdentifiers()) {
-            if (authority == null) {
-                return identifier;
-            }
-            final Citation infoAuthority = identifier.getAuthority();
-            if (infoAuthority != null) {
-                if (Citations.identifierMatches(authority, infoAuthority)) {
-                    return identifier;
+    static ReferenceIdentifier identifier(final IdentifiedObject object, final Citation authority) {
+        if (object != null) {
+            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
+            if (identifiers != null) {
+                for (final ReferenceIdentifier identifier : identifiers) {
+                    if (identifier != null) { // Paranoiac check.
+                        if (authority == null) {
+                            return identifier;
+                        }
+                        final Citation infoAuthority = identifier.getAuthority();
+                        if (infoAuthority != null && identifierMatches(authority, infoAuthority)) {
+                            return identifier;
+                        }
+                    }
                 }
             }
         }
-        return (authority == null) ? info.getName() : null;
+        return null;
     }
 
     /**
@@ -325,23 +327,21 @@ public final class IdentifiedObjects extends Static {
         String name = null;
         Citation infoAuthority = identifier.getAuthority();
         if (infoAuthority != null) {
-            if (Citations.identifierMatches(authority, infoAuthority)) {
+            if (identifierMatches(authority, infoAuthority)) {
                 name = identifier.getCode();
             } else {
                 for (final GenericName alias : info.getAlias()) {
-                    if (alias instanceof Identifier) {
-                        identifier = (Identifier) alias;
-                        infoAuthority = identifier.getAuthority();
-                        if (infoAuthority != null) {
-                            if (Citations.identifierMatches(authority, infoAuthority)) {
+                    if (alias != null) { // Paranoiac check.
+                        if (alias instanceof Identifier) {
+                            identifier = (Identifier) alias;
+                            infoAuthority = identifier.getAuthority();
+                            if (infoAuthority != null && identifierMatches(authority, infoAuthority)) {
                                 name = identifier.getCode();
                                 break;
                             }
-                        }
-                    } else {
-                        final GenericName scope = alias.scope().name();
-                        if (scope != null) {
-                            if (Citations.identifierMatches(authority, scope.toString())) {
+                        } else {
+                            final GenericName scope = alias.scope().name();
+                            if (scope != null && identifierMatches(authority, scope.toString())) {
                                 name = alias.toString();
                                 break;
                             }
@@ -411,15 +411,17 @@ public final class IdentifiedObjects extends Static {
         }
         if (alias != null) {
             for (GenericName asName : alias) {
-                asName = asName.toFullyQualifiedName();
-                while (asName != null) {
-                    if (name.equalsIgnoreCase(asName.toString().trim())) {
-                        return true;
+                if (asName != null) { // Paranoiac check.
+                    asName = asName.toFullyQualifiedName();
+                    while (asName != null) {
+                        if (name.equalsIgnoreCase(asName.toString().trim())) {
+                            return true;
+                        }
+                        if (!(asName instanceof ScopedName)) {
+                            break;
+                        }
+                        asName = ((ScopedName) asName).tail();
                     }
-                    if (!(asName instanceof ScopedName)) {
-                        break;
-                    }
-                    asName = ((ScopedName) asName).tail();
                 }
             }
         }

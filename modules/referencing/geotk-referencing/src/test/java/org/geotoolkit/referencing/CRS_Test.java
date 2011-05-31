@@ -58,7 +58,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Andrea Aime (OpenGeo)
- * @version 3.16
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -233,7 +233,7 @@ public final class CRS_Test extends ReferencingTestBase {
      * @see <a href="http://jira.codehaus.org/browse/GEOT-1268">GEOT-1268</a>
      */
     @Test
-    public void testEquivalence() throws FactoryException {
+    public void testEqualsApproximatively() throws FactoryException {
         final CoordinateReferenceSystem crs1 = CRS.parseWKT(decodeQuotes(
                 "PROJCS[“NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001”, \n" +
                 "  GEOGCS[“GCS_North_American_1983”, \n" +
@@ -283,7 +283,7 @@ public final class CRS_Test extends ReferencingTestBase {
 
         assertEquals("EPSG:26986", IdentifiedObjects.getDeclaredIdentifier(crs2));
 
-        assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
+        assertTrue(CRS.equalsApproximatively(crs1, crs2));
     }
 
     /**

@@ -270,8 +270,8 @@ typeLoop:   for (int i=0; ; i++) {
      * {@link AuthorityFactoryFinder} will be tried. A mechanism avoid trying the same
      * factory twice.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.18
      *
      * @since 2.2
      * @module
@@ -296,7 +296,7 @@ typeLoop:   for (int i=0; ; i++) {
          * search to be performed (indirectly) twice for the same factories.
          */
         private Set<AuthorityFactory> fromFactoryRegistry() {
-            final MultiAuthoritiesFactory factory = (MultiAuthoritiesFactory) proxy.getAuthorityFactory();
+            final MultiAuthoritiesFactory factory = (MultiAuthoritiesFactory) this.factory;
             final Class<? extends AuthorityFactory> type = getFactoryType();
             final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>();
             for (final String authority : AuthorityFactoryFinder.getAuthorityNames()) {
@@ -326,30 +326,6 @@ typeLoop:   for (int i=0; ; i++) {
             final Iterator<AuthorityFactory> it = fromFactoryRegistry().iterator();
             while ((finder = next(it)) != null) {
                 candidate = finder.find(object);
-                if (candidate != null) {
-                    break;
-                }
-            }
-            return candidate;
-        }
-
-        /**
-         * Returns the identifier of the specified object, or {@code null} if none.
-         * First, this method uses the algorithm defined in {@link MultiAuthoritiesFactory}
-         * super-class in order to scan the factories that were explicitly specified by the
-         * user. Only if no suitable factory is found, this method fallbacks on the factories
-         * registered in {@link AuthorityFactoryFinder}.
-         */
-        @Override
-        public String findIdentifier(final IdentifiedObject object) throws FactoryException {
-            String candidate = super.findIdentifier(object);
-            if (candidate != null) {
-                return candidate;
-            }
-            IdentifiedObjectFinder finder;
-            final Iterator<AuthorityFactory> it = fromFactoryRegistry().iterator();
-            while ((finder = next(it)) != null) {
-                candidate = finder.findIdentifier(object);
                 if (candidate != null) {
                     break;
                 }

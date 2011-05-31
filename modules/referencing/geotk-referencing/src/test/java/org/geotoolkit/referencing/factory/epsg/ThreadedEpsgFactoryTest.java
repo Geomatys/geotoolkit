@@ -783,52 +783,63 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
      * @see <a href="http://jira.codehaus.org/browse/GEOT-1268">GEOT-1268</a>
      */
     @Test
-    public final void testEquivalent() throws FactoryException {
+    public final void testEqualsApproximatively() throws FactoryException {
         assumeNotNull(factory);
         final CoordinateReferenceSystem crs1 = CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NAD83);
         final CoordinateReferenceSystem crs2 = CRS.decode("EPSG:26986");
-        assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
+        assertFalse(CRS.equalsIgnoreMetadata (crs1, crs2));
+        assertTrue (CRS.equalsApproximatively(crs1, crs2));
     }
 
     /**
-     * Tests {@link DefaultFactory#find} method.
+     * Tests {@link ThreadedEpsgFactory#find} method with a geographic CRS.
      *
      * @throws FactoryException if an error occurred while querying the factory.
      */
     @Test
     public final void testFind() throws FactoryException {
         assumeNotNull(factory);
-
+        /*
+         * Test initial conditions.
+         */
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         assertTrue("Full scan should be enabled by default.", finder.isFullScanAllowed());
         assertNull("Should not find WGS84 because the axis order is not the same.",
                    finder.find(DefaultGeographicCRS.WGS84));
-
-        CoordinateReferenceSystem crs = CRS.parseWKT(WKT.GEOGCS_WGS84_YX);
+        /*
+         * Tests that the cache is empty.
+         */
+        final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.GEOGCS_WGS84_YX);
         finder.setFullScanAllowed(false);
         assertNull("Should not find without a full scan, because the WKT contains no identifier " +
                    "and the CRS name is ambiguous (more than one EPSG object have this name).",
                    finder.find(crs));
-
+        /*
+         * Scan the database for searching the CRS.
+         */
         finder.setFullScanAllowed(true);
-        IdentifiedObject find = finder.find(crs);
+        final IdentifiedObject find = finder.find(crs);
         assertNotNull("With full scan allowed, the CRS should be found.", find);
         assertTrue("Should found an object equals (ignoring metadata) to the requested one.",
-                   CRS.equalsIgnoreMetadata(crs, find));
-        assertEquals("4326",
+                CRS.equalsIgnoreMetadata(crs, find));
+        assertEquals("Not the expected CRS.", "4326",
                 IdentifiedObjects.getIdentifier(find, factory.getAuthority()).getCode());
+        /*
+         * Should find the CRS without the need of a full scan, because of the cache.
+         */
         finder.setFullScanAllowed(false);
+        assertSame("The CRS should still in the cache.", find, finder.find(crs));
+    }
 
-        ReferenceIdentifier foundri = IdentifiedObjects.getIdentifier(find, factory.getAuthority());
-
-        if (false) {
-            // This is broken because, as we know from above, it is ambiguous,
-            // so it may not be EPSG:4326 in the cache at all!
-            assertEquals("The CRS should still in the cache.", "EPSG:4326", finder.findIdentifier(crs));
-        }
-        assertEquals("The CRS should still in the cache.",
-                foundri.getCodeSpace()+':'+foundri.getCode(), finder.findIdentifier(crs));
-
+    /**
+     * Tests {@link ThreadedEpsgFactory#find} method with a projected CRS.
+     *
+     * @throws FactoryException if an error occurred while querying the factory.
+     */
+    @Test
+    public final void testFindProjectedCRS() throws FactoryException {
+        assumeNotNull(factory);
+        final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         /*
          * The PROJCS below intentionally uses a name different from the one found in the
          * EPSG database, in order to force a full scan (otherwise the EPSG database would
@@ -852,16 +863,14 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
                 "   UNIT[“m”, 1.0],\n" +
                 "   AXIS[“Northing”, NORTH],\n" +
                 "   AXIS[“Easting”, EAST]]");
-        crs = CRS.parseWKT(wkt);
+        final CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
 
         finder.setFullScanAllowed(false);
-        IdentifiedObject found = finder.find(crs);
-        assertTrue("Should not find the CRS without a full scan.", found == null || found != null);
+        assertNull("Should not find the CRS without a full scan.", finder.find(crs));
 
         finder.setFullScanAllowed(true);
-        find = finder.find(crs);
+        final IdentifiedObject find = finder.find(crs);
         assertNotNull("With full scan allowed, the CRS should be found.", find);
-
         assertTrue("Should found an object equals (ignoring metadata) to the requested one.",
                    CRS.equalsIgnoreMetadata(crs, find));
         /*
@@ -877,6 +886,50 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
 
         finder.setFullScanAllowed(false);
         assertEquals("The CRS should still in the cache.", "EPSG:"+code, finder.findIdentifier(crs));
+    }
+
+    /**
+     * Tests {@link ThreadedEpsgFactory#find} method with a CRS which is slightly different than
+     * the one to look for in the database.
+     *
+     * @throws FactoryException if an error occurred while querying the factory.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-62">GEOTK-62</a>
+     *
+     * @since 3.18
+     */
+    @Test
+    public final void testFindApproximative() throws FactoryException {
+        assumeNotNull(factory);
+
+        final String wkt = decodeQuotes(
+                "PROJCS[“Search approximative”,\n" +
+                "   GEOGCS[“Search approximative”,\n" +
+                "     DATUM[“Beijing 1954”,\n" + // Datum name matter.
+                "       SPHEROID[“Search approximative”, 6378245.00000006, 298.299999999998]],\n" +
+                "     PRIMEM[“Greenwich”, 0.0],\n" +
+                "     UNIT[“degree”, 0.017453292519943295],\n" +
+                "     AXIS[“Geodetic latitude”, NORTH],\n" +
+                "     AXIS[“Geodetic longitude”, EAST]],\n" +
+                "   PROJECTION[“Transverse Mercator\"],\n" +
+                "   PARAMETER[“central_meridian”, 135.0000000000013],\n" +
+                "   PARAMETER[“latitude_of_origin”, 0.0],\n" +
+                "   PARAMETER[“scale_factor”, 1.0],\n" +
+                "   PARAMETER[“false_easting”, 500000.000000004],\n" +
+                "   PARAMETER[“false_northing”, 0.0],\n" +
+                "   UNIT[“m”, 1.0],\n" +
+                "   AXIS[“Northing”, NORTH],\n" +
+                "   AXIS[“Easting”, EAST]]");
+        final CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
+        final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
+        IdentifiedObject find = finder.find(crs);
+        assertNull("Should not find the CRS without approximative mode.", find);
+
+        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
+        find = finder.find(crs);
+        assertNotNull("In approximative mode, the CRS should be found.", find);
+        assertTrue ("Should be approximatively equals.",  CRS.equalsApproximatively(crs, find));
+        assertFalse("Should be slightly different.",      CRS.equalsIgnoreMetadata (crs, find));
     }
 
     /**

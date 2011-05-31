@@ -23,6 +23,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -41,7 +42,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  * would produce {@code "EPSG:4326"}, while we want {@code "urn:ogc:def:crs:epsg:7.1:4326"}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.18
  *
  * @since 3.07
  * @module
@@ -64,7 +65,18 @@ class FinderAdapter extends IdentifiedObjectFinder {
     }
 
     /**
-     * Sets whatever an exhaustive scan against all registered objects is allowed.
+     * Propagates the configuration change to the underlying finder.
+     *
+     * @since 3.18
+     */
+    @Override
+    public void setComparisonMode(final ComparisonMode mode) {
+        finder.setComparisonMode(mode);
+        super .setComparisonMode(mode);
+    }
+
+    /**
+     * Propagates the configuration change to the underlying finder.
      */
     @Override
     public final void setFullScanAllowed(final boolean fullScan) {

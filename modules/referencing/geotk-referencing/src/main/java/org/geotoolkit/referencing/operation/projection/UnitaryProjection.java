@@ -62,6 +62,7 @@ import static java.lang.Double.*;
 import static org.geotoolkit.math.XMath.xorSign;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MAJOR;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MINOR;
@@ -121,13 +122,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = 1969740225939106310L;
-
-    /**
-     * Maximum difference allowed when comparing parameter values between two projection
-     * instances. This is used in order to determine if two instances are
-     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively} equal.
-     */
-    private static final double PARAMETER_TOLERANCE = 1E-14;
 
     /**
      * Maximum difference allowed when comparing longitudes or latitudes in radians.
@@ -1462,41 +1456,30 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             return true;
         }
         if (super.equals(object, mode)) {
+            final double e1, e2;
             final UnitaryProjection that = (UnitaryProjection) object;
-            boolean strict = true;
-            switch (mode) {
-                case STRICT:
-                case BY_CONTRACT: {
-                    if (!Utilities.equals(parameters, that.parameters)) {
-                        return false;
-                    }
-                    break;
+            if (mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal()) {
+                if (!Utilities.equals(parameters, that.parameters)) {
+                    return false;
                 }
-                case APPROXIMATIVE: {
-                    strict = false;
-                    break;
-                }
+                e1 = this.excentricitySquared;
+                e2 = that.excentricitySquared;
+            } else {
+                e1 = this.excentricity;
+                e2 = that.excentricity;
             }
-            // No need to compare "excentricity" since it is computed from "excentricitySquared".
-            return equals(excentricitySquared, that.excentricitySquared, strict) &&
-                   equals(longitudeRotation,   that.longitudeRotation,   strict) &&
-                   equals(longitudeBound,      that.longitudeBound,      strict);
+            /*
+             * There is no need to compare both 'excentricity' and 'excentricitySquared' since
+             * the former is computed from the later. In strict comparison mode, we are better
+             * to compare the 'excentricitySquared' since it is the original value from which
+             * the other value is derived. However in approximative comparison mode, we need
+             * to use the 'excentricity', otherwise we would need to take the square of the
+             * tolerance factor before comparing 'excentricitySquared'.
+             */
+            return epsilonEqual(e1, e2, mode) &&
+                   epsilonEqual(longitudeRotation, that.longitudeRotation, mode) &&
+                   epsilonEqual(longitudeBound,    that.longitudeBound,    mode);
         }
         return false;
-    }
-
-    /**
-     * Implementations of comparisons of floating point values in {@link #equals} methods.
-     */
-    static boolean equals(final double v1, final double v2, final boolean strict) {
-        if (!strict) {
-            final double delta = abs(v1 - v2);
-            final double scale = max(abs(v1), abs(v2));
-            if (delta <= scale * PARAMETER_TOLERANCE) {
-                return true;
-            }
-            // Still fallback on "Utilities.equals" in case a value was NaN.
-        }
-        return Utilities.equals(v1, v2);
     }
 }

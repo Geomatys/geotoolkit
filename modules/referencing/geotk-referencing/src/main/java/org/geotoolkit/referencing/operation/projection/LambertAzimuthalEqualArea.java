@@ -32,6 +32,7 @@ import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 
 /**
@@ -551,8 +552,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final LambertAzimuthalEqualArea that = (LambertAzimuthalEqualArea) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(this.latitudeOfOrigin, that.latitudeOfOrigin, strict);
+            return epsilonEqual(this.latitudeOfOrigin, that.latitudeOfOrigin, mode);
             // All other coefficients are derived from the latitude of origin and excentricity.
         }
         return false;

@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.GeodeticCalculator;
  * (<var>latitude</var>, <var>longitude</var>, <var>height</var>) order.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 3.16
  */
@@ -48,20 +48,25 @@ public final class SamplePoints {
      * Sample points for transformations from
      * {@link CoordinateOperationFactoryTest#NAD27_Z} to
      * {@link CoordinateOperationFactoryTest#WGS84_Z}.
+     *
+     * @todo The coordinate values in the EPSG case (the last row in each constructor call) is for
+     *       Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most appropriate
+     *       operation, but this is the one selected by the current ordering criterion in the SQL
+     *       statements (GEOTK-80).
      */
     static final SamplePoints[] NAD27_TO_WGS84 = {
-        new SamplePoints( 0.0,                  0.0,                   0.0,
-                          0.001654978796746043, 0.0012755944235822696, 66.4042236590758,    66.4042236590758,
-                          0.001376446686919439, 0.000997260467127468,  69.87041821610183,   69.87041821610183),
-        new SamplePoints( 5.0,                  8.0,                   20.0,
-                          5.0012629560319874,   8.001271729856333,    120.27929787151515,  100.27929787896574,
-                          5.000987146514824,    8.000990050633513,    123.72770855855197,  103.72769769467413),
-        new SamplePoints( 5.0,                  8.0,                  -20.0,
-                          5.001262964005206,    8.001271737831601,     80.2792978901416,   100.27929787896574,
-                          5.000987154476458,    8.000990058608926,     83.72768682986498,  103.72769769467413),
-        new SamplePoints(-5.0,                 -8.0,                  -20.0,
-                         -4.99799698932651,    -7.998735783965731,      9.007854541763663,  29.00245368219864,
-                         -4.99827276660932,    -7.999017464465776,     12.491700702346861,  32.491711559705436)
+        new SamplePoints( 0.0,                   0.0,                   0.0,
+                          0.001654978796746043,  0.0012755944235822696, 66.4042236590758,    66.4042236590758,
+                          0.0016488865058817196, 0.001206062410034649,  76.25110799539834,   76.25110799539834),
+        new SamplePoints( 5.0,                   8.0,                   20.0,
+                          5.0012629560319874,    8.001271729856333,    120.27929787151515,  100.27929787896574,
+                          5.001273036851652,     8.001180660967439,    132.40271407272667,  112.40270038507879),
+        new SamplePoints( 5.0,                   8.0,                  -20.0,
+                          5.001262964005206,     8.001271737831601,     80.2792978901416,   100.27929787896574,
+                          5.001273045624943,     8.001180669334277,     92.40268669463694,  112.40270038507879),
+        new SamplePoints(-5.0,                  -8.0,                  -20.0,
+                         -4.99799698932651,     -7.998735783965731,      9.007854541763663,  29.00245368219864,
+                         -4.998019250063004,    -7.998787956860261,     16.432708218693733,  36.432721899822354)
     };
 
     /**

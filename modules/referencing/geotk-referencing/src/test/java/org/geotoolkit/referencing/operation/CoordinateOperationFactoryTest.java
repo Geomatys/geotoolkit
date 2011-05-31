@@ -68,6 +68,8 @@ import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 
 
 /**
@@ -77,7 +79,7 @@ import static org.junit.Assume.*;
  * the EPSG database (if any) enabled.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.1
  */
@@ -138,6 +140,18 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
     protected CoordinateOperationFactoryTest(final Hints hints) {
         super(AbstractMathTransform.class, hints);
         this.testHints = hints;
+    }
+
+    /**
+     * Returns {@code true} if the test suite is using {@link AuthorityBackedFactory}.
+     * This have an impact on the result of some test case.
+     *
+     * @return {@code true} if the test suite is using {@link AuthorityBackedFactory}.
+     *
+     * @since 3.18
+     */
+    protected boolean useAuthorityFactory() {
+        return false;
     }
 
     /**
@@ -483,9 +497,24 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NAD27);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84_DMHS);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
-        transform = op.getMathTransform();
         assertTrue(isTransformation(op));
-        assertSame(sourceCRS, op.getSourceCRS());
+        if (useAuthorityFactory()) {
+            assertNotSame(sourceCRS, op.getSourceCRS());
+            assertNotSame(targetCRS, op.getTargetCRS());
+            assertFalse  (equalsIgnoreMetadata (sourceCRS, op.getSourceCRS()));
+            assertTrue   (equalsIgnoreMetadata (targetCRS, op.getTargetCRS()));
+            assertTrue   (equalsApproximatively(sourceCRS, op.getSourceCRS()));
+            assertTrue   (equalsApproximatively(targetCRS, op.getTargetCRS()));
+            assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
+            // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
+            // appropriate operation, but this is the one selected by the current ordering
+            // criterion in the SQL statements (GEOTK-80).
+        } else {
+            assertSame(sourceCRS, op.getSourceCRS());
+            assertSame(targetCRS, op.getTargetCRS());
+            assertTrue(op.getIdentifiers().isEmpty());
+        }
+        transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
@@ -627,7 +656,6 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
-        transform = op.getMathTransform();
         assertNotSame(sourceCRS, op.getSourceCRS());
         assertNotSame(targetCRS, op.getTargetCRS());
         assertTrue(isTransformation(op));
@@ -635,8 +663,17 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertTrue(op.getSourceCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
         assertTrue(targetCRS         instanceof CompoundCRS);
         assertTrue(op.getTargetCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
-        assertFalse(sourceCRS.equals(targetCRS));
-        assertFalse(op.getSourceCRS().equals(op.getTargetCRS()));
+        assertFalse(equalsIgnoreMetadata(sourceCRS, targetCRS));
+        assertFalse(equalsIgnoreMetadata(op.getSourceCRS(), op.getTargetCRS()));
+        if (useAuthorityFactory()) {
+            assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
+            // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
+            // appropriate operation, but this is the one selected by the current ordering
+            // criterion in the SQL statements (GEOTK-80).
+        } else {
+            assertTrue(op.getIdentifiers().isEmpty());
+        }
+        transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
@@ -656,7 +693,6 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(Z_NAD27);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
-        transform = op.getMathTransform();
         assertNotSame(sourceCRS, op.getSourceCRS());
         assertNotSame(targetCRS, op.getTargetCRS());
         assertTrue(isTransformation(op));
@@ -666,6 +702,15 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertTrue(op.getTargetCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
         assertFalse(sourceCRS.equals(targetCRS));
         assertFalse(op.getSourceCRS().equals(op.getTargetCRS()));
+        if (useAuthorityFactory()) {
+            assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
+            // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
+            // appropriate operation, but this is the one selected by the current ordering
+            // criterion in the SQL statements (GEOTK-80).
+        } else {
+            assertTrue(op.getIdentifiers().isEmpty());
+        }
+        transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
@@ -685,8 +730,16 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(NAD27_Z);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84_DMHS);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
-        transform = op.getMathTransform();
         assertNotSame(sourceCRS, op.getSourceCRS());
+        if (useAuthorityFactory()) {
+            assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
+            // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
+            // appropriate operation, but this is the one selected by the current ordering
+            // criterion in the SQL statements (GEOTK-80).
+        } else {
+            assertTrue(op.getIdentifiers().isEmpty());
+        }
+        transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
@@ -754,9 +807,23 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NAD27);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
+        if (useAuthorityFactory()) {
+            assertNotSame(sourceCRS, op.getSourceCRS());
+            assertNotSame(targetCRS, op.getTargetCRS());
+            assertFalse  (equalsIgnoreMetadata (sourceCRS, op.getSourceCRS()));
+            assertFalse  (equalsIgnoreMetadata (targetCRS, op.getTargetCRS()));
+            assertTrue   (equalsApproximatively(sourceCRS, op.getSourceCRS()));
+            assertFalse  (equalsApproximatively(targetCRS, op.getTargetCRS()));
+            assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
+            // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
+            // appropriate operation, but this is the one selected by the current ordering
+            // criterion in the SQL statements (GEOTK-80).
+        } else {
+            assertSame   (sourceCRS, op.getSourceCRS());
+            assertNotSame(targetCRS, op.getTargetCRS());
+            assertTrue(op.getIdentifiers().isEmpty());
+        }
         transform = op.getMathTransform();
-        assertSame   (sourceCRS, op.getSourceCRS());
-        assertNotSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {

@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LATITUDE_OF_CENTRE;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONGITUDE_OF_CENTRE;
 
@@ -599,11 +600,10 @@ public class ObliqueMercator extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final ObliqueMercator that = (ObliqueMercator) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(this.B, that.B, strict) &&
-                   equals(this.E, that.E, strict) &&
-                   equals(this.singamma0, that.singamma0, strict) &&
-                   equals(this.cosgamma0, that.cosgamma0, strict);
+            return epsilonEqual(this.B, that.B, mode) &&
+                   epsilonEqual(this.E, that.E, mode) &&
+                   epsilonEqual(this.singamma0, that.singamma0, mode) &&
+                   epsilonEqual(this.cosgamma0, that.cosgamma0, mode);
         }
         return false;
     }

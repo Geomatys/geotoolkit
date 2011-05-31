@@ -215,8 +215,8 @@ public class Matrix1 implements XMatrix, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(final Object matrix, final ComparisonMode mode) {
-        return MatrixUtilities.equals(this, matrix, mode);
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, object, mode);
     }
 
     /**

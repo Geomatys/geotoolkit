@@ -203,8 +203,8 @@ public class Matrix4 extends Matrix4d implements XMatrix {
      * @since 3.18
      */
     @Override
-    public boolean equals(final Object matrix, final ComparisonMode mode) {
-        return MatrixUtilities.equals(this, matrix, mode);
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        return MatrixUtilities.equals(this, object, mode);
     }
 
     /**

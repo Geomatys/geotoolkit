@@ -50,7 +50,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 
-import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
 
@@ -432,13 +432,13 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         CoordinateReferenceSystem source = operation.getSourceCRS();
         CoordinateReferenceSystem target = operation.getTargetCRS();
         final MathTransform prepend, append;
-        if (!equalsIgnoreMetadata(sourceCRS, source)) {
+        if (!equalsApproximatively(sourceCRS, source)) {
             prepend = getMathTransform(sourceCRS, source);
             source  = sourceCRS;
         } else {
             prepend = null;
         }
-        if (!equalsIgnoreMetadata(target, targetCRS)) {
+        if (!equalsApproximatively(target, targetCRS)) {
             append = getMathTransform(target, targetCRS);
             target = targetCRS;
         } else {

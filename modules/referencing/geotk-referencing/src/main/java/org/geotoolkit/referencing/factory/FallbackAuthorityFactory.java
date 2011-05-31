@@ -941,7 +941,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     public IdentifiedObjectFinder getIdentifiedObjectFinder(Class<? extends IdentifiedObject> type)
             throws FactoryException
     {
-        return new Finder(type);
+        return new Finder(this, type);
     }
 
     /**
@@ -949,12 +949,12 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
      * if the primary one can't find a match.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.06
+     * @version 3.18
      *
      * @since 2.4
      * @module
      */
-    private final class Finder extends AuthorityFactoryAdapter.Finder {
+    private static final class Finder extends AuthorityFactoryAdapter.Finder {
         /**
          * The fallback. Will be created only when first needed.
          */
@@ -963,51 +963,26 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
         /**
          * Creates a finder for the underlying backing store.
          */
-        Finder(final Class<? extends IdentifiedObject> type) throws FactoryException {
-            super(type);
+        Finder(final FallbackAuthorityFactory factory, final Class<? extends IdentifiedObject> type)
+                throws FactoryException
+        {
+            super(factory, type);
         }
 
         /**
-         * Makes sure that {@link #fallback} is initialized.
-         */
-        private void ensureFallback() throws FactoryException {
-            if (fallback == null) {
-                /*
-                 * Remainder: since this class is a subclass of AuthorityFactoryAdapter.Finder,
-                 * the 'this.proxy' field may be null. Consequently we must use the one in the
-                 * backing finder instead.
-                 */
-                final Class<? extends IdentifiedObject> type = getObjectType();
-                fallback = FallbackAuthorityFactory.this.fallback.getIdentifiedObjectFinder(type);
-            }
-            fallback.copyConfiguration(this);
-        }
-
-        /**
-         * Lookups for the specified object.
+         * Delegates to the primary factory first, then to the fallback if the primary
+         * factory didn't found any object.
          */
         @Override
         public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
             IdentifiedObject candidate = finder.find(object);
-            if (candidate != null) {
-                return candidate;
+            if (candidate == null) {
+                if (fallback == null) {
+                    fallback = ((FallbackAuthorityFactory) factory).fallback.getIdentifiedObjectFinder(getObjectType());
+                }
+                fallback.copyConfiguration(this);
+                candidate = fallback.find(object);
             }
-            ensureFallback();
-            candidate = fallback.find(object);
-            return candidate;
-        }
-
-        /**
-         * Returns the identifier of the specified object, or {@code null} if none.
-         */
-        @Override
-        public String findIdentifier(final IdentifiedObject object) throws FactoryException {
-            String candidate = finder.findIdentifier(object);
-            if (candidate != null) {
-                return candidate;
-            }
-            ensureFallback();
-            candidate = fallback.findIdentifier(object);
             return candidate;
         }
     }

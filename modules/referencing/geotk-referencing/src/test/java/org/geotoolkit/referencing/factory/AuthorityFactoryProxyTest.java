@@ -21,103 +21,97 @@
 package org.geotoolkit.referencing.factory;
 
 import org.opengis.referencing.crs.*;
+import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.AuthorityFactory;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.factory.AuthorityFactoryProxy.*;
 
 
 /**
- * Tests the {@link AuthorityFactoryProxy} implementation. The tests in this class
- * are actually executed twice; once in this class and once again (with a different
- * value of {@link #specific}) in {@link AbstractAuthorityFactoryProxyTest}.
+ * Tests the {@link AuthorityFactoryProxy} implementation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.4
  */
 @Depend({WebCRSFactoryTest.class, AutoCRSFactoryTest.class})
-public class AuthorityFactoryProxyTest {
+public final class AuthorityFactoryProxyTest {
     /**
-     * The argument to be given to {@link AuthorityFactoryProxy#getInstance}. It control whatever
-     * the proxies are allowed to target specifically the Geotk implementation. The usual value
-     * is {@code true}, but we set it to {@code false} here for the purpose of this test suite only.
+     * Ensures that the most specific interfaces appear first in the list of proxies.
      */
-    protected boolean specific = false;
-
-    /**
-     * Gets the proxy instance to test for a given factory and type.
-     */
-    private AuthorityFactoryProxy getInstance(final AuthorityFactory factory,
-            final Class<? extends IdentifiedObject> type)
-    {
-        final AuthorityFactoryProxy proxy = AuthorityFactoryProxy.getInstance(factory, type, specific);
-        if (false) {
-            System.out.print(proxy.getClass().getSimpleName());
-            System.out.print(" proxy for type ");
-            System.out.println(type.getSimpleName());
+    @Test
+    public void testProxies() {
+        for (int i=1; i<PROXIES.length; i++) {
+            final Class<?> generic = PROXIES[i].type;
+            for (int j=0; j<i; j++) {
+                assertFalse(PROXIES[j].type.isAssignableFrom(generic));
+            }
         }
-        return proxy;
     }
 
     /**
-     * Asserts that the given class is of the expected type. If the test is allowed to create
-     * proxies targeting specifically the Geotk implementation, then the expected type will
-     * always be "Geotoolkit".
+     * Tests {@link AuthorityFactoryProxy#getInstance(Class)}.
      */
-    private void assertType(String expected, final AuthorityFactoryProxy proxy) {
-        if (specific) {
-            expected = "Geotoolkit"; // The inner class name, which is private.
-        }
-        assertEquals(expected, proxy.getClass().getSimpleName());
+    @Test
+    public void testType() {
+        assertEquals(ProjectedCRS.class,              getInstance(ProjectedCRS.class)        .type);
+        assertEquals(ProjectedCRS.class,              getInstance(DefaultProjectedCRS.class) .type);
+        assertEquals(GeographicCRS.class,             getInstance(GeographicCRS.class)       .type);
+        assertEquals(GeographicCRS.class,             getInstance(DefaultGeographicCRS.class).type);
+        assertEquals(DerivedCRS.class,                getInstance(DefaultDerivedCRS.class)   .type);
+        assertEquals(CoordinateReferenceSystem.class, getInstance(AbstractDerivedCRS.class)  .type);
+        assertEquals(GeodeticDatum.class,             getInstance(DefaultGeodeticDatum.class).type);
     }
 
     /**
-     * Tests {@link AuthorityFactoryProxy#create}. We uses the CRS factory for testing purpose.
+     * Tests {@link AuthorityFactoryProxy#createFromAPI(String)}.
+     * We uses the CRS factory for testing purpose.
      *
      * @throws FactoryException Should never happen.
      */
     @Test
-    public void testCreate() throws FactoryException {
+    public void testCreateFromAPI() throws FactoryException {
         final CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("CRS", null);
         final CoordinateReferenceSystem expected = factory.createCoordinateReferenceSystem("83");
-        AuthorityFactoryProxy proxy;
+        AuthorityFactoryProxy<?> proxy;
         /*
          * Try the proxy using the 'createGeographicCRS', 'createCoordinateReferenceSystem'
          * and 'createObject' methods. The later uses a generic implementation, while the
          * first two should use specialized implementations.
          */
-        proxy = getInstance(factory, GeographicCRS.class);
-        assertType("Geographic", proxy);
-        assertSame(expected, proxy.create("83"));
-        assertSame(expected, proxy.create("CRS:83"));
+        proxy = getInstance(GeographicCRS.class);
+        assertSame(GEOGRAPHIC_CRS, proxy);
+        assertSame(expected, proxy.createFromAPI(factory, "83"));
+        assertSame(expected, proxy.createFromAPI(factory, "CRS:83"));
 
-        proxy = getInstance(factory, CoordinateReferenceSystem.class);
-        assertType("CRS", proxy);
-        assertSame(expected, proxy.create("83"));
-        assertSame(expected, proxy.create("CRS:83"));
+        proxy = getInstance(CoordinateReferenceSystem.class);
+        assertSame(CRS, proxy);
+        assertSame(expected, proxy.createFromAPI(factory, "83"));
+        assertSame(expected, proxy.createFromAPI(factory, "CRS:83"));
 
-        proxy = getInstance(factory, IdentifiedObject.class);
-        assertType("Default", proxy);
-        assertSame(expected, proxy.create("83"));
-        assertSame(expected, proxy.create("CRS:83"));
+        proxy = getInstance(IdentifiedObject.class);
+        assertSame(OBJECT, proxy);
+        assertSame(expected, proxy.createFromAPI(factory, "83"));
+        assertSame(expected, proxy.createFromAPI(factory, "CRS:83"));
         /*
          * Try using the 'createProjectedCRS' method, which should not
          * be supported for the CRS factory (at least not for code "83").
          */
-        proxy = getInstance(factory, ProjectedCRS.class);
-        assertType("Projected", proxy);
+        proxy = getInstance(ProjectedCRS.class);
+        assertSame(PROJECTED_CRS, proxy);
         try {
-            assertSame(expected, proxy.create("83"));
+            assertSame(expected, proxy.createFromAPI(factory, "83"));
             fail();
         } catch (FactoryException e) {
             // This is the expected exception.
@@ -129,10 +123,10 @@ public class AuthorityFactoryProxyTest {
          * In addition, this code test the generic proxy instead of the
          * specialized 'GeographicCRS' and 'ProjectedCRS' variants.
          */
-        proxy = getInstance(factory, TemporalCRS.class);
-        assertType("Default", proxy);
+        proxy = getInstance(TemporalCRS.class);
+        assertSame(TEMPORAL_CRS, proxy);
         try {
-            assertSame(expected, proxy.create("83"));
+            assertSame(expected, proxy.createFromAPI(factory, "83"));
             fail();
         } catch (FactoryException e) {
             // This is the expected exception.

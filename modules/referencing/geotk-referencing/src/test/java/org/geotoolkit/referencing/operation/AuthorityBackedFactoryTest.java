@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIG
  * classpath, provided it is backed by an {@link AuthorityBackedFactory} instance.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 3.16 (derived from 3.07)
  */
@@ -48,6 +48,16 @@ public final class AuthorityBackedFactoryTest extends CoordinateOperationFactory
      */
     public AuthorityBackedFactoryTest() {
         super(null);
+    }
+
+    /**
+     * Returns {@code true} since this test suite is using {@link AuthorityBackedFactory}.
+     *
+     * @since 3.18
+     */
+    @Override
+    protected boolean useAuthorityFactory() {
+        return true;
     }
 
     /**

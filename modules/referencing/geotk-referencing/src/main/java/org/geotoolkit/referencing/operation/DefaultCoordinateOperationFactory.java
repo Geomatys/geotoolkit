@@ -60,6 +60,7 @@ import static java.util.Collections.singletonList;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import static org.geotoolkit.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
 
 
@@ -766,10 +767,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         }
         /*
          * The two geographic CRS use different datum. If Molodensky transformations
-         * are allowed, try them first. Note that is some case if the datum shift can't
+         * are allowed, try them first. Note that in some cases if the datum shift can't
          * be performed in a single Molodensky transformation step (i.e. if we need to
          * go through at least one intermediate datum), then we will use the geocentric
-         * transform below instead: it allows to concatenates many Bursa Wolf parameters
+         * transform below instead: it allows to concatenate many Bursa Wolf parameters
          * in a single affine transform.
          */
         if (molodenskyMethod != null) {
@@ -1559,7 +1560,7 @@ search: for (int j=0; j<targets.size(); j++) {
      * @since 3.07
      */
     private static boolean isDatumShiftRequired(final GeodeticDatum source, final GeodeticDatum target) {
-        if (equalsIgnoreMetadata(source, target)) {
+        if (equalsApproximatively(source, target)) {
             return false;
         }
         if (source instanceof DefaultGeodeticDatum) {
@@ -1578,7 +1579,10 @@ search: for (int j=0; j<targets.size(); j++) {
     }
 
     /**
-     * Compares the specified datum for equality, except the prime meridian.
+     * Compares the specified datum for equality, except the prime meridian. In principle,
+     * comparing the datum names should be sufficient. However we also compare ellipsoids
+     * for safety, with tolerance for rounding errors since the datum names were supposed
+     * to be the main criterion.
      *
      * @param  object1 The first object to compare (may be null).
      * @param  object2 The second object to compare (may be null).
@@ -1589,7 +1593,7 @@ search: for (int j=0; j<targets.size(); j++) {
     {
         object1 = TemporaryDatum.unwrap(object1);
         object2 = TemporaryDatum.unwrap(object2);
-        if (equalsIgnoreMetadata(object1.getEllipsoid(), object2.getEllipsoid())) {
+        if (equalsApproximatively(object1.getEllipsoid(), object2.getEllipsoid())) {
             return nameMatches(object1, object2.getName().getCode()) ||
                    nameMatches(object2, object1.getName().getCode());
         }

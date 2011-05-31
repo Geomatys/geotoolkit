@@ -42,6 +42,7 @@ import org.geotoolkit.measure.Units;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 
 /**
@@ -234,8 +235,8 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
                 }
                 default: {
                     final DefaultPrimeMeridian that = wrap((PrimeMeridian) object);
-                    return Utilities.equals(this.getGreenwichLongitude(NonSI.DEGREE_ANGLE),
-                                            that.getGreenwichLongitude(NonSI.DEGREE_ANGLE));
+                    return epsilonEqual(this.getGreenwichLongitude(NonSI.DEGREE_ANGLE),
+                                        that.getGreenwichLongitude(NonSI.DEGREE_ANGLE), mode);
                     /*
                      * Note: if mode==IGNORE_METADATA, we relax the unit check because EPSG uses
                      *       sexagesimal degrees for the Greenwich meridian. Requirying the same

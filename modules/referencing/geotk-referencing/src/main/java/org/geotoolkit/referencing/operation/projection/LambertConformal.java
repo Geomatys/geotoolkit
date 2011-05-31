@@ -41,6 +41,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
@@ -494,8 +495,7 @@ public class LambertConformal extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final LambertConformal that = (LambertConformal) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(this.n, that.n, strict);
+            return epsilonEqual(this.n, that.n, mode);
         }
         return false;
     }

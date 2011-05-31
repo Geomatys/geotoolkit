@@ -49,6 +49,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.Citations;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -1206,7 +1207,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     public IdentifiedObjectFinder getIdentifiedObjectFinder(Class<? extends IdentifiedObject> type)
             throws FactoryException
     {
-        return new Finder(type);
+        return new Finder(this, type);
     }
 
     /**
@@ -1226,7 +1227,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * @since 2.4
      * @module
      */
-    class Finder extends IdentifiedObjectFinder {
+    static class Finder extends IdentifiedObjectFinder {
         /**
          * The finder on which to delegate the work.
          */
@@ -1246,19 +1247,20 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
 
         /**
          * Creates a finder for the underlying backing store. This constructor sets the
-         * {@link #finder} field only, not {@link #proxy}. The proxy should be the same
-         * than {@code finder.proxy}, but we can't set it at construction time because
-         * it may change at any time (e.g. {@link ThreadedAuthorityFactory}).
+         * {@link #finder} field only, not {@link #factory}. The factory should be the same
+         * than {@code finder.factory}, but we can't set it at construction time because it
+         * may change at any time (e.g. {@link ThreadedAuthorityFactory}).
          */
-        Finder(final Class<? extends IdentifiedObject> type) throws FactoryException {
-            finder = getGeotoolkitFactory("getIdentifiedObjectFinder", null).getIdentifiedObjectFinder(type);
-            // Do not set the proxy; see javadoc.
+        Finder(final AuthorityFactoryAdapter factory, final Class<? extends IdentifiedObject> type)
+                throws FactoryException
+        {
+            super(factory, type);
+            finder = factory.getGeotoolkitFactory("getIdentifiedObjectFinder", null).getIdentifiedObjectFinder(type);
+            finder.setParent(this);
         }
 
         /**
-         * Returns the type of the objects to be created by the proxy instance. We need to delegate
-         * to the {@linkplain #finder}, not to the proxy used by the super-class, because the later
-         * may be null.
+         * Returns the type of the objects to be created by the proxy instance.
          */
         @Override
         final Class<? extends IdentifiedObject> getObjectType() {
@@ -1266,9 +1268,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         }
 
         /**
-         * Returns the authority of the factory examined by this finder. We need to delegate
-         * to the {@linkplain #finder}, not to the proxy used by the super-class, because the
-         * later may be null.
+         * Returns the authority of the factory examined by this finder.
          */
         @Override
         public final Citation getAuthority() throws FactoryException {
@@ -1277,8 +1277,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
 
         /**
          * Returns a set of authority codes that <strong>may</strong> identify the same
-         * object than the specified one. We need to delegate to the {@linkplain #finder},
-         * not to the proxy used by the super-class, because the later may be null.
+         * object than the specified one.
          */
         @Override
         protected final Set<String> getCodeCandidates(IdentifiedObject object) throws FactoryException {
@@ -1286,7 +1285,18 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         }
 
         /**
-         * Sets whatever an exhaustive scan against all registered objects is allowed.
+         * Propagates the configuration change to the underlying finder.
+         *
+         * @since 3.18
+         */
+        @Override
+        public final void setComparisonMode(final ComparisonMode mode) {
+            finder.setComparisonMode(mode);
+            super .setComparisonMode(mode);
+        }
+
+        /**
+         * Propagates the configuration change to the underlying finder.
          */
         @Override
         public final void setFullScanAllowed(final boolean fullScan) {
@@ -1329,7 +1339,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
                  */
                 case 1: {
                     assert code.equals(originalCode) : code;
-                    final IdentifiedObject object = replaceObject(original);
+                    final IdentifiedObject object = ((AuthorityFactoryAdapter) factory).replaceObject(original);
                     if (object != original) {
                         return object;
                     }

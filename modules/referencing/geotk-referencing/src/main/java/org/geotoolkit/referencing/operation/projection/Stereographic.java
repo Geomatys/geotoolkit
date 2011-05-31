@@ -31,6 +31,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic.PARAMETERS;
 
 
@@ -461,8 +462,7 @@ public class Stereographic extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final Stereographic that = (Stereographic) object;
-            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
-            return equals(this.phi0, that.phi0, strict);
+            return epsilonEqual(this.phi0, that.phi0, mode);
             // All other fields are derived from the latitude of origin.
         }
         return false;

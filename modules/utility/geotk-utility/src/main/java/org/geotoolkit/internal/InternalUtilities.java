@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
@@ -84,6 +85,21 @@ public final class InternalUtilities extends Static {
      */
     public static String identity(final Object value) {
         return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
+    }
+
+    /**
+     * Returns {@code true} if the given values are approximatively equal given the
+     * comparison mode.
+     *
+     * @param  v1 The first value to compare.
+     * @param  v2 The second value to compare.
+     * @param  mode The comparison mode to use for comparing the numbers.
+     * @return {@code true} If both values are approximatively equal.
+     *
+     * @since 3.18
+     */
+    public static boolean epsilonEqual(final double v1, final double v2, final ComparisonMode mode) {
+        return (mode == ComparisonMode.APPROXIMATIVE) ? epsilonEqual(v1, v2) : Utilities.equals(v1, v2);
     }
 
     /**
