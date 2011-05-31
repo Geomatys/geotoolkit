@@ -23,6 +23,7 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -47,7 +48,8 @@ public class CoverageProcessFactory extends AbstractProcessFactory{
 
     public CoverageProcessFactory(){
         super(CoverageToVectorDescriptor.INSTANCE,
-              TilingDescriptor.INSTANCE);
+              TilingDescriptor.INSTANCE,
+              CoverageToFeaturesDescriptor.INSTANCE);
     }
 
     @Override

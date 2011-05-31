@@ -14,12 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.raster.coveragetofeatures;
+package org.geotoolkit.process.coverage.coveragetofeatures;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.raster.RasterDescriptor;
+import org.geotoolkit.process.coverage.RasterDescriptor;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class CoverageToFeaturesDescriptor extends RasterDescriptor {
+public final class CoverageToFeaturesDescriptor extends RasterDescriptor {
 
     /**Process name : coveragetofeatures */
     public static final String NAME = "coveragetofeatures";

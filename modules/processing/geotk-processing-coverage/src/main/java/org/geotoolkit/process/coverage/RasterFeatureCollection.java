@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.raster;
+package org.geotoolkit.process.coverage;
 
 import java.util.AbstractCollection;
 

@@ -46,6 +46,17 @@
         <role>Developer</role>
       </roles>
     </developer>
+    <developer>
+        <name>Quentin Boileau</name>
+        <id>kite</id>
+        <email>quentin.boileau@gmail.com</email>
+        <organization>Geomatys</organization>
+        <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+        <timezone>+1</timezone>
+        <roles>
+            <role>Developer</role>
+        </roles>
+    </developer>
   </developers>
 
 
@@ -75,6 +86,17 @@
           <groupId>com.vividsolutions</groupId>
           <artifactId>jts</artifactId>
       </dependency>
+      
+      <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-epsg-javadb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
   </dependencies>
 
 </project>

@@ -14,19 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.raster.coveragetofeatures;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+package org.geotoolkit.process.coverage.coveragetofeatures;
 
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.process.raster.RasterFeatureCollection;
+import org.geotoolkit.process.coverage.RasterFeatureCollection;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.feature.Feature;

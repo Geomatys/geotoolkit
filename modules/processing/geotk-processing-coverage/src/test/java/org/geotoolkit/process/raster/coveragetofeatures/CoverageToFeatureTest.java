@@ -88,7 +88,7 @@ public class CoverageToFeatureTest {
         PixelInCell pixPos = PixelInCell.CELL_CENTER;
         GridCoverageReader reader = buildReader(pixPos);
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("raster", "coveragetofeatures");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
         org.geotoolkit.process.Process proc = desc.createProcess();
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
@@ -149,7 +149,7 @@ public class CoverageToFeatureTest {
         PixelInCell pixPos = PixelInCell.CELL_CORNER;
         GridCoverageReader reader = buildReader(pixPos);
         // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("raster", "coveragetofeatures");
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
         org.geotoolkit.process.Process proc = desc.createProcess();
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);

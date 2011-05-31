@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.raster;
+package org.geotoolkit.process.coverage;
 
 import java.util.Collection;
 
@@ -63,7 +63,7 @@ public abstract class RasterDescriptor extends AbstractProcessDescriptor {
     protected RasterDescriptor(String name, String msg,
             ParameterDescriptorGroup input, ParameterDescriptorGroup output) {
 
-        super(name, RasterProcessFactory.IDENTIFICATION,
+        super(name, CoverageProcessFactory.IDENTIFICATION,
                 new SimpleInternationalString(msg),
                 input, output);
     }
