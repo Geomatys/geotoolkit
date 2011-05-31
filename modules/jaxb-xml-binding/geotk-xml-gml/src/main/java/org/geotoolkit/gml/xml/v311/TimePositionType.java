@@ -30,8 +30,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.metadata.AbstractMetadata;
-import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Position;
@@ -95,6 +93,10 @@ public class TimePositionType implements Position {
      */
     public TimePositionType(final String value){
         this.value = value;
+    }
+    
+    public TimePositionType(final Position value){
+        this.value = formatter.format(value.getDate());
     }
 
     /**
@@ -276,7 +278,7 @@ public class TimePositionType implements Position {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("[TimePositionType] ");
+        StringBuilder s = new StringBuilder("{TimePositionType} ");
         if (calendarEraName != null) {
             s.append("calendarEraName:").append(calendarEraName).append('\n');
         }

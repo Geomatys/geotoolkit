@@ -100,6 +100,16 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     public Position getPosition() {
         return timePosition;
     }
+    
+    public void setPosition(final Position value) {
+        if (value instanceof TimePositionType) {
+            this.timePosition = (TimePositionType)value;
+        } else if (value != null) {
+            this.timePosition = new TimePositionType(value);
+        } else {
+            this.timePosition = null;
+        }
+    }
 
     public Collection<Period> getBegunBy() {
         return null;
