@@ -179,7 +179,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     /** First Bursa-Wolf method.   */ private static final int BURSA_WOLF_MIN_CODE = 9603;
     /**  Last Bursa-Wolf method.   */ private static final int BURSA_WOLF_MAX_CODE = 9607;
     /**   Rotation frame method.   */ private static final int ROTATION_FRAME_CODE = 9607;
-    /** Dummy operation to ignore. */ private static final int DUMMY_OPERATION     =    1;
 
     /**
      * List of tables and columns to test for codes values. This table is used by the
@@ -288,7 +287,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * will contains the database version in the {@linkplain Citation#getEdition edition}
      * attribute, together with the {@linkplain Citation#getEditionDate edition date}.
      */
-    private transient Citation authority;
+    private Citation authority;
 
     /**
      * Last object type returned by {@link #createObject}, or -1 if none.
@@ -301,7 +300,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * The last table in which object name were looked for.
      * This is for internal use by {@link #toPrimaryKey} only.
      */
-    private transient String lastTableForName;
+    private String lastTableForName;
 
     /**
      * The calendar instance for creating {@link java.util.Date} objects from a year
@@ -309,7 +308,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * quite accurate. But there is no obvious timezone for "epoch", and the "epoch"
      * is approximative anyway.
      */
-    private final Calendar calendar = Calendar.getInstance();
+    private Calendar calendar;
 
     /**
      * A pool of prepared statements. Key are {@link String} objects related to their
@@ -339,36 +338,45 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * in this map, and returns {@code false} if some are found (thus blocking the call to
      * {@link #dispose} by the {@link ThreadedEpsgFactory} timer).
      */
-    private final Map<Class<?>, Reference<AuthorityCodes>> authorityCodes =
-            new HashMap<Class<?>, Reference<AuthorityCodes>>();
+    private Map<Class<?>, Reference<AuthorityCodes>> authorityCodes;
 
     /**
      * Cache for axis names. This service is not provided by {@link CachingAuthorityFactory}
      * since {@link AxisName} objects are particular to the EPSG database.
      *
-     * @see #getAxisName
+     * @see #getAxisName(String)
      */
-    private final Map<String,AxisName> axisNames = new HashMap<String,AxisName>();
+    private Map<String,AxisName> axisNames;
 
     /**
      * Cache for axis numbers. This service is not provided by {@link CachingAuthorityFactory}
      * since the number of axis is used internally in this class.
      *
-     * @see #getDimensionForCS
+     * @see #getDimensionForCS(String)
      */
-    private final Map<String,Integer> axisCounts = new HashMap<String,Integer>();
+    private Map<String,Integer> axisCounts;
 
     /**
      * Cache for projection checks. This service is not provided by {@link CachingAuthorityFactory}
      * since the check that a transformation is a projection is used internally in this class.
      *
-     * @see #isProjection
+     * @see #isProjection(String)
      */
-    private final Map<String,Boolean> codeProjection = new HashMap<String,Boolean>();
+    private Map<String,Boolean> codeProjection;
+
+    /**
+     * Cache the positional accuracies. Most coordinate operation use a small
+     * set of accuracy values.
+     *
+     * @see #getAccuracy(double)
+     */
+    private Map<Double,PositionalAccuracy> accuracies;
 
     /**
      * Pool of naming systems, used for caching.
      * There is usually few of them (about 15).
+     *
+     * @see #createProperties
      */
     private final Map<String,NameSpace> scopes = new HashMap<String,NameSpace>();
 
@@ -566,6 +574,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * {@link #getDescriptionText} from user overriding of {@link #getAuthorityCodes}.
      */
     private synchronized Set<String> getAuthorityCodes0(final Class<?> type) throws FactoryException {
+        if (authorityCodes == null) {
+            authorityCodes = new HashMap<Class<?>, Reference<AuthorityCodes>>();
+        }
         /*
          * If the set were already requested previously for the given type, returns it.
          * Otherwise, a new one will be created (but will not use the database connection yet).
@@ -1452,7 +1463,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                   " ON CO.TARGET_CRS_CODE = CRS2.COORD_REF_SYS_CODE" +
                " WHERE CO.COORD_OP_METHOD_CODE >= " + BURSA_WOLF_MIN_CODE +
                  " AND CO.COORD_OP_METHOD_CODE <= " + BURSA_WOLF_MAX_CODE +
-                 " AND CO.COORD_OP_CODE <> " + DUMMY_OPERATION + // GEOT-1008
                  " AND CO.SOURCE_CRS_CODE IN (" +
               " SELECT CRS1.COORD_REF_SYS_CODE " + // GEOT-1129
                 " FROM [Coordinate Reference System] AS CRS1 " +
@@ -1592,8 +1602,12 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     properties.put(Datum.ANCHOR_POINT_KEY, anchor);
                 }
                 if (epoch != null && !epoch.isEmpty()) try {
+                    final int year = Integer.parseInt(epoch);
+                    if (calendar == null) {
+                        calendar = Calendar.getInstance();
+                    }
                     calendar.clear();
-                    calendar.set(Integer.parseInt(epoch), 0, 1);
+                    calendar.set(year, 0, 1);
                     properties.put(Datum.REALIZATION_EPOCH_KEY, calendar.getTime());
                 } catch (NumberFormatException exception) {
                     // Not a fatal error...
@@ -1656,6 +1670,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      */
     private AxisName getAxisName(final String code) throws FactoryException {
         assert Thread.holdsLock(this);
+        if (axisNames == null) {
+            axisNames = new HashMap<String,AxisName>();
+        }
         AxisName returnValue = axisNames.get(code);
         if (returnValue == null) try {
             final PreparedStatement stmt;
@@ -2382,6 +2399,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * Returns the dimension of the specified Coordinate System, or {@code null} if not found.
      */
     private Integer getDimensionForCS(final String code) throws NoSuchIdentifierException, SQLException {
+        if (axisCounts == null) {
+            axisCounts = new HashMap<String,Integer>();
+        }
         Integer dimension = axisCounts.get(code);
         if (dimension == null) {
             final PreparedStatement stmt;
@@ -2406,6 +2426,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @throws SQLException If an error occurred while querying the database.
      */
     final boolean isProjection(final String code) throws NoSuchIdentifierException, SQLException {
+        if (codeProjection == null) {
+            codeProjection = new HashMap<String,Boolean>();
+        }
         final PreparedStatement stmt;
         Boolean projection = codeProjection.get(code);
         if (projection == null) {
@@ -2421,6 +2444,32 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             codeProjection.put(code, projection);
         }
         return projection.booleanValue();
+    }
+
+    /**
+     * Wraps the given accuracy value in a {@link PositionalAccuracy} metadata.
+     *
+     * @since 3.18
+     */
+    private PositionalAccuracy getAccuracy(final double accuracy) {
+        if (accuracies == null) {
+            accuracies = new HashMap<Double,PositionalAccuracy>();
+        }
+        final Double key = accuracy;
+        PositionalAccuracy element = accuracies.get(key);
+        if (element == null) {
+            final DefaultQuantitativeResult accuracyResult;
+            final DefaultAbsoluteExternalPositionalAccuracy accuracyElement;
+            accuracyResult = new DefaultQuantitativeResult(new double[] {accuracy});
+            accuracyResult.setValueUnit(SI.METRE); // In metres by definition in the EPSG database.
+            accuracyElement = new DefaultAbsoluteExternalPositionalAccuracy(accuracyResult);
+            accuracyElement.setMeasureDescription(TRANSFORMATION_ACCURACY);
+            accuracyElement.setEvaluationMethodType(EvaluationMethodType.DIRECT_EXTERNAL);
+            accuracyElement.freeze();
+            element = accuracyElement;
+            accuracies.put(key, element);
+        }
+        return element;
     }
 
     /**
@@ -2590,22 +2639,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     properties.put(CoordinateOperation.OPERATION_VERSION_KEY, version);
                 }
                 if (!Double.isNaN(accuracy)) {
-                    final DefaultQuantitativeResult accuracyResult;
-                    final DefaultAbsoluteExternalPositionalAccuracy accuracyElement;
-                    accuracyResult = new DefaultQuantitativeResult(new double[] {accuracy});
-                    /*
-                     * TODO: The type declared in the MS-Access database is float.
-                     *       So it would be nice to invoke something equivalent to:
-                     *
-                     *         accuracyResult.setValueType(Float.class);
-                     */
-                    accuracyResult.setValueUnit(SI.METRE); // In metres by definition in the EPSG database.
-                    accuracyElement = new DefaultAbsoluteExternalPositionalAccuracy(accuracyResult);
-                    accuracyElement.setMeasureDescription(TRANSFORMATION_ACCURACY);
-                    accuracyElement.setEvaluationMethodType(EvaluationMethodType.DIRECT_EXTERNAL);
-                    accuracyElement.freeze();
-                    properties.put(CoordinateOperation.COORDINATE_OPERATION_ACCURACY_KEY,
-                            new PositionalAccuracy[] {accuracyElement});
+                    properties.put(CoordinateOperation.COORDINATE_OPERATION_ACCURACY_KEY, getAccuracy(accuracy));
                 }
                 /*
                  * Creates the operation. Conversions should be the only operations allowed to
@@ -2765,8 +2799,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                           " WHERE SOURCE_CRS_CODE = ?" +
                             " AND TARGET_CRS_CODE = ?" +
                        " ORDER BY ABS(CO.DEPRECATED), COORD_OP_ACCURACY, " +
-                       " ABS((AREA_NORTH_BOUND_LAT - AREA_SOUTH_BOUND_LAT) *" +
-                            " (AREA_EAST_BOUND_LON - AREA_WEST_BOUND_LON)) DESC";
+                       " ABS((AREA_EAST_BOUND_LON - AREA_WEST_BOUND_LON) *" +
+                          " (AREA_NORTH_BOUND_LAT - AREA_SOUTH_BOUND_LAT) * COS(0.5*RADIANS" +
+                           "(AREA_NORTH_BOUND_LAT + AREA_SOUTH_BOUND_LAT))) DESC";
                 } else {
                     key = "ConversionFromCRS";
                     sql = "SELECT PROJECTION_CONV_CODE" +
@@ -3052,19 +3087,21 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * still in use.
      */
     final synchronized boolean canDispose() {
-        System.gc(); // For cleaning as much weak references as we can before we check them.
         boolean can = true;
-        for (final Iterator<Reference<AuthorityCodes>> it=authorityCodes.values().iterator(); it.hasNext();) {
-            final AuthorityCodes codes = it.next().get();
-            if (codes == null) {
-                it.remove();
-                continue;
+        if (authorityCodes != null) {
+            System.gc(); // For cleaning as much weak references as we can before we check them.
+            for (final Iterator<Reference<AuthorityCodes>> it=authorityCodes.values().iterator(); it.hasNext();) {
+                final AuthorityCodes codes = it.next().get();
+                if (codes == null) {
+                    it.remove();
+                    continue;
+                }
+                /*
+                 * A set of authority codes is still in use. We can't dispose this factory.
+                 * But we continue the iteration anyway to cleanup the weak references.
+                 */
+                can = false;
             }
-            /*
-             * A set of authority codes is still in use. We can't dispose this factory.
-             * But we continue the iteration anyway to cleanup the weak references.
-             */
-            can = false;
         }
         return can;
     }
@@ -3080,12 +3117,14 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         final boolean isClosed;
         try {
             isClosed = connection.isClosed();
-            for (final Iterator<Reference<AuthorityCodes>> it=authorityCodes.values().iterator(); it.hasNext();) {
-                final AuthorityCodes set = it.next().get();
-                if (set != null) {
-                    set.finalize();
+            if (authorityCodes != null) {
+                for (final Iterator<Reference<AuthorityCodes>> it=authorityCodes.values().iterator(); it.hasNext();) {
+                    final AuthorityCodes set = it.next().get();
+                    if (set != null) {
+                        set.finalize();
+                    }
+                    it.remove();
                 }
-                it.remove();
             }
             for (final Iterator<PreparedStatement> it=statements.values().iterator(); it.hasNext();) {
                 it.next().close();

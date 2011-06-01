@@ -179,7 +179,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.operation.CoordinateOperation#COORDINATE_OPERATION_ACCURACY_KEY}&nbsp;</td>
-     *     <td nowrap>&nbsp;<code>{@linkplain PositionalAccuracy}[]</code>&nbsp;</td>
+     *     <td nowrap>&nbsp;<code>{@linkplain PositionalAccuracy} (singleton or array)</code>&nbsp;</td>
      *     <td nowrap>&nbsp;{@link #getCoordinateOperationAccuracy}</td>
      *   </tr>
      *   <tr>
@@ -219,20 +219,22 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                                         final MathTransform             transform)
     {
         super(properties, subProperties, LOCALIZABLES);
-        PositionalAccuracy[] positionalAccuracy;
-        domainOfValidity   = (Extent)               subProperties.get(DOMAIN_OF_VALIDITY_KEY);
-        scope              = (InternationalString)  subProperties.get(SCOPE_KEY);
-        operationVersion   = (String)               subProperties.get(OPERATION_VERSION_KEY);
-        positionalAccuracy = (PositionalAccuracy[]) subProperties.get(COORDINATE_OPERATION_ACCURACY_KEY);
-        if (positionalAccuracy == null || positionalAccuracy.length == 0) {
-            positionalAccuracy = null;
-        } else {
-            positionalAccuracy = positionalAccuracy.clone();
-            for (int i=0; i<positionalAccuracy.length; i++) {
-                ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, i, positionalAccuracy);
+        Object positionalAccuracy;
+        domainOfValidity   = (Extent)              subProperties.get(DOMAIN_OF_VALIDITY_KEY);
+        scope              = (InternationalString) subProperties.get(SCOPE_KEY);
+        operationVersion   = (String)              subProperties.get(OPERATION_VERSION_KEY);
+        positionalAccuracy =                       subProperties.get(COORDINATE_OPERATION_ACCURACY_KEY);
+        if (positionalAccuracy instanceof PositionalAccuracy[]) {
+            final PositionalAccuracy[] accuracies = ((PositionalAccuracy[]) positionalAccuracy).clone();
+            for (int i=0; i<accuracies.length; i++) {
+                ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, i, accuracies);
             }
+            coordinateOperationAccuracy = nonEmptySet(accuracies);
+        } else {
+            coordinateOperationAccuracy = (positionalAccuracy == null)
+                    ? Collections.<PositionalAccuracy>emptySet()
+                    : Collections.singleton((PositionalAccuracy) positionalAccuracy);
         }
-        this.coordinateOperationAccuracy = nonEmptySet(positionalAccuracy);
         this.sourceCRS = sourceCRS;
         this.targetCRS = targetCRS;
         this.transform = transform;

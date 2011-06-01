@@ -56,7 +56,7 @@
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.18
  *
  * @since 2.0
  * @module
