@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
@@ -243,7 +244,7 @@ public class SpatialDatabase extends Database {
             horizontalSRID = 0;
             return;
         }
-        final String code = CRS.lookupIdentifier(Citations.POSTGIS, horizontalCRS, false);
+        final String code = IdentifiedObjects.lookupIdentifier(Citations.POSTGIS, horizontalCRS, false);
         if (code != null) try {
             horizontalSRID = Integer.parseInt(code);
             return;
@@ -253,7 +254,7 @@ public class SpatialDatabase extends Database {
         /*
          * No PostGIS code. Search for an EPSG code...
          */
-        Integer id = CRS.lookupEpsgCode(horizontalCRS, true);
+        Integer id = IdentifiedObjects.lookupEpsgCode(horizontalCRS, true);
         if (id != null) {
             try {
                 final Connection c = getDataSource(true).getConnection();

@@ -730,7 +730,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                 type = SingleOperation.class;
                 final StringBuilder buffer = new StringBuilder();
                 for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
-                    final String id = IdentifiedObjects.getDeclaredIdentifier(step);
+                    final String id = IdentifiedObjects.getIdentifier(step);
                     if (id != null) {
                         if (buffer.length() != 0) {
                             buffer.append(" + ");

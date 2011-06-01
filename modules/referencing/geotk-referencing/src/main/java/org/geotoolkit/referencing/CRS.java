@@ -88,7 +88,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * <p>
  * <ul>
  *   <li>Methods working with factories, like {@link #decode(String)}.</li>
- *   <li>Methods providing informations, like {@link #lookupIdentifier(IdentifiedObject,boolean)}.</li>
+ *   <li>Methods providing informations, like {@link #isHorizontalCRS(CoordinateReferenceSystem)}.</li>
  *   <li>Methods performing coordinate transformations, like {@link #transform(CoordinateOperation,Envelope)}.</li>
  * </ul>
  *
@@ -1130,7 +1130,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      */
     @Deprecated
     public static String getDeclaredIdentifier(final IdentifiedObject object) {
-        return IdentifiedObjects.getDeclaredIdentifier(object);
+        return IdentifiedObjects.getIdentifier(object);
     }
 
     /**
@@ -1146,7 +1146,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * comparison fails, then this method returns {@code null}. Consequently this method may
      * returns {@code null} even if the given object declares explicitly its identifier. If
      * the declared identifier is wanted unconditionally, use
-     * {@link IdentifiedObjects#getDeclaredIdentifier(IdentifiedObject)} instead.
+     * {@link IdentifiedObjects#getIdentifier(IdentifiedObject)} instead.
      *
      * {@section Recommanded alternatives}
      * This convenience method delegates its work to {@link IdentifiedObjectFinder}. If you
@@ -1168,23 +1168,14 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category information
      * @since 2.4
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
+    @Deprecated
     public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
             throws FactoryException
     {
-        if (object == null) {
-            return null;
-        }
-        /*
-         * We perform the search using the 'xyFactory' because our implementation of
-         * IdentifiedObjectFinder should be able to inspect both the (x,y) and (y,x)
-         * axis order using this factory.
-         */
-        final AbstractAuthorityFactory xyFactory = (AbstractAuthorityFactory) getAuthorityFactory(true);
-        final IdentifiedObjectFinder finder = xyFactory.getIdentifiedObjectFinder(object.getClass());
-        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
-        finder.setFullScanAllowed(fullScan);
-        return finder.findIdentifier(object);
+        return IdentifiedObjects.lookupIdentifier(object, fullScan);
     }
 
     /**
@@ -1201,10 +1192,6 @@ compare:    for (final SingleCRS component : actualComponents) {
      * result formatted in a {@code "urn:ogc:def:"} or
      * {@value org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory#BASE_URL} namespace.
      *
-     * {@note The type in the method signature is restricted to <code>CoordinateReferenceSystem</code>
-     *        instead than <code>IdentifiedObject</code> because current implementation searches
-     *        using only CRS authority factory.}
-     *
      * @param  authority The authority for the code to search.
      * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
      * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
@@ -1215,37 +1202,15 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category information
      * @since 2.5
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
+    @Deprecated
     public static String lookupIdentifier(final Citation authority,
             final CoordinateReferenceSystem crs, // Not IdentifiedObject, see javadoc comment.
             final boolean fullScan) throws FactoryException
     {
-        ensureNonNull("authority", authority);
-        if (crs == null) {
-            return null;
-        }
-        ReferenceIdentifier id = IdentifiedObjects.getIdentifier(crs, authority);
-        if (id != null) {
-            return id.getCode();
-        }
-        final DefaultAuthorityFactory df = (DefaultAuthorityFactory) getAuthorityFactory(true);
-        for (final AuthorityFactory factory : df.backingStore.getFactories()) {
-            if (!Citations.identifierMatches(factory.getAuthority(), authority)) {
-                continue;
-            }
-            if (!(factory instanceof AbstractAuthorityFactory)) {
-                continue;
-            }
-            final AbstractAuthorityFactory f = (AbstractAuthorityFactory) factory;
-            final IdentifiedObjectFinder finder = f.getIdentifiedObjectFinder(crs.getClass());
-            finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
-            finder.setFullScanAllowed(fullScan);
-            final String code = finder.findIdentifier(crs);
-            if (code != null) {
-                return code;
-            }
-        }
-        return null;
+        return IdentifiedObjects.lookupIdentifier(authority, crs, fullScan);
     }
 
     /**
@@ -1263,23 +1228,13 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category information
      * @since 2.5
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
     public static Integer lookupEpsgCode(final CoordinateReferenceSystem crs, final boolean fullScan)
             throws FactoryException
     {
-        final String identifier = lookupIdentifier(Citations.EPSG, crs, fullScan);
-        if (identifier != null) {
-            final int split = identifier.lastIndexOf(DefaultNameSpace.DEFAULT_SEPARATOR);
-            final String code = identifier.substring(split + 1);
-            // The above code works even if the separator was not found, since in such case
-            // split == -1, which implies a call to substring(0) which returns 'identifier'.
-            try {
-                return Integer.parseInt(code);
-            } catch (NumberFormatException e) {
-                throw new FactoryException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, identifier), e);
-            }
-        }
-        return null;
+        return IdentifiedObjects.lookupEpsgCode(crs, fullScan);
     }
 
 

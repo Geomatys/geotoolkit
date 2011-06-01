@@ -33,12 +33,20 @@ import java.io.ObjectStreamException;
 import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
+import org.opengis.util.FactoryException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
+import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
@@ -135,8 +143,10 @@ public final class IdentifiedObjects extends Static {
 
     /**
      * Returns the informations provided in the specified identified object as a map of
-     * properties. The returned map contains key such as {@link IdentifiedObject#NAME_KEY NAME_KEY},
-     * and values from methods such as {@link IdentifiedObject#getName()}.
+     * properties. The returned map contains keys declared in the {@link IdentifiedObject}
+     * interface, for example {@link IdentifiedObject#NAME_KEY NAME_KEY}. The values are
+     * obtained by calls to the methods associated to each key, for example
+     * {@link IdentifiedObject#getName()} for the {@code NAME_KEY}.
      *
      * @param  info The identified object to view as a properties map.
      * @return An view of the identified object as an immutable map.
@@ -148,8 +158,7 @@ public final class IdentifiedObjects extends Static {
 
     /**
      * Returns the properties to be given to an identified object derived from the specified one.
-     * This method is typically used for creating a new CRS identical to an existing one except
-     * for axis units. This method returns the same properties than the supplied argument (as of
+     * This method returns the same properties than the supplied argument (as of
      * <code>{@linkplain #getProperties(IdentifiedObject) getProperties}(info)</code>), except for
      * the following:
      * <p>
@@ -172,102 +181,6 @@ public final class IdentifiedObjects extends Static {
         properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));
         properties.remove(IDENTIFIERS_KEY);
         return properties;
-    }
-
-    /**
-     * Returns the declared identifier, or {@code null} if none. This method searches for the first
-     * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
-     * At the opposite of {@link CRS#lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
-     * <em>this method does not verify the identifier validity</em>.
-     * <p>
-     * More specifically, this method uses the first non-null element found in
-     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
-     * is none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()}</code> -
-     * which is not guaranteed to be a valid identifier.
-     *
-     * {@section Recommanded alternatives}
-     * <ul>
-     *   <li>If the code of a specific authority is wanted (typically EPSG), then consider
-     *       using {@link #getIdentifier(IdentifiedObject, Citation)} instead.</li>
-     *   <li>In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
-     *       database looking for a match, use one of the lookup methods in the {@link CRS} class.</li>
-     * </ul>
-     *
-     * @param  object The identified object, or {@code null}.
-     * @return Identifier represented as a string for communication between systems, or {@code null}.
-     *
-     * @see #getIdentifier(IdentifiedObject, Citation)
-     * @see CRS#lookupIdentifier(IdentifiedObject, boolean)
-     */
-    public static String getDeclaredIdentifier(final IdentifiedObject object) {
-        if (object != null) {
-            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
-            if (identifiers != null) {
-                for (final ReferenceIdentifier identifier : identifiers) {
-                    if (identifier != null) { // Paranoiac check.
-                        final String code = identifier.toString();
-                        if (code != null) { // Paranoiac check.
-                            return code;
-                        }
-                    }
-                }
-            }
-            final ReferenceIdentifier name = object.getName();
-            if (name != null) {
-                return name.toString();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns an identifier for the given object according the given authority. This method checks
-     * all {@linkplain IdentifiedObject#getIdentifiers() identifiers} in their iteration order. It
-     * returns the first identifier with an {@linkplain ReferenceIdentifier#getAuthority authority}
-     * citation {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
-     * Citation) matching} the specified authority.
-     *
-     * @param  object The object to get the identifier from, or {@code null}.
-     * @param  authority The authority for the identifier to return, or {@code null} for
-     *         the first identifier regardless its authority.
-     * @return The object's identifier, or {@code null} if no identifier matching the specified
-     *         authority was found.
-     *
-     * @see AbstractIdentifiedObject#getIdentifier(Citation)
-     */
-    public static ReferenceIdentifier getIdentifier(final IdentifiedObject object, final Citation authority) {
-        if (object instanceof AbstractIdentifiedObject) {
-            // Gives a chances to subclasses to get their overridden method invoked.
-            return ((AbstractIdentifiedObject) object).getIdentifier(authority);
-        }
-        return identifier(object, authority);
-    }
-
-    /**
-     * Returns an identifier according the given authority.
-     *
-     * @param  object The object to get the identifier from, or {@code null}.
-     * @param  authority The authority for the identifier to return, or {@code null}.
-     * @return The object's identifier, or {@code null} if none.
-     */
-    static ReferenceIdentifier identifier(final IdentifiedObject object, final Citation authority) {
-        if (object != null) {
-            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
-            if (identifiers != null) {
-                for (final ReferenceIdentifier identifier : identifiers) {
-                    if (identifier != null) { // Paranoiac check.
-                        if (authority == null) {
-                            return identifier;
-                        }
-                        final Citation infoAuthority = identifier.getAuthority();
-                        if (infoAuthority != null && identifierMatches(authority, infoAuthority)) {
-                            return identifier;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -351,6 +264,236 @@ public final class IdentifiedObjects extends Static {
             }
         }
         return name;
+    }
+
+    /**
+     * Returns an identifier for the given object according the given authority. This method checks
+     * all {@linkplain IdentifiedObject#getIdentifiers() identifiers} in their iteration order. It
+     * returns the first identifier with an {@linkplain ReferenceIdentifier#getAuthority authority}
+     * citation {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
+     * Citation) matching} the specified authority.
+     *
+     * @param  object The object to get the identifier from, or {@code null}.
+     * @param  authority The authority for the identifier to return, or {@code null} for
+     *         the first identifier regardless its authority.
+     * @return The object's identifier, or {@code null} if no identifier matching the specified
+     *         authority was found.
+     *
+     * @see AbstractIdentifiedObject#getIdentifier(Citation)
+     */
+    public static ReferenceIdentifier getIdentifier(final IdentifiedObject object, final Citation authority) {
+        if (object instanceof AbstractIdentifiedObject) {
+            // Gives a chances to subclasses to get their overridden method invoked.
+            return ((AbstractIdentifiedObject) object).getIdentifier(authority);
+        }
+        return identifier(object, authority);
+    }
+
+    /**
+     * Returns an identifier according the given authority.
+     *
+     * @param  object The object to get the identifier from, or {@code null}.
+     * @param  authority The authority for the identifier to return, or {@code null}.
+     * @return The object's identifier, or {@code null} if none.
+     */
+    static ReferenceIdentifier identifier(final IdentifiedObject object, final Citation authority) {
+        if (object != null) {
+            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
+            if (identifiers != null) {
+                for (final ReferenceIdentifier identifier : identifiers) {
+                    if (identifier != null) { // Paranoiac check.
+                        if (authority == null) {
+                            return identifier;
+                        }
+                        final Citation infoAuthority = identifier.getAuthority();
+                        if (infoAuthority != null && identifierMatches(authority, infoAuthority)) {
+                            return identifier;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the declared identifier, or {@code null} if none. This method searches for the first
+     * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
+     * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
+     * <em>this method does not verify the identifier validity</em>.
+     * <p>
+     * More specifically, this method uses the first non-null element found in
+     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
+     * is none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()}</code> -
+     * which is not guaranteed to be a valid identifier.
+     *
+     * {@section Recommanded alternatives}
+     * <ul>
+     *   <li>If the code of a specific authority is wanted (typically EPSG), then consider
+     *       using {@link #getIdentifier(IdentifiedObject, Citation)} instead.</li>
+     *   <li>In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
+     *       database looking for a match, use one of the lookup methods defined below.</li>
+     * </ul>
+     *
+     * @param  object The identified object, or {@code null}.
+     * @return Identifier represented as a string for communication between systems, or {@code null}.
+     *
+     * @see #getIdentifier(IdentifiedObject, Citation)
+     * @see #lookupIdentifier(IdentifiedObject, boolean)
+     */
+    public static String getIdentifier(final IdentifiedObject object) {
+        if (object != null) {
+            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
+            if (identifiers != null) {
+                for (final ReferenceIdentifier identifier : identifiers) {
+                    if (identifier != null) { // Paranoiac check.
+                        final String code = identifier.toString();
+                        if (code != null) { // Paranoiac check.
+                            return code;
+                        }
+                    }
+                }
+            }
+            final ReferenceIdentifier name = object.getName();
+            if (name != null) {
+                return name.toString();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Looks up an {@linkplain ReferenceIdentifier identifier}, such as {@code "EPSG:4326"},
+     * of the specified object. This method searches in registered factories for an object
+     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
+     * object. If such an object is found, then its first identifier is returned. Otherwise
+     * this method returns {@code null}.
+     * <p>
+     * <strong>Note that this method checks the identifier validity</strong>. If the given object
+     * declares explicitly an identifier, then this method will instantiate an object from the
+     * authority factory using that identifier and compare it with the given object. If the
+     * comparison fails, then this method returns {@code null}. Consequently this method may
+     * returns {@code null} even if the given object declares explicitly its identifier. If
+     * the declared identifier is wanted unconditionally, use
+     * {@link #getIdentifier(IdentifiedObject)} instead.
+     *
+     * @param  object The object (usually a {@linkplain CoordinateReferenceSystem coordinate
+     *         reference system}) whose identifier is to be found, or {@code null}.
+     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
+     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
+     *         identifiers and names will be performed.
+     * @return The identifier, or {@code null} if none was found or if the given object was null.
+     * @throws FactoryException If an unexpected failure occurred during the search.
+     *
+     * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
+     * @see IdentifiedObjectFinder#findIdentifier(IdentifiedObject)
+     */
+    public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
+            throws FactoryException
+    {
+        if (object == null) {
+            return null;
+        }
+        /*
+         * We perform the search using the 'xyFactory' because our implementation of
+         * IdentifiedObjectFinder should be able to inspect both the (x,y) and (y,x)
+         * axis order using this factory.
+         */
+        final AbstractAuthorityFactory xyFactory = (AbstractAuthorityFactory) CRS.getAuthorityFactory(true);
+        final IdentifiedObjectFinder finder = xyFactory.getIdentifiedObjectFinder(object.getClass());
+        finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
+        finder.setFullScanAllowed(fullScan);
+        return finder.findIdentifier(object);
+    }
+
+    /**
+     * Looks up an {@linkplain ReferenceIdentifier identifier} in the namespace of the given
+     * authority, such as {@link Citations#EPSG EPSG}, of the specified CRS. Invoking this
+     * method is equivalent to invoking
+     * <code>{@linkplain #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier}(object,
+     * fullScan)</code> except that the search is performed only among the factories of the given
+     * authority.
+     *
+     * {@section Identifiers in URN and HTTP namespaces}
+     * Note that if the given authority is {@link Citations#URN_OGC} or {@link Citations#HTTP_OGC},
+     * then this method behaves as if the code was searched in all authority factories and the
+     * result formatted in a {@code "urn:ogc:def:"} or
+     * {@value org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory#BASE_URL} namespace.
+     *
+     * @param  authority The authority for the code to search.
+     * @param  object The object (usually a {@linkplain CoordinateReferenceSystem coordinate
+     *         reference system}) whose identifier is to be found, or {@code null}.
+     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
+     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
+     *         identifiers and names will be performed.
+     * @return The identifier, or {@code null} if none was found or if the given object was null.
+     * @throws FactoryException If an unexpected failure occurred during the search.
+     *
+     * @category information
+     */
+    public static String lookupIdentifier(final Citation authority, final IdentifiedObject object,
+            final boolean fullScan) throws FactoryException
+    {
+        ensureNonNull("authority", authority);
+        if (object == null) {
+            return null;
+        }
+        ReferenceIdentifier id = IdentifiedObjects.getIdentifier(object, authority);
+        if (id != null) {
+            return id.getCode();
+        }
+        final DefaultAuthorityFactory df = (DefaultAuthorityFactory) CRS.getAuthorityFactory(true);
+        for (final AuthorityFactory factory : df.backingStore.getFactories()) {
+            if (!Citations.identifierMatches(factory.getAuthority(), authority)) {
+                continue;
+            }
+            if (!(factory instanceof AbstractAuthorityFactory)) {
+                continue;
+            }
+            final AbstractAuthorityFactory f = (AbstractAuthorityFactory) factory;
+            final IdentifiedObjectFinder finder = f.getIdentifiedObjectFinder(object.getClass());
+            finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
+            finder.setFullScanAllowed(fullScan);
+            final String code = finder.findIdentifier(object);
+            if (code != null) {
+                return code;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Looks up an EPSG code of the given {@linkplain CoordinateReferenceSystem
+     * coordinate reference system}). This is a convenience method for <code>{@linkplain
+     * #lookupIdentifier(Citation, CoordinateReferenceSystem, boolean) lookupIdentifier}({@linkplain
+     * Citations#EPSG EPSG}, crs, fullScan)</code> with the returned code parsed as an integer.
+     *
+     * @param  object The object (usually a {@linkplain CoordinateReferenceSystem coordinate
+     *         reference system}) whose identifier is to be found, or {@code null}.
+     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
+     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
+     *         identifiers and names will be performed.
+     * @return The identifier, or {@code null} if none was found or if the given object was null.
+     * @throws FactoryException If an unexpected failure occurred during the search.
+     *
+     * @category information
+     */
+    public static Integer lookupEpsgCode(final IdentifiedObject object, final boolean fullScan)
+            throws FactoryException
+    {
+        final String identifier = lookupIdentifier(Citations.EPSG, object, fullScan);
+        if (identifier != null) {
+            final int split = identifier.lastIndexOf(DefaultNameSpace.DEFAULT_SEPARATOR);
+            final String code = identifier.substring(split + 1);
+            // The above code works even if the separator was not found, since in such case
+            // split == -1, which implies a call to substring(0) which returns 'identifier'.
+            try {
+                return Integer.parseInt(code);
+            } catch (NumberFormatException e) {
+                throw new FactoryException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, identifier), e);
+            }
+        }
+        return null;
     }
 
     /**

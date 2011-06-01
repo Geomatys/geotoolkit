@@ -388,9 +388,9 @@ public final class Referencing extends Formulas implements XReferencing {
         if (logger.isLoggable(Level.FINER)) {
             final LogRecord record = Loggings.format(Level.FINER,
                     Loggings.Keys.CREATED_COORDINATE_OPERATION_$3,
-                    IdentifiedObjects.getDeclaredIdentifier(operation),
-                    IdentifiedObjects.getDeclaredIdentifier(sourceCRS),
-                    IdentifiedObjects.getDeclaredIdentifier(targetCRS));
+                    IdentifiedObjects.getIdentifier(operation),
+                    IdentifiedObjects.getIdentifier(sourceCRS),
+                    IdentifiedObjects.getIdentifier(targetCRS));
             record.setSourceClassName(Referencing.class.getName());
             record.setSourceMethodName(method);
             logger.log(record);

@@ -555,6 +555,45 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
+     * Returns this object name according the given authority. This method checks first the
+     * {@linkplain #getName() primary name}, then all {@linkplain #getAlias() alias} in their
+     * iteration order.
+     *
+     * <ul>
+     *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
+     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority
+     *       identifier authority} against the specified citation using the
+     *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches}
+     *       method. If a matching is found, then this method returns the
+     *       {@linkplain ReferenceIdentifier#getCode identifier code} of this object.</p></li>
+     *
+     *   <li><p>Otherwise, if the alias implements the {@link GenericName} interface, then this
+     *       method compares the {@linkplain GenericName#scope name scope} against the specified
+     *       citation using the {@linkplain Citations#identifierMatches(Citation,String)
+     *       identifierMatches} method. If a matching is found, then this method returns the
+     *       {@linkplain GenericName#tip name tip} of this object.</p></li>
+     * </ul>
+     *
+     * Note that alias may implement both the {@link ReferenceIdentifier} and {@link GenericName}
+     * interfaces (for example {@link NamedIdentifier}). In such cases, the identifier view has
+     * precedence.
+     *
+     * @param  authority The authority for the name to return, or {@code null} for any authority.
+     * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code}
+     *         or a {@linkplain GenericName#tip name tip}), or {@code null} if
+     *         no name matching the specified authority was found.
+     *
+     * @see #getName()
+     * @see #getAlias()
+     * @see IdentifiedObjects#getName(IdentifiedObject, Citation)
+     *
+     * @since 2.2
+     */
+    public String getName(final Citation authority) {
+        return IdentifiedObjects.name(this, authority);
+    }
+
+    /**
      * An alternative name by which this object is identified.
      *
      * @return The aliases, or an empty array if there is none.
@@ -599,6 +638,26 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns an identifier according the given authority. This method checks all
+     * {@linkplain #getIdentifiers identifiers} in their iteration order. It returns the first
+     * identifier with an {@linkplain ReferenceIdentifier#getAuthority authority} citation
+     * {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
+     * Citation) matching} the specified authority.
+     *
+     * @param  authority The authority for the identifier to return, or {@code null} for
+     *         the first identifier regardless its authority.
+     * @return The object's identifier, or {@code null} if no identifier matching the specified
+     *         authority was found.
+     *
+     * @see IdentifiedObjects#getIdentifier(IdentifiedObject, Citation)
+     *
+     * @since 2.2
+     */
+    public ReferenceIdentifier getIdentifier(final Citation authority) {
+        return IdentifiedObjects.identifier(this, authority);
     }
 
     /**
@@ -653,26 +712,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Returns an identifier according the given authority. This method checks all
-     * {@linkplain #getIdentifiers identifiers} in their iteration order. It returns the first
-     * identifier with an {@linkplain ReferenceIdentifier#getAuthority authority} citation
-     * {@linkplain org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,
-     * Citation) matching} the specified authority.
-     *
-     * @param  authority The authority for the identifier to return, or {@code null} for
-     *         the first identifier regardless its authority.
-     * @return The object's identifier, or {@code null} if no identifier matching the specified
-     *         authority was found.
-     *
-     * @see IdentifiedObjects#getIdentifier(IdentifiedObject, Citation)
-     *
-     * @since 2.2
-     */
-    public ReferenceIdentifier getIdentifier(final Citation authority) {
-        return IdentifiedObjects.identifier(this, authority);
-    }
-
-    /**
      * Returns an identifier according the given authority. This method performs the same search
      * than {@link #getIdentifier(Citation)} on arbitrary implementations of GeoAPI interface.
      *
@@ -689,45 +728,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     @Deprecated
     public static ReferenceIdentifier getIdentifier(final IdentifiedObject info, final Citation authority) {
         return IdentifiedObjects.identifier(info, authority);
-    }
-
-    /**
-     * Returns this object name according the given authority. This method checks first the
-     * {@linkplain #getName() primary name}, then all {@linkplain #getAlias() alias} in their
-     * iteration order.
-     *
-     * <ul>
-     *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
-     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority
-     *       identifier authority} against the specified citation using the
-     *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches}
-     *       method. If a matching is found, then this method returns the
-     *       {@linkplain ReferenceIdentifier#getCode identifier code} of this object.</p></li>
-     *
-     *   <li><p>Otherwise, if the alias implements the {@link GenericName} interface, then this
-     *       method compares the {@linkplain GenericName#scope name scope} against the specified
-     *       citation using the {@linkplain Citations#identifierMatches(Citation,String)
-     *       identifierMatches} method. If a matching is found, then this method returns the
-     *       {@linkplain GenericName#tip name tip} of this object.</p></li>
-     * </ul>
-     *
-     * Note that alias may implement both the {@link ReferenceIdentifier} and {@link GenericName}
-     * interfaces (for example {@link NamedIdentifier}). In such cases, the identifier view has
-     * precedence.
-     *
-     * @param  authority The authority for the name to return, or {@code null} for any authority.
-     * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code}
-     *         or a {@linkplain GenericName#tip name tip}), or {@code null} if
-     *         no name matching the specified authority was found.
-     *
-     * @see #getName()
-     * @see #getAlias()
-     * @see IdentifiedObjects#getName(IdentifiedObject, Citation)
-     *
-     * @since 2.2
-     */
-    public String getName(final Citation authority) {
-        return IdentifiedObjects.name(this, authority);
     }
 
     /**

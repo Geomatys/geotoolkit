@@ -662,7 +662,7 @@ public final class NewGridCoverageReference {
                 }
             }
         }
-        return CRS.lookupEpsgCode(crs, true);
+        return IdentifiedObjects.lookupEpsgCode(crs, true);
     }
 
     /**

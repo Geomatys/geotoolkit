@@ -210,7 +210,7 @@ final class ImageCoverageStore extends Static {
             if (t != null) {
                 buffer.append(t);
             }
-            final String id = IdentifiedObjects.getDeclaredIdentifier(crs);
+            final String id = IdentifiedObjects.getIdentifier(crs);
             if (id != null) {
                 buffer.append(" (").append(id).append(')');
             }

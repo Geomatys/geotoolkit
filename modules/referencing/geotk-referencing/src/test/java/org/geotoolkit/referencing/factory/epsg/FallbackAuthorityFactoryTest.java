@@ -27,6 +27,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.test.referencing.WKT;
@@ -146,13 +147,13 @@ public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
     @Test
     public void testLookupTrivial() throws FactoryException {
         final CoordinateReferenceSystem crsXY = CRS.decode("EPSG:27572", true);
-        String code = CRS.lookupIdentifier(crsXY, false);
+        String code = IdentifiedObjects.lookupIdentifier(crsXY, false);
         assertEquals("Should find the identifier because this CRS has " +
                 "an explicit AUTHORITY element.", "EPSG:27572", code);
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:27572");
         assertFalse(CRS.equalsIgnoreMetadata(crs, crsXY));
-        code = CRS.lookupIdentifier(crs, false);
+        code = IdentifiedObjects.lookupIdentifier(crs, false);
         assertEquals("EPSG:27572", code);
     }
 
@@ -167,13 +168,13 @@ public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
     @Test
     public void testLookupSuccessfull() throws FactoryException {
         final CoordinateReferenceSystem crsXY = CRS.decode("EPSG:3035", true);
-        String code = CRS.lookupIdentifier(crsXY, false);
+        String code = IdentifiedObjects.lookupIdentifier(crsXY, false);
         assertEquals("Should find the identifier even if the WKT doesn't have an explicit AUTHORITY " +
                 "element because the factory should have added it automatically.", "EPSG:3035", code);
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
         assertFalse(CRS.equalsIgnoreMetadata(crs, crsXY));
-        code = CRS.lookupIdentifier(crs, false);
+        code = IdentifiedObjects.lookupIdentifier(crs, false);
         assertEquals("EPSG:3035", code);
     }
 
@@ -188,6 +189,6 @@ public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
     @Test
     public void testLookupFailing() throws FactoryException {
         CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_MERCATOR_GOOGLE);
-        assertNull(CRS.lookupIdentifier(crs, true));
+        assertNull(IdentifiedObjects.lookupIdentifier(crs, true));
     }
 }
