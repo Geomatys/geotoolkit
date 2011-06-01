@@ -197,13 +197,13 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          *
          * The polar case is sinb1 = 2/qp for North, -2/qp for South.
          */
-        final double sinphi = sin(latitudeOfOrigin);
+        final double sinφ = sin(latitudeOfOrigin);
         final boolean isSpherical = isSpherical();
         if (isSpherical) {
-            sinb1 = sinphi;
+            sinb1 = sinφ;
             cosb1 = cos(latitudeOfOrigin);
         } else {
-            sinb1 = qsfn(sinphi) / qp;
+            sinb1 = qsfn(sinφ) / qp;
             cosb1 = sqrt(1.0 - sinb1 * sinb1);
         }
         /*
@@ -223,7 +223,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  * including spherical. However in the spherical case, the equation simplifies to
                  * dd = 1/rq. With rq = 1 (see above), we get dd = 1.
                  */
-                final double dd = cos(latitudeOfOrigin) / (sqrt(1 - excentricitySquared*(sinphi*sinphi))*rq*cosb1);
+                final double dd = cos(latitudeOfOrigin) / (sqrt(1 - excentricitySquared*(sinφ*sinφ))*rq*cosb1);
                 denormalize.scale(dd, 1/dd);
             } else {
                 /*
@@ -254,27 +254,27 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double lambda = rollLongitude(srcPts[srcOff]);
-        final double phi    = srcPts[srcOff + 1];
-        final double coslam = cos(lambda);
-        final double sinlam = sin(lambda);
-        final double sinphi = sin(phi);
-        final double q = qsfn(sinphi);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double cosλ = cos(λ);
+        final double sinλ = sin(λ);
+        final double sinφ = sin(φ);
+        final double q = qsfn(sinφ);
         final double c;
         double x, y;
         if (!pole) {
             final double sinb = q / qp;
             final double cosb = sqrt(1 - sinb*sinb);
             if (oblique) {
-                c = 1.0 + sinb * sinb1 + cosb * coslam * cosb1;
-                y = rq * (sinb * cosb1 - cosb * coslam * sinb1);
-                x = rq * cosb * sinlam;
+                c = 1.0 + sinb * sinb1 + cosb * cosλ * cosb1;
+                y = rq * (sinb * cosb1 - cosb * cosλ * sinb1);
+                x = rq * cosb * sinλ;
                 // xmf was (rq * dd) and ymf was (rq / dd), but the
                 // dd part is now handled by the affine transform.
             } else {
-                c = 1.0 + cosb * coslam;
+                c = 1.0 + cosb * cosλ;
                 y = sinb * (0.5*qp);
-                x = cosb * sinlam;
+                x = cosb * sinλ;
                 // Proj4 had (xmf, ymf) terms here, but xmf simplifies to (rq * 1/rq) == 1
                 // (see the comments in the constructor) and ymf simplify to rq² = 0.5*qp.
             }
@@ -285,7 +285,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
             /*
              * Polar case. If this is the North case, then:
              *
-             *  - Before this block, sign of phi has been reversed by the normalize affine
+             *  - Before this block, sign of φ has been reversed by the normalize affine
              *    transform. Concequence of the above, sign of q is also reversed.
              *
              *  - After this block, sign of y will be reversed by the denormalize affine
@@ -294,15 +294,15 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
              * A little bit of algebra shows that the formulas become identical to the South case
              * exept for the sign of c (which doesn't matter), so only South case needs to be here.
              */
-            c = phi - PI/2;
+            c = φ - PI/2;
             final double b = sqrt(qp + q);
             /*
              * Proj4 tested for (qp + q) > 0, but this can be negative only if the given
              * latitude is greater (in absolute value) than 90°. By removing this check,
              * we let Java produces NaN in such cases, which is probably a right thing.
              */
-            x = b * sinlam;
-            y = b * coslam;
+            x = b * sinλ;
+            y = b * cosλ;
         }
         if (abs(c) < EPSILON) {
             /*
@@ -343,8 +343,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                 x *= rq;
                 y /= rq;
             }
-            final double rho = hypot(x, y);
-            if (rho < EPSILON) {
+            final double ρ = hypot(x, y);
+            if (ρ < EPSILON) {
                 // This check is required because otherwise, the equations
                 // in the "else" block would contains 0/0 expressions.
                 dstPts[dstOff] = 0.0;
@@ -352,16 +352,16 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                 return;
             }
             double sCe, cCe;
-            sCe = 2.0 * asin(0.5 * rho / rq);
+            sCe = 2.0 * asin(0.5 * ρ / rq);
             cCe = cos(sCe);
             sCe = sin(sCe);
             x *= sCe;
             if (oblique) {
-                ab = cCe * sinb1 + y * sCe * cosb1 / rho;
-                y  = rho * cosb1 * cCe - y * sinb1 * sCe;
+                ab = cCe * sinb1 + y * sCe * cosb1 / ρ;
+                y  = ρ * cosb1 * cCe - y * sinb1 * sCe;
             } else {
-                ab = y * sCe / rho;
-                y  = rho * cCe;
+                ab = y * sCe / ρ;
+                y  = ρ * cCe;
             }
         }
         double t = abs(ab);
@@ -419,50 +419,50 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                                  final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            final double lambda = rollLongitude(srcPts[srcOff]);
-            final double phi    = srcPts[srcOff + 1];
-            final double coslam = cos(lambda);
+            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double φ    = srcPts[srcOff + 1];
+            final double cosλ = cos(λ);
             double x,y;
             if (!pole) {
-                final double sinphi = sin(phi);
-                final double cosphi = cos(phi);
+                final double sinφ = sin(φ);
+                final double cosφ = cos(φ);
                 /*
                  * 'x' (actually not really x before the end of this block,  but rather an
                  * intermediate scale coefficient elsewhere called 'k') is checked against
                  * zero as a safety and because Proj4 does that way.  The formulas already
                  * leads naturally to NaN in Java because division by 0 produces infinity,
-                 * and the following multiplication by zero (x == 0 implies sinphi == 0 at
+                 * and the following multiplication by zero (x == 0 implies sinφ == 0 at
                  * least in the equatorial case) would produce NaN. But the explicit check
                  * makes sure that we set both ordinates to NaN.
                  */
                 if (!oblique) {
-                    x = 1.0 + cosphi * coslam;
+                    x = 1.0 + cosφ * cosλ;
                     if (x >= EPSILON) {
                         x = sqrt(2.0 / x);
-                        y = x * sinphi;
+                        y = x * sinφ;
                     } else {
                         x = y = NaN;
                     }
                 } else {
-                    y = cosphi * coslam;
-                    x = 1.0 + sinb1 * sinphi + cosb1 * y;
+                    y = cosφ * cosλ;
+                    x = 1.0 + sinb1 * sinφ + cosb1 * y;
                     if (x >= EPSILON) {
                         x = sqrt(2.0 / x);
-                        y = x * (cosb1 * sinphi - sinb1 * y);
+                        y = x * (cosb1 * sinφ - sinb1 * y);
                     } else {
                         x = y = NaN;
                     }
                 }
-                x *= cosphi * sin(lambda);
-            } else if (abs(phi - PI/2) >= EPSILON) {
+                x *= cosφ * sin(λ);
+            } else if (abs(φ - PI/2) >= EPSILON) {
                 /*
                  * Polar projection (North and South cases).
-                 * Reminder: in the North case, the sign of phi is reversed before this block
+                 * Reminder: in the North case, the sign of φ is reversed before this block
                  * and the sign of y will be reversed after this block by the affine transforms.
                  */
-                y = 2 * cos(PI/4 - 0.5*phi);
-                x = y * sin(lambda);
-                y *= coslam;
+                y = 2 * cos(PI/4 - 0.5*φ);
+                x = y * sin(λ);
+                y *= cosλ;
             } else {
                 /*
                  * Attempt to project the opposite pole. Actually the above formula would works
@@ -500,35 +500,35 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         {
             double x = srcPts[srcOff];
             double y = srcPts[srcOff + 1];
-            double lambda, phi;
-            final double rho = hypot(x, y);
-            phi = 2.0 * asin(0.5 * rho);
+            double λ, φ;
+            final double ρ = hypot(x, y);
+            φ = 2.0 * asin(0.5 * ρ);
             if (pole) {
                 /*
                  * Reminder in the North case:
                  *   - Before this block, sign of y has been reverted by the affine transform.
-                 *   - After this block, sign of phi will be reverted by the affine transform.
+                 *   - After this block, sign of φ will be reverted by the affine transform.
                  */
-                phi -= (PI / 2);
-                lambda = atan2(x, y);
+                φ -= (PI / 2);
+                λ = atan2(x, y);
             } else {
-                final double sinz = sin(phi);
-                final double cosz = cos(phi);
+                final double sinz = sin(φ);
+                final double cosz = cos(φ);
                 if (!oblique) {
-                    phi = abs(rho) <= EPSILON ? 0 : asin(y * sinz / rho);
-                    y = rho * cosz;
+                    φ = abs(ρ) <= EPSILON ? 0 : asin(y * sinz / ρ);
+                    y = ρ * cosz;
                 } else {
                     y *= sinz;
-                    phi = abs(rho) <= EPSILON ? latitudeOfOrigin : asin(cosz*sinb1 + y*cosb1/rho);
-                    y = rho*cosz*cosb1 - y*sinb1;
+                    φ = abs(ρ) <= EPSILON ? latitudeOfOrigin : asin(cosz*sinb1 + y*cosb1/ρ);
+                    y = ρ*cosz*cosb1 - y*sinb1;
                 }
                 x *= sinz;
-                lambda = atan2(x, y);
+                λ = atan2(x, y);
             }
-            lambda = unrollLongitude(lambda);
-            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, lambda, phi);
-            dstPts[dstOff] = lambda;
-            dstPts[dstOff + 1] = phi;
+            λ = unrollLongitude(λ);
+            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, λ, φ);
+            dstPts[dstOff] = λ;
+            dstPts[dstOff + 1] = φ;
         }
 
         /**
@@ -537,11 +537,11 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -562,7 +562,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      * Returns an estimation of the error in linear distance on the unit ellipse.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double λ, final double φ) {
         return 1E-8;
     }
 }

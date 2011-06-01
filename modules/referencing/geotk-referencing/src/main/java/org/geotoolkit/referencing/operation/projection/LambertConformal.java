@@ -147,88 +147,88 @@ public class LambertConformal extends UnitaryProjection {
      */
     protected LambertConformal(final Parameters parameters) {
         super(parameters);
-        double phi1, phi2;
+        double φ1, φ2;
         double latitudeOfOrigin = parameters.latitudeOfOrigin;
         final boolean belgium = parameters.nameMatches(LambertConformal2SP.Belgium.PARAMETERS);
         if (parameters.nameMatches(LambertConformal1SP.PARAMETERS)) {
             // EPSG says the 1SP case uses the latitude of origin as the SP.
-            phi1 = phi2 = latitudeOfOrigin;
-            ensureLatitudeInRange(LambertConformal1SP.LATITUDE_OF_ORIGIN, phi1, true);
+            φ1 = φ2 = latitudeOfOrigin;
+            ensureLatitudeInRange(LambertConformal1SP.LATITUDE_OF_ORIGIN, φ1, true);
         } else {
             switch (parameters.standardParallels.length) {
                 default: {
                     throw unknownParameter("standard_parallel_3");
                 }
                 case 2: {
-                    phi1 = parameters.standardParallels[0];
-                    phi2 = parameters.standardParallels[1];
+                    φ1 = parameters.standardParallels[0];
+                    φ2 = parameters.standardParallels[1];
                     break;
                 }
                 case 1: {
-                    phi2 = phi1 = parameters.standardParallels[0];
+                    φ2 = φ1 = parameters.standardParallels[0];
                     break;
                 }
                 case 0: {
-                    phi2 = phi1 = latitudeOfOrigin;
+                    φ2 = φ1 = latitudeOfOrigin;
                     break;
                 }
             }
-            ensureLatitudeInRange(LambertConformal2SP.STANDARD_PARALLEL_1, phi1, true);
-            ensureLatitudeInRange(LambertConformal2SP.STANDARD_PARALLEL_2, phi2, true);
+            ensureLatitudeInRange(LambertConformal2SP.STANDARD_PARALLEL_1, φ1, true);
+            ensureLatitudeInRange(LambertConformal2SP.STANDARD_PARALLEL_2, φ2, true);
         }
-        if (abs(phi1 + phi2) < ANGLE_TOLERANCE * (180/PI)) {
+        if (abs(φ1 + φ2) < ANGLE_TOLERANCE * (180/PI)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ANTIPODE_LATITUDES_$2,
-                    new Latitude(phi1), new Latitude(phi2)));
+                    new Latitude(φ1), new Latitude(φ2)));
         }
-        phi1 = toRadians(phi1);
-        phi2 = toRadians(phi2);
+        φ1 = toRadians(φ1);
+        φ2 = toRadians(φ2);
         latitudeOfOrigin = toRadians(latitudeOfOrigin);
         /*
          * Computes constants.
          */
-        final double rho0, F;
-        final double cosphi1 = cos(phi1);
-        final double sinphi1 = sin(phi1);
-        final boolean secant = abs(phi1 - phi2) > ANGLE_TOLERANCE; // Should be 'true' for 2SP case.
+        final double ρ0, F;
+        final double cosφ1 = cos(φ1);
+        final double sinφ1 = sin(φ1);
+        final boolean secant = abs(φ1 - φ2) > ANGLE_TOLERANCE; // Should be 'true' for 2SP case.
         final boolean isSpherical = parameters.isSpherical();
         if (isSpherical) {
             if (secant) {
-                n = log(cosphi1 / cos(phi2)) /
-                    log(tan(PI/4 + 0.5*phi2) / tan(PI/4 + 0.5*phi1));
+                n = log(cosφ1 / cos(φ2)) /
+                    log(tan(PI/4 + 0.5*φ2) / tan(PI/4 + 0.5*φ1));
             } else {
-                n = sinphi1;
+                n = sinφ1;
             }
-            F = cosphi1 * pow(tan(PI/4 + 0.5*phi1), n) / n;
+            F = cosφ1 * pow(tan(PI/4 + 0.5*φ1), n) / n;
             if (abs(abs(latitudeOfOrigin) - PI/2) >= ANGLE_TOLERANCE) {
-                rho0 = F * pow(tan(PI/4 + 0.5*latitudeOfOrigin), -n);
+                ρ0 = F * pow(tan(PI/4 + 0.5*latitudeOfOrigin), -n);
             } else {
-                rho0 = 0.0;
+                ρ0 = 0.0;
             }
         } else {
-            final double m1 = msfn(sinphi1, cosphi1);
-            final double t1 = tsfn(phi1, sinphi1);
+            final double m1 = msfn(sinφ1, cosφ1);
+            final double t1 = tsfn(φ1, sinφ1);
             if (secant) {
-                final double sinphi2 = sin(phi2);
-                final double m2 = msfn(sinphi2, cos(phi2));
-                final double t2 = tsfn(phi2, sinphi2);
+                final double sinφ2 = sin(φ2);
+                final double m2 = msfn(sinφ2, cos(φ2));
+                final double t2 = tsfn(φ2, sinφ2);
                 n = log(m1/m2) / log(t1/t2);
             } else {
-                n = sinphi1;
+                n = sinφ1;
             }
             F = m1 * pow(t1, -n) / n;
             if (abs(abs(latitudeOfOrigin) - PI/2) >= ANGLE_TOLERANCE) {
-                rho0 = F * pow(tsfn(latitudeOfOrigin, sin(latitudeOfOrigin)), n);
+                ρ0 = F * pow(tsfn(latitudeOfOrigin, sin(latitudeOfOrigin)), n);
             } else {
-                rho0 = 0.0;
+                ρ0 = 0.0;
             }
         }
         /*
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          *
-         * In GeoTools 2, rho0 was added or subtracted in the tranform methods.
+         * In GeoTools 2, ρ0 was added or subtracted in the tranform methods.
          * In Geotk, we move those linear operations to the affine transforms.
-         * In addition of rho0, linear operations include the reversal of the sign
+         * In addition of ρ0, linear operations include the reversal of the sign
          * of y, etc.
          */
         final AffineTransform normalize   = parameters.normalize(true);
@@ -238,7 +238,7 @@ public class LambertConformal extends UnitaryProjection {
         }
         normalize.scale(n, 1);
         parameters.validate();
-        denormalize.translate(0, rho0);
+        denormalize.translate(0, ρ0);
         denormalize.scale(F, -F);
         finish();
     }
@@ -289,19 +289,19 @@ public class LambertConformal extends UnitaryProjection {
          * and the linear operations applied after the last non-linear one moved to the
          * "denormalize" affine transform.
          */
-        double y = srcPts[srcOff + 1];
-        final double rho; // Snyder p. 108
-        final double a = abs(y);
+        final double φ = srcPts[srcOff + 1];
+        final double ρ; // Snyder p. 108
+        final double a = abs(φ);
         if (a < PI/2) {
-            rho = pow(tsfn(y, sin(y)), n);
+            ρ = pow(tsfn(φ, sin(φ)), n);
         } else if (a < PI/2 + ANGLE_TOLERANCE) {
-            rho = (y*n <= 0) ? POSITIVE_INFINITY : 0;
+            ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
         } else {
-            rho = NaN;
+            ρ = NaN;
         }
-        final double x = rollLongitude(srcPts[srcOff]);
-        dstPts[dstOff]     = rho * sin(x);
-        dstPts[dstOff + 1] = rho * cos(x);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        dstPts[dstOff]     = ρ * sin(λ);
+        dstPts[dstOff + 1] = ρ * cos(λ);
     }
 
     /**
@@ -312,29 +312,29 @@ public class LambertConformal extends UnitaryProjection {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = srcPts[srcOff];
-        double y = srcPts[srcOff + 1];
+        final double x = srcPts[srcOff];
+        final double y = srcPts[srcOff + 1];
         /*
-         * NOTE: If some equation terms seem missing (e.g. "y = rho0 - y"), this is because
+         * NOTE: If some equation terms seem missing (e.g. "y = ρ0 - y"), this is because
          * the linear operations applied before the first non-linear one moved to the inverse
          * of the "denormalize" transform, and the linear operations applied after the last
          * non-linear one moved to the inverse of the "normalize" transform.
          */
-        double rho = hypot(x, y);  // Zero when the latitude is 90 degrees.
+        final double ρ = hypot(x, y);  // Zero when the latitude is 90 degrees.
         /*
-         * Proj4 explicitly tests if (rho > EPSILON) here. In Geotk we skip this test,
+         * Proj4 explicitly tests if (ρ > EPSILON) here. In Geotk we skip this test,
          * since Math functions are defined in such strict way that the correct answer is
          * produced (and even a better answer in the case of NaN input). This is verified
          * in LambertConformatTest.testExtremes().
          *
-         * if (n<0) {rho=-rho; x=-x; y=-y;} was also removed because F should have the same
-         * sign than n, so the above sign reversal was intended to make F/rho positive. But
+         * if (n<0) {ρ=-ρ; x=-x; y=-y;} was also removed because F should have the same
+         * sign than n, so the above sign reversal was intended to make F/ρ positive. But
          * because we do not involve F here anymore (it is done in the affine transform),
-         * we need to keep the current sign of rho which is positive, otherwise we get NaN
-         * when used in the pow(rho, ...) expression below.
+         * we need to keep the current sign of ρ which is positive, otherwise we get NaN
+         * when used in the pow(ρ, ...) expression below.
          */
         dstPts[dstOff] = unrollLongitude(atan2(x, y));
-        dstPts[dstOff + 1] = cphi2(pow(rho, 1.0/n));
+        dstPts[dstOff + 1] = cphi2(pow(ρ, 1.0/n));
     }
 
 
@@ -399,18 +399,18 @@ public class LambertConformal extends UnitaryProjection {
                 throws ProjectionException
         {
             double y = srcPts[srcOff + 1];
-            final double rho;
+            final double ρ;
             final double a = abs(y);
             if (a < PI/2) {
-                rho = pow(tan(PI/4 + 0.5*y), -n);
+                ρ = pow(tan(PI/4 + 0.5*y), -n);
             } else if (a < PI/2 + ANGLE_TOLERANCE) {
-                rho = (y*n <= 0) ? POSITIVE_INFINITY : 0;
+                ρ = (y*n <= 0) ? POSITIVE_INFINITY : 0;
             } else {
-                rho = NaN;
+                ρ = NaN;
             }
             double x = rollLongitude(srcPts[srcOff]);
-            y = rho * cos(x);
-            x = rho * sin(x);
+            y = ρ * cos(x);
+            x = ρ * sin(x);
 
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]     = x;
@@ -440,9 +440,9 @@ public class LambertConformal extends UnitaryProjection {
         {
             double x = srcPts[srcOff];
             double y = srcPts[srcOff + 1];
-            double rho = hypot(x, y);
+            final double ρ = hypot(x, y);
             x = unrollLongitude(atan2(x, y));
-            y = 2.0 * atan(pow(1/rho, 1.0/n)) - PI/2;
+            y = 2.0 * atan(pow(1/ρ, 1.0/n)) - PI/2;
 
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff] = x;
@@ -455,11 +455,11 @@ public class LambertConformal extends UnitaryProjection {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -504,7 +504,7 @@ public class LambertConformal extends UnitaryProjection {
      * Returns an estimation of the error in linear distance on the unit ellipse.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double λ, final double φ) {
         return 0;
     }
 }

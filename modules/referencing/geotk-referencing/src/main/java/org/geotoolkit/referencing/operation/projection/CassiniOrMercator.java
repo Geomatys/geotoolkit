@@ -136,47 +136,47 @@ abstract class CassiniOrMercator extends UnitaryProjection {
 
     /**
      * Calculates the meridian distance. This is the distance along the central
-     * meridian from the equator to {@code phi}. Accurate to &lt; 1E-5 metres
+     * meridian from the equator to {@code φ}. Accurate to &lt; 1E-5 metres
      * when used in conjuction with typical major axis values.
      * <p>
      * Special cases:
      * <ul>
-     *   <li>If <var>phi</var> is 0°, then this method returns 0.</li>
+     *   <li>If <var>φ</var> is 0°, then this method returns 0.</li>
      * </ul>
      *
-     * @param  phi latitude to calculate meridian distance for.
-     * @param  sphi sin(phi).
-     * @param  cphi cos(phi).
+     * @param  φ latitude to calculate meridian distance for.
+     * @param  sinφ sin(φ).
+     * @param  cosφ cos(φ).
      * @return Meridian distance for the given latitude.
      */
-    final double mlfn(final double phi, double sphi, double cphi) {
-        cphi *= sphi;
-        sphi *= sphi;
-        return en0 * phi - cphi *
-              (en1 + sphi *
-              (en2 + sphi *
-              (en3 + sphi * en4)));
+    final double mlfn(final double φ, double sinφ, double cosφ) {
+        cosφ *= sinφ;
+        sinφ *= sinφ;
+        return en0 * φ - cosφ *
+              (en1 + sinφ *
+              (en2 + sinφ *
+              (en3 + sinφ * en4)));
     }
 
     /**
-     * Calculates the latitude ({@code phi}) from a meridian distance.
-     * Determines phi to a tenth of {@value #ITERATION_TOLERANCE} radians.
+     * Calculates the latitude ({@code φ}) from a meridian distance.
+     * Determines φ to a tenth of {@value #ITERATION_TOLERANCE} radians.
      *
-     * @param  delta meridian distance to calulate latitude for.
+     * @param  delta meridian distance to calculate latitude for.
      * @return The latitude of the meridian distance.
      * @throws ProjectionException if the iteration does not converge.
      */
     final double inv_mlfn(final double delta) throws ProjectionException {
         final double k = 1/(1 - excentricitySquared);
-        double phi = delta;
+        double φ = delta;
         int i=MAXIMUM_ITERATIONS;
         do { // rarely goes over 5 iterations
-            final double s = sin(phi);
+            final double s = sin(φ);
             double t = 1 - excentricitySquared * (s*s);
-            t = (mlfn(phi, s, cos(phi)) - delta) * (t * sqrt(t)) * k;
-            phi -= t;
+            t = (mlfn(φ, s, cos(φ)) - delta) * (t * sqrt(t)) * k;
+            φ -= t;
             if (abs(t) < ITERATION_TOLERANCE/10) {
-                return phi;
+                return φ;
             }
         } while (--i >= 0);
         throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);

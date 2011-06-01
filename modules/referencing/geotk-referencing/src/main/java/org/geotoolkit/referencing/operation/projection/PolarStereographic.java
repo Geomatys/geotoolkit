@@ -226,11 +226,11 @@ public class PolarStereographic extends Stereographic {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double x = rollLongitude(srcPts[srcOff]);
-        final double y = srcPts[srcOff + 1];
-        final double rho = tsfn(y, sin(y));
-        dstPts[dstOff  ] = rho * sin(x);
-        dstPts[dstOff+1] = rho * cos(x);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double ρ = tsfn(φ, sin(φ));
+        dstPts[dstOff  ] = ρ * sin(λ);
+        dstPts[dstOff+1] = ρ * cos(λ);
     }
 
     /**
@@ -242,16 +242,16 @@ public class PolarStereographic extends Stereographic {
     {
         final double x = srcPts[srcOff  ];
         final double y = srcPts[srcOff+1];
-        final double rho = hypot(x, y);
+        final double ρ = hypot(x, y);
         /*
          * Compute latitude using iterative technique.
          */
         final double halfe = 0.5 * excentricity;
-        double phi = 0;
+        double φ = 0;
         for (int i=MAXIMUM_ITERATIONS;;) {
-            final double esinphi = excentricity * sin(phi);
-            final double next = (PI/2) - 2*atan(rho*pow((1-esinphi)/(1+esinphi), halfe));
-            if (abs(phi - (phi=next)) < ITERATION_TOLERANCE) {
+            final double esinφ = excentricity * sin(φ);
+            final double next = (PI/2) - 2*atan(ρ*pow((1-esinφ)/(1+esinφ), halfe));
+            if (abs(φ - (φ=next)) < ITERATION_TOLERANCE) {
                 break;
             }
             if (--i < 0) {
@@ -259,7 +259,7 @@ public class PolarStereographic extends Stereographic {
             }
         }
         dstPts[dstOff  ] = atan2(x, y);
-        dstPts[dstOff+1] = phi;
+        dstPts[dstOff+1] = φ;
     }
 
 
@@ -318,7 +318,7 @@ public class PolarStereographic extends Stereographic {
         {
             double x = rollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            final double f = cos(y) / (1+sin(y)); // == tan (pi/4 - phi/2)
+            final double f = cos(y) / (1+sin(y)); // == tan (pi/4 - φ/2)
             y = f * cos(x); // (21-6)
             x = f * sin(x); // (21-5)
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
@@ -349,9 +349,9 @@ public class PolarStereographic extends Stereographic {
         {
             double x = unrollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            final double rho = hypot(x, y);
+            final double ρ = hypot(x, y);
             x = atan2(x, y);
-            y = PI/2 - abs(2*atan(rho)); // (20-14) with phi1=90° and cos(y) = sin(π/2 + y).
+            y = PI/2 - abs(2*atan(ρ)); // (20-14) with phi1=90° and cos(y) = sin(π/2 + y).
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
@@ -363,11 +363,11 @@ public class PolarStereographic extends Stereographic {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -439,8 +439,8 @@ public class PolarStereographic extends Stereographic {
              *     k0 = sqrt(pow(1+excentricity, 1+excentricity)*
              *               pow(1-excentricity, 1-excentricity)) / 2
              *
-             * This constant was used only as a divisor of chi in inverseTransform(...), but was
-             * identical to the expression that multiplies chi just a few instructions further.
+             * This constant was used only as a divisor of χ in inverseTransform(...), but was
+             * identical to the expression that multiplies χ just a few instructions further.
              * Consequently, it vanishes completely.
              */
         }
@@ -456,13 +456,13 @@ public class PolarStereographic extends Stereographic {
             double x = unrollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
             final double t = hypot(x, y);
-            final double chi = PI/2 - 2*atan(t);
+            final double χ = PI/2 - 2*atan(t);
             x = atan2(x, y);
 
             // See Snyde P. 19, "Computation of Series"
-            final double sin2chi = sin(2 * chi);
-            final double cos2chi = cos(2 * chi);
-            y = chi + sin2chi*(a + cos2chi*(b + cos2chi*(c + d*cos2chi)));
+            final double sin2χ = sin(2 * χ);
+            final double cos2χ = cos(2 * χ);
+            y = χ + sin2χ*(a + cos2χ*(b + cos2χ*(c + d*cos2χ)));
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
@@ -474,11 +474,11 @@ public class PolarStereographic extends Stereographic {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 }

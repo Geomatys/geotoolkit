@@ -97,15 +97,15 @@ public class ObliqueStereographic extends Stereographic {
      */
     protected ObliqueStereographic(final Parameters parameters) {
         super(parameters, parameters.latitudeOfOrigin);
-        final double cphi = cosphi0 * cosphi0;
-        final double r = 2 * sqrt(1-excentricitySquared) / (1 - excentricitySquared*(sinphi0*sinphi0));
+        final double cphi = cosφ0 * cosφ0;
+        final double r = 2 * sqrt(1-excentricitySquared) / (1 - excentricitySquared*(sinφ0*sinφ0));
         C      = sqrt(1 + excentricitySquared*(cphi*cphi) / (1 - excentricitySquared));
-        phic0  = asin(sinphi0 / C);
+        phic0  = asin(sinφ0 / C);
         sinc0  = sin(phic0);
         cosc0  = cos(phic0);
         ratexp = 0.5 * C * excentricity;
         K      = tan(0.5 * phic0 + PI/4) /
-                 (pow(tan(0.5 * phi0 + PI/4), C) * srat(excentricity*sinphi0, ratexp));
+                 (pow(tan(0.5 * φ0 + PI/4), C) * srat(excentricity*sinφ0, ratexp));
         /*
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
@@ -148,16 +148,16 @@ public class ObliqueStereographic extends Stereographic {
     {
         double x = unrollLongitude(srcPts[srcOff]);
         double y = srcPts[srcOff + 1];
-        final double rho = hypot(x, y);
-        if (abs(rho) < EPSILON) {
+        final double ρ = hypot(x, y);
+        if (abs(ρ) < EPSILON) {
             x = 0.0;
             y = phic0;
         } else {
-            final double ce   = 2 * atan(rho);
+            final double ce   = 2 * atan(ρ);
             final double sinc = sin(ce);
             final double cosc = cos(ce);
-            x = atan2(x*sinc, rho*cosc0*cosc - y*sinc0*sinc);
-            y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
+            x = atan2(x*sinc, ρ*cosc0*cosc - y*sinc0*sinc);
+            y = (cosc * sinc0) + (y * sinc * cosc0 / ρ);
             if (abs(y) >= 1) {
                 y = copySign(PI/2, y);
             } else {
@@ -167,11 +167,11 @@ public class ObliqueStereographic extends Stereographic {
         // Begin pj_inv_gauss(...) method inlined
         double num = pow(tan(0.5*y + PI/4)/K, 1/C);
         for (int i=MAXIMUM_ITERATIONS;;) {
-            double phi = 2 * atan(num * srat(excentricity*sin(y), -0.5*excentricity)) - PI/2;
-            if (abs(phi - y) < ITERATION_TOLERANCE) {
+            double φ = 2 * atan(num * srat(excentricity*sin(y), -0.5*excentricity)) - PI/2;
+            if (abs(φ - y) < ITERATION_TOLERANCE) {
                 break;
             }
-            y = phi;
+            y = φ;
             if (--i < 0) {
                 throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
             }

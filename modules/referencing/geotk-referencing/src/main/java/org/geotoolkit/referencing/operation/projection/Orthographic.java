@@ -75,7 +75,7 @@ public class Orthographic extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
      */
-    private static final long serialVersionUID = 5036668705538661686L;
+    private static final long serialVersionUID = 5036668705538661687L;
 
     /**
      * Maximum difference allowed when comparing real numbers.
@@ -84,7 +84,7 @@ public class Orthographic extends UnitaryProjection {
 
     /**
      * 0 if equatorial, 1 if polar, any other value if oblique. In the equatorial case,
-     * {@link #latitudeOfOrigin} is zero, {@link #sinphi0} is zero and {@link #cosphi0}
+     * {@link #latitudeOfOrigin} is zero, {@link #sinφ0} is zero and {@link #cosφ0}
      * is one.
      */
     private final byte type;
@@ -97,12 +97,12 @@ public class Orthographic extends UnitaryProjection {
     /**
      * The sine of the {@link #latitudeOfOrigin}.
      */
-    private final double sinphi0;
+    private final double sinφ0;
 
     /**
      * The cosine of the {@link #latitudeOfOrigin}.
      */
-    private final double cosphi0;
+    private final double cosφ0;
 
     /**
      * Creates an Orthographic projection from the given parameters. The descriptor argument is
@@ -140,7 +140,7 @@ public class Orthographic extends UnitaryProjection {
          */
         if (abs(abs(latitudeOfOrigin) - PI/2) <= ANGLE_TOLERANCE) {
             // Polar case. The latitude of origin must be set to a positive value even for the
-            // South case because the "normalize" affine transform will reverse the sign of phi.
+            // South case because the "normalize" affine transform will reverse the sign of φ.
             if (latitudeOfOrigin >= 0) {
                 north = true;
             } else {
@@ -154,8 +154,8 @@ public class Orthographic extends UnitaryProjection {
             type = 2; // Oblique case.
         }
         this.latitudeOfOrigin = latitudeOfOrigin;
-        sinphi0 = sin(latitudeOfOrigin);
-        cosphi0 = cos(latitudeOfOrigin);
+        sinφ0 = sin(latitudeOfOrigin);
+        cosφ0 = cos(latitudeOfOrigin);
         /*
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
@@ -206,33 +206,33 @@ public class Orthographic extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double lam = rollLongitude(srcPts[srcOff]);
-        final double phi = srcPts[srcOff + 1];
-        final double cosphi = cos(phi);
-        final double coslam = cos(lam);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double cosφ = cos(φ);
+        final double cosλ = cos(λ);
         final double threshold, y;
         switch (type) {
             default: { // Oblique
-                final double sinphi = sin(phi);
-                threshold = sinphi0*sinphi + cosphi0*cosphi*coslam;
-                y = cosphi0*sinphi - sinphi0*cosphi*coslam;
+                final double sinφ = sin(φ);
+                threshold = sinφ0*sinφ + cosφ0*cosφ*cosλ;
+                y = cosφ0*sinφ - sinφ0*cosφ*cosλ;
                 break;
             }
             case 0: { // Equatorial
-                threshold = cosphi * coslam;
-                y = sin(phi);
+                threshold = cosφ * cosλ;
+                y = sin(φ);
                 break;
             }
             case 1: { // Polar (South case, applicable to North because of (de)normalize transforms)
-                threshold = phi;
-                y = cosphi * coslam;
+                threshold = φ;
+                y = cosφ * cosλ;
                 break;
             }
         }
         if (threshold < -EPSILON) {
             throw new ProjectionException(Errors.Keys.POINT_OUTSIDE_HEMISPHERE);
         }
-        dstPts[dstOff  ] = cosphi * sin(lam);
+        dstPts[dstOff  ] = cosφ * sin(λ);
         dstPts[dstOff+1] = y;
     }
 
@@ -246,41 +246,41 @@ public class Orthographic extends UnitaryProjection {
     {
         double x = srcPts[srcOff  ];
         double y = srcPts[srcOff+1];
-        final double rho = hypot(x, y);
-        double sinc = rho;
+        final double ρ = hypot(x, y);
+        double sinc = ρ;
         if (sinc > 1) {
             if (sinc - 1 > ANGLE_TOLERANCE) {
                 throw new ProjectionException(Errors.Keys.POINT_OUTSIDE_HEMISPHERE);
             }
             sinc = 1;
         }
-        double phi;
-        if (rho <= EPSILON) {
-            phi = latitudeOfOrigin;
+        double φ;
+        if (ρ <= EPSILON) {
+            φ = latitudeOfOrigin;
             x = 0;
         } else {
             if (type != 1) {
                 final double cosc = sqrt(1 - sinc * sinc);
                 if (type != 0) {
                     // Oblique case
-                    phi = (cosc * sinphi0) + (y * sinc * cosphi0 / rho);
-                    x  *= sinc * cosphi0;
-                    y   = (cosc - sinphi0 * phi) * rho; // equivalent to part of (20-15)
+                    φ = (cosc * sinφ0) + (y * sinc * cosφ0 / ρ);
+                    x  *= sinc * cosφ0;
+                    y   = (cosc - sinφ0 * φ) * ρ; // equivalent to part of (20-15)
                 } else {
                     // Equatorial case
-                    phi = y * sinc / rho;
+                    φ = y * sinc / ρ;
                     x  *= sinc;
-                    y   = cosc * rho;
+                    y   = cosc * ρ;
                 }
-                phi = (abs(phi) >= 1) ? copySign(PI/2, phi) : asin(phi);
+                φ = (abs(φ) >= 1) ? copySign(PI/2, φ) : asin(φ);
             } else {
                 // South pole case, applicable to North case because of (de)normalize transforms.
-                phi = acos(sinc); // equivalent to asin(cos(c)) over the range [0:1]
+                φ = acos(sinc); // equivalent to asin(cos(c)) over the range [0:1]
             }
             x = atan2(x, y);
         }
         dstPts[dstOff  ] = unrollLongitude(x);
-        dstPts[dstOff+1] = phi;
+        dstPts[dstOff+1] = φ;
     }
 
     /**
@@ -319,8 +319,8 @@ public class Orthographic extends UnitaryProjection {
         m01 = -sinφ * sinλ;
         switch (type) {
             default: { // Oblique
-                m10 = sinphi0 * cosφ * sinλ;
-                m11 = cosphi0 * cosφ + sinphi0*cosλ*sinφ;
+                m10 = sinφ0 * cosφ * sinλ;
+                m11 = cosφ0 * cosφ + sinφ0*cosλ*sinφ;
                 break;
             }
             case 0: { // Equatorial

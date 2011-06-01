@@ -56,7 +56,7 @@ public class EquatorialStereographic extends Stereographic {
      */
     protected EquatorialStereographic(final Parameters parameters) {
         super(parameters);
-        assert phi0 == 0 : phi0;
+        assert φ0 == 0 : φ0;
     }
 
     /**
@@ -68,11 +68,11 @@ public class EquatorialStereographic extends Stereographic {
     {
         double x = rollLongitude(srcPts[srcOff]);
         double y = srcPts[srcOff + 1];
-        final double chi = 2*atan(ssfn(y, sin(y))) - PI/2;
-        final double cosChi = cos(chi);
-        final double A = 1 + cosChi * cos(x);    // typo in (12-29)
-        x = (cosChi * sin(x)) / A;
-        y = sin(chi) / A;
+        final double χ = 2*atan(ssfn(y, sin(y))) - PI/2;
+        final double cosχ = cos(χ);
+        final double A = 1 + cosχ * cos(x);    // typo in (12-29)
+        x = (cosχ * sin(x)) / A;
+        y = sin(χ) / A;
         /*
          * The multiplication by k0 is performed by the "denormalize" affine transform.
          */
@@ -142,10 +142,10 @@ public class EquatorialStereographic extends Stereographic {
         {
             double x = rollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            final double coslat = cos(y);
-            final double f = 1 + coslat * cos(x); // Inverse of (21-14)
-            x = coslat * sin(x) / f;   // (21-2)
-            y = sin(y)          / f;   // (21-13)
+            final double cosφ = cos(y);
+            final double f = 1 + cosφ * cos(x); // Inverse of (21-14)
+            x = cosφ * sin(x) / f;   // (21-2)
+            y = sin(y)        / f;   // (21-13)
 
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
@@ -175,16 +175,16 @@ public class EquatorialStereographic extends Stereographic {
         {
             double x = unrollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            final double rho = hypot(x, y);
-            if (rho < EPSILON) {
-                y = 0; // phi0
+            final double ρ = hypot(x, y);
+            if (ρ < EPSILON) {
+                y = 0; // φ0
                 x = 0;
             } else {
-                final double c    = 2*atan(rho);
+                final double c    = 2*atan(ρ);
                 final double sinc = sin(c);
-                final double ct   = rho*cos(c);
+                final double ct   = ρ*cos(c);
                 final double t    = x*sinc;
-                y = asin(y * sinc/rho);  // (20-14)  with phi1=0
+                y = asin(y * sinc/ρ);  // (20-14)  with phi1=0
                 x = atan2(t, ct);
             }
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
@@ -198,11 +198,11 @@ public class EquatorialStereographic extends Stereographic {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 }

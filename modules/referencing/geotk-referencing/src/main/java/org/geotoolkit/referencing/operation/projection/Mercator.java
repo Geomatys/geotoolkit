@@ -181,9 +181,9 @@ public class Mercator extends UnitaryProjection {
          * MapProjection superclass to merge this correction with the scale factor
          * in a single multiplication.
          */
-        final double phi    = toRadians(parameters.latitudeOfOrigin);
-        final double sinPhi = sin(phi);
-        final double scale  = cos(phi) / sqrt(1 - excentricitySquared * (sinPhi*sinPhi));
+        final double φ     = toRadians(parameters.latitudeOfOrigin);
+        final double sinφ  = sin(φ);
+        final double scale = cos(φ) / sqrt(1 - excentricitySquared * (sinφ*sinφ));
         denormalize.scale(scale, miller ? scale*1.25 : scale);
         /*
          * Moves the longitude rotation from "normalize" to "denormalize" transform.  This is
@@ -252,8 +252,8 @@ public class Mercator extends UnitaryProjection {
      *
      * {@note We override the super-class method only as an optimization in the special case
      *        where the target coordinates are written at the same locations than the source
-     *        coordinates. In such case, we can take advantage of the fact that the lambda
-     *        value is not modified by the unitary Mercator projection.}
+     *        coordinates. In such case, we can take advantage of the fact that the λ value
+     *        is not modified by the unitary Mercator projection.}
      */
     @Override
     public void transform(final double[] srcPts, int srcOff,
@@ -472,11 +472,11 @@ public class Mercator extends UnitaryProjection {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -501,7 +501,7 @@ public class Mercator extends UnitaryProjection {
      * even at poles.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double λ, final double φ) {
         return 0;
     }
 }

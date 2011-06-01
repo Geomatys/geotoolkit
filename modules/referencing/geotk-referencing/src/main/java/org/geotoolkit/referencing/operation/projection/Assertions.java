@@ -72,14 +72,14 @@ final class Assertions extends Static {
      * approximation. The given points must be longitude and latitude angles in radians.
      * The returned value is the distance on a sphere of radius 1.
      */
-    private static double orthodromicDistance(final double x1, final double y1,
-                                              final double x2, final double y2)
+    private static double orthodromicDistance(final double λ1, final double φ1,
+                                              final double λ2, final double φ2)
     {
-        final double dx = abs(x2 - x1) % (2*PI);
-        double rho = sin(y1)*sin(y2) + cos(y1)*cos(y2)*cos(dx);
-        if (rho > +1) {assert rho <= +(1+ITERATION_TOLERANCE) : rho; rho = +1;}
-        if (rho < -1) {assert rho >= -(1+ITERATION_TOLERANCE) : rho; rho = -1;}
-        return acos(rho);
+        final double dλ = abs(λ2 - λ1) % (2*PI);
+        double ρ = sin(φ1)*sin(φ2) + cos(φ1)*cos(φ2)*cos(dλ);
+        if (ρ > +1) {assert ρ <= +(1+ITERATION_TOLERANCE) : ρ; ρ = +1;}
+        if (ρ < -1) {assert ρ >= -(1+ITERATION_TOLERANCE) : ρ; ρ = -1;}
+        return acos(ρ);
     }
 
     /**
@@ -216,19 +216,19 @@ final class Assertions extends Static {
      *
      * @param  expected  The (longitude,latitude) computed by ellipsoidal formulas.
      * @param  offset    Index of the coordinate in the {@code expected} array.
-     * @param  lambda    The longitude computed by spherical formulas, in radians.
-     * @param  phi       The latitude computed by spherical formulas, in radians.
+     * @param  λ         The longitude computed by spherical formulas, in radians.
+     * @param  φ         The latitude computed by spherical formulas, in radians.
      * @param  tolerance The tolerance (optional).
      * @return Always {@code true} if the {@code tolerance} value is valid.
      * @throws ProjectionException if the comparison failed.
      */
     static boolean checkInverseTransform(final double[] expected, final int offset,
-            final double lambda, final double phi, final double tolerance)
+            final double λ, final double φ, final double tolerance)
             throws ProjectionException
     {
-        compare("latitude", expected[offset+1], phi, tolerance);
-        if (abs(PI/2 - abs(phi)) > ANGLE_TOLERANCE) {
-            compare("longitude", expected[offset], lambda, tolerance);
+        compare("latitude", expected[offset+1], φ, tolerance);
+        if (abs(PI/2 - abs(φ)) > ANGLE_TOLERANCE) {
+            compare("longitude", expected[offset], λ, tolerance);
         }
         return tolerance < POSITIVE_INFINITY;
     }
@@ -236,10 +236,10 @@ final class Assertions extends Static {
     /**
      * Default version of {@link #checkInverseTransform(double,double,double[],int,double)}.
      */
-    static boolean checkInverseTransform(double[] expected, int offset, double lambda, double phi)
+    static boolean checkInverseTransform(double[] expected, int offset, double λ, double φ)
             throws ProjectionException
     {
-        return checkInverseTransform(expected, offset, lambda, phi, INVERSE_TOLERANCE);
+        return checkInverseTransform(expected, offset, λ, φ, INVERSE_TOLERANCE);
     }
 
     /**

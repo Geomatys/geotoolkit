@@ -180,9 +180,9 @@ public class Equirectangular extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double y = srcPts[srcOff + 1]; // Must be before writing x.
+        final double λ = srcPts[srcOff + 1]; // Must be before writing x.
         dstPts[dstOff] = rollLongitude(srcPts[srcOff]);
-        dstPts[dstOff + 1] = y;
+        dstPts[dstOff + 1] = λ;
     }
 
     /**
@@ -190,7 +190,7 @@ public class Equirectangular extends UnitaryProjection {
      *
      * {@note We override the super-class method only as an optimization in the special case
      *        where the target coordinates are written at the same locations than the source
-     *        coordinates. In such case, we can take advantage of the fact that the phi value
+     *        coordinates. In such case, we can take advantage of the fact that the φ value
      *        is not modified by the unitary Equirectangular projection.}
      */
     @Override
@@ -241,7 +241,7 @@ public class Equirectangular extends UnitaryProjection {
      * the case of Equirectangular projection the error is close to zero everywhere.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double λ, final double φ) {
         return 0;
     }
 }

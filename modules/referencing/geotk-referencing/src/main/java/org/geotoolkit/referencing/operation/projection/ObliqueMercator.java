@@ -416,14 +416,14 @@ public class ObliqueMercator extends UnitaryProjection {
          * depend only on the latitude of centre, in radians.
          */
         final double latitudeOfCentre = toRadians(parameters.latitudeOfCentre);
-        final double com     = sqrt(1 - excentricitySquared);
-        final double sinphi0 = sin(latitudeOfCentre);
-        final double cosphi0 = cos(latitudeOfCentre);
-        double t = cosphi0 * cosphi0; // t is used as a temporary variable.
+        final double com   = sqrt(1 - excentricitySquared);
+        final double sinφ0 = sin(latitudeOfCentre);
+        final double cosφ0 = cos(latitudeOfCentre);
+        double t = cosφ0 * cosφ0; // t is used as a temporary variable.
         B = sqrt(1 + excentricitySquared * (t*t) / (1 - excentricitySquared));
-        final double con = 1 - excentricitySquared * (sinphi0 * sinphi0);
+        final double con = 1 - excentricitySquared * (sinφ0 * sinφ0);
         final double A = B * com / con;
-        final double D = B * com / (cosphi0 * sqrt(con));
+        final double D = B * com / (cosφ0 * sqrt(con));
         double F = D*D - 1;
         if (F < 0) {
             F = 0;
@@ -431,7 +431,7 @@ public class ObliqueMercator extends UnitaryProjection {
             F = copySign(sqrt(F), latitudeOfCentre);
         }
         F += D;
-        E = F * pow(tsfn(latitudeOfCentre, sinphi0), B);
+        E = F * pow(tsfn(latitudeOfCentre, sinφ0), B);
         /*
          * Computes the constants that depend on the "twoPoint" vs "azimuth" case. In the
          * two points case, we compute them from (LAT_OF_1ST_POINT, LONG_OF_1ST_POINT) and

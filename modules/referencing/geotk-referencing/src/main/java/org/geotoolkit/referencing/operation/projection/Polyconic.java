@@ -118,9 +118,9 @@ public class Polyconic extends CassiniOrMercator {
     {
         double x = rollLongitude(srcPts[srcOff]);
         double y = srcPts[srcOff + 1];
-        final double sinphi = sin(y);
-        final double cosphi = cos(y);
-        final double ms = msfn(sinphi, cosphi) / sinphi;
+        final double sinφ = sin(y);
+        final double cosφ = cos(y);
+        final double ms = msfn(sinφ, cosφ) / sinφ;
         /*
          * If y == 0, then we have (1/0) == infinity. Then we would have below
          * y = 0 + infinity * (1 - 1)  ==  infinity * zero  ==  indetermination.
@@ -132,7 +132,7 @@ public class Polyconic extends CassiniOrMercator {
          * more continuous function.
          */
         if (!Double.isInfinite(ms)) {
-            y = mlfn(y, sinphi, cosphi) + ms * (1 - cos(x *= sinphi));
+            y = mlfn(y, sinφ, cosφ) + ms * (1 - cos(x *= sinφ));
             x = ms * sin(x);
         }
         dstPts[dstOff  ] = x;
@@ -301,11 +301,11 @@ public class Polyconic extends CassiniOrMercator {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -313,7 +313,7 @@ public class Polyconic extends CassiniOrMercator {
      * Returns an estimation of the error in linear distance on the unit ellipse.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double λ, final double φ) {
         return 0;
     }
 }

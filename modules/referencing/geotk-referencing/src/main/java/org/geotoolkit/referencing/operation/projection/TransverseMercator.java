@@ -464,12 +464,12 @@ public class TransverseMercator extends CassiniOrMercator {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
-            if (abs(lambda) < ASSERTION_DOMAIN) {
+            if (abs(λ) < ASSERTION_DOMAIN) {
                 super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-                return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+                return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
             } else {
                 return true;
             }
@@ -511,7 +511,7 @@ public class TransverseMercator extends CassiniOrMercator {
      * and we disable the test when outside.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
-        return (abs(lambda) < ASSERTION_DOMAIN && abs(phi) < PI/4) ? 0 : Double.NaN;
+    double getErrorEstimate(final double λ, final double φ) {
+        return (abs(λ) < ASSERTION_DOMAIN && abs(φ) < PI/4) ? 0 : Double.NaN;
     }
 }

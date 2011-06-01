@@ -116,18 +116,18 @@ public class CassiniSoldner extends CassiniOrMercator {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double lam = rollLongitude(srcPts[srcOff]);
-        final double phi = srcPts[srcOff + 1];
-        final double sinphi = sin(phi);
-        final double cosphi = cos(phi);
-        final double n  = 1 / sqrt(1 - excentricitySquared*sinphi*sinphi);
-        final double tn = tan(phi);
-        final double t  = tn * tn;
-        final double a1 = lam * cosphi;
-        final double c  = cosphi * cosphi * excentricitySquared / (1 - excentricitySquared);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double sinφ = sin(φ);
+        final double cosφ = cos(φ);
+        final double tanφ = sinφ / cosφ;
+        final double n  = 1 / sqrt(1 - excentricitySquared*sinφ*sinφ);
+        final double t  = tanφ * tanφ;
+        final double a1 = λ * cosφ;
+        final double c  = cosφ * cosφ * excentricitySquared / (1 - excentricitySquared);
         final double a2 = a1 * a1;
         dstPts[dstOff  ] = n*a1*(1 - a2*t*(C1 - (8 - t + 8*c)*a2*C2));
-        dstPts[dstOff+1] = mlfn(phi, sinphi, cosphi) + n*tn*a2*(0.5 + (5 - t + 6*c)*a2*C3);
+        dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + n*tanφ*a2*(0.5 + (5 - t + 6*c)*a2*C3);
     }
 
     /**
@@ -197,10 +197,10 @@ public class CassiniSoldner extends CassiniOrMercator {
                                  final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            final double lam = rollLongitude(srcPts[srcOff]);
-            final double phi = srcPts[srcOff + 1];
-            final double x = asin (cos(phi) * sin(lam));
-            final double y = atan2(tan(phi) , cos(lam));
+            final double λ = rollLongitude(srcPts[srcOff]);
+            final double φ = srcPts[srcOff + 1];
+            final double x = asin (cos(φ) * sin(λ));
+            final double y = atan2(tan(φ) , cos(λ));
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
@@ -215,8 +215,8 @@ public class CassiniSoldner extends CassiniOrMercator {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            final double lambda = srcPts[srcOff];
-            if (abs(lambda) < ASSERTION_DOMAIN) {
+            final double λ = srcPts[srcOff];
+            if (abs(λ) < ASSERTION_DOMAIN) {
                 super.transform(srcPts, srcOff, dstPts, dstOff);
                 return Assertions.checkTransform(dstPts, dstOff, x, y, 1E-4);
             } else {
@@ -232,13 +232,13 @@ public class CassiniSoldner extends CassiniOrMercator {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            final double x   = srcPts[srcOff];
-            final double y   = srcPts[srcOff + 1];
-            final double phi = asin(sin(y) * cos(x));
-            final double lam = unrollLongitude(atan2(tan(x), cos(y)));
+            final double x = srcPts[srcOff];
+            final double y = srcPts[srcOff + 1];
+            final double φ = asin(sin(y) * cos(x));
+            final double λ = unrollLongitude(atan2(tan(x), cos(y)));
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = lam;
-            dstPts[dstOff+1] = phi;
+            dstPts[dstOff]   = λ;
+            dstPts[dstOff+1] = φ;
         }
 
         /**
@@ -247,12 +247,12 @@ public class CassiniSoldner extends CassiniOrMercator {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
-            if (abs(lambda) < ASSERTION_DOMAIN && abs(phi) < 85*(PI/180)) {
+            if (abs(λ) < ASSERTION_DOMAIN && abs(φ) < 85*(PI/180)) {
                 super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-                return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi, 0.1);
+                return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ, 0.1);
             } else {
                 return true;
             }

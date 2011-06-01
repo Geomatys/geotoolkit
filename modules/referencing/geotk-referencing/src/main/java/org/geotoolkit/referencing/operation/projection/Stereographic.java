@@ -147,7 +147,7 @@ public class Stereographic extends UnitaryProjection {
     /**
      * For compatibility with different versions during deserialization.
      */
-    private static final long serialVersionUID = 948619442800459871L;
+    private static final long serialVersionUID = 948619442800459872L;
 
     /**
      * Maximum difference allowed when comparing real numbers.
@@ -157,27 +157,27 @@ public class Stereographic extends UnitaryProjection {
     /**
      * The latitude of origin, in radians.
      */
-    final double phi0;
+    final double φ0;
 
     /**
      * Constants used for the oblique projections. All those constants are completely
-     * determined by {@link #phi0}. Consequently, there is no need to test them in
+     * determined by {@link #φ0}. Consequently, there is no need to test them in
      * {@link #hashCode} or {@link #equals(Object, ComparisonMode)} methods.
      */
-    final double sinphi0, cosphi0;
+    final double sinφ0, cosφ0;
 
     /**
      * Constants computed from the latitude of origin and the excentricity.
-     * It is equal to {@link #phi0} in the spherical and equatorial case.
+     * It is equal to {@link #φ0} in the spherical and equatorial case.
      */
-    private final double chi1;
+    private final double χ1;
 
     /**
      * Constants used for the oblique projections. All those constants are completely determined
-     * by {@link #phi0} and {@link #excentricity}. Consequently, there is no need to test them in
+     * by {@link #φ0} and {@link #excentricity}. Consequently, there is no need to test them in
      * {@link #hashCode} or {@link #equals(Object, ComparisonMode)} methods.
      */
-    private final double sinchi1, coschi1;
+    private final double sinχ1, cosχ1;
 
     /**
      * Creates a Stereographic projection from the given parameters. The descriptor argument is
@@ -228,7 +228,7 @@ public class Stereographic extends UnitaryProjection {
      */
     protected Stereographic(final Parameters parameters) {
         this(parameters, parameters.latitudeOfOrigin);
-        double k0 = 2*msfn(sinphi0, cosphi0) / coschi1;   // part of (14 - 15)
+        double k0 = 2*msfn(sinφ0, cosφ0) / cosχ1;   // part of (14 - 15)
         if (excentricity == 0) {
             k0 = 2; // For fixing rounding errors.
         }
@@ -256,19 +256,19 @@ public class Stereographic extends UnitaryProjection {
         double phi0 = toRadians(latitudeOfOrigin);
         if (abs(phi0) < ANGLE_TOLERANCE) { // Equatorial
             phi0    = 0;
-            cosphi0 = 1;
-            sinphi0 = 0;
-            chi1    = 0;
-            coschi1 = 1;
-            sinchi1 = 0;
+            cosφ0 = 1;
+            sinφ0 = 0;
+            χ1    = 0;
+            cosχ1 = 1;
+            sinχ1 = 0;
         } else {  // Oblique
-            cosphi0 = cos(phi0);
-            sinphi0 = sin(phi0);
-            chi1    = 2 * atan(ssfn(phi0, sinphi0)) - PI/2;
-            coschi1 = cos(chi1);
-            sinchi1 = sin(chi1);
+            cosφ0 = cos(phi0);
+            sinφ0 = sin(phi0);
+            χ1    = 2 * atan(ssfn(phi0, sinφ0)) - PI/2;
+            cosχ1 = cos(χ1);
+            sinχ1 = sin(χ1);
         }
-        this.phi0 = phi0;
+        this.φ0 = phi0;
     }
 
     /**
@@ -280,17 +280,17 @@ public class Stereographic extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double x   = rollLongitude(srcPts[srcOff]);
-        final double y   = srcPts[srcOff + 1];
-        final double chi = 2*atan(ssfn(y, sin(y))) - PI/2;
-        final double sinChi = sin(chi);
-        final double cosChi = cos(chi);
-        final double cosChi_cosLon = cosChi * cos(x);
-        final double A = 1 + sinchi1*sinChi + coschi1*cosChi_cosLon;
-        dstPts[dstOff  ] = (cosChi * sin(x)) / A;
-        dstPts[dstOff+1] = (coschi1 * sinChi - sinchi1 * cosChi_cosLon) / A;
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double χ = 2*atan(ssfn(φ, sin(φ))) - PI/2;
+        final double sinχ = sin(χ);
+        final double cosχ = cos(χ);
+        final double cosχ_cosλ = cosχ * cos(λ);
+        final double A = 1 + sinχ1*sinχ + cosχ1*cosχ_cosλ;
+        dstPts[dstOff  ] = (cosχ * sin(λ)) / A;
+        dstPts[dstOff+1] = (cosχ1 * sinχ - sinχ1 * cosχ_cosλ) / A;
         /*
-         * The multiplication by (k0 / coschi1) is performed by the "denormalize" affine transform.
+         * The multiplication by (k0 / cosχ1) is performed by the "denormalize" affine transform.
          */
     }
 
@@ -303,31 +303,31 @@ public class Stereographic extends UnitaryProjection {
             throws ProjectionException
     {
         /*
-         * (x,y) is multiplied by (coschi1 / k0),  so rho below is multiplied by the same factor
+         * (x,y) is multiplied by (cosχ1 / k0), so ρ below is multiplied by the same factor
          * compared to Proj4 code. This allow a few simplifications in the formulas. For example
-         * in the computation of ce: atan2(rho*coschi1, k0)
-         * simplifies to:            atan(rho).
+         * in the computation of ce: atan2(ρ*cosχ1, k0)
+         * simplifies to:            atan(ρ).
          */
         final double x = srcPts[srcOff  ];
         final double y = srcPts[srcOff+1];
-        final double rho   = hypot(x, y);
-        final double ce    = 2 * atan(rho);
+        final double ρ = hypot(x, y);
+        final double ce    = 2 * atan(ρ);
         final double cosce = cos(ce);
         final double since = sin(ce);
-        final double chi   = (rho < EPSILON) ? chi1 : asin(cosce*sinchi1 + (y*since*coschi1 / rho));
-        final double tp    = tan(PI/4 + 0.5*chi);
+        final double χ   = (ρ < EPSILON) ? χ1 : asin(cosce*sinχ1 + (y*since*cosχ1 / ρ));
+        final double tp    = tan(PI/4 + 0.5*χ);
 
         // parts of (21-36) used to calculate longitude
         final double t  = x*since;
-        final double ct = rho*coschi1*cosce - y*sinchi1*since;
+        final double ct = ρ*cosχ1*cosce - y*sinχ1*since;
 
         // Compute latitude using iterative technique (3-4)
         final double halfe = 0.5*excentricity;
-        double phi = chi;
+        double φ = χ;
         for (int i=MAXIMUM_ITERATIONS;;) {
-            final double esinphi = excentricity * sin(phi);
-            final double next = 2*atan(tp*pow((1+esinphi)/(1-esinphi), halfe)) - PI/2;
-            if (abs(phi - (phi=next)) < ITERATION_TOLERANCE) {
+            final double esinφ = excentricity * sin(φ);
+            final double next = 2*atan(tp*pow((1+esinφ)/(1-esinφ), halfe)) - PI/2;
+            if (abs(φ - (φ=next)) < ITERATION_TOLERANCE) {
                 break;
             }
             if (--i < 0) {
@@ -335,7 +335,7 @@ public class Stereographic extends UnitaryProjection {
             }
         }
         dstPts[dstOff  ] = unrollLongitude(atan2(t, ct));
-        dstPts[dstOff+1] = phi;
+        dstPts[dstOff+1] = φ;
     }
 
 
@@ -388,12 +388,12 @@ public class Stereographic extends UnitaryProjection {
         {
             double x = rollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            final double coslat = cos(y);
-            final double sinlat = sin(y);
-            final double coslon = cos(x);
-            final double f = 1 + sinphi0*sinlat + cosphi0*coslat*coslon; // (21-4)
-            x = coslat * sin(x) / f;                                     // (21-2)
-            y = (cosphi0 * sinlat - sinphi0 * coslat * coslon) / f;      // (21-3)
+            final double cosφ = cos(y);
+            final double sinφ = sin(y);
+            final double cosλ = cos(x);
+            final double f = 1 + sinφ0*sinφ + cosφ0*cosφ*cosλ; // (21-4)
+            x = cosφ * sin(x) / f;                             // (21-2)
+            y = (cosφ0 * sinφ - sinφ0 * cosφ * cosλ) / f;      // (21-3)
 
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
@@ -423,17 +423,17 @@ public class Stereographic extends UnitaryProjection {
         {
             double x = unrollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            final double rho = hypot(x, y);
-            if (abs(rho) < EPSILON) {
-                y = phi0;
+            final double ρ = hypot(x, y);
+            if (abs(ρ) < EPSILON) {
+                y = φ0;
                 x = 0.0;
             } else {
-                final double c    = 2 * atan(rho);
+                final double c    = 2 * atan(ρ);
                 final double cosc = cos(c);
                 final double sinc = sin(c);
-                final double ct   = rho*cosphi0*cosc - y*sinphi0*sinc; // (20-15)
-                final double t    = x*sinc;                            // (20-15)
-                y = asin(cosc*sinphi0 + y*sinc*cosphi0/rho);           // (20-14)
+                final double ct   = ρ*cosφ0*cosc - y*sinφ0*sinc; // (20-15)
+                final double t    = x*sinc;                      // (20-15)
+                y = asin(cosc*sinφ0 + y*sinc*cosφ0/ρ);           // (20-14)
                 x = atan2(t, ct);
             }
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
@@ -447,11 +447,11 @@ public class Stereographic extends UnitaryProjection {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -462,7 +462,7 @@ public class Stereographic extends UnitaryProjection {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
             final Stereographic that = (Stereographic) object;
-            return epsilonEqual(this.phi0, that.phi0, mode);
+            return epsilonEqual(this.φ0, that.φ0, mode);
             // All other fields are derived from the latitude of origin.
         }
         return false;

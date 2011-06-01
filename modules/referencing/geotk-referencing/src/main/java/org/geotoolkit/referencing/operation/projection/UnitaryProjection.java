@@ -606,12 +606,12 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * The default implementation returns {@link Double#NaN} in all case. Subclasses
      * should override this method in order to provide a better estimation.
      *
-     * @param  lambda The longitude usually in radians, relative to the central meridian.
-     * @param  phi The latitude usually in radians (not relative to the latitude of origin).
+     * @param  φ The longitude usually in radians, relative to the central meridian.
+     * @param  λ The latitude usually in radians (not relative to the latitude of origin).
      * @return The tolerance level for assertions in linear distance on the unit ellipse,
      *         or {@link Double#NaN} if unknown.
      */
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double φ, final double λ) {
         return NaN;
     }
 
@@ -688,31 +688,31 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * <p>
      * Special cases:
      * <ul>
-     *   <li>If <var>phi</var> is 0°, then this method returns 1.</li>
-     *   <li>If <var>phi</var> is ±90°, then this method returns 0 provided that we are
+     *   <li>If φ is 0°, then this method returns 1.</li>
+     *   <li>If φ is ±90°, then this method returns 0 provided that we are
      *       not in the spherical case (otherwise we get {@link Double#NaN}).</li>
      * </ul>
      *
-     * @param s The   sinus of the <var>phi</var> latitude in radians.
-     * @param c The cosinus of the <var>phi</var> latitude in radians.
+     * @param sinφ The   sinus of the φ latitude in radians.
+     * @param cosφ The cosinus of the φ latitude in radians.
      */
-    final double msfn(final double s, final double c) {
-        return c / sqrt(1.0 - (s*s) * excentricitySquared);
+    final double msfn(final double sinφ, final double cosφ) {
+        return cosφ / sqrt(1.0 - (sinφ*sinφ) * excentricitySquared);
     }
 
     /**
      * Computes part of function (3-1) from Snyder. This is numerically equivalent to
-     * <code>{@linkplain #tsfn tsfn}(-phi, sinphi)</code>, but is defined as a separated
+     * <code>{@linkplain #tsfn tsfn}(-φ, sinφ)</code>, but is defined as a separated
      * function for clarity and because the function properties are not the same.
      *
-     * @param  phi    The latitude in radians.
-     * @param  sinphi The sinus of the {@code phi} argument. This is provided explicitly
-     *                because in many cases, the caller has already computed this value.
+     * @param  φ    The latitude in radians.
+     * @param  sinφ The sinus of the φ argument. This is provided explicitly
+     *              because in many cases, the caller has already computed this value.
      */
-    final double ssfn(double phi, double sinphi) {
-        assert !(abs(sinphi - sin(phi)) > 1E-15) : phi;
-        sinphi *= excentricity;
-        return tan(PI/4 + 0.5*phi) * pow((1-sinphi) / (1+sinphi), 0.5*excentricity);
+    final double ssfn(double φ, double sinφ) {
+        assert !(abs(sinφ - sin(φ)) > 1E-15) : φ;
+        sinφ *= excentricity;
+        return tan(PI/4 + 0.5*φ) * pow((1-sinφ) / (1+sinφ), 0.5*excentricity);
     }
 
     /**
@@ -720,34 +720,34 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * the negative of function (7-7) and is the converse of {@link #cphi2}.
      * <p>
      * This function has a periodicity of 2π.  The result is always a positive value when
-     * <var>phi</var> is valid (more on it below). More specifically its behavior at some
+     * φ is valid (more on it below). More specifically its behavior at some
      * particular points is:
      * <p>
      * <ul>
-     *   <li>If {@code phi} is NaN or infinite, then the result is NaN.</li>
-     *   <li>If {@code phi} is π/2,  then the result is close to 0.</li>
-     *   <li>If {@code phi} is 0,    then the result is close to 1.</li>
-     *   <li>If {@code phi} is -π/2, then the result tends toward positive infinity.
+     *   <li>If φ is NaN or infinite, then the result is NaN.</li>
+     *   <li>If φ is π/2,  then the result is close to 0.</li>
+     *   <li>If φ is 0,    then the result is close to 1.</li>
+     *   <li>If φ is -π/2, then the result tends toward positive infinity.
      *       The actual result is not infinity however, but some large value like 1E+10.</li>
-     *   <li>If {@code phi}, after removal of any 2π perdiocity, still outside the [-π/2 ... π/2]
+     *   <li>If φ, after removal of any 2π periodicity, still outside the [-π/2 ... π/2]
      *       range, then the result is a negative number. If the caller is going to compute the
      *       logarithm of the returned value as in the Mercator projection, he will get NaN.</li>
      * </ul>
      *
-     * {@note <code>ssfn(phi, sinphi)</code> which is part of function (3-1)
-     *        from Snyder, is equivalent to <code>tsfn(-phi, sinphi)</code>.}
+     * {@note <code>ssfn(φ, sinφ)</code> which is part of function (3-1)
+     *        from Snyder, is equivalent to <code>tsfn(-φ, sinφ)</code>.}
      *
-     * @param  phi    The latitude in radians.
-     * @param  sinphi The sinus of the {@code phi} argument. This is provided explicitly
-     *                because in many cases, the caller has already computed this value.
+     * @param  φ    The latitude in radians.
+     * @param  sinφ The sinus of the φ argument. This is provided explicitly
+     *              because in many cases, the caller has already computed this value.
      *
      * @return The negative of function 7-7 from Snyder. In the case of Mercator projection,
      *         this is {@code exp(-y)} where <var>y</var> is the northing on the unit ellipse.
      */
-    final double tsfn(final double phi, double sinphi) {
-        assert !(abs(sinphi - sin(phi)) > 1E-15) : phi;
-        sinphi *= excentricity;
-        return tan(0.5 * (PI/2 - phi)) / pow((1-sinphi)/(1+sinphi), 0.5*excentricity);
+    final double tsfn(final double φ, double sinφ) {
+        assert !(abs(sinφ - sin(φ)) > 1E-15) : φ;
+        sinφ *= excentricity;
+        return tan(0.5 * (PI/2 - φ)) / pow((1-sinφ)/(1+sinφ), 0.5*excentricity);
     }
 
     /**
@@ -767,12 +767,12 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      */
     final double cphi2(final double ts) throws ProjectionException {
         final double he = 0.5 * excentricity;
-        double phi = (PI/2) - 2.0 * atan(ts);
+        double φ = (PI/2) - 2.0 * atan(ts);
         for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
-            final double con  = excentricity * sin(phi);
-            final double dphi = abs(phi - (phi = PI/2 - 2.0*atan(ts * pow((1-con)/(1+con), he))));
+            final double con  = excentricity * sin(φ);
+            final double dphi = abs(φ - (φ = PI/2 - 2.0*atan(ts * pow((1-con)/(1+con), he))));
             if (dphi <= ITERATION_TOLERANCE) {
-                return phi;
+                return φ;
             }
         }
         if (isNaN(ts)) {
@@ -789,24 +789,24 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *   <li>Output in the [-2 ... +2] range.</li>
      *   <li>Output is 0 when input is 0.</li>
      *   <li>Output of the same sign than input.</li>
-     *   <li>{@code qsfn(-sinphi) == -qsfn(sinphi)}.</li>
+     *   <li>{@code qsfn(-sinφ) == -qsfn(sinφ)}.</li>
      * </ul>
      *
-     * @param sinphi Sinus of the latitude <var>q</var> is calculated for.
+     * @param sinφ Sinus of the latitude <var>q</var> is calculated for.
      * @return <var>q</var> from Snyder equation (3-12).
      */
-    final double qsfn(final double sinphi) {
+    final double qsfn(final double sinφ) {
         if (excentricity < EPSILON) {
-            return sinphi + sinphi;
+            return sinφ + sinφ;
         }
         /*
          * Above check was required because the expression below would simplify to
-         * sinphi - 0.5/0*log(1) where the right terms are infinity multiplied by
+         * sinφ - 0.5/0*log(1) where the right terms are infinity multiplied by
          * zero, thus producing NaN.
          */
-        final double con = excentricity * sinphi;
+        final double con = excentricity * sinφ;
         return (1 - excentricitySquared) *
-                (sinphi / (1 - con*con) - (0.5 / excentricity) * log((1-con) / (1+con)));
+                (sinφ / (1 - con*con) - (0.5 / excentricity) * log((1-con) / (1+con)));
     }
 
 
@@ -911,7 +911,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
         /**
          * Central longitude in degrees. Default value is 0, the Greenwich meridian.
-         * This is named <var>lambda0</var> in Snyder.
+         * This is named <var>λ0</var> in Snyder.
          */
         public double centralMeridian;
 
@@ -928,7 +928,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         public final double[] standardParallels;
 
         /**
-         * The azimuth of the central line passing throught the centre of the projection,
+         * The azimuth of the central line passing through the centre of the projection,
          * in degrees. This is 0&deg; for most projections.
          */
         public double azimuth;

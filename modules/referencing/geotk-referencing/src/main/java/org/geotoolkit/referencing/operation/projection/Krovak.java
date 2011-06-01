@@ -212,10 +212,10 @@ public class Krovak extends UnitaryProjection {
             throws ProjectionException
     {
         final double deltav = srcPts[srcOff];
-        final double phi = srcPts[srcOff + 1];
-        final double esp = excentricity * sin(phi);
+        final double φ = srcPts[srcOff + 1];
+        final double esp = excentricity * sin(φ);
         final double gfi = pow(((1 - esp) / (1 + esp)), hae);
-        final double u   = 2 * (atan(pow(tan(phi/2 + s45), alfa) / k1 * gfi) - s45);
+        final double u   = 2 * (atan(pow(tan(φ/2 + s45), alfa) / k1 * gfi) - s45);
         final double cosU = cos(u);
         final double s = asin((cosAzim * sin(u)) + (sinAzim * cosU * cos(deltav)));
         final double eps = n * asin(cosU * sin(deltav) / cos(s));
@@ -244,14 +244,14 @@ public class Krovak extends UnitaryProjection {
         final double u   = asin((cosAzim * sin(s)) - (sinAzim * cs * cos(d)));
         final double kau = ka * pow(tan((u / 2) + s45), 1 / alfa);
         final double deltav = asin((cs * sin(d)) / cos(u));
-        double phi = 0;
+        double φ = 0;
 
         // iteration calculation
         for (int i=MAXIMUM_ITERATIONS;;) {
-            final double fi1 = phi;
+            final double fi1 = φ;
             final double esf = excentricity * sin(fi1);
-            phi = 2 * (atan(kau * pow((1 + esf) / (1 - esf), excentricity/2)) - s45);
-            if (abs(fi1 - phi) <= ITERATION_TOLERANCE) {
+            φ = 2 * (atan(kau * pow((1 + esf) / (1 - esf), excentricity/2)) - s45);
+            if (abs(fi1 - φ) <= ITERATION_TOLERANCE) {
                 break;
             }
             if (--i < 0) {
@@ -259,7 +259,7 @@ public class Krovak extends UnitaryProjection {
             }
         }
         dstPts[dstOff  ] = deltav;
-        dstPts[dstOff+1] = phi;
+        dstPts[dstOff+1] = φ;
     }
 
     /**

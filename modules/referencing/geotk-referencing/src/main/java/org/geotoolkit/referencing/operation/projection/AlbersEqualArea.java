@@ -93,8 +93,8 @@ public class AlbersEqualArea extends UnitaryProjection {
      * poles, while the formulas would still applicable, thus leading to results less accurate
      * than they could be.
      * <p>
-     * Note that Geotk formulas are modified in such a way that the {@code rho} value which
-     * is compared to {@code EPSILON} is the equivalent of {@code rho/abs(n)} in Proj4, where
+     * Note that Geotk formulas are modified in such a way that the {@code ρ} value which
+     * is compared to {@code EPSILON} is the equivalent of {@code ρ/abs(n)} in Proj4, where
      * abs(n) is typically a number between 0.8 and 1.
      */
     private static final double EPSILON = 1E-7;
@@ -142,66 +142,66 @@ public class AlbersEqualArea extends UnitaryProjection {
      */
     protected AlbersEqualArea(final Parameters parameters) {
         super(parameters);
-        double phi1, phi2;
+        double φ1, phi2;
         double latitudeOfOrigin = parameters.latitudeOfOrigin;
         switch (parameters.standardParallels.length) {
             default: {
                 throw unknownParameter("standard_parallel_3");
             }
             case 2: {
-                phi1 = parameters.standardParallels[0];
+                φ1 = parameters.standardParallels[0];
                 phi2 = parameters.standardParallels[1];
                 break;
             }
             case 1: {
-                phi2 = phi1 = parameters.standardParallels[0];
+                phi2 = φ1 = parameters.standardParallels[0];
                 break;
             }
             case 0: {
-                phi2 = phi1 = parameters.latitudeOfOrigin;
+                phi2 = φ1 = parameters.latitudeOfOrigin;
                 break;
             }
         }
-        ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_1, phi1, true);
+        ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_1, φ1, true);
         ensureLatitudeInRange(org.geotoolkit.referencing.operation.provider.AlbersEqualArea.STANDARD_PARALLEL_2, phi2, true);
-        if (abs(phi1 + phi2) < ANGLE_TOLERANCE * (180/PI)) {
+        if (abs(φ1 + phi2) < ANGLE_TOLERANCE * (180/PI)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ANTIPODE_LATITUDES_$2,
-                    new Latitude(phi1), new Latitude(phi2)));
+                    new Latitude(φ1), new Latitude(phi2)));
         }
-        phi1 = toRadians(phi1);
+        φ1 = toRadians(φ1);
         phi2 = toRadians(phi2);
         latitudeOfOrigin = toRadians(latitudeOfOrigin);
         /*
          * Computes constants.
          */
-        if (abs(phi1 + phi2) < ANGLE_TOLERANCE) {
+        if (abs(φ1 + phi2) < ANGLE_TOLERANCE) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ANTIPODE_LATITUDES_$2,
-                    new Latitude(toDegrees(phi1)), new Latitude(toDegrees(phi2))));
+                    new Latitude(toDegrees(φ1)), new Latitude(toDegrees(phi2))));
         }
-        double  sinphi = sin(phi1);
-        double  cosphi = cos(phi1);
-        double  n      = sinphi;
-        boolean secant = (abs(phi1 - phi2) >= ANGLE_TOLERANCE);
-        final double rho0;
+        double  sinφ   = sin(φ1);
+        double  cosφ   = cos(φ1);
+        double  n      = sinφ;
+        boolean secant = (abs(φ1 - phi2) >= ANGLE_TOLERANCE);
+        final double ρ0;
         if (parameters.isSpherical()) {
             if (secant) {
                 n = 0.5 * (n + sin(phi2));
             }
-            c    = cosphi * cosphi + n*2 * sinphi;
-            rho0 = sqrt(c - n*2 * sin(latitudeOfOrigin)) / n;
-            ec   = NaN;
+            c  = cosφ * cosφ + n*2 * sinφ;
+            ρ0 = sqrt(c - n*2 * sin(latitudeOfOrigin)) / n;
+            ec = NaN;
         } else {
-            double m1 = msfn(sinphi, cosphi);
-            double q1 = qsfn(sinphi);
+            double m1 = msfn(sinφ, cosφ);
+            double q1 = qsfn(sinφ);
             if (secant) { // secant cone
-                sinphi    = sin(phi2);
-                cosphi    = cos(phi2);
-                double m2 = msfn(sinphi, cosphi);
-                double q2 = qsfn(sinphi);
+                sinφ    = sin(phi2);
+                cosφ    = cos(phi2);
+                double m2 = msfn(sinφ, cosφ);
+                double q2 = qsfn(sinφ);
                 n = (m1*m1 - m2*m2) / (q2 - q1);
             }
             c = m1*m1 + n*q1;
-            rho0 = sqrt(c - n * qsfn(sin(latitudeOfOrigin))) / n;
+            ρ0 = sqrt(c - n * qsfn(sin(latitudeOfOrigin))) / n;
             ec = 1 - 0.5*(1-excentricitySquared) * log((1-excentricity) / (1+excentricity)) / excentricity;
         }
         this.n = n;
@@ -213,7 +213,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         final AffineTransform denormalize = parameters.normalize(false);
         normalize.scale(n, 1);
         parameters.validate();
-        denormalize.translate(0, rho0);
+        denormalize.translate(0, ρ0);
         denormalize.scale(1/n, -1/n);
         finish();
     }
@@ -236,13 +236,13 @@ public class AlbersEqualArea extends UnitaryProjection {
     public ParameterValueGroup getParameterValues() {
         final double[] standardParallels = parameters.standardParallels;
         final int n = standardParallels.length;
-        final double phi0 = parameters.latitudeOfOrigin;
-        final double phi1 = (n != 0) ? standardParallels[0] : phi0;
-        final double phi2 = (n >= 2) ? standardParallels[1] : phi1;
+        final double φ0 = parameters.latitudeOfOrigin;
+        final double φ1 = (n != 0) ? standardParallels[0] : φ0;
+        final double φ2 = (n >= 2) ? standardParallels[1] : φ1;
         final ParameterValueGroup values = super.getParameterValues();
         getOrCreate(LATITUDE_OF_ORIGIN,  values).setValue(parameters.latitudeOfOrigin);
-        getOrCreate(STANDARD_PARALLEL_1, values).setValue(phi1);
-        getOrCreate(STANDARD_PARALLEL_2, values).setValue(phi2);
+        getOrCreate(STANDARD_PARALLEL_1, values).setValue(φ1);
+        getOrCreate(STANDARD_PARALLEL_2, values).setValue(φ2);
         return values;
     }
 
@@ -255,19 +255,19 @@ public class AlbersEqualArea extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = rollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
-        double rho = c - n * qsfn(sin(y));
-        if (rho < 0.0) {
-            if (rho > -EPSILON) {
-                rho = 0.0;
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        double ρ = c - n * qsfn(sin(φ));
+        if (ρ < 0.0) {
+            if (ρ > -EPSILON) {
+                ρ = 0.0;
             } else {
                 throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
             }
         }
-        rho = sqrt(rho);
-        dstPts[dstOff]     = rho * sin(x);
-        dstPts[dstOff + 1] = rho * cos(x);
+        ρ = sqrt(ρ);
+        dstPts[dstOff]     = ρ * sin(λ);
+        dstPts[dstOff + 1] = ρ * cos(λ);
     }
 
     /**
@@ -284,22 +284,22 @@ public class AlbersEqualArea extends UnitaryProjection {
          * Proj4 had a code like this:
          *
          *     if (n < 0.0) {
-         *         x   = -x;
-         *         y   = -y;
-         *         rho = -rho;
+         *         x = -x;
+         *         y = -y;
+         *         ρ = -ρ;
          *     }
          *
          * This condition has disappeared in Geotk because (x,y) are premultiplied by n
          * (by the affine transform) before to enter in this method, so if n was negative
-         * those values have already their sign reverted. In the case of rho, it was divided
+         * those values have already their sign reverted. In the case of ρ, it was divided
          * further by n, so it got its sign reverted too.
          */
-        final double rho = hypot(x, y);
+        final double ρ = hypot(x, y);
         x = atan2(x, y);
-        if (rho <= EPSILON) {
+        if (ρ <= EPSILON) {
             y = copySign(PI/2, n);
         } else {
-            y = (c - rho*rho) / n;
+            y = (c - ρ*ρ) / n;
             if (abs(ec - abs(y)) <= EPSILON) { // Necessary to avoid "no convergence" error.
                 y = copySign(PI/2, y);
             } else {
@@ -356,17 +356,17 @@ public class AlbersEqualArea extends UnitaryProjection {
         {
             double x = rollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            double rho = c - n*2 * sin(y);
-            if (rho < 0.0) {
-                if (rho > -EPSILON) {
-                    rho = 0.0;
+            double ρ = c - n*2 * sin(y);
+            if (ρ < 0.0) {
+                if (ρ > -EPSILON) {
+                    ρ = 0.0;
                 } else {
                     throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
                 }
             }
-            rho = sqrt(rho);
-            y = rho * cos(x);
-            x = rho * sin(x);
+            ρ = sqrt(ρ);
+            y = ρ * cos(x);
+            x = ρ * sin(x);
 
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]     = x;
@@ -396,12 +396,12 @@ public class AlbersEqualArea extends UnitaryProjection {
         {
             double x = srcPts[srcOff];
             double y = srcPts[srcOff + 1];
-            final double rho = hypot(x, y);
+            final double ρ = hypot(x, y);
             x = unrollLongitude(atan2(x, y));
-            if (rho <= EPSILON) {
+            if (ρ <= EPSILON) {
                 y = copySign(PI/2, n);
             } else {
-                y = (c - rho*rho) / (n*2);
+                y = (c - ρ*ρ) / (n*2);
                 if (abs(y) >= 1.0) {
                     y = copySign(PI/2, y);
                 } else {
@@ -419,11 +419,11 @@ public class AlbersEqualArea extends UnitaryProjection {
          */
         private boolean checkInverseTransform(final double[] srcPts, final int srcOff,
                                               final double[] dstPts, final int dstOff,
-                                              final double lambda, final double phi)
+                                              final double λ, final double φ)
                 throws ProjectionException
         {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
+            return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
     }
 
@@ -435,20 +435,20 @@ public class AlbersEqualArea extends UnitaryProjection {
      */
     final double phi1(final double qs) throws ProjectionException {
         final double tone_es = 1 - excentricitySquared;
-        double phi = asin(0.5 * qs);
+        double φ = asin(0.5 * qs);
         if (excentricity < EPSILON) {
-            return phi;
+            return φ;
         }
         for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
-            final double sinpi = sin(phi);
-            final double cospi = cos(phi);
+            final double sinpi = sin(φ);
+            final double cospi = cos(φ);
             final double con   = excentricity * sinpi;
             final double com   = 1.0 - con*con;
             final double dphi  = 0.5 * com*com / cospi *
                     (qs/tone_es - sinpi/com + 0.5/excentricity * log((1-con) / (1+con)));
-            phi += dphi;
+            φ += dphi;
             if (abs(dphi) <= ITERATION_TOLERANCE) {
-                return phi;
+                return φ;
             }
         }
         throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
@@ -471,7 +471,7 @@ public class AlbersEqualArea extends UnitaryProjection {
      * Returns an estimation of the error in linear distance on the unit ellipse.
      */
     @Override
-    double getErrorEstimate(final double lambda, final double phi) {
+    double getErrorEstimate(final double λ, final double φ) {
         return 0;
     }
 }
