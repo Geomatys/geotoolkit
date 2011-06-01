@@ -39,7 +39,8 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Simon Reynard (Geomatys)
- * @version 3.14
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -162,20 +163,26 @@ public final class MercatorTest extends ProjectionTestBase {
     }
 
     /**
-     * Creates a projection and derivates a few points.
+     * Creates a projection and tests the derivatives at a few points.
      *
      * @throws TransformException Should never happen.
      */
     @Test
     public void testDerivative() throws TransformException {
         tolerance = 1E-9;
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+
+        // Tests spherical formulas
         transform = create(false);
         assertTrue(isSpherical());
         validate();
+        point.x = toRadians(15); point.y = toRadians( 30); checkDerivative2D(point, delta);
+        point.x = toRadians(10); point.y = toRadians(-60); checkDerivative2D(point, delta);
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
-        checkDerivative2D(point, delta);
+        // Tests ellipsoidal formulas
+        transform = create(true);
+        validate();
         point.x = toRadians(15); point.y = toRadians( 30); checkDerivative2D(point, delta);
         point.x = toRadians(10); point.y = toRadians(-60); checkDerivative2D(point, delta);
     }

@@ -88,7 +88,8 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Simon Reynard (Geomatys)
- * @version 3.14
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @see TransverseMercator
  * @see ObliqueMercator
@@ -478,21 +479,41 @@ public class Mercator extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.12
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final Matrix derivative = new Matrix2(1, 0, 0, 1/cos(point.getY()));
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
     }
 
     /**
      * Gets the derivative of this transform at a point.
-     * The current implementation is derived from the spherical formulas.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.
      * @throws ProjectionException if the derivative can't be evaluated at the specified point.
      *
-     * @since 3.12
+     * @since 3.18
      */
     @Override
     public Matrix derivative(final Point2D point) throws ProjectionException {
-        return new Matrix2(1, 0, 0, 1/cos(point.getY()));
+        final double φ = point.getY();
+        final double sinφ = sin(φ);
+        final double cosφ = cos(φ);
+        final double esinφ = sinφ * excentricity;
+        final double t = (1 - sinφ) / cosφ;
+        return new Matrix2(1, 0, 0, 0.5*(t + 1/t) - excentricitySquared*cosφ / (1 - esinφ*esinφ));
     }
 
     /**

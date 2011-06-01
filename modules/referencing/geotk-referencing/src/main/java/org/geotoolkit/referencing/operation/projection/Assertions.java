@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import org.opengis.referencing.operation.Matrix;
+
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.measure.Latitude;
@@ -33,7 +35,8 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * the distance is over some projection-dependent threshold.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -53,6 +56,12 @@ final class Assertions extends Static {
      * in distance on the unit ellipse. A value of 1E-7 is approximatively 0.1 metres.
      */
     private static final double FORWARD_TOLERANCE = 1E-7;
+
+    /**
+     * Maximum difference allowed between spherical and ellipsoidal formulas when
+     * comparing derivatives. Units are metres.
+     */
+    private static final double DERIVATIVE_TOLERANCE = 1E-1;
 
     /**
      * A conservative factory by which to increase the value returned by
@@ -243,6 +252,23 @@ final class Assertions extends Static {
     }
 
     /**
+     * Checks if derivatives using spherical formulas produces the same result than ellipsoidal
+     * formulas. This method is invoked during assertions only. The spherical formulas are used
+     * for the "expected" results since they are simpler than the ellipsoidal formulas.
+     *
+     * @since 3.18
+     */
+    static boolean checkDerivative(final Matrix spherical, final Matrix ellipsoidal)
+            throws ProjectionException
+    {
+        compare("m00", spherical.getElement(0,0), ellipsoidal.getElement(0,0), DERIVATIVE_TOLERANCE);
+        compare("m01", spherical.getElement(0,1), ellipsoidal.getElement(0,1), DERIVATIVE_TOLERANCE);
+        compare("m10", spherical.getElement(1,0), ellipsoidal.getElement(1,0), DERIVATIVE_TOLERANCE);
+        compare("m11", spherical.getElement(1,1), ellipsoidal.getElement(1,1), DERIVATIVE_TOLERANCE);
+        return true;
+    }
+
+    /**
      * Compares two value for equality up to some tolerance threshold. This is used during
      * assertions only. The comparison does not fail if at least one value to compare is
      * {@link Double#NaN} or infinity.
@@ -253,7 +279,7 @@ final class Assertions extends Static {
      *
      * @throws ProjectionException if the comparison failed.
      */
-    private static void compare(String variable, double expected, double actual, double tolerance)
+    private static void compare(final String variable, double expected, double actual, final double tolerance)
             throws ProjectionException
     {
         if (abs(expected - actual) > tolerance) {

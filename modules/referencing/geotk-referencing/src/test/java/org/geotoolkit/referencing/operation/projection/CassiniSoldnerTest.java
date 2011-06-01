@@ -17,11 +17,13 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.junit.*;
+import java.awt.geom.Point2D;
+
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
+import org.junit.*;
 import org.geotoolkit.test.Depend;
 
 import static org.junit.Assert.*;
@@ -32,7 +34,8 @@ import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.*;
  * Tests the {@link Cassini-Soldner} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -76,10 +79,10 @@ public class CassiniSoldnerTest extends ProjectionTestBase {
             validate();
             error.fit(6, 90);
             assertEquals(2353, error.delta.count());
-            assertEquals(0.0,   error.delta.minimum(), TOLERANCE);
-            assertEquals(0.0,   error.delta.maximum(), TOLERANCE);
-            assertEquals(0.0,   error.delta.mean(),    TOLERANCE);
-            assertEquals(0.0,   error.delta.rms(),     TOLERANCE);
+            assertEquals(0.0,  error.delta.minimum(), TOLERANCE);
+            assertEquals(0.0,  error.delta.maximum(), TOLERANCE);
+            assertEquals(0.0,  error.delta.mean(),    TOLERANCE);
+            assertEquals(0.0,  error.delta.rms(),     TOLERANCE);
         } while ((ellipse = !ellipse) == false);
     }
 
@@ -108,5 +111,33 @@ public class CassiniSoldnerTest extends ProjectionTestBase {
         final double[] expected = new double[] {66644.94 * links, 82536.22 * links};
         tolerance = 0.01 / links;
         verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection and tests the derivatives at a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-3;
+        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final Point2D.Double point2 = new Point2D.Double(Math.toRadians(+3), Math.toRadians(-6));
+        final Point2D.Double point1 = new Point2D.Double(Math.toRadians(-4), Math.toRadians(40));
+
+        // Tests spherical formulas
+        transform = create(false);
+        assertTrue(isSpherical());
+        validate();
+        checkDerivative2D(point1, delta);
+        checkDerivative2D(point2, delta);
+
+        // Tests ellipsoidal formulas
+        transform = create(true);
+        validate();
+        checkDerivative2D(point1, delta);
+        checkDerivative2D(point2, delta);
     }
 }

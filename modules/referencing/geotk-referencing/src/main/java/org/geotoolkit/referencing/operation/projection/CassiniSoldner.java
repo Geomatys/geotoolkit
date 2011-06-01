@@ -21,11 +21,15 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
+
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 
@@ -51,7 +55,8 @@ import static java.lang.Math.*;
  *
  * @author Mauro Bartolomeoli
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -64,7 +69,7 @@ public class CassiniSoldner extends CassiniOrMercator {
     private static final long serialVersionUID = 4710150547701615178L;
 
     /**
-     * Contants used for the forward and inverse transform for the eliptical
+     * Constants used for the forward and inverse transform for the elliptical
      * case of the Cassini-Soldner.
      */
     private static final double C1 = 0.16666666666666666666,
@@ -257,5 +262,64 @@ public class CassiniSoldner extends CassiniOrMercator {
                 return true;
             }
         }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.18
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ    = sin(φ);
+        final double cosφ    = cos(φ);
+        final double sinφ2   = sinφ*sinφ;
+        final double cosφ2   = cosφ*cosφ;
+        final double sincosφ = sinφ*cosφ*2; // Warning!! Remember the '2'.
+        final double re = excentricitySquared / (1 - excentricitySquared);
+        double fsinλφ2 = 1 - excentricitySquared*sinφ2;
+        final double feφ = excentricitySquared*cosφ2 / fsinλφ2;
+        fsinλφ2 = sqrt(fsinλφ2) / λ;
+
+        final double A     = cosφ / fsinλφ2;
+        final double dA_dφ = sinφ / fsinλφ2 * (feφ - 1);
+        final double dA_dλ = A/λ;
+
+        final double λ2    = λ*λ;
+        final double B     = λ2*sinφ2;
+        final double C     = λ2*cosφ2;
+        final double W     = re*sinφ2;
+        final double dB_dλ = 2*λ*sinφ2;
+        final double dC_dλ = 2*λ*cosφ2;
+        final double dB_dφ = sincosφ*λ2; // == -dC_dφ
+        final double dW_dφ = sincosφ*re;
+
+        final double  T    = A*B;
+        final double dT_dλ = B*dA_dλ + A*dB_dλ;
+        final double dT_dφ = B*dA_dφ + A*dB_dφ;
+
+        // Derivative of E = re * cosφ2 * C(λ,φ);
+        final double dE_dλ = re *    cosφ2 * dC_dλ;
+        final double dE_dφ = re * -2*cosφ2 * dB_dφ;
+
+        final double dU_dλ = sincosφ / fsinλφ2;
+        final double U     = 0.5 * λ * dU_dλ;
+        final double dU_dφ = (λ / fsinλφ2) * (cosφ2 + sinφ2*(feφ - 1));
+
+        final double t1 = 5*C + 6*W - B;
+        final double t2 = 7*C * (cosφ2*re + 1); // == 7*(C+E)
+
+        return new Matrix2(
+                dA_dλ - C1*    dT_dλ + C2*(T*(8*(dE_dλ + dC_dλ) - dB_dλ) + t2*dT_dλ),
+                dA_dφ - C1*    dT_dφ + C2*(T*(8*(dE_dφ - dB_dφ) - dB_dφ) + t2*dT_dφ),
+            0.5*dU_dλ + C3*(t1*dU_dλ + U*(5*dC_dλ - dB_dλ)),
+            0.5*dU_dφ + C3*(t1*dU_dφ + U*6*(dW_dφ - dB_dφ)) + dmlfn_dφ(sinφ2, cosφ2)
+        );
     }
 }

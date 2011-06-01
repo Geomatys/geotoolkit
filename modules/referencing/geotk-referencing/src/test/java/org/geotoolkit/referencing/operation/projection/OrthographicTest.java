@@ -120,7 +120,7 @@ public class OrthographicTest extends ProjectionTestBase {
     }
 
     /**
-     * Tests the unitary oblique projection on a sphere.
+     * Tests the derivatives of the unitary oblique projection on a sphere.
      *
      * @throws TransformException Should never happen.
      *

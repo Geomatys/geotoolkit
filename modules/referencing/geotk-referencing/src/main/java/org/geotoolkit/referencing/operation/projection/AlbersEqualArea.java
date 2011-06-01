@@ -21,16 +21,19 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
@@ -73,6 +76,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
+ * @author Rémi Maréchal (Geomatys)
  * @version 3.18
  *
  * @see <A HREF="http://srmwww.gov.bc.ca/gis/bceprojection.html">British Columbia Albers Standard Projection</A>
@@ -95,7 +99,7 @@ public class AlbersEqualArea extends UnitaryProjection {
      * <p>
      * Note that Geotk formulas are modified in such a way that the {@code ρ} value which
      * is compared to {@code EPSILON} is the equivalent of {@code ρ/abs(n)} in Proj4, where
-     * abs(n) is typically a number between 0.8 and 1.
+     * {@code abs(n)} is typically a number between 0.8 and 1.
      */
     private static final double EPSILON = 1E-7;
 
@@ -317,7 +321,8 @@ public class AlbersEqualArea extends UnitaryProjection {
      * @author Gerald Evenden (USGS)
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @author Rémi Maréchal (Geomatys)
+     * @version 3.18
      *
      * @since 2.1
      * @module
@@ -425,6 +430,75 @@ public class AlbersEqualArea extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.18
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final double λ = rollLongitude(point.getX());
+            final double φ = point.getY();
+            final double cosλ = cos(λ);
+            final double sinλ = sin(λ);
+            final double cosφ = cos(φ);
+            final double sinφ = sin(φ);
+            double ρ = c - n*2 * sinφ;
+            if (ρ < 0.0) {
+                if (ρ > -EPSILON) {
+                    ρ = 0.0;
+                } else {
+                    throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
+                }
+            }
+            ρ = sqrt(ρ);
+            final double dρ_dφ = -n*cosφ / ρ;
+            final Matrix derivative = new Matrix2(
+                    cosλ * ρ, dρ_dφ * sinλ,    // dx/dλ, dx/dφ
+                   -sinλ * ρ, dρ_dφ * cosλ);   // dy/dλ, dy/dφ
+
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     * The current implementation is derived from the ellipsoidal formulas.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.18
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double cosλ = cos(λ);
+        final double sinλ = sin(λ);
+        final double cosφ = cos(φ);
+        final double sinφ = sin(φ);
+        double ρ = c - n * qsfn(sinφ);
+        if (ρ < 0.0) {
+            if (ρ > -EPSILON) {
+                ρ = 0;
+            } else {
+                throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
+            }
+        }
+        ρ = sqrt(ρ);
+        double esinφ2 = excentricity * sinφ;
+        esinφ2 *= esinφ2;
+        final double dρ_dφ = 0.5 * n*cosφ * ((2 + esinφ2) / (1 - esinφ2)) * (excentricitySquared - 1) / ρ;
+        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // dx/dλ, dx/dφ
+                          -sinλ * ρ, dρ_dφ * cosλ); // dy/dλ, dy/dφ
     }
 
     /**

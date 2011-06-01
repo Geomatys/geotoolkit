@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
@@ -33,7 +34,8 @@ import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.*;
  * modify the translation term on the <var>y</var> axis.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -42,7 +44,7 @@ public class AlbersEqualAreaTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers. Since the Albers Equal Area
      * projection is implemented with iterative methods, we can not ask more than the
-     * tolerance value used in terations.
+     * tolerance value used in iterations.
      */
     private static final double TOLERANCE = UnitaryProjection.ITERATION_TOLERANCE;
 
@@ -164,5 +166,30 @@ public class AlbersEqualAreaTest extends ProjectionTestBase {
                 }
             }
         } while ((ellipse = !ellipse) == false);
+    }
+
+    /**
+     * Creates a projection and tests the derivatives at a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-3; // Millimetre precision.
+        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double(Math.toRadians(5), Math.toRadians(30));
+
+        // Test spherical
+        transform = create(false, 10, 60);
+        assertTrue(isSpherical());
+        validate();
+        checkDerivative2D(point, delta);
+
+        // Test ellipsoidal
+        transform = create(true, 10, 60);
+        validate();
+        checkDerivative2D(point, delta);
     }
 }

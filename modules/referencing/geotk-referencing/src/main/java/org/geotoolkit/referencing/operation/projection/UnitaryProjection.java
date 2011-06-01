@@ -108,6 +108,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
+ * @author Rémi Maréchal (Geomatys)
  * @version 3.18
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
@@ -122,6 +123,14 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = 1969740225939106310L;
+
+    /**
+     * Tolerance in the correctness of argument values provided to the mathematical functions
+     * defined in this class.
+     *
+     * @since 3.18
+     */
+    private static final double ARGUMENT_TOLERANCE = 1E-15;
 
     /**
      * Maximum difference allowed when comparing longitudes or latitudes in radians.
@@ -226,7 +235,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     private static int globalRangeCheckSemaphore;
 
     /**
-     * Constructs a new map projection from the supplied parameters. Subclass constuctors
+     * Constructs a new map projection from the supplied parameters. Subclass constructors
      * must invoke {@link #finish} when they have finished their work.
      *
      * @param parameters The parameters of the projection to be created.
@@ -516,7 +525,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * [-&pi;/2..&pi;/2] respectively.
      * <p>
      * Input coordinate shall have the ({@linkplain Parameters#falseEasting false easting},
-     * {@linkplain Parameters#falseNorthing false northing}) removed and the result divised
+     * {@linkplain Parameters#falseNorthing false northing}) removed and the result divided
      * by the global scale factor before this method is invoked. After this method is invoked,
      * the output coordinate shall have the {@linkplain Parameters#centralMeridian central meridian}
      * added to the longitude in {@code ptDst}. This means that projections that implement this
@@ -659,7 +668,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * order to force all projections to log again their first out-of-bounds coordinates.
      *
      * {@section Multi-threading}
-     * Calls to this method have immediate effect in the invoker's thread. The effect in other
+     * Calls to this method have immediate effect in the invoker thread. The effect in other
      * threads may be delayed by some arbitrary amount of time. This method works only on a
      * "best effort" basis.
      *
@@ -697,6 +706,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * @param cosφ The cosinus of the φ latitude in radians.
      */
     final double msfn(final double sinφ, final double cosφ) {
+        assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
         return cosφ / sqrt(1.0 - (sinφ*sinφ) * excentricitySquared);
     }
 
@@ -710,7 +720,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *              because in many cases, the caller has already computed this value.
      */
     final double ssfn(double φ, double sinφ) {
-        assert !(abs(sinφ - sin(φ)) > 1E-15) : φ;
+        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
         sinφ *= excentricity;
         return tan(PI/4 + 0.5*φ) * pow((1-sinφ) / (1+sinφ), 0.5*excentricity);
     }
@@ -745,9 +755,27 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *         this is {@code exp(-y)} where <var>y</var> is the northing on the unit ellipse.
      */
     final double tsfn(final double φ, double sinφ) {
-        assert !(abs(sinφ - sin(φ)) > 1E-15) : φ;
-        sinφ *= excentricity;
-        return tan(0.5 * (PI/2 - φ)) / pow((1-sinφ)/(1+sinφ), 0.5*excentricity);
+        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
+        final double esinφ = sinφ * excentricity;
+        return tan(0.5 * (PI/2 - φ)) / pow((1-esinφ)/(1+esinφ), 0.5*excentricity);
+    }
+
+    /**
+     * Gets the derivative of the {@link #tsfn(double, double)} method.
+     *
+     * @param  φ    The latitude.
+     * @param  sinφ the sinus of latitude.
+     * @param  cosφ The cosinus of latitude.
+     * @return The {@code tsfn} derivative at the specified latitude.
+     *
+     * @since 3.18
+     */
+    final double dtsfn_dφ(final double φ, double sinφ, final double cosφ) {
+        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
+        assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
+        final double t = (1 - sinφ) / cosφ;
+        final double esinφ = sinφ * excentricity;
+        return (excentricitySquared*cosφ / (1 - esinφ*esinφ) - 0.5*(t + 1/t)) * tsfn(φ, sinφ);
     }
 
     /**
@@ -797,16 +825,16 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      */
     final double qsfn(final double sinφ) {
         if (excentricity < EPSILON) {
-            return sinφ + sinφ;
+            return 2 * sinφ;
         }
         /*
          * Above check was required because the expression below would simplify to
          * sinφ - 0.5/0*log(1) where the right terms are infinity multiplied by
          * zero, thus producing NaN.
          */
-        final double con = excentricity * sinφ;
+        final double esinφ = excentricity * sinφ;
         return (1 - excentricitySquared) *
-                (sinφ / (1 - con*con) - (0.5 / excentricity) * log((1-con) / (1+con)));
+                (sinφ / (1 - esinφ*esinφ) - (0.5 / excentricity) * log((1-esinφ) / (1+esinφ)));
     }
 
 
