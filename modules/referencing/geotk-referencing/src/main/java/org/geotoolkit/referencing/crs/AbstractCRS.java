@@ -39,7 +39,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.referencing.NullReferencingObject;
+import org.geotoolkit.internal.referencing.NilReferencingObject;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
@@ -77,7 +77,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractCRS() {
-        this(NullReferencingObject.INSTANCE);
+        this(NilReferencingObject.INSTANCE);
     }
 
     /**
@@ -145,7 +145,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * @throws IllegalStateException If the coordinate system has already been set.
      */
     final void setCoordinateSystem(final CoordinateSystem cs) {
-        if (coordinateSystem != NullReferencingObject.INSTANCE) {
+        if (coordinateSystem != NilReferencingObject.INSTANCE) {
             throw new IllegalStateException();
         }
         ensureNonNull("cs", cs);

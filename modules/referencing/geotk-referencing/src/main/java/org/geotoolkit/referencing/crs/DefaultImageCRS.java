@@ -90,7 +90,7 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultImageCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

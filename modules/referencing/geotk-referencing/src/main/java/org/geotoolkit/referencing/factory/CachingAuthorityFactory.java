@@ -60,7 +60,7 @@ import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.Cache;
-import org.geotoolkit.internal.referencing.NullReferencingObject;
+import org.geotoolkit.internal.referencing.NilReferencingObject;
 
 
 /**
@@ -125,7 +125,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
 
     /**
      * The pool of objects identified by {@link #find} for each comparison modes. Values may be
-     * {@link NullReferencingObject} if an object has been searched but has not been found.
+     * {@link NilReferencingObject} if an object has been searched but has not been found.
      * <p>
      * Every access to this pool must be synchronized on {@code findPool}.
      */
@@ -1181,7 +1181,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 if (byMode != null) {
                     final IdentifiedObject candidate = byMode.get(mode);
                     if (candidate != null) {
-                        return (candidate == NullReferencingObject.INSTANCE) ? null : candidate;
+                        return (candidate == NilReferencingObject.INSTANCE) ? null : candidate;
                     }
                 }
             }
@@ -1210,7 +1210,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                         byMode = new EnumMap<ComparisonMode,IdentifiedObject>(ComparisonMode.class);
                         pool.put(object, byMode);
                     }
-                    byMode.put(mode, (candidate == null) ? NullReferencingObject.INSTANCE : candidate);
+                    byMode.put(mode, (candidate == null) ? NilReferencingObject.INSTANCE : candidate);
                 }
             }
             return candidate;

@@ -63,7 +63,7 @@ public class DefaultCylindricalCS extends AbstractCS implements CylindricalCS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultCylindricalCS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

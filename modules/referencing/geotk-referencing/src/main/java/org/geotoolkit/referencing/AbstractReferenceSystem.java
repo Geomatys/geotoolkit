@@ -79,7 +79,7 @@ public class AbstractReferenceSystem extends AbstractIdentifiedObject implements
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractReferenceSystem() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

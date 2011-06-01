@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.internal.referencing.NullReferencingObject;
+import org.geotoolkit.internal.referencing.NilReferencingObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
@@ -89,7 +89,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractSingleCRS() {
-        this(NullReferencingObject.INSTANCE);
+        this(NilReferencingObject.INSTANCE);
     }
 
     /**
@@ -143,7 +143,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * @throws IllegalStateException If the datum has already been set.
      */
     final void setDatum(final Datum datum) {
-        if (this.datum != NullReferencingObject.INSTANCE) {
+        if (this.datum != NilReferencingObject.INSTANCE) {
             throw new IllegalStateException();
         }
         ensureNonNull("datum", datum);

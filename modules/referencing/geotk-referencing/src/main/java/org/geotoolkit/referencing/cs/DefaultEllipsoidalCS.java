@@ -108,7 +108,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultEllipsoidalCS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

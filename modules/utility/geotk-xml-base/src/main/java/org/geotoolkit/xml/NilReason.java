@@ -50,7 +50,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
- * @see EmptyObject
+ * @see NilObject
  *
  * @since 3.18
  * @module
@@ -306,30 +306,30 @@ public final class NilReason implements Serializable {
     }
 
     /**
-     * Returns an object of the given type which is empty for the reason represented by this enum.
+     * Returns an object of the given type which is nil for the reason represented by this enum.
      * This method returns an object which implement the given interface together with the
-     * {@link EmptyObject} interface. The {@link EmptyObject#getNilReason()} method will return
+     * {@link NilObject} interface. The {@link NilObject#getNilReason()} method will return
      * this enum, and all other methods (except the ones inherited from the {@link Object} class)
      * will return {@code null} or an empty collection as appropriate.
      *
      * @param  <T> The compile-time type of the {@code type} argument.
      * @param  type The object type as an <strong>interface</strong>.
      *         This is usually a <a href="http://www.geoapi.org">GeoAPI</a> interface.
-     * @return An {@link EmptyObject} of the given type.
+     * @return An {@link NilObject} of the given type.
      */
     @SuppressWarnings("unchecked")
-    public <T> T createEmptyObject(final Class<T> type) {
+    public <T> T createNilObject(final Class<T> type) {
         ArgumentChecks.ensureNonNull("type", type);
-        if (EmptyObjectHandler.isIgnoredInterface(type)) {
+        if (NilObjectHandler.isIgnoredInterface(type)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
         InvocationHandler h;
         synchronized (this) {
             if ((h = handler) == null) {
-                handler = h = new EmptyObjectHandler(this);
+                handler = h = new NilObjectHandler(this);
             }
         }
         return (T) Proxy.newProxyInstance(NilReason.class.getClassLoader(),
-                new Class<?>[] {type, EmptyObject.class, LenientComparable.class}, h);
+                new Class<?>[] {type, NilObject.class, LenientComparable.class}, h);
     }
 }

@@ -119,7 +119,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractCS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

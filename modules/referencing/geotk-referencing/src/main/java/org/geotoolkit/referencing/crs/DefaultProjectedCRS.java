@@ -89,7 +89,7 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultProjectedCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

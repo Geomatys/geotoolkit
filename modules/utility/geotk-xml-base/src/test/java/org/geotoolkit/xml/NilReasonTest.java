@@ -96,29 +96,29 @@ public final class NilReasonTest {
     }
 
     /**
-     * Tests the creation of {@link EmptyObject} instances.
+     * Tests the creation of {@link NilObject} instances.
      */
     @Test
-    public void testCreateEmptyObject() {
-        final Citation citation = NilReason.TEMPLATE.createEmptyObject(Citation.class);
-        assertInstanceOf("Unexpected proxy.", EmptyObject.class, citation);
+    public void testCreateNilObject() {
+        final Citation citation = NilReason.TEMPLATE.createNilObject(Citation.class);
+        assertInstanceOf("Unexpected proxy.", NilObject.class, citation);
         assertNull(citation.getTitle());
         assertTrue(citation.getDates().isEmpty());
-        assertEquals("EmptyObject.toString()", "Citation[template]", citation.toString());
+        assertEquals("NilObject.toString()", "Citation[template]", citation.toString());
     }
 
     /**
-     * Tests the comparison of {@link EmptyObject} instances.
+     * Tests the comparison of {@link NilObject} instances.
      */
     @Test
-    public void testEmptyObjectComparison() {
-        final Citation e1 = NilReason.TEMPLATE.createEmptyObject(Citation.class);
-        final Citation e2 = NilReason.MISSING .createEmptyObject(Citation.class);
-        final Citation e3 = NilReason.TEMPLATE.createEmptyObject(Citation.class);
-        assertEquals("EmptyObject.hashCode()", e1.hashCode(), e3.hashCode());
-        assertFalse ("EmptyObject.hashCode()", e1.hashCode() == e2.hashCode());
-        assertEquals("EmptyObject.equals(Object)", e1, e3);
-        assertFalse ("EmptyObject.equals(Object)", e1.equals(e2));
+    public void testNilObjectComparison() {
+        final Citation e1 = NilReason.TEMPLATE.createNilObject(Citation.class);
+        final Citation e2 = NilReason.MISSING .createNilObject(Citation.class);
+        final Citation e3 = NilReason.TEMPLATE.createNilObject(Citation.class);
+        assertEquals("NilObject.hashCode()", e1.hashCode(), e3.hashCode());
+        assertFalse ("NilObject.hashCode()", e1.hashCode() == e2.hashCode());
+        assertEquals("NilObject.equals(Object)", e1, e3);
+        assertFalse ("NilObject.equals(Object)", e1.equals(e2));
 
         assertInstanceOf("e1", LenientComparable.class, e1);
         final LenientComparable c = (LenientComparable) e1;
@@ -129,7 +129,7 @@ public final class NilReasonTest {
         assertTrue (c.equals(e2, ComparisonMode.APPROXIMATIVE));
 
         // Following object should alway be different because it does not implement the same interface.
-        final ResponsibleParty r1 = NilReason.TEMPLATE.createEmptyObject(ResponsibleParty.class);
+        final ResponsibleParty r1 = NilReason.TEMPLATE.createNilObject(ResponsibleParty.class);
         assertFalse(c.equals(r1, ComparisonMode.STRICT));
         assertFalse(c.equals(r1, ComparisonMode.BY_CONTRACT));
         assertFalse(c.equals(r1, ComparisonMode.IGNORE_METADATA));

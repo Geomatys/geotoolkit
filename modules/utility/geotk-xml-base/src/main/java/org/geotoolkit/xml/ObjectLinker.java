@@ -72,18 +72,18 @@ public class ObjectLinker {
     public <T> T resolve(final Class<T> type, final XLink link) {
         ArgumentChecks.ensureNonNull("type", type);
         ArgumentChecks.ensureNonNull("link", link);
-        if (EmptyObjectHandler.isIgnoredInterface(type)) {
+        if (NilObjectHandler.isIgnoredInterface(type)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
         return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
-                new Class<?>[] {type, IdentifiedObject.class, EmptyObject.class, LenientComparable.class},
-                new EmptyObjectHandler(link));
+                new Class<?>[] {type, IdentifiedObject.class, NilObject.class, LenientComparable.class},
+                new NilObjectHandler(link));
     }
 
     /**
      * Returns an object of the given type for the given {@code nilReason} attributes. The default
      * implementation returns an immutable object which implement the given interface together
-     * with the {@link EmptyObject} interface. The {@link EmptyObject#getNilReason()} method will
+     * with the {@link NilObject} interface. The {@link NilObject#getNilReason()} method will
      * return the given reason, and all other methods (except the ones inherited from the
      * {@link Object} class) will return {@code null} or an empty collection as appropriate.
      *
@@ -97,6 +97,6 @@ public class ObjectLinker {
     @SuppressWarnings("unchecked")
     public <T> T resolve(final Class<T> type, final NilReason nilReason) {
         ArgumentChecks.ensureNonNull("nilReason", nilReason);
-        return nilReason.createEmptyObject(type);
+        return nilReason.createNilObject(type);
     }
 }

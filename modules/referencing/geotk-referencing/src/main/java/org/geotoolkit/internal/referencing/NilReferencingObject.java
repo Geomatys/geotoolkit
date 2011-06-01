@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.Extent;
 
 import org.geotoolkit.xml.NilReason;
-import org.geotoolkit.xml.EmptyObject;
+import org.geotoolkit.xml.NilObject;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
@@ -52,10 +52,10 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * @since 3.00
  * @module
  */
-public final class NullReferencingObject implements GeocentricCRS, GeographicCRS, ProjectedCRS,
+public final class NilReferencingObject implements GeocentricCRS, GeographicCRS, ProjectedCRS,
         DerivedCRS, CompoundCRS, VerticalCRS, TemporalCRS, EngineeringCRS, ImageCRS, UserDefinedCS,
         SphericalCS, EllipsoidalCS, CartesianCS, CylindricalCS, PolarCS, VerticalCS, TimeCS, LinearCS,
-        GeodeticDatum, VerticalDatum, TemporalDatum, EngineeringDatum, ImageDatum, EmptyObject, Serializable
+        GeodeticDatum, VerticalDatum, TemporalDatum, EngineeringDatum, ImageDatum, NilObject, Serializable
 {
     /**
      * For cross-version compatibility.
@@ -65,12 +65,12 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
     /**
      * The unique instance.
      */
-    public static final NullReferencingObject INSTANCE = new NullReferencingObject();
+    public static final NilReferencingObject INSTANCE = new NilReferencingObject();
 
     /**
      * Do not allow other instantiation of {@link #INSTANCE}.
      */
-    private NullReferencingObject() {
+    private NilReferencingObject() {
     }
 
     /** This object is empty because the value will be provided later. */
@@ -111,13 +111,13 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
 
     /** Returns {@code this} in all cases. */
     @Override
-    public NullReferencingObject getCoordinateSystem() {
+    public NilReferencingObject getCoordinateSystem() {
         return this;
     }
 
     /** Returns {@code this} in all cases. */
     @Override
-    public NullReferencingObject getDatum() {
+    public NilReferencingObject getDatum() {
         return this;
     }
 
@@ -206,7 +206,7 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
      */
     @Override
     public String toWKT() throws UnformattableObjectException {
-        throw new UnformattableObjectException(NullReferencingObject.class);
+        throw new UnformattableObjectException(NilReferencingObject.class);
     }
 
     /**

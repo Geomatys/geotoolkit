@@ -155,7 +155,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultCartesianCS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

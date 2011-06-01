@@ -117,7 +117,7 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultTimeCS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

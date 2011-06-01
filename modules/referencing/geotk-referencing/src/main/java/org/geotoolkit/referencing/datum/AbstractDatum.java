@@ -117,7 +117,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractDatum() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

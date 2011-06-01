@@ -100,7 +100,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultVerticalCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

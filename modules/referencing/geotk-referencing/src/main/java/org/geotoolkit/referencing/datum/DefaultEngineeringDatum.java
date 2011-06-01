@@ -66,7 +66,7 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultEngineeringDatum() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

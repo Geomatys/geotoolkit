@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.18
  * @module
  */
-final class EmptyObjectHandler implements InvocationHandler {
+final class NilObjectHandler implements InvocationHandler {
     /**
      * The {@code xlink} attribute as an {@link XLink} object, or the {@code nilReason}
      * attribute as a {@link NilReason} object. We don't use separated fields because
@@ -58,14 +58,14 @@ final class EmptyObjectHandler implements InvocationHandler {
     /**
      * Creates a new handler for an object identified by the given {@code xlink} attributes.
      */
-    EmptyObjectHandler(final XLink xlink) {
+    NilObjectHandler(final XLink xlink) {
         attribute = xlink;
     }
 
     /**
      * Creates a new handler for an object which is nil for the given reason.
      */
-    EmptyObjectHandler(final NilReason nilReason) {
+    NilObjectHandler(final NilReason nilReason) {
         attribute = nilReason;
     }
 
@@ -75,7 +75,7 @@ final class EmptyObjectHandler implements InvocationHandler {
      */
     static boolean isIgnoredInterface(final Class<?> type) {
         return IdentifiedObject.class.isAssignableFrom(type) ||
-               EmptyObject.class.isAssignableFrom(type) ||
+               NilObject.class.isAssignableFrom(type) ||
                LenientComparable.class.isAssignableFrom(type);
     }
 
@@ -159,7 +159,7 @@ final class EmptyObjectHandler implements InvocationHandler {
             if (mode.ordinal() >= ComparisonMode.IGNORE_METADATA.ordinal()) {
                 return true;
             }
-            final EmptyObjectHandler h = (EmptyObjectHandler) Proxy.getInvocationHandler(other);
+            final NilObjectHandler h = (NilObjectHandler) Proxy.getInvocationHandler(other);
             return attribute.equals(h.attribute);
         }
         switch (mode) {
@@ -171,8 +171,8 @@ final class EmptyObjectHandler implements InvocationHandler {
                         ox = ((IdentifiedObject) other).getXLink();
                     }
                 } else {
-                    if (other instanceof EmptyObject) {
-                        ox = ((EmptyObject) other).getNilReason();
+                    if (other instanceof NilObject) {
+                        ox = ((NilObject) other).getNilReason();
                     }
                 }
                 if (!Utilities.equals(attribute, ox)) {

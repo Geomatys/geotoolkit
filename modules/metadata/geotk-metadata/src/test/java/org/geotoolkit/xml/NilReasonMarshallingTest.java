@@ -58,9 +58,9 @@ public final class NilReasonMarshallingTest extends TestBase {
         assertEquals("title", "A title", citation.getTitle().toString());
 
         final Series series = citation.getSeries();
-        assertInstanceOf("Should have instantiated a proxy.", EmptyObject.class, series);
+        assertInstanceOf("Should have instantiated a proxy.", NilObject.class, series);
 
-        final NilReason reason = ((EmptyObject) series).getNilReason();
+        final NilReason reason = ((NilObject) series).getNilReason();
         assertSame("nilReason", NilReason.MISSING, reason);
         assertNull("NilReason.explanation", reason.getExplanation());
         assertNull("NilReason.URI",         reason.getURI());
@@ -94,9 +94,9 @@ public final class NilReasonMarshallingTest extends TestBase {
         assertEquals("title", "A title", citation.getTitle().toString());
 
         final Series series = citation.getSeries();
-        assertInstanceOf("Should have instantiated a proxy.", EmptyObject.class, series);
+        assertInstanceOf("Should have instantiated a proxy.", NilObject.class, series);
 
-        final NilReason reason = ((EmptyObject) series).getNilReason();
+        final NilReason reason = ((NilObject) series).getNilReason();
         assertEquals("NilReason.explanation", "myReason", reason.getExplanation());
         assertNull("NilReason.URI", reason.getURI());
 
@@ -129,9 +129,9 @@ public final class NilReasonMarshallingTest extends TestBase {
         assertEquals("title", "A title", citation.getTitle().toString());
 
         final Series series = citation.getSeries();
-        assertInstanceOf("Should have instantiated a proxy.", EmptyObject.class, series);
+        assertInstanceOf("Should have instantiated a proxy.", NilObject.class, series);
 
-        final NilReason reason = ((EmptyObject) series).getNilReason();
+        final NilReason reason = ((NilObject) series).getNilReason();
         assertNull("NilReason.explanation", reason.getExplanation());
         assertEquals("NilReason.URI", "http://www.myreason.org", String.valueOf(reason.getURI()));
 

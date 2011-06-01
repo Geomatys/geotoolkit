@@ -19,7 +19,7 @@ package org.geotoolkit.xml;
 
 
 /**
- * A marker interface for empty XML elements. Note that an "empty" XML element may not be an
+ * A marker interface for empty XML elements. Note that an "nil" XML element may not be an
  * empty Java object, since the Java object can still be associated with {@link XLink} or
  * {@link NilReason} attributes. Those attributes are not part of ISO 19115, but may appear
  * in ISO 19139 XML documents like below:
@@ -52,19 +52,19 @@ package org.geotoolkit.xml;
  * which is empty because the information are missing:
  *
  * {@preformat java
- *     Citation nil = NilReason.MISSING.createEmptyObject(Citation.class);
+ *     Citation nil = NilReason.MISSING.createNilObject(Citation.class);
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
- * @see NilReason#createEmptyObject(Class)
+ * @see NilReason#createNilObject(Class)
  * @see ObjectLinker#resolve(Class, NilReason)
  *
  * @since 3.18
  * @module
  */
-public interface EmptyObject {
+public interface NilObject {
     /**
      * Returns the reason why this object is empty.
      *

@@ -154,7 +154,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultTemporalCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.NilReason;
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.xml.EmptyObject;
+import org.geotoolkit.xml.NilObject;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
@@ -117,8 +117,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
         if (metadata instanceof IdentifiedObject) {
             reference = ((IdentifiedObject) metadata).getXLink();
         }
-        if (reference == null && metadata instanceof EmptyObject) {
-            final NilReason reason = ((EmptyObject) metadata).getNilReason();
+        if (reference == null && metadata instanceof NilObject) {
+            final NilReason reason = ((NilObject) metadata).getNilReason();
             if (reason != null) {
                 reference = reason.toString();
             }
@@ -182,7 +182,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     protected final boolean skip() {
-        if (metadata instanceof EmptyObject) {
+        if (metadata instanceof NilObject) {
             return true;
         }
         final Object ref = reference;

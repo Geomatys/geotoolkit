@@ -62,7 +62,7 @@ public class DefaultLinearCS extends AbstractCS implements LinearCS {
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultLinearCS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**

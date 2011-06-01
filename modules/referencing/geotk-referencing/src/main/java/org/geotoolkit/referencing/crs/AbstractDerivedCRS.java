@@ -106,7 +106,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private AbstractDerivedCRS() {
-        this(org.geotoolkit.internal.referencing.NullReferencingObject.INSTANCE);
+        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
     }
 
     /**
