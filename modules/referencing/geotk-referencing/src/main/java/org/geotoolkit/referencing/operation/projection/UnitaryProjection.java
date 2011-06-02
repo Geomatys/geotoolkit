@@ -702,8 +702,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *       not in the spherical case (otherwise we get {@link Double#NaN}).</li>
      * </ul>
      *
-     * @param sinφ The   sinus of the φ latitude in radians.
-     * @param cosφ The cosinus of the φ latitude in radians.
+     * @param sinφ The   sine of the φ latitude in radians.
+     * @param cosφ The cosine of the φ latitude in radians.
      */
     final double msfn(final double sinφ, final double cosφ) {
         assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
@@ -716,7 +716,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * function for clarity and because the function properties are not the same.
      *
      * @param  φ    The latitude in radians.
-     * @param  sinφ The sinus of the φ argument. This is provided explicitly
+     * @param  sinφ The sine of the φ argument. This is provided explicitly
      *              because in many cases, the caller has already computed this value.
      */
     final double ssfn(double φ, double sinφ) {
@@ -748,7 +748,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *        from Snyder, is equivalent to <code>tsfn(-φ, sinφ)</code>.}
      *
      * @param  φ    The latitude in radians.
-     * @param  sinφ The sinus of the φ argument. This is provided explicitly
+     * @param  sinφ The sine of the φ argument. This is provided explicitly
      *              because in many cases, the caller has already computed this value.
      *
      * @return The negative of function 7-7 from Snyder. In the case of Mercator projection,
@@ -764,8 +764,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * Gets the derivative of the {@link #tsfn(double, double)} method.
      *
      * @param  φ    The latitude.
-     * @param  sinφ the sinus of latitude.
-     * @param  cosφ The cosinus of latitude.
+     * @param  sinφ the sine of latitude.
+     * @param  cosφ The cosine of latitude.
      * @return The {@code tsfn} derivative at the specified latitude.
      *
      * @since 3.18
@@ -820,7 +820,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *   <li>{@code qsfn(-sinφ) == -qsfn(sinφ)}.</li>
      * </ul>
      *
-     * @param sinφ Sinus of the latitude <var>q</var> is calculated for.
+     * @param sinφ Sine of the latitude <var>q</var> is calculated for.
      * @return <var>q</var> from Snyder equation (3-12).
      */
     final double qsfn(final double sinφ) {
@@ -835,6 +835,22 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         final double esinφ = excentricity * sinφ;
         return (1 - excentricitySquared) *
                 (sinφ / (1 - esinφ*esinφ) - (0.5 / excentricity) * log((1-esinφ) / (1+esinφ)));
+    }
+
+    /**
+     * Gets the derivative of the {@link #qsfn(double)} method.
+     *
+     * @param  sinφ The sine of latitude.
+     * @param  cosφ The cosines of latitude.
+     * @return The {@code qsfn} derivative at the specified latitude.
+     *
+     * @since 3.18
+     */
+    final double dqsfn_dφ(final double sinφ, final double cosφ) {
+        assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
+        double esinφ2 = excentricity * sinφ;
+        esinφ2 *= esinφ2;
+        return (1 - excentricitySquared) * cosφ * ((2 + esinφ2) / (1 - esinφ2));
     }
 
 

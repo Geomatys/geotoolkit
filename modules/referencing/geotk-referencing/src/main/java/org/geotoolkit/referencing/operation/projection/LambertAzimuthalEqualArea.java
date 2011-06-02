@@ -21,19 +21,21 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
-
 
 /**
  * Lambert Azimuthal Equal Area projection (EPSG codes 9820, 9821). See the
@@ -55,6 +57,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  * @author Gerald Evenden (USGS)
  * @author Beate Stollberg
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Rémi Maréchal (Geomatys)
  * @version 3.18
  *
  * @since 2.4
@@ -543,6 +546,101 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.18
+         */
+        @Override
+        public Matrix derivative(Point2D point) throws ProjectionException {
+            final double λ = rollLongitude(point.getX());
+            final double φ = point.getY();
+            final double sinφ = sin(φ);
+            final double sinλ = sin(λ);
+            final double cosφ = cos(φ);
+            final double cosλ = cos(λ);
+            final double m00, m01, m10, m11;
+            if (pole) {
+                final double U = 2 * cos(PI/4 - 0.5*φ);
+                final double dU_dφ = sin(PI/4 - 0.5*φ);
+                m00 =  cosλ * U;
+                m10 = -sinλ * U;
+                m01 =  sinλ * dU_dφ;
+                m11 =  cosλ * dU_dφ;
+            } else {
+                final double cosφcosλ = cosφ * cosλ;
+                final double cosφsinλ = cosφ * sinλ;
+                final double sinφcosλ = sinφ * cosλ;
+                double b = 1 + sinb1*sinφ + cosb1*cosφcosλ;
+                final double S = sqrt(2 / b);
+                b *= b*S;
+                final double dS_dλ = (cosb1*cosφsinλ) / b;
+                final double dS_dφ = (cosb1*sinφcosλ - sinb1*cosφ) / b;
+
+                m00 = dS_dλ * cosφsinλ + cosφcosλ*S;
+                m01 = dS_dφ * cosφsinλ - sinφ*sinλ*S;
+                m10 = cosb1 *  dS_dλ*sinφ           - sinb1*(dS_dλ*cosφcosλ - cosφsinλ*S);
+                m11 = cosb1 * (dS_dφ*sinφ + cosφ*S) - sinb1*(dS_dφ*cosφcosλ - sinφcosλ*S);
+            }
+            final Matrix derivative = new Matrix2(m00, m01, m10, m11);
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.18
+     */
+    @Override
+    public Matrix derivative(Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ  = sin(φ);
+        final double cosφ  = cos(φ);
+        final double sinλ  = sin(λ);
+        final double cosλ  = cos(λ);
+        final double q     = qsfn(sinφ);
+        final double dq_dφ = dqsfn_dφ(sinφ, cosφ);
+        if (pole) {
+            final double b = sqrt(qp + q);
+            final double db_dφ = 0.5 * dq_dφ / b;
+            return new Matrix2(cosλ*b, db_dφ*sinλ,
+                              -sinλ*b, db_dφ*cosλ);
+        }
+        final double sinb      = q / qp;
+        final double dsinb_dφ  = dq_dφ / qp;
+        final double cosb      = sqrt(1.0 - sinb*sinb);
+        final double dcosb_dφ  = -dsinb_dφ * (sinb/cosb);
+        final double sinλcosb  = sinλ *  cosb;
+        final double cosλcosb  = cosλ *  cosb;
+        final double cosλdcosb = cosλ * dcosb_dφ;
+        /*
+         * In equatorial case, sinb1=0 and cosb1=1. We could do a special case
+         * with the simplification, but the result is not that much simplier.
+         */
+        final double c     = 2*(sinb1*sinb + cosb1*cosλcosb + 1);
+        final double T     =    cosb1*sinb - sinb1*cosλcosb;
+        final double dT_dλ =    sinb1*sinλcosb;
+        final double db_dλ =    cosb1*sinλcosb / c;
+        final double dT_dφ =   (cosb1*dsinb_dφ - sinb1*cosλdcosb);
+        final double db_dφ =  -(sinb1*dsinb_dφ + cosb1*cosλdcosb) / c;
+        final double f     =    2*rq / sqrt(c);
+        return new Matrix2(
+                f * (cosλ     + db_dλ*sinλ)*cosb,
+                f * (dcosb_dφ + db_dφ*cosb)*sinλ,
+                f * (dT_dλ    + db_dλ*T),
+                f * (dT_dφ    + db_dφ*T));
     }
 
     /**

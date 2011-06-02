@@ -36,11 +36,11 @@ The Geotoolkit.org library
 
   <<April 28, 2011: the {{{http://www.geoapi.org}GeoAPI 3.0.0}} specification has been approved as an
   OGC standard and is available on the {{{http://www.opengeospatial.org/standards/geoapi}OGC web site}}.>>
-  The deployment of GeoAPI JAR files to the Maven Central repository is under way. The Geotoolkit.org
+  The Geotoolkit.org
   project will maintain a branch of the {{{./metadata/index.html}metadata}} and {{{./referencing/index.html}referencing}}
   modules implementing the GeoAPI 3.0 interfaces, to be deployed on Maven central when ready (the Geotk trunk
   will continue to implement the GeoAPI development snapshots). A preview of that branch is available on the
-  {{{https://oss.sonatype.org/content/repositories/orggeotoolkit-203/}Sonatype repository}} and can
+  {{{https://oss.sonatype.org/content/repositories/orggeotoolkit-105/}Sonatype repository}} and can
   be used in a Maven project as below:
 
 +------------------------------------------------------------------------------+
@@ -48,7 +48,7 @@ The Geotoolkit.org library
 ┃  <repository>
 ┃    <id>nexus</id>
 ┃    <name>Nexus staging repository (temporary)</name>
-┃    <url>https://oss.sonatype.org/content/repositories/orggeotoolkit-203/</url>
+┃    <url>https://oss.sonatype.org/content/repositories/orggeotoolkit-105/</url>
 ┃  </repository>
 ┃</repositories>
 ┃

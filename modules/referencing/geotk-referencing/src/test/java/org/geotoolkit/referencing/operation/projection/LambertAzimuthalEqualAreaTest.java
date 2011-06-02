@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
+
 import org.junit.*;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -37,7 +39,8 @@ import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqua
  * coefficients of that class (except for the excentricity).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -299,5 +302,58 @@ public class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
         tolerance = 410;
         assertTrue(isSpherical());
         verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection and tests the derivatives at a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-3;
+        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+
+        // Polar projection.
+        transform = create(true, 90);
+        validate();
+        point.x = Math.toRadians(-6);
+        point.y = Math.toRadians(80);
+        checkDerivative2D(point, delta);
+
+        // Intentionally above the pole.
+        point.y = Math.toRadians(100);
+        checkDerivative2D(point, delta);
+
+        // Polar projection, spherical formulas.
+        transform = create(false, 90);
+        validate();
+        point.x = Math.toRadians(-6);
+        point.y = Math.toRadians(85);
+        checkDerivative2D(point, delta);
+
+        // Equatorial projection, spherical formulas.
+        transform = create(false, 0);
+        validate();
+        point.x = Math.toRadians(3);
+        point.y = Math.toRadians(4);
+        checkDerivative2D(point, delta);
+
+        // Oblique projection, ellipsoidal formulas.
+        transform = create(true, 8);
+        validate();
+        point.x = Math.toRadians(-6);
+        point.y = Math.toRadians( 2);
+        checkDerivative2D(point, delta);
+
+        // Oblique projection, spherical formulas.
+        transform = create(false, 8);
+        validate();
+        point.x = Math.toRadians(-6);
+        point.y = Math.toRadians( 2);
+        checkDerivative2D(point, delta);
     }
 }
