@@ -21,7 +21,11 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
+
+import org.opengis.referencing.operation.Matrix;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 
@@ -34,7 +38,8 @@ import static java.lang.Math.*;
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @see PolarStereographic
  * @see ObliqueStereographic
@@ -204,5 +209,67 @@ public class EquatorialStereographic extends Stereographic {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.18
+         */
+        @Override
+        public Matrix derivative(Point2D point) throws ProjectionException {
+            final double λ = rollLongitude(point.getX());
+            final double φ = point.getY();
+            final double sinφ = sin(φ);
+            final double sinλ = sin(λ);
+            final double cosφ = cos(φ);
+            final double cosλ = cos(λ);
+            final double cosφcosλ = cosφ*cosλ;
+            final double cosφsinλ = cosφ*sinλ;
+            final double sinφcosλ = sinφ*cosλ;
+            final double F = 1 + cosφcosλ;
+            final Matrix derivative = new Matrix2(
+                    (cosφsinλ*cosφsinλ/F + cosφcosλ)  / F,
+                    (sinφcosλ*cosφsinλ/F - sinφ*sinλ) / F,
+                     cosφsinλ*sinφ / (F*F),
+                    (sinφcosλ*sinφ/F + cosφ) / F);
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.18
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ     = sin(φ);
+        final double sinλ     = sin(λ);
+        final double cosλ     = cos(λ);
+        final double ssfn     = ssfn(φ, sinφ);
+        final double A        = (1 + ssfn*ssfn);
+        final double dχ_dφ    = 2*dssfn_dφ(φ, sinφ, cos(φ))*ssfn / A;
+        final double sinχ     = (ssfn*ssfn - 1) / A;
+        final double cosχ     = 2*ssfn / A;
+        final double cosχcosλ = cosχ*cosλ;
+        final double cosχsinλ = cosχ*sinλ;
+        final double sinχcosλ = sinχ*cosλ;
+        final double F = 1 + cosχcosλ;
+        return new Matrix2(
+                (cosχsinλ*cosχsinλ/F + cosχcosλ)        / F,
+                (sinχcosλ*cosχsinλ/F - sinχ*sinλ)*dχ_dφ / F,
+                 cosχsinλ*sinχ / (F*F),
+                (sinχcosλ*sinχ/F + cosχ)*dχ_dφ / F);
     }
 }

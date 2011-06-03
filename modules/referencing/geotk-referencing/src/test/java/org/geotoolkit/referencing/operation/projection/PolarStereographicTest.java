@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class PolarStereographicTest extends ProjectionTestBase {
+public final class PolarStereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

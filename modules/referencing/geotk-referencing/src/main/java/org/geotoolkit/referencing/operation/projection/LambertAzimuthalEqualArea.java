@@ -557,7 +557,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          * @since 3.18
          */
         @Override
-        public Matrix derivative(Point2D point) throws ProjectionException {
+        public Matrix derivative(final Point2D point) throws ProjectionException {
             final double λ = rollLongitude(point.getX());
             final double φ = point.getY();
             final double sinφ = sin(φ);
@@ -603,7 +603,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      * @since 3.18
      */
     @Override
-    public Matrix derivative(Point2D point) throws ProjectionException {
+    public Matrix derivative(final Point2D point) throws ProjectionException {
         final double λ = rollLongitude(point.getX());
         final double φ = point.getY();
         final double sinφ  = sin(φ);

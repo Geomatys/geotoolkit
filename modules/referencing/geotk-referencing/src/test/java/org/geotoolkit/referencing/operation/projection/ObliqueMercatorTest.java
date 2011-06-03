@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARA
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class ObliqueMercatorTest extends ProjectionTestBase {
+public final class ObliqueMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

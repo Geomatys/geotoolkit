@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqua
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
+public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */

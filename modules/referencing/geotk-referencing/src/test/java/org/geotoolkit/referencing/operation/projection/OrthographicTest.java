@@ -40,7 +40,7 @@ import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMET
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class OrthographicTest extends ProjectionTestBase {
+public final class OrthographicTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */

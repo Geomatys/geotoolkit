@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class ObliqueStereographicTest extends ProjectionTestBase {
+public final class ObliqueStereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

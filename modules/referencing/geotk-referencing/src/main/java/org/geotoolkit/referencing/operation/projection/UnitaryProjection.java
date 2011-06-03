@@ -726,6 +726,24 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     }
 
     /**
+     * Computes the derivative of the {@link #ssfn(double, double)} method divided by {@code ssfn}.
+     * Callers must multiply the return value by {@code ssfn} in order to get the actual value.
+     *
+     * @param  φ    The latitude.
+     * @param  sinφ the sine of latitude.
+     * @param  cosφ The cosine of latitude.
+     * @return The {@code dssfn} derivative at the specified latitude.
+     *
+     * @since 3.18
+     */
+    final double dssfn_dφ(final double φ, final double sinφ, final double cosφ) {
+        assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
+        assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
+        final double t  = (sinφ-cosφ + 1) / (sinφ+cosφ - 1);
+        return 0.5*(t + 1/t - excentricitySquared*cosφ/(1 - excentricitySquared*sinφ*sinφ));
+    }
+
+    /**
      * Computes functions (15-9) and (9-13) from Snyder. This is equivalent to
      * the negative of function (7-7) and is the converse of {@link #cphi2}.
      * <p>
@@ -756,12 +774,13 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      */
     final double tsfn(final double φ, double sinφ) {
         assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
-        final double esinφ = sinφ * excentricity;
-        return tan(0.5 * (PI/2 - φ)) / pow((1-esinφ)/(1+esinφ), 0.5*excentricity);
+        sinφ *= excentricity;
+        return tan(PI/4 - 0.5*φ) / pow((1-sinφ) / (1+sinφ), 0.5*excentricity);
     }
 
     /**
-     * Gets the derivative of the {@link #tsfn(double, double)} method.
+     * Gets the derivative of the {@link #tsfn(double, double)} method divided by {@code tsfn}.
+     * Callers must multiply the return value by {@code tsfn} in order to get the actual value.
      *
      * @param  φ    The latitude.
      * @param  sinφ the sine of latitude.
@@ -770,12 +789,11 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *
      * @since 3.18
      */
-    final double dtsfn_dφ(final double φ, double sinφ, final double cosφ) {
+    final double dtsfn_dφ(final double φ, final double sinφ, final double cosφ) {
         assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
         assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
         final double t = (1 - sinφ) / cosφ;
-        final double esinφ = sinφ * excentricity;
-        return (excentricitySquared*cosφ / (1 - esinφ*esinφ) - 0.5*(t + 1/t)) * tsfn(φ, sinφ);
+        return (excentricitySquared*cosφ / (1 - excentricitySquared*sinφ*sinφ) - 0.5*(t + 1/t));
     }
 
     /**
