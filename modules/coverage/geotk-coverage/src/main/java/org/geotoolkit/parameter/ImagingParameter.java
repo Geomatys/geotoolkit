@@ -343,7 +343,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
         }
         if (super.equals(object)) {
             final ImagingParameter<?> that = (ImagingParameter<?>) object;
-            return Utilities.equals(this.getValue(), that.getValue());
+            return Utilities.deepEquals(this.getValue(), that.getValue());
         }
         return false;
     }
@@ -353,7 +353,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(getValue(), super.hashCode()) ^ (int) serialVersionUID;
+        return Utilities.hash(Utilities.deepHashCode(getValue()), super.hashCode()) ^ (int) serialVersionUID;
     }
 
     /**
