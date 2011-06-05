@@ -19,11 +19,13 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.*;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -31,7 +33,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * for testing purpose, because it is the simplest non-trivial projection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -190,5 +192,94 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                 assertEquals("Expected sinphi and qsfn(sinphi) to have same sign.", signum(sinphi), signum(q), 0);
             }
         } while ((ellipse = !ellipse) == false);
+    }
+
+    /**
+     * Tests the {@link UnitaryProjection#dssfn_dφ} method.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    @Ignore
+    public void testDssfn() throws TransformException {
+        boolean ellipse = true;
+        do {
+            final Mercator mercator = MercatorTest.create(ellipse);
+            transform = new AbstractMathTransform1D() {
+                @Override public double transform (final double φ) {
+                    return mercator.ssfn(φ, sin(φ));
+                }
+                @Override public double derivative(final double φ) {
+                    final double sinφ = sin(φ);
+                    return mercator.dssfn_dφ(φ, sinφ, cos(φ)) * mercator.ssfn(φ, sinφ);
+                }
+            };
+            verifyInDomain(-PI/3, PI/3);
+        } while ((ellipse = !ellipse) == false);
+    }
+
+    /**
+     * Tests the {@link UnitaryProjection#dtsfn_dφ} method.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    @Ignore
+    public void testDtsfn() throws TransformException {
+        boolean ellipse = true;
+        do {
+            final Mercator mercator = MercatorTest.create(ellipse);
+            transform = new AbstractMathTransform1D() {
+                @Override public double transform (final double φ) {
+                    return mercator.tsfn(φ, sin(φ));
+                }
+                @Override public double derivative(final double φ) {
+                    final double sinφ = sin(φ);
+                    return mercator.dtsfn_dφ(φ, sinφ, cos(φ)) * mercator.tsfn(φ, sinφ);
+                }
+            };
+            verifyInDomain(-PI/3, PI/3);
+        } while ((ellipse = !ellipse) == false);
+    }
+
+    /**
+     * Tests the {@link UnitaryProjection#dqsfn_dφ} method.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    @Ignore
+    public void testDqsfn() throws TransformException {
+        boolean ellipse = true;
+        do {
+            final Mercator mercator = MercatorTest.create(ellipse);
+            transform = new AbstractMathTransform1D() {
+                @Override public double transform (final double φ) {
+                    return mercator.qsfn(sin(φ));
+                }
+                @Override public double derivative(final double φ) {
+                    return mercator.dqsfn_dφ(sin(φ), cos(φ));
+                }
+            };
+            verifyInDomain(-PI/3, PI/3);
+        } while ((ellipse = !ellipse) == false);
+    }
+
+    /**
+     * Convenience method invoking {@link TransformTestCase#verifyInDomain} for an 1D transform.
+     *
+     * @since 3.18
+     */
+    private void verifyInDomain(final double min, final double max) throws TransformException {
+        tolerance = 1E-9;
+        isInverseTransformSupported = false;
+        derivativeDeltas = new double[] {(max - min) / 1E+8};
+        verifyInDomain(new double[] {min}, new double[] {max}, new int[] {100}, null);
     }
 }

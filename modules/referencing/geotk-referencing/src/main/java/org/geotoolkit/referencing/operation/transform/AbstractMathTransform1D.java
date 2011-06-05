@@ -18,8 +18,15 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import net.jcip.annotations.ThreadSafe;
+
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+
+import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 
 /**
@@ -28,7 +35,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  * class, however doing so may simplify their implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -55,6 +62,41 @@ public abstract class AbstractMathTransform1D extends AbstractMathTransform impl
     @Override
     public final int getTargetDimensions() {
         return 1;
+    }
+
+    /**
+     * Transforms a single point in the given array. The default implementation delegates to
+     * {@link #transform(double)}. Subclasses may override this method for performance reason.
+     */
+    @Override
+    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff)
+            throws TransformException
+    {
+        dstPts[dstOff] = transform(srcPts[srcOff]);
+    }
+
+    /**
+     * Gets the derivative of this transform at a point. The default implementation ensures that
+     * {@code point} is one-dimensional, then delegates to {@link #derivative(double)}.
+     *
+     * @param  point The coordinate point where to evaluate the derivative, or {@code null}.
+     * @return The derivative at the specified point (never {@code null}).
+     * @throws MismatchedDimensionException if {@code point} doesn't have the expected dimension.
+     * @throws TransformException if the derivative can't be evaluated at the specified point.
+     */
+    @Override
+    public Matrix derivative(final DirectPosition point) throws TransformException {
+        final double ordinate;
+        if (point == null) {
+            ordinate = Double.NaN;
+        } else {
+            final int dimension = point.getDimension();
+            if (dimension != 1) {
+                throw new MismatchedDimensionException(mismatchedDimension("point", dimension, 1));
+            }
+            ordinate = point.getOrdinate(0);
+        }
+        return new Matrix1(derivative(ordinate));
     }
 
     /**

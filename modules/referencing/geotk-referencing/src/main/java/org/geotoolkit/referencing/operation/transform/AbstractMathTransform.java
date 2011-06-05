@@ -36,7 +36,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -48,7 +47,6 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
@@ -933,19 +931,10 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Gets the derivative of this transform at a point. The default implementation
-     * ensure that {@code point} has a valid dimension. Next, it try to delegate
-     * the work to an other method:
-     * <p>
-     * <ul>
-     *   <li>If the input dimension is 2, then this method delegates the work to
-     *       {@link #derivative(Point2D)}.</li>
-     *   <li>If this object is an instance of {@link MathTransform1D}, then this
-     *       method delegates the work to {@link MathTransform1D#derivative(double)
-     *       derivative(double)}.</li>
-     * </ul>
-     * <p>
-     * Otherwise, a {@link TransformException} is thrown.
+     * Gets the derivative of this transform at a point. The default implementation ensures that
+     * {@code point} has a valid dimension. Next, if the input dimension is 2, then this method
+     * delegates the work to {@link #derivative(Point2D)}. Otherwise a {@link TransformException}
+     * is thrown.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point (never {@code null}).
@@ -971,9 +960,6 @@ public abstract class AbstractMathTransform extends FormattableObject
                     return derivative((Point2D) point);
                 }
                 return derivative(new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1)));
-            }
-            if (this instanceof MathTransform1D) {
-                return new Matrix1(((MathTransform1D) this).derivative(point.getOrdinate(0)));
             }
         }
         throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
