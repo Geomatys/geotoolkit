@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.geometry.DirectPosition1D;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -75,7 +74,8 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
 
         // Tests the derivative at a single point.
         tolerance = 0.002;
-        checkDerivative(new DirectPosition1D(2.5), 0.001);
+        derivativeDeltas = new double[] {0.001};
+        verifyDerivative(2.5);
     }
 
     /**
@@ -103,7 +103,8 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
 
         // Tests the derivative at a single point.
         tolerance = 1E-9;
-        checkDerivative(new DirectPosition1D(2.5), 0.001);
+        derivativeDeltas = new double[] {0.001};
+        verifyDerivative(2.5);
 
         // Find back the original linear coefficients as documented in the ExpentionalTransform1D
         // class javadoc. Then check that the transform results are the expected ones.
@@ -145,7 +146,8 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
 
         // Tests the derivative at a single point.
         tolerance = 0.01;
-        checkDerivative(new DirectPosition1D(2.5), 0.001);
+        derivativeDeltas = new double[] {0.001};
+        verifyDerivative(2.5);
     }
 
     /**
@@ -176,6 +178,7 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
 
         // Tests the derivative at a single point.
         tolerance = 1E-10;
-        checkDerivative(new DirectPosition1D(2.5), 0.001);
+        derivativeDeltas = new double[] {0.001};
+        verifyDerivative(2.5);
     }
 }

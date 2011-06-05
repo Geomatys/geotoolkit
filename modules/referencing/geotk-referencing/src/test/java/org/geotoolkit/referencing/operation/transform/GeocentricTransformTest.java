@@ -278,16 +278,16 @@ public final class GeocentricTransformTest extends TransformTestBase {
          * Derivative of the direct transform.
          */
         tolerance = 1E-2;
-        double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        checkDerivative(point, delta);
+        derivativeDeltas = new double[] {Math.toRadians(1.0 / 60) / 1852}; // Approximatively one metre.
+        verifyDerivative(point.getCoordinate());
         /*
          * Derivative of the inverse transform.
          */
         point = transform.transform(point, null);
         transform = transform.inverse();
         tolerance = 1E-8;
-        delta = 1; // Approximatively one metre.
-        checkDerivative(point, delta);
+        derivativeDeltas = new double[] {1}; // Approximatively one metre.
+        verifyDerivative(point.getCoordinate());
     }
 
     /**

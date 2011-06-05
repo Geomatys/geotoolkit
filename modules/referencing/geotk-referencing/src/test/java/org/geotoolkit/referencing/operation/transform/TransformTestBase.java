@@ -44,7 +44,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.factory.Hints;
@@ -67,7 +66,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.0
  */
@@ -582,43 +581,6 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         assertSame(P2, transform.transform(P2, P2));
         assertEquals(complete("shearX"), (P2.x - P1.x) / delta, matrix.getElement(0, 1), tolerance);
         assertEquals(complete("scaleY"), (P2.y - P1.y) / delta, matrix.getElement(1, 1), tolerance);
-    }
-
-    /**
-     * Computes the derivative at the given point, and compares the matrix values with
-     * estimations computed from the corners of a cube around the given point.
-     *
-     * @param  point The point where to compute the derivative, in radians.
-     * @param  delta The distance between 2 points to use for computing derivatives, in
-     *         units of the source CRS. It should be a small value, for example 1 metre.
-     * @throws TransformException If the derivative can not be computed,
-     *         or a point can not be projected.
-     *
-     * @since 3.15
-     */
-    protected final void checkDerivative(final DirectPosition point, final double delta)
-            throws TransformException
-    {
-        final Matrix matrix = transform.derivative(point);
-        final int sourceDim = matrix.getNumCol();
-        final int targetDim = matrix.getNumRow();
-        final GeneralDirectPosition S1 = new GeneralDirectPosition(sourceDim);
-        final GeneralDirectPosition S2 = new GeneralDirectPosition(sourceDim);
-        final GeneralDirectPosition T1 = new GeneralDirectPosition(targetDim);
-        final GeneralDirectPosition T2 = new GeneralDirectPosition(targetDim);
-        for (int i=0; i<sourceDim; i++) {
-            S1.setLocation(point);
-            S2.setLocation(point);
-            final double ordinate = point.getOrdinate(i);
-            S1.setOrdinate(i, ordinate - delta/2);
-            S2.setOrdinate(i, ordinate + delta/2);
-            assertSame(T1, transform.transform(S1, T1));
-            assertSame(T2, transform.transform(S2, T2));
-            for (int j=0; j<targetDim; j++) {
-                assertEquals(complete("derivative(" + j + ',' + i + ')'),
-                        (T2.getOrdinate(j) - T1.getOrdinate(j)) / delta, matrix.getElement(j, i), tolerance);
-            }
-        }
     }
 
     /**

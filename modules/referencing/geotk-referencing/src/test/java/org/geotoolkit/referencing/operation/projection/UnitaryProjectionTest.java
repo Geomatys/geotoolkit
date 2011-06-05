@@ -202,7 +202,6 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      * @since 3.18
      */
     @Test
-    @Ignore
     public void testDssfn() throws TransformException {
         boolean ellipse = true;
         do {
@@ -216,6 +215,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dssfn_dφ(φ, sinφ, cos(φ)) * mercator.ssfn(φ, sinφ);
                 }
             };
+            tolerance = ellipse ? 1E-2 : 1E-6;
             verifyInDomain(-PI/3, PI/3);
         } while ((ellipse = !ellipse) == false);
     }
@@ -228,7 +228,6 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      * @since 3.18
      */
     @Test
-    @Ignore
     public void testDtsfn() throws TransformException {
         boolean ellipse = true;
         do {
@@ -242,6 +241,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dtsfn_dφ(φ, sinφ, cos(φ)) * mercator.tsfn(φ, sinφ);
                 }
             };
+            tolerance = 1E-6;
             verifyInDomain(-PI/3, PI/3);
         } while ((ellipse = !ellipse) == false);
     }
@@ -254,7 +254,6 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      * @since 3.18
      */
     @Test
-    @Ignore
     public void testDqsfn() throws TransformException {
         boolean ellipse = true;
         do {
@@ -267,6 +266,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dqsfn_dφ(sin(φ), cos(φ));
                 }
             };
+            tolerance = ellipse ? 1E-2 : 1E-8;
             verifyInDomain(-PI/3, PI/3);
         } while ((ellipse = !ellipse) == false);
     }
@@ -277,7 +277,6 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      * @since 3.18
      */
     private void verifyInDomain(final double min, final double max) throws TransformException {
-        tolerance = 1E-9;
         isInverseTransformSupported = false;
         derivativeDeltas = new double[] {(max - min) / 1E+8};
         verifyInDomain(new double[] {min}, new double[] {max}, new int[] {100}, null);

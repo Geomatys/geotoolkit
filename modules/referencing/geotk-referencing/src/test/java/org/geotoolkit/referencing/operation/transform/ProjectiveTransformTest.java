@@ -21,7 +21,6 @@ import java.awt.geom.AffineTransform;
 
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -204,6 +203,7 @@ public final class ProjectiveTransformTest extends TransformTestBase {
          */
         transform = new ProjectiveTransform(new Matrix3(tr));
         tolerance = 1E-10;
-        checkDerivative(new DirectPosition2D(-10, 5), 3);
+        derivativeDeltas = new double[] {3};
+        verifyDerivative(-10, 5);
     }
 }
