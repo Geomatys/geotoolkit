@@ -307,7 +307,7 @@ public final class XMLUtilities {
                 if (obj instanceof org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) {
                     final org.geotoolkit.sld.xml.v100.StyledLayerDescriptor tempsld = (org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj;
                     if ("1.0.0".equals(tempsld.getVersion())) {
-                        return transformerGTv100.visit((org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj);
+                        return getTransformer100().visit((org.geotoolkit.sld.xml.v100.StyledLayerDescriptor) obj);
                     } else {
                         throw new JAXBException("Source is SLD but not in v1.0.0");
                     }
@@ -319,7 +319,7 @@ public final class XMLUtilities {
                 if (obj instanceof org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) {
                     final org.geotoolkit.sld.xml.v110.StyledLayerDescriptor tempsld = (org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj;
                     if ("1.1.0".equals(tempsld.getVersion())) {
-                        return transformerGTv110.visit((org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj);
+                        return getTransformer110().visit((org.geotoolkit.sld.xml.v110.StyledLayerDescriptor) obj);
                     } else {
                         throw new JAXBException("Source is SLD but not in v1.1.0");
                     }
@@ -406,20 +406,26 @@ public final class XMLUtilities {
         ensureNonNull("source", source);
         ensureNonNull("version", version);
         
-        final Object obj;
+        Object obj = source;
         
         switch(version){
             case SLD_1_0_0 :
-                obj = unmarshallV100(source);
+                if(!(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle)){
+                    obj = unmarshallV100(source);
+                }
+                
                 if(obj instanceof org.geotoolkit.sld.xml.v100.UserStyle){
-                    return transformerGTv100.visitUserStyle( (org.geotoolkit.sld.xml.v100.UserStyle) obj);
+                    return getTransformer100().visitUserStyle( (org.geotoolkit.sld.xml.v100.UserStyle) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD UserStyle v1.0.0");
                 }
             case V_1_1_0 :
-                obj = unmarshallV110(source);
+                if(!(obj instanceof org.geotoolkit.sld.xml.v110.UserStyle)){
+                    obj = unmarshallV110(source);
+                }
+                
                 if(obj instanceof org.geotoolkit.sld.xml.v110.UserStyle){
-                    return transformerGTv110.visitUserStyle( (org.geotoolkit.sld.xml.v110.UserStyle) obj);
+                    return getTransformer110().visitUserStyle( (org.geotoolkit.sld.xml.v110.UserStyle) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD UserStyle v1.1.0");
                 }
@@ -477,18 +483,18 @@ public final class XMLUtilities {
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
                 if(obj instanceof org.geotoolkit.sld.xml.v100.FeatureTypeStyle){
-                    return transformerGTv100.visitFTS( (org.geotoolkit.sld.xml.v100.FeatureTypeStyle) obj);
+                    return getTransformer100().visitFTS( (org.geotoolkit.sld.xml.v100.FeatureTypeStyle) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD FeatureTypeStyle v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
                 if(obj instanceof org.geotoolkit.se.xml.v110.FeatureTypeStyleType){
-                    return transformerGTv110.visitFTS(obj);
+                    return getTransformer110().visitFTS(obj);
                 }else if(obj instanceof JAXBElement<?>&& (
                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.OnlineResourceType ||
                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.FeatureTypeStyleType ) ){
-                    return transformerGTv110.visitFTS( ((JAXBElement<?>)obj).getValue() );
+                    return getTransformer110().visitFTS( ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC SE FeatureTypeStyle v1.1.0");
                 }
@@ -551,18 +557,18 @@ public final class XMLUtilities {
             case SLD_1_0_0 :
                 obj = unmarshallV100(source);
                 if(obj instanceof org.geotoolkit.sld.xml.v100.Rule){
-                    return transformerGTv100.visitRule( (org.geotoolkit.sld.xml.v100.Rule) obj);
+                    return getTransformer100().visitRule( (org.geotoolkit.sld.xml.v100.Rule) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SLD Rule v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
                 if(obj instanceof org.geotoolkit.se.xml.v110.RuleType){
-                    return transformerGTv110.visitRule(obj);
+                    return getTransformer110().visitRule(obj);
                 }else if(obj instanceof JAXBElement<?> && (
                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.OnlineResourceType ||
                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.se.xml.v110.RuleType ) ){
-                    return transformerGTv110.visitRule( ((JAXBElement<?>)obj).getValue() );
+                    return getTransformer110().visitRule( ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC SE Rule v1.1.0");
                 }
@@ -663,20 +669,20 @@ public final class XMLUtilities {
             case V_1_0_0 :
                 obj = unmarshallV100(source);
                 if(obj instanceof org.geotoolkit.ogc.xml.v100.FilterType){
-                    return transformerGTv100.visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) obj);
+                    return getTransformer100().visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) obj);
                 }else if(obj instanceof JAXBElement<?> && 
                         ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.ogc.xml.v100.FilterType){
-                    return transformerGTv100.visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) ((JAXBElement<?>)obj).getValue() );
+                    return getTransformer100().visitFilter( (org.geotoolkit.ogc.xml.v100.FilterType) ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC Filter v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
                 if(obj instanceof org.geotoolkit.ogc.xml.v110.FilterType){
-                    return transformerGTv110.visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
+                    return getTransformer110().visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
                 }else if(obj instanceof JAXBElement<?> && 
                          ((JAXBElement<?>)obj).getValue() instanceof org.geotoolkit.ogc.xml.v110.FilterType){
-                    return transformerGTv110.visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) ((JAXBElement<?>)obj).getValue() );
+                    return getTransformer110().visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) ((JAXBElement<?>)obj).getValue() );
                 }else{
                     throw new JAXBException("Source is not a valid OGC Filter v1.1.0");
                 }
@@ -734,14 +740,14 @@ public final class XMLUtilities {
             case V_1_0_0 :
                 obj = unmarshallV100(source);
                 if(obj instanceof PropertyNameType){
-                    return transformerGTv100.visitPropertyName((org.geotoolkit.ogc.xml.v100.PropertyNameType) obj);
+                    return getTransformer100().visitPropertyName((org.geotoolkit.ogc.xml.v100.PropertyNameType) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC PropertyName v1.0.0");
                 }
             case V_1_1_0 :
                 obj = unmarshallV110(source);
                 if(obj instanceof PropertyNameType){
-                    return transformerGTv110.visitPropertyName((PropertyNameType) obj);
+                    return getTransformer110().visitPropertyName((PropertyNameType) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC PropertyName v1.1.0");
                 }
