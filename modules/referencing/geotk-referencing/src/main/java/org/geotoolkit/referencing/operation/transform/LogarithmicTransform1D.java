@@ -89,9 +89,12 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
     /**
      * The offset to add to the logarithm.
      *
-     * @deprecated A future Geotk version may move this field in a concatenated affine transform.
+     * {@note The offset could be handled by a concatenation with <code>LinearTransform1D</code>
+     *        instead than an explicit field in this class. However the <var>offset</var> +
+     *        log<sub>base</sub>(<var>x</var>) formula is extensively used as a <cite>transfer
+     *        function</cite> in grid coverages. Consequently we keep this explicit field for
+     *        performance reasons.}
      */
-    @Deprecated
     public final double offset;
 
     /**

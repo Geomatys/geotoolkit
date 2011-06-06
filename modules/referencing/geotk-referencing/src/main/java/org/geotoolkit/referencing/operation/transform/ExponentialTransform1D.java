@@ -91,9 +91,12 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
     /**
      * The scale value to be multiplied.
      *
-     * @deprecated A future Geotk version may move this field in a concatenated affine transform.
+     * {@note The scale could be handled by a concatenation with <code>LinearTransform1D</code>
+     *        instead than an explicit field in this class. However the <var>scale</var> &middot;
+     *        <var>base</var><sup><var>x</var></sup> formula is extensively used as a <cite>transfer
+     *        function</cite> in grid coverages. Consequently we keep this explicit field for
+     *        performance reasons.}
      */
-    @Deprecated
     public final double scale;
 
     /**
