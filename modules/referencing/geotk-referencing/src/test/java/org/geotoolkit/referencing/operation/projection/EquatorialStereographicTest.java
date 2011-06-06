@@ -62,7 +62,7 @@ public final class EquatorialStereographicTest extends ProjectionTestBase {
      */
     @Test
     public void testDerivative() throws TransformException {
-        tolerance = 1E-1;
+        tolerance = 1E-7;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         final Point2D.Double point = new Point2D.Double(Math.toRadians(-4), Math.toRadians( 3));
 

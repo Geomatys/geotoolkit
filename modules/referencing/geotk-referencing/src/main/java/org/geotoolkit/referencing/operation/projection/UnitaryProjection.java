@@ -739,8 +739,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     final double dssfn_dφ(final double φ, final double sinφ, final double cosφ) {
         assert !(abs(sinφ - sin(φ)) > ARGUMENT_TOLERANCE) : φ;
         assert !(abs(cosφ - cos(φ)) > ARGUMENT_TOLERANCE) : φ;
-        final double t  = (sinφ-cosφ + 1) / (sinφ+cosφ - 1);
-        return 0.5*(t + 1/t - excentricitySquared*cosφ/(1 - excentricitySquared*sinφ*sinφ));
+        return (1/cosφ) - (excentricitySquared*cosφ)/(1-excentricitySquared*sinφ*sinφ);
     }
 
     /**
@@ -868,7 +867,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
         double esinφ2 = excentricity * sinφ;
         esinφ2 *= esinφ2;
-        return (1 - excentricitySquared) * cosφ * ((2 + esinφ2) / (1 - esinφ2));
+        return (1 - excentricitySquared) * (cosφ / (1 - esinφ2)) * (1 + ((1 + esinφ2) / (1 - esinφ2)));
     }
 
 

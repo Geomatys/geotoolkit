@@ -203,6 +203,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     @Test
     public void testDssfn() throws TransformException {
+        tolerance = 1E-6;
         boolean ellipse = true;
         do {
             final Mercator mercator = MercatorTest.create(ellipse);
@@ -215,7 +216,6 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dssfn_dφ(φ, sinφ, cos(φ)) * mercator.ssfn(φ, sinφ);
                 }
             };
-            tolerance = ellipse ? 1E-2 : 1E-6;
             verifyInDomain(-PI/3, PI/3);
         } while ((ellipse = !ellipse) == false);
     }
@@ -229,6 +229,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     @Test
     public void testDtsfn() throws TransformException {
+        tolerance = 1E-6;
         boolean ellipse = true;
         do {
             final Mercator mercator = MercatorTest.create(ellipse);
@@ -241,7 +242,6 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dtsfn_dφ(φ, sinφ, cos(φ)) * mercator.tsfn(φ, sinφ);
                 }
             };
-            tolerance = 1E-6;
             verifyInDomain(-PI/3, PI/3);
         } while ((ellipse = !ellipse) == false);
     }
@@ -266,7 +266,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dqsfn_dφ(sin(φ), cos(φ));
                 }
             };
-            tolerance = ellipse ? 1E-2 : 1E-8;
+            tolerance = ellipse ? 1E-6 : 1E-8;
             verifyInDomain(-PI/3, PI/3);
         } while ((ellipse = !ellipse) == false);
     }
