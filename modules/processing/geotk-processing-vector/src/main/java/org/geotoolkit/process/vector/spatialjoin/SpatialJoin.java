@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.spacialjoin;
+package org.geotoolkit.process.vector.spatialjoin;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -54,15 +54,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Quentin Boileau
  * @module pending
  */
-public class SpacialJoin extends AbstractProcess {
+public class SpatialJoin extends AbstractProcess {
 
     ParameterValueGroup result;
 
     /**
      * Default constructor
      */
-    public SpacialJoin() {
-        super(SpacialJoinDescriptor.INSTANCE);
+    public SpatialJoin() {
+        super(SpatialJoinDescriptor.INSTANCE);
     }
 
     /**
@@ -79,12 +79,12 @@ public class SpacialJoin extends AbstractProcess {
     @Override
     public void run() {
         getMonitor().started(new ProcessEvent(this,0,null,null));
-        final FeatureCollection<Feature> sourceFeatureList = Parameters.value(SpacialJoinDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpacialJoinDescriptor.FEATURE_TARGET, inputParameters);
-        final boolean method = Parameters.value(SpacialJoinDescriptor.INTERSECT, inputParameters);
+        final FeatureCollection<Feature> sourceFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_TARGET, inputParameters);
+        final boolean method = Parameters.value(SpatialJoinDescriptor.INTERSECT, inputParameters);
 
         final FeatureCollection resultFeatureList =
-                new SpacialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
+                new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);

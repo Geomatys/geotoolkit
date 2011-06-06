@@ -28,7 +28,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Limit a FeatureCollection returns to a maximum
+ * Apply a mask to a FeatureCollection FeatureType. 
  * @author Quentin Boileau
  * @module pending
  */

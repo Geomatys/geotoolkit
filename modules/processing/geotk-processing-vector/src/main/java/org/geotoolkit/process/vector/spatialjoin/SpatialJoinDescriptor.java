@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.spacialjoin;
+package org.geotoolkit.process.vector.spatialjoin;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -29,8 +29,8 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameters description for SpacialJoin process.
- * name of the process : "spacialjoin"
+ * Parameters description for SpatialJoin process.
+ * name of the process : "spatialjoin"
  * inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" Source FeatureCollection</li>
@@ -44,10 +44,10 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-public final class SpacialJoinDescriptor extends VectorDescriptor {
+public final class SpatialJoinDescriptor extends VectorDescriptor {
 
-    /**Process name : spacialjoin */
-    public static final String NAME = "spacialjoin";
+    /**Process name : spatialjoin */
+    public static final String NAME = "spatialjoin";
 
     /**
      * Mandatory - Target FeatureCollection
@@ -72,12 +72,12 @@ public final class SpacialJoinDescriptor extends VectorDescriptor {
             new GeneralParameterDescriptor[]{FEATURE_OUT});
 
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new SpacialJoinDescriptor();
+    public static final ProcessDescriptor INSTANCE = new SpatialJoinDescriptor();
 
     /**
      * Default constructor
      */
-    private SpacialJoinDescriptor() {
+    private SpatialJoinDescriptor() {
         super(NAME, "Return the target FeatureCollection with source FeatureCollection attributes."
                 + "The link between target and source depend of method used (Intersect or Nearest)", INPUT_DESC, OUTPUT_DESC);
     }
@@ -86,6 +86,6 @@ public final class SpacialJoinDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new SpacialJoin();
+        return new SpatialJoin();
     }
 }

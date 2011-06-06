@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.spacialjoin;
+package org.geotoolkit.process.vector.spatialjoin;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
@@ -23,11 +23,11 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
 /**
- * FeatureCollection for SpacialJoin process
+ * FeatureCollection for SpatialJoin process
  * @author Quentin Boileau
  * @module pending
  */
-public class SpacialJoinFeatureCollection extends WrapFeatureCollection {
+public class SpatialJoinFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final FeatureCollection<Feature> sourceFC;
@@ -39,13 +39,13 @@ public class SpacialJoinFeatureCollection extends WrapFeatureCollection {
      * @param targetFC the target FeatureCollection
      * @param method boolean to set the used method
      */
-    public SpacialJoinFeatureCollection(final FeatureCollection<Feature> sourceFC,
+    public SpatialJoinFeatureCollection(final FeatureCollection<Feature> sourceFC,
             final FeatureCollection<Feature> targetFC, final boolean method) {
 
         super(targetFC);
         this.sourceFC = sourceFC;
         this.method = method;
-        this.newFeatureType = SpacialJoin.concatType(targetFC.getFeatureType(), sourceFC.getFeatureType());
+        this.newFeatureType = SpatialJoin.concatType(targetFC.getFeatureType(), sourceFC.getFeatureType());
     }
 
     /**
@@ -62,6 +62,6 @@ public class SpacialJoinFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return SpacialJoin.join(original, newFeatureType, sourceFC, method);
+        return SpatialJoin.join(original, newFeatureType, sourceFC, method);
     }
 }

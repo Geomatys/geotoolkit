@@ -43,7 +43,7 @@ import org.geotoolkit.process.vector.regroup.RegroupDescriptor;
 import org.geotoolkit.process.vector.reproject.ReprojectDescriptor;
 import org.geotoolkit.process.vector.retype.RetypeDescriptor;
 import org.geotoolkit.process.vector.sort.SortByDescriptor;
-import org.geotoolkit.process.vector.spacialjoin.SpacialJoinDescriptor;
+import org.geotoolkit.process.vector.spatialjoin.SpatialJoinDescriptor;
 import org.geotoolkit.process.vector.startoffset.StartOffsetDescriptor;
 import org.geotoolkit.process.vector.union.UnionDescriptor;
 
@@ -76,7 +76,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
     public VectorProcessFactory() {
         super(  CentroidDescriptor.INSTANCE,            ClipGeometryDescriptor.INSTANCE,    ClipDescriptor.INSTANCE,
                 DouglasPeuckerDescriptor.INSTANCE,      BufferDescriptor.INSTANCE,          IntersectDescriptor.INSTANCE,
-                NearestDescriptor.INSTANCE,             SpacialJoinDescriptor.INSTANCE,     DifferenceDescriptor.INSTANCE,
+                NearestDescriptor.INSTANCE,             SpatialJoinDescriptor.INSTANCE,     DifferenceDescriptor.INSTANCE,
                 DifferenceGeometryDescriptor.INSTANCE,  IntersectionDescriptor.INSTANCE,    ConvexHullDescriptor.INSTANCE,
                 RegroupDescriptor.INSTANCE,             AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
                 MergeDescriptor.INSTANCE,               UnionDescriptor.INSTANCE,           ExtendFeatureDescriptor.INSTANCE,
