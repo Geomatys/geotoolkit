@@ -82,7 +82,7 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
             //ensure we have the minimum number of points
             if(lenght < minpoint){
                 final Coordinate lastCoord = coords[coords.length-1];
-                for(int i=lenght-1;i<minpoint;i++){
+                for(int i=lenght;i<minpoint;i++){
                     coords[i] = lastCoord;
                 }
                 lenght = minpoint;
