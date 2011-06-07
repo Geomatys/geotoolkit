@@ -138,7 +138,8 @@ public class DecimatePolygonHandler extends PolygonHandler {
     private Coordinate[] decimateRing(final Coordinate[] coords) {
         int lenght = 1;
 
-        for(int i=1,j=0; i<coords.length; i++){
+        int i=1,j=0;
+        for(; i<coords.length-1; i++){
             final double distX = Math.abs(coords[j].x - coords[i].x);
             if(distX > resX){
                 lenght++;
@@ -155,6 +156,11 @@ public class DecimatePolygonHandler extends PolygonHandler {
                 continue;
             }
         }
+        
+        //always include the last point, to preserve the ring
+        lenght++; j++;
+        coords[j] = coords[i];
+        
 
         if(lenght == coords.length){
             //nothing to decimate
@@ -163,7 +169,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
             //ensure we have the minimum number of points
             if(lenght < 4){
                 final Coordinate lastCoord = coords[coords.length-1];
-                for(int i=lenght-1;i<4;i++){
+                for(i=lenght-1;i<4;i++){
                     coords[i] = lastCoord;
                 }
                 lenght = 4;
@@ -172,7 +178,6 @@ public class DecimatePolygonHandler extends PolygonHandler {
             //ensure it forms a closed line string if asked for
             if(!coords[0].equals2D(coords[lenght-1])){
                 coords[lenght-1] = new Coordinate(coords[0]);
-                lenght++;
             }
 
             final Coordinate[] cs = new Coordinate[lenght];
