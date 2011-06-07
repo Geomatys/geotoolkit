@@ -31,7 +31,7 @@ import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.*;
 
 
 /**
- * Tests the {@link Cassini-Soldner} class.
+ * Tests the {@link CassiniSoldner} class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
@@ -54,7 +54,7 @@ public final class CassiniSoldnerTest extends ProjectionTestBase {
      * @param  ellipse {@code false} for a sphere, or {@code true} for WGS84 ellipsoid.
      * @return Newly created projection.
      */
-    private static CassiniSoldner create(final boolean ellipse) {
+    static CassiniSoldner create(final boolean ellipse) {
         final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse);
         if (ellipse) {
             return new CassiniSoldner(parameters);

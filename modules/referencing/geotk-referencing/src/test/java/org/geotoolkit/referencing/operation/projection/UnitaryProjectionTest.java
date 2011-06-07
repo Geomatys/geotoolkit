@@ -203,8 +203,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     @Test
     public void testDssfn() throws TransformException {
-        tolerance = 1E-6;
-        boolean ellipse = true;
+        boolean ellipse = false;
         do {
             final Mercator mercator = MercatorTest.create(ellipse);
             transform = new AbstractMathTransform1D() {
@@ -217,7 +216,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                 }
             };
             verifyInDomain(-PI/3, PI/3);
-        } while ((ellipse = !ellipse) == false);
+        } while ((ellipse = !ellipse) == true);
     }
 
     /**
@@ -229,8 +228,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     @Test
     public void testDtsfn() throws TransformException {
-        tolerance = 1E-6;
-        boolean ellipse = true;
+        boolean ellipse = false;
         do {
             final Mercator mercator = MercatorTest.create(ellipse);
             transform = new AbstractMathTransform1D() {
@@ -243,7 +241,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                 }
             };
             verifyInDomain(-PI/3, PI/3);
-        } while ((ellipse = !ellipse) == false);
+        } while ((ellipse = !ellipse) == true);
     }
 
     /**
@@ -255,7 +253,7 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     @Test
     public void testDqsfn() throws TransformException {
-        boolean ellipse = true;
+        boolean ellipse = false;
         do {
             final Mercator mercator = MercatorTest.create(ellipse);
             transform = new AbstractMathTransform1D() {
@@ -266,9 +264,8 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                     return mercator.dqsfn_dφ(sin(φ), cos(φ));
                 }
             };
-            tolerance = ellipse ? 1E-6 : 1E-8;
             verifyInDomain(-PI/3, PI/3);
-        } while ((ellipse = !ellipse) == false);
+        } while ((ellipse = !ellipse) == true);
     }
 
     /**
@@ -278,7 +275,8 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     private void verifyInDomain(final double min, final double max) throws TransformException {
         isInverseTransformSupported = false;
-        derivativeDeltas = new double[] {(max - min) / 1E+8};
+        derivativeDeltas = new double[] {2E-8};
+        tolerance = 1E-6;
         verifyInDomain(new double[] {min}, new double[] {max}, new int[] {100}, null);
     }
 }

@@ -483,7 +483,6 @@ public class AlbersEqualArea extends UnitaryProjection {
         final double φ = point.getY();
         final double cosλ = cos(λ);
         final double sinλ = sin(λ);
-        final double cosφ = cos(φ);
         final double sinφ = sin(φ);
         double ρ = c - n * qsfn(sinφ);
         if (ρ < 0.0) {
@@ -496,7 +495,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         ρ = sqrt(ρ);
         double esinφ2 = excentricity * sinφ;
         esinφ2 *= esinφ2;
-        final double dρ_dφ = 0.5 * n*cosφ * ((2 + esinφ2) / (1 - esinφ2)) * (excentricitySquared - 1) / ρ;
+        final double dρ_dφ = -0.5 * n*dqsfn_dφ(sinφ, cos(φ)) / ρ;
         return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // dx/dλ, dx/dφ
                           -sinλ * ρ, dρ_dφ * cosλ); // dy/dλ, dy/dφ
     }

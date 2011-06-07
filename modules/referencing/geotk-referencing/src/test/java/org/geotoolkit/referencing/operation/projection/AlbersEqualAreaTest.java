@@ -177,7 +177,7 @@ public final class AlbersEqualAreaTest extends ProjectionTestBase {
      */
     @Test
     public void testDerivative() throws TransformException {
-        tolerance = 1E-3; // Millimetre precision.
+        tolerance = 1E-8;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         final Point2D.Double point = new Point2D.Double(Math.toRadians(5), Math.toRadians(30));
 
