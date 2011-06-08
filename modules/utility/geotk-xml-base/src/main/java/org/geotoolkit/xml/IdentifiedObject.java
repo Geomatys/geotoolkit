@@ -88,7 +88,7 @@ public interface IdentifiedObject {
      * @see org.geotoolkit.metadata.iso.acquisition.DefaultObjective#getIdentifiers()
      * @see org.geotoolkit.referencing.AbstractIdentifiedObject#getIdentifiers()
      */
-    Collection<? extends Identifier> getIdentifiers();
+    //Collection<? extends Identifier> getIdentifiers();
 
     /**
      * A map view of some or all {@linkplain #getIdentifiers() identifiers}.
@@ -113,7 +113,7 @@ public interface IdentifiedObject {
      * @return The identifiers as a map of (<var>authority</var>, <var>code</var>) entries,
      *         or an empty map if none.
      */
-    Map<Citation,String> getIdentifierMap();
+    //Map<Citation,String> getIdentifierMap();
 
     /**
      * Returns the XML {@code xlink} attributes associated to this identified object,

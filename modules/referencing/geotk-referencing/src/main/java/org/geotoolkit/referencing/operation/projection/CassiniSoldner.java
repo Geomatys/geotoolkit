@@ -264,7 +264,7 @@ public class CassiniSoldner extends CassiniOrMercator {
         }
     }
 
-    /**
+    /*
      * Gets the derivative of this transform at a point.
      *
      * @param  point The coordinate point where to evaluate the derivative.
@@ -272,7 +272,7 @@ public class CassiniSoldner extends CassiniOrMercator {
      * @throws ProjectionException if the derivative can't be evaluated at the specified point.
      *
      * @since 3.18
-     */
+     *
     @Override
     public Matrix derivative(final Point2D point) throws ProjectionException {
         final double λ = rollLongitude(point.getX());
@@ -322,4 +322,5 @@ public class CassiniSoldner extends CassiniOrMercator {
             0.5*dU_dφ + C3*(t1*dU_dφ + U*6*(dW_dφ - dB_dφ)) + dmlfn_dφ(sinφ2, cosφ2)
         );
     }
+    */
 }
