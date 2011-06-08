@@ -76,9 +76,9 @@ public interface GetMapRequest extends Request{
     
     /**
      * Sets the center of the request. Must be set.
-     * The coordinate will be translated in WGS84
+     * The coordinate will be translated in WGS84 later for the query.
      */
-    void setCenter(DirectPosition position) throws TransformException,FactoryException;
+    void setCenter(DirectPosition position);
     
     /**
      * Returns the output dimension to request, never {@code null}.

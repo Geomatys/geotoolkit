@@ -22,6 +22,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -72,17 +74,7 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
      */
     static final GoogleMapsGraphicBuilder INSTANCE = new GoogleMapsGraphicBuilder();
     
-    private static CoordinateReferenceSystem GOOGLE_MERCATOR = null;
-
     private GoogleMapsGraphicBuilder(){};
-
-    private static synchronized CoordinateReferenceSystem getGoogleMercator() 
-            throws NoSuchAuthorityCodeException, FactoryException{
-        if(GOOGLE_MERCATOR == null){
-            GOOGLE_MERCATOR = CRS.decode("EPSG:3857");
-        }
-        return GOOGLE_MERCATOR;
-    }
     
     @Override
     public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
@@ -133,80 +125,115 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
             dim.height /= resolution[1];
             
             
-            final CoordinateReferenceSystem googleMercator;
-            final Envelope gmEnv;
+            //we make a second correction, since google returned image have labels for a 72dpi
+            //and the renderering engine works in 90 by default
+//            Number dpi = (Number)context2D.getRenderingHints().get(GO2Hints.KEY_DPI);
+//            if(dpi == null){
+//                dpi = 90;
+//            }
+//            dim.width /= dpi.doubleValue()/72d;
+//            dim.height /= dpi.doubleValue()/72d;
+            
+            
+            final GeneralEnvelope gmEnv;
             try {
-                googleMercator = getGoogleMercator();
-                gmEnv = CRS.transform(env, googleMercator);
-            } catch (NoSuchAuthorityCodeException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return;
-            } catch (FactoryException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                gmEnv = new GeneralEnvelope(CRS.transform(env, GoogleMapsUtilities.GOOGLE_MERCATOR));
             } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
             }
             
+            //ensure we don't go out of the crs envelope
+            final Envelope maxExt = CRS.getEnvelope(GoogleMapsUtilities.GOOGLE_MERCATOR);
+            gmEnv.intersect(maxExt);
+            if(Double.isNaN(gmEnv.getMinimum(0))){ gmEnv.setRange(0, maxExt.getMinimum(0), gmEnv.getMaximum(0));  }
+            if(Double.isNaN(gmEnv.getMaximum(0))){ gmEnv.setRange(0, gmEnv.getMinimum(0), maxExt.getMaximum(0));  }
+            if(Double.isNaN(gmEnv.getMinimum(1))){ gmEnv.setRange(1, maxExt.getMinimum(1), gmEnv.getMaximum(1));  }
+            if(Double.isNaN(gmEnv.getMaximum(1))){ gmEnv.setRange(1, gmEnv.getMinimum(1), maxExt.getMaximum(1));  }
             
             
-            final GeneralDirectPosition center = new GeneralDirectPosition(googleMercator);
-            center.setOrdinate(0, 0);
-            center.setOrdinate(1, 0);
-            final Dimension dimension = new Dimension(256, 256);
+            final int bestZoomLevel = GoogleMapsUtilities.getBestZoomLevel(gmEnv, dim);            
+            final Dimension dimension = new Dimension(640, 640);            
+            final double imageResolution = GoogleMapsUtilities.getZoomResolution(bestZoomLevel);
+            final List<GetMapRequest> requests = new ArrayList<GetMapRequest>();
+                    
+            final double mercatorTileWidth = imageResolution * dimension.width;
+            final double mercatorTileHeight = imageResolution * dimension.height;
             
-            
-            
-            final GetMapRequest request = layer.getServer().createGetMap();
-            request.setFormat(layer.getFormat());
-            request.setMapType(layer.getMapType());
-            request.setDimension(dimension);
-            request.setZoom(0);
-            try {
-                request.setCenter(center);
-            } catch (TransformException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return;
-            } catch (FactoryException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+            double x= gmEnv.getMinimum(0);
+            double y= gmEnv.getMaximum(1);
+            //loop on y
+            while(y > gmEnv.getMinimum(1)){
+                x=gmEnv.getMinimum(0);
+                
+                //loop on x
+                while(x < gmEnv.getMaximum(0)){
+                    final GetMapRequest request = layer.getServer().createGetMap();
+                    request.setFormat(layer.getFormat());
+                    request.setMapType(layer.getMapType());
+                    request.setDimension(dimension);
+                    request.setZoom(bestZoomLevel);
+                    
+                    final double centerX = x + mercatorTileWidth/2;
+                    final double centerY = y - mercatorTileHeight/2;
+                    
+                    
+                    final GeneralDirectPosition center = new GeneralDirectPosition(GoogleMapsUtilities.GOOGLE_MERCATOR);
+                    center.setOrdinate(0, centerX);
+                    center.setOrdinate(1, centerY);
+                    request.setCenter(center);
+                    
+                    
+                    final Envelope tileEnv = GoogleMapsUtilities.getEnvelope(
+                        request.getCenter(), request.getDimension(), request.getZoom());
+                    System.out.println(tileEnv);
+                    
+                    requests.add(request);
+                    x += mercatorTileWidth;
+                }
+                
+                y -= mercatorTileHeight;
             }
             
-
-            final BufferedImage image;
-            InputStream is = null;
-            try {
-                is = request.getResponseStream();
-                image = ImageIO.read(is);
-            } catch (IOException io) {
-                monitor.exceptionOccured(new PortrayalException(io), Level.WARNING);
-                return;
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException ex) {
-                        monitor.exceptionOccured(ex, Level.WARNING);
+            
+            
+            
+            for(final GetMapRequest request : requests){
+            
+                final BufferedImage image;
+                InputStream is = null;
+                try {
+                    is = request.getResponseStream();
+                    image = ImageIO.read(is);
+                } catch (IOException io) {
+                    monitor.exceptionOccured(new PortrayalException(io), Level.WARNING);
+                    continue;
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (IOException ex) {
+                            monitor.exceptionOccured(ex, Level.WARNING);
+                        }
                     }
                 }
-            }
 
-            if (image == null) {
-                monitor.exceptionOccured(new PortrayalException("GoogleMaps server didn't return an image."), Level.WARNING);
-                return;
-            }
+                if (image == null) {
+                    monitor.exceptionOccured(new PortrayalException("GoogleMaps server didn't return an image."), Level.WARNING);
+                    continue;
+                }
 
-            final Envelope extent = CRS.getEnvelope(googleMercator);
-            System.out.println(extent);
-            
-            try {
-                final GridCoverageFactory gc = new GridCoverageFactory();
-                final GridCoverage2D coverage = gc.create("gm", image, extent);
-                GO2Utilities.portray(context2D, coverage);
-            } catch (PortrayalException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                final Envelope tileEnv = GoogleMapsUtilities.getEnvelope(
+                        request.getCenter(), request.getDimension(), request.getZoom());
+                
+                try {
+                    final GridCoverageFactory gc = new GridCoverageFactory();
+                    final GridCoverage2D coverage = gc.create("gm", image, tileEnv);
+                    GO2Utilities.portray(context2D, coverage);
+                } catch (PortrayalException ex) {
+                    monitor.exceptionOccured(ex, Level.WARNING);
+                    continue;
+                }
             }
         }
 
