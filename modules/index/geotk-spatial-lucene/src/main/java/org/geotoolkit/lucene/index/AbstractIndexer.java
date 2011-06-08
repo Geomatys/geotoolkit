@@ -191,7 +191,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
             //adding the document in a specific model. in this case we use a MDwebDocument.
@@ -230,7 +230,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(final String identifier) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
             final Term t          = new Term("id", identifier);

@@ -69,7 +69,7 @@ public abstract class IndexLucene {
     * Analyzer field is set to default value ClassicAnalyzer.
     */
     public IndexLucene() {
-        analyzer = new ClassicAnalyzer(Version.LUCENE_31);
+        analyzer = new ClassicAnalyzer(Version.LUCENE_32);
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class IndexLucene {
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null)
-            this.analyzer = new ClassicAnalyzer(Version.LUCENE_31);
+            this.analyzer = new ClassicAnalyzer(Version.LUCENE_32);
         else
             this.analyzer = analyzer;
     }
