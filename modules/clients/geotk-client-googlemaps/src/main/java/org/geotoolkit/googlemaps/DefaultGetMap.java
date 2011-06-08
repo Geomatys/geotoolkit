@@ -38,6 +38,7 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
     private static final String PARAMETER_CENTER    = "center";
     private static final String PARAMETER_DIMENSION = "size";
     private static final String PARAMETER_FORMAT    = "format";
+    private static final String PARAMETER_SENSOR    = "sensor";
     
     private String mapType = null;
     private int zoom = 0;
@@ -119,6 +120,9 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
         requestParameters.put(PARAMETER_ZOOM, Integer.toString(zoom));
         requestParameters.put(PARAMETER_DIMENSION,  (int)dimension.getWidth() +"x"+ (int)dimension.getHeight() );        
         requestParameters.put(PARAMETER_CENTER, center.getOrdinate(0) +","+ center.getOrdinate(1));
+        
+        //dont know what exactly this do but necessary
+        requestParameters.put(PARAMETER_SENSOR, "false");
         
     }
 
