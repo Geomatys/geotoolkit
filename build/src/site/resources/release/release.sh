@@ -56,9 +56,9 @@ read
 #
 # Deploy the JAR files.
 #
-mvn deploy -Ppackage --quiet
-mvn javadoc:aggregate -P\!no-site --quiet
-mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive --quiet
+mvn deploy --activate-profiles package
+mvn site --activate-profiles \!no-site --define skipTests
+mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
 echo "Copying the bundles to $GEOTK_SERVER:geotk-release"
 scp target/bundles/* $GEOTK_SERVER:geotk-release
 

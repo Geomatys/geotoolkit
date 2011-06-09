@@ -107,10 +107,10 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      *
      * @since 3.18
      */
-//    @Override
-//    public Collection<? extends Identifier> getIdentifiers() {
-//        return Collections.emptySet();
-//    }
+    @Override
+    public Collection<? extends Identifier> getIdentifiers() {
+        return Collections.emptySet();
+    }
 
     /**
      * A map view of some or all {@linkplain #getIdentifiers() identifiers}.
@@ -120,10 +120,10 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      *
      * @since 3.18
      */
-//    @Override
-//    public Map<Citation,String> getIdentifierMap() {
-//        return Collections.emptyMap();
-//    }
+    @Override
+    public Map<Citation,String> getIdentifierMap() {
+        return Collections.emptyMap();
+    }
 
     /**
      * Returns the XML {@code xlink} attributes associated to this identified object,
