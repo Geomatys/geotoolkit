@@ -18,8 +18,11 @@ package org.geotoolkit.googlemaps.map;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.imageio.ImageIO;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -28,6 +31,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -40,6 +44,8 @@ public final class GoogleMapsUtilities {
     
     public static final CoordinateReferenceSystem GOOGLE_MERCATOR;
     public static final Envelope MERCATOR_EXTEND;
+    public static final BufferedImage OVERLOAD;
+    
 
     /**
      * Resolution at zoom 0 level. in meter by pixel.
@@ -63,6 +69,11 @@ public final class GoogleMapsUtilities {
         ((GeneralEnvelope)MERCATOR_EXTEND).setRange(1, -2e7, 2e7);
         
         ZOOM_ZERO_RESOLUTION = MERCATOR_EXTEND.getSpan(0) / BASE_TILE_SIZE;
+        try {
+            OVERLOAD = ImageIO.read(GoogleMapsUtilities.class.getResourceAsStream("/org/geotoolkit/googlemaps/staticmap.png"));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
     
     private GoogleMapsUtilities() {
@@ -96,7 +107,7 @@ public final class GoogleMapsUtilities {
     }
     
     public static Envelope getEnvelope(final DirectPosition center, final Dimension dimension, final int zoom){
-        
+                        
         final double imageResolution = getZoomResolution(zoom);        
         final double envWidth = dimension.width * imageResolution;
         final double envHeight = dimension.height * imageResolution; 
@@ -138,12 +149,14 @@ public final class GoogleMapsUtilities {
                 }
                 
                 final Point pt = new Point(i, j);
-                final DirectPosition tileCenter = getCenter(zoom, pt);
-                final Envelope candidate = getEnvelope(tileCenter, new Dimension((int)BASE_TILE_SIZE, (int)BASE_TILE_SIZE), zoom);
+                points.add(pt);
                 
-                if(area.intersects(candidate,true)){
-                    points.add(pt);
-                }
+//                final DirectPosition tileCenter = getCenter(zoom, pt);
+//                final Envelope candidate = getEnvelope(tileCenter, new Dimension((int)BASE_TILE_SIZE, (int)BASE_TILE_SIZE), zoom);
+//                
+//                if(area.intersects(candidate,true)){
+//                    points.add(pt);
+//                }
                 
             }
             
@@ -154,7 +167,7 @@ public final class GoogleMapsUtilities {
     
     public static DirectPosition getCenter(final int zoom, final Point coordinate){        
         final GeneralDirectPosition position = new GeneralDirectPosition(GOOGLE_MERCATOR);
-                
+        
         //we look for the center, like searching for a corner if we had two times more cells
         final double zoomRes = getZoomResolution(zoom + 1);
         position.setOrdinate(0, MERCATOR_EXTEND.getMinimum(0) + zoomRes* BASE_TILE_SIZE * ( (coordinate.x)*2 + 1) );

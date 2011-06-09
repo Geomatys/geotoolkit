@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -50,6 +51,7 @@ import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
@@ -65,6 +67,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
+    private static final Logger LOGGER = Logging.getLogger(GoogleMapsGraphicBuilder.class);
+    
     private static final int TILE_SIZE = 256;
                 
     /**
@@ -160,14 +164,14 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
                         
             for(final GetMapRequest request : requests){
             
-                final BufferedImage image;
+                BufferedImage image;
                 InputStream is = null;
                 try {
                     is = request.getResponseStream();
                     image = ImageIO.read(is);
                 } catch (IOException io) {
-                    monitor.exceptionOccured(new PortrayalException(io), Level.WARNING);
-                    continue;
+                    LOGGER.log(Level.INFO, "Overexceded google maps static api.");
+                    image = GoogleMapsUtilities.OVERLOAD;
                 } finally {
                     if (is != null) {
                         try {
