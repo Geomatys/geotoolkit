@@ -17,6 +17,7 @@
 
 package org.geotoolkit.xml;
 
+import com.ctc.wstx.stax.WstxInputFactory;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -106,13 +107,13 @@ public class StaxStreamReaderTest {
     @Test
     public void testReadingFromDom() throws Exception {
         
-        //this test requiere and advanced Stax library, here we use WoodStox stream reader.
         final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
         final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
         final Document document = constructeur.parse(StaxStreamReaderTest.class.getResourceAsStream("/org/geotoolkit/xml/sample.xml"));        
         final Source src = new DOMSource(document);
         
-        final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
+        //this test requiere and advanced Stax library, here we use WoodStox stream reader.
+        final XMLInputFactory XMLfactory = new WstxInputFactory();
         final XMLStreamReader reader = XMLfactory.createXMLStreamReader(src);
 
         final MockReader instance = new MockReader();

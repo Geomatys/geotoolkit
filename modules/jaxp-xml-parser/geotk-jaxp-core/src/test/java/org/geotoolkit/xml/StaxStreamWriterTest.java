@@ -17,12 +17,11 @@
 
 package org.geotoolkit.xml;
 
+import com.ctc.wstx.stax.WstxInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.Source;
-import org.w3c.dom.Node;
-import java.beans.Expression;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +31,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.dom.DOMResult;
-import org.geotoolkit.util.DomUtilities;
 
 import org.geotoolkit.xml.MockReader.Person;
 
@@ -118,7 +116,7 @@ public class StaxStreamWriterTest {
         //check by reading it back
         final Source src = new DOMSource(document);
         
-        final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
+        final XMLInputFactory XMLfactory = new WstxInputFactory();
         final XMLStreamReader reader = XMLfactory.createXMLStreamReader(src);
 
         final MockReader mr = new MockReader();
