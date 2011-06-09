@@ -4376,7 +4376,11 @@ public class KmlReader extends StaxStreamReader {
                     resultat = KML_FACTORY.createCdata(reader.getText());
                     break;
                 case XMLStreamConstants.CHARACTERS:
-                    resultat = reader.getText();
+                    if(resultat != null){
+                        resultat = resultat.toString() + reader.getText();
+                    }else{
+                        resultat = reader.getText();
+                    }
                     break;
                 case XMLStreamConstants.END_ELEMENT:
                     break boucle;
