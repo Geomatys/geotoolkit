@@ -48,22 +48,25 @@ public class StaticGoogleMapsServer implements Server{
     }
     
     private final URL serverURL;
+    private final String key;
     
     /**
      * Builds a google maps server with the default google server address.
      */
     public StaticGoogleMapsServer() {
-        this(DEFAULT_GOOGLE_STATIC_MAPS);
+        this(DEFAULT_GOOGLE_STATIC_MAPS,null);
     }
     
     /**
      * Builds a google maps server with the given server url.
      *
      * @param serverURL The server base url.
+     * @param key, account key.
      */
-    public StaticGoogleMapsServer(final URL serverURL) {
+    public StaticGoogleMapsServer(final URL serverURL, final String key) {
         ArgumentChecks.ensureNonNull("server url", serverURL);
         this.serverURL = serverURL;
+        this.key = key;
     }
     
     @Override
@@ -81,11 +84,15 @@ public class StaticGoogleMapsServer implements Server{
         return serverURL;
     }
     
+    public String getKey(){
+        return key;
+    }
+    
     /**
      * Returns the map request object.
      */
     public GetMapRequest createGetMap() {
-        return new DefaultGetMap(serverURL.toString());
+        return new DefaultGetMap(serverURL.toString(),getKey());
     }
     
 }

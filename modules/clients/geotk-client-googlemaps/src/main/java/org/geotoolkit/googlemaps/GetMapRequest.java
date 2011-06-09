@@ -19,8 +19,6 @@ package org.geotoolkit.googlemaps;
 import java.awt.Dimension;
 import org.geotoolkit.client.Request;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Map request for static google maps api.
@@ -76,7 +74,7 @@ public interface GetMapRequest extends Request{
     
     /**
      * Sets the center of the request. Must be set.
-     * The coordinate will be translated in WGS84 later for the query.
+     * The coordinate will be translated in lat/lon later for the query.
      */
     void setCenter(DirectPosition position);
     

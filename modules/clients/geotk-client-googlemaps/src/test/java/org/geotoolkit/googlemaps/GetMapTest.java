@@ -70,7 +70,7 @@ public class GetMapTest {
         assertTrue(sUrl.contains("maptype=hybrid"));
         assertTrue(sUrl.contains("format=gif"));
         assertTrue(sUrl.contains("size=500x400"));
-        assertTrue(sUrl.contains("center=45.0,31.0"));
+        assertTrue(sUrl.contains("center=31.0,45.0")); //lat,lon order
         assertTrue(sUrl.contains("sensor=false"));
     }
 

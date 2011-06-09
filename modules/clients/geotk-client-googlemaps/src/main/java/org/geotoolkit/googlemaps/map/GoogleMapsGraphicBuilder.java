@@ -19,6 +19,8 @@ package org.geotoolkit.googlemaps.map;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
@@ -46,20 +47,15 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.googlemaps.GetMapRequest;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
-import org.openide.util.Exceptions;
 
 /**
  * Render GoogleMaps layer in default geotoolkit rendering engine.
@@ -69,6 +65,8 @@ import org.openide.util.Exceptions;
  */
 public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
+    private static final int TILE_SIZE = 256;
+                
     /**
      * One instance for all GoogleMaps map layers. Object is concurrent.
      */
@@ -101,7 +99,7 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
     }
 
     public static class GoogleMapsGraphic extends AbstractGraphicJ2D{
-
+        
         private final GoogleMapsMapLayer layer;
 
         private GoogleMapsGraphic(final J2DCanvas canvas, final GoogleMapsMapLayer layer){
@@ -127,12 +125,12 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
             
             //we make a second correction, since google returned image have labels for a 72dpi
             //and the renderering engine works in 90 by default
-//            Number dpi = (Number)context2D.getRenderingHints().get(GO2Hints.KEY_DPI);
-//            if(dpi == null){
-//                dpi = 90;
-//            }
-//            dim.width /= dpi.doubleValue()/72d;
-//            dim.height /= dpi.doubleValue()/72d;
+            Number dpi = (Number)context2D.getRenderingHints().get(GO2Hints.KEY_DPI);
+            if(dpi == null){
+                dpi = 90;
+            }
+            dim.width /= dpi.doubleValue()/72d;
+            dim.height /= dpi.doubleValue()/72d;
             
             
             final GeneralEnvelope gmEnv;
@@ -143,61 +141,23 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
                 return;
             }
             
+            final int bestZoomLevel = GoogleMapsUtilities.getBestZoomLevel(gmEnv, dim);
+            
             //ensure we don't go out of the crs envelope
-            final Envelope maxExt = CRS.getEnvelope(GoogleMapsUtilities.GOOGLE_MERCATOR);
+            final Envelope maxExt = GoogleMapsUtilities.MERCATOR_EXTEND;            
             gmEnv.intersect(maxExt);
             if(Double.isNaN(gmEnv.getMinimum(0))){ gmEnv.setRange(0, maxExt.getMinimum(0), gmEnv.getMaximum(0));  }
             if(Double.isNaN(gmEnv.getMaximum(0))){ gmEnv.setRange(0, gmEnv.getMinimum(0), maxExt.getMaximum(0));  }
             if(Double.isNaN(gmEnv.getMinimum(1))){ gmEnv.setRange(1, maxExt.getMinimum(1), gmEnv.getMaximum(1));  }
             if(Double.isNaN(gmEnv.getMaximum(1))){ gmEnv.setRange(1, gmEnv.getMinimum(1), maxExt.getMaximum(1));  }
-            
-            
-            final int bestZoomLevel = GoogleMapsUtilities.getBestZoomLevel(gmEnv, dim);            
-            final Dimension dimension = new Dimension(640, 640);            
-            final double imageResolution = GoogleMapsUtilities.getZoomResolution(bestZoomLevel);
+                                    
             final List<GetMapRequest> requests = new ArrayList<GetMapRequest>();
-                    
-            final double mercatorTileWidth = imageResolution * dimension.width;
-            final double mercatorTileHeight = imageResolution * dimension.height;
-            
-            double x= gmEnv.getMinimum(0);
-            double y= gmEnv.getMaximum(1);
-            //loop on y
-            while(y > gmEnv.getMinimum(1)){
-                x=gmEnv.getMinimum(0);
-                
-                //loop on x
-                while(x < gmEnv.getMaximum(0)){
-                    final GetMapRequest request = layer.getServer().createGetMap();
-                    request.setFormat(layer.getFormat());
-                    request.setMapType(layer.getMapType());
-                    request.setDimension(dimension);
-                    request.setZoom(bestZoomLevel);
-                    
-                    final double centerX = x + mercatorTileWidth/2;
-                    final double centerY = y - mercatorTileHeight/2;
-                    
-                    
-                    final GeneralDirectPosition center = new GeneralDirectPosition(GoogleMapsUtilities.GOOGLE_MERCATOR);
-                    center.setOrdinate(0, centerX);
-                    center.setOrdinate(1, centerY);
-                    request.setCenter(center);
-                    
-                    
-                    final Envelope tileEnv = GoogleMapsUtilities.getEnvelope(
-                        request.getCenter(), request.getDimension(), request.getZoom());
-                    System.out.println(tileEnv);
-                    
-                    requests.add(request);
-                    x += mercatorTileWidth;
-                }
-                
-                y -= mercatorTileHeight;
+                        
+            final Collection<Point> tiles = GoogleMapsUtilities.getTileCoordinates(bestZoomLevel, gmEnv);
+            for(Point pt : tiles){
+                requests.add(createRequest(bestZoomLevel, pt));
             }
-            
-            
-            
-            
+                        
             for(final GetMapRequest request : requests){
             
                 final BufferedImage image;
@@ -249,6 +209,22 @@ public final class GoogleMapsGraphicBuilder implements GraphicBuilder<GraphicJ2D
             return graphics;
         }
 
+        /**
+         * Considering we query in tiles of 256 pixels.
+         */
+        private GetMapRequest createRequest(final int zoom, final Point coordinate){
+            final GetMapRequest request = layer.getServer().createGetMap();
+            request.setFormat(layer.getFormat());
+            request.setMapType(layer.getMapType());
+            request.setDimension(new Dimension(256, 256));
+            request.setZoom(zoom);
+            
+            final DirectPosition position = GoogleMapsUtilities.getCenter(zoom, coordinate);
+            request.setCenter(position);
+            
+            return request;
+        }
+        
     }
 
 }

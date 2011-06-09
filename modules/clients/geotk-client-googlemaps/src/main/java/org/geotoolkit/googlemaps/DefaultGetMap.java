@@ -44,15 +44,18 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
     private static final String PARAMETER_DIMENSION = "size";
     private static final String PARAMETER_FORMAT    = "format";
     private static final String PARAMETER_SENSOR    = "sensor";
+    private static final String PARAMETER_KEY       = "key";
     
     private String mapType = null;
     private int zoom = 0;
     private DirectPosition center = null;
     private Dimension dimension = null;
     private String format = null;
+    private String key = null;
     
-    public DefaultGetMap(final String serverURL){
+    public DefaultGetMap(final String serverURL, final String key){
         super(serverURL);
+        this.key = key;
     }
     
     @Override
@@ -115,7 +118,7 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
         ArgumentChecks.ensureNonNull("format", format);
         
         
-        //center must be expressed in long/lat
+        //center must be expressed in lat/lon
         DirectPosition position = center;
         try{
             final MathTransform trs = CRS.findMathTransform(
@@ -131,10 +134,15 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
         requestParameters.put(PARAMETER_FORMAT, format);
         requestParameters.put(PARAMETER_ZOOM, Integer.toString(zoom));
         requestParameters.put(PARAMETER_DIMENSION,  (int)dimension.getWidth() +"x"+ (int)dimension.getHeight() );        
-        requestParameters.put(PARAMETER_CENTER, position.getOrdinate(0) +","+ position.getOrdinate(1));
+        requestParameters.put(PARAMETER_CENTER, position.getOrdinate(1) +","+ position.getOrdinate(0));
         
         //dont know what exactly this do but necessary
         requestParameters.put(PARAMETER_SENSOR, "false");
+        
+        //user key if present
+        if(key != null){
+            requestParameters.put(PARAMETER_KEY, key);
+        }
         
     }
 
