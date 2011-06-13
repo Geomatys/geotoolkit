@@ -531,7 +531,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param env
      * @param dim
      */
-    protected void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
+    public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,
             FactoryException{
 
@@ -699,7 +699,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         request.setFormat(format);
         request.setExceptions(exceptionsFormat);
         request.setTransparent(transparent);
-        request.dimensions().putAll(dims);
+        request.dimensions().putAll(dimensions());
     }
     
 
@@ -748,7 +748,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         request.setRule(rule);
         request.setScale(scale);
         request.setSldVersion(sldVersion);
-        request.dimensions().putAll(dims);
+        request.dimensions().putAll(dimensions());
     }
     
     /**

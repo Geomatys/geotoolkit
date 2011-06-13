@@ -67,14 +67,14 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
+public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     /**
      * One instance for all WMS map layers. Object is concurrent.
      */
     static final WMSGraphicBuilder INSTANCE = new WMSGraphicBuilder();
 
-    private WMSGraphicBuilder(){};
+    protected WMSGraphicBuilder(){};
 
     @Override
     public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
@@ -112,9 +112,9 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     public static class WMSGraphic extends AbstractGraphicJ2D{
 
-        private final WMSMapLayer layer;
+        protected final WMSMapLayer layer;
 
-        private WMSGraphic(final J2DCanvas canvas, final WMSMapLayer layer){
+        protected WMSGraphic(final J2DCanvas canvas, final WMSMapLayer layer){
             super(canvas,canvas.getObjectiveCRS2D());
             this.layer = layer;
         }
@@ -170,7 +170,13 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             }
 
             if (image == null) {
-                monitor.exceptionOccured(new PortrayalException("WMS server didn't return an image."), Level.WARNING);
+                String path;
+                try {
+                    path = request.getURL().toString();
+                } catch (MalformedURLException ex) {
+                    path = "Malformed URL";
+                }
+                monitor.exceptionOccured(new PortrayalException("WMS server didn't return an image for URL : \n" + path), Level.WARNING);
                 return;
             }
 
