@@ -173,7 +173,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
      * {@inheritdoc}
      */
     @Override
-    protected void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
+    public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,
             FactoryException{
         super.prepareQuery(request, env, dim, pickCoord);   

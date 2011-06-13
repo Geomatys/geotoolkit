@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.sos;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.client.Server;
+
+import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.v100.DescribeFeatureType100;
 import org.geotoolkit.sos.v100.DescribeObservationType100;
 import org.geotoolkit.sos.v100.DescribeResultModel100;
@@ -33,7 +31,6 @@ import org.geotoolkit.sos.v100.GetObservation100;
 import org.geotoolkit.sos.v100.GetObservationById100;
 import org.geotoolkit.sos.v100.GetResult100;
 import org.geotoolkit.sos.xml.SOSVersion;
-import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -42,40 +39,21 @@ import org.geotoolkit.util.logging.Logging;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class SensorObservationServiceServer implements Server {
-    private static final Logger LOGGER = Logging.getLogger(SensorObservationServiceServer.class);
+public class SensorObservationServiceServer extends AbstractServer {
 
     private final SOSVersion version;
-    private final URL serverURL;
 
     public SensorObservationServiceServer(final URL serverURL, final String version) {
+        this(serverURL,null,version);
+    }
+    
+    public SensorObservationServiceServer(final URL serverURL, final ClientSecurity security, final String version) {
+        super(serverURL,security);
         if (version.equals("1.0.0")){
             this.version = SOSVersion.v100;
         } else {
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
-        this.serverURL = serverURL;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URI getURI() {
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        return null;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
     }
 
     /**

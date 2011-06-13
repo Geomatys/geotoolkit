@@ -17,13 +17,13 @@
 package org.geotoolkit.wcs;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.client.Server;
+
+import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
@@ -39,22 +39,25 @@ import org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebCoverageServer implements Server {
+public class WebCoverageServer extends AbstractServer {
 
     private static final Logger LOGGER = Logging.getLogger(WebCoverageServer.class);
 
     private final WCSVersion version;
 
-    private final URL serverURL;
     private WCSCapabilitiesType capabilities;
 
     public WebCoverageServer(final URL serverURL, final String version) {
+        this(serverURL,null,version);
+    }
+    
+    public WebCoverageServer(final URL serverURL, final ClientSecurity security, final String version) {
+        super(serverURL,security);
         if (version.equals("1.0.0")) {
             this.version = WCSVersion.v100;
         } else {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
-        this.serverURL = serverURL;
     }
 
     /**
@@ -102,27 +105,6 @@ public class WebCoverageServer implements Server {
         }
 
         return capabilities;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URI getURI() {
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        return null;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
     }
 
     /**

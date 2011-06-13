@@ -19,15 +19,13 @@ package org.geotoolkit.data.osm.client;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.client.Request;
 
-import org.geotoolkit.client.Server;
+import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.ChangeElement060;
@@ -50,6 +48,8 @@ import org.geotoolkit.data.osm.client.v060.UpdateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
+import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -58,40 +58,26 @@ import org.geotoolkit.util.logging.Logging;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OpenStreetMapServer implements Server{
+public class OpenStreetMapServer extends AbstractServer{
 
     private static final Logger LOGGER = Logging.getLogger(OpenStreetMapServer.class);
 
     private Api capabilities = null;
 
     private final OSMVersion version;
-    private final URL serverURL;
 
     public OpenStreetMapServer(final URL serverURL, final String version){
         this(serverURL, OSMVersion.getVersion(version));
     }
 
     public OpenStreetMapServer(final URL url, final OSMVersion version){
-        this.serverURL = url;
-        this.version = version;
-    }
-
-    @Override
-    public URI getURI() {
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-            return null;
-        }
+        this(url,null,version);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
+    public OpenStreetMapServer(final URL url, final ClientSecurity security, final OSMVersion version){
+        super(url,security);
+        ArgumentChecks.ensureNonNull("version", version);
+        this.version = version;
     }
 
     public Api getCapabilities(){

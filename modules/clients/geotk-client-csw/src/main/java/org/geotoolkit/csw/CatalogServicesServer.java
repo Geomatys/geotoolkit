@@ -17,12 +17,10 @@
 package org.geotoolkit.csw;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.client.Server;
+import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
 import org.geotoolkit.csw.v202.GetDomain202;
@@ -33,6 +31,7 @@ import org.geotoolkit.csw.v202.Transaction202;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 
@@ -45,7 +44,7 @@ import org.geotoolkit.util.logging.Logging;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public class CatalogServicesServer implements Server {
+public class CatalogServicesServer extends AbstractServer {
     /**
      * Used for debugging purpose
      */
@@ -55,29 +54,11 @@ public class CatalogServicesServer implements Server {
      */
     private final CSWVersion version;
     /**
-     * Url of this csw server
-     */
-    private final URL serverURL;
-    /**
      * Stored capabilities object that can be updated by calling {@link CatalogServicesServer.updateGetCapabilities}
      */
     private AbstractCapabilities capabilities;
 
-    /**
-     * Creates a new instance of {@link CatalogServicesServer} for serverUrl and version value
-     * @param serverURL {@link URL} of the server CSW
-     * @param version value of the CSW version, usually 2.0.2.
-     */
-    public CatalogServicesServer(final URL serverURL, final String version) {
-        if (version.equals("2.0.2")){
-            this.version = CSWVersion.v202;
-        } else {
-            throw new IllegalArgumentException("unknown version : "+ version);
-        }
-        ArgumentChecks.ensureNonNull("server url", serverURL);
-        this.serverURL = serverURL;
-    }
-
+    
     /**
      * Creates a new instance of {@link CatalogServicesServer} without passing version argument,
      * It performs a getCapabilities request and set the version depending on the response.
@@ -87,8 +68,7 @@ public class CatalogServicesServer implements Server {
      * @throws IllegalStateException throws an exception if the capabilities cannot be resolved for serverUrl
      */
     public CatalogServicesServer(final URL serverURL) throws IllegalStateException{
-        ArgumentChecks.ensureNonNull("server url", serverURL);
-        this.serverURL = serverURL;
+        super(serverURL);
         final AbstractCapabilities capa = getCapabilities();
         if(capa == null){
             throw new IllegalStateException("Cannot get Capabilities document from the server "+serverURL.toString());
@@ -100,28 +80,34 @@ public class CatalogServicesServer implements Server {
             throw new IllegalStateException("unknown CSW version : " + v);
         }
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Creates a new instance of {@link CatalogServicesServer} for serverUrl and version value
+     * @param serverURL {@link URL} of the server CSW
+     * @param version value of the CSW version, usually 2.0.2.
      */
-    @Override
-    public URI getURI() {
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+    public CatalogServicesServer(final URL serverURL, final String version) {
+        this(serverURL,null,version);
+    }
+    
+    public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final String version) {
+        this(serverURL, security, toVersion(version));
+    }
+    
+    public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final CSWVersion version) {
+        super(serverURL,security);
+        ArgumentChecks.ensureNonNull("version", version);
+        this.version = version;
+    }
+
+    private static CSWVersion toVersion(final String version){
+        if (version.equals("2.0.2")) {
+            return CSWVersion.v202;
+        } else {
+            throw new IllegalArgumentException("unknown version : "+ version);
         }
-        return null;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
-    }
-
+    
     /**
      * Returns the currently used version for this server
      */

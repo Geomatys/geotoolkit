@@ -17,15 +17,14 @@
 package org.geotoolkit.ncwms;
 
 import java.net.URL;
-import java.util.logging.Logger;
 
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.ncwms.v111.NcGetFeatureInfo111;
 import org.geotoolkit.ncwms.v111.NcGetLegend111;
 import org.geotoolkit.ncwms.v111.NcGetMap111;
 import org.geotoolkit.ncwms.v130.NcGetFeatureInfo130;
 import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapServer;
@@ -38,8 +37,6 @@ import org.geotoolkit.wms.WebMapServer;
  * @module pending
  */
 public class NcWebMapServer extends WebMapServer{
-
-    private static final Logger LOGGER = Logging.getLogger(NcWebMapServer.class);
 
     /**
      * {@inheritDoc }
@@ -67,6 +64,14 @@ public class NcWebMapServer extends WebMapServer{
      */
     public NcWebMapServer(final URL serverURL, final WMSVersion version, final AbstractWMSCapabilities capabilities) {
         super(serverURL, version, capabilities);
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    public NcWebMapServer(final URL serverURL, final ClientSecurity security, 
+            final WMSVersion version, final AbstractWMSCapabilities capabilities) {
+        super(serverURL, security, version, capabilities);
     }
     
     /**

@@ -18,23 +18,32 @@ package org.geotoolkit.client;
 
 import java.net.URI;
 import java.net.URL;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
  * Default interface for all server-side classes.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public interface Server {
+    
     /**
-     * Returns the server url as an {@link URI}, or {@code null} il the uri syntax
+     * @return the server url as an {@link URI}, or {@code null} il the uri syntax
      * is not respected.
      */
     URI getURI();
     
     /**
-     * Returns the server url as an {@link URL}.
+     * @return the server url as an {@link URL}.
      */
     URL getURL();
+    
+    /**
+     * @return ClientSecurity used by this server. never null.
+     */
+    ClientSecurity getClientSecurity();
+    
 }

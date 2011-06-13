@@ -17,13 +17,11 @@
 package org.geotoolkit.data.wfs;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.client.Server;
+import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.data.wfs.v110.Delete110;
 import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
 import org.geotoolkit.data.wfs.v110.GetCapabilities110;
@@ -32,6 +30,7 @@ import org.geotoolkit.data.wfs.v110.Insert110;
 import org.geotoolkit.data.wfs.v110.Native110;
 import org.geotoolkit.data.wfs.v110.Transaction110;
 import org.geotoolkit.data.wfs.v110.Update110;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
@@ -43,43 +42,25 @@ import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebFeatureServer implements Server{
+public class WebFeatureServer extends AbstractServer{
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
     private final WFSVersion version;
-    private final URL serverURL;
     private WFSCapabilitiesType capabilities;
 
     public WebFeatureServer(final URL serverURL, final String version) {
+        this(serverURL,null,version);
+    }
+    
+    public WebFeatureServer(final URL serverURL, final ClientSecurity security, final String version) {
+        super(serverURL,security);
         if(version.equals("1.1.0")){
             this.version = WFSVersion.v110;
         }else{
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
-        this.serverURL = serverURL;
         this.capabilities = null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URI getURI(){
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
     }
     
     /**

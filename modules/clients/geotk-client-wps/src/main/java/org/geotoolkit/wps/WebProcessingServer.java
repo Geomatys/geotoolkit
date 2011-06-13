@@ -17,19 +17,18 @@
 package org.geotoolkit.wps;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.client.Server;
+
+import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.ProcessDescriptions;
 import org.geotoolkit.wps.xml.v100.WPSCapabilitiesType;
 
 /**
@@ -37,16 +36,15 @@ import org.geotoolkit.wps.xml.v100.WPSCapabilitiesType;
  * @author Quentin Boileau
  * @modul pending
  */
-public class WebProcessingServer implements Server{
+public class WebProcessingServer extends AbstractServer{
     
     private static final Logger LOGGER = Logging.getLogger(WebProcessingServer.class);
     
     private final WPSVersion version;
-    private final URL serverURL;
     private WPSCapabilitiesType capabilities;
     
     /**
-     * Static enumaeration of WPS server versions. 
+     * Static enumeration of WPS server versions. 
      */
     public static enum WPSVersion{
 
@@ -68,34 +66,22 @@ public class WebProcessingServer implements Server{
      * @param version 
      */  
    public WebProcessingServer(final URL serverURL, final String version) {
+        this(serverURL,null,version);
+    }
+   
+   /**
+     * Constructor
+     * @param serverURL
+     * @param version 
+     */  
+   public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version) {
+       super(serverURL,security);
         if(version.equals("1.0.0")){
             this.version = WPSVersion.v100;
         }else{
             throw new IllegalArgumentException("Unkonwed version : "+ version);
         }
-        this.serverURL = serverURL;
         this.capabilities = null;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URI getURI(){
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
     }
     
     /**

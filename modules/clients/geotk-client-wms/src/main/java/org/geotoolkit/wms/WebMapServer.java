@@ -24,8 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.client.AbstractServer;
 
 import org.geotoolkit.client.Server;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
@@ -48,11 +50,10 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapServer implements Server{
+public class WebMapServer extends AbstractServer{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
-    private final URL serverURL;
     private final WMSVersion version;
     private AbstractWMSCapabilities capabilities;
 
@@ -82,6 +83,17 @@ public class WebMapServer implements Server{
     public WebMapServer(final URL serverURL, final WMSVersion version) {
         this(serverURL, version, null);
     }
+    
+    /**
+     * Builds a web map server with the given server url and version.
+     *
+     * @param serverURL The server base url.
+     * @param security The server security.
+     * @param version The service version.
+     */
+    public WebMapServer(final URL serverURL, final ClientSecurity security,final WMSVersion version) {
+        this(serverURL, version, null);
+    }
 
     /**
      * Builds a web map server with the given server url, version and getCapabilities response.
@@ -102,9 +114,23 @@ public class WebMapServer implements Server{
      * @param version A string representation of the service version.
      * @param capabilities A getCapabilities response.
      */
-    public WebMapServer(final URL serverURL, final WMSVersion version, final AbstractWMSCapabilities capabilities) {
+    public WebMapServer(final URL serverURL, final WMSVersion version, 
+            final AbstractWMSCapabilities capabilities) {
+        this(serverURL,null,version,capabilities);
+    }
+    
+    /**
+     * Builds a web map server with the given server url, version and getCapabilities response.
+     *
+     * @param serverURL The server base url.
+     * @param security The server security.
+     * @param version A string representation of the service version.
+     * @param capabilities A getCapabilities response.
+     */
+    public WebMapServer(final URL serverURL, final ClientSecurity security, 
+            final WMSVersion version, final AbstractWMSCapabilities capabilities) {
+        super(serverURL,security);
         this.version = version;
-        this.serverURL = serverURL;
         this.capabilities = capabilities;
     }
 
