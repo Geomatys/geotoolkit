@@ -104,9 +104,6 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * An unmodifiable copy of this metadata. Will be created only when first needed.
      * If {@code null}, then no unmodifiable entity is available.
      * If {@code this}, then this entity is itself unmodifiable.
-     *
-     * @todo Replace by some kind of flag after {@link #unmodifiable()} has been removed.
-     *       This will also allow us to get ride of the {@code Null} inner class.
      */
     private transient ModifiableMetadata unmodifiable;
 
@@ -151,22 +148,33 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Returns an unmodifiable copy of this metadata. Any attempt to modify a property of the
-     * returned object will throw an {@link UnmodifiableMetadataException}. If this metadata is
-     * already unmodifiable, then this method returns {@code this}.
+     * returned object will throw an {@link UnmodifiableMetadataException}. The state of this
+     * object is not modified.
      * <p>
-     * The default implementation {@linkplain #clone() clone} this metadata and
-     * {@linkplain #freeze() freeze} the clone before to return it.
+     * This method is useful for reusing the same metadata object as a template. For example:
+     *
+     * {@preformat java
+     *     DefaultCitation myCitation = new DefaultCitation();
+     *     myCitation.setTitle(new SimpleInternationalString("The title of my book"));
+     *     myCitation.setEdition(new SimpleInternationalString("First edition"));
+     *     final Citation firstEdition = (Citation) myCitation.unmodifiable();
+     *
+     *     myCitation.setEdition(new SimpleInternationalString("Second edition"));
+     *     final Citation secondEdition = (Citation) myCitation.unmodifiable();
+     *     // The title of the second edition is unchanged compared to the first edition.
+     * }
+     *
+     * The default implementation makes the following choice:
+     * <p>
+     * <ul>
+     *   <li>If this metadata is itself unmodifiable, then this method returns {@code this}
+     *       unchanged.</li>
+     *   <li>Otherwise this method {@linkplain #clone() clone} this metadata and
+     *       {@linkplain #freeze() freeze} the clone before to return it.</li>
+     * </ul>
      *
      * @return An unmodifiable copy of this metadata.
-     *
-     * @deprecated Use {@link #freeze()} instead.
      */
-    /*
-     * TODO: After removal of this method, move the static unmodifiable(Object) method inside
-     *       PropertyAccessor, delete its case #4 and edit its "ModifiableMetadata" case. Then
-     *       replace de 'unmodifiable' field by some flag and delete the Null inner class.
-     */
-    @Deprecated
     public synchronized AbstractMetadata unmodifiable() {
         // Reminder: 'unmodifiable' is reset to null by checkWritePermission().
         if (unmodifiable == null) {
@@ -220,13 +228,6 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
          *          its own algorithm for creating an unmodifiable view of metadata.
          */
         if (object instanceof ModifiableMetadata) {
-            if (false) {
-                // TODO: Use this code after we removed the deprecated unmodifiable()
-                // method. Don't forget to update the documentation of 'freeze()' with
-                // a statement saying that metadata children are frozen as well.
-                ((ModifiableMetadata) object).freeze();
-                return object;
-            }
             return ((ModifiableMetadata) object).unmodifiable();
         }
         /*
@@ -278,8 +279,6 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         }
         /*
          * CASE 4 - The object is cloneable.
-         *
-         * @todo Suppress this case after we removed the deprecated unmodifiable() method.
          */
         if (object instanceof org.geotoolkit.util.Cloneable) {
             return ((org.geotoolkit.util.Cloneable) object).clone();

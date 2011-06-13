@@ -41,13 +41,13 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.Utilities.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
-import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
 
 
 /**
@@ -539,7 +539,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                      */
                     final IdentifiedObject that = (IdentifiedObject) object;
                     if (!nameMatches(that. getName().getCode()) &&
-                        !nameMatches(that, getName().getCode()))
+                        !IdentifiedObjects.nameMatches(that, getName().getCode()))
                     {
                         return false;
                     }

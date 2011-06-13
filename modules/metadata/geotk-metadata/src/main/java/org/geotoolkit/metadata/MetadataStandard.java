@@ -739,23 +739,6 @@ public final class MetadataStandard {
     }
 
     /**
-     * @deprecated Replaced by {@link #shallowEquals(Object, Object, ComparisonMode, boolean)}.
-     *
-     * @param metadata1 The first metadata object to compare.
-     * @param metadata2 The second metadata object to compare.
-     * @param skipNulls If {@code true}, only non-null values will be compared.
-     * @return {@code true} if the given metadata objects are equals.
-     * @throws ClassCastException if at least one metadata object don't
-     *         implements a metadata interface of the expected package.
-     */
-    @Deprecated
-    public boolean shallowEquals(final Object metadata1, final Object metadata2, final boolean skipNulls)
-            throws ClassCastException
-    {
-        return shallowEquals(metadata1, metadata2, ComparisonMode.STRICT, skipNulls);
-    }
-
-    /**
      * Computes a hash code for the specified metadata. The hash code is defined as the
      * sum of hash code values of all non-null properties. This is the same contract than
      * {@link java.util.Set#hashCode} and ensure that the hash code value is insensitive

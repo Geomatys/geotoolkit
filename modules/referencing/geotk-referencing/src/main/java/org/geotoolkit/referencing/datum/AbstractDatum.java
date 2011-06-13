@@ -33,6 +33,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -41,7 +42,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
-import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
 
 
 /**
@@ -315,7 +315,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
                      */
                     final IdentifiedObject that = (IdentifiedObject) object;
                     return nameMatches(that. getName().getCode()) ||
-                           nameMatches(that, getName().getCode());
+                           IdentifiedObjects.nameMatches(that, getName().getCode());
                 }
             }
         }

@@ -23,7 +23,6 @@ package org.geotoolkit.referencing;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
-import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -100,61 +99,6 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5173281694258483264L;
-
-    /**
-     * An empty array of identifiers. This is useful for fetching identifiers as an array,
-     * using the following idiom:
-     *
-     * {@preformat java
-     *     getIdentifiers().toArray(EMPTY_IDENTIFIER_ARRAY);
-     * }
-     *
-     * @see #getIdentifiers()
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static final ReferenceIdentifier[] EMPTY_IDENTIFIER_ARRAY = IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;
-
-    /**
-     * An empty array of alias. This is useful for fetching alias as an array,
-     * using the following idiom:
-     *
-     * {@preformat java
-     *     getAlias().toArray(EMPTY_ALIAS_ARRAY);
-     * }
-     *
-     * @see #getAlias()
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static final GenericName[] EMPTY_ALIAS_ARRAY = IdentifiedObjects.EMPTY_ALIAS_ARRAY;
-
-    /**
-     * A comparator for sorting identified objects by {@linkplain #getName() name}.
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static final Comparator<IdentifiedObject> NAME_COMPARATOR = IdentifiedObjects.NAME_COMPARATOR;
-
-    /**
-     * A comparator for sorting identified objects by {@linkplain #getIdentifiers identifiers}.
-     * Identifiers are compared in their iteration order.
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static final Comparator<IdentifiedObject> IDENTIFIER_COMPARATOR = IdentifiedObjects.IDENTIFIER_COMPARATOR;
-
-    /**
-     * A comparator for sorting identified objects by {@linkplain #getRemarks remarks}.
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static final Comparator<IdentifiedObject> REMARKS_COMPARATOR = IdentifiedObjects.REMARKS_COMPARATOR;
 
     /**
      * The name for this object or code. Should never be {@code null}.
@@ -669,86 +613,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Returns the informations provided in the specified identified object as a map of
-     * properties. The returned map contains key such as {@link #NAME_KEY NAME_KEY}, and
-     * values from methods such as {@link #getName}.
-     *
-     * @param  info The identified object to view as a properties map.
-     * @return An view of the identified object as an immutable map.
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static Map<String,?> getProperties(final IdentifiedObject info) {
-        return IdentifiedObjects.getProperties(info);
-    }
-
-    /**
-     * Returns the properties to be given to an identified object derived from the specified one.
-     * This method is typically used for creating a new CRS identical to an existing one except
-     * for axis units. This method returns the same properties than the supplied argument (as of
-     * <code>{@linkplain #getProperties(IdentifiedObject) getProperties}(info)</code>), except for
-     * the following:
-     * <p>
-     * <ul>
-     *   <li>The {@linkplain #getName() name}'s authority is replaced by the specified one.</li>
-     *   <li>All {@linkplain #getIdentifiers identifiers} are removed, because the new object
-     *       to be created is probably not endorsed by the original authority.</li>
-     * </ul>
-     * <p>
-     * This method returns a mutable map. Consequently, callers can add their own identifiers
-     * directly to this map if they wish.
-     *
-     * @param  info The identified object to view as a properties map.
-     * @param  authority The new authority for the object to be created, or {@code null} if it
-     *         is not going to have any declared authority.
-     * @return An view of the identified object as a mutable map.
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
-        return IdentifiedObjects.getProperties(info, authority);
-    }
-
-    /**
-     * Returns an identifier according the given authority. This method performs the same search
-     * than {@link #getIdentifier(Citation)} on arbitrary implementations of GeoAPI interface.
-     *
-     * @param  info The object to get the identifier from.
-     * @param  authority The authority for the identifier to return, or {@code null} for
-     *         the first identifier regardless its authority.
-     * @return The object's identifier, or {@code null} if no identifier matching the specified
-     *         authority was found.
-     *
-     * @since 2.2
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static ReferenceIdentifier getIdentifier(final IdentifiedObject info, final Citation authority) {
-        return IdentifiedObjects.identifier(info, authority);
-    }
-
-    /**
-     * Returns an object's name according the given authority. This method performs the same search
-     * than {@link #getName(Citation)} on arbitrary implementations of GeoAPI interface.
-     *
-     * @param  info The object to get the name from.
-     * @param  authority The authority for the name to return, or {@code null} for any authority.
-     * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
-     *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
-     *         specified authority was found.
-     *
-     * @since 2.2
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    public static String getName(final IdentifiedObject info, final Citation authority) {
-        return IdentifiedObjects.name(info, authority);
-    }
-
-    /**
      * Returns {@code true} if either the {@linkplain #getName() primary name} or at least
      * one {@linkplain #getAlias alias} matches the specified string. This method performs
      * the search in the following order, regardless of any authority:
@@ -767,41 +631,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     public boolean nameMatches(final String name) {
         return IdentifiedObjects.nameMatches(this, alias, name);
-    }
-
-    /**
-     * Returns {@code true} if either the {@linkplain #getName() primary name} or at least
-     * one {@linkplain #getAlias alias} matches the specified string. This method performs the
-     * same check than the {@linkplain #nameMatches(String) non-static method} on arbitrary
-     * object implementing the GeoAPI interface.
-     *
-     * @param  object The object to check.
-     * @param  name The name.
-     * @return {@code true} if the primary name of at least one alias
-     *         matches the specified {@code name}.
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static boolean nameMatches(final IdentifiedObject object, final String name) {
-        return IdentifiedObjects.nameMatches(object, name);
-    }
-
-    /**
-     * Returns {@code true} if the {@linkplain #getName() primary name} of an object matches
-     * the primary name or one {@linkplain #getAlias alias} of the other object.
-     *
-     * @param o1 The first object to compare by name.
-     * @param o2 The second object to compare by name.
-     * @return {@code true} if both objects have a common name.
-     *
-     * @since 2.4
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
-        return IdentifiedObjects.nameMatches(o1, o2);
     }
 
     /**
@@ -905,105 +734,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_$1, mode));
             }
         }
-    }
-
-    /**
-     * Compares two OpenGIS's {@code IdentifiedObject} objects for equality. This convenience
-     * method is provided for implementation of {@code equals} in subclasses.
-     *
-     * @param  object1 The first object to compare (may be {@code null}).
-     * @param  object2 The second object to compare (may be {@code null}).
-     * @param  mode {@code STRICT} for performing a strict comparison, or {@code IGNORE_METADATA}
-     *         for comparing only properties relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     *
-     * @since 3.14
-     *
-     * @deprecated Replaced by {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
-     */
-    @Deprecated
-    protected static boolean equals(final IdentifiedObject object1,
-                                    final IdentifiedObject object2,
-                                    final ComparisonMode mode)
-    {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            return false;
-        }
-        if (!(object1 instanceof AbstractIdentifiedObject)) return object1.equals(object2);
-        if (!(object2 instanceof AbstractIdentifiedObject)) return object2.equals(object1);
-        return ((AbstractIdentifiedObject) object1).equals((AbstractIdentifiedObject) object2, mode);
-    }
-
-    /**
-     * Compares two arrays of OpenGIS's {@code IdentifiedObject} objects for equality. This
-     * convenience method is provided for implementation of {@code equals} method in subclasses.
-     *
-     * @param  array1 The first array to compare (may be {@code null}).
-     * @param  array2 The second array to compare (may be {@code null}).
-     * @param  mode {@code STRICT} for performing a strict comparison, or {@code IGNORE_METADATA}
-     *         for comparing only properties relevant to transformations.
-     * @return {@code true} if both arrays are equal.
-     *
-     * @since 3.14
-     *
-     * @deprecated Replaced by {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
-     */
-    @Deprecated
-    protected static boolean equals(final IdentifiedObject[] array1,
-                                    final IdentifiedObject[] array2,
-                                    final ComparisonMode mode)
-    {
-        if (array1 != array2) {
-            if ((array1 == null) || (array2 == null) || (array1.length != array2.length)) {
-                return false;
-            }
-            for (int i=array1.length; --i>=0;) {
-                if (!equals(array1[i], array2[i], mode)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Compares two collections of OpenGIS's {@code IdentifiedObject} objects for equality. The
-     * comparison take order in account, which make it more appropriate for {@link java.util.List}
-     * or {@link java.util.LinkedHashSet} comparisons. This convenience method is provided for
-     * implementation of {@code equals} method in subclasses.
-     *
-     * @param  collection1 The first collection to compare (may be {@code null}).
-     * @param  collection2 The second collection to compare (may be {@code null}).
-     * @param  mode {@code STRICT} for performing a strict comparison, or {@code IGNORE_METADATA}
-     *         for comparing only properties relevant to transformations.
-     * @return {@code true} if both collections are equal.
-     *
-     * @since 3.14
-     *
-     * @deprecated Replaced by {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
-     */
-    @Deprecated
-    protected static boolean equals(final Collection<? extends IdentifiedObject> collection1,
-                                    final Collection<? extends IdentifiedObject> collection2,
-                                    final ComparisonMode mode)
-    {
-        if (collection1 == collection2) {
-            return true;
-        }
-        if (collection1==null || collection2==null) {
-            return false;
-        }
-        final Iterator<? extends IdentifiedObject> it1 = collection1.iterator();
-        final Iterator<? extends IdentifiedObject> it2 = collection2.iterator();
-        while (it1.hasNext()) {
-            if (!it2.hasNext() || !equals(it1.next(), it2.next(), mode)) {
-                return false;
-            }
-        }
-        return !it2.hasNext();
     }
 
     /**

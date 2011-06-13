@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.tree;
 
 import java.io.PrintWriter;
-import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
@@ -39,16 +38,13 @@ import org.w3c.dom.Node;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.io.LineReader;
-import org.geotoolkit.io.LineReaders;
 import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
  * Convenience static methods for trees operations. This class provides methods for performing
  * a {@linkplain #copy copy} of a tree and for {@linkplain #xmlToSwing converting from XML}.
- * It can also {@linkplain #parse parse} and {@linkplain #format format} a tree in {@link String}
- * form, where the text format looks like the example below:
+ * It can also {@linkplain #print print} a tree in a format like the following example:
  *
  * {@preformat text
  *   Node #1
@@ -59,6 +55,8 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
+ *
+ * @see TreeFormat
  *
  * @since 2.0
  * @module
@@ -296,94 +294,6 @@ public final class Trees extends Static {
             }
         }
         return target;
-    }
-
-    /**
-     * Creates a tree from the given string representation. This method can parse the trees
-     * created by the {@code toString(...)} methods defined in this class.
-     *
-     * @param text The string representation of the tree to parse.
-     * @return The root of the parsed tree.
-     * @throws IllegalArgumentException If an error occurred while parsing the tree.
-     *
-     * @since 3.02
-     *
-     * @deprecated Moved to {@link TreeFormat#parseObject(String)}
-     */
-    @Deprecated
-    public static MutableTreeNode parse(final String text) throws IllegalArgumentException {
-        try {
-            return parse(LineReaders.wrap(text));
-        } catch (IOException e) {
-            // Only ContentFormatException should occur here.
-            throw new IllegalArgumentException(e.getLocalizedMessage());
-        }
-    }
-
-    /**
-     * Creates a tree from the lines read from the given input. This method can parse the trees
-     * created by the {@code format(...)} methods defined in this class. Each node must have at
-     * least one {@code '─'} character (unicode 2500) in front of it. The number of spaces and
-     * drawing characters ({@code '│'}, {@code '├'} or {@code '└'}) before the node determines
-     * its indentation, and the indentation determines the parent of each node.
-     *
-     * @param  input A {@code LineReader} for reading the lines.
-     * @return The root of the parsed tree.
-     * @throws IOException If an error occurred while parsing the tree.
-     *
-     * @since 3.02
-     *
-     * @deprecated Moved to {@link TreeFormat#parse(LineReader)}
-     */
-    @Deprecated
-    public static MutableTreeNode parse(final LineReader input) throws IOException {
-        return new TreeFormat().parse(input);
-    }
-
-    /**
-     * Writes a graphical representation of the specified tree model in the given buffer.
-     *
-     * @param  tree          The tree to format.
-     * @param  buffer        Where to format the tree.
-     * @param  lineSeparator The line separator, or {@code null} for the system default.
-     * @throws IOException if an error occurred while writing in the given buffer.
-     *
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link TreeFormat#format(TreeModel, Appendable)}
-     */
-    @Deprecated
-    public static void format(final TreeModel tree, final Appendable buffer, String lineSeparator)
-            throws IOException
-    {
-        final TreeFormat format = new TreeFormat();
-        if (lineSeparator == null) {
-            format.setLineSeparator(lineSeparator);
-        }
-        format.format(tree, buffer);
-    }
-
-    /**
-     * Writes a graphical representation of the specified tree in the given buffer.
-     *
-     * @param  node          The root node of the tree to format.
-     * @param  buffer        Where to format the tree.
-     * @param  lineSeparator The line separator, or {@code null} for the system default.
-     * @throws IOException if an error occurred while writing in the given buffer.
-     *
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link TreeFormat#format(TreeNode, Appendable)}
-     */
-    @Deprecated
-    public static void format(final TreeNode node, final Appendable buffer, String lineSeparator)
-            throws IOException
-    {
-        final TreeFormat format = new TreeFormat();
-        if (lineSeparator == null) {
-            format.setLineSeparator(lineSeparator);
-        }
-        format.format(node, buffer);
     }
 
     /**

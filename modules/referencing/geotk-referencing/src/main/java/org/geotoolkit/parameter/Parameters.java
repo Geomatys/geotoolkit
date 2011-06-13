@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.unit.Unit;
@@ -691,46 +690,6 @@ public final class Parameters extends Static {
                 }
             }
         }
-    }
-
-    /**
-     * Gets a flat view of
-     * {@linkplain ParameterDescriptor#getName name}-{@linkplain ParameterValue#getValue value}
-     * pairs. This method copies all parameter values into the supplied {@code destination} map.
-     * Keys are parameter names as {@link String} objects, and values are parameter values as
-     * arbitrary objects. All subgroups (if any) are extracted recursively.
-     *
-     * @param  parameters  The parameters to extract values from.
-     * @param  destination The destination map, or {@code null} for a default one.
-     * @return {@code destination}, or a new map if {@code destination} was null.
-     *
-     * @category query
-     * @deprecated Replaced by {@link #copy(GeneralParameterValue, Map)}.
-     */
-    @Deprecated
-    public static Map<String,Object> toNameValueMap(final GeneralParameterValue parameters,
-            Map<String,Object> destination)
-    {
-        if (destination == null) {
-            destination = new LinkedHashMap<String,Object>();
-        }
-        if (parameters instanceof ParameterValue<?>) {
-            final ParameterValue<?> param = (ParameterValue<?>) parameters;
-            final Object value = param.getValue();
-            final Object old = destination.put(param.getDescriptor().getName().getCode(), value);
-            if (old!=null && !old.equals(value)) {
-                // TODO: This code will fails to detect if a null value was explicitly supplied
-                //       previously. We assume that this case should be uncommon and not a big deal.
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCONSISTENT_VALUE));
-            }
-        }
-        if (parameters instanceof ParameterValueGroup) {
-            final ParameterValueGroup group = (ParameterValueGroup) parameters;
-            for (final GeneralParameterValue value : group.values()) {
-                destination = toNameValueMap(value, destination);
-            }
-        }
-        return destination;
     }
 
     /**

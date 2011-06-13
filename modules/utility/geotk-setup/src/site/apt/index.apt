@@ -25,11 +25,11 @@ Geotoolkit.org installer
 
     * <<<geotk-setup.jar>>>
 
-    * <<<geoapi-utility.jar>>>
+    * <<<geotk-utility.jar>>>
 
-    * <<<geoapi-metadata.jar>>>
+    * <<<geotk-metadata.jar>>>
 
-    * <<<geoapi-metadata-sql.jar>>>
+    * <<<geotk-metadata-sql.jar>>>
 
     * <<<geotk-referencing.jar>>>
 

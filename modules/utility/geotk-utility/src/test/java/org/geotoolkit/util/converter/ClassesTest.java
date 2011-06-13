@@ -105,16 +105,6 @@ public final class ClassesTest {
     private static abstract class T3 extends T2 implements Transformation {}
 
     /**
-     * Tests {@link Classes#getInterface}.
-     *
-     * @since 3.17
-     */
-    @Test
-    public void testGetInterface() {
-        assertEquals(NavigableSet.class, Classes.getInterface(TreeSet.class, Collection.class));
-    }
-
-    /**
      * Tests {@link Classes#findSpecializedClass} and {@link Classes#findCommonClass}.
      */
     @Test

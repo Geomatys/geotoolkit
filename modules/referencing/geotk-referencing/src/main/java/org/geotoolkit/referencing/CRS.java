@@ -38,7 +38,6 @@ import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.*;
-import org.opengis.metadata.citation.Citation;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
@@ -59,20 +58,16 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -1080,161 +1075,6 @@ compare:    for (final SingleCRS component : actualComponents) {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns the declared identifier, or {@code null} if none. This method searches for the first
-     * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
-     * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
-     * <em>this method does not verify the identifier validity</em>.
-     * <p>
-     * More specifically, this method uses the first non-null element found in
-     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
-     * is none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()}</code> -
-     * which is not guaranteed to be a valid identifier.
-     *
-     * {@section Recommanded alternatives}
-     * <ul>
-     *   <li>If the code of a specific authority is wanted (typically EPSG), then consider
-     *       using the static methods defined in {@link AbstractIdentifiedObject} instead.</li>
-     *   <li>In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
-     *       database looking for a match, use one of the lookup methods below.</li>
-     * </ul>
-     *
-     * {@section Note on Spatial Reference System (SRS) identifiers}
-     * OGC Web Services have the concept of a Spatial Reference System identifier used to
-     * communicate CRS information between systems. In <cite>Well Known Text</cite> (WKT)
-     * format, this identifier is declared in the {@code AUTHORITY} element.
-     * <p>
-     * Examples of Spatial Reference System (SRS) values:
-     * <ul>
-     *   <li>{@code EPSG:4326} - this was understood to mean <cite>force XY axis order</cite> in
-     *       old Web Map Services (WMS). Note that latest WMS specifications require the respect
-     *       of axis order as declared in the EPSG database, which is (<var>latitude</var>,
-     *       <var>longitude</var>).</li>
-     *   <li>{@code urn:ogc:def:crs:EPSG:4326} - understood to match the EPSG database axis order
-     *       in all cases, no matter the WMS version.</li>
-     *   <li>{@code AUTO:43200} - without the parameters that are specific to AUTO codes.</li>
-     * </ul>
-     *
-     * @param  object The identified object, or {@code null}.
-     * @return Identifier represented as a string for communication between systems, or {@code null}.
-     *
-     * @see #lookupIdentifier(IdentifiedObject, boolean)
-     * @see AbstractIdentifiedObject#getIdentifier(IdentifiedObject, Citation)
-     *
-     * @category information
-     * @since 3.06 (derived from 2.5)
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static String getDeclaredIdentifier(final IdentifiedObject object) {
-        return IdentifiedObjects.getIdentifier(object);
-    }
-
-    /**
-     * Looks up an {@linkplain ReferenceIdentifier identifier}, such as {@code "EPSG:4326"},
-     * of the specified object. This method searches in registered factories for an object
-     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively equals} to the specified
-     * object. If such an object is found, then its first identifier is returned. Otherwise
-     * this method returns {@code null}.
-     * <p>
-     * <strong>Note that this method checks the identifier validity</strong>. If the given object
-     * declares explicitly an identifier, then this method will instantiate an object from the
-     * authority factory using that identifier and compare it with the given object. If the
-     * comparison fails, then this method returns {@code null}. Consequently this method may
-     * returns {@code null} even if the given object declares explicitly its identifier. If
-     * the declared identifier is wanted unconditionally, use
-     * {@link IdentifiedObjects#getIdentifier(IdentifiedObject)} instead.
-     *
-     * {@section Recommanded alternatives}
-     * This convenience method delegates its work to {@link IdentifiedObjectFinder}. If you
-     * want more control, consider using that class. For example, use that class if the search
-     * should be performed only against some {@linkplain AuthorityFactory authority factories}
-     * instead of against all the registered factories, or if you want access to the full
-     * {@linkplain IdentifiedObject identified object} instead of only its string value.
-     *
-     * @param  object The object (usually a {@linkplain CoordinateReferenceSystem coordinate
-     *         reference system}) whose identifier is to be found.
-     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
-     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
-     *         identifiers and names will be performed.
-     * @return The identifier, or {@code null} if not found.
-     * @throws FactoryException If an unexpected failure occurred during the search.
-     *
-     * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
-     * @see IdentifiedObjectFinder#findIdentifier(IdentifiedObject)
-     *
-     * @category information
-     * @since 2.4
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
-            throws FactoryException
-    {
-        return IdentifiedObjects.lookupIdentifier(object, fullScan);
-    }
-
-    /**
-     * Looks up an {@linkplain ReferenceIdentifier identifier} in the namespace of the given
-     * authority, such as {@link Citations#EPSG EPSG}, of the specified CRS. Invoking this
-     * method is similar to invoking
-     * <code>{@linkplain #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier}(object,
-     * fullScan)</code> except that the search is performed only among the factories of the given
-     * authority.
-     *
-     * {@section Identifiers in URN and HTTP namespaces}
-     * Note that if the given authority is {@link Citations#URN_OGC} or {@link Citations#HTTP_OGC},
-     * then this method behaves as if the code was searched in all authority factories and the
-     * result formatted in a {@code "urn:ogc:def:"} or
-     * {@value org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory#BASE_URL} namespace.
-     *
-     * @param  authority The authority for the code to search.
-     * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
-     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
-     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
-     *         identifiers and names will be performed.
-     * @return The CRS identifier, or {@code null} if none was found or if the given CRS was null.
-     * @throws FactoryException If an unexpected failure occurred during the search.
-     *
-     * @category information
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    @Deprecated
-    public static String lookupIdentifier(final Citation authority,
-            final CoordinateReferenceSystem crs, // Not IdentifiedObject, see javadoc comment.
-            final boolean fullScan) throws FactoryException
-    {
-        return IdentifiedObjects.lookupIdentifier(authority, crs, fullScan);
-    }
-
-    /**
-     * Looks up an EPSG code of the given {@linkplain CoordinateReferenceSystem
-     * coordinate reference system}). This is a convenience method for <code>{@linkplain
-     * #lookupIdentifier(Citation, CoordinateReferenceSystem, boolean) lookupIdentifier}({@linkplain
-     * Citations#EPSG EPSG}, crs, fullScan)</code> with the returned code parsed as an integer.
-     *
-     * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
-     * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
-     *         should be performed (may be slow). Otherwise only a fast lookup based on embedded
-     *         identifiers and names will be performed.
-     * @return The CRS identifier, or {@code null} if none was found or if the given CRS was null.
-     * @throws FactoryException If an unexpected failure occurred during the search.
-     *
-     * @category information
-     * @since 2.5
-     *
-     * @deprecated Moved to {@link IdentifiedObjects}.
-     */
-    public static Integer lookupEpsgCode(final CoordinateReferenceSystem crs, final boolean fullScan)
-            throws FactoryException
-    {
-        return IdentifiedObjects.lookupEpsgCode(crs, fullScan);
     }
 
 
