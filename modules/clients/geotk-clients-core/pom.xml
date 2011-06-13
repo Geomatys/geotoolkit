@@ -65,10 +65,17 @@
   <!--     Dependencies to be inherited by all modules.            -->
   <!-- =========================================================== -->
   <dependencies>
+      
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-temporal</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    
+    <!--for base64 enconding -->
+    <dependency>
+      <groupId>net.iharder</groupId>
+      <artifactId>base64</artifactId>
     </dependency>
   </dependencies>
 
