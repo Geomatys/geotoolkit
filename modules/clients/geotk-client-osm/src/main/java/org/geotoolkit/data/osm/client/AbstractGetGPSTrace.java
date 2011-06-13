@@ -39,10 +39,10 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      */
-    protected AbstractGetGPSTrace(final String serverURL, final String subpath){
-        super(serverURL, subpath);
+    protected AbstractGetGPSTrace(final OpenStreetMapServer server, final String subpath){
+        super(server, subpath);
     }
 
     /**

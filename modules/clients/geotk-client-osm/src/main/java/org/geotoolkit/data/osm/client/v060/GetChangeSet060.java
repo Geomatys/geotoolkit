@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractGetChangeSet;
+import org.geotoolkit.data.osm.client.OpenStreetMapServer;
 
 /**
  *
@@ -26,8 +27,8 @@ import org.geotoolkit.data.osm.client.AbstractGetChangeSet;
  */
 public class GetChangeSet060 extends AbstractGetChangeSet{
 
-    public GetChangeSet060(final String serveruURL){
-        super(serveruURL,"/api/0.6/changeset/");
+    public GetChangeSet060(final OpenStreetMapServer server){
+        super(server,"/api/0.6/changeset/");
     }
 
     @Override

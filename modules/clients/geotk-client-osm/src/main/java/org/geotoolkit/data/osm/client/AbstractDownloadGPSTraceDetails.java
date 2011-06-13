@@ -30,8 +30,8 @@ public abstract class AbstractDownloadGPSTraceDetails extends AbstractRequest im
 
     protected int id = -1;
 
-    public AbstractDownloadGPSTraceDetails(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractDownloadGPSTraceDetails(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override

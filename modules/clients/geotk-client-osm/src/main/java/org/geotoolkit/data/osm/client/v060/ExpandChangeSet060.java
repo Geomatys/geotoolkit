@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractExpandChangeSet;
+import org.geotoolkit.data.osm.client.OpenStreetMapServer;
 
 /**
  *
@@ -26,8 +27,8 @@ import org.geotoolkit.data.osm.client.AbstractExpandChangeSet;
  */
 public class ExpandChangeSet060 extends AbstractExpandChangeSet{
 
-    public ExpandChangeSet060(final String serverURL){
-        super(serverURL,"");
+    public ExpandChangeSet060(final OpenStreetMapServer server){
+        super(server,"");
     }
 
     @Override

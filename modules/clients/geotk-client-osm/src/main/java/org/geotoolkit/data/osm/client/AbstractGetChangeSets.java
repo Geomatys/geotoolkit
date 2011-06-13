@@ -47,10 +47,10 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      */
-    protected AbstractGetChangeSets(final String serverURL, final String subpath){
-        super(serverURL, subpath);
+    protected AbstractGetChangeSets(final OpenStreetMapServer server, final String subpath){
+        super(server, subpath);
     }
 
     /**

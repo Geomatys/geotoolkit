@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.geotoolkit.client.AbstractRequest;
 
 /**
@@ -37,10 +32,10 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      */
-    protected AbstractGetChangeSet(final String serverURL, final String subpath){
-        super(serverURL, subpath);
+    protected AbstractGetChangeSet(final OpenStreetMapServer server, final String subpath){
+        super(server, subpath);
     }
 
     /**

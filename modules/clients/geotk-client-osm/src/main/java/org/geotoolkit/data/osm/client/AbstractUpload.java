@@ -24,13 +24,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
-import org.geotoolkit.util.StringUtilities;
 
 /**
  * Abstract implementation of {@link UploadRequest}, which defines the
@@ -46,8 +44,8 @@ public abstract class AbstractUpload extends AbstractRequest implements UploadRe
     protected String generator = "GeotoolKit.org";
     protected String version = "3";
 
-    public AbstractUpload(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractUpload(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override
@@ -88,12 +86,14 @@ public abstract class AbstractUpload extends AbstractRequest implements UploadRe
     @Override
     public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
         try{
             final OSMXMLWriter writer = new OSMXMLWriter();
             writer.setOutput(stream);

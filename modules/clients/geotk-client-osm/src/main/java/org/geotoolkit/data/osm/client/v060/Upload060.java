@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractUpload;
+import org.geotoolkit.data.osm.client.OpenStreetMapServer;
 
 /**
  *
@@ -26,8 +27,8 @@ import org.geotoolkit.data.osm.client.AbstractUpload;
  */
 public class Upload060 extends AbstractUpload{
 
-    public Upload060(final String serverURL){
-        super(serverURL,"");
+    public Upload060(final OpenStreetMapServer server){
+        super(server,"");
     }
 
     @Override

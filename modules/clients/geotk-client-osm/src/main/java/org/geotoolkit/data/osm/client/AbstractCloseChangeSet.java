@@ -20,7 +20,6 @@ package org.geotoolkit.data.osm.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLConnection;
 import org.geotoolkit.client.AbstractRequest;
 
@@ -35,8 +34,8 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
 
     protected int id = -1;
 
-    public AbstractCloseChangeSet(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractCloseChangeSet(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override
@@ -51,7 +50,8 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
 
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URLConnection conec = getURL().openConnection();
+        URLConnection conec = getURL().openConnection();
+        conec = security.secure(conec);
         final HttpURLConnection ht = (HttpURLConnection) conec;
         ht.setRequestMethod("PUT");
         return openRichException(conec);

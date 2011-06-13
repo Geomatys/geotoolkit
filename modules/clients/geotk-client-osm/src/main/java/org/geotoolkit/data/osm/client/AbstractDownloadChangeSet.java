@@ -30,8 +30,8 @@ public abstract class AbstractDownloadChangeSet extends AbstractRequest implemen
 
     protected int id = -1;
 
-    public AbstractDownloadChangeSet(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractDownloadChangeSet(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override

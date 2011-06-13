@@ -23,13 +23,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
-import org.geotoolkit.util.StringUtilities;
 
 /**
  * Abstract implementation of {@link CreateChangeSetRequest}, which defines the
@@ -42,8 +39,8 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
 
     protected ChangeSet cs = null;
 
-    public AbstractCreateChangeSet(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractCreateChangeSet(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override
@@ -59,7 +56,8 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
     @Override
     public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         final HttpURLConnection ht = (HttpURLConnection) conec;
         ht.setRequestMethod("PUT");
@@ -67,7 +65,8 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
         try{
             final OSMXMLWriter writer = new OSMXMLWriter();
             writer.setOutput(stream);

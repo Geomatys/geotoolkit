@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,10 +36,10 @@ public abstract class AbstractReadElements extends AbstractRequest implements Re
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      */
-    protected AbstractReadElements(final String serverURL, final String subpath){
-        super(serverURL, subpath);
+    protected AbstractReadElements(final OpenStreetMapServer server, final String subpath){
+        super(server, subpath);
     }
 
     /**

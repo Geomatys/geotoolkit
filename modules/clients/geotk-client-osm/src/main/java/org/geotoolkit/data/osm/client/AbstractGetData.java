@@ -38,10 +38,10 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      */
-    protected AbstractGetData(final String serverURL, final String subpath){
-        super(serverURL, subpath);
+    protected AbstractGetData(final OpenStreetMapServer server, final String subpath){
+        super(server, subpath);
     }
 
     /**

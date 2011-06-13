@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractDownloadGPSTraceDetails;
+import org.geotoolkit.data.osm.client.OpenStreetMapServer;
 
 
 /**
@@ -27,8 +28,8 @@ import org.geotoolkit.data.osm.client.AbstractDownloadGPSTraceDetails;
  */
 public class DownloadGPSTraceDetails060 extends AbstractDownloadGPSTraceDetails{
 
-    public DownloadGPSTraceDetails060(final String serverURL){
-        super(serverURL,"");
+    public DownloadGPSTraceDetails060(final OpenStreetMapServer server){
+        super(server,"");
     }
 
     @Override

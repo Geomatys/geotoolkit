@@ -30,7 +30,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.data.osm.model.ChangeSet;
 import org.geotoolkit.data.osm.model.Tag;
-import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.xml.OSMXMLWriter;
 
 /**
@@ -45,8 +44,8 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
     protected int id = -1;
     protected final List<Tag> tags = new ArrayList<Tag>();
 
-    public AbstractUpdateChangeSet(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractUpdateChangeSet(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override
@@ -67,7 +66,8 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
     @Override
     public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         final HttpURLConnection ht = (HttpURLConnection) conec;
         ht.setRequestMethod("PUT");
@@ -77,7 +77,8 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
 
         final ChangeSet cs = new ChangeSet(id, null, null, null, null, tags);
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
         try{
             final OSMXMLWriter writer = new OSMXMLWriter();
             writer.setOutput(stream);

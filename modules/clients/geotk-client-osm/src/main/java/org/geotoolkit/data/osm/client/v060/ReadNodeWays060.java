@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractReadNodeWays;
+import org.geotoolkit.data.osm.client.OpenStreetMapServer;
 
 /**
  *
@@ -26,8 +27,8 @@ import org.geotoolkit.data.osm.client.AbstractReadNodeWays;
  */
 public class ReadNodeWays060 extends AbstractReadNodeWays{
 
-    public ReadNodeWays060(final String serveruURL){
-        super(serveruURL,"/api/0.6/node/");
+    public ReadNodeWays060(final OpenStreetMapServer server){
+        super(server,"/api/0.6/node/");
     }
 
     @Override

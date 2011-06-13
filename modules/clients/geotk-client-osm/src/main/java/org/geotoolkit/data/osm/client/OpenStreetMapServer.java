@@ -137,7 +137,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public GetCapabilitiesRequest createGetCapabilities(){
         switch (version) {
             case v060:
-                return new GetCapabilities060(serverURL.toString());
+                return new GetCapabilities060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -149,7 +149,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public GetDataRequest createGetData() {
         switch (version) {
             case v060:
-                return new GetData060(serverURL.toString());
+                return new GetData060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -163,7 +163,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public GetChangeSetRequest createGetChangeSet(){
         switch (version) {
             case v060:
-                return new GetChangeSet060(serverURL.toString());
+                return new GetChangeSet060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -175,7 +175,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public GetChangeSetsRequest createGetChangeSets(){
         switch (version) {
             case v060:
-                return new GetChangeSets060(serverURL.toString());
+                return new GetChangeSets060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -187,7 +187,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public CreateChangeSetRequest createCreateChangeSet(){
         switch (version) {
             case v060:
-                return new CreateChangeSet060(serverURL.toString());
+                return new CreateChangeSet060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -199,7 +199,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public UpdateChangeSetRequest createUpdateChangeSet(){
         switch (version) {
             case v060:
-                return new UpdateChangeSet060(serverURL.toString());
+                return new UpdateChangeSet060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -211,7 +211,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public CloseChangeSetRequest createCloseChangeSet(){
         switch (version) {
             case v060:
-                return new CloseChangeSet060(serverURL.toString());
+                return new CloseChangeSet060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -223,7 +223,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public DownloadChangeSetRequest createDownloadChangeSet(){
         switch (version) {
             case v060:
-                return new DownloadChangeSet060(serverURL.toString());
+                return new DownloadChangeSet060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -235,7 +235,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ExpandChangeSetRequest createExpandChangeSet(){
         switch (version) {
             case v060:
-                return new ExpandChangeSet060(serverURL.toString());
+                return new ExpandChangeSet060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -247,7 +247,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public UploadRequest createUploadChangeSet(){
         switch (version) {
             case v060:
-                return new Upload060(serverURL.toString());
+                return new Upload060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -259,7 +259,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ChangeElementRequest createCreateElement(){
         switch (version) {
             case v060:
-                return new ChangeElement060(serverURL.toString(),ChangeElementRequest.Type.CREATE);
+                return new ChangeElement060(this,ChangeElementRequest.Type.CREATE);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -272,7 +272,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ReadElementRequest createReadElement(){
         switch (version) {
             case v060:
-                return new ReadElement060(serverURL.toString());
+                return new ReadElement060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -284,7 +284,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ReadElementsRequest createReadElements(){
         switch (version) {
             case v060:
-                return new ReadElements060(serverURL.toString());
+                return new ReadElements060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -296,7 +296,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ReadElementFullRequest createReadFullElement(){
         switch (version) {
             case v060:
-                return new ReadElementFull060(serverURL.toString());
+                return new ReadElementFull060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -308,7 +308,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ChangeElementRequest createUpdateElement(){
         switch (version) {
             case v060:
-                return new ChangeElement060(serverURL.toString(),ChangeElementRequest.Type.UPDATE);
+                return new ChangeElement060(this,ChangeElementRequest.Type.UPDATE);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -320,7 +320,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ChangeElementRequest createDeleteElement(){
         switch (version) {
             case v060:
-                return new ChangeElement060(serverURL.toString(),ChangeElementRequest.Type.DELETE);
+                return new ChangeElement060(this,ChangeElementRequest.Type.DELETE);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -332,7 +332,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ReadElementHistoryRequest createHistoryElement(){
         switch (version) {
             case v060:
-                return new ReadElementHistory060(serverURL.toString());
+                return new ReadElementHistory060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -344,7 +344,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ReadElementRelationsRequest createRelatedRelationElement(){
         switch (version) {
             case v060:
-                return new ReadElementRelations060(serverURL.toString());
+                return new ReadElementRelations060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -356,7 +356,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public ReadNodeWaysRequest createRelatedWayElement(){
         switch (version) {
             case v060:
-                return new ReadNodeWays060(serverURL.toString());
+                return new ReadNodeWays060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -370,7 +370,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public GetGPSTraceRequest createGetGPSTraces(){
         switch (version) {
             case v060:
-                return new GetGPSTraces060(serverURL.toString());
+                return new GetGPSTraces060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -390,7 +390,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public DownloadGPSTraceDetail createDownloadGPSTraceDetails(){
         switch (version) {
             case v060:
-                return new DownloadGPSTraceDetails060(serverURL.toString());
+                return new DownloadGPSTraceDetails060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -402,7 +402,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public DownloadGPSTraceData createDownloadGPSTraceData(){
         switch (version) {
             case v060:
-                return new DownloadGPSTraceData060(serverURL.toString());
+                return new DownloadGPSTraceData060(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

@@ -31,10 +31,10 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server url.
      */
-    protected AbstractGetCapabilities(final String serverURL){
-        super(serverURL, "api/capabilities");
+    protected AbstractGetCapabilities(final OpenStreetMapServer server){
+        super(server, "api/capabilities");
     }
 
     @Override

@@ -40,8 +40,8 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     protected final Type type;
     protected IdentifiedElement element = null;
 
-    public AbstractChangeElement(final String serverURL, final String subPath, final Type type){
-        super(serverURL, subPath);
+    public AbstractChangeElement(final OpenStreetMapServer server, final String subPath, final Type type){
+        super(server, subPath);
         this.type = type;
     }
 
@@ -63,7 +63,8 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     @Override
     public InputStream getResponseStream() throws IOException {
         final URL url = getURL();
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         final HttpURLConnection ht = (HttpURLConnection) conec;
         switch(type){
@@ -75,7 +76,8 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
         try{
             final OSMXMLWriter writer = new OSMXMLWriter();
             writer.setOutput(stream);

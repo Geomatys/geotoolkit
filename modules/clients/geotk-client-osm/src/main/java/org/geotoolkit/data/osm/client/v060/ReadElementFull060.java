@@ -18,6 +18,7 @@
 package org.geotoolkit.data.osm.client.v060;
 
 import org.geotoolkit.data.osm.client.AbstractReadElementFull;
+import org.geotoolkit.data.osm.client.OpenStreetMapServer;
 import org.geotoolkit.data.osm.model.Relation;
 import org.geotoolkit.data.osm.model.Way;
 
@@ -28,8 +29,8 @@ import org.geotoolkit.data.osm.model.Way;
  */
 public class ReadElementFull060 extends AbstractReadElementFull{
 
-    public ReadElementFull060(final String serveruURL){
-        super(serveruURL,"/api/0.6/");
+    public ReadElementFull060(final OpenStreetMapServer server){
+        super(server,"/api/0.6/");
     }
 
     @Override

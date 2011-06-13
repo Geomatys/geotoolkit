@@ -42,8 +42,8 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
     protected int id = -1;
     protected Envelope env = null;
 
-    public AbstractExpandChangeSet(final String serverURL, final String subPath){
-        super(serverURL, subPath);
+    public AbstractExpandChangeSet(final OpenStreetMapServer server, final String subPath){
+        super(server, subPath);
     }
 
     @Override
@@ -76,7 +76,8 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
         }
 
         final URL url = getURL();
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         final HttpURLConnection ht = (HttpURLConnection) conec;
         ht.setRequestMethod("POST");
@@ -87,7 +88,8 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
         final Node node1 = new Node(env.getMinimum(1), env.getMinimum(0), -1, -1, -1, null, -1, null);
         final Node node2 = new Node(env.getMaximum(1), env.getMaximum(0), -1, -1, -1, null, -1, null);
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
         try{
             final OSMXMLWriter writer = new OSMXMLWriter();
             writer.setOutput(stream);
