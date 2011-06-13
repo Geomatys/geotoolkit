@@ -39,8 +39,8 @@ The Geotoolkit.org library
   The Geotoolkit.org
   project will maintain a branch of the {{{./metadata/index.html}metadata}} and {{{./referencing/index.html}referencing}}
   modules implementing the GeoAPI 3.0 interfaces, to be deployed on Maven central when ready (the Geotk trunk
-  will continue to implement the GeoAPI development snapshots). A preview of that branch is available on the
-  {{{https://oss.sonatype.org/content/repositories/orggeotoolkit-105/}Sonatype repository}} and can
+  will continue to implement the GeoAPI development snapshots). A release candidate of that branch is available on the
+  {{{https://oss.sonatype.org/content/repositories/orggeotoolkit-094/}Sonatype repository}} and can
   be used in a Maven project as below:
 
 +------------------------------------------------------------------------------+
@@ -48,7 +48,7 @@ The Geotoolkit.org library
 ┃  <repository>
 ┃    <id>nexus</id>
 ┃    <name>Nexus staging repository (temporary)</name>
-┃    <url>https://oss.sonatype.org/content/repositories/orggeotoolkit-105/</url>
+┃    <url>https://oss.sonatype.org/content/repositories/orggeotoolkit-094/</url>
 ┃  </repository>
 ┃</repositories>
 ┃
@@ -56,15 +56,14 @@ The Geotoolkit.org library
 ┃  <dependency>
 ┃    <groupId>org.geotoolkit</groupId>
 ┃    <artifactId>geotk-referencing</artifactId>
-┃    <version>3.17-geoapi-3.0</version>
+┃    <version>3.18-geoapi-3.0</version>
 ┃  </dependency>
 ┃</dependencies>
 +------------------------------------------------------------------------------+
 
-  Latest Geotoolkit.org monthly release is Geotk-3.17, released March 11, 2011.
-  This release depends on GeoAPI 2.3-RC1.
-
-  The Geotk 3.17 release features improvements in ISO 19139 compliance, and bug fixes.
+  Latest Geotoolkit.org monthly release is Geotk-3.18, released June 9, 2011.
+  This release depends on GeoAPI 3.1-M01.
+  See the {{{http://download.geotoolkit.org/3.18/}download page}} for release note.
 
 
 * License
