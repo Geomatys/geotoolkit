@@ -38,7 +38,7 @@ public class GetRecordByIdTest {
      */
     @Test
     public void testGetRecordById202() {
-        final GetRecordById202 getRecordById202 = new GetRecordById202("http://test.com");
+        final GetRecordById202 getRecordById202 = new GetRecordById202("http://test.com",null);
         getRecordById202.setElementSetName(ElementSetType.FULL);
         getRecordById202.setIds("myid");
         getRecordById202.setOutputFormat("xml");

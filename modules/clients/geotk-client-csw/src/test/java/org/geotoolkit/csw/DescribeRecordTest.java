@@ -38,7 +38,7 @@ public class DescribeRecordTest {
      */
     @Test
     public void testDescribeRecord202() {
-        final DescribeRecord202 describeRecord202 = new DescribeRecord202("http://test.com");
+        final DescribeRecord202 describeRecord202 = new DescribeRecord202("http://test.com",null);
         describeRecord202.setTypeNames(new QName("ut:value"));
         describeRecord202.setNamespace("xmlns(ut=http://myqnametest.com)");
         final URL url;

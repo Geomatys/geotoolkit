@@ -39,7 +39,7 @@ public class GetRecordsTest {
      */
     @Test
     public void testGetRecords202() {
-        final GetRecords202 getRecords202 = new GetRecords202("http://test.com");
+        final GetRecords202 getRecords202 = new GetRecords202("http://test.com",null);
         getRecords202.setElementSetName(ElementSetType.FULL);
         getRecords202.setConstraintLanguage("CQL_TEXT");
         getRecords202.setConstraintLanguageVersion("1.1.0");

@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.v202;
 
 import org.geotoolkit.csw.AbstractGetCapabilities;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -31,7 +32,7 @@ public class GetCapabilities202 extends AbstractGetCapabilities {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetCapabilities202(final String serverURL){
-        super(serverURL, "2.0.2");
+    public GetCapabilities202(final String serverURL, final ClientSecurity security){
+        super(serverURL, "2.0.2", security);
     }
 }

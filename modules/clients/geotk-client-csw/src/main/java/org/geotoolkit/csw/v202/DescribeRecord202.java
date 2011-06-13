@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.v202;
 
 import org.geotoolkit.csw.AbstractDescribeRecord;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -31,7 +32,7 @@ public class DescribeRecord202 extends AbstractDescribeRecord {
      *
      * @param serverURL The url of the webservice.
      */
-    public DescribeRecord202(final String serverURL){
-        super(serverURL, "2.0.2");
+    public DescribeRecord202(final String serverURL, final ClientSecurity security){
+        super(serverURL, "2.0.2", security);
     }
 }

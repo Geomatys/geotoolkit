@@ -122,7 +122,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new DescribeRecord202(serverURL.toString());
+                return new DescribeRecord202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -137,7 +137,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new GetCapabilities202(serverURL.toString());
+                return new GetCapabilities202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -150,7 +150,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new GetDomain202(serverURL.toString());
+                return new GetDomain202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -163,7 +163,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new GetRecordById202(serverURL.toString());
+                return new GetRecordById202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -176,7 +176,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new GetRecords202(serverURL.toString());
+                return new GetRecords202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -189,7 +189,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new Harvest202(serverURL.toString());
+                return new Harvest202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -202,7 +202,7 @@ public class CatalogServicesServer extends AbstractServer {
 
         switch (version) {
             case v202:
-                return new Transaction202(serverURL.toString());
+                return new Transaction202(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

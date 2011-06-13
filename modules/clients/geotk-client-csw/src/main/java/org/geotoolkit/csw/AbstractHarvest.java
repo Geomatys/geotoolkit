@@ -27,6 +27,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.csw.xml.v202.HarvestType;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.temporal.object.DefaultPeriodDuration;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 
@@ -58,8 +59,8 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractHarvest(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractHarvest(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security);
         this.version = version;
     }
 
@@ -159,13 +160,15 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        final URL url = getURL();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -193,7 +196,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 }

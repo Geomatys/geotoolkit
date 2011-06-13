@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.v202;
 
 import org.geotoolkit.csw.AbstractGetDomain;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -31,7 +32,7 @@ public class GetDomain202 extends AbstractGetDomain {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetDomain202(final String serverURL){
-        super(serverURL, "2.0.2");
+    public GetDomain202(final String serverURL, final ClientSecurity security){
+        super(serverURL, "2.0.2", security);
     }
 }

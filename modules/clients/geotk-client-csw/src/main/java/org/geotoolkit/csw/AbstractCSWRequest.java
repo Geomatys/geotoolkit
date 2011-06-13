@@ -20,6 +20,7 @@ package org.geotoolkit.csw;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ebrim.xml.EBRIMMarshallerPool;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -42,7 +43,7 @@ public abstract class AbstractCSWRequest extends AbstractRequest{
         POOL = EBRIMMarshallerPool.getInstance();
     }
 
-    public AbstractCSWRequest(final String serverURL) {
-        super(serverURL);
+    public AbstractCSWRequest(final String serverURL, final ClientSecurity security) {
+        super(serverURL,security,null);
     }
 }

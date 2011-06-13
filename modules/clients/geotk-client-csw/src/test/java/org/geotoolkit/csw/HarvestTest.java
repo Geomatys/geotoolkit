@@ -37,7 +37,7 @@ public class HarvestTest {
      */
     @Test
     public void testHarvest202() {
-        final Harvest202 harvest202 = new Harvest202("http://test.com");
+        final Harvest202 harvest202 = new Harvest202("http://test.com",null);
         harvest202.setNamespace("xmlns(ut=http://myqname.com)");
         harvest202.setResourceFormat("xml");
         harvest202.setResourceType("file");

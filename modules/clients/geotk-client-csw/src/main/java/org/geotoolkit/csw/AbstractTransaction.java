@@ -28,6 +28,7 @@ import org.geotoolkit.csw.xml.v202.DeleteType;
 import org.geotoolkit.csw.xml.v202.InsertType;
 import org.geotoolkit.csw.xml.v202.TransactionType;
 import org.geotoolkit.csw.xml.v202.UpdateType;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -54,8 +55,8 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractTransaction(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractTransaction(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security);
         this.version = version;
     }
 
@@ -105,12 +106,14 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
     @Override
     public InputStream getResponseStream() throws IOException {
         final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -135,6 +138,6 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 }

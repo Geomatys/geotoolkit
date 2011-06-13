@@ -39,6 +39,7 @@ import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.security.ClientSecurity;
 import org.opengis.filter.Filter;
 
 
@@ -80,8 +81,8 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetRecords(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractGetRecords(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security);
         this.version = version;
     }
 
@@ -312,13 +313,15 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        final URL url = getURL();
+        URLConnection conec = url.openConnection();
+        security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -387,6 +390,6 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 }

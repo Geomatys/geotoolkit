@@ -37,7 +37,7 @@ public class GetDomainTest {
      */
     @Test
     public void testGetDomain202() {
-        final GetDomain202 getDomain202 = new GetDomain202("http://test.com");
+        final GetDomain202 getDomain202 = new GetDomain202("http://test.com",null);
         getDomain202.setPropertyName("prop");
         final URL url;
         try {

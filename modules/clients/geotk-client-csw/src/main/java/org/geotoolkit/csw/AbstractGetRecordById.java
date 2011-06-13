@@ -27,6 +27,7 @@ import javax.xml.bind.Marshaller;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.v202.ElementSetNameType;
 import org.geotoolkit.csw.xml.v202.GetRecordByIdType;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 
 
@@ -55,8 +56,8 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetRecordById(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractGetRecordById(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security);
         this.version = version;
     }
 
@@ -128,13 +129,15 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        final URL url = getURL();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -151,6 +154,6 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 }

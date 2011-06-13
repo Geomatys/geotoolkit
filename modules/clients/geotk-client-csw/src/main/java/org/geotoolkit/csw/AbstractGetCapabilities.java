@@ -24,6 +24,7 @@ import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.csw.xml.v202.GetCapabilitiesType;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -40,8 +41,8 @@ public abstract class AbstractGetCapabilities extends AbstractCSWRequest impleme
      */
     protected final String version;
 
-    protected AbstractGetCapabilities(final String serverURL, final String version) {
-        super(serverURL);
+    protected AbstractGetCapabilities(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL,security);
         this.version = version;
     }
 
@@ -58,13 +59,15 @@ public abstract class AbstractGetCapabilities extends AbstractCSWRequest impleme
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        final URL url = getURL();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -79,7 +82,7 @@ public abstract class AbstractGetCapabilities extends AbstractCSWRequest impleme
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 }

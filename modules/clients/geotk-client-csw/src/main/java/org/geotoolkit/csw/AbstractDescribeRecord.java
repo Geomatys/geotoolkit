@@ -26,6 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.v202.DescribeRecordType;
+import org.geotoolkit.security.ClientSecurity;
 
 /**
  * Abstract implementation of {@link DescribeRecordRequest}, which defines the
@@ -52,8 +53,8 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractDescribeRecord(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractDescribeRecord(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security);
         this.version = version;
     }
 
@@ -132,13 +133,15 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-        final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        final URL url = getURL();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -154,6 +157,6 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 }
