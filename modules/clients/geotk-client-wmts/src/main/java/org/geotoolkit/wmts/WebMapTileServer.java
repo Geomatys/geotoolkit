@@ -96,6 +96,14 @@ public class WebMapTileServer implements Server{
      * {@inheritDoc}
      */
     @Override
+    public URL getURL() {
+        return serverURL;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public URI getURI(){
         try {
             return serverURL.toURI();
