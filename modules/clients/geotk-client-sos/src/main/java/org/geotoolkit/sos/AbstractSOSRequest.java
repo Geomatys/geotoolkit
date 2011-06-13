@@ -56,7 +56,7 @@ public class AbstractSOSRequest extends AbstractRequest {
         POOL = temp;
     }
 
-    public AbstractSOSRequest(final String serverURL) {
-        super(serverURL);
+    public AbstractSOSRequest(final SensorObservationServiceServer server) {
+        super(server);
     }
 }

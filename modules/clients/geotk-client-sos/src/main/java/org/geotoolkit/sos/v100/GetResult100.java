@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.v100;
 
 import org.geotoolkit.sos.AbstractGetResult;
+import org.geotoolkit.sos.SensorObservationServiceServer;
 
 
 /**
@@ -29,10 +30,10 @@ public class GetResult100 extends AbstractGetResult {
     /**
      * Defines the server url and its version.
      *
-     * @param serverURL The url of the webservice.
+     * @param server The webservice.
      */
-    public GetResult100(final String serverURL){
-        super(serverURL, "1.0.0");
+    public GetResult100(final SensorObservationServiceServer server){
+        super(server, "1.0.0");
     }
 
 }

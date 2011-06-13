@@ -59,11 +59,11 @@ public abstract class AbstractGetObservation extends AbstractSOSRequest implemen
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractGetObservation(final String serverURL, final String version) {
-        super(serverURL);
+    protected AbstractGetObservation(final SensorObservationServiceServer server, final String version) {
+        super(server);
         this.version = version;
     }
 
@@ -187,12 +187,14 @@ public abstract class AbstractGetObservation extends AbstractSOSRequest implemen
             throw new IllegalArgumentException("responseFormat is not defined");
         }
         final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -211,7 +213,7 @@ public abstract class AbstractGetObservation extends AbstractSOSRequest implemen
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 }

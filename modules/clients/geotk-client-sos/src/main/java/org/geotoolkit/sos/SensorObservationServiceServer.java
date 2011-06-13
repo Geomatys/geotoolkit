@@ -70,7 +70,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new DescribeFeatureType100(serverURL.toString());
+                return new DescribeFeatureType100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -83,7 +83,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new DescribeObservationType100(serverURL.toString());
+                return new DescribeObservationType100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -96,7 +96,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new DescribeResultModel100(serverURL.toString());
+                return new DescribeResultModel100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -109,7 +109,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new DescribeSensor100(serverURL.toString());
+                return new DescribeSensor100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -122,7 +122,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetCapabilities100(serverURL.toString());
+                return new GetCapabilities100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -135,7 +135,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetFeatureOfInterest100(serverURL.toString());
+                return new GetFeatureOfInterest100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -148,7 +148,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetFeatureOfInterestTime100(serverURL.toString());
+                return new GetFeatureOfInterestTime100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -161,7 +161,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetObservation100(serverURL.toString());
+                return new GetObservation100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -174,7 +174,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetObservationById100(serverURL.toString());
+                return new GetObservationById100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -187,7 +187,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetResult100(serverURL.toString());
+                return new GetResult100(this);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

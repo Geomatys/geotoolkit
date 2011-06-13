@@ -22,14 +22,9 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.sos.xml.v100.GetCapabilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -49,11 +44,11 @@ public abstract class AbstractGetCapabilities extends AbstractSOSRequest impleme
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractGetCapabilities(final String serverURL, final String version) {
-        super(serverURL);
+    protected AbstractGetCapabilities(final SensorObservationServiceServer server, final String version) {
+        super(server);
         this.version = version;
     }
 
@@ -74,12 +69,14 @@ public abstract class AbstractGetCapabilities extends AbstractSOSRequest impleme
     @Override
     public InputStream getResponseStream() throws IOException {
         final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         Marshaller marsh = null;
         try {
@@ -94,7 +91,7 @@ public abstract class AbstractGetCapabilities extends AbstractSOSRequest impleme
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 }

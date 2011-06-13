@@ -17,6 +17,7 @@
 package org.geotoolkit.sos.v100;
 
 import org.geotoolkit.sos.AbstractDescribeObservationType;
+import org.geotoolkit.sos.SensorObservationServiceServer;
 
 
 /**
@@ -29,10 +30,10 @@ public class DescribeObservationType100 extends AbstractDescribeObservationType 
     /**
      * Defines the server url and its version.
      *
-     * @param serverURL The url of the webservice.
+     * @param server The webservice.
      */
-    public DescribeObservationType100(final String serverURL){
-        super(serverURL, "1.0.0");
+    public DescribeObservationType100(final SensorObservationServiceServer server){
+        super(server, "1.0.0");
     }
 
 }

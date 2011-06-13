@@ -46,11 +46,11 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractSOSReques
     /**
      * Defines the server url and the service version for this kind of request.
      *
-     * @param serverURL The server url.
+     * @param server The server.
      * @param version The version of the request.
      */
-    protected AbstractGetFeatureOfInterestTime(final String serverURL, final String version) {
-        super(serverURL);
+    protected AbstractGetFeatureOfInterestTime(final SensorObservationServiceServer server, final String version) {
+        super(server);
         this.version = version;
     }
 
@@ -78,7 +78,8 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractSOSReques
             throw new IllegalArgumentException("The parameter \"featureOfInterestId\" is not defined");
         }
         final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
@@ -99,7 +100,7 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractSOSReques
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 }
