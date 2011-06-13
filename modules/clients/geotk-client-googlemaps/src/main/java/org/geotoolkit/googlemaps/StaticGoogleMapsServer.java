@@ -17,14 +17,9 @@
 package org.geotoolkit.googlemaps;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.client.Server;
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.logging.Logging;
+
+import org.geotoolkit.client.AbstractServer;
 
 /**
  * Client for google static maps.
@@ -32,9 +27,7 @@ import org.geotoolkit.util.logging.Logging;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaticGoogleMapsServer implements Server{
-
-    private static final Logger LOGGER = Logging.getLogger(StaticGoogleMapsServer.class);
+public class StaticGoogleMapsServer extends AbstractServer{
     
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
     
@@ -47,7 +40,6 @@ public class StaticGoogleMapsServer implements Server{
         }
     }
     
-    private final URL serverURL;
     private final String key;
     
     /**
@@ -64,26 +56,10 @@ public class StaticGoogleMapsServer implements Server{
      * @param key, account key.
      */
     public StaticGoogleMapsServer(final URL serverURL, final String key) {
-        ArgumentChecks.ensureNonNull("server url", serverURL);
-        this.serverURL = serverURL;
+        super(serverURL);
         this.key = key;
     }
-    
-    @Override
-    public URI getURI() {
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        return null;
-    }
-
-    @Override
-    public URL getURL() {
-        return serverURL;
-    }
-    
+        
     public String getKey(){
         return key;
     }
@@ -92,7 +68,7 @@ public class StaticGoogleMapsServer implements Server{
      * Returns the map request object.
      */
     public GetMapRequest createGetMap() {
-        return new DefaultGetMap(serverURL.toString(),getKey());
+        return new DefaultGetMap(this,getKey());
     }
     
 }

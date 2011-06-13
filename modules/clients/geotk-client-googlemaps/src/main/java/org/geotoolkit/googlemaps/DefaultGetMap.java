@@ -53,8 +53,8 @@ public class DefaultGetMap extends AbstractRequest implements GetMapRequest{
     private String format = null;
     private String key = null;
     
-    public DefaultGetMap(final String serverURL, final String key){
-        super(serverURL);
+    public DefaultGetMap(final StaticGoogleMapsServer server, final String key){
+        super(server);
         this.key = key;
     }
     
