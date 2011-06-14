@@ -42,7 +42,7 @@ public class GetTileTest {
      */
     @Test
     public void testGetTile100() throws NoSuchAuthorityCodeException, FactoryException {
-        final GetTile100 map111 = new GetTile100("http://test.com");
+        final GetTile100 map111 = new GetTile100("http://test.com",null);
         map111.setFormat("image/png");
         map111.setLayer("test");
         map111.setStyle("");

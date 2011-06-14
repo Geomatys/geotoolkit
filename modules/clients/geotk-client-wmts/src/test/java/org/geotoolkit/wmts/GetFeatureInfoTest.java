@@ -49,7 +49,7 @@ public class GetFeatureInfoTest {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetFeatureInfo100 featureInfo111 = new GetFeatureInfo100("http://test.com");
+        final GetFeatureInfo100 featureInfo111 = new GetFeatureInfo100("http://test.com",null);
         featureInfo111.setFormat("image/png");
         featureInfo111.setLayer("test");
         featureInfo111.setStyle("");

@@ -17,13 +17,12 @@
 package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.client.Server;
+import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
@@ -38,12 +37,11 @@ import org.geotoolkit.wmts.xml.v100.Capabilities;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WebMapTileServer implements Server{
+public class WebMapTileServer extends AbstractServer{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
     private final WMTSVersion version;
-    private final URL serverURL;
     private Capabilities capabilities;
 
     /**
@@ -87,32 +85,23 @@ public class WebMapTileServer implements Server{
      * @param capabilities A getCapabilities response.
      */
     public WebMapTileServer(final URL serverURL, final WMTSVersion version, final Capabilities capabilities) {
+        this(serverURL,null,version,capabilities);
+    }
+    
+    /**
+     * Builds a web map server with the given server url, version and getCapabilities response.
+     *
+     * @param serverURL The server base url.
+     * @param version A string representation of the service version.
+     * @param capabilities A getCapabilities response.
+     */
+    public WebMapTileServer(final URL serverURL, final ClientSecurity security, 
+            final WMTSVersion version, final Capabilities capabilities) {
+        super(serverURL,security);
         this.version = version;
-        this.serverURL = serverURL;
         this.capabilities = capabilities;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URL getURL() {
-        return serverURL;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public URI getURI(){
-        try {
-            return serverURL.toURI();
-        } catch (URISyntaxException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        return null;
-    }
-
+    
     /**
      * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
      * request.
@@ -168,7 +157,7 @@ public class WebMapTileServer implements Server{
     public GetTileRequest createGetTile() {
         switch (version) {
             case v100:
-                return new GetTile100(serverURL.toString());
+                return new GetTile100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -182,7 +171,7 @@ public class WebMapTileServer implements Server{
     public GetCapabilitiesRequest createGetCapabilities() {
         switch (version) {
             case v100:
-                return new GetCapabilities100(serverURL.toString());
+                return new GetCapabilities100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

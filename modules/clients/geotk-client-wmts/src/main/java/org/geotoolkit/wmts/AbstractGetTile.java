@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.wmts;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -58,8 +57,8 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetTile(String serverURL,String version){
-        super(serverURL);
+    protected AbstractGetTile(final String serverURL,final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }
 
@@ -182,11 +181,9 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         return dims;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (layer == null) {
             throw new IllegalArgumentException("Layer is not defined");
         }
@@ -207,9 +204,7 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
         requestParameters.put("TILECOL",      tileCol + "");
         requestParameters.put("TILEROW",      tileRow + "");
         
-        requestParameters.putAll(dims);
-        
-
-        return super.getURL();
+        requestParameters.putAll(dimensions());
     }
+
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmts.v100;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wmts.AbstractGetFeatureInfo;
 
 
@@ -32,8 +33,8 @@ public class GetFeatureInfo100 extends AbstractGetFeatureInfo {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetFeatureInfo100(String serverURL){
-        super(serverURL,"1.0.0");
+    public GetFeatureInfo100(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.0.0", security);
     }
 
 }

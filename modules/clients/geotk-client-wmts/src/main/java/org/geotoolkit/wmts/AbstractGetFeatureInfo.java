@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.wmts;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.geotoolkit.security.ClientSecurity;
 
 /**
  *
@@ -30,8 +29,8 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetTile implements 
     protected Integer rawIndex;
     protected String infoFormat;
 
-    protected AbstractGetFeatureInfo(String serverURL, String version) {
-        super(serverURL, version);
+    protected AbstractGetFeatureInfo(String serverURL, String version, final ClientSecurity security) {
+        super(serverURL, version,security);
     }
 
     /**
@@ -76,11 +75,9 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetTile implements 
         this.infoFormat = format;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (infoFormat == null) {
             throw new IllegalArgumentException("Info_Format is not defined");
         }
@@ -93,6 +90,6 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetTile implements 
         }
         requestParameters.put("I", String.valueOf(columnIndex));
         requestParameters.put("J", String.valueOf(rawIndex));
-        return super.getURL();
     }
+
 }

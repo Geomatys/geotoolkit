@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmts.v100;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wmts.AbstractGetTile;
 
 
@@ -31,8 +32,8 @@ public class GetTile100 extends AbstractGetTile {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetTile100(String serverURL){
-        super(serverURL,"1.0.0");
+    public GetTile100(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.0.0", security);
     }
 
 }
