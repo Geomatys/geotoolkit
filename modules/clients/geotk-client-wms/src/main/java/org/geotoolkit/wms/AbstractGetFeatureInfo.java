@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 
 
@@ -33,8 +34,8 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     protected String infoFormat;
     protected String[] queryLayers;
 
-    protected AbstractGetFeatureInfo(final String serverURL, final String version) {
-        super(serverURL, version);
+    protected AbstractGetFeatureInfo(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL, version, security);
     }
 
     /**

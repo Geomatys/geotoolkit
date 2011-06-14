@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.v111;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetLegend;
 
 
@@ -31,8 +32,8 @@ public class GetLegend111 extends AbstractGetLegend {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetLegend111(final String serverURL){
-        super(serverURL,"1.1.1");
+    public GetLegend111(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.1", security);
     }
 
 

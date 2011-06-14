@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 
@@ -73,8 +74,8 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetMap(final String serverURL, final String version) {
-        super(serverURL);
+    protected AbstractGetMap(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL,security,null);
         this.version = version;
     }
 

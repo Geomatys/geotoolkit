@@ -51,7 +51,7 @@ public class GetFeatureInfoTest {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetFeatureInfo111 featureInfo111 = new GetFeatureInfo111("http://test.com");
+        final GetFeatureInfo111 featureInfo111 = new GetFeatureInfo111("http://test.com",null);
         featureInfo111.setDimension(new Dimension(800, 600));
         featureInfo111.setFormat("image/png");
         featureInfo111.setLayers("test");
@@ -96,7 +96,7 @@ public class GetFeatureInfoTest {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetFeatureInfo130 featureInfo130 = new GetFeatureInfo130("http://test.com");
+        final GetFeatureInfo130 featureInfo130 = new GetFeatureInfo130("http://test.com",null);
         featureInfo130.setDimension(new Dimension(800, 600));
         featureInfo130.setFormat("image/png");
         featureInfo130.setLayers("test");

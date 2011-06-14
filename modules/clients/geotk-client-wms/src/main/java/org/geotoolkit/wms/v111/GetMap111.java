@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetMap;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -40,8 +41,8 @@ public class GetMap111 extends AbstractGetMap {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetMap111(final String serverURL){
-        super(serverURL,"1.1.1");
+    public GetMap111(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.1", security);
     }
 
     /**

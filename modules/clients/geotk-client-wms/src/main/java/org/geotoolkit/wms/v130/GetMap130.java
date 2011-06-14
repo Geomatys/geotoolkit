@@ -22,6 +22,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetMap;
 
 import org.opengis.geometry.Envelope;
@@ -42,8 +43,8 @@ public class GetMap130 extends AbstractGetMap {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetMap130(final String serverURL){
-        super(serverURL,"1.3.0");
+    public GetMap130(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.3.0", security);
     }
 
     /**

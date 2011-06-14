@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.client.AbstractServer;
 
-import org.geotoolkit.client.Server;
+import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
@@ -216,9 +215,9 @@ public class WebMapServer extends AbstractServer{
     public GetMapRequest createGetMap() {
         switch (version) {
             case v111:
-                return new GetMap111(serverURL.toString());
+                return new GetMap111(serverURL.toString(),securityManager);
             case v130:
-                return new GetMap130(serverURL.toString());
+                return new GetMap130(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -232,9 +231,9 @@ public class WebMapServer extends AbstractServer{
     public GetCapabilitiesRequest createGetCapabilities() {
         switch (version) {
             case v111:
-                return new GetCapabilities111(serverURL.toString());
+                return new GetCapabilities111(serverURL.toString(),securityManager);
             case v130:
-                return new GetCapabilities130(serverURL.toString());
+                return new GetCapabilities130(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -248,9 +247,9 @@ public class WebMapServer extends AbstractServer{
     public GetLegendRequest createGetLegend(){
         switch (version) {
             case v111:
-                return new GetLegend111(serverURL.toString());
+                return new GetLegend111(serverURL.toString(),securityManager);
             case v130:
-                return new GetLegend130(serverURL.toString());
+                return new GetLegend130(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -264,9 +263,9 @@ public class WebMapServer extends AbstractServer{
     public GetFeatureInfoRequest createGetFeatureInfo() {
         switch (version) {
             case v111:
-                return new GetFeatureInfo111(serverURL.toString());
+                return new GetFeatureInfo111(serverURL.toString(),securityManager);
             case v130:
-                return new GetFeatureInfo130(serverURL.toString());
+                return new GetFeatureInfo130(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

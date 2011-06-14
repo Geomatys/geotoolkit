@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -41,8 +42,8 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetFeatureInfo130(final String serverURL){
-        super(serverURL,"1.3.0");
+    public GetFeatureInfo130(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.3.0", security);
     }
 
     /**

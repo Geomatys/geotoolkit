@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -62,8 +62,8 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetLegend(final String serverURL,final String version){
-        super(serverURL);
+    protected AbstractGetLegend(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }    
     

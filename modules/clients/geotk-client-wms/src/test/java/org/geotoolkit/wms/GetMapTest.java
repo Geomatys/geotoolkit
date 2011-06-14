@@ -51,7 +51,7 @@ public class GetMapTest {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetMap111 map111 = new GetMap111("http://test.com");
+        final GetMap111 map111 = new GetMap111("http://test.com",null);
         map111.setDimension(new Dimension(800, 600));
         map111.setFormat("image/png");
         map111.setLayers("test");
@@ -88,7 +88,7 @@ public class GetMapTest {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetMap130 map130 = new GetMap130("http://test.com");
+        final GetMap130 map130 = new GetMap130("http://test.com",null);
         map130.setDimension(new Dimension(800, 600));
         map130.setFormat("image/png");
         map130.setLayers("test");

@@ -19,6 +19,7 @@ package org.geotoolkit.wms;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -45,8 +46,8 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetCapabilities(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractGetCapabilities(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }
 

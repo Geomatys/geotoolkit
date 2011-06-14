@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.v111;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetCapabilities;
 
 
@@ -31,8 +32,8 @@ public class GetCapabilities111 extends AbstractGetCapabilities {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetCapabilities111(final String serverURL){
-        super(serverURL, "1.1.1");
+    public GetCapabilities111(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.1.1", security);
     }
 
 }

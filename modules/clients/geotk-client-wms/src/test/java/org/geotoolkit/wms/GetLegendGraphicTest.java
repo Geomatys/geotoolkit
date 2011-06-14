@@ -39,7 +39,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic111() {
-        final GetLegend111 legend111 = new GetLegend111("http://test.com");
+        final GetLegend111 legend111 = new GetLegend111("http://test.com",null);
         legend111.setDimension(new Dimension(140, 20));
         legend111.setFormat("image/png");
         legend111.setLayer("test");
@@ -64,7 +64,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic130() {
-        final GetLegend130 legend130 = new GetLegend130("http://test.com");
+        final GetLegend130 legend130 = new GetLegend130("http://test.com",null);
         legend130.setDimension(new Dimension(140, 20));
         legend130.setFormat("image/png");
         legend130.setLayer("test");
@@ -91,7 +91,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic111Complete() {
-        final GetLegend111 legend = new GetLegend111("http://test.com");
+        final GetLegend111 legend = new GetLegend111("http://test.com",null);
         legend.setDimension(new Dimension(140, 20));
         legend.setFormat("image/png");
         legend.setExceptions("application/test");
@@ -137,7 +137,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic130Complete() {
-        final GetLegend130 legend = new GetLegend130("http://test.com");
+        final GetLegend130 legend = new GetLegend130("http://test.com",null);
         legend.setDimension(new Dimension(140, 20));
         legend.setFormat("image/png");
         legend.setExceptions("application/test");
@@ -182,7 +182,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic111SLDPrecedence() {
-        final GetLegend111 legend = new GetLegend111("http://test.com");
+        final GetLegend111 legend = new GetLegend111("http://test.com",null);
         legend.setDimension(new Dimension(140, 20));
         legend.setLayer("test");
         legend.setStyle("test");
@@ -207,7 +207,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic130SLDPrecedence() {
-        final GetLegend130 legend = new GetLegend130("http://test.com");
+        final GetLegend130 legend = new GetLegend130("http://test.com",null);
         legend.setDimension(new Dimension(140, 20));
         legend.setLayer("test");
         legend.setStyle("test");
@@ -232,7 +232,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic111SLDBODYPrecedence() {
-        final GetLegend111 legend = new GetLegend111("http://test.com");
+        final GetLegend111 legend = new GetLegend111("http://test.com",null);
         legend.setDimension(new Dimension(140, 20));
         legend.setLayer("test");
         legend.setStyle("test");
@@ -259,7 +259,7 @@ public class GetLegendGraphicTest {
      */
     @Test
     public void testGetLegendGraphic130SLDBODYPrecedence() {
-        final GetLegend130 legend = new GetLegend130("http://test.com");
+        final GetLegend130 legend = new GetLegend130("http://test.com",null);
         legend.setDimension(new Dimension(140, 20));
         legend.setLayer("test");
         legend.setStyle("test");
