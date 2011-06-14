@@ -115,7 +115,7 @@ public class WebCoverageServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new DescribeCoverage100(serverURL.toString());
+                return new DescribeCoverage100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -129,7 +129,7 @@ public class WebCoverageServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetCapabilities100(serverURL.toString());
+                return new GetCapabilities100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -143,7 +143,7 @@ public class WebCoverageServer extends AbstractServer {
 
         switch (version) {
             case v100:
-                return new GetCoverage100(serverURL.toString());
+                return new GetCoverage100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

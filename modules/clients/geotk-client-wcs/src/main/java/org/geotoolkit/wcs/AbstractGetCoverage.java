@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -59,8 +60,8 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
     private CoordinateReferenceSystem responseCRS = null;
     private String time = null;
 
-    protected AbstractGetCoverage(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractGetCoverage(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }
 

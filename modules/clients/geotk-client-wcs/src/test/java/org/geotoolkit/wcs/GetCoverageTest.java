@@ -50,7 +50,7 @@ public class GetCoverageTest {
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final GetCoverage100 coverage100 = new GetCoverage100("http://test.com");
+        final GetCoverage100 coverage100 = new GetCoverage100("http://test.com",null);
         coverage100.setDimension(new Dimension(800, 600));
         coverage100.setFormat("image/png");
         coverage100.setCoverage("test");

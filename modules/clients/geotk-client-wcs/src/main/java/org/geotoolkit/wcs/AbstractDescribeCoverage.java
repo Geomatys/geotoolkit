@@ -19,6 +19,7 @@ package org.geotoolkit.wcs;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.StringUtilities;
 
 
@@ -34,8 +35,8 @@ public abstract class AbstractDescribeCoverage extends AbstractRequest implement
 
     private String[] coverage;
 
-    protected AbstractDescribeCoverage(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractDescribeCoverage(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wcs.v100;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wcs.AbstractGetCoverage;
 
 
@@ -31,8 +32,8 @@ public class GetCoverage100 extends AbstractGetCoverage {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetCoverage100(final String serverURL){
-        super(serverURL, "1.0.0");
+    public GetCoverage100(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.0.0", security);
     }
 
 }

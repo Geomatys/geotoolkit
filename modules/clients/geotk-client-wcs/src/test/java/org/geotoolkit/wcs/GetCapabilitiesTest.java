@@ -37,7 +37,7 @@ public class GetCapabilitiesTest {
      */
     @Test
     public void testGetCapabilities100() {
-        final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com");
+        final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
         final URL url;
         try {
             url = caps100.getURL();

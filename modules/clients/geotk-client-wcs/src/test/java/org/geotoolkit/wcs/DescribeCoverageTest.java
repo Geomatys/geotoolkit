@@ -37,7 +37,7 @@ public class DescribeCoverageTest {
      */
     @Test
     public void testDescribeCoverage100() {
-        final DescribeCoverage100 describeCoverage100 = new DescribeCoverage100("http://test.com");
+        final DescribeCoverage100 describeCoverage100 = new DescribeCoverage100("http://test.com",null);
         describeCoverage100.setCoverage("test");
         final URL url;
         try {
