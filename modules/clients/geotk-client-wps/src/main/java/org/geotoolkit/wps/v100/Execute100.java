@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wps.v100;
 
-import org.geotoolkit.wps.AbstractDescribeProcess;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.AbstractExecute;
 
 /**
@@ -26,8 +26,8 @@ import org.geotoolkit.wps.AbstractExecute;
  */
 public class Execute100 extends AbstractExecute {
     
-    public Execute100(final String serverURL){
-        super(serverURL, "1.0.0");
+    public Execute100(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.0.0",security);
     }
       
 }

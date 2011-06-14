@@ -57,7 +57,7 @@ public class ExecuteTest {
             List<WPSOutput> outputs = new ArrayList<WPSOutput>();
             outputs.add(new WPSOutput("output"));
             
-            final Execute100 exec100 = new Execute100("http://test.com");
+            final Execute100 exec100 = new Execute100("http://test.com",null);
             exec100.setIdentifier("identifier");
             exec100.setInputs(inputs);
             exec100.setOutputs(outputs);

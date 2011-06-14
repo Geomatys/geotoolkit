@@ -139,7 +139,7 @@ public class WebProcessingServer extends AbstractServer{
 
         switch (version) {
             case v100:
-                return new GetCapabilities100(serverURL.toString());
+                return new GetCapabilities100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -152,7 +152,7 @@ public class WebProcessingServer extends AbstractServer{
     public DescribeProcessRequest createDescribeProcess(){
         switch (version) {
             case v100:
-                return new DescribeProcess100(serverURL.toString());
+                return new DescribeProcess100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -165,7 +165,7 @@ public class WebProcessingServer extends AbstractServer{
     public ExecuteRequest createExecute(){
         switch (version) {
             case v100:
-                return new Execute100(serverURL.toString());
+                return new Execute100(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

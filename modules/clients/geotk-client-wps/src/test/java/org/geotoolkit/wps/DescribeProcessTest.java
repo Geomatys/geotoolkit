@@ -50,7 +50,7 @@ public class DescribeProcessTest {
         identifiers.add("identifier2");
         identifiers.add("identifier3");
         
-        final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com");
+        final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com",null);
         desc100.setIdentifiers(identifiers);
         final URL url;
         try {
@@ -60,8 +60,12 @@ public class DescribeProcessTest {
             return;
         }
         
-        final String expectedURL = "http://test.com?VERSION=1.0.0&SERVICE=WPS&REQUEST=DescribeProcess&IDENTIFIER=identifier1,identifier2,identifier3";
-        assertEquals(expectedURL, url.toString());
+        final String strUrl = url.toString();
+        //final String expectedURL = "http://test.com?VERSION=1.0.0&SERVICE=WPS&REQUEST=DescribeProcess&IDENTIFIER=identifier1,identifier2,identifier3";
+        assertTrue(strUrl.contains("VERSION=1.0.0"));
+        assertTrue(strUrl.contains("SERVICE=WPS"));
+        assertTrue(strUrl.contains("REQUEST=DescribeProcess"));
+        assertTrue(strUrl.contains("IDENTIFIER=identifier1,identifier2,identifier3"));
     }
     
    @Test 
@@ -77,7 +81,7 @@ public class DescribeProcessTest {
             identifierList.add(new CodeType("identifier2"));
             identifierList.add(new CodeType("identifier3"));
             
-            final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com");
+            final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com",null);
             desc100.setIdentifiers(identifiers);
             final DescribeProcess request = desc100.makeRequest();
             assertEquals("WPS", request.getService());

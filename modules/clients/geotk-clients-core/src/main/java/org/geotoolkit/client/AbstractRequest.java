@@ -30,7 +30,6 @@ import java.util.zip.GZIPInputStream;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
-import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 
 
@@ -106,6 +105,10 @@ public abstract class AbstractRequest implements Request {
         return subPath;
     }
 
+    /**
+     * Called by the getURL method to fill the request parameter map.
+     * Subclasses should override this method rather then getURL.
+     */
     protected void prepareParameters(){};
 
     /**

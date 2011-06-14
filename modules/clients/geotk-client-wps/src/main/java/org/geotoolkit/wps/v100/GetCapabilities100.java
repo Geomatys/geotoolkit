@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wps.v100;
 
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.AbstractGetCapabilities;
 
 /**
@@ -25,7 +26,7 @@ import org.geotoolkit.wps.AbstractGetCapabilities;
  */
 public class GetCapabilities100 extends AbstractGetCapabilities{
     
-    public GetCapabilities100(final String serverURL){
-        super(serverURL, "1.0.0");
+    public GetCapabilities100(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.0.0", security);
     }
 }

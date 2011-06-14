@@ -18,6 +18,7 @@ package org.geotoolkit.wps.v100;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wps.AbstractDescribeProcess;
 
 /**
@@ -27,16 +28,13 @@ import org.geotoolkit.wps.AbstractDescribeProcess;
  */
 public class DescribeProcess100 extends AbstractDescribeProcess {
     
-    public DescribeProcess100(final String serverURL){
-        super(serverURL, "1.0.0");
+    public DescribeProcess100(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.0.0", security);
     }
-    
-    /**
-     * {@inheritDoc }
-     */
+
     @Override
-    public URL getURL() throws MalformedURLException {
-        
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (identifiers == null) {
             throw new IllegalArgumentException("Identifiers are not defined");
         }
@@ -49,10 +47,6 @@ public class DescribeProcess100 extends AbstractDescribeProcess {
         }
         
         requestParameters.put("IDENTIFIER", ids );
-        return super.getURL();
     }
-
-    
-    
     
 }

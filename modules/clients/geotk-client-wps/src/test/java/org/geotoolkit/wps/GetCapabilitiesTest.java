@@ -42,7 +42,7 @@ public class GetCapabilitiesTest {
      */
     @Test
     public void testGetCapabilities110() {
-        final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com");
+        final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
         final URL url;
         try {
             url = caps100.getURL();
@@ -58,7 +58,7 @@ public class GetCapabilitiesTest {
    @Test 
    public void testRequestAndMarshall(){
         try {
-            final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com");
+            final GetCapabilities100 caps100 = new GetCapabilities100("http://test.com",null);
             final GetCapabilities request = caps100.makeRequest();
             assertEquals("WPS", request.getService());
             assertEquals("1.0.0", request.getAcceptVersions().getVersion().get(0));
