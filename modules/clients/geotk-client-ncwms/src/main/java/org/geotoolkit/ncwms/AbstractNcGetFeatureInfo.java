@@ -17,6 +17,7 @@
 package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 
@@ -44,8 +45,8 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
     /**
      * {@inheritDoc}
      */
-    protected AbstractNcGetFeatureInfo(final String serverURL, final String version) {
-        super(serverURL, version);
+    protected AbstractNcGetFeatureInfo(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL, version, security);
     }    
     
     /**

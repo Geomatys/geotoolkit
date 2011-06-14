@@ -54,7 +54,7 @@ public class NcGetFeatureInfoTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         
-        final NcGetFeatureInfo111 request = new NcGetFeatureInfo111("http://test.com");
+        final NcGetFeatureInfo111 request = new NcGetFeatureInfo111("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
         request.setLayers("test");
@@ -111,7 +111,7 @@ public class NcGetFeatureInfoTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         
-        final NcGetFeatureInfo130 request = new NcGetFeatureInfo130("http://test.com");
+        final NcGetFeatureInfo130 request = new NcGetFeatureInfo130("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
         request.setLayers("test");

@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.ncwms.AbstractNcGetMap;
+import org.geotoolkit.security.ClientSecurity;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -44,8 +45,8 @@ public class NcGetMap130 extends AbstractNcGetMap  {
      *
      * @param serverURL The url of the webservice.
      */
-    public NcGetMap130(final String serverURL){
-        super(serverURL,"1.3.0");
+    public NcGetMap130(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.3.0",security);
     }
 
     /**

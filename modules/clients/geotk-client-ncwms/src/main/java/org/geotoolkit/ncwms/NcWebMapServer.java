@@ -101,10 +101,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetMap111(getURI().toString());
+                return new NcGetMap111(getURI().toString(),securityManager);
                 
             case v130:
-                return new NcGetMap130(getURI().toString());
+                return new NcGetMap130(getURI().toString(),securityManager);
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -120,10 +120,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetLegend111(getURI().toString());
+                return new NcGetLegend111(getURI().toString(),securityManager);
                 
             case v130:
-                return new NcGetLegend130(getURI().toString());
+                return new NcGetLegend130(getURI().toString(),securityManager);
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -140,10 +140,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetFeatureInfo111(getURI().toString());
+                return new NcGetFeatureInfo111(getURI().toString(),securityManager);
                 
             case v130:
-                return new NcGetFeatureInfo130(getURI().toString());
+                return new NcGetFeatureInfo130(getURI().toString(),securityManager);
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");

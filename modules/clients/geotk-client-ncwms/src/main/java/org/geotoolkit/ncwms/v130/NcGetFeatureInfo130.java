@@ -16,13 +16,14 @@
  */
 package org.geotoolkit.ncwms.v130;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
 import org.geotoolkit.ncwms.AbstractNcGetFeatureInfo;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.security.ClientSecurity;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 
@@ -42,8 +43,8 @@ public class NcGetFeatureInfo130 extends AbstractNcGetFeatureInfo {
      *
      * @param serverURL The url of the webservice.
      */
-    public NcGetFeatureInfo130(final String serverURL){
-        super(serverURL,"1.3.0");
+    public NcGetFeatureInfo130(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.3.0", security);
     }
 
     /**
@@ -73,7 +74,8 @@ public class NcGetFeatureInfo130 extends AbstractNcGetFeatureInfo {
     }
 
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (columnIndex == null) {
             throw new IllegalArgumentException("I is not defined");
         }
@@ -82,6 +84,6 @@ public class NcGetFeatureInfo130 extends AbstractNcGetFeatureInfo {
         }
         requestParameters.put("I", String.valueOf(columnIndex));
         requestParameters.put("J", String.valueOf(rawIndex));
-        return super.getURL();
     }
+
 }

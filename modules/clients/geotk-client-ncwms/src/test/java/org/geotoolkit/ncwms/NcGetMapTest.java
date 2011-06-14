@@ -49,7 +49,7 @@ public class NcGetMapTest {
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        final NcGetMap111 request = new NcGetMap111("http://test.com");
+        final NcGetMap111 request = new NcGetMap111("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
         request.setLayers("test");
@@ -90,7 +90,7 @@ public class NcGetMapTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         
-        final NcGetMap130 request = new NcGetMap130("http://test.com");
+        final NcGetMap130 request = new NcGetMap130("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
         request.setLayers("test");

@@ -17,6 +17,7 @@
 package org.geotoolkit.ncwms.v130;
 
 import org.geotoolkit.ncwms.AbstractNcGetLegend;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -27,14 +28,14 @@ import org.geotoolkit.ncwms.AbstractNcGetLegend;
  * @module pending
  */
 public class NcGetLegend130 extends AbstractNcGetLegend {
+    
     /**
      * Defines the server url and its version.
      *
      * @param serverURL The url of the webservice.
      */
-    public NcGetLegend130(final String serverURL){
-        super(serverURL,"1.3.0");
+    public NcGetLegend130(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.3.0", security);
     }
-
 
 }

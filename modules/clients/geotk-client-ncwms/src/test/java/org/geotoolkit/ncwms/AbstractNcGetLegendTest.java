@@ -82,6 +82,6 @@ public class AbstractNcGetLegendTest {
 
 class NcGetLegendImpl extends AbstractNcGetLegend {
     public NcGetLegendImpl(final String serverURL){
-        super(serverURL,"1.1.1");
+        super(serverURL,"1.1.1",null);
     }
 }

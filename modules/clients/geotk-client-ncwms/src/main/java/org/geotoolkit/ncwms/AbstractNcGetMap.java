@@ -17,6 +17,7 @@
 package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
+import org.geotoolkit.security.ClientSecurity;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.AbstractGetMap;
@@ -45,8 +46,8 @@ public abstract class AbstractNcGetMap extends AbstractGetMap implements NcGetMa
     /**
      * {@inheritDoc}
      */
-    protected AbstractNcGetMap(final String serverURL, final String version) {
-        super(serverURL, version);
+    protected AbstractNcGetMap(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL, version, security);
     }    
     
     /**

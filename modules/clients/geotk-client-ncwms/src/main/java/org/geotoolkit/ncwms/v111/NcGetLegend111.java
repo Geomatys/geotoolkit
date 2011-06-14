@@ -17,6 +17,7 @@
 package org.geotoolkit.ncwms.v111;
 
 import org.geotoolkit.ncwms.AbstractNcGetLegend;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -32,8 +33,8 @@ public class NcGetLegend111 extends AbstractNcGetLegend {
      *
      * @param serverURL The url of the webservice.
      */
-    public NcGetLegend111(final String serverURL){
-        super(serverURL,"1.1.1");
+    public NcGetLegend111(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.1", security);
     }
 
 

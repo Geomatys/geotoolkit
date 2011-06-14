@@ -39,7 +39,7 @@ public class NcGetLegendGraphicTest {
      */
     @Test
     public void testNcGetLegendGraphic111() {
-        final NcGetLegend111 request = new NcGetLegend111("http://test.com");
+        final NcGetLegend111 request = new NcGetLegend111("http://test.com",null);
         request.setDimension(new Dimension(140, 20));
         request.setFormat("image/png");
         request.setLayer("test");
@@ -72,7 +72,7 @@ public class NcGetLegendGraphicTest {
      */
     @Test
     public void testNcGetLegendGraphic130() {
-        final NcGetLegend130 request = new NcGetLegend130("http://test.com");
+        final NcGetLegend130 request = new NcGetLegend130("http://test.com",null);
         request.setDimension(new Dimension(140, 20));
         request.setFormat("image/png");
         request.setLayer("test");

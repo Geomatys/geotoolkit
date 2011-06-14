@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.ncwms.AbstractNcGetMap;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.security.ClientSecurity;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,8 +43,8 @@ public class NcGetMap111 extends AbstractNcGetMap {
      *
      * @param serverURL The url of the webservice.
      */
-    public NcGetMap111(final String serverURL){
-        super(serverURL,"1.1.1");
+    public NcGetMap111(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.1",security);
     }
 
     /**

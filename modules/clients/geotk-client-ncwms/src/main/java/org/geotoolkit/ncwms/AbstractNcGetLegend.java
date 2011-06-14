@@ -17,6 +17,7 @@
 package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.AbstractGetLegend;
 
@@ -46,8 +47,8 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     /**
      * {@inheritDoc}
      */
-    protected AbstractNcGetLegend(final String serverURL, final String version) {
-        super(serverURL, version);
+    protected AbstractNcGetLegend(final String serverURL, final String version, final ClientSecurity security) {
+        super(serverURL, version, security);
     }    
     
     /**
