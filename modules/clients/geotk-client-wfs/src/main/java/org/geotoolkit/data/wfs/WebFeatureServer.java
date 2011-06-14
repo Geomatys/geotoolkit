@@ -116,7 +116,7 @@ public class WebFeatureServer extends AbstractServer{
 
         switch (version) {
             case v110:
-                return new GetCapabilities110(serverURL.toString());
+                return new GetCapabilities110(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -129,7 +129,7 @@ public class WebFeatureServer extends AbstractServer{
     public DescribeFeatureTypeRequest createDescribeFeatureType(){
         switch (version) {
             case v110:
-                return new DescribeFeatureType110(serverURL.toString());
+                return new DescribeFeatureType110(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -142,7 +142,7 @@ public class WebFeatureServer extends AbstractServer{
     public GetFeatureRequest createGetFeature(){
         switch (version) {
             case v110:
-                return new GetFeature110(serverURL.toString());
+                return new GetFeature110(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -155,7 +155,7 @@ public class WebFeatureServer extends AbstractServer{
     public TransactionRequest createTransaction(){
         switch (version) {
             case v110:
-                return new Transaction110(serverURL.toString());
+                return new Transaction110(serverURL.toString(),securityManager);
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

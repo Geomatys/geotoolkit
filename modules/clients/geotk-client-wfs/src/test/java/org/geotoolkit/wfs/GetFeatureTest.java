@@ -40,7 +40,7 @@ public class GetFeatureTest {
      */
     @Test
     public void testGetFeature110() {
-        final GetFeature110 getFeat110 = new GetFeature110("http://test.com");
+        final GetFeature110 getFeat110 = new GetFeature110("http://test.com",null);
         getFeat110.setTypeName(new QName("http://myqnametest.com", "value", "ut"));
         final FilterFactory ff = FactoryFinder.getFilterFactory(null);
         getFeat110.setFilter(ff.bbox("propGeom", -180.0, -90.0, 180.0, 90.0, "CRS:84"));

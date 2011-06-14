@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
@@ -64,8 +65,8 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     private Name[] propertyNames = null;
     private String outputFormat  = null;
 
-    protected AbstractGetFeature(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractGetFeature(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }
 
@@ -261,12 +262,14 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         final GetFeatureType request = new GetFeatureType("WFS", version, null, maxFeatures, Arrays.asList(query), ResultTypeType.RESULTS, outputFormat);
 
         final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
         Marshaller marshaller = null;
         try {
             marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
@@ -280,7 +283,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             }
         }
         stream.close();
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 

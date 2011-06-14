@@ -18,6 +18,7 @@
 package org.geotoolkit.data.wfs.v110;
 
 import org.geotoolkit.data.wfs.AbstractGetFeature;
+import org.geotoolkit.security.ClientSecurity;
 
 /**
  * Get feature request for WFS 1.1.0
@@ -27,8 +28,8 @@ import org.geotoolkit.data.wfs.AbstractGetFeature;
  */
 public class GetFeature110 extends AbstractGetFeature{
 
-    public GetFeature110(final String serverURL){
-        super(serverURL,"1.1.0");
+    public GetFeature110(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.0",security);
     }
     
 }

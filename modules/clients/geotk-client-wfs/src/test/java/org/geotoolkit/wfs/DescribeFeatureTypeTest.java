@@ -39,7 +39,7 @@ public class DescribeFeatureTypeTest {
      */
     @Test
     public void testDescribeFeatureType110() {
-        final DescribeFeatureType110 describeFeat110 = new DescribeFeatureType110("http://test.com");
+        final DescribeFeatureType110 describeFeat110 = new DescribeFeatureType110("http://test.com",null);
         describeFeat110.setTypeNames(Collections.singletonList(new QName("http://myqnametest.com", "value", "ut")));
         final URL url;
         try {

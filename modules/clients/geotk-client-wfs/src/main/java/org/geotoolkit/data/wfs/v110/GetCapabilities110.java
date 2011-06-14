@@ -18,6 +18,7 @@
 package org.geotoolkit.data.wfs.v110;
 
 import org.geotoolkit.data.wfs.AbstractGetCapabilities;
+import org.geotoolkit.security.ClientSecurity;
 
 /**
  * Get capabilities request for WFS 1.1.0
@@ -27,7 +28,7 @@ import org.geotoolkit.data.wfs.AbstractGetCapabilities;
  */
 public class GetCapabilities110 extends AbstractGetCapabilities{
 
-    public GetCapabilities110(final String serverURL){
-        super(serverURL, "1.1.0");
+    public GetCapabilities110(final String serverURL, final ClientSecurity security){
+        super(serverURL, "1.1.0",security);
     }
 }

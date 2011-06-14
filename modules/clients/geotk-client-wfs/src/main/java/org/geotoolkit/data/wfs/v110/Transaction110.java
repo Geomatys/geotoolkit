@@ -18,6 +18,7 @@
 package org.geotoolkit.data.wfs.v110;
 
 import org.geotoolkit.data.wfs.AbstractTransactionRequest;
+import org.geotoolkit.security.ClientSecurity;
 
 /**
  *
@@ -25,8 +26,8 @@ import org.geotoolkit.data.wfs.AbstractTransactionRequest;
  */
 public class Transaction110 extends AbstractTransactionRequest{
 
-    public Transaction110(final String serverURL){
-        super(serverURL,"1.1.0");
+    public Transaction110(final String serverURL, final ClientSecurity security){
+        super(serverURL,"1.1.0",security);
     }
 
 }

@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.data.wfs.xml.JAXPStreamTransactionWriter;
+import org.geotoolkit.security.ClientSecurity;
 
 
 /**
@@ -42,8 +43,8 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
     protected String lockId = null;
     protected ReleaseAction release = null;
 
-    protected AbstractTransactionRequest(final String serverURL, final String version){
-        super(serverURL);
+    protected AbstractTransactionRequest(final String serverURL, final String version, final ClientSecurity security){
+        super(serverURL,security,null);
         this.version = version;
     }
 
@@ -94,12 +95,14 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
     public InputStream getResponseStream() throws IOException {
 
         final URL url = new URL(serverURL);
-        final URLConnection conec = url.openConnection();
+        URLConnection conec = url.openConnection();
+        conec = security.secure(conec);
 
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        final OutputStream stream = conec.getOutputStream();
+        OutputStream stream = conec.getOutputStream();
+        stream = security.encrypt(stream);
 
         //write the transaction xml content
         final JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
@@ -110,7 +113,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
             throw new IOException(ex);
         }
 
-        return conec.getInputStream();
+        return security.decrypt(conec.getInputStream());
     }
 
 }
