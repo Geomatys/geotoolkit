@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
@@ -39,11 +40,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Since DirectPositions, as data types, will often be included in larger objects (such as geometry elements) that have references to CRS,
  * the "srsName" attribute will in general be missing, if this particular DirectPosition is included in a larger element with such a reference to a
  * CRS. In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
- * 
+ *
  * <p>Java class for DirectPositionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DirectPositionType">
  *   &lt;simpleContent>
@@ -53,8 +54,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -175,7 +176,7 @@ public class DirectPositionType implements DirectPosition {
                 CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
                 if ( crs != null) {
                     try {
-                        this.srsName = CRS.lookupIdentifier(crs, true);
+                        this.srsName = IdentifiedObjects.lookupIdentifier(crs, true);
                     } catch (FactoryException ex) {
                         Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
                     }
@@ -188,7 +189,7 @@ public class DirectPositionType implements DirectPosition {
     /**
      * XML List based on XML Schema double type.
      * An element of this type contains a space-separated list of double values Gets the value of the value property.
-     * 
+     *
      */
     public List<Double> getValue() {
         if (value == null) {
@@ -220,11 +221,11 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -232,11 +233,11 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(final String value) {
         this.srsName = value;
@@ -244,11 +245,11 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -256,11 +257,11 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
@@ -268,7 +269,7 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Gets the value of the axisLabels property.
-     * 
+     *
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {

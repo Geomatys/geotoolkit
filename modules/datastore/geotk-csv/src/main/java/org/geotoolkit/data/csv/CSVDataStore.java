@@ -55,6 +55,7 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
@@ -76,7 +77,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * CSV DataStore, holds a single feature type which name match the file name.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -206,7 +207,7 @@ public class CSVDataStore extends AbstractDataStore{
             }else if(clazz.equals(Geometry.class)){
                 GeometryDescriptor gd = (GeometryDescriptor) desc;
                 try {
-                    sb.append(CRS.lookupIdentifier(gd.getCoordinateReferenceSystem(), true));
+                    sb.append(IdentifiedObjects.lookupIdentifier(gd.getCoordinateReferenceSystem(), true));
                 } catch (FactoryException ex) {
                     throw new DataStoreException(ex);
                 }
@@ -220,7 +221,7 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     private void writeType(final SimpleFeatureType type) throws DataStoreException {
-        
+
         Writer output = null;
         try {
             if(!file.exists()){
@@ -580,7 +581,7 @@ public class CSVDataStore extends AbstractDataStore{
 
             //close read iterator
             super.close();
-            
+
             //flip files
             RWLock.writeLock().lock();
             file.delete();

@@ -98,6 +98,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -727,8 +728,8 @@ public final class GO2Utilities {
                 //can't change anything if it's only one axis
                 return crs;
             }
-                     
-            
+
+
             //find the east axis
             int eastAxis = -1;
             for(int i=0; i<dimension; i++){
@@ -745,7 +746,7 @@ public final class GO2Utilities {
             }
 
             //try to change the crs axis
-            final String id = CRS.lookupIdentifier(singlecrs, true);
+            final String id = IdentifiedObjects.lookupIdentifier(singlecrs, true);
             if(id != null){
                 return CRS.decode(id, true);
             }else{

@@ -28,6 +28,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
@@ -49,7 +50,7 @@ import org.opengis.feature.Feature;
 
 /**
  * Tests the ability of the datastore to cope with 3D data
- * 
+ *
  * @author Andrea Aime - OpenGeo
  * @module pending
  */
@@ -97,7 +98,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
         SimpleFeatureType schema = (SimpleFeatureType) dataStore.getFeatureType(tname(LINE3D));
         CoordinateReferenceSystem crs = schema.getGeometryDescriptor()
                 .getCoordinateReferenceSystem();
-        assertEquals(new Integer(4359), CRS.lookupEpsgCode(crs, false));
+        assertEquals(new Integer(4359), IdentifiedObjects.lookupEpsgCode(crs, false));
         assertEquals(new Integer(4359), schema.getGeometryDescriptor().getUserData().get(
                 JDBCDataStore.JDBC_NATIVE_SRID));
     }
@@ -155,7 +156,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
      * Creates the polygon schema and then inserts a 3D geometry into the
      * datastore and retrieves it back to make sure 3d data is really handled as
      * such
-     * 
+     *
      * @throws Exception
      */
     public void testCreateSchemaAndInsert() throws Exception {
@@ -192,7 +193,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
     /**
      * Make sure we can properly retrieve the bounds of 3d layers
-     * 
+     *
      * @throws Exception
      */
     public void testBounds() throws Exception {

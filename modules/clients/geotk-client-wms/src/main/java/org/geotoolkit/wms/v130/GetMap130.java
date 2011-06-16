@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetMap;
 
@@ -64,7 +64,7 @@ public class GetMap130 extends AbstractGetMap {
 
         try {
             CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
-            map.put("CRS", CRS.lookupIdentifier(crs2d, true));
+            map.put("CRS", IdentifiedObjects.lookupIdentifier(crs2d, true));
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {

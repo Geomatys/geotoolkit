@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sld.xml;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.util.Version;
 
@@ -78,7 +78,7 @@ public final class GetLegendGraphic {
     private final Double scale;
 
     private final Version version;
-    
+
     /**
      * Builds a {@code GetLegendGraphic} request, using the layer and mime-type specified
      * and width and height for the image.

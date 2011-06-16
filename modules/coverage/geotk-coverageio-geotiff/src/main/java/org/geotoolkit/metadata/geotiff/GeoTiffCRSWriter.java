@@ -26,7 +26,7 @@ import java.io.IOException;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.operation.provider.Orthographic;
@@ -350,7 +350,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Transverse Mercator
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(TransverseMercator.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(TransverseMercator.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_TransverseMercator);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -368,7 +368,7 @@ final class GeoTiffCRSWriter {
         // Mercator_1SP
         // Mercator_2SP
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(Mercator2SP.PARAMETERS, desc) || nameMatches(Mercator1SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(Mercator2SP.PARAMETERS, desc) || IdentifiedObjects.nameMatches(Mercator1SP.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Mercator);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -385,7 +385,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Lamber conformal 1sp
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(LambertConformal1SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(LambertConformal1SP.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_LambertConfConic_Helmert);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -403,7 +403,7 @@ final class GeoTiffCRSWriter {
         // LAMBERT_CONFORMAL_CONIC_2SP
         // lambert_conformal_conic_2SP_Belgium
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(LambertConformal2SP.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(LambertConformal2SP.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_LambertConfConic_2SP);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -421,7 +421,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // stereographic
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(Stereographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(Stereographic.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Stereographic);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -438,7 +438,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // polar_stereographic
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(PolarStereographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(PolarStereographic.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_PolarStereographic);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -455,7 +455,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Oblique Mercator
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(ObliqueMercator.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(ObliqueMercator.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_ObliqueMercator);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -474,7 +474,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // albers_Conic_Equal_Area
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(AlbersEqualArea.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(AlbersEqualArea.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_AlbersEqualArea);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -493,7 +493,7 @@ final class GeoTiffCRSWriter {
         // /////////////////////////////////////////////////////////////////////
         // Orthographic
         // /////////////////////////////////////////////////////////////////////
-        if (nameMatches(Orthographic.PARAMETERS, desc)) {
+        if (IdentifiedObjects.nameMatches(Orthographic.PARAMETERS, desc)) {
             // key 3075
             stack.addShort(ProjCoordTransGeoKey, CT_Orthographic);
             stack.addAscii(PCSCitationGeoKey, name);
@@ -603,7 +603,7 @@ final class GeoTiffCRSWriter {
 
         //search for an IdentifiedObject with the same definition
         if(candidate instanceof CoordinateReferenceSystem){
-            return CRS.lookupEpsgCode((CoordinateReferenceSystem) candidate, true);
+            return IdentifiedObjects.lookupEpsgCode((CoordinateReferenceSystem) candidate, true);
         }else if(candidate instanceof Datum){
             final DatumAuthorityFactory factory = AuthorityFactoryFinder.getDatumAuthorityFactory("EPSG", null);
             if(factory instanceof AbstractAuthorityFactory){

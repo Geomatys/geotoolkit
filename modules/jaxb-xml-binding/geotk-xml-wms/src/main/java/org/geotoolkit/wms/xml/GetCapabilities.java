@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wms.xml;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.Version;
 
 
@@ -48,7 +48,7 @@ public final class GetCapabilities {
         this.language = language;
     }
 
-    
+
     public String getExceptionFormat() {
         return "application/vnd.ogc.se_xml";
     }

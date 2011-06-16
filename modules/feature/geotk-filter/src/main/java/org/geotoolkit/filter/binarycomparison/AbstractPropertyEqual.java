@@ -20,7 +20,7 @@ package org.geotoolkit.filter.binarycomparison;
 import java.util.Calendar;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -65,7 +65,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
         if(converted1 != null){
             if(equalOrNumberEqual(value2, converted1)){
                 return true;
-            } 
+            }
         }
 
         Object converted2 = Converters.convert(value2, value1.getClass());
@@ -81,7 +81,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
                    cal1.get(Calendar.MONTH) == expMonth &&
                    cal1.get(Calendar.DAY_OF_MONTH) == expDay;
         }
-        
+
         if(converted2 != null){
             if(equalOrNumberEqual(value1, converted2)){
                 return true;
@@ -110,7 +110,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
             final Number n1 = (Number) value1;
             final Number n2 = (Number) value2;
 
-            if(Classes.isInteger(n1.getClass()) && Classes.isInteger(n2.getClass())){
+            if(Numbers.isInteger(n1.getClass()) && Numbers.isInteger(n2.getClass())){
                 final long l1 = n1.longValue();
                 final long l2 = n2.longValue();
                 return l1 == l2;

@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.geometry.ImmutableEnvelope;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -111,7 +111,7 @@ public class GetMap {
      * or renderers may understand.
      */
     private final Object parameters;
-    
+
     /**
      * Default minimal constructor to generate a {@code GetMap} request.
      */
@@ -285,7 +285,7 @@ public class GetMap {
     /**
      * Returns the envelope which contains the bounds and the crs for the request.
      * The ND envelope from the query BBOX + CRS + TIME + ELEVATION
-     
+
     public Envelope getEnvelope() throws TransformException {
         return GO2Utilities.combine(getEnvelope2D(), new Date[]{time, time}, new Double[]{elevation, elevation});
     }*/

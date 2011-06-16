@@ -30,18 +30,19 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 
 /**
- * This type is adapted from the EnvelopeType of GML 3.1, with modified contents and documentation for encoding a MINIMUM size box SURROUNDING all associated data. 
- * 
+ * This type is adapted from the EnvelopeType of GML 3.1, with modified contents and documentation for encoding a MINIMUM size box SURROUNDING all associated data.
+ *
  * <p>Java class for BoundingBoxType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BoundingBoxType">
  *   &lt;complexContent>
@@ -56,8 +57,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -88,10 +89,10 @@ public class BoundingBoxType {
 
     BoundingBoxType(){
     }
-    
+
     /**
      * Build a 2 dimension boundingBox.
-     * 
+     *
      * @param crs
      * @param maxx
      * @param maxy
@@ -118,7 +119,7 @@ public class BoundingBoxType {
             final CoordinateReferenceSystem crss = envelope.getCoordinateReferenceSystem();
             if (crss != null) {
                 try {
-                    crs = "EPSG:" + CRS.lookupEpsgCode(crss, true);
+                    crs = "EPSG:" + IdentifiedObjects.lookupEpsgCode(crss, true);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception while creating OWS BoundingBox from opengis one", ex);
                 }
@@ -126,7 +127,7 @@ public class BoundingBoxType {
             this.dimensions = envelope.getDimension();
         }
     }
-    
+
     /**
      * Gets the value of the lowerCorner property.
      * (unmodifiable)
@@ -145,7 +146,7 @@ public class BoundingBoxType {
 
     /**
      * Gets the value of the crs property.
-     * 
+     *
      */
     public String getCrs() {
         return crs;

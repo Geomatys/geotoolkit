@@ -43,7 +43,7 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -86,7 +86,7 @@ public class JAXPStreamTransactionWriter {
     private static final String TAG_NAME = "Name";
     private static final String TAG_VALUE = "Value";
     private static final String TAG_FILTER = "Filter";
-    
+
     private static final String PROP_SERVICE = "service";
     private static final String PROP_VERSION = "version";
     private static final String PROP_RELEASEACTION = "releaseAction";
@@ -107,15 +107,15 @@ public class JAXPStreamTransactionWriter {
     private final AtomicInteger inc = new AtomicInteger();
 
     private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
-    
-    public void write(final OutputStream out, final TransactionRequest request) 
+
+    public void write(final OutputStream out, final TransactionRequest request)
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         final XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(out);
 
         // the XML header
         streamWriter.writeStartDocument("UTF-8", "1.0");
-        
+
         //set the namespaces
         streamWriter.setDefaultNamespace(WFS_NAMESPACE);
         streamWriter.setPrefix(GML_PREFIX, GML_NAMESPACE);
@@ -133,7 +133,7 @@ public class JAXPStreamTransactionWriter {
         streamWriter.close();
     }
 
-    private void write(final XMLStreamWriter writer, final TransactionRequest request) 
+    private void write(final XMLStreamWriter writer, final TransactionRequest request)
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         writer.writeStartElement(WFS_PREFIX, TAG_TRANSACTION, WFS_NAMESPACE);
         writer.writeAttribute(PROP_SERVICE, "WFS");
@@ -226,7 +226,7 @@ public class JAXPStreamTransactionWriter {
         //write crs-------------------------------------------------------------
         final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
         if(crs != null){
-            final String id = CRS.lookupIdentifier(Citations.URN_OGC, crs, true);
+            final String id = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, true);
             writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
         }
 
@@ -235,7 +235,7 @@ public class JAXPStreamTransactionWriter {
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
         fw.setOutput(writer);
         fw.writeFeatureCollection(col,true);
-        
+
         writer.writeEndElement();
     }
 
@@ -271,7 +271,7 @@ public class JAXPStreamTransactionWriter {
         //write crs-------------------------------------------------------------
         final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
         if(crs != null){
-            final String id = CRS.lookupIdentifier(Citations.URN_OGC, crs, true);
+            final String id = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, true);
             writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
         }
 
@@ -313,7 +313,7 @@ public class JAXPStreamTransactionWriter {
                 pref = "geons"+inc.incrementAndGet();
                 writer.writeAttribute("xmlns:"+pref, name.getNamespaceURI());
             }
-            
+
 
             //write name
             writer.writeStartElement(WFS_PREFIX, TAG_NAME, WFS_NAMESPACE);
@@ -338,7 +338,7 @@ public class JAXPStreamTransactionWriter {
                             POOL.release(marshaller);
                         }
                     }
-                    
+
                 }else if(value instanceof org.opengis.geometry.Geometry){
                     Marshaller marshaller = null;
                     try {
@@ -397,7 +397,7 @@ public class JAXPStreamTransactionWriter {
         } finally {
             util.getJaxbContext110().release(marshaller);
         }
-            
+
         writer.writeEndElement();
     }
 
@@ -430,7 +430,7 @@ public class JAXPStreamTransactionWriter {
             throw new IllegalArgumentException("Unexpected attribut type : "+ candidate.getClass());
         }
 
-        
+
     }
 
 }

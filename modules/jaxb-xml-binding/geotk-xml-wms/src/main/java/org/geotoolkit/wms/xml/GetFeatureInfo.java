@@ -20,8 +20,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Date;
 import java.util.List;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -37,7 +37,7 @@ import org.opengis.sld.StyledLayerDescriptor;
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * 
+ *
  * @see GetMap
  */
 @Immutable

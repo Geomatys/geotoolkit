@@ -80,7 +80,7 @@ import org.geotoolkit.ogc.xml.v110.SpatialOperatorsType;
 import org.geotoolkit.ogc.xml.v110.TouchesType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.logging.Logging;
 
 // GeoAPI dependencies
@@ -141,17 +141,17 @@ import org.opengis.geometry.Geometry;
 
 
 /**
- * A factory used by a CQL parser to build filter. 
- * 
+ * A factory used by a CQL parser to build filter.
+ *
  * @author Guilhem Legal
  * @module pending
  */
 public class FilterFactoryImpl implements FilterFactory2 {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
-    
+
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    
+
     public FeatureId featureId(final String id) {
         return new FeatureIdType(id);
     }
@@ -287,7 +287,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         }
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
-    
+
     public BBOX bbox(final Expression geometry, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         String propertyName = "";
         if (geometry instanceof PropertyNameType) {
@@ -308,7 +308,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propertyName = ((PropertyNameType)geometry).getPropertyName();
         }
         if (bounds.getCoordinateReferenceSystem() != null) {
-            CRSName = CRS.getDeclaredIdentifier(bounds.getCoordinateReferenceSystem());
+            CRSName = IdentifiedObjects.getIdentifier(bounds.getCoordinateReferenceSystem());
         } else {
             CRSName = "EPSG:4326";
         }
@@ -316,7 +316,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public Beyond beyond(final String propertyName, final Geometry geometry, final double distance, final String units) {
-       
+
         return new BeyondType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
 
@@ -327,35 +327,35 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         // we formats the units (CQL parser add a white spce at the end)
         if (units.indexOf(' ') == units.length() -1)
             units = units.substring(0, units.length() - 1);
-        
+
         return new BeyondType(propertyName, (AbstractGeometryType) geom, distance, units);
     }
-    
+
     public DWithin dwithin(final String propertyName, final Geometry geometry, final double distance, final String units) {
         return new DWithinType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
 
     public DWithin dwithin(final Expression geometry1, final Expression geometry2, final double distance, String units) {
         String propertyName = "";
-        
+
         // we get the propertyName
         if (geometry1 instanceof PropertyNameType) {
             propertyName = ((PropertyNameType)geometry1).getPropertyName();
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
@@ -365,10 +365,10 @@ public class FilterFactoryImpl implements FilterFactory2 {
         // we formats the units (CQL parser add a white spce at the end)
         if (units.indexOf(' ') == units.length() -1)
             units = units.substring(0, units.length() - 1);
-        
+
         return new DWithinType(propertyName, (AbstractGeometryType) geom, distance, units);
     }
-    
+
     public Contains contains(final String propertyName, final Geometry geometry) {
         return new ContainsType(propertyName, (AbstractGeometryType) geometry);
     }
@@ -381,7 +381,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
@@ -390,7 +390,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         }
         return new ContainsType(propertyName, geom);
     }
-    
+
     public Crosses crosses(final String propertyName, final Geometry geometry) {
         return new CrossesType(propertyName, (AbstractGeometryType) geometry);
     }
@@ -402,17 +402,17 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         return new CrossesType(propertyName, geom);
     }
-    
+
     public Disjoint disjoint(final String propertyName, final Geometry geometry) {
         return new DisjointType(propertyName, (AbstractGeometryType) geometry);
     }
@@ -430,12 +430,12 @@ public class FilterFactoryImpl implements FilterFactory2 {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         return new DisjointType(propertyName,  geom);
     }
-    
-    
-    
+
+
+
     public Equals equals(final String propertyName, final Geometry geometry) {
         return new EqualsType(propertyName, (AbstractGeometryType) geometry);
     }
@@ -447,14 +447,14 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         // we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         return new EqualsType(propertyName, geom);
     }
 
@@ -469,7 +469,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
@@ -478,7 +478,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         }
         return new IntersectsType(propertyName, geom);
     }
-    
+
     public Overlaps overlaps(final String propertyName, final Geometry geometry) {
         return new OverlapsType(propertyName, (AbstractGeometryType) geometry);
     }
@@ -490,17 +490,17 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
          //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         return new OverlapsType(propertyName, geom);
     }
-    
+
     public Touches touches(final String propertyName, final Geometry geometry) {
         return new TouchesType(propertyName, (AbstractGeometryType) geometry);
     }
@@ -512,22 +512,22 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + propertyName1.getClass().getSimpleName());
         }
-        
+
         //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         return new TouchesType(propertyName, geom);
-        
+
     }
-    
+
     public Within within(final String propertyName, final Geometry geometry) {
        return new WithinType(propertyName, (AbstractGeometryType) geometry);
     }
-    
+
     public Within within(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
@@ -535,14 +535,14 @@ public class FilterFactoryImpl implements FilterFactory2 {
         } else {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry1.getClass().getSimpleName());
         }
-        
+
         //we transform the JTS geometry into a GML geometry
         Object geom = null;
         if (geometry2 instanceof LiteralType) {
             geom = ((LiteralType)geometry2).getValue();
             geom = GeometryToGML(geom);
         }
-        
+
         return new WithinType(propertyName, geom);
     }
 
@@ -638,7 +638,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public Functions functions(final FunctionName[] functionNames) {
-       
+
         return new FunctionNamesType(Arrays.asList((FunctionNameType[])functionNames));
     }
 
@@ -673,7 +673,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
     public PropertyName property(final Name name) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     /**
      * Transform a JTS geometric object into a GML marshallable object
      * @param geom
@@ -684,25 +684,25 @@ public class FilterFactoryImpl implements FilterFactory2 {
         if (geom instanceof Polygon) {
             Polygon p          = (Polygon) geom;
             Coordinate[] coord = p.getCoordinates();
-            
+
             // an envelope
             if (coord.length == 5) {
                 DirectPositionType lowerCorner = new DirectPositionType(coord[0].x, coord[1].y);
                 DirectPositionType upperCorner = new DirectPositionType(coord[2].x, coord[0].y);
                 result = new EnvelopeType(null, lowerCorner, upperCorner, "EPSG:4326");
             }
-        } else if (geom instanceof Point){ 
+        } else if (geom instanceof Point){
             Point p = (Point) geom;
             Coordinate[] coord = p.getCoordinates();
             result = new PointType(null, new DirectPositionType(coord[0].x, coord[0].y));
             ((PointType)result).setSrsName("EPSG:4326");
-        
-        } else if (geom instanceof LineString){ 
+
+        } else if (geom instanceof LineString){
             LineString ls = (LineString) geom;
             Coordinate[] coord = ls.getCoordinates();
             result = new LineStringType(new CoordinatesType(coord[0].x + "," + coord[0].y + " " + coord[1].x + "," + coord[1].y ));
             ((LineStringType)result).setSrsName("EPSG:4326");
-            
+
         } else {
             LOGGER.severe("unable to create GML geometry with: " + geom.getClass().getSimpleName());
         }

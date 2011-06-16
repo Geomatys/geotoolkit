@@ -61,6 +61,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.provider.AlbersEqualArea;
@@ -244,7 +245,7 @@ final class GeoTiffCRSReader {
                     // Creating anew projected CRS
                     // //
                     crs = new DefaultProjectedCRS(
-                            java.util.Collections.singletonMap("name",DefaultEllipsoidalCS.getName(pcrs, new DefaultCitation("EPSG"))),
+                            java.util.Collections.singletonMap("name", IdentifiedObjects.getName(pcrs, new DefaultCitation("EPSG"))),
                             pcrs.getConversionFromBase(),
                             (GeographicCRS) pcrs.getBaseCRS(),
                             pcrs.getConversionFromBase().getMathTransform(),
@@ -316,7 +317,7 @@ final class GeoTiffCRSReader {
                     // Create a user-defined GCRS using the provided angular
                     // unit.
                     // //
-                    gcs = new DefaultGeographicCRS(DefaultEllipsoidalCS.getName(gcs, new DefaultCitation("EPSG")),
+                    gcs = new DefaultGeographicCRS(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG")),
                             (GeodeticDatum) gcs.getDatum(),
                             DefaultEllipsoidalCS.GEODETIC_2D.usingUnit(angularUnit));
                 }
@@ -492,12 +493,12 @@ final class GeoTiffCRSReader {
         // projection is M.
         //
         // ///
-        if (projUserDefined) {            
+        if (projUserDefined) {
             DefaultCartesianCS cs = DefaultCartesianCS.PROJECTED;
             if(linearUnit != null && !linearUnit.equals(SI.METRE)){
                 cs = cs.usingUnit(linearUnit);
             }
-            
+
             return this.factories.getCRSFactory().createProjectedCRS(
                     Collections.singletonMap("name", projectedCrsName),
                     gcs, projection, cs);
@@ -991,7 +992,7 @@ final class GeoTiffCRSReader {
                     // Create a user-defined GCRS using the provided angular
                     // unit.
                     // //
-                    gcs = new DefaultGeographicCRS(DefaultEllipsoidalCS.getName(gcs, new DefaultCitation("EPSG")),
+                    gcs = new DefaultGeographicCRS(IdentifiedObjects.getName(gcs, new DefaultCitation("EPSG")),
                             (GeodeticDatum) gcs.getDatum(),
                             DefaultEllipsoidalCS.GEODETIC_2D.usingUnit(angularUnit));
                 }

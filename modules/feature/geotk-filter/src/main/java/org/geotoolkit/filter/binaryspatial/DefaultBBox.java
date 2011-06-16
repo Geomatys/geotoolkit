@@ -33,6 +33,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.StringUtilities;
 
 import org.opengis.feature.Feature;
@@ -78,7 +79,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             this.srid = 0;
         }
     }
-    
+
     private PreparedGeometry getPreparedGeometry(){
         if(boundingGeometry == null){
             boundingGeometry = toGeometry(right.getValue());
@@ -136,7 +137,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public String getSRS() {
-        return CRS.getDeclaredIdentifier(right.getValue().getCoordinateReferenceSystem());
+        return IdentifiedObjects.getIdentifier(right.getValue().getCoordinateReferenceSystem());
     }
 
     /**
@@ -220,7 +221,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         } else {
             return false;
         }
-        
+
     }
 
     /**

@@ -47,6 +47,7 @@ import org.geotoolkit.jdbc.fid.NullPrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -1160,7 +1161,7 @@ public final class SQLQueryBuilder {
 
             if (crs != null) {
                 try {
-                    final Integer candidate = CRS.lookupEpsgCode(crs, false);
+                    final Integer candidate = IdentifiedObjects.lookupEpsgCode(crs, false);
                     if (candidate != null) {
                         srid = candidate;
                     }

@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -68,7 +69,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WMSMapLayer extends AbstractMapLayer {    
+public class WMSMapLayer extends AbstractMapLayer {
 
     /**
      * Configure the politic when the requested envelope is in CRS:84.
@@ -89,7 +90,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         STRICT,
         CONVERT_TO_CRS84
     }
-    
+
     /**
      * EPSG:4326 object.
      */
@@ -108,7 +109,7 @@ public class WMSMapLayer extends AbstractMapLayer {
 
     //TODO : we should use the envelope provided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(WGS84, -180,
-                                                                 -90, 360, 180);             
+                                                                 -90, 360, 180);
 
     /**
      * The web map server to request.
@@ -183,7 +184,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         //register the default graphic builder for geotk 2D engine.
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
-    
+
     /**
      * Sets the layer names to requests.
      *
@@ -322,7 +323,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     public void setTransparent(final Boolean transparent) {
         this.transparent = transparent;
     }
-    
+
     /**
      * Returns the {@link WebMapServer} to request. Can't be {@code null}.
      */
@@ -397,12 +398,12 @@ public class WMSMapLayer extends AbstractMapLayer {
      *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
      * @throws FactoryException
      */
-    protected boolean supportCRS(final CoordinateReferenceSystem crs) 
+    protected boolean supportCRS(final CoordinateReferenceSystem crs)
             throws FactoryException {
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
         if(stack != null){
-            final String srid = CRS.lookupIdentifier(crs, true);
+            final String srid = IdentifiedObjects.lookupIdentifier(crs, true);
             //start by the most accurate layer
             for(int i=stack.length-1; i>=0; i--){
                 for (String str : stack[i].getCRS()) {
@@ -501,8 +502,8 @@ public class WMSMapLayer extends AbstractMapLayer {
         }
         return Collections.emptyList();
     }
-    
-    
+
+
     /*************************  Queries functions *****************************/
 
     /**
@@ -516,7 +517,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws MalformedURLException if the generated url is invalid.
      * @throws TransformException if the tranformation between 2 CRS failed.
      */
-    public URL query(final Envelope env, final Dimension rect) 
+    public URL query(final Envelope env, final Dimension rect)
             throws MalformedURLException, TransformException, FactoryException {
         final GetMapRequest request = server.createGetMap();
         prepareQuery(request, new GeneralEnvelope(env), rect, null);
@@ -541,7 +542,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
         GeneralEnvelope fakeEnv = new GeneralEnvelope(env);
-        
+
         //check if we must make the  coverage reprojection ourself--------------
         if (isUseLocalReprojection() && !supportCRS(crs2D)) {
             crs2D = findOriginalCRS();
@@ -573,7 +574,7 @@ public class WMSMapLayer extends AbstractMapLayer {
             }
 
         }else{
-            
+
             if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
@@ -623,18 +624,18 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         prepareGetMapRequest(request, fakeEnv, dim);
     }
-    
+
     /**
      * Prepare parameters for a GetMap request.
-     * 
+     *
      * @param request the GetMap request
      * @param env A valid envelope to request.
      * @param rect the output dimension
-     * @throws TransformException 
+     * @throws TransformException
      */
     private void prepareGetMapRequest(final GetMapRequest request, Envelope env,
             final Dimension rect) throws TransformException{
-        
+
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
@@ -701,7 +702,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         request.setTransparent(transparent);
         request.dimensions().putAll(dimensions());
     }
-    
+
 
     /**
      * Gives a {@linkplain GetLegendRequest GetLegendGraphic request} for
@@ -715,13 +716,13 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @return A {@linkplain GetLegendRequest GetLegendGraphic request}.
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public URL queryLegend(final Dimension rect, final String format, 
-            final String rule, final Double scale) throws MalformedURLException {        
+    public URL queryLegend(final Dimension rect, final String format,
+            final String rule, final Double scale) throws MalformedURLException {
         final GetLegendRequest request = server.createGetLegend();
         prepareGetLegendRequest(request, rect, format, rule, scale);
         return request.getURL();
     }
-    
+
     /**
      * Prepare parameters for a GetLegendGraphic request.
      *
@@ -731,32 +732,32 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param rule     the SLD rule to draw
      * @param scale    the scale level of the SLD rule to draw
      */
-    protected void prepareGetLegendRequest(final GetLegendRequest request, 
-            final Dimension rect, final String format, final String rule, 
-            final Double scale) {  
-        
+    protected void prepareGetLegendRequest(final GetLegendRequest request,
+            final Dimension rect, final String format, final String rule,
+            final Double scale) {
+
         request.setDimension(rect);
         request.setFormat(format);
         request.setExceptions(exceptionsFormat);
         request.setLayer(layers[0]);
-        
+
         if (styles.length > 0)
             request.setStyle(styles[0]);
-        
+
         request.setSld(sld);
-        request.setSldBody(sldBody);        
+        request.setSldBody(sldBody);
         request.setRule(rule);
         request.setScale(scale);
         request.setSldVersion(sldVersion);
         request.dimensions().putAll(dimensions());
     }
-    
+
     /**
      * Gives a {@linkplain GetFeatureInfoRequest GetFeatureInfo request} for the
-     * given envelope and output dimension. The default format will be 
-     * {@code image/png} if the {@link #setFormat(java.lang.String)} has not 
+     * given envelope and output dimension. The default format will be
+     * {@code image/png} if the {@link #setFormat(java.lang.String)} has not
      * been called.
-     * 
+     *
      * @param request      the GetFeatureInfo request
      * @param env          the current envelope of the map
      * @param rect         the dimension of the map
@@ -779,10 +780,10 @@ public class WMSMapLayer extends AbstractMapLayer {
                                      infoFormat, featureCount);
         return request.getURL();
     }
-    
-    /**     
+
+    /**
      * Prepare parameters for a GetFeatureInfo request.
-     * 
+     *
      * @param request      the GetFeatureInfo request
      * @param env          the current envelope of the map
      * @param rect         the dimension of the map
@@ -795,7 +796,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws FactoryException
      * @throws MalformedURLException
      */
-    protected void prepareGetFeatureInfoRequest(final GetFeatureInfoRequest request, 
+    protected void prepareGetFeatureInfoRequest(final GetFeatureInfoRequest request,
             final Envelope env, final Dimension rect, int x, int y,
             final String[] queryLayers, final String infoFormat, final int featureCount)
             throws TransformException, FactoryException, MalformedURLException {
@@ -808,8 +809,8 @@ public class WMSMapLayer extends AbstractMapLayer {
         final Point2D pickCoord = new Point2D.Double(x, y);
 
         // Add the GetMap parameters
-        prepareQuery(request, cenv, crect, pickCoord); 
-        
+        prepareQuery(request, cenv, crect, pickCoord);
+
         request.setColumnIndex( (int)Math.round(pickCoord.getX()) );
         request.setRawIndex( (int)Math.round(pickCoord.getY()) );
     }

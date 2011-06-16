@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.ncwms.AbstractNcGetFeatureInfo;
 import org.geotoolkit.security.ClientSecurity;
 
@@ -63,13 +63,13 @@ public class NcGetFeatureInfo111 extends AbstractNcGetFeatureInfo {
         map.put("BBOX", sb.toString());
 
         try {
-            map.put("SRS", CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
+            map.put("SRS", IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
         encodeTimeAndElevation(env, map);
-        
+
         return map;
     }
 

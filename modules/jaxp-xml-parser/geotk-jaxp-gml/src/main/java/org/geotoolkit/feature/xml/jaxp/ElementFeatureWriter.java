@@ -34,7 +34,7 @@ import org.geotoolkit.data.FeatureIterator;
 
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.storage.DataStoreException;
@@ -62,7 +62,7 @@ import org.w3c.dom.Element;
  * @author Guilhem Legal (Geomatys)
  */
 public class ElementFeatureWriter {
-    
+
     /**
      * Logger for this writer.
      */
@@ -89,7 +89,7 @@ public class ElementFeatureWriter {
     }
 
     public ElementFeatureWriter(final Map<String, String> schemaLocations) {
-         
+
          if (schemaLocations != null && schemaLocations.size() > 0) {
              final StringBuilder sb = new StringBuilder();
              for (Entry<String,String> entry : schemaLocations.entrySet()) {
@@ -106,7 +106,7 @@ public class ElementFeatureWriter {
      * {@inheritDoc}
      */
     public Element write(final Object candidate, final boolean fragment) throws IOException, DataStoreException, ParserConfigurationException {
-        
+
         if (candidate instanceof Feature) {
             return writeFeature((Feature) candidate, null, fragment);
         } else if (candidate instanceof FeatureCollection) {
@@ -138,21 +138,21 @@ public class ElementFeatureWriter {
         } else {
             document = rootDocument;
         }
-      
-      
+
+
         //the root element of the xml document (type of the feature)
         final FeatureType type = feature.getType();
         final Name typeName    = type.getName();
         final String namespace = typeName.getNamespaceURI();
         final String localPart = typeName.getLocalPart();
-        
+
         final Element rootElement;
         final Prefix prefix;
         if (namespace != null) {
             prefix = getPrefix(namespace);
             rootElement = document.createElementNS(namespace, localPart);
             rootElement.setPrefix(prefix.prefix);
-            
+
         } else {
             rootElement = document.createElement(localPart);
             prefix = null;
@@ -281,7 +281,7 @@ public class ElementFeatureWriter {
      * @throws DataStoreException
      */
     public Element writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment, final boolean wfs) throws DataStoreException, ParserConfigurationException {
-       
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         // then we have to create document-loader:
         factory.setNamespaceAware(false);
@@ -305,9 +305,9 @@ public class ElementFeatureWriter {
             rootElement = document.createElementNS("http://www.opengis.net/gml", "FeatureCollection");
             rootElement.setPrefix("gml");
         }
-        
+
         document.appendChild(rootElement);
-        
+
         String collectionID = "";
         if (featureCollection.getID() != null) {
             collectionID = featureCollection.getID();
@@ -316,7 +316,7 @@ public class ElementFeatureWriter {
         idAttribute.setValue(collectionID);
         idAttribute.setPrefix("gml");
         rootElement.setAttributeNodeNS(idAttribute);
-        
+
         if (schemaLocation != null && !schemaLocation.equals("")) {
             rootElement.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
         }
@@ -346,7 +346,7 @@ public class ElementFeatureWriter {
                 memberElement.setPrefix("gml");
                 memberElement.appendChild(writeFeature(f, document, true));
                 rootElement.appendChild(memberElement);
-                
+
             }
 
         } finally {
@@ -362,7 +362,7 @@ public class ElementFeatureWriter {
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {
-                    srsName = CRS.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
+                    srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
                 }
@@ -376,7 +376,7 @@ public class ElementFeatureWriter {
             } else {
                 envElement.setAttribute("srsName", "");
             }
-            
+
             // lower corner
             final Element lower = document.createElementNS(Namespaces.GML, "lowerCorner");
             String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
@@ -390,7 +390,7 @@ public class ElementFeatureWriter {
             upper.setTextContent(uppValue);
             upper.setPrefix("gml");
             envElement.appendChild(upper);
-            
+
             boundElement.appendChild(envElement);
             return boundElement;
         }

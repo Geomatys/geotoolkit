@@ -47,6 +47,7 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -135,7 +136,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         sqlTypeToSqlTypeNameOverrides.put(Types.BOOLEAN, "BOOL");
 
     }
-  
+
     public boolean isLooseBBOXEnabled(){
         return looseBBOXEnabled;
     }
@@ -257,7 +258,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                     schemaName, tableName,columnName);
             return;
         }
-        
+
         String gType = null;
         if(tableName == null || tableName.isEmpty()){
             //this column informations seems to come from a custom sql query
@@ -297,7 +298,7 @@ public class PostGISDialect extends AbstractSQLDialect {
 
         atb.setBinding(geometryClass);
     }
-    
+
     @Override
     public Integer getGeometrySRID(String schemaName, final String tableName, final String columnName,
             final Connection cx) throws SQLException{
@@ -477,7 +478,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                                 JDBCDataStore.JDBC_NATIVE_SRID);
                     } else if (gd.getCoordinateReferenceSystem() != null) {
                         try {
-                            final Integer result = CRS.lookupEpsgCode(gd.getCoordinateReferenceSystem(), true);
+                            final Integer result = IdentifiedObjects.lookupEpsgCode(gd.getCoordinateReferenceSystem(), true);
                             if (result != null) {
                                 srid = result;
                             }

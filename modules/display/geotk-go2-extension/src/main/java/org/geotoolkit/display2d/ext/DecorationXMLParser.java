@@ -65,6 +65,7 @@ import org.geotoolkit.display2d.ext.text.GraphicTextJ2D;
 import org.geotoolkit.display2d.ext.text.TextTemplate;
 import org.geotoolkit.display2d.service.PortrayalExtension;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.util.FactoryException;
@@ -124,7 +125,7 @@ public final class DecorationXMLParser {
     private static final String TYPE_SCALE_NUMERIC = "scalebar-numeric";
     private static final String TYPE_SCALE_GRAPHIC = "scalebar-graphic";
     private static final String TYPE_GRID = "grid";
-    
+
     private static final String POSTION_NORTH = "north";
     private static final String POSTION_NORTH_EAST = "north-east";
     private static final String POSTION_NORTH_WEST = "north-west";
@@ -540,12 +541,12 @@ public final class DecorationXMLParser {
                 el.setAttribute(ATT_NAME, PARAM_POSITION);
                 el.setTextContent(encodePosition((Integer) params.get(PARAM_POSITION)));
                 deco.appendChild(el);
-                
+
                 el = document.createElement(TAG_PARAMETER);
                 el.setAttribute(ATT_NAME, PARAM_OFFSET_X);
                 el.setTextContent(params.get(PARAM_OFFSET_X).toString());
                 deco.appendChild(el);
-                
+
                 el = document.createElement(TAG_PARAMETER);
                 el.setAttribute(ATT_NAME, PARAM_OFFSET_Y);
                 el.setTextContent(params.get(PARAM_OFFSET_Y).toString());
@@ -564,12 +565,12 @@ public final class DecorationXMLParser {
                 try {
                     el = document.createElement(TAG_PARAMETER);
                     el.setAttribute(ATT_NAME, PARAM_CRS);
-                    el.setTextContent(CRS.lookupIdentifier(gridTemplate.getCRS(), true));
+                    el.setTextContent(IdentifiedObjects.lookupIdentifier(gridTemplate.getCRS(), true));
                     deco.appendChild(el);
                 } catch (FactoryException ex) {
                     Logger.getLogger(DecorationXMLParser.class.getName()).log(Level.WARNING, null, ex);
                 }
-                
+
                 final Element main = document.createElement(TAG_MAIN);
 
                     final BasicStroke mainStroke = (BasicStroke)gridTemplate.getMainLineStroke();

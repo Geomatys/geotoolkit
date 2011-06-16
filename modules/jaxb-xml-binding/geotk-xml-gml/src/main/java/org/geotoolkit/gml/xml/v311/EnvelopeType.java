@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -36,14 +37,14 @@ import org.opengis.util.FactoryException;
 
 
 /**
- * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions. 
+ * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions.
  * The first direct position is the "lower corner" (a coordinate position consisting of all the minimal ordinates for each dimension for all points within the envelope),
  * the second one the "upper corner" (a coordinate position consisting of all the maximal ordinates for each dimension for all points within the envelope).
- * 
+ *
  * <p>Java class for EnvelopeType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EnvelopeType">
  *   &lt;complexContent>
@@ -62,8 +63,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -131,7 +132,7 @@ public class EnvelopeType implements Entry, Envelope {
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
             if (crs != null) {
                 try {
-                    srsName = "EPSG:" + CRS.lookupEpsgCode(crs, true);
+                    srsName = "EPSG:" + IdentifiedObjects.lookupEpsgCode(crs, true);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, "Factory exception xhile creating GML envelope from opengis one", ex);
                 }
@@ -168,11 +169,11 @@ public class EnvelopeType implements Entry, Envelope {
 
     /**
      * Gets the value of the lowerCorner property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     @Override
     public DirectPositionType getLowerCorner() {
@@ -181,11 +182,11 @@ public class EnvelopeType implements Entry, Envelope {
 
     /**
      * Sets the value of the lowerCorner property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setLowerCorner(final DirectPositionType value) {
         this.lowerCorner = value;
@@ -193,11 +194,11 @@ public class EnvelopeType implements Entry, Envelope {
 
     /**
      * Gets the value of the upperCorner property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     @Override
     public DirectPositionType getUpperCorner() {
@@ -206,11 +207,11 @@ public class EnvelopeType implements Entry, Envelope {
 
     /**
      * Sets the value of the upperCorner property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionType }
-     *     
+     *
      */
     public void setUpperCorner(final DirectPositionType value) {
         this.upperCorner = value;
@@ -323,11 +324,11 @@ public class EnvelopeType implements Entry, Envelope {
     /**
      * Deprecated with GML version 3.1.0.
      * Use the explicit properties "lowerCorner" and "upperCorner" instead.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     @Deprecated
     public CoordinatesType getCoordinates() {
@@ -337,11 +338,11 @@ public class EnvelopeType implements Entry, Envelope {
     /**
      * Deprecated with GML version 3.1.0.
      * Use the explicit properties "lowerCorner" and "upperCorner" instead.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     @Deprecated
     public void setCoordinates(final CoordinatesType value) {

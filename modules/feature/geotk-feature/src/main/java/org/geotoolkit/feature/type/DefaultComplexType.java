@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
@@ -270,7 +270,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             final CoordinateReferenceSystem crs = desc.getCoordinateReferenceSystem();
             if(crs != null){
                 try {
-                    builder.append(String.valueOf(CRS.lookupIdentifier(crs, true)));
+                    builder.append(String.valueOf(IdentifiedObjects.lookupIdentifier(crs, true)));
                 } catch (FactoryException ex) {
                     builder.append("Error getting identifier");
                 }

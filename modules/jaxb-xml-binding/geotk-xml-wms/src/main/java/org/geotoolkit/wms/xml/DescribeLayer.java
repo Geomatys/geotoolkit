@@ -17,8 +17,8 @@
 package org.geotoolkit.wms.xml;
 
 import java.util.List;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 

@@ -38,7 +38,7 @@ import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
@@ -259,7 +259,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     public void writeFeatureCollection(final FeatureCollection featureCollection, final boolean fragment)
                                                             throws DataStoreException, XMLStreamException
     {
-        
+
         // the XML header
         if(!fragment){
             writer.writeStartDocument("UTF-8", "1.0");
@@ -328,7 +328,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {
-                    srsName = CRS.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
+                    srsName = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
                 }

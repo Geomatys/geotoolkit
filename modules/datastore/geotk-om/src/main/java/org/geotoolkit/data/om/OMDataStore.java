@@ -54,6 +54,7 @@ import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
@@ -135,7 +136,7 @@ public class OMDataStore extends AbstractDataStore {
             throw new DataStoreException(ex);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -156,7 +157,7 @@ public class OMDataStore extends AbstractDataStore {
             throw new DataStoreException(ex);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -169,7 +170,7 @@ public class OMDataStore extends AbstractDataStore {
             getLogger().info("SQL Exception while closing O&M datastore");
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -228,7 +229,7 @@ public class OMDataStore extends AbstractDataStore {
                     String crsIdentifier = null;
                     if (featureType.getCoordinateReferenceSystem() != null) {
                         try {
-                            crsIdentifier = CRS.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
+                            crsIdentifier = IdentifiedObjects.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
                         } catch (FactoryException ex) {
                             LOGGER.log(Level.WARNING, null, ex);
                         }
@@ -306,7 +307,7 @@ public class OMDataStore extends AbstractDataStore {
         return null;
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // No supported stuffs /////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -456,11 +457,11 @@ public class OMDataStore extends AbstractDataStore {
     private class OMWriter extends OMReader implements FeatureWriter {
 
         protected Feature candidate = null;
-        
+
         private OMWriter(final FeatureType type) throws SQLException{
             super(type);
         }
-        
+
         @Override
         public Feature next() throws DataStoreRuntimeException {
             try {
@@ -472,20 +473,20 @@ public class OMDataStore extends AbstractDataStore {
             current = null;
             return candidate;
         }
-        
+
         @Override
         public void remove() throws DataStoreRuntimeException{
-            
+
             if (candidate == null) {
                 return;
             }
-            
+
             PreparedStatement stmtDelete = null;
             try {
                 stmtDelete = cnx.prepareStatement(SQL_DELETE_SAMPLING_POINT);
                 stmtDelete.setString(1, candidate.getIdentifier().getID());
                 stmtDelete.executeUpdate();
-                
+
             } catch (SQLException ex) {
                 LOGGER.log(Level.WARNING, SQL_WRITE_SAMPLING_POINT, ex);
             } finally {
@@ -497,9 +498,9 @@ public class OMDataStore extends AbstractDataStore {
                     }
                 }
             }
-            
+
         }
-        
+
         @Override
         public void write() throws DataStoreRuntimeException {
             throw new DataStoreRuntimeException("Not supported.");

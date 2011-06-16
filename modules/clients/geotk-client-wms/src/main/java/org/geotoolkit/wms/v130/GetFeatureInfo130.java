@@ -21,7 +21,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.opengis.geometry.Envelope;
@@ -62,7 +62,7 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
         map.put("BBOX", sb.toString());
 
         try {
-            map.put("CRS", CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
+            map.put("CRS", IdentifiedObjects.lookupIdentifier(env.getCoordinateReferenceSystem(), true));
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }

@@ -33,18 +33,19 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.CodeType;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 
 /**
- * This GridCRS is a simplification and specialization of a gml:DerivedCRS. All elements and attributes not required to define this GridCRS are optional. 
- * 
+ * This GridCRS is a simplification and specialization of a gml:DerivedCRS. All elements and attributes not required to define this GridCRS are optional.
+ *
  * <p>Java class for GridCrsType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GridCrsType">
  *   &lt;complexContent>
@@ -62,8 +63,8 @@ import org.opengis.util.FactoryException;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * @author Guilhem Legal 
+ *
+ * @author Guilhem Legal
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,7 +79,7 @@ import org.opengis.util.FactoryException;
 public class GridCrsType {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wcs.xml.v111");
-    
+
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private CodeType srsName;
     @XmlElement(name = "GridBaseCRS", required = true)
@@ -107,7 +108,7 @@ public class GridCrsType {
      */
     GridCrsType() {
     }
-    
+
     /**
      * Build a new grid crs type
      */
@@ -141,7 +142,7 @@ public class GridCrsType {
             final CoordinateReferenceSystem crss = grid.getCoordinateReferenceSystem();
             if (crss != null) {
                 try {
-                    srsName = new CodeType("EPSG:" + CRS.lookupEpsgCode(crss, true));
+                    srsName = new CodeType("EPSG:" + IdentifiedObjects.lookupEpsgCode(crss, true));
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.WARNING, "Factory exception while creating WCS GRIDType from opengis one", ex);
                 }  catch (NullPointerException ex) {
@@ -151,7 +152,7 @@ public class GridCrsType {
 
         }
     }
-    
+
     /**
      * Gets the value of the srsName property.
      */
@@ -161,7 +162,7 @@ public class GridCrsType {
 
     /**
      * Gets the value of the gridBaseCRS property.
-     * 
+     *
      */
     public String getGridBaseCRS() {
         return gridBaseCRS;
@@ -180,7 +181,7 @@ public class GridCrsType {
     }
 
     /**
-     * When this GridOrigin position is omitted, 
+     * When this GridOrigin position is omitted,
      * the origin defaults be the most commonly used origin in a GridCRS used in the output part of a GetCapabilities operation request, namely "0 0".
      * Gets the value of the gridOrigin property.
      */
@@ -202,7 +203,7 @@ public class GridCrsType {
     }
 
     /**
-     * When this GridCS reference is omitted, the GridCS defaults to the most commonly used grid coordinate system, which is referenced by the URN "urn:ogc:def:cs:OGC:0.0:Grid2dSquareCS". 
+     * When this GridCS reference is omitted, the GridCS defaults to the most commonly used grid coordinate system, which is referenced by the URN "urn:ogc:def:cs:OGC:0.0:Grid2dSquareCS".
      */
     public String getGridCS() {
         return gridCS;
@@ -210,7 +211,7 @@ public class GridCrsType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      */
     public String getId() {
         return id;
