@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.tms.map;
+package org.geotoolkit.osmtms.map;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -44,8 +44,8 @@ import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.tms.GetTileRequest;
-import org.geotoolkit.tms.OSMTileMapServer;
+import org.geotoolkit.osmtms.GetTileRequest;
+import org.geotoolkit.osmtms.OSMTileMapServer;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;

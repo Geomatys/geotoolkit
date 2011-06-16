@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.tms.map;
+package org.geotoolkit.osmtms.map;
 
 import java.awt.Dimension;
 import org.geotoolkit.referencing.CRS;

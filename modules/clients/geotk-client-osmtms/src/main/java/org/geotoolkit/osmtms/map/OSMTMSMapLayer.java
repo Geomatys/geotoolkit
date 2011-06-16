@@ -14,12 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.tms.map;
+package org.geotoolkit.osmtms.map;
 
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.tms.OSMTileMapServer;
+import org.geotoolkit.osmtms.OSMTileMapServer;
 
 import org.opengis.geometry.Envelope;
 
