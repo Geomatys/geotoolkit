@@ -1183,16 +1183,12 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     /**
      * @param created the created to set
      */
-    public void setcreated(final SimpleLiteral created) {
+    public void setCreated(final SimpleLiteral created) {
          if (this.created == null)
             this.created = new ArrayList<SimpleLiteral>();
         this.created.add(created);
     }
     
-    public void setcreated(final List<SimpleLiteral> created) {
-         this.created = created;
-    }
-
     /**
      * @return the hasPart
      */
