@@ -6,16 +6,12 @@
 Running Geotoolkit.org
 
   Geotk requires Java 6. No extension is required for the referencing and metadata
-  modules. However if the coverage module is also used, then Geotk requires also the
-  {{{http://jai.dev.java.net/}Java Advanced Imaging}} library
-  ({{{http://download.java.net/media/jai/builds/release/}download}}).
-  Note that this library is pre-installed on MacOS X.
-
-  While not mandatory, installation of the {{{http://jai-imageio-core.dev.java.net/}Image I/O for JAI}}
-  library is also recommended ({{{http://download.java.net/media/jai-imageio/builds/release/}download}}).
+  modules. However if the coverage module is also used, then Geotk requires some
+  additional dependencies listed in the _Running modules beyond GeoAPI 3.0_ section
+  below.
 
 
-* EPSG database
+* Running modules defined by GeoAPI 3.0
 
   While not mandatory, the referencing module works better with a connection to an
   {{{http://www.epsg.org/}EPSG}} database. The database will be created automatically
@@ -35,3 +31,84 @@ Running Geotoolkit.org
 
   The above-cited Setup application can also create the EPSG database on PostgreSQL,
   using connection parameters which must be explicitly specified.
+
+** Maven configuration
+
+  _Geotk for GeoAPI 3.0_ is deployed into the {{{http://search.maven.org/}Maven Central}} repository,
+  and consequently does not require any explicit repository declaration. The following example is
+  sufficient for running Geotk referencing services with the optional - but recommended - EPSG
+  database.
+
++---------------------------------------------+
+<dependencies>
+  <dependency>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotk-referencing</artifactId>
+    <version>3.18-geoapi-3.0</version>
+  </dependency>
+  <dependency>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotk-epsg</artifactId>
+    <version>3.18-geoapi-3.0</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.derby</groupId>
+    <artifactId>derby</artifactId>
+    <version>10.7.1.1</version>
+    <scope>runtime</scope>
+  </dependency>
+</dependencies>
++---------------------------------------------+
+
+
+* Running modules beyond GeoAPI 3.0
+
+  If the coverage or display modules are also used, then Geotk requires also the
+  {{{http://java.net/projects/jai/}Java Advanced Imaging}} library
+  ({{{http://download.java.net/media/jai/builds/release/}download}}).
+  Note that this library is pre-installed on MacOS X.
+
+  While not mandatory, installation of the {{{http://jai-imageio-core.dev.java.net/}Image I/O for JAI}}
+  library is also recommended ({{{http://download.java.net/media/jai-imageio/builds/release/}download}}).
+
+
+** Maven configuration
+
+  Because modules beyond metadata and referencing are not yet deployed on Maven Central, projects
+  need to declare the Geotk repository in order to use them. The example below uses the Coverage
+  I/O services, together with the same referencing services than the previous example.
+
++---------------------------------------------+
+<repositories>
+  <repository>
+    <id>geotoolkit</id>
+    <name>Geotoolkit.org repository</name>
+    <url>http://maven.geotoolkit.org</url>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotk-coverageio</artifactId>
+    <version>3.18</version>
+  </dependency>
+  <dependency>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>geotk-epsg</artifactId>
+    <version>3.18</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.derby</groupId>
+    <artifactId>derby</artifactId>
+    <version>10.7.1.1</version>
+    <scope>runtime</scope>
+  </dependency>
+</dependencies>
++---------------------------------------------+
+
+  Note that the version number in the later example is <<<3.18>>> rather <<<3.18-geoapi-3.0>>>
+  because those Geotk modules depend on GeoAPI version <<<3.1-SNAPSHOT>>>, which is not yet
+  standardized by OGC.

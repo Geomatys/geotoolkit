@@ -6,7 +6,7 @@
 Building Geotoolkit.org
 
   Users generally don't need to build Geotk themself since snapshots are built and deployed on the
-  {{{http://maven.geotoolkit.org}Maven repository}} every day, and monthly releases are deployed
+  {{{http://maven.geotoolkit.org}Maven repository}} every day, and releases are deployed
   both on the Maven repository and on the {{{http://download.geotoolkit.org}download area}}. If
   nevertheless there is a need to build Geotk on a local machine, then this page describes the steps.
 
@@ -37,14 +37,30 @@ Building Geotoolkit.org
     * {{{https://jai-imageio.dev.java.net/binary-builds.html}Image I/O extensions for JAI}} version 1.1 or later.
 
 
-* Building the JAR files
+* Preparing source code
 
-  Gets the source code from the above-cited download area (if monthly releases are sufficient)
+  Gets the source code from the above-cited download area (if releases are sufficient)
   or from the Mercurial repository if the development version (snapshot) is wanted. In the later
   case, see the {{{../source-repository.html}Source Repository}} page for more information.
 
+  The following branches are available on the Mercurial source code repository:
+
+    * <<<default>>>
+
+    * <<<GeoAPI-3.0>>>
+
+  If the GeoAPI branch is wanted instead than the default one, execute the following command
+  (available only if the source code was obtained from the Mercurial repository):
+
+--------------------
+hg update GeoAPI-3.0
+--------------------
+
+
+* Building the JAR files
+
   Make sure that the current directory is the project root directory, the one which contains
-  the topermost <<<pom.xml>>> file. From this directory, execute the following commands:
+  the topermost <<<pom.xml>>> file. From this directory, execute the following command:
 
 -----------
 mvn install
@@ -74,9 +90,9 @@ mvn install -DskipTests
   Execute the following command from the same directory than above. It is recommended to run
   this command only after a successful build.
 
----------------------
-mvn javadoc:aggregate
----------------------
+--------
+mvn site
+--------
 
   After a successful javadoc generation, the generated HTML pages will be located
   in the <<<target/site/apidocs>>> directory.
@@ -84,11 +100,12 @@ mvn javadoc:aggregate
 
 * Building the PACK200 bundles
 
-  Execute the following command after a successful build of JAR files and javadoc:
+  Execute the following command after a successful build of JAR files and javadoc
+  (replace <<<3.x-SNAPSHOT>>> by the actual Geotk version number to be built):
 
-----------------------------------------------------------------------------
-mvn org.geotoolkit.project:geotk-jar-collector:pack-specific --non-recursive
-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+mvn org.geotoolkit.project:geotk-jar-collector:3.x-SNAPSHOT:pack-specific --non-recursive
+-----------------------------------------------------------------------------------------
 
 
 Updating the source code

@@ -173,7 +173,7 @@
     <javadoc.exclude>
       org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:com
     </javadoc.exclude>
-    <derby.version>10.7.1.1</derby.version>
+    <derby.version>10.7.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
   </properties>

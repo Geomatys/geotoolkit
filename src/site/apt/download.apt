@@ -20,8 +20,10 @@ Downloading Geotoolkit.org Binaries
 * Maven downloads
 
   Geotk can be obtained using the Apache's {{{http://maven.apache.org/}Maven}} management
-  tool to download Geotk JAR files which have been deployed into the project's
-  {{{http://maven.geotoolkit.org/}Maven repository}}.
+  tool to download Geotk JAR files which have been deployed into the
+  {{{http://maven.geotoolkit.org/}project's Maven repository}} (all Geotk modules) or into the
+  {{{http://search.maven.org/}Maven Central repository}} (only Geotk modules implementing the
+  {{{http://www.geoapi.org/3.0}GeoAPI 3.0}} release).
 
   The Maven approach provides the following advantages compared to using Geotk bundles:
 
@@ -45,7 +47,7 @@ Downloading Geotoolkit.org Binaries
 <properties>
   <!-- Define the version that we want to use here, so
        we have a single line to change when upgrating. -->
-  <geotk.version>3.17</geotk.version>
+  <geotk.version>3.18-geoapi-3.0</geotk.version>
 </properties>
 
 <dependencies>
@@ -63,17 +65,15 @@ Downloading Geotoolkit.org Binaries
 </dependencies>
 +---------------------------------------------------------+
 
-  For this example to work, the following repositories must be declared in the root <<<pom.xml>>>
+  The above example is sufficient for any version ending in <<<-geoapi-3.0>>>. If the <<<3.18>>>
+  version is wanted instead than <<<3.18-geoapi-3.0>>> (in order to use modules that are beyond
+  GeoAPI 3.0 interfaces), then the following repository must be declared in the root <<<pom.xml>>>
   file.
 
 +---------------------------------------------------------+
 <repositories>
   <repository>
-    <id>maven2-repository.dev.java.net</id>
-    <name>Java.net repository</name>
-    <url>http://download.java.net/maven/2</url>
-  </repository>
-  <repository>
+     <!-- Not needed for "*-geoapi-3.0" versions -->
      <id>geotoolkit</id>
      <name>Geotk repository</name>
      <url>http://maven.geotoolkit.org</url>
@@ -81,7 +81,7 @@ Downloading Geotoolkit.org Binaries
 </repositories>
 +---------------------------------------------------------+
 
-  We plan eventually to build a maven artifact to simplify the creation of a maven based project.
+  See the {{{./run.html}Running Geotoolkit.org}} page for more examples.
 
 
 * Bundle downloads (everything in a single JAR)
@@ -94,7 +94,7 @@ Downloading Geotoolkit.org Binaries
 
   These Geotk bundles can be downloaded from:
 
-    * {{{http://download.geotoolkit.org/}Monthly releases}}
+    * {{{http://download.geotoolkit.org/}Releases download area}}
 
     * {{{http://hudson.geomatys.com/job/Geotoolkit/}Nightly builds}}
 
@@ -108,7 +108,7 @@ Downloading Geotoolkit.org Binaries
 *----------------------------------------+------------------------------------+---------------------------+
 || File                                  || Content                           || Prerequites             ||
 *----------------------------------------+------------------------------------+---------------------------+
-| <<<geotk-bundle-referencing.pack.gz>>> | • geoapi.jar\                      | • Java 6\                 |
+| <<<geotk-bundle-referencing.pack.gz>>> | • geoapi-pending.jar\              | • Java 6\                 |
 |                                        | • jsr-275.jar\                     | • JavaDB (<optional>)     |
 |                                        | • vecmath.jar\                     |                           |
 |                                        | • jcip-annotations.jar\            |                           |
@@ -119,9 +119,8 @@ Downloading Geotoolkit.org Binaries
 |                                        | • geotk-epsg.jar                   |                           |
 *----------------------------------------+------------------------------------+---------------------------+
 | <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:>\  | • Java 6\                 |
-|                                        | • geoapi-pending.jar\              | • Java Advanced Imaging\  |
-|                                        | • geotk-coverage.jar\              | • JavaDB (<optional>)     |
-|                                        | • geotk-coverageio.jar\            |                           |
+|                                        | • geotk-coverage.jar\              | • Java Advanced Imaging\  |
+|                                        | • geotk-coverageio.jar\            | • JavaDB (<optional>)     |
 |                                        | • geotk-coverageio-netcdf.jar\     |                           |
 |                                        | • geotk-storage.jar\               |                           |
 |                                        | • jai_imageio.jar\                 |                           |
@@ -163,11 +162,11 @@ Downloading Geotoolkit.org Binaries
   installation directory.
 
   For example, users who wish to use the georeferencing functionality of Geotk can select the
-  <<<geotk-bundle-referencing-3.17.pack.gz>>> archive for download. Once downloaded, the archive
+  <<<geotk-bundle-referencing-3.18.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 
 -----------------------------------------------------------------------------------------------
-unpack200 --remove-pack-file geotk-bundle-referencing-3.17.pack.gz geotk-bundle-referencing.jar
+unpack200 --remove-pack-file geotk-bundle-referencing-3.18.pack.gz geotk-bundle-referencing.jar
 -----------------------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any

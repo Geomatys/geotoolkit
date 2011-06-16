@@ -42,8 +42,8 @@ Performing a Geotoolkit.org release
   the Geotk version numbers and the deployment server:
 
 --------------------------------------------------------
-export OLD_VERSION="3.17"
-export NEW_VERSION="3.18"
+export OLD_VERSION="3.18"
+export NEW_VERSION="3.19"
 export GEOTK_SERVER=(... insert foo@server.com here ...)
 --------------------------------------------------------
 
