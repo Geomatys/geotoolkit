@@ -41,6 +41,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -268,10 +270,11 @@ public final class GO2Utilities {
         final Graphics2D g2d = renderingContext.getGraphics();
 
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
+        boolean sameCRS = true;
         try{
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
             if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
-
+                sameCRS = false;
                 dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
 
                 if(dataCoverage != null){
@@ -300,7 +303,32 @@ public final class GO2Utilities {
         //we must switch to objectiveCRS for grid coverage
         renderingContext.switchToObjectiveCRS();
 
-        final RenderedImage img = dataCoverage.getRenderedImage();
+        RenderedImage img = dataCoverage.getRenderedImage();
+        
+        if(!sameCRS){
+            //will be reprojected, we must check that image has alpha support
+            //otherwise we will have black borders after reprojection
+            if(!img.getColorModel().hasAlpha()){
+                //ensure we have a bufferedImage for floodfill operation
+                final BufferedImage buffer;
+                if(img instanceof BufferedImage){
+                    buffer = (BufferedImage) img;
+                }else{
+                    buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+                }
+
+                //remove black borders+
+                FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f,0f,0f,0f),
+                        new java.awt.Point(0,0),
+                        new java.awt.Point(buffer.getWidth()-1,0),
+                        new java.awt.Point(buffer.getWidth()-1,buffer.getHeight()-1),
+                        new java.awt.Point(0,buffer.getHeight()-1)
+                        );
+                img = buffer;
+            }
+        }
+        
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
