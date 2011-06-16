@@ -1188,6 +1188,10 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
             this.created = new ArrayList<SimpleLiteral>();
         this.created.add(created);
     }
+    
+    public void setcreated(final List<SimpleLiteral> created) {
+         this.created = created;
+    }
 
     /**
      * @return the hasPart
@@ -1367,7 +1371,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     /**
      * @param dateAccepted the dateAccepted to set
      */
-    public void setdateAccepted(final SimpleLiteral dateAccepted) {
+    public void setDateAccepted(final SimpleLiteral dateAccepted) {
          if (this.dateAccepted == null) {
             this.dateAccepted = new ArrayList<SimpleLiteral>();
          }
