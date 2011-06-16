@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractTiledGraphic;
@@ -46,16 +45,14 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.tms.GetTileRequest;
-import org.geotoolkit.tms.TileMapServer;
+import org.geotoolkit.tms.OSMTileMapServer;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 /**
  * Render TMS layer in default geotoolkit rendering engine.
@@ -63,20 +60,20 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
+public final class OSMTMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                     
     /**
      * One instance for all WMTS map layers. Object is concurrent.
      */
-    static final TMSGraphicBuilder INSTANCE = new TMSGraphicBuilder();
+    static final OSMTMSGraphicBuilder INSTANCE = new OSMTMSGraphicBuilder();
     
-    private TMSGraphicBuilder(){};
+    private OSMTMSGraphicBuilder(){};
     
     @Override
     public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
-        if(layer instanceof TMSMapLayer && canvas instanceof J2DCanvas){
+        if(layer instanceof OSMTMSMapLayer && canvas instanceof J2DCanvas){
             return Collections.singleton((GraphicJ2D)
-                    new TMSGraphic((J2DCanvas)canvas, (TMSMapLayer)layer));
+                    new TMSGraphic((J2DCanvas)canvas, (OSMTMSMapLayer)layer));
         }else{
             return Collections.emptyList();
         }
@@ -89,7 +86,7 @@ public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     @Override
     public Image getLegend(final MapLayer layer) throws PortrayalException {
-        final TMSMapLayer tmsLayer = (TMSMapLayer) layer;
+        final OSMTMSMapLayer tmsLayer = (OSMTMSMapLayer) layer;
         
         //TODO : how could we generate a proper legend for this layer ...
         final BufferedImage buffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -98,9 +95,9 @@ public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     public static class TMSGraphic extends AbstractTiledGraphic{
         
-        private final TMSMapLayer layer;
+        private final OSMTMSMapLayer layer;
 
-        private TMSGraphic(final J2DCanvas canvas, final TMSMapLayer layer){
+        private TMSGraphic(final J2DCanvas canvas, final OSMTMSMapLayer layer){
             super(canvas,canvas.getObjectiveCRS2D());
             this.layer = layer;
         }
@@ -120,9 +117,9 @@ public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             dim.width /= resolution[0];
             dim.height /= resolution[1];
             
-            final TileMapServer server = layer.getServer();
+            final OSMTileMapServer server = layer.getServer();
             
-            final CoordinateReferenceSystem matrixCRS = TMSUtilities.GOOGLE_MERCATOR;
+            final CoordinateReferenceSystem matrixCRS = server.getCoordinateReferenceSystem();
             final GeneralEnvelope matrixEnv;
             try {
                 matrixEnv = new GeneralEnvelope(CRS.transform(env, matrixCRS));
@@ -141,12 +138,19 @@ public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 if(Double.isNaN(matrixEnv.getMaximum(1))){ matrixEnv.setRange(1, matrixEnv.getMinimum(1), maxExt.getMaximum(1));  }
             }
             
+            final double scale0Resolution = maxExt.getSpan(0) / OSMTMSUtilities.BASE_TILE_SIZE;
+            
+            //the wanted image resolution
+            final double wantedResolution = matrixEnv.getSpan(0) / dim.getWidth() ;
+            final double result = Math.log(wantedResolution/scale0Resolution) / Math.log(0.5d);        
+            int scale = Math.round( (float)result );
+            if(scale < 0){ scale = 0; }
+            if(scale > server.getMaxZoomLevel()){ scale = server.getMaxZoomLevel(); }
                                            
-            final int scale = TMSUtilities.getBestZoomLevel(matrixEnv, dim);
             final double tileMatrixMinX = maxExt.getMinimum(0);
             final double tileMatrixMaxY = maxExt.getMaximum(1);
-            final double tileWidth = TMSUtilities.BASE_TILE_SIZE;
-            final double tileHeight = TMSUtilities.BASE_TILE_SIZE;
+            final double tileWidth = OSMTMSUtilities.BASE_TILE_SIZE;
+            final double tileHeight = OSMTMSUtilities.BASE_TILE_SIZE;
             final double tileSpanX = (maxExt.getSpan(0) / (Math.pow(2, scale) ));
             final double tileSpanY = (maxExt.getSpan(1) / (Math.pow(2, scale) ));
             

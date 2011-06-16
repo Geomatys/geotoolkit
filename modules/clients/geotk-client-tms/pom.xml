@@ -23,12 +23,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-client-tms</artifactId>
+  <artifactId>geotk-client-osm-tms</artifactId>
   <packaging>jar</packaging>
-  <name>Java Client TMS</name>
+  <name>Java Client OSM TMS</name>
 
   <description>
-    An OSGeo TMS Client.
+    An OSM Tile Map Server Client.
   </description>
 
   <licenses>

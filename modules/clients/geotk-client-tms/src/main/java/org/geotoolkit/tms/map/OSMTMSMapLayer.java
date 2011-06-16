@@ -19,7 +19,7 @@ package org.geotoolkit.tms.map;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.tms.TileMapServer;
+import org.geotoolkit.tms.OSMTileMapServer;
 
 import org.opengis.geometry.Envelope;
 
@@ -33,7 +33,7 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TMSMapLayer extends AbstractMapLayer {    
+public class OSMTMSMapLayer extends AbstractMapLayer {    
 
     //full world extend
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(WGS84, -180,
@@ -42,7 +42,7 @@ public class TMSMapLayer extends AbstractMapLayer {
     /**
      * The server to request.
      */
-    private final TileMapServer server;
+    private final OSMTileMapServer server;
     
     /**
      * Query extension.
@@ -50,12 +50,12 @@ public class TMSMapLayer extends AbstractMapLayer {
     private String format = ".png";
     
     
-    public TMSMapLayer(final TileMapServer server) {
+    public OSMTMSMapLayer(final OSMTileMapServer server) {
         super(new DefaultStyleFactory().style());
         this.server = server;
 
         //register the default graphic builder for geotk 2D engine.
-        graphicBuilders().add(TMSGraphicBuilder.INSTANCE);
+        graphicBuilders().add(OSMTMSGraphicBuilder.INSTANCE);
     }
     
     /**
@@ -77,7 +77,7 @@ public class TMSMapLayer extends AbstractMapLayer {
     /**
      * Returns the {@link StaticGoogleMapsServer} to request. Can't be {@code null}.
      */
-    public TileMapServer getServer() {
+    public OSMTileMapServer getServer() {
         return server;
     }
 
