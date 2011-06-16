@@ -142,18 +142,7 @@ public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             }
             
                                            
-            final int scale = 0; //TMSUtilities.getBestZoomLevel(matrixEnv, dim);
-            
-            //find all the tiles we need --------------------------------------
-            //tiles to render         
-            final Map<Entry<CoordinateReferenceSystem,MathTransform>,Request> queries = 
-                    new HashMap<Entry<CoordinateReferenceSystem, MathTransform>, Request>();
-            
-            final int startX = 0;
-            final int endX = 1;
-            final int startY = 0;
-            final int endY = 1;
-            
+            final int scale = TMSUtilities.getBestZoomLevel(matrixEnv, dim);
             final double tileMatrixMinX = maxExt.getMinimum(0);
             final double tileMatrixMaxY = maxExt.getMaximum(1);
             final double tileWidth = TMSUtilities.BASE_TILE_SIZE;
@@ -161,8 +150,25 @@ public final class TMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final double tileSpanX = (maxExt.getSpan(0) / (Math.pow(2, scale) ));
             final double tileSpanY = (maxExt.getSpan(1) / (Math.pow(2, scale) ));
             
-            for(int tileCol=startX; tileCol<endX; tileCol++){
-                for(int tileRow=startY; tileRow<endY; tileRow++){
+            //find all the tiles we need --------------------------------------
+            //tiles to render         
+            final Map<Entry<CoordinateReferenceSystem,MathTransform>,Request> queries = 
+                    new HashMap<Entry<CoordinateReferenceSystem, MathTransform>, Request>();
+            
+            final double epsilon = 1e-6;
+            final double bBoxMinX = matrixEnv.getMinimum(0);
+            final double bBoxMaxX = matrixEnv.getMaximum(0);
+            final double bBoxMinY = matrixEnv.getMinimum(1);
+            final double bBoxMaxY = matrixEnv.getMaximum(1);
+            double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+            double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+            double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
+            double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
+            
+            System.out.println(">>>>>> X["+ tileMinCol +" ... "+ tileMaxCol + "]  Y["+ tileMinRow +" ... "+ tileMaxRow +"]");
+            
+            for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
+                for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
                     
                     //tile bbox
                     final double leftX  = tileMatrixMinX + tileCol * tileSpanX ;

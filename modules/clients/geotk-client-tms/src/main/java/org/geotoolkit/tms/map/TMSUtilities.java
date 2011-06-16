@@ -35,7 +35,9 @@ public final class TMSUtilities {
     public static final CoordinateReferenceSystem GOOGLE_MERCATOR;
     public static final Envelope MERCATOR_EXTEND;
     
-
+    //scale tolerance of 10%
+    private static final double tolerance = 0.1;
+    
     /**
      * Resolution at zoom 0 level. in meter by pixel.
      */
