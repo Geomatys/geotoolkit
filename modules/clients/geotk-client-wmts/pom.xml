@@ -52,11 +52,12 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
   <dependencies>
-    <!--dependency>
+    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-go2</artifactId>
       <version>${project.version}</version>
-    </dependency-->
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-clients-core</artifactId>
