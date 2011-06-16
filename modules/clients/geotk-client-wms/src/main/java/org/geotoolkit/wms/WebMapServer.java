@@ -91,7 +91,7 @@ public class WebMapServer extends AbstractServer{
      * @param version The service version.
      */
     public WebMapServer(final URL serverURL, final ClientSecurity security,final WMSVersion version) {
-        this(serverURL, version, null);
+        this(serverURL, security, version, null);
     }
 
     /**

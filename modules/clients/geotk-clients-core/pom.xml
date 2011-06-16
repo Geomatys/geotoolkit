@@ -65,7 +65,13 @@
   <!--     Dependencies to be inherited by all modules.            -->
   <!-- =========================================================== -->
   <dependencies>
-      
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-go2</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-temporal</artifactId>

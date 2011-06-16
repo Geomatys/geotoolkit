@@ -22,18 +22,20 @@ import java.awt.Image;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.client.Request;
+import org.geotoolkit.client.map.AbstractTiledGraphic;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -42,7 +44,6 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -58,6 +59,7 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -110,7 +112,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         return buffer;
     }
 
-    public static class WMSGraphic extends AbstractGraphicJ2D{
+    public static class WMSGraphic extends AbstractTiledGraphic{
 
         protected final WMSMapLayer layer;
 
@@ -151,51 +153,25 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 return;
             }
 
-            final BufferedImage image;
-            InputStream is = null;
-            try {
-                is = request.getResponseStream();
-                image = ImageIO.read(is);
-            } catch (IOException io) {
-                monitor.exceptionOccured(new PortrayalException(io), Level.WARNING);
-                return;
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException ex) {
-                        monitor.exceptionOccured(ex, Level.WARNING);
-                    }
-                }
-            }
-
-            if (image == null) {
-                String path;
-                try {
-                    path = request.getURL().toString();
-                } catch (MalformedURLException ex) {
-                    path = "Malformed URL";
-                }
-                monitor.exceptionOccured(new PortrayalException("WMS server didn't return an image for URL : \n" + path), Level.WARNING);
-                return;
-            }
-
+            //render a single tile            
+            final Map<Entry<CoordinateReferenceSystem,MathTransform>,Request> queries = 
+                    new HashMap<Entry<CoordinateReferenceSystem, MathTransform>, Request>();
+            
+            final Entry<CoordinateReferenceSystem,MathTransform> key;
             try {
                 final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
                 final Envelope env2D = CRS.transform(env, crs2d);
                 final AffineTransform2D gridToCRS = new AffineTransform2D(GO2Utilities.toAffine(dim, env2D));
-                final GridCoverageFactory gc = new GridCoverageFactory();
 
-                final GridCoverage2D coverage = gc.create("wms", image,
-                    CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), gridToCRS, null, null, null);
-                GO2Utilities.portray(context2D, coverage);
-            } catch (PortrayalException ex) {
-                monitor.exceptionOccured(ex, Level.WARNING);
-                return;
+                key = new SimpleImmutableEntry<CoordinateReferenceSystem, MathTransform>(
+                        CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), gridToCRS);
             } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
             }
+            
+            queries.put(key, request);            
+            paint(context2D, queries);            
         }
 
         @Override
@@ -206,7 +182,6 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             }
 
             graphics.add(this);
-
             return graphics;
         }
 
