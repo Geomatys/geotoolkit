@@ -17,7 +17,6 @@
 
 package org.geotoolkit.osmtms.map;
 
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.AbstractMap.SimpleImmutableEntry;
@@ -36,6 +35,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -86,8 +86,6 @@ public final class OSMTMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     @Override
     public Image getLegend(final MapLayer layer) throws PortrayalException {
-        final OSMTMSMapLayer tmsLayer = (OSMTMSMapLayer) layer;
-        
         //TODO : how could we generate a proper legend for this layer ...
         final BufferedImage buffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         return buffer;
@@ -107,18 +105,8 @@ public final class OSMTMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final CanvasMonitor monitor = context2D.getMonitor();
 
 
-            final GeneralEnvelope env = new GeneralEnvelope(context2D.getCanvasObjectiveBounds2D());
-            final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
-            final double[] resolution = context2D.getResolution(context2D.getDisplayCRS());
-
-            //resolution contain dpi adjustments, to obtain an image of the correct dpi
-            //we raise the request dimension so that when we reduce it it will have the
-            //wanted dpi.
-            dim.width /= resolution[0];
-            dim.height /= resolution[1];
-            
-            final OSMTileMapServer server = layer.getServer();
-            
+            final GeneralEnvelope env = new GeneralEnvelope(context2D.getCanvasObjectiveBounds2D());            
+            final OSMTileMapServer server = layer.getServer();            
             final CoordinateReferenceSystem matrixCRS = server.getCoordinateReferenceSystem();
             final GeneralEnvelope matrixEnv;
             try {
@@ -137,13 +125,21 @@ public final class OSMTMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 if(Double.isNaN(matrixEnv.getMinimum(1))){ matrixEnv.setRange(1, maxExt.getMinimum(1), matrixEnv.getMaximum(1));  }
                 if(Double.isNaN(matrixEnv.getMaximum(1))){ matrixEnv.setRange(1, matrixEnv.getMinimum(1), maxExt.getMaximum(1));  }
             }
+                        
+            //the wanted image resolution
+            final double wantedResolution;
+            try {
+                wantedResolution = GO2Utilities.pixelResolution(context2D, matrixEnv);
+            } catch (TransformException ex) {
+                monitor.exceptionOccured(ex, Level.WARNING);
+                return;
+            }
             
             final double scale0Resolution = maxExt.getSpan(0) / OSMTMSUtilities.BASE_TILE_SIZE;
-            
-            //the wanted image resolution
-            final double wantedResolution = matrixEnv.getSpan(0) / dim.getWidth() ;
-            final double result = Math.log(wantedResolution/scale0Resolution) / Math.log(0.5d);        
-            int scale = Math.round( (float)result );
+            final double result = Math.log(wantedResolution/scale0Resolution) / Math.log(0.5d);
+            //15% tolerance, since the renderer do not use the exact tile scales
+            //this allow us to preserve propert text size whatever level
+            int scale = Math.round( (float)(result-0.15d) ); 
             if(scale < 0){ scale = 0; }
             if(scale > server.getMaxZoomLevel()){ scale = server.getMaxZoomLevel(); }
                                            
@@ -164,12 +160,10 @@ public final class OSMTMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final double bBoxMaxX = matrixEnv.getMaximum(0);
             final double bBoxMinY = matrixEnv.getMinimum(1);
             final double bBoxMaxY = matrixEnv.getMaximum(1);
-            double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
-            double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
-            double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
-            double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
-            
-            System.out.println(">>>>>> X["+ tileMinCol +" ... "+ tileMaxCol + "]  Y["+ tileMinRow +" ... "+ tileMaxRow +"]");
+            final double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+            final double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+            final double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
+            final double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
             
             for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
                 for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
@@ -199,8 +193,7 @@ public final class OSMTMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 }
             }
                                
-            paint(context2D, queries);            
-            
+            paint(context2D, queries);
         }
 
         @Override
