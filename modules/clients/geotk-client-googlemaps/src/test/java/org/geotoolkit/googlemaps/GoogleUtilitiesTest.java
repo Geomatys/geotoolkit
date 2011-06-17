@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.googlemaps;
 
-import java.awt.Point;
-import org.geotoolkit.googlemaps.map.GoogleMapsUtilities;
 import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 
@@ -44,80 +42,80 @@ public class GoogleUtilitiesTest {
         //ZOOM LEVEL 0 test
         
         //must be the center of the pseudo-mercator projection
-        position = getCenter(0, new Point(0, 0));        
+        position = getCenter(0, 0, 0);        
         assertEquals(MERCATOR_EXTEND.getMedian(0), position.getOrdinate(0), DELTA);
         assertEquals(MERCATOR_EXTEND.getMedian(1), position.getOrdinate(1), DELTA);
         
         //ZOOM LEVEL 1 test
         
-        position = getCenter(1, new Point(1, 1));
+        position = getCenter(1, 1, 1);
         assertEquals(1e7, position.getOrdinate(0), DELTA);
         assertEquals(-1e7, position.getOrdinate(1), DELTA);
         
-        position = getCenter(1, new Point(0, 1));
+        position = getCenter(1, 0, 1);
         assertEquals(-1e7, position.getOrdinate(0), DELTA);
         assertEquals(-1e7, position.getOrdinate(1), DELTA);
         
-        position = getCenter(1, new Point(1, 0));
+        position = getCenter(1, 1, 0);
         assertEquals(1e7, position.getOrdinate(0), DELTA);
         assertEquals(1e7, position.getOrdinate(1), DELTA);
         
-        position = getCenter(1, new Point(0, 0));
+        position = getCenter(1, 0, 0);
         assertEquals(-1e7, position.getOrdinate(0), DELTA);
         assertEquals(1e7, position.getOrdinate(1), DELTA);
         
         
         //ZOOM LEVEL 2 test
         
-        position = getCenter(2, new Point(0, 0));
+        position = getCenter(2, 0, 0);
         assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(1.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(1, 0));
+        position = getCenter(2, 1, 0);
         assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(1.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(2, 0));
+        position = getCenter(2, 2, 0);
         assertEquals(0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(1.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(3, 0));
+        position = getCenter(2, 3, 0);
         assertEquals(1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(1.5e7, position.getOrdinate(1), DELTA);
         
-        position = getCenter(2, new Point(0, 1));
+        position = getCenter(2, 0, 1);
         assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(0.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(1, 1));
+        position = getCenter(2, 1, 1);
         assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(0.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(2, 1));
+        position = getCenter(2, 2, 1);
         assertEquals(0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(0.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(3, 1));
+        position = getCenter(2, 3, 1);
         assertEquals(1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(0.5e7, position.getOrdinate(1), DELTA);
         
-        position = getCenter(2, new Point(0, 2));
+        position = getCenter(2, 0, 2);
         assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-0.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(1, 2));
+        position = getCenter(2, 1, 2);
         assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-0.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(2, 2));
+        position = getCenter(2, 2, 2);
         assertEquals(0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-0.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(3, 2));
+        position = getCenter(2, 3, 2);
         assertEquals(1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-0.5e7, position.getOrdinate(1), DELTA);
         
-        position = getCenter(2, new Point(0, 3));
+        position = getCenter(2, 0, 3);
         assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-1.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(1, 3));
+        position = getCenter(2, 1, 3);
         assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-1.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(2, 3));
+        position = getCenter(2, 2, 3);
         assertEquals(0.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-1.5e7, position.getOrdinate(1), DELTA);        
-        position = getCenter(2, new Point(3, 3));
+        position = getCenter(2, 3, 3);
         assertEquals(1.5e7, position.getOrdinate(0), DELTA);
         assertEquals(-1.5e7, position.getOrdinate(1), DELTA);
         
