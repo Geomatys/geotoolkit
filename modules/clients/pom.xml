@@ -97,6 +97,7 @@
     <module>geotk-clients-core</module>
     <module>geotk-client-csw</module>
     <module>geotk-client-osm</module>
+    <module>geotk-client-osmtms</module>
     <module>geotk-client-sos</module>
     <module>geotk-client-wcs</module>
     <module>geotk-client-wfs</module>
