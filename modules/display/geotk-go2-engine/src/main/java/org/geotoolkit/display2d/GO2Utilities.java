@@ -135,6 +135,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
@@ -820,6 +821,37 @@ public final class GO2Utilities {
         return new AffineTransform(scaleX, 0, 0, scaleY, minx, maxy);
     }
 
+    /**
+     * Calculate the most accurate pixel resolution for the given envelope.
+     * 
+     * @param context2D
+     * @param wanted
+     * @return double, in envelope crs unit by pixel
+     * @throws TransformException 
+     */
+    public static double pixelResolution(final RenderingContext2D context2D, final Envelope wanted) throws TransformException{
+        final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+        final double[] resolution = context2D.getResolution(context2D.getDisplayCRS());
+
+        //resolution contain dpi adjustments, to obtain an image of the correct dpi
+        //we raise the request dimension so that when we reduce it it will have the
+        //wanted dpi.
+        dim.width /= resolution[0];
+        dim.height /= resolution[1];
+        
+        final MathTransform objToDisp = context2D.getObjectiveToDisplay();
+        
+        Envelope cropped = wanted;
+        if(!CRS.equalsApproximatively(context2D.getCanvasObjectiveBounds2D(), wanted.getCoordinateReferenceSystem())){
+            cropped = CRS.transform(wanted, context2D.getObjectiveCRS2D());
+        }
+        
+        cropped = CRS.transform(objToDisp, cropped);
+        
+        //we assume we only have a regular
+        return wanted.getSpan(0) / cropped.getSpan(0);  
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // renderers cache /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

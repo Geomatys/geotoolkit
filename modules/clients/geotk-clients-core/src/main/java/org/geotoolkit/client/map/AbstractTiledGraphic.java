@@ -24,6 +24,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -58,85 +65,102 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
     protected void paint(final RenderingContext2D context, 
             final Map<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request>  queries) {
         final CanvasMonitor monitor = context.getMonitor();
-                
-        final Collection<Thread> threads = new ArrayList<Thread>();
+        
+        //bypass all if no queries
+        if(queries.isEmpty()){
+            return;
+        }
+        
+        //bypass thread creation when only a single tile
+        if(queries.size() == 1){
+            paint(context, queries.entrySet().iterator().next());            
+            return;
+        }
+                  
+        final ThreadPoolExecutor exec = new ThreadPoolExecutor(0, 8, 100, TimeUnit.MILLISECONDS, 
+                new ArrayBlockingQueue<Runnable>(queries.size()));
+            
+        
+        final Collection<FutureTask> tasks = new ArrayList<FutureTask>();
         
         for(final Entry<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request> entry : queries.entrySet()){
-            
-            //check if rendering stopped requested
+                        
             if(monitor.stopRequested()){
                 return;
             }
             
-            final Thread thread = new Thread(){
+            final FutureTask task = new FutureTask(new Callable() {
                 @Override
-                public void run() {
-                    final CoordinateReferenceSystem tileCRS = entry.getKey().getKey();
-                    final MathTransform gridToCRS = entry.getKey().getValue();
-                    final Request request = entry.getValue();
-
-                    final BufferedImage image;
-                    InputStream is = null;
-                    try {
-                        is = request.getResponseStream();
-                        image = ImageIO.read(is);
-                    } catch (IOException io) {
-                        monitor.exceptionOccured(io, Level.WARNING);
-                        return;
-                    } finally {
-                        if (is != null) {
-                            try {
-                                is.close();
-                            } catch (IOException ex) {
-                                monitor.exceptionOccured(ex, Level.WARNING);
-                            }
-                        }
-                    }
-
-                    String urlpath;
-                    try {
-                        urlpath = request.getURL().toString();
-                        System.out.println(urlpath);
-                    } catch (MalformedURLException ex) {
-                        urlpath = "Malformed URL";
-                    }
-
-                    if (image == null) {
-                        String path;
-                        try {
-                            path = request.getURL().toString();
-                        } catch (MalformedURLException ex) {
-                            path = "Malformed URL";
-                        }
-                        monitor.exceptionOccured(new PortrayalException("Server did not return an image for URL : \n" + path), Level.WARNING);
-                        return;
-                    }
-
-                    final GridCoverageFactory gc = new GridCoverageFactory();
-
-                    final GridCoverage2D coverage = gc.create("tile", image,
-                        tileCRS, gridToCRS, null, null, null);
-                    System.out.println(coverage.getEnvelope2D());
-                    paint(context, coverage);
+                public Object call() throws Exception {
+                    paint(context, entry);
+                    return null;
                 }
-            };
-            threads.add(thread);
-            thread.start();
+            });
+            
+            tasks.add(task);
+            exec.execute(task);            
         }
         
         //wait for all thread to end
-        for(Thread t : threads){
+        for(FutureTask t : tasks){
+            if(monitor.stopRequested()){
+                return;
+            }
+            
             try {
-                t.join();
+                t.get(2000,TimeUnit.MILLISECONDS);
             } catch (InterruptedException ex) {
+                Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ExecutionException ex) {
+                Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TimeoutException ex) {
                 Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
     }
     
-    private synchronized void paint(final RenderingContext2D context, final GridCoverage2D coverage){
+    private static void paint(final RenderingContext2D context,
+            final Entry<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request> entry){
         final CanvasMonitor monitor = context.getMonitor();
+        
+        final CoordinateReferenceSystem tileCRS = entry.getKey().getKey();
+        final MathTransform gridToCRS = entry.getKey().getValue();
+        final Request request = entry.getValue();
+
+        final BufferedImage image;
+        InputStream is = null;
+        try {
+            is = request.getResponseStream();
+            image = ImageIO.read(is);
+        } catch (IOException io) {
+            monitor.exceptionOccured(io, Level.WARNING);
+            return;
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    monitor.exceptionOccured(ex, Level.WARNING);
+                }
+            }
+        }
+
+        if (image == null) {
+            String path;
+            try {
+                path = request.getURL().toString();
+            } catch (MalformedURLException ex) {
+                path = "Malformed URL";
+            }
+            monitor.exceptionOccured(new PortrayalException("Server did not return an image for URL : \n" + path), Level.WARNING);
+            return;
+        }
+
+        final GridCoverageFactory gc = new GridCoverageFactory();
+
+        final GridCoverage2D coverage = gc.create("tile", image,
+            tileCRS, gridToCRS, null, null, null);
         try {
             GO2Utilities.portray(context, coverage);
         } catch (PortrayalException ex) {
@@ -144,5 +168,5 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
             return;
         }
     }
-        
+         
 }
