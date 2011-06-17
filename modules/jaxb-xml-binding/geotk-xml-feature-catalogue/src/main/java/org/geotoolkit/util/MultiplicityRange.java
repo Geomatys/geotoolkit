@@ -125,7 +125,7 @@ public class MultiplicityRange {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + this.lower;
+        hash = 97 * hash + (this.lower != null ? this.lower.hashCode() : 0);
         hash = 97 * hash + (this.upper != null ? this.upper.hashCode() : 0);
         return hash;
     }
