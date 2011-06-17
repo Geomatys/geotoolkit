@@ -14,32 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.osmtms.model;
 
-import org.geotoolkit.client.Request;
-
+import java.awt.geom.Point2D;
+import org.geotoolkit.client.map.DefaultGridMosaic;
+import org.geotoolkit.client.map.Pyramid;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetTileRequest extends Request {
+public class OSMTMSMosaic extends DefaultGridMosaic{
 
-    int getScaleLevel();
+    private final int scaleLevel;
     
-    void setScaleLevel(int level);
+    public OSMTMSMosaic(Pyramid pyramid, Point2D upperLeft, int width, int height, 
+            int tileHeight, int tileWidth, double tileSpanX, double tileSpanY, int scaleLevel) {
+        super(pyramid,upperLeft,width,height,tileHeight,tileWidth,tileSpanX,tileSpanY);
+        this.scaleLevel = scaleLevel;
+    }
+
+    public int getScaleLevel() {
+        return scaleLevel;
+    }
     
-    int getTileRow();
-
-    void setTileRow(int tr);
-
-    int getTileCol();
-
-    void setTileCol(int tr);
-    
-    String getExtension();
-    
-    void setExtension(String ext);
-
 }

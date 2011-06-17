@@ -19,6 +19,8 @@ package org.geotoolkit.osmtms;
 import java.net.URL;
 
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -31,6 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class OSMTileMapServer extends AbstractServer{
     
+    private final OSMTMSPyramidSet pyramidSet;
     private final CoordinateReferenceSystem serverCRS;
     private final int maxZoomLevel;
     
@@ -58,8 +61,13 @@ public class OSMTileMapServer extends AbstractServer{
         super(serverURL,security);
         this.serverCRS = crs;
         this.maxZoomLevel = maxZoomLevel;
+        pyramidSet = new OSMTMSPyramidSet(maxZoomLevel, crs);
     }
 
+    public PyramidSet getPyramidSet(){
+        return pyramidSet;
+    }
+    
     /**
      * OSM TMS provide images for a single CRS. never null.
      */
