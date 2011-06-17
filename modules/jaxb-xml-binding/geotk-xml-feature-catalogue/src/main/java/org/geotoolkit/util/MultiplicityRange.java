@@ -69,7 +69,7 @@ public class MultiplicityRange {
     /**
      * Gets the value of the lower property.
      */
-    public int getLower() {
+    public Integer getLower() {
         return lower;
     }
 
