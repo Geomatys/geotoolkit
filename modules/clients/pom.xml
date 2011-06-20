@@ -103,6 +103,7 @@
     <module>geotk-client-wfs</module>
     <module>geotk-client-wms</module>
     <module>geotk-client-ncwms</module>
+    <module>geotk-client-wmts</module>
     <module>geotk-client-wps</module>
     <module>geotk-client-googlemaps</module>
   </modules>
