@@ -120,8 +120,8 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
         }
         
 
-        final double tileMatrixMinX = maxExt.getMinimum(0);
-        final double tileMatrixMaxY = maxExt.getMaximum(1);
+        final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
+        final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
         final double tileWidth = mosaic.getTileWidth();
         final double tileHeight = mosaic.getTileHeight();
         final double tileSpanX = mosaic.getTileSpanX();
@@ -145,6 +145,11 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
 
+                if(mosaic.isMissing(tileCol, tileRow)){
+                    //tile not available
+                    continue;
+                }
+                
                 //tile bbox
                 final double leftX  = tileMatrixMinX + tileCol * tileSpanX ;
                 final double upperY = tileMatrixMaxY - tileRow * tileSpanY;

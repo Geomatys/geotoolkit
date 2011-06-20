@@ -33,7 +33,7 @@ public interface GridMosaic {
      * @return pyramid containing this mosaic.
      */
     Pyramid getPyramid();
-    
+        
     /**
      * @return upper left corner of the mosaic, expressed in pyramid CRS.
      */
@@ -68,5 +68,16 @@ public interface GridMosaic {
      * @return image height in cell units.
      */
     int getTileHeight();
+    
+    /**
+     * Some services define some missing tiles.
+     * WMTS for example may define for a given layer a limitation saying
+     * only tiles for column 10 to 30 are available. 
+     * 
+     * @param col
+     * @param row
+     * @return true is tile is missing
+     */
+    boolean isMissing(int col, int row);
     
 }

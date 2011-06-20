@@ -88,5 +88,10 @@ public class DefaultGridMosaic implements GridMosaic{
     public int getTileHeight() {
         return tileHeight;
     }
+
+    @Override
+    public boolean isMissing(int col, int row) {
+        return false;
+    }
     
 }
