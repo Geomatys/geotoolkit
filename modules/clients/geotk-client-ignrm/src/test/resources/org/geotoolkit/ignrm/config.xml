@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config>
+    <tokenTimeOut>1200</tokenTimeOut>
+    <boundingBox minx="-10" miny="40" maxx="30" maxy="60"/>
+    <resources>
+        <resource>
+            <name>couche</name>
+            <type>WMSC, WMS, WFS</type>
+            <url>http://test.com</url>
+        </resource>
+    </resources>
+</config>
+
