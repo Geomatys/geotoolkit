@@ -17,6 +17,7 @@
 package org.geotoolkit.client.map;
 
 import java.awt.geom.Point2D;
+import org.opengis.geometry.Envelope;
 
 /**
  * A Grid Mosaic in a grid of image. all images share common attributes :
@@ -68,6 +69,14 @@ public interface GridMosaic {
      * @return image height in cell units.
      */
     int getTileHeight();
+    
+    /**
+     * 
+     * @param col
+     * @param row
+     * @return Envelope of the given tile.
+     */
+    Envelope getEnvelope(int col, int row);
     
     /**
      * Some services define some missing tiles.

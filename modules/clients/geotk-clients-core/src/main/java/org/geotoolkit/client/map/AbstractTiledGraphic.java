@@ -55,8 +55,18 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
 
+    private boolean silentErrors = false;
+    
     public AbstractTiledGraphic(final J2DCanvas canvas, final CoordinateReferenceSystem crs){
         super(canvas, crs);
+    }
+
+    public void setSilentErrors(boolean silentErrors) {
+        this.silentErrors = silentErrors;
+    }
+
+    public boolean isSilentErrors() {
+        return silentErrors;
     }
     
     /**
@@ -120,7 +130,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
         
     }
     
-    private static void paint(final RenderingContext2D context,
+    private void paint(final RenderingContext2D context, 
             final Entry<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request> entry){
         final CanvasMonitor monitor = context.getMonitor();
         
@@ -147,13 +157,15 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
         }
 
         if (image == null) {
-            String path;
-            try {
-                path = request.getURL().toString();
-            } catch (MalformedURLException ex) {
-                path = "Malformed URL";
+            if(!silentErrors){
+                String path;
+                try {
+                    path = request.getURL().toString();
+                } catch (MalformedURLException ex) {
+                    path = "Malformed URL";
+                }
+                monitor.exceptionOccured(new PortrayalException("Server did not return an image for URL : \n" + path), Level.WARNING);
             }
-            monitor.exceptionOccured(new PortrayalException("Server did not return an image for URL : \n" + path), Level.WARNING);
             return;
         }
 

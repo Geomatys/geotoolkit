@@ -227,6 +227,7 @@ public abstract class AbstractRequest implements Request {
 
     protected InputStream openRichException(final URLConnection cnx) throws IOException {
         try {
+            cnx.setConnectTimeout(20000);
             InputStream stream = cnx.getInputStream();
             //security
             stream = security.decrypt(stream);

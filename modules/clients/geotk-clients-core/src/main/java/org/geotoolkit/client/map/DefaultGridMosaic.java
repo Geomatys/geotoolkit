@@ -17,6 +17,8 @@
 package org.geotoolkit.client.map;
 
 import java.awt.geom.Point2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.opengis.geometry.Envelope;
 
 /**
  * Default mosaic grid.
@@ -90,8 +92,23 @@ public class DefaultGridMosaic implements GridMosaic{
     }
 
     @Override
+    public Envelope getEnvelope(int row, int col) {
+        final double minX = getUpperLeftCorner().getX();
+        final double maxY = getUpperLeftCorner().getY();
+        final double spanX = getTileSpanX();
+        final double spanY = getTileSpanY();
+        
+        final GeneralEnvelope envelope = new GeneralEnvelope(
+                getPyramid().getCoordinateReferenceSystem());
+        envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
+        envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
+        
+        return envelope;
+    }
+    
+    @Override
     public boolean isMissing(int col, int row) {
         return false;
     }
-    
+
 }

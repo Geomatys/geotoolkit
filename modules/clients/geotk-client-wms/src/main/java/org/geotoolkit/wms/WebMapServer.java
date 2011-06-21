@@ -174,6 +174,7 @@ public class WebMapServer extends AbstractServer{
                 getCaps.getHeaderMap().putAll(headerMap);
 
                 try {
+                    System.out.println(getCaps.getURL());
                     capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), version);
                 } catch (Exception ex) {
                     capabilities = null;

@@ -122,6 +122,8 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
         final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
         final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
+        final int gridWidth = mosaic.getWidth();
+        final int gridHeight = mosaic.getHeight();
         final double tileWidth = mosaic.getTileWidth();
         final double tileHeight = mosaic.getTileHeight();
         final double tileSpanX = mosaic.getTileSpanX();
@@ -137,12 +139,27 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
         final double bBoxMaxX = wantedEnv.getMaximum(0);
         final double bBoxMinY = wantedEnv.getMinimum(1);
         final double bBoxMaxY = wantedEnv.getMaximum(1);
-        final double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
-        final double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
-        final double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
-        final double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
+        double tileMinCol = Math.floor( (bBoxMinX - tileMatrixMinX) / tileSpanX + epsilon);
+        double tileMaxCol = Math.floor( (bBoxMaxX - tileMatrixMinX) / tileSpanX - epsilon)+1;
+        double tileMinRow = Math.floor( (tileMatrixMaxY - bBoxMaxY) / tileSpanY + epsilon);
+        double tileMaxRow = Math.floor( (tileMatrixMaxY - bBoxMinY) / tileSpanY - epsilon)+1;
 
+        //ensure we dont go out of the grid
+        if(tileMinCol < 0) tileMinCol = 0;
+        if(tileMaxCol > gridWidth) tileMaxCol = gridWidth-1;
+        if(tileMinRow < 0) tileMinRow = 0;
+        if(tileMaxRow > gridHeight) tileMaxRow = gridHeight-1;
+                
+        //don't render layer if it requieres more then 100 queries
+        if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > 100 ){
+            System.out.println("Too much tiles requiered to render layer at this scale.");
+            return;
+        }
+        
+        loopCol:
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
+            
+            loopRow:
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
 
                 if(mosaic.isMissing(tileCol, tileRow)){
@@ -168,7 +185,7 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
                 key = new SimpleImmutableEntry<CoordinateReferenceSystem, MathTransform>(pyramidCRS, gridToCRS);
 
                 queries.put(key,request);
-
+                //break loopCol;
             }
         }
 
