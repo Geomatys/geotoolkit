@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wmsc.map;
 
-import org.geotoolkit.client.map.PyramidSet;
 import org.geotoolkit.wms.map.WMSMapLayer;
 import org.geotoolkit.wmsc.WebMapServerCached;
 
@@ -26,29 +25,18 @@ import org.geotoolkit.wmsc.WebMapServerCached;
  * @module pending
  */
 public class WMSCMapLayer extends WMSMapLayer{
-
-    private final PyramidSet pyramidset;
     
     /**
-     * WMSC layer are not defined by any specification. each server implementing it
-     * define it's own schema to describe tile sets. The user is responsible to provide
-     * a pyramid set at construction time.
      * 
      * @param server
-     * @param pyramidset
-     * @param layer 
+     * @param layer : only one layer possible in wms-c
      */
-    public WMSCMapLayer(final WebMapServerCached server, final PyramidSet pyramidset, final String layer) {
+    public WMSCMapLayer(final WebMapServerCached server, final String layer) {
         super(server, layer);
-        this.pyramidset = pyramidset;
         
         //replace wms graphic builder by wms-c builder
         graphicBuilders().clear();
         graphicBuilders().add(WMSCGraphicBuilder.INSTANCE);
-    }
-
-    public PyramidSet getPyramid() {
-        return pyramidset;
     }
     
 }

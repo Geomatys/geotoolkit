@@ -23,7 +23,9 @@ import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.WMSVersion;
 
 /**
- *
+ * WMS-C is a osgeo profile for WMS 1.1.1.
+ * 
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -33,28 +35,20 @@ public class WebMapServerCached extends WebMapServer{
      * Builds a web map server with the given server url and version.
      *
      * @param serverURL The server base url.
-     * @param version A string representation of the service version.
-     * @throws IllegalArgumentException if the version specified is not applyable.
      */
-    public WebMapServerCached(final URL serverURL, final String version) {
-        super(serverURL,version);
-        init();
+    public WebMapServerCached(final URL serverURL) {
+        super(serverURL,"1.1.1");
     }
     
     /**
      * Builds a web map server with the given server url and version.
      *
      * @param serverURL The server base url.
-     * @param version The service version.
      */
-    public WebMapServerCached(final URL serverURL, final ClientSecurity security, final WMSVersion version) {
-        super(serverURL, security, version, null);
-        init();
+    public WebMapServerCached(final URL serverURL, final ClientSecurity security) {
+        super(serverURL, security, WMSVersion.v111, null);
     }
     
-    private void init(){
-    }
-
     @Override
     public GetMapRequest createGetMap() {
         final GetMapRequest request = super.createGetMap();

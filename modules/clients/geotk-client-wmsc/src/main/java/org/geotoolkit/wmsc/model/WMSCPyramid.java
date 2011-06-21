@@ -16,8 +16,13 @@
  */
 package org.geotoolkit.wmsc.model;
 
+import java.awt.geom.Point2D;
+import java.util.List;
 import org.geotoolkit.client.map.DefaultPyramid;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.wmsc.xml.v111.TileSet;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -25,15 +30,35 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public class WMSCPyramid extends DefaultPyramid{
+        
+    private final TileSet tileset;
+    private final Point2D upperleft;
     
-    public WMSCPyramid(final WMSCPyramidSet set){
-        super(set, null);
+    public WMSCPyramid(final WMSCPyramidSet set, final TileSet tileset) throws NoSuchAuthorityCodeException, FactoryException{
+        super(set,CRS.decode(tileset.getSRS()));        
+        this.tileset = tileset;
+        
+        this.upperleft = new Point2D.Double(
+                tileset.getBoundingBox().getMinx(), 
+                tileset.getBoundingBox().getMaxy());
+        
+        final List<Double> ress = tileset.getResolutions();
+        if(ress == null){
+            return;
+        }
+        
+        for(Double res : tileset.getResolutions()){
+            getMosaics().put(res, new WMSCMosaic(this, res));
+        }
+        
     }
 
-    @Override
-    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        //TODO
-        return super.getCoordinateReferenceSystem();
+    public TileSet getTileset() {
+        return tileset;
     }
- 
+     
+    public Point2D getUpperLeftCorner(){
+        return upperleft;
+    }
+    
 }

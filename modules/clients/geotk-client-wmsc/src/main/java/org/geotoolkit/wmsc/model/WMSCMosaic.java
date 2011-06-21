@@ -17,8 +17,12 @@
 package org.geotoolkit.wmsc.model;
 
 import java.awt.geom.Point2D;
+
 import org.geotoolkit.client.map.GridMosaic;
 import org.geotoolkit.client.map.Pyramid;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.wms.xml.v111.BoundingBox;
+
 import org.opengis.geometry.Envelope;
 
 /**
@@ -28,54 +32,93 @@ import org.opengis.geometry.Envelope;
  */
 public class WMSCMosaic implements GridMosaic{
 
+    private final WMSCPyramid pyramid;
+    private final double scale;
+    
+    private final int tileWidth;
+    private final int tileHeight;
+    private final double tileSpanX;
+    private final double tileSpanY;
+    private final int gridWidth;
+    private final int gridHeight;
+
+    public WMSCMosaic(final WMSCPyramid pyramid, final double scaleLevel) {
+        this.pyramid = pyramid;
+        this.scale = scaleLevel;
+                
+        tileWidth = pyramid.getTileset().getWidth();
+        tileHeight = pyramid.getTileset().getHeight();
+        
+        final BoundingBox env = pyramid.getTileset().getBoundingBox();
+        final double spanX = env.getMaxx() - env.getMinx();
+        final double spanY = env.getMaxy() - env.getMiny();
+        
+        gridWidth  = (int) (spanX / (scale*tileWidth));
+        gridHeight = (int) (spanY / (scale*tileHeight));
+        
+        tileSpanX = spanX / gridWidth ;
+        tileSpanY = spanY / gridHeight ;   
+    }
+    
     @Override
     public Pyramid getPyramid() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return pyramid;
     }
 
     @Override
     public Point2D getUpperLeftCorner() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return pyramid.getUpperLeftCorner();
     }
 
     @Override
     public int getWidth() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return gridWidth;
     }
 
     @Override
     public int getHeight() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return gridHeight;
     }
 
     @Override
     public double getTileSpanX() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return tileSpanX;
     }
 
     @Override
     public double getTileSpanY() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return tileSpanY;
     }
 
     @Override
     public int getTileWidth() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return tileWidth;
     }
 
     @Override
     public int getTileHeight() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return tileHeight;
     }
 
     @Override
     public Envelope getEnvelope(int col, int row) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        final double minX = getUpperLeftCorner().getX();
+        final double maxY = getUpperLeftCorner().getY();
+        final double spanX = getTileSpanX();
+        final double spanY = getTileSpanY();
+        
+        final GeneralEnvelope envelope = new GeneralEnvelope(
+                getPyramid().getCoordinateReferenceSystem());
+        envelope.setRange(0, minX + col*spanX, minX + (col+1)*spanX);
+        envelope.setRange(1, maxY - (row+1)*spanY, maxY - row*spanY);
+        
+        return envelope;
     }
 
     @Override
     public boolean isMissing(int col, int row) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return false;
     }
     
 }

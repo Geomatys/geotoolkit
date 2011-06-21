@@ -34,9 +34,7 @@ import org.opengis.display.canvas.Canvas;
  * @module pending
  */
 public class WMSCGraphicBuilder extends WMSGraphicBuilder {
-    
-    private static final Logger LOGGER = Logging.getLogger(WMSCGraphicBuilder.class);
-    
+        
     /**
      * One instance for all WMS-C map layers. Object is concurrent.
      */
