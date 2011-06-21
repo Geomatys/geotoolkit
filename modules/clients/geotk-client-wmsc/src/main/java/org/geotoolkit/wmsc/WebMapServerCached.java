@@ -17,6 +17,7 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -46,17 +47,18 @@ public class WebMapServerCached extends WebMapServer{
      * @param serverURL The server base url.
      * @param version The service version.
      */
-    public WebMapServerCached(final URL serverURL, final WMSVersion version) {
-        super(serverURL, version, null);
+    public WebMapServerCached(final URL serverURL, final ClientSecurity security, final WMSVersion version) {
+        super(serverURL, security, version, null);
         init();
     }
     
     private void init(){
-   }
+    }
 
     @Override
     public GetMapRequest createGetMap() {
-        final GetMapRequest request = super.createGetMap();        
+        final GetMapRequest request = super.createGetMap();
+        request.dimensions().put("TILED", "true");
         return request;
     }
     
