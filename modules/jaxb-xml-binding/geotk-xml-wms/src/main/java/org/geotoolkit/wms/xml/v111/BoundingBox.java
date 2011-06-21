@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractBoundingBox;
 
 
@@ -69,7 +70,7 @@ public class BoundingBox extends AbstractBoundingBox{
      * @param version
      */
     public BoundingBox(final String crs, final double minx, final double miny,
-            final double maxx, final double maxy, final double resx, final double resy, final String version) {
+            final double maxx, final double maxy, final Double resx, final Double resy, final String version) {
         this.maxx = maxx;
         this.maxy = maxy;
         this.minx = minx;
@@ -142,4 +143,56 @@ public class BoundingBox extends AbstractBoundingBox{
         return getSRS();
     }
 
+    /**
+     * Verifie si cette entree est identique a l'objet specifie.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BoundingBox) {
+            final BoundingBox that = (BoundingBox) object;
+
+            
+            return Utilities.equals(this.maxx, that.maxx) &&
+                   Utilities.equals(this.maxy,     that.maxy)     &&
+                   Utilities.equals(this.minx,   that.minx)   &&
+                   Utilities.equals(this.miny,   that.miny)   &&
+                   Utilities.equals(this.resx,   that.resx)   &&
+                   Utilities.equals(this.resy,   that.resy)   &&
+                   Utilities.equals(this.srs,   that.srs);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.srs != null ? this.srs.hashCode() : 0);
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.minx) ^ (Double.doubleToLongBits(this.minx) >>> 32));
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.miny) ^ (Double.doubleToLongBits(this.miny) >>> 32));
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.maxx) ^ (Double.doubleToLongBits(this.maxx) >>> 32));
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.maxy) ^ (Double.doubleToLongBits(this.maxy) >>> 32));
+        hash = 97 * hash + (this.resx != null ? this.resx.hashCode() : 0);
+        hash = 97 * hash + (this.resy != null ? this.resy.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[BoundingBox]\n");
+        s.append("minx=").append(minx).append(" maxx=").append(maxx).append(" miny=").append(miny).append(" maxy=").append(maxy);
+        
+        if (srs != null) {
+            s.append("srs:").append(srs).append('\n');
+        }
+        if (resx != null) {
+            s.append("resx:").append(resx).append('\n');
+        }
+        if (resy != null) {
+           s.append("resy:").append(resy).append('\n');
+        }
+        return s.toString();
+    }
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml;
 
+import org.geotoolkit.wms.xml.v111.VendorSpecificCapabilities;
 import java.io.StringReader;
 import java.util.List;
 import org.geotoolkit.inspire.xml.vs.LanguageType;
@@ -51,7 +52,9 @@ import org.geotoolkit.temporal.object.DefaultPeriod;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.geotoolkit.wms.xml.v130.Capability;
+import org.geotoolkit.wmsc.xml.v111.TileSet;
 
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
@@ -93,14 +96,137 @@ public class WmsXmlBindingTest {
     }
 
     /**
-     * Test simple Record Marshalling.
-     *
      * @throws java.lang.Exception
      */
     @Test
-    public void unmarshallingTest() throws JAXBException {
+    public void WMSCUnmarshallingTest() throws JAXBException {
+        String xml =
+        "<Capability>" + '\n' +
+        "    <VendorSpecificCapabilities>" + '\n' +
+        "     <TileSet>" + '\n' +
+        "        <SRS>EPSG:310024802</SRS>" + '\n' +
+        "        <BoundingBox SRS=\"EPSG:310024802\" minx=\"-1048576\" miny=\"3670016\" maxx=\"2621440\" maxy=\"8388608\" />" + '\n' +
+        "        <Resolutions>0.5 1 2 4 8</Resolutions>" + '\n' +
+        "        <Width>256</Width>" + '\n' +
+        "        <Height>256</Height>" + '\n' +
+        "        <Format>image/png</Format>" + '\n' +
+        "        <Layers>ADMINISTRATIVEUNITS.BOUNDARIES</Layers>" + '\n' +
+        "    </TileSet>" + '\n' +
+        "    <TileSet>" + '\n' +
+        "        <SRS>EPSG:310915814</SRS>" + '\n' +
+        "        <BoundingBox SRS=\"EPSG:310915814\" minx=\"-6791168\" miny=\"1761280\" maxx=\"-6553600\" maxy=\"2023424\" />" + '\n' +
+        "        <Resolutions>0.5 1 2 4</Resolutions>" + '\n' +
+        "        <Width>256</Width>" + '\n' +
+        "        <Height>256</Height>" + '\n' +
+        "        <Format>image/png</Format>" + '\n' +
+        "        <Layers>ADMINISTRATIVEUNITS.BOUNDARIES</Layers>" + '\n' +
+        "    </TileSet>" + '\n' +
+        "    </VendorSpecificCapabilities>" + '\n' +
+        "    </Capability>" + '\n';
 
+        final Object unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
 
+        assertNotNull(unmarshalled);
+        assertTrue(unmarshalled instanceof org.geotoolkit.wms.xml.v111.Capability);
+
+        org.geotoolkit.wms.xml.v111.Capability result = (org.geotoolkit.wms.xml.v111.Capability) unmarshalled;
+        
+        org.geotoolkit.wms.xml.v111.Capability expResult = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
+        VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
+        
+        BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null, null);
+        List<Double> res = new ArrayList<Double>();
+        res.add(0.5);
+        res.add(1.0);
+        res.add(2.0);
+        res.add(4.0);
+        res.add(8.0);
+        
+        TileSet ts = new TileSet("EPSG:310024802", bb1, res, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
+        spec.getTileSet().add(ts);
+        
+        BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null, null);
+        List<Double> res2 = new ArrayList<Double>();
+        res2.add(0.5);
+        res2.add(1.0);
+        res2.add(2.0);
+        res2.add(4.0);
+        
+        TileSet ts2 = new TileSet("EPSG:310915814", bb2, res2, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
+        spec.getTileSet().add(ts2);
+        expResult.setVendorSpecificCapabilities(spec);
+        
+        assertEquals(expResult, result);
+        
+    }
+    
+    /**
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void WMSCMarshallingTest() throws JAXBException {
+        String expResult =
+        "<Capability >" + '\n' +
+        "    <VendorSpecificCapabilities>" + '\n' +
+        "        <TileSet>" + '\n' +
+        "            <SRS>EPSG:310024802</SRS>" + '\n' +
+        "            <BoundingBox maxy=\"8388608.0\" maxx=\"2621440.0\" miny=\"3670016.0\" minx=\"-1048576.0\" SRS=\"EPSG:310024802\"/>" + '\n' +
+        "            <Resolutions>0.5 1.0 2.0 4.0 8.0</Resolutions>" + '\n' +
+        "            <Width>256</Width>" + '\n' +
+        "            <Height>256</Height>" + '\n' +
+        "            <Format>image/png</Format>" + '\n' +
+        "            <Layers>ADMINISTRATIVEUNITS.BOUNDARIES</Layers>" + '\n' +
+        "        </TileSet>" + '\n' +
+        "        <TileSet>" + '\n' +
+        "            <SRS>EPSG:310915814</SRS>" + '\n' +
+        "            <BoundingBox maxy=\"2023424.0\" maxx=\"-6553600.0\" miny=\"1761280.0\" minx=\"-6791168.0\" SRS=\"EPSG:310915814\"/>" + '\n' +
+        "            <Resolutions>0.5 1.0 2.0 4.0</Resolutions>" + '\n' +
+        "            <Width>256</Width>" + '\n' +
+        "            <Height>256</Height>" + '\n' +
+        "            <Format>image/png</Format>" + '\n' +
+        "            <Layers>ADMINISTRATIVEUNITS.BOUNDARIES</Layers>" + '\n' +
+        "        </TileSet>" + '\n' +
+        "    </VendorSpecificCapabilities>" + '\n' +
+        "</Capability>" + '\n';
+
+       
+        
+        org.geotoolkit.wms.xml.v111.Capability capa = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
+        VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
+        
+        BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null, null);
+        List<Double> res = new ArrayList<Double>();
+        res.add(0.5);
+        res.add(1.0);
+        res.add(2.0);
+        res.add(4.0);
+        res.add(8.0);
+        
+        TileSet ts = new TileSet("EPSG:310024802", bb1, res, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
+        spec.getTileSet().add(ts);
+        
+        BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null, null);
+        List<Double> res2 = new ArrayList<Double>();
+        res2.add(0.5);
+        res2.add(1.0);
+        res2.add(2.0);
+        res2.add(4.0);
+        
+        TileSet ts2 = new TileSet("EPSG:310915814", bb2, res2, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
+        spec.getTileSet().add(ts2);
+        capa.setVendorSpecificCapabilities(spec);
+        
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(capa, sw);
+        String result = sw.toString();
+        
+        //we remove the first line
+        result = result.substring(result.indexOf("?>") + 3);
+        //we remove the xmlmns
+        result = StringUtilities.removeXmlns(result);
+                
+        assertEquals(expResult, result);
+        
     }
 
     /**

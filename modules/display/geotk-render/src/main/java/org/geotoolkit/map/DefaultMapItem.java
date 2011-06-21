@@ -18,6 +18,7 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +33,7 @@ import org.geotoolkit.util.collection.NotifiedCopyOnWriteArrayList;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class DefaultMapItem extends AbstractMapItem implements ItemListener{
+class DefaultMapItem extends AbstractMapItem implements ItemListener, Serializable{
 
     protected final List<MapItem> items = new NotifiedCopyOnWriteArrayList<MapItem>() {
 

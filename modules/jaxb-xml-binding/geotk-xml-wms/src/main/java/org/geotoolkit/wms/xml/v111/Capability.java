@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractRequest;
@@ -136,9 +137,62 @@ public class Capability extends AbstractCapability {
     public VendorSpecificCapabilities getVendorSpecificCapabilities() {
         return vendorSpecificCapabilities;
     }
+    
+    public void setVendorSpecificCapabilities(VendorSpecificCapabilities vc) {
+        this.vendorSpecificCapabilities = vc;
+    }
 
     public UserDefinedSymbolization getUserDefinedSymbolization() {
         return userDefinedSymbolization;
     }
+    
+    /**
+     * Verifie si cette entree est identique a l'objet specifie.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Capability) {
+            final Capability that = (Capability) object;
 
+            
+            return Utilities.equals(this.exception, that.exception) &&
+                   Utilities.equals(this.layer,     that.layer)     &&
+                   Utilities.equals(this.request,   that.request)   &&
+                   Utilities.equals(this.userDefinedSymbolization,   that.userDefinedSymbolization)   &&
+                   Utilities.equals(this.vendorSpecificCapabilities,   that.vendorSpecificCapabilities);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.request != null ? this.request.hashCode() : 0);
+        hash = 41 * hash + (this.exception != null ? this.exception.hashCode() : 0);
+        hash = 41 * hash + (this.vendorSpecificCapabilities != null ? this.vendorSpecificCapabilities.hashCode() : 0);
+        hash = 41 * hash + (this.userDefinedSymbolization != null ? this.userDefinedSymbolization.hashCode() : 0);
+        hash = 41 * hash + (this.layer != null ? this.layer.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[Capability]\n");
+        if (request != null) {
+            s.append("request:").append(request).append('\n');
+        }
+        if (layer != null) {
+            s.append("layer:").append(layer).append('\n');
+        }
+        if (exception != null) {
+            s.append("exception:").append(exception).append('\n');
+        }
+        if (vendorSpecificCapabilities != null) {
+           s.append("vendorSpecificCapabilities:").append(vendorSpecificCapabilities).append('\n');
+        }
+        return s.toString();
+    }
 }
