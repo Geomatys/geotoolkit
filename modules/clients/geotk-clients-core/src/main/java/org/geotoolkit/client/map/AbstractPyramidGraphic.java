@@ -146,9 +146,9 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
         //ensure we dont go out of the grid
         if(tileMinCol < 0) tileMinCol = 0;
-        if(tileMaxCol > gridWidth) tileMaxCol = gridWidth-1;
+        if(tileMaxCol > gridWidth) tileMaxCol = gridWidth;
         if(tileMinRow < 0) tileMinRow = 0;
-        if(tileMaxRow > gridHeight) tileMaxRow = gridHeight-1;
+        if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
                 
         //don't render layer if it requieres more then 100 queries
         if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > 100 ){

@@ -32,7 +32,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.client.Request;
@@ -120,11 +119,11 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
             try {
                 t.get(2000,TimeUnit.MILLISECONDS);
             } catch (InterruptedException ex) {
-                Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
             } catch (ExecutionException ex) {
-                Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
             } catch (TimeoutException ex) {
-                Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
+                getLogger().log(Level.WARNING, ex.getMessage(), ex);
             }
         }
         
