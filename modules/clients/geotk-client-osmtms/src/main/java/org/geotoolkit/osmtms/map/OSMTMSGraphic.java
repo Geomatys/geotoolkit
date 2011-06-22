@@ -37,7 +37,7 @@ public class OSMTMSGraphic extends AbstractPyramidGraphic{
     private final OSMTMSMapLayer layer;
     
     public OSMTMSGraphic(final J2DCanvas canvas, final OSMTMSMapLayer layer){
-        super(canvas,layer.getServer().getCoordinateReferenceSystem(), SCALE_TOLERANCE);
+        super(canvas,OSMTMSUtilities.GOOGLE_MERCATOR, SCALE_TOLERANCE);
         this.layer = layer;
     }
     

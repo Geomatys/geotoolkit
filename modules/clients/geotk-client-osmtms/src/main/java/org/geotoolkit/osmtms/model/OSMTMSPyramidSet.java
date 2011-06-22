@@ -17,12 +17,13 @@
 package org.geotoolkit.osmtms.model;
 
 import java.awt.geom.Point2D;
+
 import org.geotoolkit.client.map.DefaultPyramid;
 import org.geotoolkit.client.map.DefaultPyramidSet;
 import org.geotoolkit.osmtms.map.OSMTMSUtilities;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -31,14 +32,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class OSMTMSPyramidSet extends DefaultPyramidSet{
 
-    public OSMTMSPyramidSet(final int maxScale, final CoordinateReferenceSystem crs) {
+    public OSMTMSPyramidSet(final int maxScale) {
         
-        final DefaultPyramid pyramid = new DefaultPyramid(this, crs);
+        final DefaultPyramid pyramid = new DefaultPyramid(this,OSMTMSUtilities.GOOGLE_MERCATOR);
         
         final int tileWidth = (int) OSMTMSUtilities.BASE_TILE_SIZE;        
         final int tileHeight = (int) OSMTMSUtilities.BASE_TILE_SIZE;        
-        final Envelope extent = CRS.getEnvelope(crs);
-        final Point2D upperLeft = new Point2D.Double(extent.getMinimum(0), extent.getMaximum(1));
+        final Envelope extent = CRS.getEnvelope(OSMTMSUtilities.GOOGLE_MERCATOR);
+                
+        final Point2D upperLeft = new Point2D.Double(
+                OSMTMSUtilities.UPPER_LEFT_CORNER.getOrdinate(0), 
+                OSMTMSUtilities.UPPER_LEFT_CORNER.getOrdinate(1));
         
         final double scale0Resolution = extent.getSpan(0) / OSMTMSUtilities.BASE_TILE_SIZE;
         

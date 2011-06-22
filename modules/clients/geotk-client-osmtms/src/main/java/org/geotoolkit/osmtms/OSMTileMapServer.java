@@ -22,8 +22,6 @@ import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.map.PyramidSet;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 
 /**
  * Represent a Tile Map Server instance.
@@ -34,18 +32,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class OSMTileMapServer extends AbstractServer{
     
     private final OSMTMSPyramidSet pyramidSet;
-    private final CoordinateReferenceSystem serverCRS;
     private final int maxZoomLevel;
     
     /**
      * Builds a tile map server with the given server url and version.
      *
      * @param serverURL The server base url. must not be null.
-     * @param crs CoordinateReferenceSystem. must not be null.
      * @param maxZoomLevel maximum zoom level supported on server.
      */
-    public OSMTileMapServer(final URL serverURL, final CoordinateReferenceSystem crs, final int maxZoomLevel) {
-        this(serverURL,null,crs,maxZoomLevel);
+    public OSMTileMapServer(final URL serverURL, final int maxZoomLevel) {
+        this(serverURL,null,maxZoomLevel);
     }
     
     /**
@@ -53,28 +49,19 @@ public class OSMTileMapServer extends AbstractServer{
      *
      * @param serverURL The server base url. must not be null.
      * @param security ClientSecurity.
-     * @param crs CoordinateReferenceSystem. must not be null.
      * @param maxZoomLevel maximum zoom level supported on server.
      */
     public OSMTileMapServer(final URL serverURL, final ClientSecurity security,
-            final CoordinateReferenceSystem crs, final int maxZoomLevel) {
+            final int maxZoomLevel) {
         super(serverURL,security);
-        this.serverCRS = crs;
         this.maxZoomLevel = maxZoomLevel;
-        pyramidSet = new OSMTMSPyramidSet(maxZoomLevel, crs);
+        pyramidSet = new OSMTMSPyramidSet(maxZoomLevel);
     }
 
     public PyramidSet getPyramidSet(){
         return pyramidSet;
     }
     
-    /**
-     * OSM TMS provide images for a single CRS. never null.
-     */
-    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return serverCRS;
-    }
-
     /**
      * @return maximum scale level available on this server.
      */
