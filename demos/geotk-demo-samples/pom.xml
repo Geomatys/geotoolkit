@@ -75,6 +75,16 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-ignrm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-wmsc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-coverageio-geotiff</artifactId>
             <version>${project.version}</version>
         </dependency>
