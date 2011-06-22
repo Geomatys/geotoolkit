@@ -23,6 +23,7 @@ import org.geotoolkit.client.map.GridMosaic;
 import org.geotoolkit.client.map.PyramidSet;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.wms.GetMapRequest;
+import org.geotoolkit.wmsc.model.WMSCPyramid;
 import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 
 /**
@@ -56,7 +57,7 @@ public class WMSCGraphic extends AbstractPyramidGraphic{
         request.setLayers(layer.getCombinedLayerNames());
         request.setEnvelope(mosaic.getEnvelope(col, row));
         request.setDimension(new Dimension(mosaic.getTileWidth(), mosaic.getTileHeight()));
-        request.setFormat(layer.getFormat());
+        request.setFormat(((WMSCPyramid)mosaic.getPyramid()).getTileset().getFormat());
         return request;
     }
     
