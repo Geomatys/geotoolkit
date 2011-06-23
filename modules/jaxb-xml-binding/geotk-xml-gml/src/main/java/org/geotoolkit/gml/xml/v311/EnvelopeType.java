@@ -435,6 +435,7 @@ public class EnvelopeType implements Entry, Envelope {
         return s.toString();
     }
 
+    @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         if (srsName != null) {
             try {
@@ -448,23 +449,34 @@ public class EnvelopeType implements Entry, Envelope {
         return null;
     }
 
+    @Override
     public int getDimension() {
         return srsDimension;
     }
 
+    @Override
     public double getMinimum(final int i) throws IndexOutOfBoundsException {
-        return lowerCorner.getOrdinate(i);
+        if (lowerCorner != null) {
+            return lowerCorner.getOrdinate(i);
+        }
+        return -1;
     }
 
+    @Override
     public double getMaximum(final int i) throws IndexOutOfBoundsException {
-        return upperCorner.getOrdinate(i);
+        if (upperCorner != null) {
+            return upperCorner.getOrdinate(i);
+        }
+        return -1;
     }
 
+    @Override
     public double getMedian(final int i) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
+    @Override
     public double getSpan(final int i) throws IndexOutOfBoundsException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 }
