@@ -88,6 +88,28 @@
             <artifactId>geotk-coverageio-geotiff</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <!-- processing -->
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-quartz</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-vector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-coverage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- OSM -->
         <dependency>
