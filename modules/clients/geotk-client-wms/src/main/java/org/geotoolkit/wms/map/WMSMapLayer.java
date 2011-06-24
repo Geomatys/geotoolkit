@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.temporal.object.ISODateParser;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.GetFeatureInfoRequest;
 import org.geotoolkit.wms.GetMapRequest;
@@ -171,6 +172,7 @@ public class WMSMapLayer extends AbstractMapLayer {
 
     public WMSMapLayer(final WebMapServer server, final String... layers) {
         super(new DefaultStyleFactory().style());
+        ArgumentChecks.ensureNonNull("server", server);
         this.server = server;
 
         for(final String str : layers){
@@ -178,7 +180,7 @@ public class WMSMapLayer extends AbstractMapLayer {
                 throw new IllegalArgumentException("invalid layer, name must nor contain ',' caractere : " + str);
             }
         }
-
+        
         this.layers = layers;
 
         //register the default graphic builder for geotk 2D engine.
