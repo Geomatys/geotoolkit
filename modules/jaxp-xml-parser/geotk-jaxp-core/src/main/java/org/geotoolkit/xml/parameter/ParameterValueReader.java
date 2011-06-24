@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.util.Converters;
@@ -96,25 +97,24 @@ public class ParameterValueReader extends StaxStreamReader {
      * @return
      */
     public GeneralParameterValue read() throws XMLStreamException {
-        GeneralParameterValue root = null;
 
         while (reader.hasNext()) {
 
             switch (reader.next()) {
-
+            
                 case XMLStreamConstants.START_ELEMENT:
-                    final String eName = reader.getLocalName();
-                    final String eUri = reader.getNamespaceURI();
+                final String eName = reader.getLocalName();
+                final String eUri = reader.getNamespaceURI();
 
-                    if (URI_PARAMETER.equals(eUri)) {
-                        root = this.readValue(eName);
-                    }
+                if (URI_PARAMETER.equals(eUri)) {
+                    return this.readValue(eName);                    
+                }
                     break;
+                }
             }
-        }
-        return root;
+        return null;
     }
-
+    
     /**
      * <p>This method reads a general value.</p>
      *
