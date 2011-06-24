@@ -18,6 +18,7 @@ package org.geotoolkit.process.quartz;
 
 import java.util.UUID;
 import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
 import org.quartz.Scheduler;
 import org.quartz.impl.JobDetailImpl;
 
@@ -31,12 +32,12 @@ import static org.geotoolkit.process.quartz.ProcessJob.*;
  */
 public class ProcessJobDetail extends JobDetailImpl {
         
-    public ProcessJobDetail(final String factoryId, final String processId, final GeneralParameterValue parameters){
+    public ProcessJobDetail(final String factoryId, final String processId, final ParameterValueGroup parameters){
         this(factoryId+"."+processId+"-"+UUID.randomUUID(), null, factoryId, processId, parameters);
     }
     
     public ProcessJobDetail(final String name, final String group, final String factoryId, 
-            final String processId, final GeneralParameterValue parameters){
+            final String processId, final ParameterValueGroup parameters){
         super(name, group, ProcessJob.class);
         if(group == null){
             setGroup(Scheduler.DEFAULT_GROUP);
@@ -44,6 +45,27 @@ public class ProcessJobDetail extends JobDetailImpl {
         getJobDataMap().put(KEY_FACTORY_ID, factoryId);
         getJobDataMap().put(KEY_PROCESS_ID, processId);
         getJobDataMap().put(KEY_PARAMETERS, parameters);
+    }
+    
+    /**
+     * @return name of the authority
+     */
+    public String getFactoryIdentifier(){
+        return getJobDataMap().getString(KEY_FACTORY_ID);
+    }
+    
+    /**
+     * @return name of the process
+     */
+    public String getProcessIdentifier(){
+        return getJobDataMap().getString(KEY_PROCESS_ID);
+    }
+    
+    /**
+     * @return parameter values of the process.
+     */
+    public ParameterValueGroup getParameters(){
+        return (ParameterValueGroup) getJobDataMap().get(KEY_PARAMETERS);
     }
     
 }
