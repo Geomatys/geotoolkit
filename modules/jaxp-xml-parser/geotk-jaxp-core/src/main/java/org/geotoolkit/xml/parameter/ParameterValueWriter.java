@@ -35,13 +35,23 @@ public class ParameterValueWriter extends StaxStreamWriter {
 
     /**
      * <p>This method writes an XML document containing a GeneralParameterValue</p>
+     * Do not write the start/end, use when encapsulated in another writer.
+     * 
+     * @param generalParameterValue
+     */
+    public void writeForInsertion(final GeneralParameterValue generalParameterValue) throws XMLStreamException {
+        this.writeGeneralParameterValue(generalParameterValue);
+    }
+    
+    /**
+     * <p>This method writes an XML document containing a GeneralParameterValue</p>
      *
      * @param generalParameterValue
      */
     public void write(final GeneralParameterValue generalParameterValue) throws XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
         writer.setDefaultNamespace(URI_PARAMETER);
-        this.writeGeneralParameterValue(generalParameterValue);
+        this.writeForInsertion(generalParameterValue);
         writer.writeEndDocument();
         writer.flush();
     }
@@ -59,10 +69,10 @@ public class ParameterValueWriter extends StaxStreamWriter {
         writer.writeStartElement(URI_PARAMETER,
                 generalParameterValue.getDescriptor().getName().getCode().replace(' ', '_'));
 
-        if (generalParameterValue instanceof Parameter) {
-            this.writeParameterValue((Parameter) generalParameterValue);
-        } else if (generalParameterValue instanceof ParameterGroup) {
-            this.writeParameterValueGroup((ParameterGroup) generalParameterValue);
+        if (generalParameterValue instanceof ParameterValueGroup) {
+            this.writeParameterValueGroup((ParameterValueGroup) generalParameterValue);
+        } else {
+            this.writeParameterValue((ParameterValue) generalParameterValue);
         }
         writer.writeEndElement();
     }
