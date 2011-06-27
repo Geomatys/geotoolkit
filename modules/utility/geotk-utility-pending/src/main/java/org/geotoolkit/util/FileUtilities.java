@@ -289,6 +289,37 @@ public final class FileUtilities extends Static {
 
         return result;
     }
+    
+    public static File buildFileFromStream(final InputStream in) throws IOException {
+        if (in != null) {
+            final File f = File.createTempFile("cstl-import", null);
+            final FileOutputStream fos = new FileOutputStream(f);
+            try {
+                final byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead); // write
+                }
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                    }
+                }
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                }
+            }
+            return f;
+        }
+        return null;
+    }
+    
 
     /**
      * Load the properties from a properies file.
