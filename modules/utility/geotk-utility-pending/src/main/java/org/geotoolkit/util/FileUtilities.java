@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.util;
 
+import java.io.FileNotFoundException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -290,10 +291,9 @@ public final class FileUtilities extends Static {
         return result;
     }
     
-    public static File buildFileFromStream(final InputStream in) throws IOException {
-        if (in != null) {
-            final File f = File.createTempFile("cstl-import", null);
-            final FileOutputStream fos = new FileOutputStream(f);
+    public static File buildFileFromStream(final InputStream in, final File dest) throws IOException {
+        if (in != null && dest != null) {
+            final FileOutputStream fos = new FileOutputStream(dest);
             try {
                 final byte[] buffer = new byte[4096];
                 int bytesRead;
@@ -315,7 +315,7 @@ public final class FileUtilities extends Static {
                     LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
                 }
             }
-            return f;
+            return dest;
         }
         return null;
     }
@@ -865,6 +865,81 @@ public final class FileUtilities extends Static {
         } finally {
             zis.close();
         }
+    }
+    
+    /**
+     * This method returns a file list from a Zip file.
+     *
+     * @param is InputStream of the Zip File.
+     * @return List of Files.
+     */
+    public static List<File> unZipFileList(final InputStream is) {
+        ZipInputStream in = null;
+        final List<File> files = new ArrayList<File>();
+        final List<String> fileNames = new ArrayList<String>();
+        try {
+            in = new ZipInputStream(is);
+            ZipEntry zi;
+            while ((zi = in.getNextEntry()) != null) {
+                if (!zi.isDirectory()) {
+                    final String fileName = getUnicFileName(removeDirectory(zi.getName()), fileNames);
+                    fileNames.add(fileName);
+                    final File f = new File(fileName);
+
+                    final FileOutputStream out = new FileOutputStream(f);
+                    int c = 0;
+                    while ((c = in.read()) != -1) {
+                        out.write(c);
+                    }
+                    out.close();
+                    files.add(f);
+                }
+            }
+            in.close();
+        } catch (FileNotFoundException ex) {
+            LOGGER.log(Level.WARNING, null, ex);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, null, ex);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            }
+        }
+        return files;
+    }
+    
+    /**
+     * Remove the directory names before the file name.
+     *
+     * @param fileName A zipEntry file name.
+     * @return The zipEntry name without the directory structure.
+     */
+    private static String removeDirectory(final String fileName) {
+        final int index = fileName.lastIndexOf('/');
+        if (index != -1) {
+            return fileName.substring(index + 1);
+        }
+        return fileName;
+    }
+    
+    /**
+     * Return an unic name for the file in the specified list fileNames.
+     * 
+     * @param fileName a file name.
+     * @param fileNames a list of unic file name
+     * @return an unic name for the file in the list fileNames.
+     */
+    private static String getUnicFileName(final String fileName, final List<String> fileNames) {
+        int i = 0;
+        String newName = fileName + i;
+        while (fileNames.contains(newName)) {
+            i++;
+            newName = newName.substring(0, newName.length() - 1);
+            newName = newName + i;
+        }
+        return newName;
     }
 
     /**
