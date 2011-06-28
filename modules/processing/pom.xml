@@ -55,6 +55,7 @@
   <modules>
     <module>geotk-processing-core</module>
     <module>geotk-processing-quartz</module>
+    <module>geotk-processing-math</module>
     <module>geotk-processing-coverage</module>
     <module>geotk-processing-vector</module>
   </modules>
