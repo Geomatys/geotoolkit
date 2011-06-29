@@ -34,21 +34,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ExtendFeature extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public ExtendFeature() {
         super(ExtendFeatureDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -63,7 +53,7 @@ public class ExtendFeature extends AbstractProcess {
 
         final FeatureCollection resultFeatureList = GenericExtendFeatureIterator.wrap(inputFeatureList, extension, hints);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

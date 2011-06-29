@@ -39,21 +39,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class DifferenceGeometry extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public DifferenceGeometry() {
         super(DifferenceGeometryDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -68,7 +58,7 @@ public class DifferenceGeometry extends AbstractProcess {
         final FeatureCollection resultFeatureList = 
                 new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

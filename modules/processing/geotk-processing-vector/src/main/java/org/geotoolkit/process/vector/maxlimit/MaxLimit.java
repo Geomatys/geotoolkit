@@ -33,21 +33,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class MaxLimit extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public MaxLimit() {
         super(MaxLimitDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -61,7 +51,7 @@ public class MaxLimit extends AbstractProcess {
         
         final FeatureCollection resultFeatureList = GenericMaxFeatureIterator.wrap(inputFeatureList, max);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

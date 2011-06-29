@@ -66,12 +66,14 @@ public abstract class AbstractProcess implements Process{
     };
 
     protected final ProcessDescriptor descriptor;
+    protected final ParameterValueGroup outputParameters;
     protected ParameterValueGroup inputParameters;
     private ProcessMonitor monitor = null;
 
     public AbstractProcess(final ProcessDescriptor desc){
         ensureNonNull("descriptor", desc);
         this.descriptor = desc;
+        this.outputParameters = descriptor.getOutputDescriptor().createValue();
     }
 
     @Override
@@ -89,8 +91,8 @@ public abstract class AbstractProcess implements Process{
     }
 
     @Override
-    public ParameterValueGroup getOutput() {
-        return descriptor.getOutputDescriptor().createValue();
+    public final ParameterValueGroup getOutput() {
+        return outputParameters;
     }
 
     @Override

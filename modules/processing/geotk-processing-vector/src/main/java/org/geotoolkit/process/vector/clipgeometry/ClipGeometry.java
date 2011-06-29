@@ -39,21 +39,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ClipGeometry extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public ClipGeometry() {
         super(ClipGeometryDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -67,7 +57,7 @@ public class ClipGeometry extends AbstractProcess {
 
         final FeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

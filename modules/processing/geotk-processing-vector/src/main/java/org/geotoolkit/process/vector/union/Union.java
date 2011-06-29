@@ -60,21 +60,11 @@ import org.opengis.util.FactoryException;
  */
 public class Union extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public Union() {
         super(UnionDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -91,7 +81,7 @@ public class Union extends AbstractProcess {
         
         final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this, 100, null, null));
     }

@@ -34,21 +34,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class Intersect extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public Intersect() {
         super(IntersectDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -62,7 +52,7 @@ public class Intersect extends AbstractProcess {
 
         final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

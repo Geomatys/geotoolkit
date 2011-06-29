@@ -42,21 +42,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class ConvexHull extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public ConvexHull() {
         super(ConvexHullDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -70,7 +60,7 @@ public class ConvexHull extends AbstractProcess {
 
         final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = super.getOutput();
         result.parameter(ConvexHullDescriptor.GEOMETRY_OUT.getName().getCode()).setValue(hull);
         getMonitor().ended(new ProcessEvent(this, 100, null, null));
     }

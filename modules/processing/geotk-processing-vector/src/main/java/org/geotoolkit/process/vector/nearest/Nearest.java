@@ -36,7 +36,6 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
@@ -49,7 +48,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -62,7 +60,6 @@ public class Nearest extends AbstractProcess {
 
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
-    ParameterValueGroup result;
 
     /**
      * Default constructor
@@ -71,13 +68,6 @@ public class Nearest extends AbstractProcess {
         super(NearestDescriptor.INSTANCE);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
-    }
 
     /**
      *  {@inheritDoc }
@@ -92,7 +82,7 @@ public class Nearest extends AbstractProcess {
             final FeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
-            result = super.getOutput();
+            final ParameterValueGroup result = getOutput();
             result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
             getMonitor().ended(new ProcessEvent(this, 100, null, null));
 

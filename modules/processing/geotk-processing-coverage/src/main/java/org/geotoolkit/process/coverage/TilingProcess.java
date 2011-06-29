@@ -40,19 +40,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class TilingProcess extends AbstractProcess{
 
-    private TileManager tileManager;
-    private CoordinateReferenceSystem crs;
-
     TilingProcess(){
         super(TilingDescriptor.INSTANCE);
-    }
-
-    @Override
-    public ParameterValueGroup getOutput() {
-        final ParameterValueGroup result = super.getOutput();
-        result.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
-        result.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
-        return result;
     }
 
     @Override
@@ -76,13 +65,17 @@ public final class TilingProcess extends AbstractProcess{
             reader.setInput(input);
             final SpatialMetadata coverageMetadata = reader.getCoverageMetadata(0);
             final RectifiedGrid grid = coverageMetadata.getInstanceForType(RectifiedGrid.class);
-            crs = coverageMetadata.getInstanceForType(CoordinateReferenceSystem.class);
+            CoordinateReferenceSystem crs = coverageMetadata.getInstanceForType(CoordinateReferenceSystem.class);
             AffineTransform gridtoCRS = null;
             try{
                 gridtoCRS = MetadataHelper.INSTANCE.getAffineTransform(grid, null);
             }catch(Exception ex){ /*silent exit, not a georeferenced coverage*/}
             
-            tileManager = GridCoverageReaders.buildTileManager(input, gridtoCRS, 512, output);
+            TileManager tileManager = GridCoverageReaders.buildTileManager(input, gridtoCRS, 512, output);
+            
+            final ParameterValueGroup result = super.getOutput();
+            result.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
+            result.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
             getMonitor().ended(new ProcessEvent(this));
         } catch (Exception ex) {
             getMonitor().failed(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getLocalizedMessage()), ex));

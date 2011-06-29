@@ -56,21 +56,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class SpatialJoin extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public SpatialJoin() {
         super(SpatialJoinDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -86,7 +76,7 @@ public class SpatialJoin extends AbstractProcess {
         final FeatureCollection resultFeatureList =
                 new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

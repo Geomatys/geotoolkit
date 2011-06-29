@@ -47,8 +47,9 @@ public interface Process extends Runnable {
     /**
      * Output values of the process. Thoses are described in the
      * process descriptor.
-     * Those can be aquiered after the monitor has been informed of the end
-     * of the process.
+     * The output parameters can be accesed before the process is started,
+     * this behavior allows process chains to be configured one after the other
+     * before running them.
      * @param parameter must not be null.
      */
     ParameterValueGroup getOutput();

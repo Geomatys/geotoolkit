@@ -60,21 +60,12 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class CoverageToFeatures extends AbstractProcess {
 
-    ParameterValueGroup result;
 
     /**
      * Default constructor
      */
     public CoverageToFeatures() {
         super(CoverageToFeaturesDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -91,7 +82,7 @@ public class CoverageToFeatures extends AbstractProcess {
             final CoverageToFeatureCollection resultFeatureList =
                     new CoverageToFeatureCollection(reader, gridGeom.getGridRange(), coverage, gridGeom);
 
-            result = super.getOutput();
+            final ParameterValueGroup result = getOutput();
             result.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
             getMonitor().ended(new ProcessEvent(this,100,null,null));
         } catch (CoverageStoreException ex) {

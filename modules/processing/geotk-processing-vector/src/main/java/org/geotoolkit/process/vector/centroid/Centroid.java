@@ -38,21 +38,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class Centroid extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default Constructor
      */
     public Centroid() {
         super(CentroidDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -65,7 +55,7 @@ public class Centroid extends AbstractProcess {
 
         final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

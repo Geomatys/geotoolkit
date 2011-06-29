@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -61,8 +60,6 @@ public class CoverageToVectorProcess extends AbstractProcess {
     //buffer[0] holds last line buffer
     //buffer[1] holds current line buffer
     private Boundary[][] buffers;
-
-    private Geometry[] result = null;
 
     //current pixel block
     private final Block block = new Block();
@@ -396,14 +393,6 @@ public class CoverageToVectorProcess extends AbstractProcess {
         return extent;
     }
 
-
-    @Override
-    public ParameterValueGroup getOutput() {
-        final ParameterValueGroup group = super.getOutput();
-        group.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).setValue(result);
-        return group;
-    }
-
     @Override
     public void run() {
         if (inputParameters == null) {
@@ -419,6 +408,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
             band = 0;
         }
 
+        Geometry[] result = null;
         try {
             result = toPolygon(coverage, ranges, 0);
         } catch (IOException ex) {
@@ -426,6 +416,13 @@ public class CoverageToVectorProcess extends AbstractProcess {
         } catch (TransformException ex) {
             getMonitor().failed(new ProcessEvent(this, -1, null, ex));
         }
+        
+        //avoid memory use
+        buffers = null;
+        polygons.clear();
+        
+        final ParameterValueGroup group = getOutput();
+        group.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).setValue(result);
 
         getMonitor().ended(new ProcessEvent(this));
 

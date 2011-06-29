@@ -20,8 +20,8 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
-import java.util.Collections;
 
+import java.util.Collections;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
@@ -41,7 +41,6 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.MathTransform;
@@ -56,22 +55,12 @@ import org.opengis.util.FactoryException;
  * @module pending
  */
 public class DouglasPeucker extends AbstractProcess {
-
-    ParameterValueGroup result;
     
     /**
      * Default constructor
      */
     public DouglasPeucker() {
         super(DouglasPeuckerDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -89,7 +78,7 @@ public class DouglasPeucker extends AbstractProcess {
         final FeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList,inputAccuracy,inputUnit,inputBehavior,inputLenient);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }

@@ -49,21 +49,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class Merge extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public Merge() {
         super(MergeDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -78,7 +68,7 @@ public class Merge extends AbstractProcess {
 
         final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this, 100, null, null));
     }

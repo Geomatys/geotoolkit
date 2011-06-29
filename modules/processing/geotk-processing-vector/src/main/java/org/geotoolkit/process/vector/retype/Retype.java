@@ -34,21 +34,11 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class Retype extends AbstractProcess {
 
-    ParameterValueGroup result;
-
     /**
      * Default constructor
      */
     public Retype() {
         super(RetypeDescriptor.INSTANCE);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ParameterValueGroup getOutput() {
-        return result;
     }
 
     /**
@@ -62,7 +52,7 @@ public class Retype extends AbstractProcess {
         
         final FeatureCollection resultFeatureList = GenericRetypeFeatureIterator.wrap(inputFeatureList, mask);
 
-        result = super.getOutput();
+        final ParameterValueGroup result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         getMonitor().ended(new ProcessEvent(this,100,null,null));
     }
