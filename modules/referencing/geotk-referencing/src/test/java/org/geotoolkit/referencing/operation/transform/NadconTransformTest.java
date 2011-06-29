@@ -113,6 +113,6 @@ public class NadconTransformTest extends TransformTestBase {
         transform.transform(srcPts, 0, resPts, 0, srcPts.length/2);
         tolerance = 1E-8;
 
-        assertCoordinatesEqual("NADCON", 2, dstPts, 0, resPts, 0, dstPts.length/2, false);
+        assertCoordinatesEqual("NADCON", 2, dstPts, 0, resPts, 0, dstPts.length/2, ComparisonType.DIRECT_TRANSFORM);
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
@@ -35,7 +34,7 @@ import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -179,17 +178,18 @@ public final class AlbersEqualAreaTest extends ProjectionTestBase {
     public void testDerivative() throws TransformException {
         tolerance = 1E-8;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double(Math.toRadians(5), Math.toRadians(30));
+        derivativeDeltas = new double[] {delta, delta};
 
         // Test spherical
         transform = create(false, 10, 60);
         assertTrue(isSpherical());
         validate();
-        checkDerivative2D(point, delta);
+        verifyDerivative(Math.toRadians(5), Math.toRadians(30));
 
         // Test ellipsoidal
         transform = create(true, 10, 60);
+        assertFalse(isSpherical());
         validate();
-        checkDerivative2D(point, delta);
+        verifyDerivative(Math.toRadians(5), Math.toRadians(30));
     }
 }

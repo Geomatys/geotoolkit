@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
-
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
@@ -27,7 +25,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static java.lang.Double.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.*;
@@ -40,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  * long as we make this value varying, the latitude of origin is the simplest approach.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -203,10 +201,10 @@ public final class LambertConformalTest extends ProjectionTestBase {
         validate();
 
         final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
-        checkDerivative2D(point, delta);
-        point.x = toRadians(15); point.y = toRadians(30); checkDerivative2D(point, delta);
-        point.x = toRadians(10); point.y = toRadians(60); checkDerivative2D(point, delta);
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians( 0), toRadians( 0));
+        verifyDerivative(toRadians(15), toRadians(30));
+        verifyDerivative(toRadians(10), toRadians(60));
     }
 
     /**

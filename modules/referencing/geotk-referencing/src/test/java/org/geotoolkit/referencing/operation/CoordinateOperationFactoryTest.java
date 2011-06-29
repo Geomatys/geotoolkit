@@ -70,6 +70,7 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
+import static org.geotoolkit.referencing.operation.SamplePoints.MOLODENSKY_TOLERANCE;
 
 
 /**
@@ -79,7 +80,7 @@ import static org.geotoolkit.referencing.CRS.equalsApproximatively;
  * the EPSG database (if any) enabled.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  */
@@ -94,12 +95,6 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
             WGS84_H    = "COMPD_CS[\"WGS84 + H\","   + WKT.GEOGCS_WGS84_DMHS + ',' + WKT.VERTCS_HEIGHT + ']',
             NAD27_H    = "COMPD_CS[\"NAD27 + Z\","   + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_HEIGHT + ']',
             MERCATOR_Z = "COMPD_CS[\"Mercator + Z\","+ WKT.PROJCS_MERCATOR   + ',' + WKT.VERTCS_Z      + ']';
-
-    /**
-     * Tolerance value. Do not relax this tolerance: we have selected a value fine enough to allow
-     * the tests to distinguish between a "Molodensky" operation and an "Abridged Molodensky" one.
-     */
-    private static final double TOLERANCE = 1E-6;
 
     /**
      * A filter to be used in constructor for selecting a {@link DefaultCoordinateOperationFactory}
@@ -314,10 +309,10 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
 
         transform = operation.getMathTransform();
         validate();
-        tolerance = TOLERANCE;
-        assertTransformEquals2_2(170, 50, 0, 0);
+        tolerance = MOLODENSKY_TOLERANCE;
+        verifyTransform(new double[] {170, 50}, new double[] {0, 0});
         transform = transform.inverse();
-        assertTransformEquals2_2(0, 0, 170, 50);
+        verifyTransform(new double[] {0, 0}, new double[] {170, 50});
     }
 
     /**
@@ -335,12 +330,13 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertSame(targetCRS, operation.getTargetCRS());
         transform = operation.getMathTransform();
         validate();
-        tolerance = TOLERANCE;
+        tolerance  = MOLODENSKY_TOLERANCE;
+        λDimension = new int[] {0};
         final boolean isGeoc = "Geocentric".equals(getDatumShiftMethod());
         // Note: Expected values below were computed with Geotk (not an external library).
-                    assertTransformEquals2_2(-180, -88.21076182660325, -180, -88.21076182655470);
-        if (isGeoc) assertTransformEquals2_2(+180,  85.41283436546335, +180,  85.41283436548373);
-        else        assertTransformEquals2_2(+180,  85.41283436546335, -180,  85.41283436531322);
+                    verifyTransform(new double[] {-180, -88.21076182660325}, new double[] {-180, -88.21076182655470});
+        if (isGeoc) verifyTransform(new double[] {+180,  85.41283436546335}, new double[] {+180,  85.41283436548373});
+        else        verifyTransform(new double[] {+180,  85.41283436546335}, new double[] {-180,  85.41283436531322});
     }
 
     /**
@@ -377,14 +373,14 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
-        tolerance = TOLERANCE;
+        tolerance = MOLODENSKY_TOLERANCE;
         /*
          * Note: Expected values below were computed with Geotk (not an external library).
          *       However, it was tested with both Molodenski and Geocentric transformations.
          */
-        assertTransformEquals2_2(0, 0, 2.3367521703619816, 0.0028940088671177986);
-        if (isAbridged) assertTransformEquals2_2(20, -10, -6.663517586507632, 18.00134007052471);
-        else            assertTransformEquals2_2(20, -10, -6.663517606186469, 18.00134508026729);
+        verifyTransform(new double[] {0, 0}, new double[] {2.3367521703619816, 0.0028940088671177986});
+        if (isAbridged) verifyTransform(new double[] {20, -10}, new double[] {-6.663517586507632, 18.00134007052471});
+        else            verifyTransform(new double[] {20, -10}, new double[] {-6.663517606186469, 18.00134508026729});
         /*
          * Remove the TOWGS84 element and test again. An exception should be throws,
          * since no Bursa-Wolf parameters were available.
@@ -437,14 +433,14 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
 
         transform = lenient.getMathTransform();
         validate();
-        tolerance = TOLERANCE;
+        tolerance = MOLODENSKY_TOLERANCE;
         /*
          * Note: Expected values below were computed with Geotk (not an external library).
          *       However, it was tested with both Molodenski and Geocentric transformations.
          */
-        assertTransformEquals2_2(0, 0, 2.33722917, 0);
-        if (isAbridged) assertTransformEquals2_2(20, -10, -6.66277083, 17.99814367592171);
-        else            assertTransformEquals2_2(20, -10, -6.66277083, 17.99814879585781);
+        verifyTransform(new double[] {0, 0}, new double[] {2.33722917, 0});
+        if (isAbridged) verifyTransform(new double[] {20, -10}, new double[] {-6.66277083, 17.99814367592171});
+        else            verifyTransform(new double[] {20, -10}, new double[] {-6.66277083, 17.99814879585781});
     }
 
     /**
@@ -463,8 +459,9 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
-        tolerance = TOLERANCE;
-        assertTransformEquals2_2(168.1075, -21.597283333333, 822023.338884308, 7608648.67486555);
+        tolerance = MOLODENSKY_TOLERANCE;
+        verifyTransform(new double[] {168.1075, -21.597283333333},
+                        new double[] {822023.338884308, 7608648.67486555});
         // Note: Expected values above were computed with Geotk (not an external library).
 
         /*
@@ -482,8 +479,9 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
-        tolerance = TOLERANCE;
-        assertTransformEquals2_2(168.1075, -21.597283333333, 822023.338884308, 7608648.67486555);
+        tolerance = MOLODENSKY_TOLERANCE;
+        verifyTransform(new double[] {168.1075, -21.597283333333},
+                        new double[] {822023.338884308, 7608648.67486555});
         // Note: Expected values above were computed with Geotk (not an external library).
     }
 
@@ -517,10 +515,11 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
+        // Horizontal tolerance will be set by the call to getExpectedResults.
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
             final SamplePoints.Source src = sample.src;
             final SamplePoints.Target tgt = getExpectedResult(sample, false);
-            assertTransformEquals2_2(src.φ, src.λ, tgt.φ, tgt.λ);
+            verifyTransform(new double[] {src.φ, src.λ}, new double[] {tgt.φ, tgt.λ});
         }
     }
 
@@ -673,13 +672,17 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         } else {
             assertTrue(op.getIdentifiers().isEmpty());
         }
-        transform = op.getMathTransform();
+        transform  = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
+        zTolerance = 0.01;
+        zDimension = new int[] {2};
+        // Horizontal tolerance will be set by the call to getExpectedResults.
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
             final SamplePoints.Source src = sample.src;
             final SamplePoints.Target tgt = getExpectedResult(sample, true);
-            assertTransformEquals3_3(src.φ, src.λ, src.h, tgt.φ, tgt.λ, tgt.h);
+            verifyTransform(new double[] {src.φ, src.λ, src.h},
+                            new double[] {tgt.φ, tgt.λ, tgt.h});
         }
     }
 
@@ -713,10 +716,14 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
+        zTolerance = 0.01;
+        zDimension = new int[] {2, 0};
+        // Horizontal tolerance will be set by the call to getExpectedResults.
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
             final SamplePoints.Source src = sample.src;
             final SamplePoints.Target tgt = getExpectedResult(sample, true);
-            assertTransformEquals3_3(src.h, src.φ, src.λ, tgt.φ, tgt.λ, tgt.h);
+            verifyTransform(new double[] {src.h, src.φ, src.λ},
+                            new double[] {tgt.φ, tgt.λ, tgt.h});
         }
     }
 
@@ -742,10 +749,18 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         transform = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
+        /*
+         * A high z tolerance value is normal because the 2D CRS lost the height.
+         * So the tolerance must be as high as the z value used in the test data.
+         */
+        zTolerance = 200;
+        zDimension = new int[] {2};
+        // Horizontal tolerance will be set by the call to getExpectedResults.
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
             final SamplePoints.Source src = sample.src;
             final SamplePoints.Target tgt = getExpectedResult(sample, true);
-            assertTransformEquals3_2(src.φ, src.λ, src.h, tgt.φ, tgt.λ);
+            verifyTransform(new double[] {src.φ, src.λ, src.h},
+                            new double[] {tgt.φ, tgt.λ});
         }
     }
 
@@ -789,10 +804,11 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
-        tolerance = TOLERANCE;
-        assertTransformEquals3_1( 0,  0, 0,   0);
-        assertTransformEquals3_1( 5,  8, 20, 20);
-        assertTransformEquals3_1(-5, -8, 20, 20);
+        tolerance = MOLODENSKY_TOLERANCE;
+        isInverseTransformSupported = false;
+        verifyTransform(new double[] { 0,  0,  0}, new double[] { 0});
+        verifyTransform(new double[] { 5,  8, 20}, new double[] {20});
+        verifyTransform(new double[] {-5, -8, 20}, new double[] {20});
     }
 
     /**
@@ -823,13 +839,17 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
             assertNotSame(targetCRS, op.getTargetCRS());
             assertTrue(op.getIdentifiers().isEmpty());
         }
-        transform = op.getMathTransform();
+        transform  = op.getMathTransform();
         assertFalse(transform.isIdentity());
         validate();
+        zTolerance = 0.01;
+        zDimension = new int[] {2};
+        // Horizontal tolerance will be set by the call to getExpectedResults.
         for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
             final SamplePoints.Source src = sample.src;
             final SamplePoints.Target tgt = getExpectedResult(sample, false);
-            assertTransformEquals2_3(src.φ, src.λ, tgt.φ, tgt.λ, tgt.h0);
+            verifyTransform(new double[] {src.φ, src.λ},
+                            new double[] {tgt.φ, tgt.λ, tgt.h0});
         }
     }
 
@@ -918,10 +938,11 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
-        tolerance = TOLERANCE;
-        assertTransformEquals3_1( 0,  0, 0,   0);
-        assertTransformEquals3_1( 5,  8, 20, 20);
-        assertTransformEquals3_1(-5, -8, 20, 20);
+        tolerance = MOLODENSKY_TOLERANCE;
+        isInverseTransformSupported = false;
+        verifyTransform(new double[] { 0,  0,  0}, new double[] { 0});
+        verifyTransform(new double[] { 5,  8, 20}, new double[] {20});
+        verifyTransform(new double[] {-5, -8, 20}, new double[] {20});
     }
 
     /**
@@ -945,9 +966,10 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
                    "to a single affine transform.", transform instanceof LinearTransform);
         assertTrue("The operation should be a simple axis change, not a complex" +
                    "chain of ConcatenatedOperations.", op instanceof Conversion);
-        tolerance = TOLERANCE;
-        assertTransformEquals4_2(   0,     0,  0,    0,    0,     0);
-        assertTransformEquals4_2(1000, -2000, 20, 4000, 1000, -2000);
+        tolerance = MOLODENSKY_TOLERANCE;
+        isInverseTransformSupported = false;
+        verifyTransform(new double[] {   0,     0,  0,    0}, new double[] {   0,     0});
+        verifyTransform(new double[] {1000, -2000, 20, 4000}, new double[] {1000, -2000});
     }
 
     /**

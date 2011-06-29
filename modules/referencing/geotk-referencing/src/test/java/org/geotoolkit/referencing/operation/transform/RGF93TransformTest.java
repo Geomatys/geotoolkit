@@ -159,10 +159,10 @@ public class RGF93TransformTest extends TransformTestBase {
         tolerance = 1E-10;
         stress(CoordinateDomain.GEOGRAPHIC, 426005043);
     }
-    
+
     /**
      * Ensures that the cache works properly.
-     * 
+     *
      * @throws FactoryException Should never happen.
      */
     @Test
@@ -210,12 +210,12 @@ public class RGF93TransformTest extends TransformTestBase {
         transform.transform(sourcePts, 0, actualPts, 0, sourcePts.length / 2);
         tolerance = 4E-4;
         assertCoordinatesEqual("RGF93 transform (compared to NTv2)",
-                2, expectedPts, 0, actualPts, 0, expectedPts.length/2, false);
+                2, expectedPts, 0, actualPts, 0, expectedPts.length/2, ComparisonType.DIRECT_TRANSFORM);
 
         tolerance = 2E-3;
         final double[] circePts = getPoints(2);
         assertCoordinatesEqual("RGF93 transform (compared to CIRCE)",
-                2, circePts, 0, actualPts, 0, circePts.length/2, false);
+                2, circePts, 0, actualPts, 0, circePts.length/2, ComparisonType.DIRECT_TRANSFORM);
         /*
          * Optional statistics for comparing our errors with the ones reported by IGN. We perform
          * equal or better than IGN in 42% of cases, and we perform worst in the remaining 58% of

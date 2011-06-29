@@ -40,7 +40,10 @@ import org.geotoolkit.referencing.GeodeticCalculator;
 public final class SamplePoints {
     /**
      * Tolerance factor. If must be small enough to detect if the height has
-     * been use, except when the source coordinates is known to have no height.
+     * been used, except when the source coordinates is known to have no height.
+     * <p>
+     * Do not relax the Molodensky tolerance: we have selected a value fine enough to allow
+     * the tests to distinguish between a "Molodensky" and "Abridged Molodensky" operations.
      */
     static final double TOLERANCE = 1E-12, NOHEIGHT_TOLERANCE = 1E-8, MOLODENSKY_TOLERANCE = 1E-6;
 

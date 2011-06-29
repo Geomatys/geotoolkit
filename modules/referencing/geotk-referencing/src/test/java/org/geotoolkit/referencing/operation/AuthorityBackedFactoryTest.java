@@ -71,10 +71,13 @@ public final class AuthorityBackedFactoryTest extends CoordinateOperationFactory
 
     /**
      * Returns the expected result for a transformation using the given sample point.
+     * Disables also the inverse transform tests, because they do not have the precision
+     * requested by this method.
      */
     @Override
     protected SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
         tolerance = withHeight ? SamplePoints.TOLERANCE : SamplePoints.NOHEIGHT_TOLERANCE;
+        isInverseTransformSupported = false;
         return sample.epsg;
     }
 
@@ -114,8 +117,8 @@ public final class AuthorityBackedFactoryTest extends CoordinateOperationFactory
         tolerance = 0.02;
         // Test using the location of Paris (48.856578°N, 2.351828°E)
         // Only after, test using a coordinate different than the prime meridian.
-        assertTransformEquals2_2(601124.99, 2428693.45, 261804.30, 6218365.72);
-        assertTransformEquals2_2(600000.00, 2420000.00, 260098.74, 6205194.95);
+        verifyTransform(new double[] {601124.99, 2428693.45}, new double[] {261804.30, 6218365.72});
+        verifyTransform(new double[] {600000.00, 2420000.00}, new double[] {260098.74, 6205194.95});
     }
 
     /**
@@ -141,9 +144,10 @@ public final class AuthorityBackedFactoryTest extends CoordinateOperationFactory
         validate();
         assertFalse(transform.isIdentity());
         tolerance = 0.02;
+        isInverseTransformSupported = false;
         // Same coordinates than testProjected2D_withMeridianShift(),
         // but with random elevation and time which should be dropped.
-        assertTransformEquals4_2(601124.99, 2428693.45, 400, 1000, 261804.30, 6218365.72);
-        assertTransformEquals4_2(600000.00, 2420000.00, 400, 1000, 260098.74, 6205194.95);
+        verifyTransform(new double[] {601124.99, 2428693.45, 400, 1000}, new double[] {261804.30, 6218365.72});
+        verifyTransform(new double[] {600000.00, 2420000.00, 400, 1000}, new double[] {260098.74, 6205194.95});
     }
 }

@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
-
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
@@ -35,7 +33,7 @@ import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -125,20 +123,20 @@ public final class CassiniSoldnerTest extends ProjectionTestBase {
     public void testDerivative() throws TransformException {
         tolerance = 1E-3;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
-        final Point2D.Double point2 = new Point2D.Double(Math.toRadians(+3), Math.toRadians(-6));
-        final Point2D.Double point1 = new Point2D.Double(Math.toRadians(-4), Math.toRadians(40));
+        derivativeDeltas = new double[] {delta, delta};
 
         // Tests spherical formulas
         transform = create(false);
         assertTrue(isSpherical());
         validate();
-        checkDerivative2D(point1, delta);
-        checkDerivative2D(point2, delta);
+        verifyDerivative(Math.toRadians(+3), Math.toRadians(-6));
+        verifyDerivative(Math.toRadians(-4), Math.toRadians(40));
 
         // Tests ellipsoidal formulas
         transform = create(true);
+        assertFalse(isSpherical());
         validate();
-        checkDerivative2D(point1, delta);
-        checkDerivative2D(point2, delta);
+        verifyDerivative(Math.toRadians(+3), Math.toRadians(-6));
+        verifyDerivative(Math.toRadians(-4), Math.toRadians(40));
     }
 }

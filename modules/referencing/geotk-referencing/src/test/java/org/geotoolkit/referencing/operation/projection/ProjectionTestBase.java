@@ -35,7 +35,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransformTest;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;
 
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static org.opengis.test.Assert.*;
 
 
@@ -43,7 +43,7 @@ import static org.opengis.test.Assert.*;
  * Base class for tests of {@link UnitaryProjection} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -216,7 +216,7 @@ public abstract class ProjectionTestBase extends TransformTestBase {
         projection. transform(target, 0, target, 0, numPts);
         inverse.    transform(target, 0, target, 0, numPts);
         denormalize.transform(target, 0, target, 0, numPts);
-        assertCoordinatesEqual("Longitude rolling", 2, source, 0, target, 0, numPts, false);
+        assertCoordinatesEqual("Longitude rolling", 2, source, 0, target, 0, numPts, ComparisonType.DIRECT_TRANSFORM);
     }
 
     /**

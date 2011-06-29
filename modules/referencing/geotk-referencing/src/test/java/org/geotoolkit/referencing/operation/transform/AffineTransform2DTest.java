@@ -18,12 +18,8 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.awt.geom.Point2D;
-
 import org.opengis.referencing.operation.TransformException;
-
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.test.Depend;
-
 import org.junit.*;
 
 
@@ -67,7 +63,7 @@ public final class AffineTransform2DTest extends TransformTestBase {
          */
         transform = tr;
         tolerance = 1E-10;
-        checkDerivative2D(new Point2D.Double(-10, 5), 3);
-        checkDerivative2D(new DirectPosition2D(-10, 5), 3);
+        derivativeDeltas = new double[] {3, 3};
+        verifyDerivative(-10, 5);
     }
 }

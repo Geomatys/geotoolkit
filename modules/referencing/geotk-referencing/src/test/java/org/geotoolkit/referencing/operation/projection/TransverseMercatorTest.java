@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
-
 import org.junit.*;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -26,7 +24,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
 
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.PARAMETERS;
 import static org.geotoolkit.referencing.operation.projection.TransverseMercator.Parameters;
@@ -36,7 +34,7 @@ import static org.geotoolkit.referencing.operation.projection.TransverseMercator
  * Tests the {@link TransverseMercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -148,9 +146,9 @@ public final class TransverseMercatorTest extends ProjectionTestBase {
         validate();
 
         final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
-        checkDerivative2D(point, delta);
-        point.x = toRadians(-3); point.y = toRadians(30); checkDerivative2D(point, delta);
-        point.x = toRadians(+6); point.y = toRadians(60); checkDerivative2D(point, delta);
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians( 0), toRadians( 0));
+        verifyDerivative(toRadians(-3), toRadians(30));
+        verifyDerivative(toRadians(+6), toRadians(60));
     }
 }

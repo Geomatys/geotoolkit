@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
-
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
@@ -26,6 +24,7 @@ import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import org.junit.*;
 
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMETERS;
 
@@ -35,7 +34,7 @@ import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMET
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -82,11 +81,9 @@ public final class OrthographicTest extends ProjectionTestBase {
 
         // Test the derivative on the same MathTransform than above.
         tolerance = DERIVATIVE_TOLERANCE;
-        final double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
-        point.x = Math.toRadians(5);
-        point.y = Math.toRadians(3);
-        checkDerivative2D(point, delta);
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians(5), toRadians(3));
     }
 
     /**
@@ -111,11 +108,9 @@ public final class OrthographicTest extends ProjectionTestBase {
 
             // Test the derivative on the same MathTransform than above.
             tolerance = DERIVATIVE_TOLERANCE;
-            final double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-            final Point2D.Double point = new Point2D.Double();
-            point.x = Math.toRadians(5);
-            point.y = Math.toRadians(85);
-            checkDerivative2D(point, delta);
+            final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+            derivativeDeltas = new double[] {delta, delta};
+            verifyDerivative(toRadians(5), toRadians(85));
         } while ((south = !south) == true);
     }
 
@@ -132,11 +127,9 @@ public final class OrthographicTest extends ProjectionTestBase {
         transform = create(10, 60);
         validate();
 
-        final double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
-        point.x = Math.toRadians(5);
-        point.y = Math.toRadians(30);
-        checkDerivative2D(point, delta);
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians(5), toRadians(30));
     }
 
     /**

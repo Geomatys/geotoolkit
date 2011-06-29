@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
-
 import org.junit.*;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -28,7 +26,7 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import static java.lang.Double.*;
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea.*;
 
@@ -40,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqua
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -315,45 +313,34 @@ public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
     public void testDerivative() throws TransformException {
         tolerance = 1E-9;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
+        derivativeDeltas = new double[] {delta, delta};
 
         // Polar projection.
         transform = create(true, 90);
         validate();
-        point.x = Math.toRadians(-6);
-        point.y = Math.toRadians(80);
-        checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(-6), toRadians(80));
 
         // Intentionally above the pole.
-        point.y = Math.toRadians(100);
-        checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(-6), toRadians(100));
 
         // Polar projection, spherical formulas.
         transform = create(false, 90);
         validate();
-        point.x = Math.toRadians(-6);
-        point.y = Math.toRadians(85);
-        checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(-6), toRadians(85));
 
         // Equatorial projection, spherical formulas.
         transform = create(false, 0);
         validate();
-        point.x = Math.toRadians(3);
-        point.y = Math.toRadians(4);
-        checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(3), toRadians(4));
 
         // Oblique projection, ellipsoidal formulas.
         transform = create(true, 8);
         validate();
-        point.x = Math.toRadians(-6);
-        point.y = Math.toRadians( 2);
-        checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(-6), toRadians(2));
 
         // Oblique projection, spherical formulas.
         transform = create(false, 8);
         validate();
-        point.x = Math.toRadians(-6);
-        point.y = Math.toRadians( 2);
-        checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(-6), toRadians(2));
     }
 }

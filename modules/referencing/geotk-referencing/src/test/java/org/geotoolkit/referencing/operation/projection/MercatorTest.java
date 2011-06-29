@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
-
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
@@ -27,7 +25,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static java.lang.Double.*;
 import static org.opengis.test.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Mercator1SP.*;
@@ -40,7 +38,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  * @author Martin Desruisseaux (Geomatys)
  * @author Simon Reynard (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -171,20 +169,20 @@ public final class MercatorTest extends ProjectionTestBase {
     public void testDerivative() throws TransformException {
         tolerance = 1E-9;
         final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double();
+        derivativeDeltas = new double[] {delta, delta};
 
         // Tests spherical formulas
         transform = create(false);
         assertTrue(isSpherical());
         validate();
-        point.x = toRadians(15); point.y = toRadians( 30); checkDerivative2D(point, delta);
-        point.x = toRadians(10); point.y = toRadians(-60); checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(15), toRadians( 30));
+        verifyDerivative(toRadians(10), toRadians(-60));
 
         // Tests ellipsoidal formulas
         transform = create(true);
         validate();
-        point.x = toRadians(15); point.y = toRadians( 30); checkDerivative2D(point, delta);
-        point.x = toRadians(10); point.y = toRadians(-60); checkDerivative2D(point, delta);
+        verifyDerivative(toRadians(15), toRadians( 30));
+        verifyDerivative(toRadians(10), toRadians(-60));
     }
 
     /**
@@ -250,10 +248,10 @@ public final class MercatorTest extends ProjectionTestBase {
          */
         tolerance = 1E-3; // Scale magnitude will be about 110861.
         final double delta = (1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double pt = new Point2D.Double();
-        checkDerivative2D(pt, delta);
-        pt.x = 15; pt.y =  30; checkDerivative2D(pt, delta);
-        pt.x = 10; pt.y = -60; checkDerivative2D(pt, delta);
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians( 0), toRadians(  0));
+        verifyDerivative(toRadians(15), toRadians( 30));
+        verifyDerivative(toRadians(10), toRadians(-60));
     }
 
     /**
@@ -293,10 +291,10 @@ public final class MercatorTest extends ProjectionTestBase {
          */
         tolerance = 1E-3; // Scale magnitude will be about 82634.
         final double delta = (1.0 / 60) / 1852; // Approximatively one metre.
-        final Point2D.Double pt = new Point2D.Double();
-        checkDerivative2D(pt, delta);
-        pt.x = 15; pt.y =  30; checkDerivative2D(pt, delta);
-        pt.x = 10; pt.y = -60; checkDerivative2D(pt, delta);
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians( 0), toRadians(  0));
+        verifyDerivative(toRadians(15), toRadians( 30));
+        verifyDerivative(toRadians(10), toRadians(-60));
     }
 
     /**

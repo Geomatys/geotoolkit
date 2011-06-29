@@ -66,15 +66,12 @@ public final class PassThroughTransformTest extends TransformTestBase {
     }
 
     /**
-     * Returns the tolerance value for comparing the given ordinate.
-     * This method implements relative tolerance threshold.
-     *
-     * @param  ordinate The ordinate value being compared.
-     * @return The absolute tolerance threshold to use for comparing the given ordinate.
+     * Verify after each test case that all GeoAPI tests were enabled.
      */
+    @After
     @Override
-    protected double tolerance(final double ordinate) {
-        return tolerance * Math.abs(ordinate);
+    public void assertAllTestsEnabled() {
+        super.assertAllTestsEnabled();
     }
 
     /**
@@ -87,7 +84,6 @@ public final class PassThroughTransformTest extends TransformTestBase {
     public void testPassthrough() throws FactoryException, TransformException {
         final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
         runTest(mtFactory.createParameterizedTransform(param), PassThroughTransform.class);
-        assertAllTestsEnabled(); // Including isInverseTransformSupported.
     }
 
     /**
@@ -254,31 +250,29 @@ public final class PassThroughTransformTest extends TransformTestBase {
          * test suite.
          */
         tolerance = 0; // Results should be strictly identical because we use the same inputs.
+        relativeTolerance = false;
         isInverseTransformSupported = (subtDimension == subTransform.getTargetDimensions());
         final float[] sourceAsFloat = new float[sourceData.length];
         for (int i=0; i<sourceAsFloat.length; i++) {
             sourceAsFloat[i] = (float) sourceData[i];
         }
         transform.transform(sourceData, 0, sourceData, 0, numPts);
-        for (int i=0; i<sourceData.length; i++) {
-            final double expected = targetData[i];
-            assertEquals("A transformed value is wrong.",
-                    expected, sourceData[i], tolerance(expected));
-        }
-        tolerance = 1E-4f; // Because result is computed from inputs as float values.
+        assertCoordinatesEqual("Expected a plain copy.", fullDimension,
+                targetData, 0, sourceData, 0, numPts, ComparisonType.STRICT);
+        /*
+         * Below is a relatively high tolerance value, because result are
+         * computed using inputs stored as float values.
+         */
+        tolerance = 1E-4f;
+        relativeTolerance = true;
         final float[] targetAsFloat = verifyConsistency(sourceAsFloat);
         assertEquals("Unexpected length of transformed array.", targetData.length, targetAsFloat.length);
-        for (int i=0; i<targetAsFloat.length; i++) {
-            final double expected = targetData[i];
-            assertEquals("A transformed value is wrong.",
-                    (float) expected, targetAsFloat[i], (float) tolerance(expected));
-        }
+        assertCoordinatesEqual("A transformed value is wrong.", fullDimension,
+                targetData, 0, targetAsFloat, 0, numPts, ComparisonType.DIRECT_TRANSFORM);
         if (isInverseTransformSupported) {
             transform.inverse().transform(sourceData, 0, sourceData, 0, numPts);
-            for (int i=0; i<numPts; i++) {
-                assertEquals("Wrong value after inverse transform.",
-                        sourceAsFloat[i], (float) sourceData[i], 0f);
-            }
+            assertCoordinatesEqual("A transformed value is wrong.", fullDimension,
+                    sourceAsFloat, 0, sourceData, 0, numPts, ComparisonType.DIRECT_TRANSFORM);
         } else try {
             assertNotNull(transform.inverse());
             fail("Expected a non-invertible transform.");

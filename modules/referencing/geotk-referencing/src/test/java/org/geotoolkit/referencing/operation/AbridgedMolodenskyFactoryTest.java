@@ -52,7 +52,10 @@ public final class AbridgedMolodenskyFactoryTest extends CoordinateOperationFact
     @Override
     protected SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
         tolerance = SamplePoints.MOLODENSKY_TOLERANCE * 10;
-        zTolerance = 2E-2;
+        zTolerance = Math.max(zTolerance, 2E-2);
+        if (zDimension == null) {
+            zDimension = new int[] {2};
+        }
         return sample.tgt;
     }
 }

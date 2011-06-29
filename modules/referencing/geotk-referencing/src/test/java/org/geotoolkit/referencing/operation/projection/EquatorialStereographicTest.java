@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
@@ -28,7 +27,7 @@ import static org.geotoolkit.referencing.operation.provider.Stereographic.*;
  * Tests the {@link EquatorialStereographic} class.
  *
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18
  */
@@ -64,21 +63,17 @@ public final class EquatorialStereographicTest extends ProjectionTestBase {
     public void testDerivative() throws TransformException {
         tolerance = 1E-7;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
-        final Point2D.Double point = new Point2D.Double(Math.toRadians(-4), Math.toRadians( 3));
+        derivativeDeltas = new double[] {delta, delta};
 
         // Test spherical formulas.
         transform = create(false);
         validate();
-        checkDerivative2D(point, delta);
+        verifyDerivative(Math.toRadians(-4), Math.toRadians(3));
 
         // Test ellipsoidal formulas.
         transform = create(true);
         validate();
-        checkDerivative2D(point, delta);
-
-        // Test ellipsoidal formulas.
-        point.x = 20;
-        point.y = 15;
-        checkDerivative2D(point, delta);
+        verifyDerivative(Math.toRadians(-4), Math.toRadians( 3));
+        verifyDerivative(Math.toRadians(20), Math.toRadians(15));
     }
 }
