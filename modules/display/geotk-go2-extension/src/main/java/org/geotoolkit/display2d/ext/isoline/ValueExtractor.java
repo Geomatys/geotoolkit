@@ -17,6 +17,7 @@
 
 package org.geotoolkit.display2d.ext.isoline;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.feature.Feature;
@@ -32,6 +33,6 @@ public interface ValueExtractor {
      * @param feature feature from where data must be extracted.
      * @return an array of 3 values : x,y, value
      */
-    double[] getValues(RenderingContext2D context, Feature feature) throws IOException;
+    Coordinate getValues(RenderingContext2D context, Feature feature) throws IOException;
 
 }
