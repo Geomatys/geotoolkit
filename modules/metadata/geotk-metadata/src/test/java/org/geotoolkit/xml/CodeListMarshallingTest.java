@@ -17,16 +17,22 @@
  */
 package org.geotoolkit.xml;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.io.StringWriter;
 import java.util.Collections;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
+
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.ResponsibleParty;
+import org.opengis.metadata.identification.TopicCategory;
+
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.test.LocaleDependantTestBase;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -36,7 +42,8 @@ import static org.geotoolkit.test.Assert.*;
  * Tests the XML marshalling of {@code CodeList}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.19
  *
  * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-121">GEOTK-121</a>
  *
@@ -149,5 +156,29 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
         assertDomEquals(expected, actual, "xmlns:*");
 
         pool.release(marshaller);
+    }
+
+    /**
+     * Tests marshalling of a code list which is not in the list of standard codes.
+     *
+     * @throws JAXBException If an error occurred while marshalling the XML.
+     */
+    @Test
+    public void testExtraCodes() throws JAXBException {
+        final MarshallerPool pool = new MarshallerPool(DefaultDataIdentification.class);
+        final Marshaller marshaller = pool.acquireMarshaller();
+        final DefaultDataIdentification id = new DefaultDataIdentification();
+        id.setTopicCategories(Arrays.asList(
+                TopicCategory.valueOf("oceans"), // New code
+                TopicCategory.valueOf("OCEANS"), // Existing code with UML id="oceans"
+                TopicCategory.valueOf("test"))); // New code
+
+        final String xml = marshal(marshaller, id);
+        pool.release(marshaller);
+
+        // "OCEANS" is marshalled as "oceans" because is contains a UML id, which is lower-case.
+        assertEquals(2, Strings.count(xml, "<gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>"));
+        assertEquals(0, Strings.count(xml, "<gmd:MD_TopicCategoryCode>OCEANS</gmd:MD_TopicCategoryCode>"));
+        assertEquals(1, Strings.count(xml, "<gmd:MD_TopicCategoryCode>test</gmd:MD_TopicCategoryCode>"));
     }
 }

@@ -133,7 +133,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         if (value == null) {
             return null;
         }
-        return wrap(isEnum() ? new CodeListProxy(value.identifier()) : new CodeListProxy(value));
+        return wrap(isEnum() ? new CodeListProxy(CodeLists.identifier(value)) : new CodeListProxy(value));
     }
 
     /**
