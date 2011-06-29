@@ -294,13 +294,13 @@ public class Category implements Serializable {
      *          The upper sample value, exclusive.
      * @param scale
      *          The {@link GridSampleDimension#getScale() scale} value which is
-     *          multiplied to sample values for this category.
+     *          multiplied to sample values for this category. Must be different than zero.
      * @param offset
      *          The {@link GridSampleDimension#getOffset() offset} value to add
      *          to sample values for this category.
      * @throws IllegalArgumentException
      *          if {@code lower} is not smaller than {@code upper}, or if {@code scale} or
-     *          {@code offset} are not real numbers.
+     *          {@code offset} are not real numbers, or if {@code scale} is zero.
      */
     public Category(final CharSequence name,
                     final Color[]      colors,
@@ -334,13 +334,13 @@ public class Category implements Serializable {
      *          {@link Integer}, but {@link Float} and {@link Double} are accepted as well.
      * @param scale
      *          The {@link GridSampleDimension#getScale() scale} value which is multiplied to
-     *          sample values for this category.
+     *          sample values for this category. Must be different than zero.
      * @param offset
      *          The {@link GridSampleDimension#getOffset() offset} value to add to sample values
      *          for this category.
      * @throws IllegalArgumentException
      *          if {@code lower} is not smaller than {@code upper}, or if {@code scale} or
-     *          {@code offset} are not real numbers.
+     *          {@code offset} are not real numbers, or if {@code scale} is zero.
      */
     public Category(final CharSequence   name,
                     final Color[]        colors,
@@ -460,7 +460,7 @@ public class Category implements Serializable {
             Double.doubleToRawLongBits(minimum) == Double.doubleToRawLongBits(maximum))
         {
             inverse   = this;
-            transform = createLinearTransform(0, minimum);
+            transform = LinearTransform1D.create(0, minimum);
             return;
         }
         /*
@@ -478,7 +478,7 @@ public class Category implements Serializable {
         try {
             if (sampleToGeophysics == null) {
                 inverse = new GeophysicsCategory(this, false);
-                transform = createLinearTransform(0, inverse.minimum); // sample to geophysics
+                transform = LinearTransform1D.create(0, inverse.minimum); // sample to geophysics
                 return;
             }
             transform = sampleToGeophysics; // Must be set before GeophysicsCategory construction!
@@ -520,7 +520,7 @@ public class Category implements Serializable {
         this.ARGB    = inverse.ARGB;
         if (!isQuantitative) {
             minimum = maximum = XMath.toNaN((int) Math.round((inverse.minimum + inverse.maximum)/2));
-            transform = createLinearTransform(0, inverse.minimum); // geophysics to sample
+            transform = LinearTransform1D.create(0, inverse.minimum); // geophysics to sample
             return;
         }
         /*
@@ -548,8 +548,18 @@ public class Category implements Serializable {
      * @param scale  The scale factor. May be 0 for a constant transform.
      * @param offset The offset value. May be NaN if this method is invoked from a constructor
      *               for initializing {@link #transform} for a qualitative category.
+     * @throws IllegalArgumentException If the {@code scale} is zero, or if the scale or offset
+     *         is NaN or infinite.
      */
-    static MathTransform1D createLinearTransform(final double scale, final double offset) {
+    static MathTransform1D createLinearTransform(final double scale, final double offset)
+            throws IllegalArgumentException
+    {
+        if (scale == 0 || Double.isNaN(scale) || Double.isInfinite(scale)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "scale", scale));
+        }
+        if (Double.isNaN(offset) || Double.isInfinite(offset)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "offset", offset));
+        }
         return LinearTransform1D.create(scale, offset);
     }
 
@@ -600,11 +610,10 @@ public class Category implements Serializable {
         final double maxSample = doubleValue(sType,     sampleValueRange.getMaxValue(), sMaxInc);
         final double minValue  = doubleValue(gType, geophysicsValueRange.getMinValue(), gMinInc);
         final double maxValue  = doubleValue(gType, geophysicsValueRange.getMaxValue(), gMaxInc);
-        double scale = (maxValue-minValue) / (maxSample-minSample);
-        if (Double.isNaN(scale) &&
-           !Double.isNaN(maxValue  - minValue) &&
-           !Double.isNaN(maxSample - minSample))
-        {
+        final double dValue    = maxValue  - minValue;
+        final double dSample   = maxSample - minSample;
+        double scale = dValue / dSample;
+        if (Double.isNaN(scale) && !Double.isNaN(dValue) && !Double.isNaN(dSample)) {
             scale = 1.0;
         }
         final double offset = minValue - scale*minSample;

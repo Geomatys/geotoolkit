@@ -34,7 +34,7 @@ Running Geotoolkit.org
 
 ** Maven configuration
 
-  _Geotk for GeoAPI 3.0_ is deployed into the {{{http://search.maven.org/}Maven Central}} repository,
+  <Geotk for GeoAPI 3.0> is deployed into the {{{http://search.maven.org/}Maven Central}} repository,
   and consequently does not require any explicit repository declaration. The following example is
   sufficient for running Geotk referencing services with the optional - but recommended - EPSG
   database.
