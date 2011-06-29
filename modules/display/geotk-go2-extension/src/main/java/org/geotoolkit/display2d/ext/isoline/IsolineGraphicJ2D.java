@@ -51,6 +51,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
@@ -66,6 +67,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.XArrays;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Envelope;
@@ -145,8 +147,14 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
-        final FeatureCollection<SimpleFeature> collection =
+        FeatureCollection<SimpleFeature> collection =
                     (FeatureCollection<SimpleFeature>) item.getCollection();
+        try {
+            collection = collection.subCollection(item.getQuery());
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }
+        
 
         try {
             final FeatureIterator<SimpleFeature> iterator = collection.iterator();
@@ -279,7 +287,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
         final int lower = 1;
         final int upper = 255;
-        final double scale = (zmax - zmin) / upper;
+        double scale = (zmax - zmin) / upper;
+        if(scale == 0) scale = 1;
         final double offset = zmin - scale*lower;
 
         final byte[] zs = new byte[xs.length*ys.length];
