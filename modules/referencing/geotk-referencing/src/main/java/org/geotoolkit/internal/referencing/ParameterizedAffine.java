@@ -76,7 +76,7 @@ public class ParameterizedAffine extends AffineTransform2D {
      * @return A copy of the given affine transform associated to the parameter of this object,
      *         or the given transform unchanged if it was not affine.
      */
-    public final MathTransform wrap(final MathTransform transform) {
+    public final MathTransform using(final MathTransform transform) {
         if (transform instanceof AffineTransform) {
             return new ParameterizedAffine((AffineTransform) transform, parameters);
         } else {

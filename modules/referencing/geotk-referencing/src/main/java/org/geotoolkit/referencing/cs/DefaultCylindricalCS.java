@@ -43,7 +43,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see DefaultPolarCS
  *
@@ -68,7 +68,7 @@ public class DefaultCylindricalCS extends AbstractCS implements CylindricalCS {
 
     /**
      * Constructs a new coordinate system with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
@@ -122,15 +122,25 @@ public class DefaultCylindricalCS extends AbstractCS implements CylindricalCS {
      * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
      * attribute values of the given object.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultCylindricalCS wrap(final CylindricalCS object) {
+    public static DefaultCylindricalCS castOrCopy(final CylindricalCS object) {
         return (object == null) || (object instanceof DefaultCylindricalCS)
                 ? (DefaultCylindricalCS) object : new DefaultCylindricalCS(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultCylindricalCS wrap(final CylindricalCS object) {
+        return castOrCopy(object);
     }
 
     /**

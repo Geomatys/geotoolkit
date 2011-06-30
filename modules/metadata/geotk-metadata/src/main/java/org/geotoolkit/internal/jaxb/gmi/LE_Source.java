@@ -65,12 +65,17 @@ public class LE_Source extends DefaultSource {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultSource wrap(final Source original) {
+    public static DefaultSource castOrCopy(final Source original) {
         if (original != null && !(original instanceof LE_Source)) {
             if (original.getProcessedLevel() != null || original.getResolution() != null) {
                 return new LE_Source(original);
             }
         }
-        return DefaultSource.wrap(original);
+        return DefaultSource.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultSource wrap(final Source original) {
+        return castOrCopy(original);
     }
 }

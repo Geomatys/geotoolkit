@@ -80,7 +80,7 @@ public final class MI_EnvironmentalRecord
     @Override
     @XmlElementRef
     public DefaultEnvironmentalRecord getElement() {
-        return skip() ? null : DefaultEnvironmentalRecord.wrap(metadata);
+        return skip() ? null : DefaultEnvironmentalRecord.castOrCopy(metadata);
     }
 
     /**

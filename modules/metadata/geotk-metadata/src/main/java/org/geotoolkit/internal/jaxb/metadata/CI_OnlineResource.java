@@ -78,7 +78,7 @@ public final class CI_OnlineResource extends PropertyType<CI_OnlineResource, Onl
     @Override
     @XmlElementRef
     public DefaultOnlineResource getElement() {
-        return skip() ? null : DefaultOnlineResource.wrap(metadata);
+        return skip() ? null : DefaultOnlineResource.castOrCopy(metadata);
     }
 
     /**

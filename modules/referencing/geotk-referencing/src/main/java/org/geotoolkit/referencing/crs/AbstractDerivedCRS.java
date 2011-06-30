@@ -111,7 +111,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
 
     /**
      * Constructs a new derived CRS with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.

@@ -80,7 +80,7 @@ public final class MI_RangeElementDescription
     @Override
     @XmlElementRef
     public DefaultRangeElementDescription getElement() {
-        return skip() ? null : DefaultRangeElementDescription.wrap(metadata);
+        return skip() ? null : DefaultRangeElementDescription.castOrCopy(metadata);
     }
 
     /**

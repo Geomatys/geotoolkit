@@ -80,7 +80,7 @@ public final class MD_Constraints extends PropertyType<MD_Constraints, Constrain
     @Override
     @XmlElementRef
     public DefaultConstraints getElement() {
-        return skip() ? null : DefaultConstraints.wrap(metadata);
+        return skip() ? null : DefaultConstraints.castOrCopy(metadata);
     }
 
     /**

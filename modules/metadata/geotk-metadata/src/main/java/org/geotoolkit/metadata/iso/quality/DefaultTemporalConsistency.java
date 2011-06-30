@@ -32,7 +32,7 @@ import org.opengis.metadata.quality.TemporalConsistency;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -71,14 +71,24 @@ public class DefaultTemporalConsistency extends AbstractTemporalAccuracy impleme
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultTemporalConsistency wrap(final TemporalConsistency object) {
+    public static DefaultTemporalConsistency castOrCopy(final TemporalConsistency object) {
         return (object == null) || (object instanceof DefaultTemporalConsistency)
                 ? (DefaultTemporalConsistency) object : new DefaultTemporalConsistency(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultTemporalConsistency wrap(final TemporalConsistency object) {
+        return castOrCopy(object);
     }
 }

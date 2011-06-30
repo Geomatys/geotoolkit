@@ -172,7 +172,7 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
             this.boundingBox       = source.boundingBox;
         } else {
             this.coverage = coverage;
-            temporalCRS = DefaultTemporalCRS.wrap(CRS.getTemporalCRS(crs));
+            temporalCRS = DefaultTemporalCRS.castOrCopy(CRS.getTemporalCRS(crs));
             if (temporalCRS == null) {
                 throw new IllegalArgumentException(Errors.format(
                         Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));

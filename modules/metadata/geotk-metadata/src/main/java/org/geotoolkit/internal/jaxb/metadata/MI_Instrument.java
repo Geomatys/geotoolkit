@@ -78,7 +78,7 @@ public final class MI_Instrument extends PropertyType<MI_Instrument, Instrument>
     @Override
     @XmlElementRef
     public DefaultInstrument getElement() {
-        return skip() ? null : DefaultInstrument.wrap(metadata);
+        return skip() ? null : DefaultInstrument.castOrCopy(metadata);
     }
 
     /**

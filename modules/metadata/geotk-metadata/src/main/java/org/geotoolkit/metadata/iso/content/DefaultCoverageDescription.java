@@ -43,7 +43,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -111,20 +111,30 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      * (i.e. attributes are not cloned).
      * <p>
      * This method checks for the {@link ImageDescription} sub-interface. If that interface is
-     * found, then this method delegates to the corresponding {@code wrap} static method.
+     * found, then this method delegates to the corresponding {@code castOrCopy} static method.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultCoverageDescription wrap(final CoverageDescription object) {
+    public static DefaultCoverageDescription castOrCopy(final CoverageDescription object) {
         if (object instanceof ImageDescription) {
-            return DefaultImageDescription.wrap((ImageDescription) object);
+            return DefaultImageDescription.castOrCopy((ImageDescription) object);
         }
         return (object == null) || (object instanceof DefaultCoverageDescription) ?
                 (DefaultCoverageDescription) object : new DefaultCoverageDescription(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultCoverageDescription wrap(final CoverageDescription object) {
+        return castOrCopy(object);
     }
 
     /**

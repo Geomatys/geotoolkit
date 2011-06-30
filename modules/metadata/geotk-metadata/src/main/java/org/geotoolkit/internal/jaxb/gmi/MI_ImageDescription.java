@@ -67,12 +67,17 @@ public class MI_ImageDescription extends DefaultImageDescription {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultImageDescription wrap(final ImageDescription original) {
+    public static DefaultImageDescription castOrCopy(final ImageDescription original) {
         if (original != null && !(original instanceof MI_ImageDescription)) {
             if (!isNullOrEmpty(original.getRangeElementDescriptions())) {
                 return new MI_ImageDescription(original);
             }
         }
-        return DefaultImageDescription.wrap(original);
+        return DefaultImageDescription.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultImageDescription wrap(final ImageDescription original) {
+        return castOrCopy(original);
     }
 }

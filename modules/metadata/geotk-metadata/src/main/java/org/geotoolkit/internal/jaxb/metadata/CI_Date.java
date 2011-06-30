@@ -78,7 +78,7 @@ public final class CI_Date extends PropertyType<CI_Date, CitationDate> {
     @Override
     @XmlElementRef
     public DefaultCitationDate getElement() {
-        return skip() ? null : DefaultCitationDate.wrap(metadata);
+        return skip() ? null : DefaultCitationDate.castOrCopy(metadata);
     }
 
     /**

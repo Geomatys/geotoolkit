@@ -38,7 +38,7 @@ import org.opengis.metadata.quality.ConceptualConsistency;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -85,30 +85,40 @@ public class AbstractLogicalConsistency extends AbstractElement implements Logic
      * <p>
      * This method checks for the {@link ConceptualConsistency}, {@link DomainConsistency},
      * {@link FormatConsistency} and {@link TopologicalConsistency} sub-interfaces. If one
-     * of those interfaces is found, then this method delegates to the corresponding {@code wrap}
+     * of those interfaces is found, then this method delegates to the corresponding {@code castOrCopy}
      * static method. If the given object implements more than one of the above-cited interfaces,
-     * then the {@code wrap} method to be used is unspecified.
+     * then the {@code castOrCopy} method to be used is unspecified.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static AbstractLogicalConsistency wrap(final LogicalConsistency object) {
+    public static AbstractLogicalConsistency castOrCopy(final LogicalConsistency object) {
         if (object instanceof ConceptualConsistency) {
-            return DefaultConceptualConsistency.wrap((ConceptualConsistency) object);
+            return DefaultConceptualConsistency.castOrCopy((ConceptualConsistency) object);
         }
         if (object instanceof DomainConsistency) {
-            return DefaultDomainConsistency.wrap((DomainConsistency) object);
+            return DefaultDomainConsistency.castOrCopy((DomainConsistency) object);
         }
         if (object instanceof FormatConsistency) {
-            return DefaultFormatConsistency.wrap((FormatConsistency) object);
+            return DefaultFormatConsistency.castOrCopy((FormatConsistency) object);
         }
         if (object instanceof TopologicalConsistency) {
-            return DefaultTopologicalConsistency.wrap((TopologicalConsistency) object);
+            return DefaultTopologicalConsistency.castOrCopy((TopologicalConsistency) object);
         }
         return (object == null) || (object instanceof AbstractLogicalConsistency)
                 ? (AbstractLogicalConsistency) object : new AbstractLogicalConsistency(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static AbstractLogicalConsistency wrap(final LogicalConsistency object) {
+        return castOrCopy(object);
     }
 }

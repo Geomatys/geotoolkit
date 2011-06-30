@@ -78,7 +78,7 @@ public final class CI_Contact extends PropertyType<CI_Contact, Contact> {
     @Override
     @XmlElementRef
     public DefaultContact getElement() {
-        return skip() ? null : DefaultContact.wrap(metadata);
+        return skip() ? null : DefaultContact.castOrCopy(metadata);
     }
 
     /**

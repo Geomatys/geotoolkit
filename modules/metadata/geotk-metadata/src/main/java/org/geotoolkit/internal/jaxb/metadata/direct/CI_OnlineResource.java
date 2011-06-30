@@ -40,6 +40,6 @@ public final class CI_OnlineResource extends MetadataAdapter<OnlineResource, Def
      */
     @Override
     public DefaultOnlineResource marshal(final OnlineResource value) {
-        return DefaultOnlineResource.wrap(value);
+        return DefaultOnlineResource.castOrCopy(value);
     }
 }

@@ -78,7 +78,7 @@ public final class MI_GCP extends PropertyType<MI_GCP, GCP> {
     @Override
     @XmlElementRef
     public DefaultGCP getElement() {
-        return skip() ? null : DefaultGCP.wrap(metadata);
+        return skip() ? null : DefaultGCP.castOrCopy(metadata);
     }
 
     /**

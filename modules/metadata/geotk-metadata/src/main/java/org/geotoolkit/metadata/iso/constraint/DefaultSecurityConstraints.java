@@ -36,7 +36,7 @@ import org.opengis.metadata.constraint.SecurityConstraints;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -96,7 +96,7 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
     /**
      * Creates a security constraints initialized with the specified classification.
      *
-     * @param classification The nname of the handling restrictions on the resource.
+     * @param classification The name of the handling restrictions on the resource.
      */
     public DefaultSecurityConstraints(final Classification classification) {
         setClassification(classification);
@@ -110,15 +110,25 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultSecurityConstraints wrap(final SecurityConstraints object) {
+    public static DefaultSecurityConstraints castOrCopy(final SecurityConstraints object) {
         return (object == null) || (object instanceof DefaultSecurityConstraints)
                 ? (DefaultSecurityConstraints) object : new DefaultSecurityConstraints(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultSecurityConstraints wrap(final SecurityConstraints object) {
+        return castOrCopy(object);
     }
 
     /**

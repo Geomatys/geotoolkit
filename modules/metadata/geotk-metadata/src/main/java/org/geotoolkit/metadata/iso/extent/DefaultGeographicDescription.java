@@ -35,7 +35,7 @@ import org.opengis.metadata.extent.GeographicDescription;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -90,15 +90,25 @@ public class DefaultGeographicDescription extends AbstractGeographicExtent
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultGeographicDescription wrap(final GeographicDescription object) {
+    public static DefaultGeographicDescription castOrCopy(final GeographicDescription object) {
         return (object == null) || (object instanceof DefaultGeographicDescription)
                 ? (DefaultGeographicDescription) object : new DefaultGeographicDescription(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultGeographicDescription wrap(final GeographicDescription object) {
+        return castOrCopy(object);
     }
 
     /**

@@ -78,7 +78,7 @@ public final class MD_BrowseGraphic extends PropertyType<MD_BrowseGraphic, Brows
     @Override
     @XmlElementRef
     public DefaultBrowseGraphic getElement() {
-        return skip() ? null : DefaultBrowseGraphic.wrap(metadata);
+        return skip() ? null : DefaultBrowseGraphic.castOrCopy(metadata);
     }
 
     /**

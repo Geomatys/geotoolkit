@@ -78,7 +78,7 @@ public final class CD_ImageDatum extends PropertyType<CD_ImageDatum, ImageDatum>
     @Override
     @XmlElement(name = "ImageDatum")
     public DefaultImageDatum getElement() {
-        return skip() ? null : DefaultImageDatum.wrap(metadata);
+        return skip() ? null : DefaultImageDatum.castOrCopy(metadata);
     }
 
     /**

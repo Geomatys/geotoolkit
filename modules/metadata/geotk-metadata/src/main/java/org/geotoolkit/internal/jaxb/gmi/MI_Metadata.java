@@ -67,12 +67,17 @@ public class MI_Metadata extends DefaultMetadata {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultMetadata wrap(final Metadata original) {
+    public static DefaultMetadata castOrCopy(final Metadata original) {
         if (original != null && !(original instanceof MI_Metadata)) {
             if (!isNullOrEmpty(original.getAcquisitionInformation())) {
                 return new MI_Metadata(original);
             }
         }
-        return DefaultMetadata.wrap(original);
+        return DefaultMetadata.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultMetadata wrap(final Metadata original) {
+        return castOrCopy(original);
     }
 }

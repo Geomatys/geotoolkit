@@ -80,7 +80,7 @@ public final class MD_ScopeDescription
     @Override
     @XmlElementRef
     public DefaultScopeDescription getElement() {
-        return skip() ? null : DefaultScopeDescription.wrap(metadata);
+        return skip() ? null : DefaultScopeDescription.castOrCopy(metadata);
     }
 
     /**

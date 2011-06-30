@@ -37,7 +37,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.03
  * @module
@@ -99,15 +99,25 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultEnvironmentalRecord wrap(final EnvironmentalRecord object) {
+    public static DefaultEnvironmentalRecord castOrCopy(final EnvironmentalRecord object) {
         return (object == null) || (object instanceof DefaultEnvironmentalRecord)
                 ? (DefaultEnvironmentalRecord) object : new DefaultEnvironmentalRecord(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultEnvironmentalRecord wrap(final EnvironmentalRecord object) {
+        return castOrCopy(object);
     }
 
     /**

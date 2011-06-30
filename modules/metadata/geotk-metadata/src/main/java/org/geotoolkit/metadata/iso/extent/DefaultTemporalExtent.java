@@ -45,7 +45,7 @@ import org.geotoolkit.internal.referencing.ProxyForMetadata;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -141,20 +141,30 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      * (i.e. attributes are not cloned).
      * <p>
      * This method checks for the {@link SpatialTemporalExtent} sub-interfaces. If this interface
-     * is found, then this method delegates to the corresponding {@code wrap} static method.
+     * is found, then this method delegates to the corresponding {@code castOrCopy} static method.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultTemporalExtent wrap(final TemporalExtent object) {
+    public static DefaultTemporalExtent castOrCopy(final TemporalExtent object) {
         if (object instanceof SpatialTemporalExtent) {
-            return DefaultSpatialTemporalExtent.wrap((SpatialTemporalExtent) object);
+            return DefaultSpatialTemporalExtent.castOrCopy((SpatialTemporalExtent) object);
         }
         return (object == null) || (object instanceof DefaultTemporalExtent)
                 ? (DefaultTemporalExtent) object : new DefaultTemporalExtent(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultTemporalExtent wrap(final TemporalExtent object) {
+        return castOrCopy(object);
     }
 
     /**

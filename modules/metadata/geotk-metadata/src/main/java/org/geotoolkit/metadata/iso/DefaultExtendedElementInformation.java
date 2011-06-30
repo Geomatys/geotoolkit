@@ -42,7 +42,7 @@ import org.geotoolkit.lang.ValueRange;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -203,15 +203,25 @@ public class DefaultExtendedElementInformation extends MetadataEntity
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultExtendedElementInformation wrap(final ExtendedElementInformation object) {
+    public static DefaultExtendedElementInformation castOrCopy(final ExtendedElementInformation object) {
         return (object == null) || (object instanceof DefaultExtendedElementInformation)
                 ? (DefaultExtendedElementInformation) object : new DefaultExtendedElementInformation(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultExtendedElementInformation wrap(final ExtendedElementInformation object) {
+        return castOrCopy(object);
     }
 
     /**

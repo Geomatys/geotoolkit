@@ -80,7 +80,7 @@ public final class MI_AcquisitionInformation
     @Override
     @XmlElementRef
     public DefaultAcquisitionInformation getElement() {
-        return skip() ? null : DefaultAcquisitionInformation.wrap(metadata);
+        return skip() ? null : DefaultAcquisitionInformation.castOrCopy(metadata);
     }
 
     /**

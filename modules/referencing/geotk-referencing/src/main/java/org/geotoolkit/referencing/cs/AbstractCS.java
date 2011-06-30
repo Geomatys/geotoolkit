@@ -73,7 +73,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see DefaultCoordinateSystemAxis
  * @see javax.measure.unit.Unit
@@ -124,7 +124,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
 
     /**
      * Constructs a new coordinate system with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
@@ -524,7 +524,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
             final CoordinateSystemAxis a = axis[i];
             if (!unit.equals(a.getUnit())) {
                 final DefaultCoordinateSystemAxis converted =
-                        DefaultCoordinateSystemAxis.wrap(a).usingUnit(unit);
+                        DefaultCoordinateSystemAxis.castOrCopy(a).usingUnit(unit);
                 if (converted != a) {
                     if (newAxis == null) {
                         newAxis = new CoordinateSystemAxis[axis.length];
@@ -548,7 +548,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
             final CoordinateSystemAxis a = cs.getAxis(i);
             DefaultCoordinateSystemAxis c = DefaultCoordinateSystemAxis.getPredefined(a);
             if (c == null) {
-                c = DefaultCoordinateSystemAxis.wrap(a);
+                c = DefaultCoordinateSystemAxis.castOrCopy(a);
             }
             axis[i] = c;
         }

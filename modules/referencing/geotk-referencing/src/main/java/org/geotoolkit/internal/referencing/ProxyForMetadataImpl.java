@@ -242,7 +242,7 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
         final int dim = CRSUtilities.dimensionColinearWith(
                 crs.getCoordinateSystem(), temporalCRS.getCoordinateSystem());
         if (dim >= 0) {
-            final DefaultTemporalCRS converter = DefaultTemporalCRS.wrap(temporalCRS);
+            final DefaultTemporalCRS converter = DefaultTemporalCRS.castOrCopy(temporalCRS);
             target.setStartTime(converter.toDate(envelope.getMinimum(dim)));
             target.setEndTime  (converter.toDate(envelope.getMaximum(dim)));
         }

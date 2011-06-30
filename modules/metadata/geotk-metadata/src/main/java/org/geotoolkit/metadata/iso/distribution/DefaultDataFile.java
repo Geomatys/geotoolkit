@@ -39,7 +39,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.03
  * @module
@@ -92,15 +92,25 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultDataFile wrap(final DataFile object) {
+    public static DefaultDataFile castOrCopy(final DataFile object) {
         return (object == null) || (object instanceof DefaultDataFile)
                 ? (DefaultDataFile) object : new DefaultDataFile(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultDataFile wrap(final DataFile object) {
+        return castOrCopy(object);
     }
 
     /**

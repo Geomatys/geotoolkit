@@ -413,7 +413,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                 if (!(temporalCRS instanceof TemporalCRS)) {
                     return null;
                 }
-                final DefaultTemporalCRS converter = DefaultTemporalCRS.wrap((TemporalCRS) temporalCRS);
+                final DefaultTemporalCRS converter = DefaultTemporalCRS.castOrCopy((TemporalCRS) temporalCRS);
                 start = converter.toValue((Date) first);
                 end   = converter.toValue((Date) last);
             } else {

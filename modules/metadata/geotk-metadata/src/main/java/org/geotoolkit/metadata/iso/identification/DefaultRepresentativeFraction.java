@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -91,15 +91,25 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
      * attribute values of the given object.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultRepresentativeFraction wrap(final RepresentativeFraction object) {
+    public static DefaultRepresentativeFraction castOrCopy(final RepresentativeFraction object) {
         return (object == null) || (object instanceof DefaultRepresentativeFraction)
                 ? (DefaultRepresentativeFraction) object : new DefaultRepresentativeFraction(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultRepresentativeFraction wrap(final RepresentativeFraction object) {
+        return castOrCopy(object);
     }
 
     /**

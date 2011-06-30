@@ -78,7 +78,7 @@ public final class MI_Operation extends PropertyType<MI_Operation, Operation> {
     @Override
     @XmlElementRef
     public DefaultOperation getElement() {
-        return skip() ? null : DefaultOperation.wrap(metadata);
+        return skip() ? null : DefaultOperation.castOrCopy(metadata);
     }
 
     /**

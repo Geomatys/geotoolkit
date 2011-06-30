@@ -81,7 +81,7 @@ public final class MD_StandardOrderProcess
     @Override
     @XmlElementRef
     public DefaultStandardOrderProcess getElement() {
-        return skip() ? null : DefaultStandardOrderProcess.wrap(metadata);
+        return skip() ? null : DefaultStandardOrderProcess.castOrCopy(metadata);
     }
 
     /**

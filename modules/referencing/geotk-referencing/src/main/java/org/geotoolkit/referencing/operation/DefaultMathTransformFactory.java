@@ -491,7 +491,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         }
         MathTransform mt = createConcatenatedTransform(createConcatenatedTransform(step1, step2), step3);
         if (projection instanceof ParameterizedAffine) {
-            mt = ((ParameterizedAffine) projection).wrap(mt);
+            mt = ((ParameterizedAffine) projection).using(mt);
         }
         return mt;
     }

@@ -82,7 +82,7 @@ public final class MD_ApplicationSchemaInformation
     @Override
     @XmlElementRef
     public DefaultApplicationSchemaInformation getElement() {
-        return skip() ? null : DefaultApplicationSchemaInformation.wrap(metadata);
+        return skip() ? null : DefaultApplicationSchemaInformation.castOrCopy(metadata);
     }
 
     /**

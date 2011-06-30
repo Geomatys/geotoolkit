@@ -78,7 +78,7 @@ public final class CI_Series extends PropertyType<CI_Series, Series> {
     @Override
     @XmlElementRef
     public DefaultSeries getElement() {
-        return skip() ? null : DefaultSeries.wrap(metadata);
+        return skip() ? null : DefaultSeries.castOrCopy(metadata);
     }
 
     /**

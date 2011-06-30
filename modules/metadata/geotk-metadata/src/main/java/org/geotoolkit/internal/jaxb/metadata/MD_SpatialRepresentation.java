@@ -90,12 +90,12 @@ public final class MD_SpatialRepresentation
         if (skip()) return null;
         final SpatialRepresentation metadata = this.metadata;
         if (metadata instanceof Georectified) {
-            return MI_Georectified.wrap((Georectified) metadata);
+            return MI_Georectified.castOrCopy((Georectified) metadata);
         }
         if (metadata instanceof Georeferenceable) {
-            return MI_Georeferenceable.wrap((Georeferenceable) metadata);
+            return MI_Georeferenceable.castOrCopy((Georeferenceable) metadata);
         }
-        return AbstractSpatialRepresentation.wrap(metadata);
+        return AbstractSpatialRepresentation.castOrCopy(metadata);
     }
 
     /**

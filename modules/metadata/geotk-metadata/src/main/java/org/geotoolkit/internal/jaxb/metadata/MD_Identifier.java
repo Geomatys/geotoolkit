@@ -88,7 +88,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
         if (metadata instanceof ReferenceIdentifier) {
             return null;
         }
-        return DefaultIdentifier.wrap(metadata);
+        return DefaultIdentifier.castOrCopy(metadata);
     }
 
     /**

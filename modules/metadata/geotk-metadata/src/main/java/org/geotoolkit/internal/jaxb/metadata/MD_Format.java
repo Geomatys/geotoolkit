@@ -78,7 +78,7 @@ public final class MD_Format extends PropertyType<MD_Format, Format> {
     @Override
     @XmlElementRef
     public DefaultFormat getElement() {
-        return skip() ? null : DefaultFormat.wrap(metadata);
+        return skip() ? null : DefaultFormat.castOrCopy(metadata);
     }
 
     /**

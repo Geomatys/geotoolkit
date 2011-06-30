@@ -505,7 +505,7 @@ public final class NewGridCoverageReference {
                             Range<?> r = da.getOrdinateRangeAt(i);
                             if (!(r instanceof DateRange)) {
                                 if (c == null) {
-                                    c = DefaultTemporalCRS.wrap(temporalCRS);
+                                    c = DefaultTemporalCRS.castOrCopy(temporalCRS);
                                 }
                                 r = new DateRange(
                                         c.toDate(((Number) r.getMinValue()).doubleValue()), r.isMinIncluded(),
@@ -514,7 +514,7 @@ public final class NewGridCoverageReference {
                             dateRanges[i] = (DateRange) r;
                         }
                     } else {
-                        final DefaultTemporalCRS c = DefaultTemporalCRS.wrap(temporalCRS);
+                        final DefaultTemporalCRS c = DefaultTemporalCRS.castOrCopy(temporalCRS);
                         dateRanges = new DateRange[] {
                             new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
                         };

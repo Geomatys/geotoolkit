@@ -78,7 +78,7 @@ public final class DQ_Scope extends PropertyType<DQ_Scope, Scope> {
     @Override
     @XmlElementRef
     public DefaultScope getElement() {
-        return skip() ? null : DefaultScope.wrap(metadata);
+        return skip() ? null : DefaultScope.castOrCopy(metadata);
     }
 
     /**

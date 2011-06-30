@@ -78,7 +78,7 @@ public final class MD_Keywords extends PropertyType<MD_Keywords, Keywords> {
     @Override
     @XmlElementRef
     public DefaultKeywords getElement() {
-        return skip() ? null : DefaultKeywords.wrap(metadata);
+        return skip() ? null : DefaultKeywords.castOrCopy(metadata);
     }
 
     /**

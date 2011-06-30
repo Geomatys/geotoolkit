@@ -67,12 +67,17 @@ public class MI_CoverageDescription extends DefaultCoverageDescription {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultCoverageDescription wrap(final CoverageDescription original) {
+    public static DefaultCoverageDescription castOrCopy(final CoverageDescription original) {
         if (original != null && !(original instanceof MI_CoverageDescription)) {
             if (!isNullOrEmpty(original.getRangeElementDescriptions())) {
                 return new MI_CoverageDescription(original);
             }
         }
-        return DefaultCoverageDescription.wrap(original);
+        return DefaultCoverageDescription.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultCoverageDescription wrap(final CoverageDescription original) {
+        return castOrCopy(original);
     }
 }

@@ -78,7 +78,7 @@ public final class DQ_DataQuality extends PropertyType<DQ_DataQuality, DataQuali
     @Override
     @XmlElementRef
     public DefaultDataQuality getElement() {
-        return skip() ? null : DefaultDataQuality.wrap(metadata);
+        return skip() ? null : DefaultDataQuality.castOrCopy(metadata);
     }
 
     /**

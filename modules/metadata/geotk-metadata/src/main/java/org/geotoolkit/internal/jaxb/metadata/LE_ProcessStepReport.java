@@ -78,7 +78,7 @@ public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepRepor
     @Override
     @XmlElementRef
     public DefaultProcessStepReport getElement() {
-        return skip() ? null : DefaultProcessStepReport.wrap(metadata);
+        return skip() ? null : DefaultProcessStepReport.castOrCopy(metadata);
     }
 
     /**

@@ -80,7 +80,7 @@ public final class MI_GeolocationInformation
     @Override
     @XmlElementRef
     public AbstractGeolocationInformation getElement() {
-        return skip() ? null : AbstractGeolocationInformation.wrap(metadata);
+        return skip() ? null : AbstractGeolocationInformation.castOrCopy(metadata);
     }
 
     /**

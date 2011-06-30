@@ -55,7 +55,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Guilhem Legal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -177,37 +177,47 @@ public class AbstractElement extends MetadataEntity implements Element {
      * This method checks for the {@link PositionalAccuracy}, {@link TemporalAccuracy},
      * {@link ThematicAccuracy}, {@link LogicalConsistency}, {@link Completeness} and
      * {@link Usability} sub-interfaces. If one of those interfaces is found, then this method
-     * delegates to the corresponding {@code wrap} static method. If the given object implements
-     * more than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * delegates to the corresponding {@code castOrCopy} static method. If the given object implements
+     * more than one of the above-cited interfaces, then the {@code castOrCopy} method to be used is
      * unspecified.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static AbstractElement wrap(final Element object) {
+    public static AbstractElement castOrCopy(final Element object) {
         if (object instanceof PositionalAccuracy) {
-            return AbstractPositionalAccuracy.wrap((PositionalAccuracy) object);
+            return AbstractPositionalAccuracy.castOrCopy((PositionalAccuracy) object);
         }
         if (object instanceof TemporalAccuracy) {
-            return AbstractTemporalAccuracy.wrap((TemporalAccuracy) object);
+            return AbstractTemporalAccuracy.castOrCopy((TemporalAccuracy) object);
         }
         if (object instanceof ThematicAccuracy) {
-            return AbstractThematicAccuracy.wrap((ThematicAccuracy) object);
+            return AbstractThematicAccuracy.castOrCopy((ThematicAccuracy) object);
         }
         if (object instanceof LogicalConsistency) {
-            return AbstractLogicalConsistency.wrap((LogicalConsistency) object);
+            return AbstractLogicalConsistency.castOrCopy((LogicalConsistency) object);
         }
         if (object instanceof Completeness) {
-            return AbstractCompleteness.wrap((Completeness) object);
+            return AbstractCompleteness.castOrCopy((Completeness) object);
         }
         if (object instanceof Usability) {
-            return DefaultUsability.wrap((Usability) object);
+            return DefaultUsability.castOrCopy((Usability) object);
         }
         return (object == null) || (object instanceof AbstractElement)
                 ? (AbstractElement) object : new AbstractElement(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static AbstractElement wrap(final Element object) {
+        return castOrCopy(object);
     }
 
     /**

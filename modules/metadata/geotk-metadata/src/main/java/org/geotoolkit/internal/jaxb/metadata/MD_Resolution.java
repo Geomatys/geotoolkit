@@ -78,7 +78,7 @@ public final class MD_Resolution extends PropertyType<MD_Resolution, Resolution>
     @Override
     @XmlElementRef
     public DefaultResolution getElement() {
-        return skip() ? null : DefaultResolution.wrap(metadata);
+        return skip() ? null : DefaultResolution.castOrCopy(metadata);
     }
 
     /**

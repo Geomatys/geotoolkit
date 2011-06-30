@@ -79,7 +79,7 @@ public final class LI_ProcessStep extends PropertyType<LI_ProcessStep, ProcessSt
     @Override
     @XmlElementRef
     public DefaultProcessStep getElement() {
-        return skip() ? null : LE_ProcessStep.wrap(metadata);
+        return skip() ? null : LE_ProcessStep.castOrCopy(metadata);
     }
 
     /**

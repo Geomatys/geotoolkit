@@ -78,7 +78,7 @@ public final class MI_Event extends PropertyType<MI_Event, Event> {
     @Override
     @XmlElementRef
     public DefaultEvent getElement() {
-        return skip() ? null : DefaultEvent.wrap(metadata);
+        return skip() ? null : DefaultEvent.castOrCopy(metadata);
     }
 
     /**

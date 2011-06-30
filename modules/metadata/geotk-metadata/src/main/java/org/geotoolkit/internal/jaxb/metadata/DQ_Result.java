@@ -78,7 +78,7 @@ public final class DQ_Result extends PropertyType<DQ_Result, Result> {
     @Override
     @XmlElementRef
     public AbstractResult getElement() {
-        return skip() ? null : AbstractResult.wrap(metadata);
+        return skip() ? null : AbstractResult.castOrCopy(metadata);
     }
 
     /**

@@ -78,7 +78,7 @@ public final class MI_Objective extends PropertyType<MI_Objective, Objective> {
     @Override
     @XmlElementRef
     public DefaultObjective getElement() {
-        return skip() ? null : DefaultObjective.wrap(metadata);
+        return skip() ? null : DefaultObjective.castOrCopy(metadata);
     }
 
     /**

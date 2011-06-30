@@ -81,7 +81,7 @@ public final class MD_AggregateInformation extends
     @Override
     @XmlElementRef
     public DefaultAggregateInformation getElement() {
-        return skip() ? null : DefaultAggregateInformation.wrap(metadata);
+        return skip() ? null : DefaultAggregateInformation.castOrCopy(metadata);
     }
 
     /**

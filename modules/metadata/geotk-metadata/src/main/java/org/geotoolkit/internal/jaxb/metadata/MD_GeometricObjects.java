@@ -78,7 +78,7 @@ public final class MD_GeometricObjects extends PropertyType<MD_GeometricObjects,
     @Override
     @XmlElementRef
     public DefaultGeometricObjects getElement() {
-        return skip() ? null : DefaultGeometricObjects.wrap(metadata);
+        return skip() ? null : DefaultGeometricObjects.castOrCopy(metadata);
     }
 
     /**

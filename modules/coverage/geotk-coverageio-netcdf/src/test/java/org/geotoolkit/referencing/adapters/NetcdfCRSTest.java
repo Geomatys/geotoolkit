@@ -201,7 +201,7 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
         /*
          * Check the epoch of the temporal CRS.
          */
-        final DefaultTemporalCRS timeCS = DefaultTemporalCRS.wrap((TemporalCRS) components.get(2));
+        final DefaultTemporalCRS timeCS = DefaultTemporalCRS.castOrCopy((TemporalCRS) components.get(2));
         assertEquals("Expected the 1950-01-01 origin", -20L * 365250 * 24 * 60 * 60,
                 timeCS.getDatum().getOrigin().getTime());
         /*

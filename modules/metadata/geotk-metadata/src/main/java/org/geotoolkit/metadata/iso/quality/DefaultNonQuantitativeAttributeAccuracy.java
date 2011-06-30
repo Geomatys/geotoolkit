@@ -32,7 +32,7 @@ import org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy;
  *
  * @author Cory Horner (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -73,14 +73,24 @@ public class DefaultNonQuantitativeAttributeAccuracy extends AbstractThematicAcc
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultNonQuantitativeAttributeAccuracy wrap(final NonQuantitativeAttributeAccuracy object) {
+    public static DefaultNonQuantitativeAttributeAccuracy castOrCopy(final NonQuantitativeAttributeAccuracy object) {
         return (object == null) || (object instanceof DefaultNonQuantitativeAttributeAccuracy)
                 ? (DefaultNonQuantitativeAttributeAccuracy) object : new DefaultNonQuantitativeAttributeAccuracy(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultNonQuantitativeAttributeAccuracy wrap(final NonQuantitativeAttributeAccuracy object) {
+        return castOrCopy(object);
     }
 }

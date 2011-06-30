@@ -78,7 +78,7 @@ public final class MI_Requirement extends PropertyType<MI_Requirement, Requireme
     @Override
     @XmlElementRef
     public DefaultRequirement getElement() {
-        return skip() ? null : DefaultRequirement.wrap(metadata);
+        return skip() ? null : DefaultRequirement.castOrCopy(metadata);
     }
 
     /**

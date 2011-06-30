@@ -80,7 +80,7 @@ public final class MD_Identification extends PropertyType<MD_Identification, Ide
     @Override
     @XmlElementRef
     public AbstractIdentification getElement() {
-        return skip() ? null : AbstractIdentification.wrap(metadata);
+        return skip() ? null : AbstractIdentification.castOrCopy(metadata);
     }
 
     /**

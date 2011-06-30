@@ -66,7 +66,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * Conversely, these names shall not be used in any other context.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see AbstractCS
  * @see Unit
@@ -679,7 +679,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
 
     /**
      * Constructs a new coordinate system axis with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
@@ -881,15 +881,25 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
      * attribute values of the given object.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultCoordinateSystemAxis wrap(final CoordinateSystemAxis object) {
+    public static DefaultCoordinateSystemAxis castOrCopy(final CoordinateSystemAxis object) {
         return (object == null) || (object instanceof DefaultCoordinateSystemAxis)
                 ? (DefaultCoordinateSystemAxis) object : new DefaultCoordinateSystemAxis(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultCoordinateSystemAxis wrap(final CoordinateSystemAxis object) {
+        return castOrCopy(object);
     }
 
     /**
@@ -1280,7 +1290,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultCoordinateSystemAxis that = wrap((CoordinateSystemAxis) object);
+            final DefaultCoordinateSystemAxis that = castOrCopy((CoordinateSystemAxis) object);
             return equals(that, mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal(), true);
         }
         return false;

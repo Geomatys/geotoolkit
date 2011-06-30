@@ -67,12 +67,17 @@ public class MI_Georeferenceable  extends DefaultGeoreferenceable {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultGeoreferenceable wrap(final Georeferenceable original) {
+    public static DefaultGeoreferenceable castOrCopy(final Georeferenceable original) {
         if (original != null && !(original instanceof MI_Georeferenceable)) {
             if (!isNullOrEmpty(original.getGeolocationInformation())) {
                 return new MI_Georeferenceable(original);
             }
         }
-        return DefaultGeoreferenceable.wrap(original);
+        return DefaultGeoreferenceable.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultGeoreferenceable wrap(final Georeferenceable original) {
+        return castOrCopy(original);
     }
 }

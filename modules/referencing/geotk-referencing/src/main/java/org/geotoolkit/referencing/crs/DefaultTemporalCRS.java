@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.19
  *
  * @since 1.2
  * @module
@@ -159,7 +159,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
 
     /**
      * Constructs a new temporal CRS with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
@@ -168,7 +168,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      *
      * @since 2.2
      *
-     * @see #wrap(TemporalCRS)
+     * @see #castOrCopy(TemporalCRS)
      */
     public DefaultTemporalCRS(final TemporalCRS crs) {
         super(crs);
@@ -222,12 +222,23 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      * If the supplied CRS is already an instance of {@code DefaultTemporalCRS} or is {@code null},
      * then it is returned unchanged.
      *
-     * @param crs The temporal CRS to wrap.
-     * @return The given CRS as a {@code DefaultTemporalCRS}.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
      */
-    public static DefaultTemporalCRS wrap(final TemporalCRS crs) {
-        return (crs == null || crs instanceof DefaultTemporalCRS)
-                ? (DefaultTemporalCRS) crs : new DefaultTemporalCRS(crs);
+    public static DefaultTemporalCRS castOrCopy(final TemporalCRS object) {
+        return (object == null || object instanceof DefaultTemporalCRS)
+                ? (DefaultTemporalCRS) object : new DefaultTemporalCRS(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultTemporalCRS wrap(final TemporalCRS object) {
+        return castOrCopy(object);
     }
 
     /**

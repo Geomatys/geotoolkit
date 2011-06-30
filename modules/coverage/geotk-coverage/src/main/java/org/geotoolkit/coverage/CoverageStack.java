@@ -1200,7 +1200,7 @@ public class CoverageStack extends AbstractCoverage {
         }
         final Object Zp;
         if (zCRS instanceof TemporalCRS) {
-            Zp = DefaultTemporalCRS.wrap((TemporalCRS) zCRS).toDate(z);
+            Zp = DefaultTemporalCRS.castOrCopy((TemporalCRS) zCRS).toDate(z);
         } else {
             Zp = Z;
         }

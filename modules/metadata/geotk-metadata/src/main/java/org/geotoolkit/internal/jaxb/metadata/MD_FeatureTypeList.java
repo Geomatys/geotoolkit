@@ -78,7 +78,7 @@ public final class MD_FeatureTypeList extends PropertyType<MD_FeatureTypeList, F
     @Override
     @XmlElementRef
     public DefaultFeatureTypeList getElement() {
-        return skip() ? null : DefaultFeatureTypeList.wrap(metadata);
+        return skip() ? null : DefaultFeatureTypeList.castOrCopy(metadata);
     }
 
     /**

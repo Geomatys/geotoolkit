@@ -78,7 +78,7 @@ public final class CI_Address extends PropertyType<CI_Address, Address> {
     @Override
     @XmlElementRef
     public DefaultAddress getElement() {
-        return skip() ? null : DefaultAddress.wrap(metadata);
+        return skip() ? null : DefaultAddress.castOrCopy(metadata);
     }
 
     /**

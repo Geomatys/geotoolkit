@@ -85,9 +85,9 @@ public final class MD_RangeDimension extends PropertyType<MD_RangeDimension, Ran
         if (skip()) return null;
         final RangeDimension metadata = this.metadata;
         if (metadata instanceof Band) {
-            return MI_Band.wrap((Band) metadata);
+            return MI_Band.castOrCopy((Band) metadata);
         }
-        return DefaultRangeDimension.wrap(metadata);
+        return DefaultRangeDimension.castOrCopy(metadata);
     }
 
     /**

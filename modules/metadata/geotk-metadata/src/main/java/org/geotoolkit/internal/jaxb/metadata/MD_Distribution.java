@@ -78,7 +78,7 @@ public final class MD_Distribution extends PropertyType<MD_Distribution, Distrib
     @Override
     @XmlElementRef
     public DefaultDistribution getElement() {
-        return skip() ? null : DefaultDistribution.wrap(metadata);
+        return skip() ? null : DefaultDistribution.castOrCopy(metadata);
     }
 
     /**

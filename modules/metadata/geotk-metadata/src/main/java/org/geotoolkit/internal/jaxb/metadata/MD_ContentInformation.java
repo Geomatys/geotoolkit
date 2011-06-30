@@ -89,12 +89,12 @@ public final class MD_ContentInformation
         if (skip()) return null;
         final ContentInformation metadata = this.metadata;
         if (metadata instanceof ImageDescription) {
-            return MI_ImageDescription.wrap((ImageDescription) metadata);
+            return MI_ImageDescription.castOrCopy((ImageDescription) metadata);
         }
         if (metadata instanceof CoverageDescription) {
-            return MI_CoverageDescription.wrap((CoverageDescription) metadata);
+            return MI_CoverageDescription.castOrCopy((CoverageDescription) metadata);
         }
-        return AbstractContentInformation.wrap(metadata);
+        return AbstractContentInformation.castOrCopy(metadata);
     }
 
     /**

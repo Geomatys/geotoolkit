@@ -67,7 +67,7 @@ public class LE_ProcessStep extends DefaultProcessStep {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultProcessStep wrap(final ProcessStep original) {
+    public static DefaultProcessStep castOrCopy(final ProcessStep original) {
         if (original != null && !(original instanceof LE_ProcessStep)) {
             if (original.getProcessingInformation() != null ||
                 !isNullOrEmpty(original.getOutputs()) ||
@@ -76,6 +76,11 @@ public class LE_ProcessStep extends DefaultProcessStep {
                 return new LE_ProcessStep(original);
             }
         }
-        return DefaultProcessStep.wrap(original);
+        return DefaultProcessStep.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultProcessStep wrap(final ProcessStep original) {
+        return castOrCopy(original);
     }
 }

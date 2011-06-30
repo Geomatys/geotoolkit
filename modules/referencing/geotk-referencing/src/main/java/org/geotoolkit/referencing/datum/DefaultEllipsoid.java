@@ -70,7 +70,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 1.2
  * @module
@@ -228,7 +228,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * Constructs a new ellipsoid with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
@@ -237,7 +237,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      *
      * @since 2.2
      *
-     * @see #wrap(Ellipsoid)
+     * @see #castOrCopy(Ellipsoid)
      */
     protected DefaultEllipsoid(final Ellipsoid ellipsoid) {
         super(ellipsoid);
@@ -372,19 +372,30 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * If the supplied ellipsoid is already an instance of {@code DefaultEllipsoid} or is
      * {@code null}, then it is returned unchanged.
      *
-     * @param ellipsoid The ellipsoid to wrap.
-     * @return The given ellipsoid as a {@code DefaultEllipsoid} instance.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
      */
-    public static DefaultEllipsoid wrap(final Ellipsoid ellipsoid) {
-        if (ellipsoid == null || ellipsoid instanceof DefaultEllipsoid) {
-            return (DefaultEllipsoid) ellipsoid;
+    public static DefaultEllipsoid castOrCopy(final Ellipsoid object) {
+        if (object == null || object instanceof DefaultEllipsoid) {
+            return (DefaultEllipsoid) object;
         }
-        final Map<String,?> properties = IdentifiedObjects.getProperties(ellipsoid);
-        final double        semiMajor  = ellipsoid.getSemiMajorAxis();
-        final Unit<Length>  unit       = ellipsoid.getAxisUnit();
-        return ellipsoid.isIvfDefinitive() ?
-                createFlattenedSphere(properties, semiMajor, ellipsoid.getInverseFlattening(), unit) :
-                createEllipsoid      (properties, semiMajor, ellipsoid.getSemiMinorAxis(),     unit);
+        final Map<String,?> properties = IdentifiedObjects.getProperties(object);
+        final double        semiMajor  = object.getSemiMajorAxis();
+        final Unit<Length>  unit       = object.getAxisUnit();
+        return object.isIvfDefinitive() ?
+                createFlattenedSphere(properties, semiMajor, object.getInverseFlattening(), unit) :
+                createEllipsoid      (properties, semiMajor, object.getSemiMinorAxis(),     unit);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultEllipsoid wrap(final Ellipsoid object) {
+        return castOrCopy(object);
     }
 
     /**

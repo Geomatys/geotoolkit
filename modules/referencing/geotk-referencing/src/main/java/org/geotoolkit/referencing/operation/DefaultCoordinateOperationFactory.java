@@ -1414,7 +1414,7 @@ search: for (int j=0; j<targets.size(); j++) {
                 /*
                  * The DefaultPassThroughOperation constuctor expect a SingleOperation.
                  * In most case, the 'subOperation' is already of this kind. However if
-                 * it is not, try to wrap it in such object.
+                 * it is not, try to copy it in such object.
                  */
                 final SingleOperation op;
                 if (subOperation instanceof SingleOperation) {

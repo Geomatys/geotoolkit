@@ -79,7 +79,7 @@ public final class LE_Algorithm extends PropertyType<LE_Algorithm, Algorithm> {
     @Override
     @XmlElementRef
     public DefaultAlgorithm getElement() {
-        return skip() ? null : DefaultAlgorithm.wrap(metadata);
+        return skip() ? null : DefaultAlgorithm.castOrCopy(metadata);
     }
 
     /**

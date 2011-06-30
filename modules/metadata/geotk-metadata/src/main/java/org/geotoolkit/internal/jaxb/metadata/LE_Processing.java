@@ -78,7 +78,7 @@ public final class LE_Processing extends PropertyType<LE_Processing, Processing>
     @Override
     @XmlElementRef
     public DefaultProcessing getElement() {
-        return skip() ? null : DefaultProcessing.wrap(metadata);
+        return skip() ? null : DefaultProcessing.castOrCopy(metadata);
     }
 
     /**

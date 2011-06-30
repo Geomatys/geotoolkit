@@ -194,7 +194,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
              */
             final Unit<?> unit = axe.getUnit();
             if (!Unit.ONE.equals(unit) && !SI.METRE.equals(unit)) {
-                axe = DefaultCoordinateSystemAxis.wrap(axe).usingUnit(SI.METRE);
+                axe = DefaultCoordinateSystemAxis.castOrCopy(axe).usingUnit(SI.METRE);
             }
             changed |= (axe != axis[i]);
             axis[i] = axe;

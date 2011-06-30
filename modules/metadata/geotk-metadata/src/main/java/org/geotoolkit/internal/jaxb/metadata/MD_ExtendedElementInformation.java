@@ -82,7 +82,7 @@ public final class MD_ExtendedElementInformation
     @Override
     @XmlElementRef
     public DefaultExtendedElementInformation getElement() {
-        return skip() ? null : DefaultExtendedElementInformation.wrap(metadata);
+        return skip() ? null : DefaultExtendedElementInformation.castOrCopy(metadata);
     }
 
     /**

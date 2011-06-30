@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -84,27 +84,37 @@ public class AbstractResult extends MetadataEntity implements Result {
      * <p>
      * This method checks for the {@link CoverageResult}, {@link QuantitativeResult}, and
      * {@link ConformanceResult} sub-interfaces. If one of those interfaces is found, then
-     * this method delegates to the corresponding {@code wrap} static method. If the given
-     * object implements more than one of the above-cited interfaces, then the {@code wrap}
+     * this method delegates to the corresponding {@code castOrCopy} static method. If the given
+     * object implements more than one of the above-cited interfaces, then the {@code castOrCopy}
      * method to be used is unspecified.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static AbstractResult wrap(final Result object) {
+    public static AbstractResult castOrCopy(final Result object) {
         if (object instanceof CoverageResult) {
-            return DefaultCoverageResult.wrap((CoverageResult) object);
+            return DefaultCoverageResult.castOrCopy((CoverageResult) object);
         }
         if (object instanceof QuantitativeResult) {
-            return DefaultQuantitativeResult.wrap((QuantitativeResult) object);
+            return DefaultQuantitativeResult.castOrCopy((QuantitativeResult) object);
         }
         if (object instanceof ConformanceResult) {
-            return DefaultConformanceResult.wrap((ConformanceResult) object);
+            return DefaultConformanceResult.castOrCopy((ConformanceResult) object);
         }
         return (object == null) || (object instanceof AbstractResult)
                 ? (AbstractResult) object : new AbstractResult(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static AbstractResult wrap(final Result object) {
+        return castOrCopy(object);
     }
 }

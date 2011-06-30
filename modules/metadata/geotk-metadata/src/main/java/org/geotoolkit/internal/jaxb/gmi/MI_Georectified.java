@@ -67,12 +67,17 @@ public class MI_Georectified extends DefaultGeorectified {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultGeorectified wrap(final Georectified original) {
+    public static DefaultGeorectified castOrCopy(final Georectified original) {
         if (original != null && !(original instanceof MI_Georectified)) {
             if (!isNullOrEmpty(original.getCheckPoints())) {
                 return new MI_Georectified(original);
             }
         }
-        return DefaultGeorectified.wrap(original);
+        return DefaultGeorectified.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultGeorectified wrap(final Georectified original) {
+        return castOrCopy(original);
     }
 }

@@ -82,7 +82,7 @@ public final class MD_PortrayalCatalogueReference
     @Override
     @XmlElementRef
     public DefaultPortrayalCatalogueReference getElement() {
-        return skip() ? null : DefaultPortrayalCatalogueReference.wrap(metadata);
+        return skip() ? null : DefaultPortrayalCatalogueReference.castOrCopy(metadata);
     }
 
     /**

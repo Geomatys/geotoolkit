@@ -78,7 +78,7 @@ public final class DQ_Element extends PropertyType<DQ_Element, Element> {
     @Override
     @XmlElementRef
     public AbstractElement getElement() {
-        return skip() ? null : AbstractElement.wrap(metadata);
+        return skip() ? null : AbstractElement.castOrCopy(metadata);
     }
 
     /**

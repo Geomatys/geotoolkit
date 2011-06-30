@@ -78,7 +78,7 @@ public final class CS_TimeCS extends PropertyType<CS_TimeCS, TimeCS> {
     @Override
     @XmlElement(name = "TimeCS")
     public DefaultTimeCS getElement() {
-        return skip() ? null : DefaultTimeCS.wrap(metadata);
+        return skip() ? null : DefaultTimeCS.castOrCopy(metadata);
     }
 
     /**

@@ -78,7 +78,7 @@ public final class LE_NominalResolution extends PropertyType<LE_NominalResolutio
     @Override
     @XmlElementRef
     public DefaultNominalResolution getElement() {
-        return skip() ? null : DefaultNominalResolution.wrap(metadata);
+        return skip() ? null : DefaultNominalResolution.castOrCopy(metadata);
     }
 
     /**

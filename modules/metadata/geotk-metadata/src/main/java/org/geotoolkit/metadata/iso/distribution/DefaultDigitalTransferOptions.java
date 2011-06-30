@@ -43,7 +43,7 @@ import org.geotoolkit.internal.jaxb.gco.GO_Real;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -109,19 +109,29 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultDigitalTransferOptions wrap(final DigitalTransferOptions object) {
+    public static DefaultDigitalTransferOptions castOrCopy(final DigitalTransferOptions object) {
         return (object == null) || (object instanceof DefaultDigitalTransferOptions)
                 ? (DefaultDigitalTransferOptions) object : new DefaultDigitalTransferOptions(object);
     }
 
     /**
-     * Returne tiles, layers, geographic areas, etc., in which data is available.
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultDigitalTransferOptions wrap(final DigitalTransferOptions object) {
+        return castOrCopy(object);
+    }
+
+    /**
+     * Returns tiles, layers, geographic areas, etc., in which data is available.
      */
     @Override
     @XmlElement(name = "unitsOfDistribution")

@@ -53,7 +53,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 1.2
  * @module
@@ -99,7 +99,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
 
     /**
      * Constructs a new prime meridian with the same values than the specified one.
-     * This copy constructor provides a way to wrap an arbitrary implementation into a
+     * This copy constructor provides a way to convert an arbitrary implementation into a
      * Geotk one or a user-defined one (as a subclass), usually in order to leverage
      * some implementation-specific API. This constructor performs a shallow copy,
      * i.e. the properties are not cloned.
@@ -163,15 +163,25 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
      * attribute values of the given object.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static DefaultPrimeMeridian wrap(final PrimeMeridian object) {
+    public static DefaultPrimeMeridian castOrCopy(final PrimeMeridian object) {
         return (object == null) || (object instanceof DefaultPrimeMeridian)
                 ? (DefaultPrimeMeridian) object : new DefaultPrimeMeridian(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static DefaultPrimeMeridian wrap(final PrimeMeridian object) {
+        return castOrCopy(object);
     }
 
     /**
@@ -234,7 +244,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
                            Utilities.equals(getAngularUnit(),        that.getAngularUnit());
                 }
                 default: {
-                    final DefaultPrimeMeridian that = wrap((PrimeMeridian) object);
+                    final DefaultPrimeMeridian that = castOrCopy((PrimeMeridian) object);
                     return epsilonEqual(this.getGreenwichLongitude(NonSI.DEGREE_ANGLE),
                                         that.getGreenwichLongitude(NonSI.DEGREE_ANGLE), mode);
                     /*

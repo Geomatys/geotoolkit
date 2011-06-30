@@ -65,7 +65,7 @@ public class MI_Band extends DefaultBand {
      * @param  original The original metadata provided by the user.
      * @return The metadata to marshall.
      */
-    public static DefaultBand wrap(final Band original) {
+    public static DefaultBand castOrCopy(final Band original) {
         if (original != null && !(original instanceof MI_Band)) {
             if (original.getBandBoundaryDefinition()   != null ||
                 original.getNominalSpatialResolution() != null ||
@@ -76,6 +76,11 @@ public class MI_Band extends DefaultBand {
                 return new MI_Band(original);
             }
         }
-        return DefaultBand.wrap(original);
+        return DefaultBand.castOrCopy(original);
+    }
+
+    @Deprecated
+    public static DefaultBand wrap(final Band original) {
+        return castOrCopy(original);
     }
 }

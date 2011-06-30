@@ -79,7 +79,7 @@ public final class LI_Source extends PropertyType<LI_Source, Source> {
     @Override
     @XmlElementRef
     public DefaultSource getElement() {
-        return skip() ? null : LE_Source.wrap(metadata);
+        return skip() ? null : LE_Source.castOrCopy(metadata);
     }
 
     /**

@@ -37,7 +37,7 @@ import org.opengis.metadata.quality.QuantitativeAttributeAccuracy;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -84,27 +84,37 @@ public class AbstractThematicAccuracy extends AbstractElement implements Themati
      * This method checks for the {@link QuantitativeAttributeAccuracy},
      * {@link NonQuantitativeAttributeAccuracy} and {@link ThematicClassificationCorrectness}
      * sub-interfaces. If one of those interfaces is found, then this method delegates to
-     * the corresponding {@code wrap} static method. If the given object implements more
-     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * the corresponding {@code castOrCopy} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code castOrCopy} method to be used is
      * unspecified.
      *
-     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @param  object The object to get as a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
      *         given object itself), or {@code null} if the argument was null.
      *
      * @since 3.18
      */
-    public static AbstractThematicAccuracy wrap(final ThematicAccuracy object) {
+    public static AbstractThematicAccuracy castOrCopy(final ThematicAccuracy object) {
         if (object instanceof QuantitativeAttributeAccuracy) {
-            return DefaultQuantitativeAttributeAccuracy.wrap((QuantitativeAttributeAccuracy) object);
+            return DefaultQuantitativeAttributeAccuracy.castOrCopy((QuantitativeAttributeAccuracy) object);
         }
         if (object instanceof NonQuantitativeAttributeAccuracy) {
-            return DefaultNonQuantitativeAttributeAccuracy.wrap((NonQuantitativeAttributeAccuracy) object);
+            return DefaultNonQuantitativeAttributeAccuracy.castOrCopy((NonQuantitativeAttributeAccuracy) object);
         }
         if (object instanceof ThematicClassificationCorrectness) {
-            return DefaultThematicClassificationCorrectness.wrap((ThematicClassificationCorrectness) object);
+            return DefaultThematicClassificationCorrectness.castOrCopy((ThematicClassificationCorrectness) object);
         }
         return (object == null) || (object instanceof AbstractThematicAccuracy)
                 ? (AbstractThematicAccuracy) object : new AbstractThematicAccuracy(object);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
+     * @param object The object to get as a Geotk implementation, or {@code null} if none.
+     * @return The given object as a Geotk implementation.
+     */
+    @Deprecated
+    public static AbstractThematicAccuracy wrap(final ThematicAccuracy object) {
+        return castOrCopy(object);
     }
 }

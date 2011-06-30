@@ -78,7 +78,7 @@ public final class MI_Platform extends PropertyType<MI_Platform, Platform> {
     @Override
     @XmlElementRef
     public DefaultPlatform getElement() {
-        return skip() ? null : DefaultPlatform.wrap(metadata);
+        return skip() ? null : DefaultPlatform.castOrCopy(metadata);
     }
 
     /**

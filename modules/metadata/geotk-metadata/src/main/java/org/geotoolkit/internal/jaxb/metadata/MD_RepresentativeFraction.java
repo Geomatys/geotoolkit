@@ -82,7 +82,7 @@ public final class MD_RepresentativeFraction
     @Override
     @XmlElementRef
     public DefaultRepresentativeFraction getElement() {
-        return skip() ? null : DefaultRepresentativeFraction.wrap(metadata);
+        return skip() ? null : DefaultRepresentativeFraction.castOrCopy(metadata);
     }
 
     /**

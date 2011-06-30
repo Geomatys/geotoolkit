@@ -78,7 +78,7 @@ public final class MD_Usage extends PropertyType<MD_Usage, Usage> {
     @Override
     @XmlElementRef
     public DefaultUsage getElement() {
-        return skip() ? null : DefaultUsage.wrap(metadata);
+        return skip() ? null : DefaultUsage.castOrCopy(metadata);
     }
 
     /**

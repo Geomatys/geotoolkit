@@ -82,7 +82,7 @@ public final class MD_MaintenanceInformation
     @Override
     @XmlElementRef
     public DefaultMaintenanceInformation getElement() {
-        return skip() ? null : DefaultMaintenanceInformation.wrap(metadata);
+        return skip() ? null : DefaultMaintenanceInformation.castOrCopy(metadata);
     }
 
     /**

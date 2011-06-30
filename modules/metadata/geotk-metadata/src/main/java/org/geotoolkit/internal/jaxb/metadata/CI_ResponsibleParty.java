@@ -80,7 +80,7 @@ public final class CI_ResponsibleParty
     @Override
     @XmlElementRef
     public DefaultResponsibleParty getElement() {
-        return skip() ? null : DefaultResponsibleParty.wrap(metadata);
+        return skip() ? null : DefaultResponsibleParty.castOrCopy(metadata);
     }
 
     /**

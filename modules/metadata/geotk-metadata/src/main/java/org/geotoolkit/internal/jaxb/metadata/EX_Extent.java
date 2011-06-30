@@ -78,7 +78,7 @@ public final class EX_Extent extends PropertyType<EX_Extent, Extent> {
     @Override
     @XmlElementRef
     public DefaultExtent getElement() {
-        return skip() ? null : DefaultExtent.wrap(metadata);
+        return skip() ? null : DefaultExtent.castOrCopy(metadata);
     }
 
     /**

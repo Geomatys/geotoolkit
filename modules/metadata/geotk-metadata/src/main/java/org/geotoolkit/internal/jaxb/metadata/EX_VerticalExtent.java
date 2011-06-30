@@ -78,7 +78,7 @@ public final class EX_VerticalExtent extends PropertyType<EX_VerticalExtent, Ver
     @Override
     @XmlElementRef
     public DefaultVerticalExtent getElement() {
-        return skip() ? null : DefaultVerticalExtent.wrap(metadata);
+        return skip() ? null : DefaultVerticalExtent.castOrCopy(metadata);
     }
 
     /**

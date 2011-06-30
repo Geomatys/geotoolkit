@@ -78,7 +78,7 @@ public final class LI_Lineage extends PropertyType<LI_Lineage, Lineage> {
     @Override
     @XmlElementRef
     public DefaultLineage getElement() {
-        return skip() ? null : DefaultLineage.wrap(metadata);
+        return skip() ? null : DefaultLineage.castOrCopy(metadata);
     }
 
     /**

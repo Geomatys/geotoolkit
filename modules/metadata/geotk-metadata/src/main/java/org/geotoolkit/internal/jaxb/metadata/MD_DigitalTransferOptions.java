@@ -82,7 +82,7 @@ public final class MD_DigitalTransferOptions
     @Override
     @XmlElementRef
     public DefaultDigitalTransferOptions getElement() {
-        return skip() ? null : DefaultDigitalTransferOptions.wrap(metadata);
+        return skip() ? null : DefaultDigitalTransferOptions.castOrCopy(metadata);
     }
 
     /**

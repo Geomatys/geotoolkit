@@ -78,7 +78,7 @@ public final class MI_Plan extends PropertyType<MI_Plan, Plan> {
     @Override
     @XmlElementRef
     public DefaultPlan getElement() {
-        return skip() ? null : DefaultPlan.wrap(metadata);
+        return skip() ? null : DefaultPlan.castOrCopy(metadata);
     }
 
     /**

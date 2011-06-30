@@ -46,7 +46,7 @@ public class DefaultVerticalCRS implements VerticalCRS {
     private DefaultVerticalCRS() {
     }
 
-    public static DefaultVerticalCRS wrap(VerticalCRS crs) {
+    public static DefaultVerticalCRS castOrCopy(VerticalCRS crs) {
         throw new UnsupportedOperationException();
     }
 

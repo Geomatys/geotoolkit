@@ -80,7 +80,7 @@ public final class MD_DataIdentification
     @Override
     @XmlElementRef
     public DefaultDataIdentification getElement() {
-        return skip() ? null : DefaultDataIdentification.wrap(metadata);
+        return skip() ? null : DefaultDataIdentification.castOrCopy(metadata);
     }
 
     /**
