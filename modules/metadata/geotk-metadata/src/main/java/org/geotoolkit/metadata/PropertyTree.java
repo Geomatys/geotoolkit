@@ -37,12 +37,12 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
+import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.CodeLists;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
@@ -57,7 +57,7 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  * {@link javax.swing.tree.TreeModel} in some future Geotk implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -70,6 +70,24 @@ final class PropertyTree {
      * The default number of significant digits (may or may not be fraction digits).
      */
     private static final int PRECISION = 12;
+
+    /**
+     * Maximum number of characters to use in the heuristic titles.
+     * This is an arbitrary limit.
+     *
+     * @since 3.19
+     */
+    private static final int TITLE_LIMIT = 40;
+
+    /**
+     * The kind of objects to use for inferring a title, in preference order.
+     * {@code Object.class} must exist and be last.
+     *
+     * @since 3.19
+     */
+    private static final Class<?>[] TITLE_TYPES = {
+        InternationalString.class, CharSequence.class, CodeList.class, Object.class
+    };
 
     /**
      * The expected standard implemented by the metadata.
@@ -401,11 +419,21 @@ final class PropertyTree {
             // String formatted below must comply with the isCollectionElement(...) condition.
             final StringBuilder buffer = new StringBuilder(32);
             buffer.append('[').append(format(number)).append("] ");
+            Class<?> type = value.getClass();
+            if (standard.isMetadata(type)) {
+                type = standard.getInterface(type);
+            }
+            buffer.append(Strings.camelCaseToSentence(Classes.getShortName(type)));
             String title = getTitle(asMap.values());
             if (title != null) {
-                buffer.append(title);
-            } else {
-                buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
+                boolean exceed = title.length() > TITLE_LIMIT;
+                if (exceed) {
+                    title = title.substring(0, TITLE_LIMIT);
+                }
+                buffer.append(" \u2012 ").append(title);
+                if (exceed) {
+                    buffer.append('\u2026'); // "..."
+                }
             }
             title = buffer.toString();
             assert isCollectionElement(title) : title;
@@ -461,41 +489,60 @@ final class PropertyTree {
      * @return The title, or {@code null} if none were found.
      */
     private String getTitle(final Collection<?> values) {
-        CodeList<?> codeList = null;
-        for (final Object element : values) {
-            if (element instanceof CharSequence) {
-                String name;
-                if (element instanceof InternationalString) {
-                    name = ((InternationalString) element).toString(locale);
-                } else {
-                    name = element.toString();
-                }
-                if (!(name = name.trim()).isEmpty()) {
-                    return name;
+        String shortestName  = null;
+        for (int i=0; i<TITLE_TYPES.length-1; i++) { // Exclude the last type, which is Object.class
+            final Class<?> baseType = TITLE_TYPES[i];
+            for (final Object element : values) {
+                if (baseType.isInstance(element)) {
+                    String name;
+                    if (element instanceof InternationalString) {
+                        name = ((InternationalString) element).toString(locale);
+                    } else if (element instanceof CodeList<?>) {
+                        name = CodeLists.localize((CodeList<?>) element, locale);
+                    } else {
+                        name = element.toString();
+                    }
+                    if (name != null && !(name = name.trim()).isEmpty()) {
+                        if (shortestName == null || name.length() < shortestName.length()) {
+                            shortestName = name;
+                        }
+                    }
                 }
             }
-            if (element instanceof CodeList<?> && codeList == null) {
-                // To be used as a fallback if no text is found.
-                codeList = (CodeList<?>) element;
+            if (shortestName != null) {
+                return shortestName;
             }
-        }
-        /*
-         * No character string found. Use the code list if any.
-         */
-        if (codeList != null) {
-            return CodeLists.localize(codeList, locale);
         }
         /*
          * If no title were found, search if any element is a collection and search again in
-         * collection elements and return the first suitable element found, if any. We do this
+         * collection elements. Return the shortest suitable element found, if any. We do this
          * check after the above loop because we want singleton element to have precedence.
          */
+        final Collection<?>[] collections = new Collection<?>[values.size()];
+        int count = 0;
         for (final Object element : values) {
             if (element instanceof Collection<?>) {
-                final String title = getTitle((Collection<?>) element);
-                if (title != null) {
-                    return title;
+                collections[count++] = (Collection<?>) element;
+            }
+        }
+        for (final Class<?> baseType : TITLE_TYPES) {
+            int newCount = 0;
+            for (int i=0; i<count; i++) {
+                final Collection<?> collection = collections[i];
+                if (baseType.isAssignableFrom((collection instanceof CheckedCollection<?>) ?
+                        ((CheckedCollection<?>) collection).getElementType() : Object.class))
+                {
+                    final String name = getTitle(collection);
+                    if (name != null && (shortestName == null || name.length() < shortestName.length())) {
+                        shortestName = name;
+                    }
+                } else {
+                    collections[newCount++] = collection;
                 }
+            }
+            count = newCount;
+            if (shortestName != null) {
+                return shortestName;
             }
         }
         return null;

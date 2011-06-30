@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.text.ParseException;
@@ -34,6 +35,7 @@ import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 
 import org.junit.*;
@@ -44,7 +46,7 @@ import static org.geotoolkit.test.Assert.*;
  * Tests {@link PropertyTree}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -62,7 +64,7 @@ public final class PropertyTreeTest {
 
     /**
      * Creates a tree from a metadata object and verifies that the tree contains
-     * the expected values. Then remove values from this map.
+     * the expected values. Then remove values from the map and test again.
      *
      * @throws ParseException Should not happen.
      */
@@ -94,12 +96,12 @@ public final class PropertyTreeTest {
             "│   ├───Alt A\n" +
             "│   └───Alt B\n" +
             "├───Cited Responsible Parties\n" +
-            "│   ├───[1] Testsuya Toyoda\n" +
+            "│   ├───[1] Responsible party ‒ Testsuya Toyoda\n" +
             "│   │   ├───Role\n" +
             "│   │   │   └───author\n" +
             "│   │   └───Individual Name\n" +
             "│   │       └───Testsuya Toyoda\n" +
-            "│   └───[2] A japanese author\n" +
+            "│   └───[2] Responsible party ‒ A japanese author\n" +
             "│       └───Individual Name\n" +
             "│           └───A japanese author\n" +
             "├───ISBN\n" +
@@ -177,24 +179,53 @@ public final class PropertyTreeTest {
     @Test
     public void testUntitled() {
         final DefaultCitation   titled = new DefaultCitation("Some specification");
+        final DefaultCitation    coded = new DefaultCitation();
         final DefaultCitation untitled = new DefaultCitation();
         titled  .getPresentationForms().add(PresentationForm.DOCUMENT_HARDCOPY);
-        untitled.getPresentationForms().add(PresentationForm.IMAGE_HARDCOPY);
+        coded   .getPresentationForms().add(PresentationForm.IMAGE_HARDCOPY);
+        untitled.getCitedResponsibleParties().add(new DefaultResponsibleParty(Role.AUTHOR));
         final DefaultProcessing processing = new DefaultProcessing();
-        processing.getDocumentations().add(  titled);
+        processing.getDocumentations().add(titled);
+        processing.getDocumentations().add(coded);
         processing.getDocumentations().add(untitled);
 
         TreeModel tree = processing.asTree();
         assertMultilinesEquals(
             "Processing\n" +
             "└───Documentations\n" +
-            "    ├───[1] Some specification\n" +
+            "    ├───[1] Citation ‒ Some specification\n" +
             "    │   ├───Title\n" +
             "    │   │   └───Some specification\n" +
             "    │   └───Presentation Forms\n" +
             "    │       └───document hardcopy\n" +
-            "    └───[2] Image hardcopy\n" +
-            "        └───Presentation Forms\n" +
-            "            └───image hardcopy\n", Trees.toString(tree));
+            "    ├───[2] Citation ‒ Image hardcopy\n" +
+            "    │   └───Presentation Forms\n" +
+            "    │       └───image hardcopy\n" +
+            "    └───[3] Citation\n" +
+            "        └───Cited Responsible Parties\n" +
+            "            └───Role\n" +
+            "                └───author\n", Trees.toString(tree));
+    }
+
+    /**
+     * Tests a tree of metadata containing more than one keyword.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testKeywords() {
+        final DefaultKeywords keywords = new DefaultKeywords();
+        keywords.setKeywords(Arrays.asList(
+                new SimpleInternationalString("Apple"),
+                new SimpleInternationalString("Orange"),
+                new SimpleInternationalString("Kiwi")));
+
+        TreeModel tree = keywords.asTree();
+        assertMultilinesEquals(
+            "Keywords\n" +
+            "└───Keywords\n" +
+            "    ├───Apple\n" +
+            "    ├───Orange\n" +
+            "    └───Kiwi\n", Trees.toString(tree));
     }
 }
