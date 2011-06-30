@@ -5,8 +5,6 @@ import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class AddProcess extends AbstractProcess{
-
-    private Double result = null;
     
     public AddProcess(){
         super(AddDescriptor.INSTANCE);
@@ -18,14 +16,10 @@ public class AddProcess extends AbstractProcess{
         final double first = (Double)inputParameters.parameter("first").getValue();   
         final double second = (Double)inputParameters.parameter("second").getValue();       
         
-        result = first + second;        
-    }
-
-    @Override
-    public ParameterValueGroup getOutput() {
+        Double result = first + second;
         final ParameterValueGroup res =  super.getOutput();
         res.parameter("result").setValue(result);
-        return res;
     }
+
     
 }

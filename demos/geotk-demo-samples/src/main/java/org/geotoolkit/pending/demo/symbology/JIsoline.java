@@ -1,6 +1,7 @@
 
 package org.geotoolkit.pending.demo.symbology;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.opengis.style.Fill;
 import org.opengis.style.Halo;
 import org.opengis.style.LabelPlacement;
@@ -79,14 +80,14 @@ public class JIsoline extends JAbstractMapPane{
             private PropertyName prop = FF.property("A_temp");
 
             @Override
-            public double[] getValues(RenderingContext2D context, Feature feature) throws IOException {
+            public Coordinate getValues(RenderingContext2D context, Feature feature) throws IOException {
                 final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
                 final Point centroid = geom.getCentroid();
-                final double[] values = new double[3];
-                values[0] = centroid.getX();
-                values[1] = centroid.getY();
-                values[2] = prop.evaluate(feature, Double.class);
-                return values;
+                final Coordinate c = new Coordinate();
+                c.x = centroid.getX();
+                c.y = centroid.getY();
+                c.z = prop.evaluate(feature, Double.class);
+                return c;
             }
         });
 
