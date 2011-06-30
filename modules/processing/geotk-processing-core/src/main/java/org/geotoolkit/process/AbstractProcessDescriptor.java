@@ -74,8 +74,8 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         return outputdesc;
     }
 
-
-    private static class DerivateIdentifier implements Identifier{
+    
+    protected static class DerivateIdentifier implements Identifier{
 
         private final String code;
         private final Identification factoryId;
