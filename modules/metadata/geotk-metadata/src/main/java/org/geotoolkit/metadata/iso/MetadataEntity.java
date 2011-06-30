@@ -17,16 +17,15 @@
  */
 package org.geotoolkit.metadata.iso;
 
-import java.util.Map;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
-import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.xml.XLink;
+import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
@@ -45,7 +44,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -121,8 +120,8 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      * @since 3.18
      */
     @Override
-    public Map<Citation,String> getIdentifierMap() {
-        return Collections.emptyMap();
+    public IdentifierMap getIdentifierMap() {
+        throw new UnsupportedOperationException();
     }
 
     /**

@@ -61,8 +61,9 @@ import org.opengis.metadata.citation.Citation;
  * for the purpose of handling XML {@code id}, {@code uuid} or {@code href} attributes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
+ * @see IdentifierSpace
  * @see org.geotoolkit.metadata.iso.MetadataEntity
  *
  * @since 3.18
@@ -72,12 +73,19 @@ public interface IdentifiedObject {
     /**
      * Returns all identifiers associated to this object. Each {@linkplain Identifier#getCode()
      * identifier code} shall be unique in the {@linkplain Identifier#getAuthority() identifier
-     * authority} name space. Examples of namespace are
-     * {@linkplain org.geotoolkit.metadata.iso.citation.Citations#EPSG EPSG} codes,
-     * <cite>Universal Product Code</cite> (UPC), <cite>National Stock Number</cite> (NSN),
-     * <cite>International Standard Book Number</cite> (ISBN), <cite>International Standard
-     * Serial Number</cite> (ISSN), <cite>Universally Unique Identifier</cite>
-     * ({@linkplain java.util.UUID}) or XML {@linkplain IdentifierSpace#ID ID} attribute.
+     * authority} name space. Examples of namespace are:
+     * <p>
+     * <ul>
+     *   <li>{@linkplain org.geotoolkit.metadata.iso.citation.Citations#EPSG EPSG} codes</li>
+     *   <li><cite>Universal Product Code</cite> (UPC)</li>
+     *   <li><cite>National Stock Number</cite> (NSN)</li>
+     *   <li><cite>International Standard Book Number</cite> (ISBN)</li>
+     *   <li><cite>International Standard Serial Number</cite> (ISSN)</li>
+     *   <li><cite>Universally Unique Identifier</cite> ({@linkplain java.util.UUID})</li>
+     *   <li>XML {@linkplain IdentifierSpace#ID ID} attribute</li>
+     *   <li>{@link XLink} ({@code href}, {@code role}, {@code arcrole}, {@code title},
+     *       {@code show} and {@code actuate} attributes)</li>
+     * </ul>
      * <p>
      * Note that XML ID attribute are actually unique only in the scope of the XML document
      * being processed.
@@ -96,8 +104,10 @@ public interface IdentifiedObject {
      * element from the identifier collection, where
      * {@linkplain java.util.Map.Entry#getKey() key} is the {@linkplain Identifier#getAuthority()
      * identifier authority} and the {@linkplain java.util.Map.Entry#getValue() value} is the
-     * {@linkplain Identifier#getCode() identifier code}. There is usually a one-to-one relationship
-     * between the map entries and the identifier elements, but not always:
+     * {@linkplain Identifier#getCode() identifier code}.
+     * <p>
+     * There is usually a one-to-one relationship between the map entries and the identifier
+     * elements, but not always:
      * <ul>
      *   <li><p>The map view may contain less entries, because the map interface allows only one
      *   entry per authority. If the {@linkplain #getIdentifiers() identifiers collection} contains
@@ -113,7 +123,7 @@ public interface IdentifiedObject {
      * @return The identifiers as a map of (<var>authority</var>, <var>code</var>) entries,
      *         or an empty map if none.
      */
-    Map<Citation,String> getIdentifierMap();
+    IdentifierMap getIdentifierMap();
 
     /**
      * Returns the XML {@code xlink} attributes associated to this identified object,
@@ -122,7 +132,10 @@ public interface IdentifiedObject {
      * for an example applicable to ISO 19139 document.
      *
      * @return XML {@code xlink} attributes, or {@code null} if none.
+     *
+     * @deprecated Replaced by {@code getIdentifierMap().get(IdentifierSpace.HREF)}.
      */
+    @Deprecated
     XLink getXLink();
 
     /**
@@ -132,6 +145,9 @@ public interface IdentifiedObject {
      *
      * @param link XML {@code xlink} attributes, or {@code null} if none.
      * @throws UnsupportedOperationException if this object is unmodifiable.
+     *
+     * @deprecated Replaced by {@code getIdentifierMap().put(IdentifierSpace.HREF, link)}.
      */
+    @Deprecated
     void setXLink(final XLink link) throws UnsupportedOperationException;
 }

@@ -31,15 +31,17 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.xml.IdentifierSpace;
+import org.geotoolkit.xml.IdentifierMap;
 
 
 /**
  * A map of identifiers which can be used as a helper class for
  * {@link org.geotoolkit.xml.IdentifiedObject} implementations.
- *
+ * <p>
  * This class work as a wrapper around a collection of identifiers. Because all operations
  * are performed by an iteration over the collection elements, this implementation is
- * suitable only for small maps (less that 10 elements). Given that objects typically
+ * suitable only for small maps (less than 10 elements). Given that objects typically
  * have only one or two identifiers, this is considered acceptable.
  * <p>
  * The collection of identifiers shall not contains any null element. However, in order
@@ -51,14 +53,14 @@ import org.geotoolkit.util.collection.XCollections;
  * This class is thread safe if the underlying identifiers collection is thread safe.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see org.geotoolkit.xml.IdentifiedObject
  *
  * @since 3.18
  * @module
  */
-public final class IdentifierMap extends AbstractMap<Citation,String> implements Serializable {
+public final class IdentifierMapAdapter extends AbstractMap<Citation,String> implements IdentifierMap, Serializable {
     /**
      * For cross-version compatibility.
      */
@@ -79,7 +81,7 @@ public final class IdentifierMap extends AbstractMap<Citation,String> implements
      *
      * @param identifiers The identifiers to wrap in a map view.
      */
-    public IdentifierMap(final Collection<Identifier> identifiers) {
+    public IdentifierMapAdapter(final Collection<Identifier> identifiers) {
         this.identifiers = identifiers;
     }
 
@@ -156,6 +158,17 @@ public final class IdentifierMap extends AbstractMap<Citation,String> implements
     }
 
     /**
+     * Returns the identifier associated with the given authority,
+     * or {@code null} if no identifier was found.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T get(final IdentifierSpace<T> authority) {
+        final Identifier identifier = get(authority, false);
+        return (identifier instanceof IdentifierAdapter<?>) ? ((IdentifierAdapter<T>) identifier).value : null;
+    }
+
+    /**
      * Returns the code of the first identifier associated with the given
      * {@linkplain Identifier#getAuthority() authority}, or {@code null} if no identifier was found.
      *
@@ -190,7 +203,7 @@ public final class IdentifierMap extends AbstractMap<Citation,String> implements
      * @return The previous code for the given authority, or {@code null} if none.
      */
     @Override
-    public String put(final Citation authority, final String code) {
+    public String put(final Citation authority, final String code) throws UnsupportedOperationException {
         String old = null;
         final Iterator<? extends Identifier> it = identifiers.iterator();
         while (it.hasNext()) {
@@ -198,7 +211,7 @@ public final class IdentifierMap extends AbstractMap<Citation,String> implements
             if (identifier == null) {
                 it.remove(); // Opportunist cleaning, but should not happen.
             } else if (Utilities.equals(authority, identifier.getAuthority())) {
-                if (identifier instanceof IdentifierEntry) {
+                if (code != null && identifier instanceof IdentifierEntry) {
                     return ((IdentifierEntry) identifier).setValue(code);
                 }
                 if (old == null) {
@@ -207,7 +220,39 @@ public final class IdentifierMap extends AbstractMap<Citation,String> implements
                 it.remove();
             }
         }
-        identifiers.add(new IdentifierEntry(authority, code));
+        if (code != null) {
+            identifiers.add(new IdentifierEntry(authority, code));
+        }
+        return old;
+    }
+
+    /**
+     * Returns the identifier associated with the given authority.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T put(final IdentifierSpace<T> authority, final T value) throws UnsupportedOperationException {
+        T old = null;
+        final Iterator<? extends Identifier> it = identifiers.iterator();
+        while (it.hasNext()) {
+            final Identifier identifier = it.next();
+            if (identifier == null) {
+                it.remove(); // Opportunist cleaning, but should not happen.
+            } else if (Utilities.equals(authority, identifier.getAuthority())) {
+                if (identifier instanceof IdentifierAdapter<?>) {
+                    if (value != null) {
+                        return ((IdentifierAdapter<T>) identifier).value = value;
+                    }
+                    if (old == null) {
+                        old = ((IdentifierAdapter<T>) identifier).value;
+                    }
+                }
+                it.remove();
+            }
+        }
+        if (value != null) {
+            identifiers.add(new IdentifierAdapter<T>(authority, value));
+        }
         return old;
     }
 
@@ -332,8 +377,8 @@ public final class IdentifierMap extends AbstractMap<Citation,String> implements
 
         /**
          * Advance to the next non-null identifier, wraps it in an entry and stores the
-         * result in the {@link #next} field. If this we reach the iteration end, then
-         * this method set the {@link #identifiers} iterator to {@code null}.
+         * result in the {@link #next} field. If we reach the iteration end, then this
+         * method set the {@link #identifiers} iterator to {@code null}.
          */
         private void toNext() {
             final Iterator<? extends Identifier> it = identifiers;

@@ -17,10 +17,13 @@
  */
 package org.geotoolkit.internal.jaxb;
 
+import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
+
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
@@ -29,14 +32,14 @@ import static org.geotoolkit.xml.IdentifierSpace.*;
 
 
 /**
- * Test {@link IdentifierMap}.
+ * Test {@link IdentifierMapAdapter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18
  */
-public final class IdentifierMapTest extends TestBase {
+public final class IdentifierMapAdapterTest extends TestBase {
     /**
      * Tests read and write operations on an {@link IdentifierMap}, using a well-formed
      * identifier collection (no null values, no duplicated authorities).
@@ -44,7 +47,7 @@ public final class IdentifierMapTest extends TestBase {
     @Test
     public void testReadWrite() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final IdentifierMap map = new IdentifierMap(identifiers);
+        final Map<Citation,String> map = new IdentifierMapAdapter(identifiers);
         assertTrue(map.isEmpty());
         assertEquals(0, map.size());
 
