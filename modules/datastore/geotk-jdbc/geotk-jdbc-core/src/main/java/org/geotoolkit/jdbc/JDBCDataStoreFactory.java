@@ -109,13 +109,18 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
-        if(valid){
-            Object value = params.parameter(DBTYPE.getName().toString()).getValue();
-            if(value != null && value instanceof String){
-                return value.toString().equals(getDatabaseID());
-            }else{
+        
+        if(!valid){
+            //check if the datasource is set
+            final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
+            if(ds == null){
                 return false;
             }
+        }
+        
+        Object value = params.parameter(DBTYPE.getName().toString()).getValue();
+        if(value != null && value instanceof String){
+            return value.toString().equals(getDatabaseID());
         }else{
             return false;
         }
