@@ -18,7 +18,6 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReaders;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;

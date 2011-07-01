@@ -17,14 +17,17 @@
 
 package org.geotoolkit.process.coverage;
 
+import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 
-import org.geotoolkit.coverage.io.GridCoverageReaders;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.mosaic.MosaicBuilder;
+import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -71,7 +74,16 @@ public final class TilingProcess extends AbstractProcess{
                 gridtoCRS = MetadataHelper.INSTANCE.getAffineTransform(grid, null);
             }catch(Exception ex){ /*silent exit, not a georeferenced coverage*/}
             
-            TileManager tileManager = GridCoverageReaders.buildTileManager(input, gridtoCRS, 512, output);
+            final MosaicBuilder builder = new MosaicBuilder();
+            builder.setTileSize(new Dimension(512, 512));
+            builder.setGridToCRS(gridtoCRS);
+            //let the builder build the best pyramid resolutions
+            //builder.setSubsamplings(new int[]{1,2,4,6,8,12,16,20,30});
+            builder.setTileDirectory(output);
+
+            final MosaicImageWriteParam params = new MosaicImageWriteParam();
+            params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
+            final TileManager tileManager = builder.writeFromInput(input, params);
             
             final ParameterValueGroup result = super.getOutput();
             result.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);

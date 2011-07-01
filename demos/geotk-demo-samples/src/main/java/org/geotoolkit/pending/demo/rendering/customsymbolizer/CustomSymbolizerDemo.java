@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import org.geotoolkit.coverage.io.CoverageIO;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageReaders;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.JMap2D;

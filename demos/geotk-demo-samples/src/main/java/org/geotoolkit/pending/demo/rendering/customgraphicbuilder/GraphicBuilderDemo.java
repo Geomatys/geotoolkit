@@ -13,7 +13,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageReaders;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;

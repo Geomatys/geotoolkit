@@ -16,7 +16,6 @@ import org.geotoolkit.coverage.io.CoverageIO;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageReaders;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;

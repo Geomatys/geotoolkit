@@ -64,6 +64,10 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverageio</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-engine-core</artifactId>
       <version>${project.version}</version>

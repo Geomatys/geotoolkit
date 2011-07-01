@@ -97,17 +97,11 @@
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
     </dependency>
-    
-    <!-- FOR GridCoverageReaders utility class -->
+    <!-- for AnchoredMarshallerPool remove ? -->
     <dependency>
       <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverage</artifactId>
+      <artifactId>geotk-xml-base</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio</artifactId>
-    </dependency>
-    
   </dependencies>
 
 </project>

@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import org.geotoolkit.coverage.io.CoverageIO;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
-import org.geotoolkit.coverage.io.GridCoverageReaders;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
