@@ -518,11 +518,13 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             }
 
             //add ignore flag ------------------------------------------------------
-            if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
-                //style does not expend itself further than the feature geometry
-                //that mean geometries smaller than a pixel will not be renderer are barely visible
-                queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
-            }
+            //TODO this is efficient but erases values, when plenty of then are to be rendered
+            //we should find another way to handle this
+            //if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
+            //    //style does not expend itself further than the feature geometry
+            //    //that mean geometries smaller than a pixel will not be renderer or barely visible
+            //    queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+            //}
         }
 
         //add reprojection -----------------------------------------------------
