@@ -63,8 +63,8 @@
   -->
   <dependencies>
     <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-utility</artifactId>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
     </dependency>
   </dependencies>
 
