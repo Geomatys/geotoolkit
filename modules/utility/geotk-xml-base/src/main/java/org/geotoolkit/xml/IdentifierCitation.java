@@ -63,10 +63,8 @@ final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
     }
 
     /**
-     * Returns the attribute name with its prefix. Attribute name can be {@code "gml:id"},
+     * Returns the XML attribute name with its prefix. Attribute names can be {@code "gml:id"},
      * {@code "gco:uuid"} or {@code "xlink:href"}.
-     *
-     * @return The attribute name.
      */
     @Override
     public String toString() {
@@ -74,8 +72,9 @@ final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
     }
 
     /**
-     * Returns the attribute name as an international string. This is the same value than the
-     * one returned by {@link #toString()}, wrapped in a {@link SimpleInternationalString} object.
+     * Returns the attribute name as an international string. This is the same value than the one
+     * returned by {@link #getAttributeName()}, wrapped in a {@link SimpleInternationalString}
+     * object.
      */
     @Override
     public InternationalString getTitle() {

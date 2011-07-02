@@ -31,8 +31,8 @@ import org.opengis.metadata.citation.Citation;
  * <p>
  * Some XML identifiers are difficult to handle as {@link Identifier} objects. Those identifiers are
  * rather handled using specialized classes like {@link XLink}. This {@code IdentifierMap} interface
- * provides overloaded variants of the standard {@link Map#get get} and {@link Map#put put} methods
- * in order to fetch and store those identifiers as objects of the specialized class.
+ * mirrors the standard {@link Map#get get} and {@link Map#put put} methods with specialized methods,
+ * in order to fetch and store identifiers as objects of the specialized class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
@@ -52,13 +52,12 @@ public interface IdentifierMap extends Map<Citation,String> {
      * @return The identifier to which the specified key is mapped, or
      *         {@code null} if this map contains no mapping for the key.
      */
-    <T> T get(IdentifierSpace<T> authority);
+    <T> T getSpecialized(IdentifierSpace<T> authority);
 
     /**
      * Associates the specified identifier with the specified key in this map
-     * (optional operation).  If the map previously contained a mapping for
+     * (optional operation). If the map previously contained a mapping for
      * the key, the old value is replaced by the specified value.
-     * <tt>true</tt>.)
      *
      * @param  <T> The identifier type.
      * @param  authority The key with which the specified identifier is to be associated.
@@ -67,5 +66,5 @@ public interface IdentifierMap extends Map<Citation,String> {
      *         no mapping for {@code key}.
      * @throws UnsupportedOperationException If the identifier map is unmodifiable.
      */
-    <T> T put(IdentifierSpace<T> authority, T value) throws UnsupportedOperationException;
+    <T> T putSpecialized(IdentifierSpace<T> authority, T value) throws UnsupportedOperationException;
 }

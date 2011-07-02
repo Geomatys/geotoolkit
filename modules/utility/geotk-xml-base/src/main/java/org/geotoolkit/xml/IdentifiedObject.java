@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.xml;
 
-import java.util.Map;
 import java.util.Collection;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -83,7 +82,7 @@ public interface IdentifiedObject {
      *   <li><cite>International Standard Serial Number</cite> (ISSN)</li>
      *   <li><cite>Universally Unique Identifier</cite> ({@linkplain java.util.UUID})</li>
      *   <li>XML {@linkplain IdentifierSpace#ID ID} attribute</li>
-     *   <li>{@link XLink} ({@code href}, {@code role}, {@code arcrole}, {@code title},
+     *   <li>{@linkplain XLink} ({@code href}, {@code role}, {@code arcrole}, {@code title},
      *       {@code show} and {@code actuate} attributes)</li>
      * </ul>
      * <p>
@@ -95,6 +94,8 @@ public interface IdentifiedObject {
      * @see org.geotoolkit.metadata.iso.citation.DefaultCitation#getIdentifiers()
      * @see org.geotoolkit.metadata.iso.acquisition.DefaultObjective#getIdentifiers()
      * @see org.geotoolkit.referencing.AbstractIdentifiedObject#getIdentifiers()
+     *
+     * @since 3.19
      */
     Collection<? extends Identifier> getIdentifiers();
 
@@ -122,6 +123,8 @@ public interface IdentifiedObject {
      *
      * @return The identifiers as a map of (<var>authority</var>, <var>code</var>) entries,
      *         or an empty map if none.
+     *
+     * @since 3.19
      */
     IdentifierMap getIdentifierMap();
 

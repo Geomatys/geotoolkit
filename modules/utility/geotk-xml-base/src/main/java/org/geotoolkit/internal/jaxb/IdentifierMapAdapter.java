@@ -163,7 +163,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T get(final IdentifierSpace<T> authority) {
+    public <T> T getSpecialized(final IdentifierSpace<T> authority) {
         final Identifier identifier = get(authority, false);
         return (identifier instanceof IdentifierAdapter<?>) ? ((IdentifierAdapter<T>) identifier).value : null;
     }
@@ -221,7 +221,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
             }
         }
         if (code != null) {
-            identifiers.add(new IdentifierEntry(authority, code));
+            identifiers.add(IdentifierAdapter.create(authority, code));
         }
         return old;
     }
@@ -230,8 +230,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      * Returns the identifier associated with the given authority.
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T put(final IdentifierSpace<T> authority, final T value) throws UnsupportedOperationException {
+    public <T> T putSpecialized(final IdentifierSpace<T> authority, final T value) throws UnsupportedOperationException {
         T old = null;
         final Iterator<? extends Identifier> it = identifiers.iterator();
         while (it.hasNext()) {
@@ -240,11 +239,14 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
                 it.remove(); // Opportunist cleaning, but should not happen.
             } else if (Utilities.equals(authority, identifier.getAuthority())) {
                 if (identifier instanceof IdentifierAdapter<?>) {
-                    if (value != null) {
-                        return ((IdentifierAdapter<T>) identifier).value = value;
-                    }
+                    @SuppressWarnings("unchecked")
+                    final IdentifierAdapter<T> id = (IdentifierAdapter<T>) identifier;
                     if (old == null) {
-                        old = ((IdentifierAdapter<T>) identifier).value;
+                        old = id.value;
+                    }
+                    if (value != null) {
+                        id.value = value;
+                        return old;
                     }
                 }
                 it.remove();
@@ -365,7 +367,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
          * The next entry to be returned by {@link #next()}, or {@code null} if not yet computed.
          * This field will be computed only when {@link #next()} or {@link #hasNext()} is invoked.
          */
-        private transient IdentifierEntry next;
+        private transient Entry<Citation,String> next;
 
         /**
          * Creates a new iterator for the given collection of identifiers.
@@ -376,9 +378,10 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
         }
 
         /**
-         * Advance to the next non-null identifier, wraps it in an entry and stores the
-         * result in the {@link #next} field. If we reach the iteration end, then this
-         * method set the {@link #identifiers} iterator to {@code null}.
+         * Advances to the next non-null identifier, skips duplicated authorities, wraps the
+         * identifier in an entry if needed and stores the result in the {@link #next} field.
+         * If we reach the iteration end, then this method set the {@link #identifiers}
+         * iterator to {@code null}.
          */
         private void toNext() {
             final Iterator<? extends Identifier> it = identifiers;
@@ -391,7 +394,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
                             if (identifier instanceof IdentifierEntry) {
                                 next = (IdentifierEntry) identifier;
                             } else {
-                                next = new IdentifierEntry(authority, identifier.getCode());
+                                next = new IdentifierEntry.Immutable(authority, identifier.getCode());
                             }
                             return;
                         }
@@ -420,7 +423,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
          */
         @Override
         public Entry<Citation,String> next() throws NoSuchElementException {
-            IdentifierEntry entry = next;
+            Entry<Citation,String> entry = next;
             if (entry == null) {
                 toNext();
                 entry = next;

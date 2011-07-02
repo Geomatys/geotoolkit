@@ -59,4 +59,16 @@ final class IdentifierEntry extends AbstractMap.SimpleEntry<Citation,String> imp
     public String getCode() {
         return getValue();
     }
+
+    /**
+     * Same than the above, but as an immutable entry. We use this implementation when the
+     * entry has been created on-the-fly at iteration time rather than being stored in the
+     * identifier collection.
+     */
+    static final class Immutable extends AbstractMap.SimpleImmutableEntry<Citation,String> implements Identifier {
+        private static final long serialVersionUID = -8179498861233498041L;
+        Immutable(Citation authority, String code) {super(authority, code);}
+        @Override public Citation getAuthority()   {return getKey();}
+        @Override public String   getCode()        {return getValue();}
+    }
 }
