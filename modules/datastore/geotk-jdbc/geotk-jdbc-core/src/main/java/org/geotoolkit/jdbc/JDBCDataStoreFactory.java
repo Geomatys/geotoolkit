@@ -35,6 +35,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -112,8 +113,13 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         
         if(!valid){
             //check if the datasource is set
-            final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
-            if(ds == null){
+            try{
+                final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
+                if(ds == null){
+                    return false;
+                }
+            }catch(ParameterNotFoundException ex){
+                //parameter does not exist
                 return false;
             }
         }
