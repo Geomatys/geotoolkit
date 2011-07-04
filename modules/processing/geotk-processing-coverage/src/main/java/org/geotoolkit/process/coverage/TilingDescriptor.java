@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.coverage;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -52,10 +53,16 @@ public final class TilingDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptor<File> IN_TILES_FOLDER =
             new DefaultParameterDescriptor<File>("target","Folder where tiles will be stored.",File.class,null,true);
 
+    /**
+     * Optional - Grid to CRS
+     */
+    public static final ParameterDescriptor<AffineTransform> IN_GRID_TO_CRS =
+            new DefaultParameterDescriptor<AffineTransform>("gridToCRS","MathTransform from grid to crs.",AffineTransform.class,null,false);
+
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_SOURCE_FILE,IN_TILES_FOLDER);
+                IN_SOURCE_FILE,IN_TILES_FOLDER,IN_GRID_TO_CRS);
 
     /**
      * Mandatory - Resulting tile manager

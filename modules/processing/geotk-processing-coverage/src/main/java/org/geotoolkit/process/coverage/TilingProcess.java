@@ -57,6 +57,8 @@ public final class TilingProcess extends AbstractProcess{
 
         final File input = (File) inputParameters.parameter(TilingDescriptor.IN_SOURCE_FILE.getName().getCode()).getValue();
         final File output = (File) inputParameters.parameter(TilingDescriptor.IN_TILES_FOLDER.getName().getCode()).getValue();
+        AffineTransform gridtoCRS = (AffineTransform)
+                inputParameters.parameter(TilingDescriptor.IN_GRID_TO_CRS.getName().getCode()).getValue();
 
         if(!output.exists()){
             output.mkdirs();
@@ -67,12 +69,15 @@ public final class TilingProcess extends AbstractProcess{
         try {
             reader.setInput(input);
             final SpatialMetadata coverageMetadata = reader.getCoverageMetadata(0);
-            final RectifiedGrid grid = coverageMetadata.getInstanceForType(RectifiedGrid.class);
             CoordinateReferenceSystem crs = coverageMetadata.getInstanceForType(CoordinateReferenceSystem.class);
-            AffineTransform gridtoCRS = null;
-            try{
-                gridtoCRS = MetadataHelper.INSTANCE.getAffineTransform(grid, null);
-            }catch(Exception ex){ /*silent exit, not a georeferenced coverage*/}
+            if(gridtoCRS == null){
+                final RectifiedGrid grid = coverageMetadata.getInstanceForType(RectifiedGrid.class);
+                try{
+                    gridtoCRS = MetadataHelper.INSTANCE.getAffineTransform(grid, null);
+                }catch(Exception ex){ 
+                    /*silent exit, not a georeferenced coverage*/
+                }
+            }
             
             final MosaicBuilder builder = new MosaicBuilder();
             builder.setTileSize(new Dimension(512, 512));
