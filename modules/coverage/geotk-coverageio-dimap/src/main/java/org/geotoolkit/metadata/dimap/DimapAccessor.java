@@ -43,7 +43,6 @@ import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
 import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
 import org.geotoolkit.metadata.iso.acquisition.DefaultOperation;
-import org.geotoolkit.metadata.iso.citation.DefaultAddress;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
@@ -52,6 +51,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
+import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
@@ -65,7 +65,6 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.metadata.Metadata;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
@@ -342,8 +341,12 @@ public final class DimapAccessor extends Static {
 
         if(metadata == null){
             metadata = new DefaultMetadata();
+        }else{
+            //to ensure we don't modify the original
+            metadata = new DefaultMetadata(metadata);
         }
 
+        
         //default values
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setLanguage(Locale.ENGLISH);
@@ -428,7 +431,7 @@ public final class DimapAccessor extends Static {
             citation.setTitle(new SimpleInternationalString(productInfo));
             citation.getCitedResponsibleParties().add(responsibleParty);
             citation.getDates().add(new DefaultCitationDate(productionDate, DateType.CREATION));
-            final DefaultDataIdentification identification = getIdentification(metadata);
+            final AbstractIdentification identification = getIdentification(metadata);
             identification.setCitation(citation);
 
             final Element facility = firstElement(production, TAG_PRODUCTION_FACILITY);
@@ -589,7 +592,7 @@ public final class DimapAccessor extends Static {
             format.setName(new SimpleInternationalString(formatName));
             format.setVersion(new SimpleInternationalString(version));
 
-            final DefaultDataIdentification idf = getIdentification(metadata);
+            final AbstractIdentification idf = getIdentification(metadata);
             idf.getResourceFormats().add(format);
         }
 
@@ -662,7 +665,7 @@ public final class DimapAccessor extends Static {
             final Double sunElevation = textValueSafe(sceneSource, TAG_SCENE_SUN_ELEVATION, Double.class);
 
 
-            final DefaultDataIdentification idf = getIdentification(metadata);
+            final AbstractIdentification idf = getIdentification(metadata);
             idf.setAbstract(new SimpleInternationalString(sourceDesc));
 
             final DefaultCitation citation = new DefaultCitation();
@@ -724,7 +727,17 @@ public final class DimapAccessor extends Static {
             steps.add(step);
             return step;
         }else{
-            return (DefaultProcessStep) steps.iterator().next();
+            final List<ProcessStep> copies = new ArrayList<ProcessStep>(steps);
+            final ProcessStep step = copies.get(0);
+            if(step instanceof DefaultProcessStep){
+                return (DefaultProcessStep) step;
+            }else{
+                final DefaultProcessStep copy = DefaultProcessStep.castOrCopy(step);
+                copies.set(0, copy);
+                //copy and replace collection
+                lineage.setProcessSteps(copies);
+                return copy;
+            }
         }
     }
 
@@ -738,7 +751,14 @@ public final class DimapAccessor extends Static {
             quality.setLineage(lineage);
         }
 
-        return (DefaultLineage) lineage;
+        if(lineage instanceof DefaultLineage){
+            return (DefaultLineage) lineage;
+        }else{
+            final DefaultLineage copy = DefaultLineage.castOrCopy(lineage);
+            quality.setLineage(lineage);
+            return copy;
+        }
+        
     }
 
     private static DefaultDataQuality getDataQuality(final DefaultMetadata metadata){
@@ -749,12 +769,22 @@ public final class DimapAccessor extends Static {
             metadata.getDataQualityInfo().add(quality);
             return quality;
         }else{
-            return (DefaultDataQuality) qualities.iterator().next();
+            final List<DataQuality> copies = new ArrayList<DataQuality>(qualities);
+            final DataQuality quality = copies.get(0);
+            if(quality instanceof DefaultDataQuality){
+                return (DefaultDataQuality) quality;
+            }else{
+                final DefaultDataQuality copy = DefaultDataQuality.castOrCopy(quality);
+                copies.set(0, copy);
+                //copy and replace collection
+                metadata.setDataQualityInfo(copies);
+                return copy;
+            }
         }
 
     }
 
-    private static DefaultDataIdentification getIdentification(final DefaultMetadata metadata){
+    private static AbstractIdentification getIdentification(final DefaultMetadata metadata){
         final Collection<Identification> ids = metadata.getIdentificationInfo();
 
         if(ids.isEmpty()){
@@ -762,7 +792,17 @@ public final class DimapAccessor extends Static {
             ids.add(id);
             return id;
         }else{
-            return (DefaultDataIdentification)ids.iterator().next();
+            final List<Identification> copies = new ArrayList<Identification>(ids);
+            final Identification id = copies.get(0);
+            if(id instanceof DefaultDataIdentification){
+                return (DefaultDataIdentification) id;
+            }else{
+                final AbstractIdentification copy = DefaultDataIdentification.castOrCopy(id);
+                copies.set(0, copy);
+                //copy and replace collection
+                metadata.setIdentificationInfo(copies);
+                return copy;
+            }
         }
 
     }
