@@ -20,6 +20,8 @@
  */
 package org.geotoolkit.metadata.iso.citation;
 
+import java.net.URI;
+
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.OnLineFunction;
@@ -30,6 +32,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.xml.IdentifierSpace;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
@@ -42,16 +45,22 @@ import static java.util.Collections.singleton;
  * referenced in the Geotk library, and handling citations requires some convenience methods.
  * They are factored out in this {@code Citations} class for clarity.
  * <p>
- * Citations may be about an <cite>organization</cite> (e.g. {@linkplain #OPEN_GIS OpenGIS}),
- * a <cite>specification</cite> (e.g. {@linkplain #WMS}) or an <cite>authority</cite> that
- * maintains definitions of codes (e.g. {@linkplain #EPSG}). In the later case, the citation
- * contains an {@linkplain Citation#getIdentifiers identifier} which is the namespace of the
- * codes maintained by the authority. For example the identifier for the {@link #EPSG} citation
- * is {@code "EPSG"}, and EPSG codes look like {@code "EPSG:4326"}.
+ * The citation constants declared in this class are for:
+ * <p>
+ * <ul>
+ *   <li><cite>Organizations</cite> (e.g. {@linkplain #OPEN_GIS OpenGIS})</li>
+ *   <li><cite>Specifications</cite> (e.g. {@linkplain #WMS})</li>
+ *   <li><cite>Authorities</cite> that maintain definitions of codes (e.g. {@linkplain #EPSG})</li>
+ * </ul>
+ * <p>
+ * In the later case, the citations are actually of kind {@link IdentifierSpace}. The namespaces of
+ * codes maintained by the authority are given by the {@linkplain Citation#getIdentifiers() citation
+ * identifiers}. For example EPSG codes look like {@code "EPSG:4326"}, so the identifier for the
+ * {@link #EPSG} citation is defined as {@code "EPSG"}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.2
  * @module
@@ -73,6 +82,22 @@ public final class Citations extends Static {
     ///////////////////////////////////////////////////////////////////////
 
     /**
+     * The <A HREF="http://www.iso.org/">International Organization for Standardization</A>
+     * organisation. An {@linkplain Citation#getAlternateTitles alternate title} for this
+     * citation is "ISO" (according ISO 19115, alternate titles often contain abbreviations).
+     *
+     * @since 3.19
+     */
+    public static final Citation ISO;
+    static {
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "ISO", "ISO");
+        c.setAlternateTitle("ISO");
+        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        c.freeze();
+        ISO = c;
+    }
+
+    /**
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> organisation.
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      * An {@linkplain Citation#getAlternateTitles alternate title} for this citation is "OGC"
@@ -84,8 +109,7 @@ public final class Citations extends Static {
      */
     public static final Citation OGC;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC");
-        c.setIdentifier("OGC");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC", "OGC");
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         OGC = c;
@@ -104,7 +128,7 @@ public final class Citations extends Static {
      */
     public static final Citation OPEN_GIS;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OPEN_GIS, "OPEN_GIS", null);
         c.setPresentationForms(OGC.getPresentationForms());
         c.setAlternateTitles  (OGC.getAlternateTitles());
         c.setIdentifiers      (OGC.getIdentifiers());
@@ -121,8 +145,7 @@ public final class Citations extends Static {
      */
     public static final Citation ESRI;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ESRI, "ESRI");
-        c.setIdentifier("ESRI");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ESRI, "ESRI", "ESRI");
         c.freeze();
         ESRI = c;
     }
@@ -135,8 +158,7 @@ public final class Citations extends Static {
      */
     public static final Citation ORACLE;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ORACLE, "ORACLE");
-        c.setIdentifier("Oracle");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ORACLE, "ORACLE", "Oracle");
         c.freeze();
         ORACLE = c;
     }
@@ -151,8 +173,7 @@ public final class Citations extends Static {
      */
     public static final Citation POSTGIS;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.POSTGIS, "POSTGIS");
-        c.setIdentifier("PostGIS");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.POSTGIS, "POSTGIS", "PostGIS");
         c.freeze();
         POSTGIS = c;
     }
@@ -165,8 +186,7 @@ public final class Citations extends Static {
      */
     public static final Citation GEOTOOLKIT;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT");
-        c.setIdentifier("Geotk");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT", "Geotk");
         c.freeze();
         GEOTOOLKIT = c;
     }
@@ -179,8 +199,7 @@ public final class Citations extends Static {
      */
     public static final Citation GEOTOOLS;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLS, "GEOTOOLS");
-        c.setIdentifier("GeoTools");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLS, "GEOTOOLS", "GeoTools");
         c.freeze();
         GEOTOOLS = c;
     }
@@ -209,8 +228,7 @@ public final class Citations extends Static {
      */
     public static final Citation WMS;
     static {
-        final CitationConstant c = new CitationConstant("Web Map Service", "WMS");
-        c.setIdentifier("WMS");
+        final CitationConstant c = new CitationConstant("Web Map Service", "WMS", "WMS");
         c.setAlternateTitles(asList(
                 new SimpleInternationalString("WMS 1.3.0"),
                 new SimpleInternationalString("OGC 04-024"),
@@ -240,8 +258,7 @@ public final class Citations extends Static {
      */
     public static final Citation NETCDF;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.NETCDF, "NETCDF");
-        c.setIdentifier("NetCDF");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.NETCDF, "NETCDF", "NetCDF");
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         NETCDF = c;
@@ -255,8 +272,7 @@ public final class Citations extends Static {
      */
     public static final Citation GEOTIFF;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTIFF, "GEOTIFF");
-        c.setIdentifier("GeoTIFF");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTIFF, "GEOTIFF", "GeoTIFF");
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         GEOTIFF = c;
@@ -272,8 +288,8 @@ public final class Citations extends Static {
      */
     public static final Citation JAI;
     static {
-        final CitationConstant c = new CitationConstant("Java Advanced Imaging", "JAI");
-        c.setAuthority("JAI");
+        final CitationConstant c = new CitationConstant("Java Advanced Imaging", "JAI", "JAI");
+        c.setAlternateTitle("JAI");
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.SUN_MICROSYSTEMS));
         c.freeze();
         JAI = c;
@@ -284,7 +300,7 @@ public final class Citations extends Static {
 
     ///////////////////////////////////////////////////////////////////////
     ////////                                                       ////////
-    ////////             C R S   A U T H O R I T I E S             ////////
+    ////////                 A U T H O R I T I E S                 ////////
     ////////                                                       ////////
     ///////////////////////////////////////////////////////////////////////
 
@@ -308,10 +324,11 @@ public final class Citations extends Static {
      * @see #CRS
      * @category Code space
      */
-    public static final Citation EPSG;
+    public static final IdentifierSpace<Integer> EPSG;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.EPSG, "EPSG");
-        c.setAuthority("EPSG");
+        final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<Integer>(
+                DefaultResponsibleParty.EPSG, "EPSG", "EPSG");
+        c.setAlternateTitle("EPSG");
         c.setPresentationForm(PresentationForm.TABLE_DIGITAL);
         c.freeze();
         EPSG = c;
@@ -341,10 +358,10 @@ public final class Citations extends Static {
      * @see #EPSG
      * @category Code space
      */
-    public static final Citation AUTO;
+    public static final IdentifierSpace<String> AUTO;
     static { // Sanity check ensure that all @see tags are actually available in the metadata
-        final CitationConstant c = new CitationConstant("Automatic Projections", "AUTO");
-        c.setIdentifier("AUTO");
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+                "Automatic Projections", "AUTO", "AUTO");
         /*
          * Do not put "WMS 1.1.1" and "OGC 01-068r3" as alternative titles. They are alternative
          * titles for the WMS specification (see the WMS constant in this class), not for the
@@ -384,10 +401,10 @@ public final class Citations extends Static {
      * @see #EPSG
      * @category Code space
      */
-    public static final Citation AUTO2;
+    public static final IdentifierSpace<String> AUTO2;
     static {
-        final CitationConstant c = new CitationConstant("Automatic Projections", "AUTO2");
-        c.setIdentifier("AUTO2");
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+                "Automatic Projections", "AUTO2", "AUTO2");
         /*
          * Do not put "WMS 1.3.0" and "OGC 04-024" as alternative titles. They are alternative
          * titles for the WMS specification (see the WMS constant in this class), not for the
@@ -414,10 +431,10 @@ public final class Citations extends Static {
      * @see #EPSG
      * @category Code space
      */
-    public static final Citation CRS;
+    public static final IdentifierSpace<String> CRS;
     static {
-        final CitationConstant c = new CitationConstant("Web Map Service CRS", "CRS");
-        c.setIdentifier("CRS");
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+                "Web Map Service CRS", "CRS", "CRS");
         c.getIdentifiers().add(new DefaultIdentifier("OGC"));
         c.setCitedResponsibleParties(AUTO2.getCitedResponsibleParties());
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
@@ -427,15 +444,15 @@ public final class Citations extends Static {
 
     /**
      * URN in the OGC namespace. This citation contains the {@code "urn:ogc:def"} and
-     * {@code "urn:x-ogc:def"} {@linkplain Citation#getIdentifiers identifiers}.
+     * {@code "urn:x-ogc:def"} {@linkplain Citation#getIdentifiers() identifiers}.
      *
      * @category Code space
      * @since 2.4
      */
-    public static final Citation URN_OGC;
+    public static final IdentifierSpace<URI> URN_OGC;
     static {
-        final CitationConstant c = new CitationConstant("URN in OGC namespace", "URN_OGC");
-        c.setIdentifier("urn:ogc:def");
+        final CitationConstant.Authority<URI> c = new CitationConstant.Authority<URI>(
+                "URN in OGC namespace", "URN_OGC", "urn:ogc:def");
         c.getIdentifiers().add(new DefaultIdentifier("urn:x-ogc:def"));
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.OGC));
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
@@ -444,20 +461,62 @@ public final class Citations extends Static {
     }
 
     /**
-     * URL in the OGC namespace. This citation contains the
-     * {@code "http://www.opengis.net"} {@linkplain Citation#getIdentifiers identifiers}.
+     * URL in the OGC namespace. This citation contains the {@code "http://www.opengis.net"}
+     * {@linkplain Citation#getIdentifiers() identifiers}.
      *
      * @category Code space
      * @since 2.4
      */
-    public static final Citation HTTP_OGC;
+    public static final IdentifierSpace<URI> HTTP_OGC;
     static {
-        final CitationConstant c = new CitationConstant("URL in OGC namespace", "HTTP_OGC");
-        c.setIdentifier("http://www.opengis.net");
+        final CitationConstant.Authority<URI> c = new CitationConstant.Authority<URI>(
+                "URL in OGC namespace", "HTTP_OGC", "http://www.opengis.net");
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.OGC));
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         HTTP_OGC = c;
+    }
+
+    /**
+     * <cite>International Standard Book Number</cite> (ISBN) defined by
+     * {@linkplain DefaultResponsibleParty#ISO ISO}-2108. The ISO-19115 metadata standard
+     * defines a specific attribute for this information, but the Geotk library handles it
+     * like any other identifier.
+     *
+     * @see Citation#getISBN()
+     *
+     * @category Code space
+     * @since 3.19
+     */
+    public static final IdentifierSpace<String> ISBN;
+    static {
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+                "International Standard Book Number", "ISBN", "ISBN");
+        c.setAlternateTitle("ISBN");
+        c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.ISO));
+        c.freeze();
+        ISBN = c;
+    }
+
+    /**
+     * <cite>International Standard Serial Number</cite> (ISSN) defined by
+     * {@linkplain DefaultResponsibleParty#ISO ISO}-3297. The ISO-19115 metadata standard
+     * defines a specific attribute for this information, but the Geotk library handles it
+     * like any other identifier.
+     *
+     * @see Citation#getISSN()
+     *
+     * @category Code space
+     * @since 3.19
+     */
+    public static final IdentifierSpace<String> ISSN;
+    static {
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+                "International Standard Serial Number", "ISSN", "ISSN");
+        c.setAlternateTitle("ISSN");
+        c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.ISO));
+        c.freeze();
+        ISSN = c;
     }
 
     /**
@@ -467,7 +526,8 @@ public final class Citations extends Static {
      */
     public static final Citation UNKNOWN;
     static {
-        final CitationConstant c = new CitationConstant(Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN), "UNKNOWN");
+        final CitationConstant c = new CitationConstant(
+                Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN), "UNKNOWN", null);
         c.freeze();
         UNKNOWN = c;
     }

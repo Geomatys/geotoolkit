@@ -27,6 +27,7 @@ import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.xml.IdentifierSpace;
 
 import static java.util.Collections.singleton;
 
@@ -41,7 +42,7 @@ import static java.util.Collections.singleton;
  * @module
  */
 @ThreadSafe
-final class CitationConstant extends DefaultCitation {
+class CitationConstant extends DefaultCitation {
     /**
      * For cross-version compatibility.
      */
@@ -56,40 +57,65 @@ final class CitationConstant extends DefaultCitation {
      * Constructs a citation with the specified title.
      *
      * @param title The title, as a {@link String} or an {@link InternationalString} object.
-     * @param name  The name of a field in the {@link Citations} class.
+     * @param name  The field name in the {@link Citations} class.
+     * @param identifier The identifier, or {@code null} if none.
      */
-    public CitationConstant(final CharSequence title, final String name) {
+    CitationConstant(final CharSequence title, final String name, final String identifier) {
         super(title);
         replacement = new Serialized(name);
+        setIdentifier(identifier);
     }
 
     /**
      * Constructs a citation with the specified responsible party.
      *
      * @param party The name for an organization that is responsible for the resource.
-     * @param name  The name of a field in the {@link Citations} class.
+     * @param name  The field name in the {@link Citations} class.
+     * @param identifier The identifier, or {@code null} if none.
      */
-    public CitationConstant(final ResponsibleParty party, final String name) {
+    CitationConstant(final ResponsibleParty party, final String name, final String identifier) {
         super(party);
         replacement = new Serialized(name);
+        setIdentifier(identifier);
     }
 
     /**
-     * Sets the specified identifier as a CRS authority factory. This is used as a convenience
-     * method for the creation of constants, and for making sure that all of them use the same
-     * identifier type.
+     * A citation constant also used as a namespace for identifiers.
+     *
+     * @param <T> The identifier type.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.19
+     *
+     * @since 3.19
+     * @module
      */
-    final void setAuthority(final String identifier) {
-        assert !identifier.equals(getTitle().toString(null)) : identifier;
-        setAlternateTitles(singleton(new SimpleInternationalString(identifier)));
-        setIdentifier(identifier);
+    static final class Authority<T> extends CitationConstant implements IdentifierSpace<T> {
+        private static final long serialVersionUID = 9049409961960288134L;
+
+        /** The identifier namespace. */
+        private final String namespace;
+
+        Authority(CharSequence     title, String name, String namespace) {super(title, name, namespace); this.namespace = namespace;}
+        Authority(ResponsibleParty party, String name, String namespace) {super(party, name, namespace); this.namespace = namespace;}
+        @Override public String getName() {return namespace;}
+    }
+
+    /**
+     * Sets the alternative title.
+     */
+    final void setAlternateTitle(final String title) {
+        assert !title.equals(getTitle().toString(null)) : title;
+        setAlternateTitles(singleton(new SimpleInternationalString(title)));
     }
 
     /**
      * Sets the identifier. This is used as a convenience method for the creation of constants.
      */
-    final void setIdentifier(final String identifier) {
-        setIdentifiers(singleton(new DefaultIdentifier(identifier)));
+    private void setIdentifier(final String identifier) {
+        if (identifier != null) {
+            setIdentifiers(singleton(new DefaultIdentifier(identifier)));
+        }
     }
 
     /**
@@ -106,7 +132,7 @@ final class CitationConstant extends DefaultCitation {
      * @return A modifiable clone of this citation.
      */
     @Override
-    public DefaultCitation clone() {
+    public final DefaultCitation clone() {
         return new DefaultCitation(this);
     }
 
@@ -116,7 +142,7 @@ final class CitationConstant extends DefaultCitation {
      * @return The object to be serialized.
      * @throws ObjectStreamException Should never be thrown.
      */
-    protected Object writeReplace() throws ObjectStreamException {
+    protected final Object writeReplace() throws ObjectStreamException {
         return replacement;
     }
 

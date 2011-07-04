@@ -634,7 +634,7 @@ public final class MetadataStandard {
      * This method can parse the tree created by {@link #asTree(Object)}. The current implementation
      * expects the {@linkplain TreeModel#getRoot tree root} to be an instance of {@link TreeNode}.
      *
-     * @param  root     The tre from which to fetch the values.
+     * @param  root     The tree from which to fetch the values.
      * @param  metadata The metadata where to store the values.
      * @throws ParseException If a value can not be stored in the given metadata object.
      */

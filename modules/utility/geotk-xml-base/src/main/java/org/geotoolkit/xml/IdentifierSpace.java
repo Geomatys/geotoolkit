@@ -26,8 +26,19 @@ import org.opengis.metadata.citation.Citation;
  * Some identifier namespaces that are handled in a special way. The identifier namespaces are
  * usually defined as authorities in the {@link org.geotoolkit.metadata.iso.citation.Citations}
  * class. However a few identifiers defined in the {@code gco:ObjectIdentification} XML attribute
- * group are handled in a special way.
- * <p>
+ * group are handled in a special way. For example identifiers associated to the {@link #HREF}
+ * space are marshalled in the outer property element, as in the example below:
+ *
+ * {@preformat xml
+ *   <gmd:CI_Citation>
+ *     <gmd:series xlink:href="http://myReference">
+ *       <gmd:CI_Series>
+ *         <gmd:name>...</gmd:name>
+ *       </gmd:CI_Series>
+ *     </gmd:series>
+ *   </gmd:CI_Citation>
+ * }
+ *
  * The values defined in this interface can be used as keys in the map returned by
  * {@link IdentifiedObject#getIdentifierMap()}.
  *
@@ -49,7 +60,7 @@ public interface IdentifierSpace<T> extends Citation {
      * {@code "xs:ID"} - i.e. it is a fragment identifier, unique within document scope only,
      * for internal cross-references. It is not useful by itself as a persistent unique identifier.
      * <p>
-     * The XML {@linkplain #toString() attribute name} is {@code "gml:id"}.
+     * The XML {@linkplain #getName() attribute name} is {@code "gml:id"}.
      *
      * @see javax.xml.bind.annotation.XmlID
      */
@@ -60,7 +71,7 @@ public interface IdentifierSpace<T> extends Citation {
      * that implement ISO 19115 in XML. May be used as a persistent unique identifier, but only
      * available within GMD context.
      * <p>
-     * The XML {@linkplain #toString() attribute name} is {@code "gco:uuid"}.
+     * The XML {@linkplain #getName() attribute name} is {@code "gco:uuid"}.
      *
      * @see UUID
      */
@@ -72,7 +83,7 @@ public interface IdentifierSpace<T> extends Citation {
      * {@link #XLINK} identifier space, but is provided as a special constant because
      * {@code href} is the most frequently used {@code xlink} attribute.
      * <p>
-     * The XML {@linkplain #toString() attribute name} is {@code "xlink:href"}.
+     * The XML {@linkplain #getName() attribute name} is {@code "xlink:href"}.
      *
      * @see XLink#getHRef()
      */
@@ -96,11 +107,19 @@ public interface IdentifierSpace<T> extends Citation {
      */
 
     /**
-     * Returns the XML attribute name with its prefix. Attribute names can be {@code "gml:id"},
-     * {@code "gco:uuid"} or {@code "xlink:href"}.
+     * Returns the name of this identifier space.
      *
-     * @return The XML attribute name.
+     * <ul>
+     *   <li><p>For the constants defined in this {@code IdentifierSpace} interface, this is
+     *       the XML attribute name with its prefix. Attribute names can be {@code "gml:id"},
+     *       {@code "gco:uuid"} or {@code "xlink:href"}.</p></li>
+     *
+     *   <li><p>For the constants defined in the {@link org.geotoolkit.metadata.iso.citation.Citations}
+     *       class, this is the identifier namespace. They usually not XML attribute name because those
+     *       identifiers marshalled as {@code <MD_Identifier>} XML elements rather than attributes.</p></li>
+     * </ul>
+     *
+     * @return The name of this identifier space (may be XML attribute name).
      */
-    @Override
-    String toString();
+    String getName();
 }

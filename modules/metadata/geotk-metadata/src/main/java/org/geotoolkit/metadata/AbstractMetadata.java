@@ -51,7 +51,7 @@ public abstract class AbstractMetadata implements LenientComparable {
 
     /**
      * Hash code value, or 0 if not yet computed. This field is reset to 0 by
-     * {@link #invalidate} in order to account for a change in metadata content.
+     * {@link #invalidate()} in order to account for a change in metadata content.
      */
     private transient int hashCode;
 
@@ -192,7 +192,8 @@ public abstract class AbstractMetadata implements LenientComparable {
     /**
      * Compares this metadata with the specified object for equality. The default
      * implementation uses Java reflection. Subclasses may override this method
-     * for better performances.
+     * for better performances, or for comparing "hidden" attributes not specified
+     * by the GeoAPI (or other standard) interface.
      * <p>
      * This method performs a <cite>deep</cite> comparison (i.e. if this metadata contains
      * other metadata, the comparison will walk through the other metadata content as well)
@@ -255,7 +256,7 @@ public abstract class AbstractMetadata implements LenientComparable {
      */
     private static Class<?> getClass(final Object metadata) {
         Class<?> type = metadata.getClass();
-        if (!Modifier.isPublic(type.getModifiers()) && type.getName().startsWith("org.geotoolkit.metadata.iso.")) {
+        while (!Modifier.isPublic(type.getModifiers()) && type.getName().startsWith("org.geotoolkit.metadata.iso.")) {
             type = type.getSuperclass();
         }
         return type;

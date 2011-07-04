@@ -68,11 +68,6 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     private static final long serialVersionUID = -4633298523976029384L;
 
     /**
-     * Code used to identify the objective.
-     */
-    private Collection<Identifier> identifiers;
-
-    /**
      * Priority applied to the target.
      */
     private InternationalString priority;
@@ -157,8 +152,8 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Collection<Identifier> getIdentifiers() {
-        return identifiers = nonNullCollection(identifiers, Identifier.class);
+    public Collection<Identifier> getIdentifiers() {
+        return super.getIdentifiers();
     }
 
     /**
@@ -166,8 +161,9 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      *
      * @param newValues The new identifiers values.
      */
-    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+    @Override
+    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        super.setIdentifiers(newValues);
     }
 
     /**

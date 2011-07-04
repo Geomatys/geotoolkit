@@ -102,12 +102,6 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     private long editionDate;
 
     /**
-     * Unique identifier for the resource. Example: Universal Product Code (UPC),
-     * National Stock Number (NSN).
-     */
-    private Collection<Identifier> identifiers;
-
-    /**
      * Name and position information for an individual or organization that is responsible
      * for the resource. Returns an empty string if there is none.
      */
@@ -345,8 +339,8 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     @Override
     @XmlElement(name = "identifier")
-    public synchronized Collection<Identifier> getIdentifiers() {
-        return xmlOptional(identifiers = nonNullCollection(identifiers, Identifier.class));
+    public Collection<Identifier> getIdentifiers() {
+        return xmlOptional(super.getIdentifiers());
     }
 
     /**
@@ -355,8 +349,9 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      *
      * @param newValues The new identifiers.
      */
-    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+    @Override
+    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        super.setIdentifiers(newValues);
     }
 
     /**
@@ -464,6 +459,8 @@ public class DefaultCitation extends MetadataEntity implements Citation {
 
     /**
      * Returns the International Standard Book Number, or {@code null} if none.
+     *
+     * @see Citations#ISBN
      */
     @Override
     @XmlElement(name = "ISBN")
@@ -483,6 +480,8 @@ public class DefaultCitation extends MetadataEntity implements Citation {
 
     /**
      * Returns the International Standard Serial Number, or {@code null} if none.
+     *
+     * @see Citations#ISSN
      */
     @Override
     @XmlElement(name = "ISSN")

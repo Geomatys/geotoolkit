@@ -332,11 +332,14 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * Invoked when the metadata changed. Some cached informations will need
-     * to be recomputed.
+     * Invoked every time a metadata property is about to change. If there is any cached value
+     * in this metadata object, then this method shall clear that cache.
+     * <p>
+     * Subclasses that override this method must invoke {@code super.invalidate()} in their
+     * method body.
      */
     @Override
-    final void invalidate() {
+    void invalidate() {
         super.invalidate();
         unmodifiable = null;
     }

@@ -28,6 +28,7 @@ import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -106,6 +107,27 @@ final class IdentifierAdapter<T> implements Identifier {
     @Override
     public String getCode() {
         return value.toString();
+    }
+
+    /**
+     * Returns a hash code value for this identifier.
+     */
+    @Override
+    public int hashCode() {
+        return Utilities.hash(value, authority.hashCode());
+    }
+
+    /**
+     * Compares this identifier with the given object for equality.
+     */
+    @Override
+    public boolean equals(final Object other) {
+        if (other instanceof IdentifierAdapter<?>) {
+            final IdentifierAdapter<?> that = (IdentifierAdapter<?>) other;
+            return Utilities.equals(authority, that.authority) &&
+                   Utilities.equals(value, that.value);
+        }
+        return false;
     }
 
     /**

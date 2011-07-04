@@ -61,6 +61,19 @@ public class DefaultContact extends MetadataEntity implements Contact {
     private static final long serialVersionUID = 3283637180253117382L;
 
     /**
+     * Contact informations for the <A HREF="http://www.iso.org/">International Organization for
+     * Standardization</A>.
+     *
+     * @since 3.19
+     */
+    public static final Contact ISO;
+    static {
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.ISO);
+        c.freeze();
+        ISO = c;
+    }
+
+    /**
      * Contact informations for the <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A>.
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *

@@ -45,12 +45,12 @@ import org.opengis.metadata.citation.Citation;
  * <i>etc.</i>) have an explicit single identifier attribute, while other GeoAPI objects
  * ({@link org.opengis.metadata.citation.Citation}, {@link org.opengis.metadata.acquisition.Objective},
  * referencing {@link org.opengis.referencing.IdentifiedObject}, <i>etc.</i>) allow an arbitrary
- * number of identifiers. However GeoAPI does not define any method for handling the {@code id},
- * {@code uuid} or {@code href} attributes on every kind of objects, since they are specific to
- * XML marshalling (they do not appear in OGC/ISO abstract specifications). This interface provides
- * a way to handle those identifiers.
+ * number of identifiers. However GeoAPI does not define explicit methods for handling the {@code id},
+ * {@code uuid} or {@code href} attributes, since they are specific to XML marshalling (they do not
+ * appear in OGC/ISO abstract specifications). This {@code IdentifiedObject} interface provides a
+ * way to handle those identifiers.
  * <p>
- * Note that GeoAPI defines a similar interface, namely {@link org.opengis.referencing.IdentifiedObject}.
+ * Note that GeoAPI defines a similar interface, also named {@link org.opengis.referencing.IdentifiedObject}.
  * However that GeoAPI interface is not of general use, since it contains methods like
  * {@link org.opengis.referencing.IdentifiedObject#toWKT() toWKT()} that are specific to referencing
  * or geometric objects. In addition, the GeoAPI interface defines some attributes
@@ -78,8 +78,10 @@ public interface IdentifiedObject {
      *   <li>{@linkplain org.geotoolkit.metadata.iso.citation.Citations#EPSG EPSG} codes</li>
      *   <li><cite>Universal Product Code</cite> (UPC)</li>
      *   <li><cite>National Stock Number</cite> (NSN)</li>
-     *   <li><cite>International Standard Book Number</cite> (ISBN)</li>
-     *   <li><cite>International Standard Serial Number</cite> (ISSN)</li>
+     *   <li><cite>International Standard Book Number</cite>
+     *       ({@linkplain org.geotoolkit.metadata.iso.citation.Citations#ISBN ISBN)</li>
+     *   <li><cite>International Standard Serial Number</cite>
+     *       ({@linkplain org.geotoolkit.metadata.iso.citation.Citations#ISSN ISSN)</li>
      *   <li><cite>Universally Unique Identifier</cite> ({@linkplain java.util.UUID})</li>
      *   <li>XML {@linkplain IdentifierSpace#ID ID} attribute</li>
      *   <li>{@linkplain XLink} ({@code href}, {@code role}, {@code arcrole}, {@code title},
@@ -100,25 +102,23 @@ public interface IdentifiedObject {
     Collection<? extends Identifier> getIdentifiers();
 
     /**
-     * A map view of some or all {@linkplain #getIdentifiers() identifiers}.
-     * Each {@linkplain java.util.Map.Entry map entry} is associated to an
-     * element from the identifier collection, where
-     * {@linkplain java.util.Map.Entry#getKey() key} is the {@linkplain Identifier#getAuthority()
-     * identifier authority} and the {@linkplain java.util.Map.Entry#getValue() value} is the
+     * A map view of {@linkplain #getIdentifiers() identifiers}.
+     * Each {@linkplain java.util.Map.Entry map entry} is associated to an element from the
+     * identifier collection in which the {@linkplain java.util.Map.Entry#getKey() key} is
+     * the {@linkplain Identifier#getAuthority() identifier authority} and the
+     * {@linkplain java.util.Map.Entry#getValue() value} is the
      * {@linkplain Identifier#getCode() identifier code}.
      * <p>
-     * There is usually a one-to-one relationship between the map entries and the identifier
-     * elements, but not always:
+     * Notes:
+     * <p>
      * <ul>
-     *   <li><p>The map view may contain less entries, because the map interface allows only one
-     *   entry per authority. If the {@linkplain #getIdentifiers() identifiers collection} contains
-     *   many identifiers for the same authority, then only the first occurrence is visible through
-     *   this {@code Map} view.</p></li>
+     *   <li><p>The map supports {@link IdentifierMap#put put} operations if and only if this
+     *   {@code IdentifiedObject} is modifiable.</p></li>
      *
-     *   <li><p>The map view may also contain more entries than the {@linkplain #getIdentifiers()
-     *   identifiers collection}. For example the {@link org.opengis.metadata.citation.Citation}
-     *   interface defines separated attributes for ISBN, ISSN and other identifiers. This map
-     *   view may choose to unify all those attributes in a single view.</p></li>
+     *   <li><p>The map view may contain less entries then the {@linkplain #getIdentifiers()
+     *   identifiers collection}, because the map interface allows only one entry per authority.
+     *   If the identifiers collection contains many identifiers for the same authority, then
+     *   only the first occurrence is visible through this {@code Map} view.</p></li>
      * </ul>
      *
      * @return The identifiers as a map of (<var>authority</var>, <var>code</var>) entries,
@@ -136,7 +136,7 @@ public interface IdentifiedObject {
      *
      * @return XML {@code xlink} attributes, or {@code null} if none.
      *
-     * @deprecated Replaced by {@code getIdentifierMap().get(IdentifierSpace.HREF)}.
+     * @deprecated Replaced by {@code getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})}.
      */
     @Deprecated
     XLink getXLink();
@@ -149,7 +149,7 @@ public interface IdentifiedObject {
      * @param link XML {@code xlink} attributes, or {@code null} if none.
      * @throws UnsupportedOperationException if this object is unmodifiable.
      *
-     * @deprecated Replaced by {@code getIdentifierMap().put(IdentifierSpace.HREF, link)}.
+     * @deprecated Replaced by {@code getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)}.
      */
     @Deprecated
     void setXLink(final XLink link) throws UnsupportedOperationException;

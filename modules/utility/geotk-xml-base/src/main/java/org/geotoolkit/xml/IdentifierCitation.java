@@ -67,13 +67,13 @@ final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
      * {@code "gco:uuid"} or {@code "xlink:href"}.
      */
     @Override
-    public String toString() {
+    public String getName() {
         return attribute;
     }
 
     /**
      * Returns the attribute name as an international string. This is the same value than the one
-     * returned by {@link #getAttributeName()}, wrapped in a {@link SimpleInternationalString}
+     * returned by {@link #getName()}, wrapped in a {@link SimpleInternationalString}
      * object.
      */
     @Override
@@ -175,6 +175,16 @@ final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
     @Override
     public String getISSN() {
         return null;
+    }
+
+    /**
+     * Returns a string representation of this identifier space. Current implementation returns
+     * the XML attribute name in order to keep the content of {@link IdentifierMap#toString()}
+     * easier to read.
+     */
+    @Override
+    public String toString() {
+        return attribute;
     }
 
     /**

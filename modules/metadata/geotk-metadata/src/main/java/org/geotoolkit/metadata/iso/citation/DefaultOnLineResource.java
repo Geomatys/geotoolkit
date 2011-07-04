@@ -62,6 +62,19 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     private static final long serialVersionUID = 5412370008274334799L;
 
     /**
+     * The online resources for the <A HREF="http://www.iso.org/">International Organization for
+     * Standardization</A>.
+     *
+     * @since 3.19
+     */
+    public static final OnlineResource ISO;
+    static {
+        final DefaultOnlineResource r;
+        ISO = r = new DefaultOnlineResource("http://www.iso.org/");
+        r.freeze();
+    }
+
+    /**
      * The online resources for the <A HREF="http://www.opengeospatial.org">Open Geospatial Consortium</A>.
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *

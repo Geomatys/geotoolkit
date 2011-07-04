@@ -42,9 +42,13 @@
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.05
+ * @version 3.19
  *
  * @since 2.0
  * @module
  */
+@XmlAccessorType(XmlAccessType.NONE)
 package org.geotoolkit.metadata;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;

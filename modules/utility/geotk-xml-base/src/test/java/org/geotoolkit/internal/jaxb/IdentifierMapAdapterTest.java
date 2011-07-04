@@ -52,7 +52,7 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testGetAndPut() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final Map<Citation,String> map = new IdentifierMapAdapter(identifiers);
+        final Map<Citation,String> map = IdentifierMapAdapter.create(Identifier.class, identifiers);
         assertTrue(map.isEmpty());
         assertEquals(0, map.size());
 
@@ -116,7 +116,7 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testPutSpecialized() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final IdentifierMap map = new IdentifierMapAdapter(identifiers);
+        final IdentifierMap map = IdentifierMapAdapter.create(Identifier.class, identifiers);
         final String myID = "myID";
         final java.util.UUID myUUID = java.util.UUID.fromString("a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
         final URI myURI = URI.create("http://mylink");
@@ -140,7 +140,7 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testGetSpecialized() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final IdentifierMap map = new IdentifierMapAdapter(identifiers);
+        final IdentifierMap map = IdentifierMapAdapter.create(Identifier.class, identifiers);
         map.put(ID,   "myID");
         map.put(UUID, "a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
         map.put(HREF, "http://mylink");
@@ -165,7 +165,7 @@ public final class IdentifierMapAdapterTest extends TestBase {
         assertSame(HREF, Commons.serialize(HREF));
 
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final Map<Citation,String> map = new IdentifierMapAdapter(identifiers);
+        final Map<Citation,String> map = IdentifierMapAdapter.create(Identifier.class, identifiers);
         identifiers.add(new IdentifierEntry(ID, "myID"));
         identifiers.add(new IdentifierEntry(UUID, "myUUID"));
 

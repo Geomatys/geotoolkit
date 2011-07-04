@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.AbstractSet;
 import java.util.AbstractMap;
 import java.util.NoSuchElementException;
@@ -30,7 +31,9 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifierMap;
 
@@ -67,6 +70,11 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
     private static final long serialVersionUID = 2661044384787218964L;
 
     /**
+     * An immutable empty instance.
+     */
+    public static final IdentifierMap EMPTY = new IdentifierMapAdapter(Collections.<Identifier>emptySet());
+
+    /**
      * The identifiers to wrap in a map view.
      */
     private final Collection<Identifier> identifiers;
@@ -81,8 +89,27 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      *
      * @param identifiers The identifiers to wrap in a map view.
      */
-    public IdentifierMapAdapter(final Collection<Identifier> identifiers) {
+    private IdentifierMapAdapter(final Collection<Identifier> identifiers) {
         this.identifiers = identifiers;
+    }
+
+    /**
+     * Creates an identifier map for the given kind of identifiers.
+     *
+     * @param  <T>  The kind of identifiers.
+     * @param  type The kind of identifiers.
+     * @param  identifiers The identifiers to wrap in a map view.
+     * @return The map of identifiers as a wrapper over the given collection.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Identifier> IdentifierMapAdapter create(
+            final Class<T> type, final Collection<T> identifiers)
+    {
+        if (type == Identifier.class) {
+            return new IdentifierMapAdapter((Collection) identifiers);
+        }
+        // TODO: add more cases.
+        throw new UnsupportedImplementationException(type);
     }
 
     /**
@@ -204,6 +231,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      */
     @Override
     public String put(final Citation authority, final String code) throws UnsupportedOperationException {
+        ArgumentChecks.ensureNonNull("authority", authority);
         String old = null;
         final Iterator<? extends Identifier> it = identifiers.iterator();
         while (it.hasNext()) {
@@ -231,6 +259,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      */
     @Override
     public <T> T putSpecialized(final IdentifierSpace<T> authority, final T value) throws UnsupportedOperationException {
+        ArgumentChecks.ensureNonNull("authority", authority);
         T old = null;
         final Iterator<? extends Identifier> it = identifiers.iterator();
         while (it.hasNext()) {

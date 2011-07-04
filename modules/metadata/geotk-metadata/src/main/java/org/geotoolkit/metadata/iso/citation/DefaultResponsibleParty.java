@@ -65,14 +65,6 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     private static final long serialVersionUID = -2477962229031486552L;
 
     /**
-     * The name of Open Geospatial Consortium as an international string.
-     *
-     * @todo Localize.
-     */
-    static final InternationalString OGC_NAME =
-            new SimpleInternationalString("Open Geospatial Consortium");
-
-    /**
      * Creates a responsible party metadata entry for OGC involvement.
      * The organisation name is automatically set to "Open Geospatial Consortium".
      *
@@ -87,7 +79,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
         contact.freeze();
 
         final DefaultResponsibleParty ogc = new DefaultResponsibleParty(role);
-        ogc.setOrganisationName(OGC_NAME);
+        ogc.setOrganisationName(OGC.getOrganisationName());
         ogc.setContactInfo(contact);
         ogc.freeze();
 
@@ -130,6 +122,21 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
+     * The <A HREF="http://www.iso.org/">International Organization for Standardization</A>
+     * responsible party.
+     *
+     * @since 3.19
+     */
+    public static final ResponsibleParty ISO;
+    static {
+        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        r.setOrganisationName(new SimpleInternationalString("International Organization for Standardization"));
+        r.setContactInfo(DefaultContact.ISO);
+        r.freeze();
+        ISO = r;
+    }
+
+    /**
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> responsible party.
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *
@@ -138,7 +145,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     public static final ResponsibleParty OGC;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
-        r.setOrganisationName(OGC_NAME);
+        r.setOrganisationName(new SimpleInternationalString("Open Geospatial Consortium"));
         r.setContactInfo(DefaultContact.OGC);
         r.freeze();
         OGC = r;

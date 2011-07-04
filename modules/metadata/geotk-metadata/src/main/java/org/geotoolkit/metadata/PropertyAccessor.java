@@ -45,6 +45,7 @@ import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.xml.IdentifiedObject;
 
 import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
 
@@ -54,9 +55,22 @@ import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
  * declared in the Geotk implementation. An instance of {@code PropertyAccessor} gives access
  * to all public attributes of an instance of a metadata object. It uses reflection for this
  * purpose, a little bit like the <cite>Java Beans</cite> framework.
+ * <p>
+ * This accessor groups the properties in two categories:
+ * <p>
+ * <ul>
+ *   <li>The standard properties defined by the GeoAPI (or other standard) interfaces.
+ *       Those properties are the only one accessible by most methods in this class,
+ *       except {@link #shallowEquals}, {@link #shallowCopy} and {@link #freeze}.</li>
+ *
+ *   <li>Extra properties defined by the {@link IdentifiedObject} interface. Those properties
+ *       invisible in the ISO 19115 model, but appears in ISO 19139 XML marshalling. So we do
+ *       the same in the Geotk implementation: invisible in map and tree view, but visible in
+ *       XML marshalling.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -99,6 +113,25 @@ final class PropertyAccessor {
     private static final Map<Class<?>, Method[]> SHARED_GETTERS = new HashMap<Class<?>, Method[]>();
 
     /**
+     * Additional getter to declare in every list of getter methods that do not already provide
+     * their own {@code getIdentifiers()} method. We handle this method specially because it is
+     * needed for XML marshalling in ISO 19139 compliant document, while not part of abstract
+     * ISO 19115 specification.
+     *
+     * @see IdentifiedObject#getIdentifiers()
+     *
+     * @since 3.19
+     */
+    private static final Method EXTRA_GETTER;
+    static {
+        try {
+            EXTRA_GETTER = IdentifiedObject.class.getMethod("getIdentifiers", (Class<?>[]) null);
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError(e); // Should never happen.
+        }
+    }
+
+    /**
      * The implemented metadata interface.
      */
     final Class<?> type;
@@ -111,6 +144,15 @@ final class PropertyAccessor {
      * }
      */
     final Class<?> implementation;
+
+    /**
+     * Number of {@link #getters} methods to use. This is either {@code getters.length}
+     * or {@code getters.length-1}, depending whatever the {@link #EXTRA_GETTER} method
+     * needs to be skipped or not.
+     *
+     * @since 3.19
+     */
+    private final int standardCount, allCount;
 
     /**
      * The getter methods. This array should not contain any null element.
@@ -184,12 +226,25 @@ final class PropertyAccessor {
         this.type = type;
         assert type.isAssignableFrom(implementation) : implementation;
         getters = getGetters(type);
-        mapping = new HashMap<String,Integer>(XCollections.hashMapCapacity(getters.length));
-        names   = new String[getters.length];
-        elementTypes = new Class<?>[getters.length];
+        int allCount = getters.length;
+        int standardCount = allCount;
+        if (allCount != 0 && getters[allCount-1] == EXTRA_GETTER) {
+            if (!EXTRA_GETTER.getDeclaringClass().isAssignableFrom(implementation)) {
+                allCount--; // The extra getter method does not exist.
+            }
+            standardCount--;
+        }
+        this.allCount = allCount;
+        this.standardCount = standardCount;
+        /*
+         * Compute all information derived from getters: setters, property names, value types.
+         */
+        mapping = new HashMap<String,Integer>(XCollections.hashMapCapacity(allCount));
+        names   = new String[allCount];
+        elementTypes = new Class<?>[allCount];
         Method[] setters = null;
         final Class<?>[] arguments = new Class<?>[1];
-        for (int i=0; i<getters.length; i++) {
+        for (int i=0; i<allCount; i++) {
             /*
              * Fetch the getter and remind its name. We do the same for
              * the UML tag attached to the getter, if any.
@@ -257,7 +312,7 @@ final class PropertyAccessor {
             }
             if (setter != null) {
                 if (setters == null) {
-                    setters = new Method[getters.length];
+                    setters = new Method[allCount];
                 }
                 setters[i] = setter;
             }
@@ -374,6 +429,7 @@ final class PropertyAccessor {
             Method[] getters = SHARED_GETTERS.get(type);
             if (getters == null) {
                 getters = type.getMethods();
+                boolean hasExtraGetter = false;
                 int count = 0;
                 for (int i=0; i<getters.length; i++) {
                     final Method candidate = getters[i];
@@ -395,29 +451,31 @@ final class PropertyAccessor {
                          * is not sufficient because the method may be overridden in a subclass.
                          */
                         final String name = candidate.getName();
-                        if (!name.startsWith(SET) && !isExcluded(name)) {
+                        if (!name.startsWith(SET) && !XArrays.contains(EXCLUDES, name)) {
                             getters[count++] = candidate;
+                            if (!hasExtraGetter) {
+                                hasExtraGetter = name.equals(EXTRA_GETTER.getName());
+                            }
                         }
                     }
                 }
+                /*
+                 * Sort the standard methods before to add the extra methods (if any) in order to
+                 * keep the extra methods last. The code checking for the extra methods require
+                 * them to be last.
+                 */
+                Arrays.sort(getters, 0, count, PropertyComparator.INSTANCE);
+                if (!hasExtraGetter) {
+                    if (getters.length == count) {
+                        getters = Arrays.copyOf(getters, count+1);
+                    }
+                    getters[count++] = EXTRA_GETTER;
+                }
                 getters = XArrays.resize(getters, count);
-                Arrays.sort(getters, PropertyComparator.INSTANCE);
                 SHARED_GETTERS.put(type, getters);
             }
             return getters;
         }
-    }
-
-    /**
-     * Returns {@code true} if the specified method is on the exclusion list.
-     */
-    private static boolean isExcluded(final String name) {
-        for (int i=0; i<EXCLUDES.length; i++) {
-            if (name.equals(EXCLUDES[i])) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -484,7 +542,7 @@ final class PropertyAccessor {
      * Returns the number of properties that can be read.
      */
     final int count() {
-        return getters.length;
+        return standardCount;
     }
 
     /**
@@ -587,7 +645,7 @@ final class PropertyAccessor {
      * @return The type of property values, or {@code null} if unknown.
      */
     final Class<?> type(final int index, final TypeValuePolicy policy) {
-        if (index >= 0 && index < getters.length) {
+        if (index >= 0 && index < standardCount) {
             switch (policy) {
                 case ELEMENT_TYPE: {
                     return elementTypes[index];
@@ -622,7 +680,7 @@ final class PropertyAccessor {
     final synchronized ValueRestriction restriction(final int index) {
         ValueRestriction[] restrictions = this.restrictions;
         if (restrictions == null) {
-            this.restrictions = restrictions = new ValueRestriction[getters.length];
+            this.restrictions = restrictions = new ValueRestriction[standardCount];
             Arrays.fill(restrictions, ValueRestriction.PENDING);
         }
         if (index < 0 || index >= restrictions.length) {
@@ -650,14 +708,14 @@ final class PropertyAccessor {
      * Returns {@code true} if the property at the given index is writable.
      */
     final boolean isWritable(final int index) {
-        return (index >= 0) && (index < getters.length) && (setters != null) && (setters[index] != null);
+        return (index >= 0) && (index < standardCount) && (setters != null) && (setters[index] != null);
     }
 
     /**
      * Returns the value for the specified metadata, or {@code null} if none.
      */
     final Object get(final int index, final Object metadata) {
-        return (index >= 0 && index < getters.length) ? get(getters[index], metadata) : null;
+        return (index >= 0 && index < standardCount) ? get(getters[index], metadata) : null;
     }
 
     /**
@@ -704,7 +762,7 @@ final class PropertyAccessor {
             throws IllegalArgumentException, ClassCastException
     {
         String key;
-        if (index >= 0 && index < getters.length && setters != null) {
+        if (index >= 0 && index < standardCount && setters != null) {
             final Method getter = getters[index];
             final Method setter = setters[index];
             if (setter != null) {
@@ -919,6 +977,16 @@ final class PropertyAccessor {
     }
 
     /**
+     * Return the number of getters to consider for operations using two objects (equals, copy).
+     *
+     * @param  other The other object.
+     * @return Number of getter methods to consider.
+     */
+    private int countFor(final Object other) {
+        return EXTRA_GETTER.getDeclaringClass().isInstance(other) ? allCount : standardCount;
+    }
+
+    /**
      * Compares the two specified metadata objects. The comparison is <cite>shallow</cite>,
      * i.e. all metadata attributes are compared using the {@link Object#equals} method without
      * recursive call to this {@code shallowEquals} method for other metadata.
@@ -927,7 +995,7 @@ final class PropertyAccessor {
      * null value often means "don't know", so in some occasion we want to consider two
      * metadata as different only if a property value is know for sure to be different.
      *
-     * @param metadata1 The first metadata object to compare.
+     * @param metadata1 The first metadata object to compare. This object determines the accessor.
      * @param metadata2 The second metadata object to compare.
      * @param mode The strictness level of the comparison.
      * @param skipNulls If {@code true}, only non-null values will be compared.
@@ -937,7 +1005,8 @@ final class PropertyAccessor {
     {
         assert type.isInstance(metadata1) : metadata1;
         assert type.isInstance(metadata2) : metadata2;
-        for (int i=0; i<getters.length; i++) {
+        final int count = (mode == ComparisonMode.STRICT) ? countFor(metadata2) : standardCount;
+        for (int i=0; i<count; i++) {
             final Method  method = getters[i];
             final Object  value1 = get(method, metadata1);
             final Object  value2 = get(method, metadata2);
@@ -973,11 +1042,14 @@ final class PropertyAccessor {
     public boolean shallowCopy(final Object source, final Object target, final boolean skipNulls)
             throws UnmodifiableMetadataException
     {
+        // Because this PropertyAccesssor is designed for the target, we must
+        // check if the extra methods are suitable for the source object.
         ObjectConverter<?,?> converter = this.converter;
         boolean success = true;
         assert type.isInstance(source) : Classes.getClass(source);
         final Object[] arguments = new Object[1];
-        for (int i=0; i<getters.length; i++) {
+        final int count = countFor(source);
+        for (int i=0; i<count; i++) {
             final Method getter = getters[i];
             arguments[0] = get(getter, source);
             if (!skipNulls || !isEmpty(arguments[0])) {
@@ -1005,7 +1077,7 @@ final class PropertyAccessor {
         assert implementation.isInstance(metadata) : metadata;
         if (setters != null) {
             final Object[] arguments = new Object[1];
-            for (int i=0; i<getters.length; i++) {
+            for (int i=0; i<allCount; i++) {
                 final Method setter = setters[i];
                 if (setter != null) {
                     final Method getter = getters[i];
@@ -1036,7 +1108,7 @@ final class PropertyAccessor {
         if (setters != null) {
             return true;
         }
-        for (int i=0; i<getters.length; i++) {
+        for (int i=0; i<allCount; i++) {
             // Immutable objects usually don't need to be cloned. So if
             // an object is cloneable, it is probably not immutable.
             if (Cloneable.class.isAssignableFrom(getters[i].getReturnType())) {
@@ -1055,7 +1127,7 @@ final class PropertyAccessor {
     public int hashCode(final Object metadata) {
         assert type.isInstance(metadata) : metadata;
         int code = 0;
-        for (int i=0; i<getters.length; i++) {
+        for (int i=0; i<standardCount; i++) {
             final Object value = get(getters[i], metadata);
             if (!isEmpty(value)) {
                 code += value.hashCode();
@@ -1070,7 +1142,7 @@ final class PropertyAccessor {
     public int count(final Object metadata, final int max) {
         assert type.isInstance(metadata) : metadata;
         int count = 0;
-        for (int i=0; i<getters.length; i++) {
+        for (int i=0; i<standardCount; i++) {
             if (!isEmpty(get(getters[i], metadata))) {
                 if (++count >= max) {
                     break;
