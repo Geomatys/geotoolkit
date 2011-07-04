@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-swe</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Sensor Web Enablement schema</name>
+  <name>Bindings OGC - SWE : Sensor Web Enablement</name>
   <description>
     XML bindings for the OGC Sensor Web Enablement schema.
   </description>

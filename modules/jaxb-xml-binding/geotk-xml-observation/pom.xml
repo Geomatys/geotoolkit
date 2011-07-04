@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-om</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Observation and Measurement schema</name>
+  <name>Bindings OGC - OM :Observation and Measurement</name>
   <description>
     XML bindings for the OGC Observation and Measurement schema.
   </description>

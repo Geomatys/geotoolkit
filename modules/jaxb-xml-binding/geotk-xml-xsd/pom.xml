@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-xsd</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the XML schema</name>
+  <name>Bindings W3C - XSD : XML Schema Description</name>
   <description>
     XML binding for the W3C XML schema.
   </description>

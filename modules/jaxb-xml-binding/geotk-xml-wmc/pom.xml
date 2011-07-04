@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wmc</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Web Map Context schemas</name>
+  <name>Bindings OGC - WMC : Web Map Context</name>
   <description>
     XML bindings for various versions of the OGC Web Map Context schemas.
   </description>

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-owc</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the OWS Context schemas</name>
+  <name>Bindings OGC - OWC : Opengis Web Service Context</name>
   <description>
     XML bindings for various versions of the OWS Context schemas.
   </description>

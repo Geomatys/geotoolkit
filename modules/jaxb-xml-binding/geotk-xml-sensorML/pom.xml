@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-sensorML</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Sensor Markup Language schema</name>
+  <name>Bindings OGC - SensorML : Sensor Markup Language</name>
   <description>
     SensorML provides standard models and an XML encoding for describing any process.
   </description>

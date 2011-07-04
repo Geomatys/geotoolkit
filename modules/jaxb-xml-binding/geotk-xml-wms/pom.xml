@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wms</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Web Map Service schemas</name>
+  <name>Bindings OGC - WMS : Web Map Service</name>
   <description>
     XML bindings for various versions of the OGC Web Map Service schemas.
   </description>

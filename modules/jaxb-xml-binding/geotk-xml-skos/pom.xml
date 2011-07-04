@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-skos</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Simple Knowledge Organization System</name>
+  <name>Bindings W3C - SKOS : Simple Knowledge Organization System</name>
   <description>
     XML bindings for various versions of the Simple Knowledge Organization 
     System (SKOS) schemas.

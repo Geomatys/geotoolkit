@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-service</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for ISO 19119</name>
+  <name>Bindings ISO - 19119 : Geographic information services</name>
   <description>An implementation of ISO 19119.</description>
 
 

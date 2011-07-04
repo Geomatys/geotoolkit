@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-xacml</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the XACML and GeoXACML schema</name>
+  <name>Bindings OASIS - XACML/GeoXACML : eXtensible Access Control Markup Language</name>
   <description>
     XML binding for the OASIS XACML schema and the OGC GeoXACML schema.
   </description>

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wcs</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Web Coverage Service schema</name>
+  <name>Bindings OGC - WCS : Web Coverage Service</name>
   <description>
     XML bindings for various versions of the OGC Web Coverage Service schemas.
   </description>

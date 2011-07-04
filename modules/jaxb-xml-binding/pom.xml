@@ -79,21 +79,20 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-xml-citygml</module>
-    <module>geotk-xml-csw</module>
-    <module>geotk-xml-ebrim</module>
+    <module>geotk-xml-xsd</module>
     <module>geotk-xml-feature-catalogue</module>
+    <module>geotk-xml-service</module>
     <!--module>geotk-xml-metadata-imagery</module-->
     <module>geotk-xml-gml</module>
+    <module>geotk-xml-citygml</module>
     <module>geotk-xml-kml</module>
+    <module>geotk-xml-csw</module>
     <module>geotk-xml-observation</module>
-    <module>geotk-xml-ogc</module>
     <module>geotk-xml-owc</module>
     <module>geotk-xml-ows</module>
     <module>geotk-xml-sensorML</module>
+    <module>geotk-xml-ogc</module>
     <module>geotk-xml-se</module>
-    <module>geotk-xml-service</module>
-    <module>geotk-xml-skos</module>
     <module>geotk-xml-sld</module>
     <module>geotk-xml-sos</module>
     <module>geotk-xml-swe</module>
@@ -103,8 +102,9 @@
     <module>geotk-xml-wms</module>
     <module>geotk-xml-wmts</module>
     <module>geotk-xml-wps</module>
+    <module>geotk-xml-ebrim</module>
     <module>geotk-xml-xacml</module>
-    <module>geotk-xml-xsd</module>
+    <module>geotk-xml-skos</module>
   </modules>
 
 </project>

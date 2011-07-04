@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-ows</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the core OGC Web Service schemas</name>
+  <name>Bindings OGC - OWS : Opengis Web Service</name>
   <description>
     XML bindings for various versions of the OGC Web Service (OWS) schemas.
   </description>

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-gml</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Geometry Markup Language schema</name>
+  <name>Bindings OGC - GML : Geometry Markup Language</name>
   <description>
     XML bindings for the various versions of the OGC standard Geographic Markup 
     Language (GML) schemas.

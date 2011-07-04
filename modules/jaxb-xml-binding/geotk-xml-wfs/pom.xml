@@ -21,7 +21,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wfs</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Web Feature Service schema</name>
+  <name>Bindings OGC - WFS : Web Feature Service</name>
   <description>
     XML bindings for the OGC Web Feature Service schema.
   </description>

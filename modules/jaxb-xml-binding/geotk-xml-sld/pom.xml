@@ -21,7 +21,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-xml-sld</artifactId>
     <packaging>jar</packaging>
-    <name>Bindings for the Styled Layer Descriptor schema</name>
+    <name>Bindings OGC - SLD : Styled Layer Descriptor</name>
     <description>OGC XML Styled Layer Descriptor binding implementation.</description>
     <licenses>
         <license>

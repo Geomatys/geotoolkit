@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-ogc</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the OGC Filter schemas</name>
+  <name>Bindings OGC - Filter : Filter and Expressions</name>
   <description>
     XML bindings for various versions of OGC Filter schemas.
   </description>

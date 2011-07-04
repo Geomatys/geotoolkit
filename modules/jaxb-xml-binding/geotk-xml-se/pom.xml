@@ -22,7 +22,7 @@
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-xml-se</artifactId>
     <packaging>jar</packaging>
-    <name>Bindings for the Symbology Encoding schema</name>
+    <name>Bindings OGC - SE : Symbology Encoding</name>
     <description>OGC XML Symbology Encoding implementation.</description>
     <licenses>
         <license>

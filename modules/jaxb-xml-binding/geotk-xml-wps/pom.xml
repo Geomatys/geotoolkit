@@ -21,7 +21,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-wps</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Web Processing Service schema</name>
+  <name>Bindings OGC - WPS : Web Processing Service</name>
   <description>
     XML bindings for the OGC Web Processing Service schema.
   </description>

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-sos</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Sensor Observation Service schema</name>
+  <name>Bindings OGC - SOS : Sensor Observation Service</name>
   <description>
     XML bindings for the OGC Sensor Observation Service schema.
   </description>

@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-clients-core</artifactId>
   <packaging>jar</packaging>
-  <name>Java Clients Core</name>
+  <name>Java Client Core</name>
 
   <description>
     Core module for java clients.

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-ebrim</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the OASIS ebrim registry schema</name>
+  <name>Bindings OASIS - EBRIM : E-Business Registry Information Model</name>
   <description>
     XML bindings for the objects used in the ebRIM registry storage model.
   </description>

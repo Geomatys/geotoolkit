@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-kml</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Keyhole Markup Language schema</name>
+  <name>Bindings OGC - KML : Keyhole Markup Language</name>
   <description>
     XML bindings for various versions of the Keyhole Markup Language (KML) schemas.
   </description>

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-csw</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the Catalog Service for the Web schemas</name>
+  <name>Bindings OGC - CSW : Catalog Service for the Web</name>
   <description>
     XML bindings for the geographic information metadata schemas used by the 
     OGC Catalog Service for the Web (CSW).

@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-citygml</artifactId>
   <packaging>jar</packaging>
-  <name>Bindings for the City Geometry Markup Language schema</name>
+  <name>Bindings OGC - CityGML : City Geometry Markup Language</name>
   <description>
     XML bindings for the various versions of the OGC standard City Geographic Markup 
     Language (GML) schemas.
