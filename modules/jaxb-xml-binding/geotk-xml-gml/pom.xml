@@ -67,15 +67,13 @@
         <groupId>org.geotoolkit</groupId>
         <artifactId>geotk-metadata-sql</artifactId>
     </dependency>
-	<dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-coverage</artifactId>
-    </dependency>
+    <!-- for GML Temporal factory -->
     <dependency>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>geotk-temporal</artifactId>
         <version>${project.version}</version>
     </dependency>
+    <!-- for utils -->
     <dependency>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>geotk-jtswrapper</artifactId>

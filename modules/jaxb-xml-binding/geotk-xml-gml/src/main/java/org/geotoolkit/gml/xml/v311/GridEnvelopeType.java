@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.coverage.grid.GridEnvelope;
 
@@ -98,7 +97,7 @@ public class GridEnvelopeType implements GridEnvelope {
      */
     public GridCoordinates getLow() {
         if (low != null) {
-            return new GeneralGridCoordinates(low);
+            return new GmlGridCoordinates(low);
         }
         return null;
     }
@@ -108,7 +107,7 @@ public class GridEnvelopeType implements GridEnvelope {
      */
     public GridCoordinates getHigh() {
         if (high != null) {
-            return new GeneralGridCoordinates(high);
+            return new GmlGridCoordinates(high);
         }
         return null;
     }
@@ -139,4 +138,48 @@ public class GridEnvelopeType implements GridEnvelope {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public class GmlGridCoordinates implements GridCoordinates {
+
+        /**
+         * The grid coordinates.
+         */
+        final int[] coordinates;
+
+        /**
+         * Creates a grid coordinates initialized to the specified values.
+         *
+         * @param coordinates The grid coordinates to copy.
+         */
+        public GmlGridCoordinates(final int[] coordinates) {
+            this.coordinates = coordinates.clone();
+        }
+    
+        public int getDimension() {
+            if (coordinates != null) {
+                return coordinates.length;
+            }
+            return -1;
+        }
+
+        public int[] getCoordinateValues() {
+            if (coordinates != null) {
+                return coordinates.clone();
+            }
+            return null;
+        }
+
+        public int getCoordinateValue(final int dimension) throws IndexOutOfBoundsException {
+            if (coordinates != null) {
+                return coordinates[dimension];
+            }
+            return -1;
+        }
+
+        public void setCoordinateValue(final int dimension, final int value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+            if (coordinates != null) {
+                coordinates[dimension] = value;
+            }
+
+        }
+    }
 }
