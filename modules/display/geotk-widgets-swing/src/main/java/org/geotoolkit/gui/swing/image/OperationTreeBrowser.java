@@ -62,6 +62,7 @@ import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.Debug;
 
 
 /**
@@ -182,6 +183,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      *
      * @param image The image to display in a frame.
      */
+    @Debug
     public static void show(final RenderedImage image) {
         new OperationTreeBrowser(image).showFrame(image);
     }
@@ -192,6 +194,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      *
      * @param image The image to display in a frame.
      */
+    @Debug
     public static void show(final RenderableImage image) {
         new OperationTreeBrowser(image).showFrame(image);
     }
@@ -204,6 +207,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      *
      * @since 2.4
      */
+    @Debug
     public static void print(final RenderedImage image) {
         Trees.print(getTree(image, Locale.getDefault()));
     }
@@ -216,6 +220,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      *
      * @since 2.4
      */
+    @Debug
     public static void print(final RenderableImage image) {
         Trees.print(getTree(image, Locale.getDefault()));
     }

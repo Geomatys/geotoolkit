@@ -31,6 +31,7 @@ import com.sun.media.jai.util.ImageUtil;
 
 import org.opengis.coverage.PaletteInterpretation;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.image.ColorModels;
 import org.geotoolkit.internal.image.ImageUtilities;
@@ -717,6 +718,7 @@ public class ImageInspector {
      *
      * @see org.geotoolkit.gui.swing.image.OperationTreeBrowser#show(RenderedImage)
      */
+    @Debug
     public void show() throws HeadlessException {
         /*
          * Uses reflection because the "gt2-widgets-swing.jar" dependency is optional and may not

@@ -26,6 +26,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.metadata.quality.ConformanceResult;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -85,6 +86,7 @@ public class FactoryRegistry extends ServiceRegistry {
     /**
      * The logger level for debug messages.
      */
+    @Debug
     private static final Level DEBUG_LEVEL = Level.FINEST;
 
     /**

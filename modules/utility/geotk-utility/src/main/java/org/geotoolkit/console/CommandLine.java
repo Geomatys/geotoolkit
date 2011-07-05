@@ -41,6 +41,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Debug;
 
 
 /**
@@ -151,6 +152,7 @@ public abstract class CommandLine implements Runnable {
      *
      * @since 3.00
      */
+    @Debug
     @Option
     protected boolean debug;
 

@@ -75,11 +75,8 @@ import org.geotoolkit.util.XArrays;
  * will takes advantage of the aliases table.
  *
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (Geomatys, IRD)
  * @version 3.19
- *
- * @todo Invokes {@link #freeUnused} automatically after some amount of time, in order to release
- *       memory for unusued aliases. A timer should be set in {@code reload()} method.
  *
  * @see <A HREF="http://gdal.velocet.ca/~warmerda/wktproblems.html">WKT problems</A>
  *

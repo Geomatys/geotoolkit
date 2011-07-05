@@ -30,6 +30,7 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
@@ -133,6 +134,7 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
      * <p>
      * The default implementation always returns an empty set.
      */
+    @Debug
     Collection<? super AuthorityFactory> dependencies() {
         return Collections.emptySet();
     }

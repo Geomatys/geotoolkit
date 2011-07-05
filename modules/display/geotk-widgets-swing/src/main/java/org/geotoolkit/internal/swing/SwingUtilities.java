@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 import org.geotoolkit.gui.swing.WindowCreator;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -67,6 +68,7 @@ public final class SwingUtilities extends Static {
      * @param  panel The panel to show.
      * @param  title The frame title.
      */
+    @Debug
     public static void show(final JComponent panel, final String title) {
         final JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

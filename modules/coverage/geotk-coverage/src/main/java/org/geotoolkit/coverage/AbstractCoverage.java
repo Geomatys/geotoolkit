@@ -84,6 +84,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Debug;
 
 
 /**
@@ -1140,6 +1141,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      *
      * @since 2.3
      */
+    @Debug
     public void show(String title, final int xAxis, final int yAxis) {
         if (title == null || (title = title.trim()).isEmpty()) {
             title = String.valueOf(getName());
@@ -1207,6 +1209,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      *
      * @since 2.3
      */
+    @Debug
     public void show(final String title) {
         show(title, 0, 1);
     }
@@ -1215,6 +1218,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * Displays this coverage in a windows. This convenience method is used for debugging purpose.
      * The exact appareance of the windows and the tools provided may changes in future versions.
      */
+    @Debug
     public void show() {
         show(null);
     }

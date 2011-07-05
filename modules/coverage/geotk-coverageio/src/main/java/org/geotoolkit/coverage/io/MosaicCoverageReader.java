@@ -36,6 +36,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Debug;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 
@@ -62,6 +63,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * {@code true} if this reader has created a new mosaic.
      * This is used only for debugging and testing purpose.
      */
+    @Debug
     boolean saved;
 
     /**

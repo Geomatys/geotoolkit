@@ -65,6 +65,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.Debug;
 
 import static java.awt.GridBagConstraints.*;
 
@@ -607,7 +608,7 @@ public class ImageProperties extends JComponent implements Dialog {
      * @param  resources The resources to use for formatting the type.
      * @return The name of the color space.
      */
-    private static final String getColorSpace(final ColorModel cm, final Vocabulary resources) {
+    private static String getColorSpace(final ColorModel cm, final Vocabulary resources) {
         if (cm != null) {
             final ColorSpace cs = cm.getColorSpace();
             if (cs != null) {
@@ -971,6 +972,7 @@ public class ImageProperties extends JComponent implements Dialog {
      *
      * @since 3.05
      */
+    @Debug
     public static void show(final RenderedImage image) {
         SwingUtilities.show(new ImageProperties(image), Vocabulary.format(Vocabulary.Keys.PROPERTIES));
     }

@@ -50,6 +50,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
@@ -1227,6 +1228,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      *
      * @since 3.17
      */
+    @Debug
     public void printCacheContent(final PrintWriter out) {
         CacheRecord.printCacheContent(cache, out);
     }

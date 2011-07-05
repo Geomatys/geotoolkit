@@ -27,6 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
@@ -271,6 +272,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * Returns the number of backing stores that can still be created.
      * This method is used only for debugging purpose.
      */
+    @Debug
     final synchronized int remainingBackingStores() {
         return remainingBackingStores;
     }

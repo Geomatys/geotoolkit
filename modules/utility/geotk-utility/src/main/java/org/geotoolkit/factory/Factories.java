@@ -25,8 +25,10 @@ import java.awt.RenderingHints; // For javadoc
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
+
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Debug;
 
 
 /**
@@ -171,6 +173,7 @@ public final class Factories extends Static {
      *
      * @since 3.00
      */
+    @Debug
     public static void listProviders(final Collection<FactoryRegistry> registries,
             final Writer out, final Locale locale) throws IOException
     {

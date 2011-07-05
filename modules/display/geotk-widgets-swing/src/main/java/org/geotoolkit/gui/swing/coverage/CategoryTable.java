@@ -46,6 +46,7 @@ import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.gui.swing.image.PaletteComboBox;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.Debug;
 
 import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -108,6 +109,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     /**
      * Sets to {@code true} for sending debugging information to the console output.
      */
+    @Debug
     private static final boolean DEBUG = false;
 
     /**

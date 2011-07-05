@@ -41,6 +41,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.util.InternationalString;
 import org.opengis.util.FactoryException;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -78,6 +79,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
      * The number of time the primary factory failed and the fallback factory was used
      * instead. This information is provided mostly for debugging and testing purpose.
      */
+    @Debug
     private static final AtomicInteger failureCount = new AtomicInteger();
 
     /**
@@ -1013,6 +1015,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
      * Returns the number of time the primary factory failed and the fallback factory was
      * used instead. This information is provided mostly for debugging and testing purpose.
      */
+    @Debug
     static int getFailureCount() {
         return failureCount.get();
     }

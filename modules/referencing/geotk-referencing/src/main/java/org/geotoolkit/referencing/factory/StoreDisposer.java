@@ -24,6 +24,7 @@ import java.util.concurrent.DelayQueue;
 import java.util.Iterator;
 import java.util.logging.Level;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.DaemonThread;
@@ -125,6 +126,7 @@ final class StoreDisposer extends DaemonThread {
      * If there is no factory waiting for being disposed, returns {@code 0}. This is
      * used for debugging purpose only.
      */
+    @Debug
     final long getDelay() {
         final Delayed next = queue.peek();
         if (next == null) {

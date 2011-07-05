@@ -28,6 +28,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
@@ -119,8 +120,11 @@ public class FormattableObject implements Formattable {
      * <p>
      * This citation is used only for debugging purpose.
      *
+     * @see Formatter#isInternalWKT()
+     *
      * @since 3.00
      */
+    @Debug
     public static final Citation INTERNAL;
     static {
         final DefaultCitation c = new DefaultCitation("Internal WKT");
@@ -156,6 +160,7 @@ public class FormattableObject implements Formattable {
      *
      * @since 3.00
      */
+    @Debug
     public void print() {
         PrintWriter out = null;
         final Console console = System.console();

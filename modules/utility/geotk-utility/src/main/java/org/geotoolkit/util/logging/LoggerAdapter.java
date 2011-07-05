@@ -27,6 +27,8 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.regex.Pattern;
 
+import org.geotoolkit.lang.Debug;
+
 
 /**
  * An adapter that redirect all Java logging events to an other logging framework. This
@@ -146,6 +148,7 @@ public abstract class LoggerAdapter extends Logger {
      *
      * @return The level to use for debugging informations.
      */
+    @Debug
     protected Level getDebugLevel() {
         return Level.FINER;
     }

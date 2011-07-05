@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.text.ParsePosition;
 import java.text.ParseException;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.resources.Errors;
@@ -571,6 +572,7 @@ final class Element {
      * @param out   The output stream.
      * @param level The indentation level (usually 0).
      */
+    @Debug
     public void print(final PrintWriter out, final int level) {
         final int tabWidth = 4;
         out.print(Strings.spaces(tabWidth * level));

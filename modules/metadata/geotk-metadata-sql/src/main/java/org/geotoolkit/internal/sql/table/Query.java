@@ -38,6 +38,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.sql.Ordering;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Debug;
 
 
 /**
@@ -467,7 +468,7 @@ scan:       while (!tables.isEmpty()) {
             } else {
                 buffer.append(quote).append(table).append(quote);
             }
-            if (separator != JOIN) {
+            if (separator != JOIN) { // NOSONAR: identity comparison is ok here.
                 separator = JOIN;
                 assert entry.getValue() == null : entry;
                 continue;
@@ -556,6 +557,7 @@ scan:       while (!tables.isEmpty()) {
      * @return The SQL statement.
      * @throws SQLException if an error occurred while reading the database.
      */
+    @Debug
     final String selectAll(final LocalCache lc, final QueryType type) throws SQLException {
         final DatabaseMetaData metadata = getMetaData(lc);
         final StringBuilder buffer = new StringBuilder();

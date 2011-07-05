@@ -26,6 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -35,7 +36,7 @@ import org.geotoolkit.util.logging.Logging;
  * grouping the threads created by Geotk together under the same parent tree node.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @since 3.03
  * @module
@@ -74,7 +75,9 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
 
     /**
      * {@code true} if the threads to be created are part of the {@link #RESOURCE_DISPOSERS}
-     * group, or {@code false} if they are {@link #WORKERS} threads.
+     * group, or {@code false} if they are {@link #WORKERS} threads. This information is used
+     * mostly for reporting in debugger - it has no functional impact (except on the threads
+     * priority).
      */
     private final boolean disposer;
 
@@ -132,6 +135,8 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      * It is preferable to use it as soon as possible and discard.
      *
      * @param  disposer {@code true} if the executor is for resources disposal tasks.
+     *         This information is used mostly for reporting in debugger - it has no
+     *         functional impact (except on the threads priority).
      * @return The executor.
      */
     public static synchronized Executor executor(final boolean disposer) {
@@ -227,6 +232,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      *
      * @since 3.17
      */
+    @Debug
     public static Thread[] getNonDaemonThreads() {
         ThreadGroup root = Thread.currentThread().getThreadGroup();
         for (ThreadGroup parent; (parent = root.getParent()) != null;) {

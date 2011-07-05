@@ -28,6 +28,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -131,6 +132,7 @@ public class GradientMagnitude extends OperationJAI {
     /**
      * Set to {@code true} for enabling some tracing code.
      */
+    @Debug
     private static final boolean DEBUG = false;
 
     /**

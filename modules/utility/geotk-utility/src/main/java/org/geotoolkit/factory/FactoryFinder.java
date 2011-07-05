@@ -50,6 +50,7 @@ import org.opengis.geometry.complex.ComplexFactory;
 import org.opengis.geometry.aggregate.AggregateFactory;
 import org.opengis.temporal.TemporalFactory;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.Citations;
@@ -959,6 +960,7 @@ public class FactoryFinder extends Static {
      *
      * @since 3.00
      */
+    @Debug
     public static synchronized void listProviders(final Writer out, final Locale locale)
             throws IOException
     {

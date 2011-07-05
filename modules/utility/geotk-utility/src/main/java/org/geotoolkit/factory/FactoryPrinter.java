@@ -34,6 +34,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
@@ -48,6 +49,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.4
  * @module
  */
+@Debug
 final class FactoryPrinter implements Comparator<Class<?>> {
     /**
      * The factory registries to format.

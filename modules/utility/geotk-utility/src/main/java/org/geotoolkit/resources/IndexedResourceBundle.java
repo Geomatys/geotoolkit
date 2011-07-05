@@ -35,6 +35,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -164,6 +165,7 @@ public class IndexedResourceBundle extends ResourceBundle {
      * @param  out The destination stream.
      * @throws IOException if an output operation failed.
      */
+    @Debug
     public final void list(final Writer out) throws IOException {
         // Synchronization performed by 'ensureLoaded'
         list(out, ensureLoaded(null));

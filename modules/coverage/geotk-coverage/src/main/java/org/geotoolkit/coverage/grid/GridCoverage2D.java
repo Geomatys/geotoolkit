@@ -67,6 +67,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.lang.Debug;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
@@ -652,6 +653,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @return A string with pixel coordinates and pixel values at the specified location,
      *         or {@code null} if {@code coord} is outside coverage.
      */
+    @Debug
     public synchronized String getDebugString(final DirectPosition coord) {
         Point2D pixel = toPoint2D(coord);
         pixel         = gridGeometry.inverseTransform(pixel);

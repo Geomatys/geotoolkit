@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.io.IOException;
 import javax.imageio.stream.ImageInputStream;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.util.logging.Logging;
@@ -37,6 +38,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.14
  * @module
  */
+@Debug
 @Decorator(ImageInputStream.class)
 public final class CheckedImageInputStream extends ImageInputStreamProxy {
     /**

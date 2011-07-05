@@ -60,6 +60,7 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.Debug;
 
 
 /**
@@ -828,6 +829,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *
      * @param image The image to display in a frame.
      */
+    @Debug
     public static void show(final File image) {
         JComponent c;
         try {

@@ -35,6 +35,7 @@ import javax.swing.tree.DefaultTreeModel;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
@@ -370,6 +371,7 @@ public final class Trees extends Static {
      *
      * @since 2.4
      */
+    @Debug
     public static void print(final TreeModel tree) {
         print(toString(tree));
     }
@@ -382,6 +384,7 @@ public final class Trees extends Static {
      *
      * @since 2.4
      */
+    @Debug
     public static void print(final TreeNode node) {
         print(toString(node));
     }
@@ -389,6 +392,7 @@ public final class Trees extends Static {
     /**
      * Prints the given text to the console.
      */
+    @Debug
     private static void print(final String text) {
         final PrintWriter out = IOUtilities.standardPrintWriter();
         out.println(text);
@@ -404,6 +408,7 @@ public final class Trees extends Static {
      *
      * @since 2.5
      */
+    @Debug
     public static void show(final TreeNode node, final String title) {
         show(new DefaultTreeModel(node, true), title);
     }
@@ -417,6 +422,7 @@ public final class Trees extends Static {
      *
      * @since 2.5
      */
+    @Debug
     public static void show(final TreeModel tree, final String title) {
         final JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
