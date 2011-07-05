@@ -51,7 +51,7 @@ public class DefaultDataSource implements DataSource {
      * The logger where to report the JDBC driver version. Note that the logger
      * name intentionally hides the {@code "internal"} part of the package name.
      */
-    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.jdbc");
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.sql");
 
     /**
      * The driver names of the connection returned by {@code DefaultDataSource}.

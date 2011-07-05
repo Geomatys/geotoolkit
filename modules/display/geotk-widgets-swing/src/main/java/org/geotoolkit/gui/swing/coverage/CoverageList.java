@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.Collections;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutionException;
 import java.io.File;
 import java.awt.Dimension;
@@ -175,11 +174,6 @@ public class CoverageList extends JComponent {
      * Listeners used for various actions.
      */
     private final Listeners listeners;
-
-    /**
-     * Executor for adding new coverages. Created when first needed.
-     */
-    private transient Executor executor;
 
     /**
      * Creates a new list with a default, initially empty, {@code CoverageTableModel}.
@@ -579,10 +573,7 @@ public class CoverageList extends JComponent {
              * block waiting for user input from the event thread, and it seems
              * to prevent other SwingWorkers to work.
              */
-            if (executor == null) {
-                executor = Threads.executor(false);
-            }
-            executor.execute(new Runnable() {
+            Threads.executeWork(new Runnable() {
                 @Override public void run() {
                     try {
                         layer.addCoverageReferences(Arrays.asList(files), addController);

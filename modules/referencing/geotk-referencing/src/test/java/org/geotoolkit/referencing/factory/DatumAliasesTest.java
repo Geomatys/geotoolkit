@@ -29,6 +29,7 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.PrimeMeridian;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
@@ -50,7 +51,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(FactoryFinderTest.class)
-public final class DatumAliasesTest {
+public final class DatumAliasesTest extends TestBase {
     /**
      * Tests the registration. {@link DatumAliases} should be before
      * {@link ReferencingObjectFactory}. The dummy GeoTools factory

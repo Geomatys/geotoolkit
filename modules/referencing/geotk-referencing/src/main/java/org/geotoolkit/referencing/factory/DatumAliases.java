@@ -43,6 +43,7 @@ import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.util.XArrays;
 
 
@@ -104,7 +105,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
     private static final Object[] NEED_LOADING = new Object[0];
 
     /**
-     * The URL of the alias table. This file is read by {@link #reload} when first needed.
+     * The URL of the alias table. This file is read by {@link #reload()} when first needed.
      */
     private final URL aliasURL;
 
@@ -118,7 +119,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
 
     /**
      * The authorities. This is the first line in the alias table.
-     * This array is constructed by {@link #reload} when first needed.
+     * This array is constructed by {@link #reload()} when first needed.
      */
     private Citation[] authorities;
 
@@ -327,6 +328,11 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             }
         }
         in.close();
+        Threads.executeDisposal(new Runnable() {
+            @Override public void run() {
+                freeUnused();
+            }
+        }, 10000); // Arbitrary delay of 10 seconds.
     }
 
     /**
@@ -618,8 +624,11 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
     /**
      * Frees all aliases that have been unused up to date. If one of those alias is needed at a
      * later time, the aliases table will be reloaded.
+     * <p>
+     * This method is invoked automatically after the timeout and doesn't need to be invoked
+     * explicitely.
      */
-    public synchronized void freeUnused() {
+    final synchronized void freeUnused() {
         for (final Map.Entry<String,Object[]> entry : aliasMap.entrySet()) {
             final Object[] value = entry.getValue();
             if (!(value instanceof GenericName[])) {

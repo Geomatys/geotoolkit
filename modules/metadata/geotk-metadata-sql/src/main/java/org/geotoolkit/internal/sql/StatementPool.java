@@ -19,6 +19,7 @@ package org.geotoolkit.internal.sql;
 
 import java.util.Map;
 import java.util.Iterator;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -76,7 +77,7 @@ import org.geotoolkit.util.collection.XCollections;
  * @param <V> The type of values.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.03
  * @module
@@ -91,6 +92,12 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * hopefully keeps the performance at a reasonable level.
      */
     private static final int TIMEOUT = 2000;
+
+    /**
+     * An extra delay to add to the {@link #TIMEOUT} in order to increase the chances to
+     * close many statement at once.
+     */
+    private static final int EXTRA_DELAY = 500;
 
     /**
      * The maximum number of prepared statements to be kept in the pool.
@@ -148,7 +155,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
             assert isEmpty();
             connection = c = dataSource.getConnection();
             DefaultDataSource.log(c, StatementPool.class);
-            Threads.executor(true).execute(this);
+            Threads.executeDisposal(this, TIMEOUT + EXTRA_DELAY);
         }
         return c;
     }
@@ -181,8 +188,9 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * Overridden in order to check for synchronization if assertions are enabled.
      * See class-javadoc for why the synchronization must be performed by the caller.
      * <p>
-     * <b>NOTE:</b> If this method returns a non-null value, then the caller
-     * should consider {@linkplain StatementEntry#close() closing} it.
+     * <b>NOTE:</b> If this method returns a non-null value, then the caller should
+     * either {@linkplain #put put} it back to this pool when finished using it, or
+     * {@linkplain StatementEntry#close() close} it.
      */
     @Override
     public final V remove(final Object key) {
@@ -206,8 +214,8 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
     }
 
     /**
-     * Closes all statements and remove them from the map.
-     * The connection is not closed.
+     * Closes all statements and remove them from the map. The connection is not closed -
+     * it will be closed after the timeout if no new statement have been added in this pool.
      */
     @Override
     public final void clear() {
@@ -216,6 +224,15 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
             entry.closeQuietly();
         }
         super.clear();
+    }
+
+    /**
+     * Intentionally disallows overriding.
+     */
+    @Override
+    public final Collection<V> values() {
+        assert Thread.holdsLock(this);
+        return super.values();
     }
 
     /**
@@ -228,48 +245,19 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      */
     @Override
     public final synchronized void run() {
-        /*
-         * An initial wait time is preferable because the map may be empty for a few
-         * milliseconds (this occurs when MetadataSource has just been created).
-         */
-        long waitTime = TIMEOUT;
-sleep:  while (true) {
-            /*
-             * Call user code. The call needs to be protected against unexpected exceptions,
-             * otherwise some JDBC resources could be left unclosed if this thread die. Note
-             * that monitorExit(boolean) uses assertions, so we need to catch Throwable.
-             */
-            try {
+        final long currentTime = System.currentTimeMillis();
+        final Iterator<V> it = values().iterator();
+        while (it.hasNext()) {
+            final V entry = it.next();
+            final long waitTime = entry.expireTime - currentTime;
+            if (waitTime > 0) {
+                // Some statements can not be disposed yet.
+                Threads.executeDisposal(this, waitTime + EXTRA_DELAY);
                 monitorExit(false);
-            } catch (Throwable e) { // NOSONAR: See above comment.
-                Logging.unexpectedException(DefaultDataSource.LOGGER, getClass(), "monitorExit", e);
+                return;
             }
-            /*
-             * Increase the wait time by an arbitrary amount in order to
-             * increase the chances to close many statements in one pass.
-             */
-            waitTime += 500;
-            try {
-                wait(waitTime);
-            } catch (InterruptedException e) {
-                // Someone doesn't want to let us sleep. Check if there is any statement
-                // to close, then go sleep again if the map is not empty.
-            }
-            final long currentTime = System.currentTimeMillis();
-            final Iterator<V> it = values().iterator();
-            while (it.hasNext()) {
-                final V entry = it.next();
-                waitTime = entry.expireTime - currentTime;
-                if (waitTime > 0) {
-                    // Some statements can not be disposed yet.
-                    continue sleep;
-                }
-                it.remove();
-                entry.closeQuietly();
-            }
-            // We have closed every statements. Terminate the thread.
-            // A new one will be created later if new statements are created.
-            break;
+            it.remove();
+            entry.closeQuietly();
         }
         /*
          * No more prepared statements. Close the connection.
@@ -278,7 +266,7 @@ sleep:  while (true) {
         connection = null;
         if (c != null) try {
             c.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Logging.recoverableException(DefaultDataSource.LOGGER, Connection.class, "close", e);
         }
         monitorExit(true);
@@ -298,7 +286,7 @@ sleep:  while (true) {
      *     }
      * }
      *
-     * Then subclasses can overload this method in order to be informed when the above work is
+     * Then subclasses can override this method in order to be informed when the above work is
      * finished. Note that this method may not be invoked immediately after the work completion.
      * It may be invoked with a delay up to {@value #TIMEOUT} milliseconds (or a bit more).
      *
@@ -328,8 +316,6 @@ sleep:  while (true) {
         if (c != null) {
             c.close();
         }
-        // If the run() method is executed in an other thread and that thread
-        // is waiting, wake it up in order to cause the thread to die now.
-        notify();
+        // monitorExit(boolean) will be invoked later by the run() method.
     }
 }

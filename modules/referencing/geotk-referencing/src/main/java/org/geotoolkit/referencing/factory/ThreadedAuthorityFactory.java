@@ -414,7 +414,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                  * enabled only if the queue is some implementation having a limited capacity). This is
                  * probably not worth to keep yet more factories, so dispose the current one immediately.
                  */
-                dispose(factory, false);
+                dispose(factory, 0, false);
             } else {
                 /*
                  * If the backing store we just released is the first one, awake the
@@ -497,7 +497,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * by all {@code ThreadedAuthorityFactory} instances. An other effect is to avoid to
      * run the user-code while we hold a synchronization lock on this factory.
      */
-    private void dispose(final AbstractAuthorityFactory factory, final boolean shutdown) {
+    private void dispose(final AbstractAuthorityFactory factory, final long delay, final boolean shutdown) {
         final Runnable task = new Runnable() {
             @Override public void run() {
                 if (shutdown || canDisposeBackingStore(factory)) {
@@ -506,7 +506,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             }
         };
         try {
-            Threads.executor(true).execute(task);
+            Threads.executeDisposal(task, delay);
         } catch (RejectedExecutionException e) {
             /*
              * May happen because of race conditions on JVM shutdown. Don't let StoreDisposer
@@ -534,7 +534,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
         Store store;
         // Dispose from least recent to most recent.
         while ((store = stores.pollFirst()) != null) {
-            dispose(store.factory, shutdown);
+            dispose(store.factory, 0, shutdown);
         }
         isActive = false;
         remainingBackingStores = 0;
@@ -567,7 +567,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             // Found an expired factory. Dispose it and
             // search for other factories to dispose.
             it.remove();
-            dispose(store.factory, false);
+            dispose(store.factory, 0, false);
         }
         /*
          * If we reach this point, then all worker factories in the queue have been disposed.

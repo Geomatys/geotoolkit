@@ -18,11 +18,12 @@
 package org.geotoolkit.internal;
 
 import java.util.Arrays;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,27 +52,47 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     /**
      * The group of threads disposing resources, typically after a timeout.
      */
-    public static final ThreadGroup RESOURCE_DISPOSERS;
+    public static final ThreadGroup RESOURCE_DISPOSERS = new ThreadGroup(GEOTOOLKIT, "ResourceDisposers");
+    static {
+        RESOURCE_DISPOSERS.setMaxPriority(Thread.NORM_PRIORITY + 2);
+    }
 
     /**
      * The group of workers to run in a background thread.
      *
      * @since 3.05
      */
-    public static final ThreadGroup WORKERS;
-
+    public static final ThreadGroup WORKERS = new ThreadGroup(GEOTOOLKIT, "Workers");
     static {
-        RESOURCE_DISPOSERS = new ThreadGroup(GEOTOOLKIT, "ResourceDisposers");
-        WORKERS            = new ThreadGroup(GEOTOOLKIT, "Workers");
-        RESOURCE_DISPOSERS.setMaxPriority(Thread.MAX_PRIORITY  - 2);
-        WORKERS           .setMaxPriority(Thread.NORM_PRIORITY - 1);
+        WORKERS.setMaxPriority(Thread.NORM_PRIORITY - 1);
     }
 
     /**
-     * The executors to be returned by {@link #executor(boolean)}.
-     * Will be created only when first needed, and then considered as final.
+     * The executor for non-disposal works.
+     *
+     * For CPU-bound tasks, the optimal number of threads is often the number of
+     * processor + 1. However the tasks given to this executor can be of any kind,
+     * including I/O bound tasks. So we will allow more.
      */
-    private static ExecutorService[] EXECUTORS;
+    private static final ExecutorService WORK_EXECUTOR = new ThreadPoolExecutor(
+            0, 4*Runtime.getRuntime().availableProcessors(),
+            60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(8000),
+            new Threads(false, true, "Pooled thread #"));
+
+    /**
+     * The executor for disposal tasks. The tasks submitted to this executor should be only
+     * house-keeping works. The threads in this executor have a priority slightly higher than
+     * the normal priority. Their execution should complete quickly.
+     */
+    private static final ScheduledExecutorService DISPOSAL_EXECUTOR;
+    static {
+        final ScheduledThreadPoolExecutor ex = new ScheduledThreadPoolExecutor(4,
+                new Threads(true, true, "Pooled thread #"));
+        ex.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+        ex.setKeepAliveTime(60L, TimeUnit.SECONDS);
+        ex.allowCoreThreadTimeOut(true);
+        DISPOSAL_EXECUTOR = ex;
+    }
 
     /**
      * {@code true} if the threads to be created are part of the {@link #RESOURCE_DISPOSERS}
@@ -101,9 +122,9 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * Creates a factory for worker threads created by the Geotk library.
-     * This factory should be used by every method that use {@link Executors}
-     * directly instead than {@link #executor(boolean)}.
+     * Creates a factory for worker threads created by the Geotk library. This factory should be
+     * used by every method that use {@link java.util.concurrent.Executors} directly rather than
+     * the {@code execute} methods provided in this class.
      *
      * @param  prefix The prefix to put in front of thread names.
      * @return The thread factory.
@@ -115,50 +136,31 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * A pool of threads to be shared by different Geotk utility classes. The threads
-     * created by the executor can be part of two groups:
+     * Executes the given task in a worker thread. The given work is executed as soon as a
+     * thread from the {@link #WORKERS} group is available.
      *
-     * <ul>
-     *   <li><p><b>Disposer:</b> The tasks submitted to this executor should be only house-keeping
-     *   works. The threads in this executor have a priority slightly higher than the normal priority.
-     *   This is on the assumption that the tasks will spend most of their time waiting for some
-     *   condition, and complete quickly when the condition become true.</p></li>
+     * @param task The work to execute.
      *
-     *   <li><p><b>Normal:</b> Any background task which is not about disposing resources.</p></li>
-     * </ul>
-     *
-     * The executor threads will be daemon. However the submitted tasks should still be fully
-     * completed because the shutdown hook will wait for tasks to complete, up to some timeout
-     * delay.
-     * <p>
-     * Callers should not keep a reference to the returned executor for a long time.
-     * It is preferable to use it as soon as possible and discard.
-     *
-     * @param  disposer {@code true} if the executor is for resources disposal tasks.
-     *         This information is used mostly for reporting in debugger - it has no
-     *         functional impact (except on the threads priority).
-     * @return The executor.
+     * @since 3.19
      */
-    public static synchronized Executor executor(final boolean disposer) {
-        final int index = (disposer) ? 1 : 0;
-        ExecutorService[] executors = EXECUTORS;
-        if (executors == null) {
-            ensureShutdownHookRegistered();
-            EXECUTORS = executors = new ExecutorService[2];
-        }
-        ExecutorService executor = executors[index];
-        if (executor == null) {
-            /*
-             * In the disposer case, the tasks should be very short-lived. So limit the number
-             * of threads in order to avoid the creation of many threads at startup time which
-             * become idle very soon after their creation.
-             */
-            final int maximumPoolSize = disposer ? 4 : 100;
-            final ThreadFactory factory = new Threads(disposer, true, "Pooled daemon #");
-            executors[index] = executor = new ThreadPoolExecutor(0, maximumPoolSize, 60L, TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<Runnable>(), factory);
-        }
-        return executor;
+    public static void executeWork(final Runnable task) {
+        WORK_EXECUTOR.execute(task);
+    }
+
+    /**
+     * Executes the given task in a disposer thread after the given delay. The task
+     * is executed in a thread from the {@link #RESOURCE_DISPOSERS} group. They have
+     * a higher priority than the worker group and may be available even if the worker
+     * group is full.
+     *
+     * @param task  The task to execute.
+     * @param delay The delay to wait before to execute the task, in milliseconds.
+     *              May be zero for immediate execution.
+     *
+     * @since 3.19
+     */
+    public static void executeDisposal(final Runnable task, final long delay) {
+        DISPOSAL_EXECUTOR.schedule(task, delay, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -183,11 +185,11 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      *
      * @since 3.16
      */
-    public static void ensureShutdownHookRegistered() {
+    static {
         try {
             Class.forName("org.geotoolkit.factory.ShutdownHook", true, Threads.class.getClassLoader());
         } catch (Exception e) {
-            Logging.unexpectedException(Threads.class, "ensureShutdownHookRegistered", e);
+            Logging.unexpectedException(Threads.class, "<init>", e);
         }
     }
 
@@ -201,25 +203,20 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      * @since 3.06
      */
     public static synchronized void shutdown() {
-        final ExecutorService[] executors = EXECUTORS;
-        if (executors != null) {
-            for (final ExecutorService executor : executors) {
-                if (executor != null) {
+        try {
+            for (int i=0; i<4; i++) {
+                final ExecutorService executor = (i & 1) == 0 ? WORK_EXECUTOR : DISPOSAL_EXECUTOR;
+                if ((i & 2) == 0) {
                     executor.shutdown();
+                } else if (!executor.awaitTermination(8, TimeUnit.SECONDS)) {
+                    // We can't use java.util.logging at this point since we are shutting down.
+                    System.err.println("NOTE: Some background threads didn't completed.");
+                    return;
                 }
             }
-            try {
-                for (final ExecutorService executor : executors) {
-                    if (executor != null && !executor.awaitTermination(8, TimeUnit.SECONDS)) {
-                        // We can't use java.util.logging at this point since we are shutting down.
-                        System.err.println("NOTE: Some background threads didn't completed.");
-                        return;
-                    }
-                }
-            } catch (InterruptedException e) {
-                // Too late for logging since we are in process of shuting down.
-                System.err.println(e);
-            }
+        } catch (InterruptedException e) {
+            // Too late for logging since we are in process of shuting down.
+            System.err.println(e);
         }
     }
 

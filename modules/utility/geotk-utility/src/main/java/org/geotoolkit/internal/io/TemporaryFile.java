@@ -28,7 +28,6 @@ import java.lang.ref.PhantomReference;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
@@ -58,7 +57,11 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
      * Registers a shutdown hook which will delete every files not yet deleted.
      */
     static {
-        Threads.ensureShutdownHookRegistered();
+        try {
+            Class.forName("org.geotoolkit.factory.ShutdownHook", true, TemporaryFile.class.getClassLoader());
+        } catch (Exception e) {
+            Logging.unexpectedException(TemporaryFile.class, "<init>", e);
+        }
     }
 
     /**

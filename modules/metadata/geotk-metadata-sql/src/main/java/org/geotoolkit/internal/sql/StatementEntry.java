@@ -88,7 +88,9 @@ public class StatementEntry {
     final void closeQuietly() {
         try {
             close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            // Catch Exception rather than SQLException because this method is invoked from semi-
+            // critical code which need to never fail, otherwise some memory leak could occur.
             /*
              * Use the logger of the package that subclass this entry, and pretend that the
              * message comme from PreparedStatement.close() which is the closest we can get
