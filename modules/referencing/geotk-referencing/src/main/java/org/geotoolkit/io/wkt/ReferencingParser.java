@@ -28,7 +28,6 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Quantity;
-import javax.measure.unit.SI;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
@@ -100,7 +99,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  * @see <A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A>
@@ -116,6 +115,18 @@ public class ReferencingParser extends MathTransformParser {
      * {@code TOWGS84} element.
      */
     private static final boolean ALLOW_ORACLE_SYNTAX = true;
+
+    /**
+     * {@code true} if the authority declared in the {@code AUTHORITY[<authority>, <code>]} element
+     * should be assigned to the name. A previous Geotk version assigned the authority to the name.
+     * However experience show that it is often wrong in practice, since peoples declare EPSG codes
+     * but still use WKT name much shorter than the EPSG name (for example "<cite>WGS84</cite>"
+     * instead than "<cite>World Geodetic System 1984</cite>"). Even our own Geotk implementation
+     * make such substitution through the {@link Formatter#getName(IdentifiedObject)} method.
+     *
+     * @since 3.19
+     */
+    private static final boolean ASSIGN_AUTHORITY_TO_NAME = false;
 
     /**
      * The factory to use for creating {@linkplain Datum datum}.
@@ -436,21 +447,19 @@ public class ReferencingParser extends MathTransformParser {
     {
         final boolean  isRoot = parent.isRoot();
         final Element element = parent.pullOptionalElement("AUTHORITY");
-        Map<String,Object> properties;
-        if (element == null) {
-            if (isRoot) {
-                properties = new HashMap<String,Object>(4);
-                properties.put(IdentifiedObject.NAME_KEY, name);
-            } else {
-                properties = singletonMap(IdentifiedObject.NAME_KEY, (Object) name);
-            }
-        } else {
+        if (element == null && !isRoot) {
+            return singletonMap(IdentifiedObject.NAME_KEY, (Object) name);
+        }
+        Map<String,Object> properties = new HashMap<String,Object>(4);
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        if (element != null) {
             final String auth = element.pullString("name");
             final String code = element.pullObject("code").toString(); // Accepts Integer as well as String.
             element.close();
             final Citation authority = Citations.fromName(auth);
-            properties = new HashMap<String,Object>(4);
-            properties.put(IdentifiedObject.       NAME_KEY, new NamedIdentifier(authority, name));
+            if (ASSIGN_AUTHORITY_TO_NAME) {
+                properties.put(IdentifiedObject.NAME_KEY, new NamedIdentifier(authority, name));
+            }
             properties.put(IdentifiedObject.IDENTIFIERS_KEY, new NamedIdentifier(authority, code));
         }
         if (isRoot) {
@@ -468,7 +477,8 @@ public class ReferencingParser extends MathTransformParser {
      * }
      *
      * @param  parent The parent element.
-     * @param  unit The contextual unit. Usually {@link SI#METRE} or {@link SI#RADIAN}.
+     * @param  unit The contextual unit. Usually {@link javax.measure.unit.SI#METRE} or
+     *         {@link javax.measure.unit.SI#RADIAN}.
      * @return The {@code "UNIT"} element as an {@link Unit} object.
      * @throws ParseException if the {@code "UNIT"} can't be parsed.
      *

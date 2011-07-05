@@ -73,7 +73,7 @@ public class FormattableObject implements Formattable {
     private static final ThreadLocal<Formatter> FORMATTER = new ThreadLocal<Formatter>();
 
     /**
-     * The indentation value to give to {@link #toWKT(int)} method for formatting the complete
+     * The indentation value to give to the {@link #toWKT(int)} method for formatting the complete
      * object on a single line.
      *
      * @since 2.6

@@ -48,7 +48,7 @@ import static org.geotoolkit.test.Commons.*;
  * @author Yann Cézard (IRD)
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.19
  *
  * @since 2.0
  */
@@ -318,6 +318,10 @@ public final class WKTFormatTest {
      * Tests the Equidistant Cylindrical projected CRS. This one is a special case because it
      * is simplified to an affine transform. The referencing module should be able to find the
      * projection parameters from the affine transform.
+     * <p>
+     * This method tests also indirectly the datum aliases, since the
+     * “World Geodetic System 1984” datum should be formatted as “WGS84”
+     * according OGC authority names.
      *
      * @throws ParseException Should never happen.
      */
@@ -328,7 +332,7 @@ public final class WKTFormatTest {
                 "PROJCS[“Equidistant Cylindrical”,\n" +
                 "  GEOGCS[“WGS 84”,\n" +
                 "    DATUM[“World Geodetic System 1984”,\n" +
-                "      SPHEROID[“WGS 84”, 6378137.0, 298.257223563]],\n" +
+                "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
                 "    PRIMEM[“Greenwich”, 0.0],\n" +
                 "    UNIT[“degree”, 0.017453292519943295],\n" +
                 "    AXIS[“Geodetic latitude”, NORTH],\n" +
@@ -342,6 +346,7 @@ public final class WKTFormatTest {
                 "  AXIS[“Easting”, EAST],\n" +
                 "  AXIS[“Northing”, NORTH]]\n");
         CoordinateReferenceSystem crs = wktFormat.parse(wkt, 0, CoordinateReferenceSystem.class);
+        wkt = wkt.replace("World Geodetic System 1984", "WGS84"); // DATUM name change.
         assertMultilinesEquals(wkt, wktFormat.format(crs));
     }
 

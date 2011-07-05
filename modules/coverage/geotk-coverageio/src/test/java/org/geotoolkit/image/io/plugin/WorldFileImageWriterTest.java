@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.19
  *
  * @since 3.07
  */
@@ -135,7 +135,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
             wkt = wkt.replace("], ", "],\n");
             assertMultilinesEquals(decodeQuotes(
                 "PROJCS[“WGS 84 / World Mercator”, " +
-                "GEOGCS[“Sans-titre”, DATUM[“World Geodetic System 1984”, " +
+                "GEOGCS[“Sans-titre”, DATUM[“WGS84”, " +
                 "SPHEROID[“WGS 84”, 6378137.0, 298.257223563]],\n" +
                 "PRIMEM[“Greenwich”, 0.0],\n" +
                 "UNIT[“degree”, 0.017453292519943295],\n" +

@@ -79,9 +79,9 @@ public interface IdentifiedObject {
      *   <li><cite>Universal Product Code</cite> (UPC)</li>
      *   <li><cite>National Stock Number</cite> (NSN)</li>
      *   <li><cite>International Standard Book Number</cite>
-     *       ({@linkplain org.geotoolkit.metadata.iso.citation.Citations#ISBN ISBN)</li>
+     *       ({@linkplain org.geotoolkit.metadata.iso.citation.Citations#ISBN ISBN})</li>
      *   <li><cite>International Standard Serial Number</cite>
-     *       ({@linkplain org.geotoolkit.metadata.iso.citation.Citations#ISSN ISSN)</li>
+     *       ({@linkplain org.geotoolkit.metadata.iso.citation.Citations#ISSN ISSN})</li>
      *   <li><cite>Universally Unique Identifier</cite> ({@linkplain java.util.UUID})</li>
      *   <li>XML {@linkplain IdentifierSpace#ID ID} attribute</li>
      *   <li>{@linkplain XLink} ({@code href}, {@code role}, {@code arcrole}, {@code title},
@@ -136,7 +136,7 @@ public interface IdentifiedObject {
      *
      * @return XML {@code xlink} attributes, or {@code null} if none.
      *
-     * @deprecated Replaced by {@code getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})}.
+     * @deprecated Replaced by <code>getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})</code>.
      */
     @Deprecated
     XLink getXLink();
@@ -149,7 +149,7 @@ public interface IdentifiedObject {
      * @param link XML {@code xlink} attributes, or {@code null} if none.
      * @throws UnsupportedOperationException if this object is unmodifiable.
      *
-     * @deprecated Replaced by {@code getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)}.
+     * @deprecated Replaced by <code>getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)</code>.
      */
     @Deprecated
     void setXLink(final XLink link) throws UnsupportedOperationException;

@@ -139,7 +139,7 @@ public abstract class IdentifiedMetadata<T extends Identifier> extends Modifiabl
      *
      * @return XML {@code xlink} attributes, or {@code null} if none.
      *
-     * @deprecated Replaced by {@code getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})}.
+     * @deprecated Replaced by <code>getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})</code>.
      */
     @Override
     @Deprecated
@@ -155,7 +155,7 @@ public abstract class IdentifiedMetadata<T extends Identifier> extends Modifiabl
      * @param link XML {@code xlink} attributes, or {@code null} if none.
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
      *
-     * @deprecated Replaced by {@code getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)}.
+     * @deprecated Replaced by <code>getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)</code>.
      */
     @Override
     @Deprecated

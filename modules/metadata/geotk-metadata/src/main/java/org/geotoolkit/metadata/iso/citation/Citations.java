@@ -110,6 +110,7 @@ public final class Citations extends Static {
     public static final Citation OGC;
     static {
         final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "OGC", "OGC");
+        c.setAlternateTitle("OGC");
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         OGC = c;

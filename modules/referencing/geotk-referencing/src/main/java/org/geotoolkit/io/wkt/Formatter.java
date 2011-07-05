@@ -767,9 +767,20 @@ public class Formatter {
      * Returns the preferred name for the specified object. If the specified object contains a name
      * from the preferred authority (usually {@linkplain Citations#OGC Open Geospatial}), then this
      * name is returned. Otherwise, the first name found is returned.
+     * <p>
+     * The preferred authority can be set by the {@link WKTFormat#setAuthority(Citation)} method.
+     * This is not necessarily the authority of the given {@linkplain IdentifiedObject#getName()
+     * object name}.
+     * <p>
+     * <b>Example:</b> The EPSG name of the {@code EPSG:6326} datum is "<cite>World Geodetic System
+     * 1984</cite>". However if the preferred authority is OGC (which is the case by default), then
+     * this method usually returns "<cite>WGS84</cite>" (the exact string to be returned depends on
+     * the list of declared {@linkplain IdentifiedObject#getAlias() aliases}).
      *
      * @param  info The object to looks for a preferred name.
      * @return The preferred name, or {@code null} if the given object has no name.
+     *
+     * @see WKTFormat#getAuthority()
      */
     public String getName(final IdentifiedObject info) {
         final Identifier name = info.getName();

@@ -296,7 +296,7 @@ public final class WKT {
     public static final String PROJCS_LAMBERT_CONIC = decodeQuotes(
             "PROJCS[“WGS 84 / LCC Canada”,\n" +
             "  GEOGCS[“WGS 84”,\n" +
-            "    DATUM[“WGS_1984”,\n" +
+            "    DATUM[“WGS84”,\n" +
             "      SPHEROID[“WGS_1984”, 6378137.0, 298.257223563]],\n" +
             "    PRIMEM[“Greenwich”, 0.0],\n" +
             "    UNIT[“degree”, 0.017453292519943295],\n" +

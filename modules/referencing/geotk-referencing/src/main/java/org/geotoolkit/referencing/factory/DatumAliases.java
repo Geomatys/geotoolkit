@@ -76,7 +76,7 @@ import org.geotoolkit.util.XArrays;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.19
  *
  * @todo Invokes {@link #freeUnused} automatically after some amount of time, in order to release
  *       memory for unusued aliases. A timer should be set in {@code reload()} method.
@@ -102,7 +102,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      * Array used as a marker for alias that has been discarded because never used.
      * This array may appears in {@link #aliasMap} values.
      *
-     * @see #freeUnused
+     * @see #freeUnused()
      */
     private static final Object[] NEED_LOADING = new Object[0];
 
@@ -166,7 +166,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      * line in this file most be the authority names. All other names are aliases.
      *
      * @param factory  The factory to use for datum creation.
-     * @param aliasURL The url to the alias table.
+     * @param aliasURL The URL to the alias table.
      */
     public DatumAliases(final DatumFactory factory, final URL aliasURL) {
         ensureNonNull("factory",  factory );
@@ -565,6 +565,8 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
 
     /**
      * Creates an ellipsoid from radius values.
+     * This method does not add any alias to the ellipsoid object. In Geotk implementation,
+     * ellipsoids don't need aliases because their name can be ignored during comparisons.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  semiMajorAxis Equatorial radius in supplied linear units.
@@ -577,11 +579,13 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             final double semiMajorAxis, final double semiMinorAxis, final Unit<Length> unit)
             throws FactoryException
     {
-        return getDatumFactory().createEllipsoid(addAliases(properties), semiMajorAxis, semiMinorAxis, unit);
+        return getDatumFactory().createEllipsoid(properties, semiMajorAxis, semiMinorAxis, unit);
     }
 
     /**
      * Creates an ellipsoid from an major radius, and inverse flattening.
+     * This method does not add any alias to the ellipsoid object. In Geotk implementation,
+     * ellipsoids don't need aliases because their name can be ignored during comparisons.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  semiMajorAxis Equatorial radius in supplied linear units.
@@ -594,11 +598,13 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             final double semiMajorAxis, final double inverseFlattening, final Unit<Length> unit)
             throws FactoryException
     {
-        return getDatumFactory().createFlattenedSphere(addAliases(properties), semiMajorAxis, inverseFlattening, unit);
+        return getDatumFactory().createFlattenedSphere(properties, semiMajorAxis, inverseFlattening, unit);
     }
 
     /**
      * Creates a prime meridian, relative to Greenwich.
+     * This method does not add any alias to the prime meridian object. In Geotk implementation,
+     * prime meridians don't need aliases because their name can be ignored during comparisons.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  longitude Longitude of prime meridian in supplied angular units East of Greenwich.
@@ -609,11 +615,11 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
     public PrimeMeridian createPrimeMeridian(final Map<String,?> properties,
             final double longitude, final Unit<Angle> angularUnit) throws FactoryException
     {
-        return getDatumFactory().createPrimeMeridian(addAliases(properties), longitude, angularUnit);
+        return getDatumFactory().createPrimeMeridian(properties, longitude, angularUnit);
     }
 
     /**
-     * Free all aliases that have been unused up to date. If one of those alias is needed at a
+     * Frees all aliases that have been unused up to date. If one of those alias is needed at a
      * later time, the aliases table will be reloaded.
      */
     public synchronized void freeUnused() {

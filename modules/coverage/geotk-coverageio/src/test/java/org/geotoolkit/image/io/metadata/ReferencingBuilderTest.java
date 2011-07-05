@@ -47,7 +47,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests the {@link ReferencingBuilder} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.19
  *
  * @since 3.07
  */
@@ -127,22 +127,22 @@ public final class ReferencingBuilderTest extends LocaleDependantTestBase {
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "└───RectifiedGridDomain\n" +
             "    └───CoordinateReferenceSystem\n" +
-            "        ├───name=“EPSG:WGS 84 / World Mercator”\n" +
+            "        ├───name=“WGS 84 / World Mercator”\n" +
             "        ├───type=“projected”\n" +
             "        ├───Datum\n" +
-            "        │   ├───name=“EPSG:World Geodetic System 1984”\n" +
+            "        │   ├───name=“World Geodetic System 1984”\n" +
             "        │   ├───type=“geodetic”\n" +
             "        │   ├───Ellipsoid\n" +
-            "        │   │   ├───name=“EPSG:WGS 84”\n" +
+            "        │   │   ├───name=“WGS 84”\n" +
             "        │   │   ├───axisUnit=“m”\n" +
             "        │   │   ├───semiMajorAxis=“6378137.0”\n" +
             "        │   │   └───inverseFlattening=“298.257223563”\n" +
             "        │   └───PrimeMeridian\n" +
-            "        │       ├───name=“EPSG:Greenwich”\n" +
+            "        │       ├───name=“Greenwich”\n" +
             "        │       ├───greenwichLongitude=“0.0”\n" +
             "        │       └───angularUnit=“deg”\n" +
             "        ├───CoordinateSystem\n" +
-            "        │   ├───name=“EPSG:WGS 84 / World Mercator”\n" +
+            "        │   ├───name=“WGS 84 / World Mercator”\n" +
             "        │   ├───type=“cartesian”\n" +
             "        │   ├───dimension=“2”\n" +
             "        │   └───Axes\n" +

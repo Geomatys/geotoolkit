@@ -53,6 +53,16 @@ import org.geotoolkit.resources.Errors;
  * Parser and formatter for <cite>Well Known Text</cite> (WKT) objects. This format handles a
  * pair of {@link Parser} and {@link Formatter}, to be used by {@code parse} and {@code format}
  * methods respectively.
+ * <p>
+ * {@code WKTFormat} objects allow the following configuration:
+ * <p>
+ * <ul>
+ *   <li>The {@linkplain Symbols symbols} to use (curly braces or brackets, <i>etc.</i>)</li>
+ *   <li>The preferred authority of {@linkplain IdentifiedObject#getName() object name} to
+ *       format (see {@link Formatter#getName(IdentifiedObject)} for more information)</li>
+ *   <li>Whatever ANSI X3.64 colors are allowed or not (default is not)</li>
+ *   <li>The indentation</li>
+ * </ul>
  *
  * {@section String expansion}
  * Because the strings to be parsed by this class are long and tend to contain repetitive
@@ -246,22 +256,26 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * Returns the preferred authority for formatting WKT entities.
-     * The {@link #format format} method will use the name specified
-     * by this authority, if available.
+     * Returns the preferred authority for formatting WKT entities. The {@link #format format}
+     * method will use the name specified by this authority, if available. See the
+     * {@link Formatter#getName(IdentifiedObject) Formatter} javadoc for more information.
      *
      * @return The expected authority.
+     *
+     * @see Formatter#getName(IdentifiedObject)
      */
     public Citation getAuthority() {
         return authority;
     }
 
     /**
-     * Sets the preferred authority for formatting WKT entities.
-     * The {@link #format format} method will use the name specified
-     * by this authority, if available.
+     * Sets the preferred authority for formatting WKT entities. The {@link #format format}
+     * method will use the name specified by this authority, if available. See the
+     * {@link Formatter#getName(IdentifiedObject) Formatter} javadoc for more information.
      *
      * @param authority The new authority.
+     *
+     * @see Formatter#getName(IdentifiedObject)
      */
     public void setAuthority(final Citation authority) {
         if (authority == null) {
