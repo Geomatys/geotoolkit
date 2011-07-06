@@ -31,7 +31,7 @@ import org.geotoolkit.internal.io.TemporaryFile;
  * are better to be executed only after factories disposal, like executors shutdown.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @see Threads#ensureShutdownHookRegistered()
  *
@@ -40,15 +40,14 @@ import org.geotoolkit.internal.io.TemporaryFile;
  */
 @ThreadSafe
 final class ShutdownHook extends Thread {
-    /**
-     * The single shutdown hook instance.
-     */
-    static final ShutdownHook INSTANCE = new ShutdownHook();
+    static {
+        Runtime.getRuntime().addShutdownHook(new ShutdownHook());
+    }
 
     /**
      * The registries on which to dispose the factories on shutdown.
      */
-    private ServiceRegistry[] registries;
+    private static ServiceRegistry[] registries;
 
     /**
      * Creates the singleton instance.
@@ -60,36 +59,36 @@ final class ShutdownHook extends Thread {
     /**
      * Adds the given registry to the list of registry to dispose on shutdown.
      */
-    synchronized void register(final ServiceRegistry registry) {
-        ServiceRegistry[] registries = this.registries;
+    static synchronized void register(final ServiceRegistry registry) {
+        ServiceRegistry[] registries = ShutdownHook.registries;
         if (registries == null) {
-            Runtime.getRuntime().addShutdownHook(this);
             registries = new ServiceRegistry[] {registry};
         } else {
             final int n = registries.length;
             registries = Arrays.copyOf(registries, n + 1);
             registries[n] = registry;
         }
-        this.registries = registries;
+        ShutdownHook.registries = registries;
     }
 
     /**
-     * Disposes every factories.
+     * Disposes every factories. Note that some factories perform their disposal work in a
+     * background thread, so we need to shutdown the thread executor only after we finished
+     * to requested the disposal of every factories.
      */
     @Override
     public synchronized void run() {
-        final ServiceRegistry[] registries = this.registries;
-        if (registries == null) {
-            return;
-        }
-        this.registries = null;
-        for (final ServiceRegistry registry : registries) {
-            for (final Iterator<Class<?>> it=registry.getCategories(); it.hasNext();) {
-                final Class<?> category = it.next();
-                for (final Iterator<?> i=registry.getServiceProviders(category, false); i.hasNext();) {
-                    final Object factory = i.next();
-                    if (factory instanceof Factory) {
-                        ((Factory) factory).dispose(true);
+        final ServiceRegistry[] registries = ShutdownHook.registries;
+        if (registries != null) {
+            ShutdownHook.registries = null;
+            for (final ServiceRegistry registry : registries) {
+                for (final Iterator<Class<?>> it=registry.getCategories(); it.hasNext();) {
+                    final Class<?> category = it.next();
+                    for (final Iterator<?> i=registry.getServiceProviders(category, false); i.hasNext();) {
+                        final Object factory = i.next();
+                        if (factory instanceof Factory) {
+                            ((Factory) factory).dispose(true);
+                        }
                     }
                 }
             }
@@ -97,7 +96,7 @@ final class ShutdownHook extends Thread {
         /*
          * The following method should be invoked only when we think there is not any code still
          * runnning that may invoke Threads.executor(boolean). It is actually hard to ensure that,
-         * but a search on Threads.SHUTDOWN_HOOKS and Threads.executor(boolean,boolean) is helpful.
+         * but a search on Threads.SHUTDOWN_HOOKS and Threads.executeDisposal(Runnable) is helpful.
          */
         Threads.shutdown();
         /*

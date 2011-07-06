@@ -201,7 +201,7 @@ public class FactoryFinder extends Static {
                     setOrdering(category, filter1, filter2);
                 }
             };
-            ShutdownHook.INSTANCE.register(registry);
+            ShutdownHook.register(registry);
             FactoryFinder.registry = registry;
         }
         return registry;

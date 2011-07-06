@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.RejectedExecutionException;
 import java.awt.RenderingHints;
 import net.jcip.annotations.ThreadSafe;
 
@@ -31,7 +30,6 @@ import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
@@ -51,7 +49,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
  * needed, some of the threads will block until an instance become available.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -165,6 +163,17 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     static final long TIMEOUT_RESOLUTION = 100;
 
     /**
+     * The task to run for disposing expired workers. May be run many time.
+     *
+     * @see #disposeExpired()
+     */
+    private final Runnable disposerTask = new Runnable() {
+        @Override public void run() {
+            disposeExpired();
+        }
+    };
+
+    /**
      * {@code true} if the call to {@link #disposeExpired} is scheduled for future execution
      * in the background thread.  A value of {@code true} implies that this factory contains
      * at least one active backing store. However the reciprocal is not true: this field may
@@ -269,18 +278,10 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     }
 
     /**
-     * Returns the number of backing stores that can still be created.
-     * This method is used only for debugging purpose.
-     */
-    @Debug
-    final synchronized int remainingBackingStores() {
-        return remainingBackingStores;
-    }
-
-    /**
      * Returns the number of backing stores. This count does not include the backing stores
      * that are currently under execution. This method is used only for testing purpose.
      */
+    @Debug
     final synchronized int countBackingStores() {
         return stores.size();
     }
@@ -406,26 +407,16 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             remainingBackingStores++; // Must be done first in case an exception happen after this point.
             final AbstractAuthorityFactory factory = usage.factory;
             usage.factory = null;
-            final Store store = new Store(factory);
-            if (!stores.offerLast(store)) {
-                /*
-                 * We were unable to add the factory to the queue. It may be because the queue is full,
-                 * which could happen if there is too much factories created recently (this behavior is
-                 * enabled only if the queue is some implementation having a limited capacity). This is
-                 * probably not worth to keep yet more factories, so dispose the current one immediately.
-                 */
-                dispose(factory, 0, false);
-            } else {
-                /*
-                 * If the backing store we just released is the first one, awake the
-                 * disposer thread which was waiting for an indefinite amount of time.
-                 */
-                if (!isActive) {
-                    isActive = true;
-                    StoreDisposer.INSTANCE.schedule(this, store.timestamp + timeout);
-                }
-                notify(); // We released only one backing store, so awake only one thread - not all of them.
+            stores.addLast(new Store(factory));
+            /*
+             * If the backing store we just released is the first one, awake the
+             * disposer thread which was waiting for an indefinite amount of time.
+             */
+            if (!isActive) {
+                isActive = true;
+                Threads.executeDisposal(disposerTask, timeout);
             }
+            notify(); // We released only one backing store, so awake only one thread - not all of them.
         }
         assert usage.count >= 0 && (usage.factory == null) == (usage.count == 0) : usage.count;
     }
@@ -491,32 +482,11 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     }
 
     /**
-     * Disposes the given backing store in a background thread. We use a background thread
-     * in part for avoiding {@link #disposeExpired()} to be blocked  if there is a problem
-     * with a factory, because {@code disposeExpired()} is run in a thread which is shared
-     * by all {@code ThreadedAuthorityFactory} instances. An other effect is to avoid to
-     * run the user-code while we hold a synchronization lock on this factory.
+     * Disposes the given backing store if possible.
      */
-    private void dispose(final AbstractAuthorityFactory factory, final long delay, final boolean shutdown) {
-        final Runnable task = new Runnable() {
-            @Override public void run() {
-                if (shutdown || canDisposeBackingStore(factory)) {
-                    factory.dispose(shutdown);
-                }
-            }
-        };
-        try {
-            Threads.executeDisposal(task, delay);
-        } catch (RejectedExecutionException e) {
-            /*
-             * May happen because of race conditions on JVM shutdown. Don't let StoreDisposer
-             * dies. If we are not in a shutdown process, we may have a problem: log the full
-             * stack trace.  If we are in a shutdown process, still log the problem but there
-             * is some chance that the log message will not be visible to the user because the
-             * logging framework is shutdown.
-             */
-            Logging.unexpectedException(ThreadedAuthorityFactory.class, "dispose", e);
-            task.run(); // Run in current thread as a fallback (may be more dangerous).
+    private void dispose(final AbstractAuthorityFactory factory, final boolean shutdown) {
+        if (shutdown || canDisposeBackingStore(factory)) {
+            factory.dispose(shutdown);
         }
     }
 
@@ -529,52 +499,68 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      *        this method is invoked during the process of a JVM shutdown.
      */
     @Override
-    protected synchronized void dispose(final boolean shutdown) {
-        StoreDisposer.INSTANCE.cancel(this);
-        Store store;
-        // Dispose from least recent to most recent.
-        while ((store = stores.pollFirst()) != null) {
-            dispose(store.factory, 0, shutdown);
+    protected void dispose(final boolean shutdown) {
+        final AbstractAuthorityFactory[] factories;
+        int count = 0;
+        synchronized (this) {
+            super.dispose(shutdown); // Mark the factory as not available anymore.
+            remainingBackingStores = 0;
+            factories = new AbstractAuthorityFactory[stores.size()];
+            Store store;
+            while ((store = stores.pollFirst()) != null) {
+                factories[count++] = store.factory;
+            }
         }
-        isActive = false;
-        remainingBackingStores = 0;
-        super.dispose(shutdown);
+        // Disposes the factories from outside the synchronized lock.
+        while (--count >= 0) {
+            dispose(factories[count], shutdown);
+        }
     }
 
     /**
      * Disposes the expired entries. This method should be invoked from the
-     * {@link StoreDisposer} thread only.
-     *
-     * @return When (in milliseconds) to run the next check for disposal,
-     *         or {@link Long#MIN_VALUE} if there is no remaining worker.
+     * {@link #disposerTask} only. It may reschedule the task again for an
+     * other execution.
      */
-    final synchronized long disposeExpired() {
+    final void disposeExpired() {
         final long currentTimeMillis = System.currentTimeMillis();
-        final Iterator<Store> it = stores.iterator();
-        while (it.hasNext()) {
-            final Store store = it.next();
-            /*
-             * Computes how much time we need to wait again before we can dispose the factory.
-             * If this time is greater than some arbitrary amount, do not dispose the factory
-             * and wait again.
-             */
-            long delay = timeout - (currentTimeMillis - store.timestamp);
-            if (delay > TIMEOUT_RESOLUTION) {
-                // Found a factory which is not expired. Stop the search,
-                // since the iteration is expected to be ordered.
-                return currentTimeMillis + delay;
+        final AbstractAuthorityFactory[] factories;
+        int count = 0;
+        synchronized (this) {
+            factories = new AbstractAuthorityFactory[stores.size()];
+            final Iterator<Store> it = stores.iterator();
+            while (it.hasNext()) {
+                final Store store = it.next();
+                /*
+                 * Computes how much time we need to wait again before we can dispose the factory.
+                 * If this time is greater than some arbitrary amount, do not dispose the factory
+                 * and wait again.
+                 */
+                final long delay = timeout - (currentTimeMillis - store.timestamp);
+                if (delay > TIMEOUT_RESOLUTION) {
+                    // Found a factory which is not expired. Stop the search,
+                    // since the iteration is expected to be ordered.
+                    Threads.executeDisposal(disposerTask, delay);
+                    break;
+                }
+                // Found an expired factory. Adds it to the list of
+                // factories to dispose and search for other factories.
+                factories[count++] = store.factory;
+                it.remove();
             }
-            // Found an expired factory. Dispose it and
-            // search for other factories to dispose.
-            it.remove();
-            dispose(store.factory, 0, false);
+            /*
+             * The stores list is empty if all worker factories in the queue have been disposed.
+             * Note that some worker factories may still be active outside the queue, because the
+             * workers are added to the queue only after completion of their work. In the later
+             * case, release() will reschedule a new task.
+             */
+            isActive = !stores.isEmpty();
         }
         /*
-         * If we reach this point, then all worker factories in the queue have been disposed.
-         * Note that some worker factories may still be active, because the workers which were
-         * in use at the time this method has been executed were not in the queue.
+         * Disposes the factories from outside the synchronized lock.
          */
-        isActive = false;
-        return Long.MIN_VALUE;
+        while (--count >= 0) {
+            dispose(factories[count], false);
+        }
     }
 }

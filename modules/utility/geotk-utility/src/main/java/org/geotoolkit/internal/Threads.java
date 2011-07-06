@@ -18,12 +18,11 @@
 package org.geotoolkit.internal;
 
 import java.util.Arrays;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -68,31 +67,20 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * The executor for non-disposal works.
-     *
-     * For CPU-bound tasks, the optimal number of threads is often the number of
-     * processor + 1. However the tasks given to this executor can be of any kind,
-     * including I/O bound tasks. So we will allow more.
+     * The executor for non-disposal works. This executor is suitable for small tasks
+     * that complete relatively rapidly. Each tasks is executed immediately (they are
+     * not enqueued).
      */
-    private static final ExecutorService WORK_EXECUTOR = new ThreadPoolExecutor(
-            0, 4*Runtime.getRuntime().availableProcessors(),
-            60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(8000),
-            new Threads(false, true, "Pooled thread #"));
+    private static final ExecutorService WORK_EXECUTOR =
+            Executors.newCachedThreadPool(new Threads(false, true, "Pooled thread #"));
 
     /**
      * The executor for disposal tasks. The tasks submitted to this executor should be only
      * house-keeping works. The threads in this executor have a priority slightly higher than
      * the normal priority. Their execution should complete quickly.
      */
-    private static final ScheduledExecutorService DISPOSAL_EXECUTOR;
-    static {
-        final ScheduledThreadPoolExecutor ex = new ScheduledThreadPoolExecutor(4,
-                new Threads(true, true, "Pooled thread #"));
-        ex.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-        ex.setKeepAliveTime(60L, TimeUnit.SECONDS);
-        ex.allowCoreThreadTimeOut(true);
-        DISPOSAL_EXECUTOR = ex;
-    }
+    private static final ScheduledExecutorService DISPOSAL_EXECUTOR =
+            Executors.newScheduledThreadPool(1, new Threads(true, true, "Pooled thread #"));
 
     /**
      * {@code true} if the threads to be created are part of the {@link #RESOURCE_DISPOSERS}
@@ -136,8 +124,8 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * Executes the given task in a worker thread. The given work is executed as soon as a
-     * thread from the {@link #WORKERS} group is available.
+     * Executes the given task in a worker thread. The given work is executed immediately,
+     * creating a new thread if needed.
      *
      * @param task The work to execute.
      *
@@ -203,15 +191,34 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      * @since 3.06
      */
     public static synchronized void shutdown() {
+        /*
+         * We can wait for the work executors to terminate, because its tasks are
+         * executed immediatly. However we can't wait for delayed tasks, because
+         * the delay may be long. Executes those tasks now in this current thread.
+         * We execute them in the same order than they would be executed if the
+         * delay were honored.
+         */
+        WORK_EXECUTOR.shutdown();
+        DISPOSAL_EXECUTOR.shutdown();
+        final ThreadPoolExecutor ex = (ThreadPoolExecutor) DISPOSAL_EXECUTOR;
+        for (final Runnable task : ex.getQueue()) {
+            if (ex.remove(task)) try {
+                task.run();
+            } catch (Exception e) {
+                // Too late for logging since we are in process of shuting down.
+                System.err.println(e);
+            }
+        }
         try {
-            for (int i=0; i<4; i++) {
-                final ExecutorService executor = (i & 1) == 0 ? WORK_EXECUTOR : DISPOSAL_EXECUTOR;
-                if ((i & 2) == 0) {
-                    executor.shutdown();
-                } else if (!executor.awaitTermination(8, TimeUnit.SECONDS)) {
+            // Wait for work completion. In theory, there is no disposal
+            // completion to wait for, but we check anyway as a safety.
+            if (!WORK_EXECUTOR    .awaitTermination(8, TimeUnit.SECONDS) ||
+                !DISPOSAL_EXECUTOR.awaitTermination(2, TimeUnit.SECONDS))
+            {
+                // Check again in case one executor finished while we waited for the other.
+                if (!WORK_EXECUTOR.isTerminated() || !DISPOSAL_EXECUTOR.isTerminated()) {
                     // We can't use java.util.logging at this point since we are shutting down.
                     System.err.println("NOTE: Some background threads didn't completed.");
-                    return;
                 }
             }
         } catch (InterruptedException e) {

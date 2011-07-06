@@ -728,12 +728,14 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *        embedded database, if there is one (for example JavaDB).
      */
     @Override
-    protected synchronized void dispose(final boolean shutdown) {
+    protected void dispose(final boolean shutdown) {
         super.dispose(shutdown); // Close the connections first.
-        if (shutdown && (datasource instanceof DefaultDataSource)) {
-            ((DefaultDataSource) datasource).shutdown();
+        synchronized (this) {
+            if (shutdown && (datasource instanceof DefaultDataSource)) {
+                ((DefaultDataSource) datasource).shutdown();
+            }
+            schema = user = password = null;
+            datasource = null;
         }
-        schema = user = password = null;
-        datasource = null;
     }
 }

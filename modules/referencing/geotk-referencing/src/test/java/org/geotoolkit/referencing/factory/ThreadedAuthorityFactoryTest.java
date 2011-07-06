@@ -23,6 +23,7 @@ import org.geotoolkit.util.logging.Logging;
 
 import org.junit.*;
 
+import static org.junit.Assume.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.factory.ThreadedAuthorityFactory.TIMEOUT_RESOLUTION;
 
@@ -31,7 +32,7 @@ import static org.geotoolkit.referencing.factory.ThreadedAuthorityFactory.TIMEOU
  * Tests {@link ThreadedAuthorityFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -55,6 +56,7 @@ public final class ThreadedAuthorityFactoryTest {
          * Ask for one element, wait for the timeout and
          * check that the backing store is disposed.
          */
+        long workTime = System.currentTimeMillis();
         assertTrue  ("Should have initially no worker.", threaded.factories().isEmpty());
         assertEquals("Should have initially no worker.", 0, threaded.countBackingStores());
         assertNotNull(threaded.createObject("WGS84"));
@@ -64,14 +66,13 @@ public final class ThreadedAuthorityFactoryTest {
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(0).isDisposed());
 
-        Thread.sleep(TIMEOUT_RESOLUTION * 2);
+        sleepWithoutExceedingTimeout(workTime, 2*TIMEOUT_RESOLUTION);
         assertEquals("Expected no new worker.",     factories, threaded.factories());
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(0).isDisposed());
 
-        Thread.sleep(TIMEOUT_RESOLUTION * 3);
+        sleepUntilAfterTimeout(3*TIMEOUT_RESOLUTION, threaded);
         assertEquals("Expected no new worker.",    factories, threaded.factories());
-        waitIfAlive (threaded, factories.get(0));
         assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
         assertTrue  ("Worker should be disposed.", factories.get(0).isDisposed());
         /*
@@ -85,13 +86,14 @@ public final class ThreadedAuthorityFactoryTest {
          * Ask for one element and check that
          * a new backing store is created.
          */
+        workTime = System.currentTimeMillis();
         assertNotNull(threaded.createObject("WGS84-new"));
         factories = threaded.factories();
         assertEquals("Expected a new worker.",      2, factories.size());
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
 
-        Thread.sleep(TIMEOUT_RESOLUTION * 2);
+        sleepWithoutExceedingTimeout(workTime, 2*TIMEOUT_RESOLUTION);
         assertEquals("Expected no new worker.",     factories, threaded.factories());
         assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
         assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
@@ -99,72 +101,54 @@ public final class ThreadedAuthorityFactoryTest {
          * Ask again for a new element before the timeout is elapsed and
          * check that the disposal of the backing store has been reported.
          */
+        workTime = System.currentTimeMillis();
         assertNotNull(threaded.createObject("WGS84-new2"));
-        Thread.sleep(TIMEOUT_RESOLUTION);
+        sleepWithoutExceedingTimeout(workTime, TIMEOUT_RESOLUTION);
         assertNotNull(threaded.createObject("WGS84-new3"));
-        Thread.sleep(TIMEOUT_RESOLUTION * 2);
+        sleepWithoutExceedingTimeout(workTime, 2*TIMEOUT_RESOLUTION);
+        assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
+        assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
+        assertEquals("Expected no new worker.",     factories, threaded.factories());
 
-        // Following tests are unreliable if the threads are not scheduled at the expected
-        // time, for example if the server is under heavy load. For now we log failures as
-        // a warning, but this issue will need more investigation.
-        try {
-            assertEquals("Expected one valid worker.",  1, threaded.countBackingStores());
-            assertFalse ("Should not be disposed yet.", factories.get(1).isDisposed());
-            assertEquals("Expected no new worker.",     factories, threaded.factories());
-            Thread.sleep(TIMEOUT_RESOLUTION * 3);
-            assertEquals("Expected no new worker.",     factories, threaded.factories());
-        } catch (AssertionError e) {
-            Logging.unexpectedException(ThreadedAuthorityFactoryTest.class, "testTimeout", e);
-        }
-
-        waitIfAlive (threaded, factories.get(1));
-        assertEquals("Worker should be disposed.", 0, threaded.countBackingStores());
-        assertTrue  ("Worker should be disposed.", factories.get(1).isDisposed());
-        assertTrue  ("Worker should be disposed.", factories.get(0).isDisposed());
+        sleepUntilAfterTimeout(3*TIMEOUT_RESOLUTION, threaded);
+        assertEquals("Expected no new worker.",     factories, threaded.factories());
+        assertEquals("Worker should be disposed.",  0, threaded.countBackingStores());
+        assertTrue  ("Worker should be disposed.",  factories.get(1).isDisposed());
+        assertTrue  ("Worker should be disposed.",  factories.get(0).isDisposed());
     }
 
     /**
-     * Asserts that the given worker is disposed. It should be disposed right at the time this
-     * method is invoked. However if it is not, we will be lenient, give some time and try again.
+     * Sleeps and ensures that the sleep time did not exceeded the timeout. The sleep time could
+     * be greater if the test machine is under heavy load (for example a Hudson server), in which
+     * case we will cancel the test without failure.
      */
-    private static void waitIfAlive(final ThreadedAuthorityFactory threaded, final DummyFactory worker)
-            throws InterruptedException
+    private static void sleepWithoutExceedingTimeout(final long previousTime, final long waitTime) throws InterruptedException {
+        Thread.sleep(waitTime);
+        assumeTrue(System.currentTimeMillis() - previousTime < TIMEOUT);
+    }
+
+    /**
+     * Sleeps a time long enough so that we exceed the timeout time. After this method call, the
+     * workers should be disposed. However if they are not, then we will wait a little bit more.
+     * <p>
+     * The workers should be disposed right after the sleep time. However the workers disposal is
+     * performed by a shared (Geotk-library wide) {@link ScheduledThreadPoolExecutor} instance
+     * which invoke {@link ThreadedAuthorityFactory#disposeExpired()}. Because the later is
+     * invoked in a background thread, it is exposed to the hazard of thread scheduling.
+     */
+    private static void sleepUntilAfterTimeout(final long waitTime,
+            final ThreadedAuthorityFactory threaded) throws InterruptedException
     {
-        /*
-         * First, wait that ThreadedAuthorityFactory declares that it has no more backing store.
-         * The removal of backing store is performed by the StoreDisposer daemon thread,  which
-         * invoke factory.disposeExpired(). Because it is invoked in a background thread, it is
-         * exposed to the hazard of thread scheduling.
-         */
-        int n = 10, c;
-        while ((c = threaded.countBackingStores()) != 0) {
-            final long delay = StoreDisposer.INSTANCE.getDelay();
-            String message = "ThreadedAuthorityFactory should have discarded its worker factory.\n"
-                    + "The factory active flag is '" + threaded.isActive() + "' (expected 'false').\n"
-                    + "Maximum number of additional workers is " + threaded.remainingBackingStores() + ".\n"
-                    + "There is " + c + " workers in the factory cache, " + (delay == 0
-                    ? "but the StoreDisposer queue is empty (PROBLEM!)."
-                    : "and StoreDisposer next job is scheduled in " + delay + " ms.");
-            if (--n == 0) {
-                fail(message);
-            }
-            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning(message);
-            Thread.sleep(TIMEOUT_RESOLUTION);
+        Thread.sleep(waitTime);
+        int n = 3;
+        while (threaded.isActive()) {
+            Logging.getLogger(ThreadedAuthorityFactoryTest.class).warning(
+                    "Execution of ThreadedAuthorityFactory.disposeExpired() has been delayed.");
+            Thread.sleep(TIMEOUT);
             System.gc();
-        }
-        /*
-         * Now the worker factory has been discarded by ThreadedAuthorityFactory, but maybe
-         * not yet disposed because the call to worker.dispose() is performed in yet an other
-         * background thread. So we need again to be lenient because of thread scheduling hazard.
-         */
-        n = 10;
-        while (!worker.isDisposed()) {
             if (--n == 0) {
-                fail("Worker should be disposed.");
+                break;
             }
-            Logging.getLogger(ThreadedAuthorityFactoryTest.class)
-                    .warning("Worker should be disposed.");
-            Thread.sleep(TIMEOUT_RESOLUTION);
         }
     }
 }
