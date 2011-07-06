@@ -152,7 +152,7 @@ import org.geotoolkit.resources.Errors;
  * is provided and if the input is a {@link java.io.File}, {@link java.net.URL} or
  * {@link java.net.URI}, then {@code AsciiGridReader} will looks for a file of the same name
  * with the {@code ".raw"} extension. If this file is found, then the data in the ASCII file
- * will be ignored (they can be non-existant) and the RAW file will be read instead, which is
+ * will be ignored (they can be non-existent) and the RAW file will be read instead, which is
  * usually much faster. The value of the {@code BINARY_TYPE} attribute specify the data type:
  * {@code BYTE}, {@code SHORT}, {@code USHORT}, {@code INT}, {@code FLOAT} or {@code DOUBLE}.
  *
@@ -704,10 +704,8 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                                 }
                             }
                         } catch (NumberFormatException cause) {
-                            final IIOException e = new IIOException(Warnings.message(
-                                    this, Errors.Keys.UNPARSABLE_NUMBER_$1, value));
-                            e.initCause(cause);
-                            throw e;
+                            throw new IIOException(Warnings.message(this,
+                                    Errors.Keys.UNPARSABLE_NUMBER_$1, value), cause);
                         }
                         /*
                          * Move to the next pixel in the destination image. The reading process

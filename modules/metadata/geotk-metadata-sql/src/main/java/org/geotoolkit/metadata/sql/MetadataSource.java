@@ -341,7 +341,7 @@ public class MetadataSource {
                 if (value != null) {
                     return null;  // The column was mandatory for the searched metadata.
                 } else {
-                    continue;     // Do not include a non-existant column in the SQL query.
+                    continue;     // Do not include a non-existent column in the SQL query.
                 }
             }
             /*

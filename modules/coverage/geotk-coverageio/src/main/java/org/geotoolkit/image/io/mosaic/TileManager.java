@@ -328,7 +328,7 @@ public abstract class TileManager implements Serializable {
      * those tiles in a persistent way if this method is invoked by {@link #setGridToCRS}.
      * <p>
      * Callers of this method should not rely on the {@linkplain Tile#getInput tile input} and
-     * should not attempt to read the tiles, since the inputs can be non-existant files or patterns
+     * should not attempt to read the tiles, since the inputs can be non-existent files or patterns
      * (again the case of {@link GridTileManager}). This method is not public for that reason.
      * <p>
      * The default implementation returns {@link #getTiles}.

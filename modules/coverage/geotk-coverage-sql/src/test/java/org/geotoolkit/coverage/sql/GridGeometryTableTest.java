@@ -158,7 +158,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         assertNull("Wrong horizontal SRID.", table.find(entry.getImageSize(),
                 entry.gridToCRS, 4326, depths, entry.getVerticalSRID()));
 
-        depths[1] = 12.8; // Tries a non-existant altitude.
+        depths[1] = 12.8; // Tries a non-existent altitude.
         assertNull("Wrong depth.", table.find(entry.getImageSize(),
                 entry.gridToCRS, entry.getHorizontalSRID(), depths, entry.getVerticalSRID()));
         table.release();
@@ -175,7 +175,7 @@ public final class GridGeometryTableTest extends CatalogTestBase {
         final GridGeometryEntry entry = table.getEntry(CORIOLIS_ID);
         final double[] depths = entry.getVerticalOrdinates();
 
-        depths[1] = 12.8; // Non-existant altitude.
+        depths[1] = 12.8; // Non-existent altitude.
         final int id = table.findOrCreate(entry.getImageSize(), entry.gridToCRS,
                 entry.getHorizontalSRID(), depths, entry.getVerticalSRID());
         assertFalse("Should not be the existing ID.", id == CORIOLIS_ID.intValue());

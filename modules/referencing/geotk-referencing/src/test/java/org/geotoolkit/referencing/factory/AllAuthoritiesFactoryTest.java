@@ -180,15 +180,15 @@ public final class AllAuthoritiesFactoryTest extends ReferencingTestBase {
      */
     @Test
     public void testConnectionFailure() throws FactoryException {
-        final Hints hints = new Hints(Hints.EPSG_DATA_SOURCE, new DefaultDataSource("jdbc:inexistant:dummy"));
+        final Hints hints = new Hints(Hints.EPSG_DATA_SOURCE, new DefaultDataSource("jdbc:inexistent:dummy"));
         hints.put(Hints.CRS_AUTHORITY_FACTORY, ThreadedAuthorityFactory.class);
         AllAuthoritiesFactory factory = AllAuthoritiesFactory.getInstance(hints);
-        assertTrue("Because we asked for an inexistant driver, and because we have specified " +
+        assertTrue("Because we asked for an inexistent driver, and because we have specified " +
                 "a hint that exclude other factories (WMS, etc.), we should get an empty set.",
                 factory.getFactories().isEmpty());
         try {
             assertNotNull(factory.createGeographicCRS("EPSG:4326"));
-            fail("The \"inexistant\" JDBC driver should not be found.");
+            fail("The \"inexistent\" JDBC driver should not be found.");
         } catch (NoSuchAuthorityCodeException e) {
             /*
              * This is the expected exception. If we iterate through the exception chain, we

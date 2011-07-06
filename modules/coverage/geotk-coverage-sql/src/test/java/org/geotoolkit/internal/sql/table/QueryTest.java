@@ -95,7 +95,7 @@ public final class QueryTest extends CatalogTestBase {
             assertSame (name, iterator.next());
             assertFalse(      iterator.hasNext());
             /*
-             * Tests a query involving a non-existant column. The Query class should detect
+             * Tests a query involving a non-existent column. The Query class should detect
              * that this column does not exist and replace it by the default value.
              */
             final Column dummy = query.addOptionalColumn("dummy", 10, uses);

@@ -226,7 +226,7 @@ public final class LayerTableTest extends CatalogTestBase {
     @Test
     public void testSearchFreeIdentifier() throws SQLException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
-        assertEquals("Non existant", table.searchFreeIdentifier("Non existant"));
+        assertEquals("Non existent", table.searchFreeIdentifier("Non existent"));
         assertEquals(TEMPERATURE + "-1", table.searchFreeIdentifier(TEMPERATURE));
         table.release();
     }

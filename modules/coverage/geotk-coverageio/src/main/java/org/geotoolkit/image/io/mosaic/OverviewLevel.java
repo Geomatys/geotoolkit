@@ -346,7 +346,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         /*
          * Sets the pattern index. Index in the 'tile' array are numbered from 0 (like usual),
          * but values in the 'patternUsed' list are numbered from 1 because we reserve the 0
-         * value for non-existant tiles.
+         * value for non-existent tiles.
          */
         patterns = new Tile[models.size()];
         patternUsed = new IntegerList(nx*ny, patterns.length, true);

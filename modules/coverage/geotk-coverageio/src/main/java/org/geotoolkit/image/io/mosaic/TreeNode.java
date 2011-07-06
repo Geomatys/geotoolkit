@@ -81,7 +81,7 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
 
     /**
      * Creates an initially empty rectangle. Width and height are set to -1, which
-     * stands for non-existant rectangle according {@link Rectangle} documentation.
+     * stands for non-existent rectangle according {@link Rectangle} documentation.
      * Other fields (including subsamplings) are set to 0 or {@code null}.
      */
     protected TreeNode() {

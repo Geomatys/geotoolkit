@@ -93,7 +93,7 @@ public final class PaletteFactoryTest {
         assertTrue ("Part of Geotk distribution", names.contains("rainbow"));
         assertTrue ("Part of Geotk distribution", names.contains("grayscale"));
         assertTrue ("Part of Geotk distribution", names.contains("bell"));
-        assertFalse("Non-existant",               names.contains("Donald Duck"));
+        assertFalse("Non-existent",               names.contains("Donald Duck"));
         assertTrue ("Defined in MyPalettes",      names.contains("green-blue"));
         /*
          * Ensures that every palettes exist.

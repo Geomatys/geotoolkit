@@ -27,6 +27,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
+import org.opengis.metadata.identification.DataIdentification;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -43,7 +44,7 @@ import static org.geotoolkit.test.Assert.*;
  * Tests {@link SpatialMetadata}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.19
  *
  * @since 3.06
  */
@@ -175,15 +176,15 @@ public final class SpatialMetadataTest {
     }
 
     /**
-     * Tests the {@link SpatialMetadata#getInstanceForType} method for non-existant elements.
+     * Tests the {@link SpatialMetadata#getInstanceForType} method for non-existent elements.
      *
      * @since 3.08
      */
     @Test
-    public void testInexistantNode() {
+    public void testInexistentNode() {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         metadata.setReadOnly(true);
-        assertNull("SpatialMetadata can not return an instance of an inexistant node " +
+        assertNull("SpatialMetadata can not return an instance of an inexistent node " +
                    "if it was not allowed to create the missing nodes.",
                    metadata.getListForType(SampleDimension.class));
         assertMultilinesEquals("No node should have been created.",
@@ -198,5 +199,19 @@ public final class SpatialMetadataTest {
             "└───ImageDescription\n" +
             "    └───Dimensions\n",
             metadata.toString());
+    }
+
+    /**
+     * Ensures that the spatial metadata proxy correctly detect that the nodes are empty. This is
+     * required for proper working of {@link org.geotoolkit.coverage.io.GridCoverageReader#getMetadata()}.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testEmpty() {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        final DataIdentification identification = metadata.getInstanceForType(DataIdentification.class);
+        assertTrue(identification.getExtents().isEmpty());
+        assertTrue(identification.getSpatialResolutions().isEmpty());
     }
 }
