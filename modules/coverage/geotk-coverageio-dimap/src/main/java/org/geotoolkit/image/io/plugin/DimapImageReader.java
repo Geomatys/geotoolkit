@@ -176,7 +176,11 @@ public class DimapImageReader extends ImageReaderAdapter {
 
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-
+        if(imageIndex < 0){
+            //stream metadata
+            return super.createMetadata(imageIndex);
+        }
+        
         //grab spatial metadata from underlying geotiff
         final SpatialMetadata metadata = super.createMetadata(imageIndex);
 
