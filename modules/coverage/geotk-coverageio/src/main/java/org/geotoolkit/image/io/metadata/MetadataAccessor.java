@@ -168,7 +168,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @see SpatialMetadata#getInstanceForType(Class)
  * @see SpatialMetadata#getListForType(Class)
@@ -283,9 +283,8 @@ public class MetadataAccessor implements WarningProducer {
      *
      * @throws IllegalArgumentException if {@code childPath} is {@code "#auto"} but the childs
      *         can not be inferred from the metadata format.
-     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
-     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
-     *         contains a node for the element to fetch.
+     * @throws NoSuchElementException If this accessor is {@linkplain #isReadOnly() is read only}
+     *         and the given metadata doesn't contains a node for the element to fetch.
      *
      * @since 3.06
      */
@@ -307,9 +306,8 @@ public class MetadataAccessor implements WarningProducer {
      *
      * @throws IllegalArgumentException If no element accepting the given type was found,
      *         or if more than one element accepting that type was found.
-     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
-     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
-     *         contains a node for the element to fetch.
+     * @throws NoSuchElementException If this accessor is {@linkplain #isReadOnly() is read only}
+     *         and the given metadata doesn't contains a node for the element to fetch.
      *
      * @see #listPaths(IIOMetadataFormat, Class)
      *
@@ -332,9 +330,8 @@ public class MetadataAccessor implements WarningProducer {
      * @param  parentPath  The path to the {@linkplain Node node} of interest, or {@code null}
      *                     if the {@code metadata} root node is directly the node of interest.
      *
-     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
-     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
-     *         contains a node for the element to fetch.
+     * @throws NoSuchElementException If this accessor is {@linkplain #isReadOnly() is read only}
+     *         and the given metadata doesn't contains a node for the element to fetch.
      *
      * @since 3.06
      */
@@ -376,9 +373,8 @@ public class MetadataAccessor implements WarningProducer {
      *                     {@linkplain Element elements}, or {@code null} if none,
      *                     or {@code "#auto"} for auto-detection.
      *
-     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
-     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
-     *         contains a node for the element to fetch.
+     * @throws NoSuchElementException If this accessor is {@linkplain #isReadOnly() is read only}
+     *         and the given metadata doesn't contains a node for the element to fetch.
      */
     public MetadataAccessor(IIOMetadata metadata, String formatName, String parentPath,
             String childPath) throws NoSuchElementException
@@ -411,9 +407,8 @@ public class MetadataAccessor implements WarningProducer {
      *
      * @throws IllegalArgumentException If no element accepting the given type was found,
      *         or if more than one element accepting that type was found.
-     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
-     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
-     *         contains a node for the element to fetch.
+     * @throws NoSuchElementException If this accessor is {@linkplain #isReadOnly() is read only}
+     *         and the given metadata doesn't contains a node for the element to fetch.
      *
      * @see #listPaths(IIOMetadataFormat, Class)
      *
@@ -561,7 +556,7 @@ public class MetadataAccessor implements WarningProducer {
                     break;
                 }
                 case 0: {
-                    if (metadata.isReadOnly()) {
+                    if (isReadOnly()) {
                         throw new NoSuchElementException(getErrorResources().getString(
                                 Errors.Keys.NO_SUCH_ELEMENT_$1, parentPath));
                     }
@@ -753,6 +748,26 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Returns {@code true} if this accessor is read-only. The default implementation returns the
+     * read-only state of the wrapped {@linkplain #metadata} object. Subclasses can override this
+     * method if they need more control about whatever this accessor is allowed to add child
+     * elements in the metadata object.
+     * <p>
+     * If this method returns {@code true}, then every <code>setFoo(&hellip;)</code> methods in
+     * this class will thrown an {@link UnsupportedOperationException} when they are invoked.
+     *
+     * @return {@code true} if this accessor is read-only, or {@code false} if it allows
+     *         write operations.
+     *
+     * @see IIOMetadata#isReadOnly()
+     *
+     * @since 3.19
+     */
+    public boolean isReadOnly() {
+        return metadata.isReadOnly();
+    }
+
+    /**
      * Returns {@code true} if this node contains no child and no attribute.
      *
      * @return {@code true} if this node is empty, or {@code false} if it contains at
@@ -802,7 +817,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #selectChild
      */
     public int appendChild() throws UnsupportedOperationException {
-        if (metadata.isReadOnly()) {
+        if (isReadOnly()) {
             throw new UnsupportedOperationException(getErrorResources()
                     .getString(Errors.Keys.UNMODIFIABLE_METADATA));
         }
@@ -1532,7 +1547,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     public void setAttribute(final String attribute, String value) {
         ensureNonNull("attribute", attribute);
-        if (metadata.isReadOnly()) {
+        if (isReadOnly()) {
             throw new UnsupportedOperationException(getErrorResources()
                     .getString(Errors.Keys.UNMODIFIABLE_METADATA));
         }

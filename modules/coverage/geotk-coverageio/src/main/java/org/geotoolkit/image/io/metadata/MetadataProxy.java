@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
+import java.util.NoSuchElementException;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
@@ -74,7 +75,7 @@ import org.geotoolkit.resources.Errors;
  * @param <T> The metadata interface implemented by the proxy.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @since 3.06
  * @module
@@ -453,7 +454,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 String elementName = SpatialMetadataFormat.toElementName(name);
                 MetadataAccessor acc;
                 try {
-                    acc = new MetadataAccessor(accessor, elementName, "#auto");
+                    acc = new ReadOnlyAccessor(accessor, elementName);
                 } catch (IllegalArgumentException e) {
                     /*
                      * This exception happen when no node for 'elementName' is defined in the
@@ -462,6 +463,9 @@ final class MetadataProxy<T> implements InvocationHandler {
                      */
                     Logging.recoverableException(MetadataAccessor.LOGGER, interfaceType, methodName, e);
                     return null;
+                } catch (NoSuchElementException e) {
+                    // There is no value for this node.
+                    return Collections.emptyList();
                 }
                 /*
                  * At this point we have a MetadataAccessor to a node which is known to exist.
@@ -500,7 +504,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 // Each of the last 3 lines may throw, directly or indirectly, an IllegalArgumentException.
                 final String   elementName = SpatialMetadataFormat.toElementName(name);
                 final Class<?> elementType = getElementClass(elementName, targetType);
-                final MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
+                final MetadataAccessor acc = new ReadOnlyAccessor(accessor, elementName);
                 child = acc.isEmpty() ? Void.TYPE : acc.newProxyInstance(elementType);
             } catch (IllegalArgumentException e) {
                 /*
@@ -510,6 +514,9 @@ final class MetadataProxy<T> implements InvocationHandler {
                  * not define every attributes).
                  */
                 accessor.warning(Level.FINE, interfaceType, methodName, e);
+                child = Void.TYPE;
+            } catch (NoSuchElementException e) {
+                // There is no value for this node.
                 child = Void.TYPE;
             }
             childs.put(methodName, child);
