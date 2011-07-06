@@ -26,7 +26,7 @@ import java.text.ParsePosition;
 import java.text.ParseException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultTreeModel; // Really the Swing implementation, not the Geotk one.
 
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
@@ -456,6 +456,8 @@ public class TreeFormat extends Format {
      * @see Trees#toString(TreeNode)
      */
     public void format(final TreeNode node, final Appendable toAppendTo) throws IOException {
+        // Use the Swing implementation in order to avoid recursivity
+        // in the debugguer if the tree model is formatted as a tree.
         format(new DefaultTreeModel(node, true), toAppendTo);
     }
 

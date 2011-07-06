@@ -22,16 +22,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultTreeModel;
 
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
+import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -108,7 +107,7 @@ public final class PropertyTreeTest {
             "│   └───9782505004509\n" +
             "└───Presentation Forms\n" +
             "    ├───document hardcopy\n" +
-            "    └───image hardcopy\n", Trees.toString(tree));
+            "    └───image hardcopy\n", tree.toString());
 
         TreeNode root = (TreeNode) tree.getRoot();
         assertSame(citation, root.getUserObject());
@@ -135,7 +134,7 @@ public final class PropertyTreeTest {
          * should be lost in this process, so we are testing the capability to parse code
          * list string here (the previous test took the code directly from the user object).
          */
-        root = parse(Trees.toString(tree));
+        root = parse(tree.toString());
         tree = new DefaultTreeModel(root);
         newCitation = new DefaultCitation();
         newCitation.parse(tree);
@@ -204,7 +203,7 @@ public final class PropertyTreeTest {
             "    └───[3] Citation\n" +
             "        └───Cited Responsible Parties\n" +
             "            └───Role\n" +
-            "                └───author\n", Trees.toString(tree));
+            "                └───author\n", tree.toString());
     }
 
     /**
@@ -226,6 +225,6 @@ public final class PropertyTreeTest {
             "└───Keywords\n" +
             "    ├───Apple\n" +
             "    ├───Orange\n" +
-            "    └───Kiwi\n", Trees.toString(tree));
+            "    └───Kiwi\n", tree.toString());
     }
 }

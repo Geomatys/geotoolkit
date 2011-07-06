@@ -26,7 +26,6 @@ import java.text.ParseException;
 import java.util.MissingResourceException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultTreeModel;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
@@ -38,6 +37,7 @@ import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

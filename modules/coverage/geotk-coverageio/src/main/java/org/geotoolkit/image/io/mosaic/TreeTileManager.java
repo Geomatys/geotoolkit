@@ -23,11 +23,11 @@ import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNodeFilter;
+import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;

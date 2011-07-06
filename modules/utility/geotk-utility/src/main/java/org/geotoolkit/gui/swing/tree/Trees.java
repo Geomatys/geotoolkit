@@ -31,7 +31,6 @@ import javax.swing.JScrollPane;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeModel;
-import javax.swing.tree.DefaultTreeModel;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 

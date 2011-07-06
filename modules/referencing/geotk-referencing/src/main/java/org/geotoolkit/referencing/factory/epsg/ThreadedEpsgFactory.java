@@ -269,6 +269,14 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         super(userHints);
         factories = ReferencingFactoryContainer.instance(userHints);
         hints.put(Hints.EPSG_DATA_SOURCE, (userHints != null) ? userHints.get(Hints.EPSG_DATA_SOURCE) : null);
+        /*
+         * Allow key collision, actually not because we have different object for the same code
+         * (Geotk use also the object type in the key, so there is no more collission that way),
+         * but rather to allow some recursivity. For example a call to getDatum(...) may invoke
+         * createBursaWolfParameters(...) which invoke getDatum(...) again for the same code
+         * while the datum was still under construction. The current Cache implementation signals
+         * that as a key collision, even if the object to be constructed is actually the same.
+         */
         setKeyCollisionAllowed(true);
         setTimeout(15000L); // Close the connection after 15 seconds of inactivity.
     }

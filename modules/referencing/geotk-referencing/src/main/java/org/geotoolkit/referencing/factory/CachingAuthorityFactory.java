@@ -1238,6 +1238,11 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * an error, so the default {@link Cache} behavior is to thrown an exception in such
      * case. However in some cases we may want to relax this check. For example the EPSG
      * database sometime assign the same key to different kind of objects.
+     * <p>
+     * This property can also be set in order to allow some recursivity. If during the creation of
+     * an object, the program asks to this {@code CachingAuthorityFactory} for the same object
+     * (using the same key), then the default {@code CachingAuthorityFactory} implementation will
+     * consider this situation as a key collision unless this property has been set to {@code true}.
      *
      * @param allowed {@code true} if key collisions are allowed.
      *

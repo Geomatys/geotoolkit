@@ -38,7 +38,6 @@ import javax.swing.BorderFactory;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -54,6 +53,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
+import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
@@ -237,7 +237,7 @@ public class RegisteredOperationBrowser extends JComponent {
 
     /**
      * Returns a tree view of all operations registered in the default {@link JAI} instance.
-     * Labels will be formatted in the Swing's {@linkplain #getDefaultLocale default locale}.
+     * Labels will be formatted in the Swing {@linkplain #getDefaultLocale default locale}.
      *
      * @return All JAI operations as a tree.
      */
