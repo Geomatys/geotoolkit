@@ -68,7 +68,7 @@ import org.geotoolkit.internal.swing.ToolBar;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.resources.Widgets;
 import org.jdesktop.swingx.JXBusyLabel;
 
@@ -572,8 +572,12 @@ public class CoverageList extends JComponent {
              * We don't use the SwingWorker because NewGridCoverageDetails will
              * block waiting for user input from the event thread, and it seems
              * to prevent other SwingWorkers to work.
+             *
+             * Note: don't use Threads.executeWork(...) neither, since it is designed
+             * for short-lived task (running this task could block other tasks if the
+             * thread pool is full).
              */
-            Threads.executeWork(new Runnable() {
+            new Thread(SwingUtilities.THREAD_GROUP, new Runnable() {
                 @Override public void run() {
                     try {
                         layer.addCoverageReferences(Arrays.asList(files), addController);
@@ -592,7 +596,7 @@ public class CoverageList extends JComponent {
                         });
                     }
                 }
-            });
+            }, "CoverageList").start();
         }
     }
 

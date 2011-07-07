@@ -107,7 +107,7 @@ public class About extends JComponent implements Dialog {
     private final Vocabulary resources;
 
     /**
-     * Construct a new dialog box with the Geotk's logo.
+     * Constructs a new dialog box with the Geotk logo.
      */
     public About() {
         this("org/geotoolkit/resources/Geotoolkit.png", About.class, Threads.GEOTOOLKIT);
@@ -504,7 +504,7 @@ public class About extends JComponent implements Dialog {
          */
         public synchronized void start() {
             if (worker == null) {
-                worker = new DaemonThread(Threads.WORKERS, this, resources.getString(Vocabulary.Keys.ABOUT));
+                worker = new DaemonThread(SwingUtilities.THREAD_GROUP, this, resources.getString(Vocabulary.Keys.ABOUT));
                 worker.setPriority(Thread.NORM_PRIORITY - 1);
                 worker.start();
             }

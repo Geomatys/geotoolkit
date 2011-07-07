@@ -29,10 +29,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
+import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
@@ -133,7 +135,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @param <V> The type of value objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.19
  *
  * @since 3.00
  * @module
@@ -150,17 +152,19 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     /**
      * The keys of values that are retained in the {@linkplain #map} by strong references,
      * together with an estimation of their cost. This map is <strong>not</strong> thread
-     * safe. For this reason, it must be used in the {@link CacheReferences} thread only,
-     * even for read-only operations.
+     * safe. For this reason, it must be used by a single thread at a given time, even
+     * for read-only operations.
      * <p>
      * Entries in this map are ordered from least-recently accessed to most-recently accessed.
      */
+    @GuardedBy("costs")
     private final Map<K,Integer> costs;
 
     /**
      * The sum of all values in the {@link #costs} map. This field must be used in the
-     * {@link CacheReferences} thread only.
+     * same thread than {@link #costs}.
      */
+    @GuardedBy("costs")
     private long totalCost;
 
     /**
@@ -230,8 +234,8 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     @Override
     public void clear() {
         map.clear();
-        // Do not update "costs" and "totalCost". Instead let CacheReferences
-        // do its job, which needs to be done in its own thread.
+        // Do not update "costs" and "totalCost". Instead let adjustReferences(...)
+        // do its job, which needs to be done in a different thread.
     }
 
     /**
@@ -396,7 +400,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
             final V result = ref.get();
             if (result != null && map.replace(key, ref, result)) {
                 ref.clear(); // Prevents the reference from being enqueued.
-                CacheReferences.INSTANCE.add(new Strong(key, result));
+                Threads.executeWork(new Strong(key, result));
             }
             return result;
         }
@@ -406,12 +410,12 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     }
 
     /**
-     * Invoked from the {@link CacheReferences} thread after a {@linkplain WeakReference weak}
+     * Invoked from the a background thread after a {@linkplain WeakReference weak}
      * or {@linkplain SoftReference soft} reference has been replaced by a strong one. It will
      * looks for older strong references to replace by weak references so that the total cost
      * stay below the cost limit.
      */
-    private final class Strong implements CacheReferences.Handler {
+    private final class Strong implements Runnable {
         private final K key;
         private final V value;
 
@@ -422,17 +426,10 @@ public class Cache<K,V> extends AbstractMap<K,V> {
 
         /**
          * Process to the replacement of eldest strong references by weak references.
-         * This method should be invoked from the {@link CacheReferences} thread only.
+         * This method should be invoked from the background thread only.
          */
-        @Override public void adjustReferences() {
+        @Override public void run() {
             Cache.this.adjustReferences(key, value);
-        }
-
-        /**
-         * Should never happen. But if it happen anyway, abandon our attempt to cache.
-         */
-        @Override public void cancel() {
-            map.remove(key, value);
         }
     }
 
@@ -489,19 +486,19 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                     /*
                      * The value is a valid weak reference. Replaces it by a strong reference
                      * before to return it in a wrapper. Note: the call to ref.clear() is for
-                     * preventing the reference from being enqueued for WeakCollectionCleaner
+                     * preventing the reference from being enqueued for ReferenceQueueConsumer
                      * processing. It would not hurt if we let the processing happen, but it
                      * would be useless.
                      */
                     if (map.replace(key, ref, result)) {
                         ref.clear(); // Prevents the reference from being enqueued.
-                        CacheReferences.INSTANCE.add(new Strong(key, result));
+                        Threads.executeWork(new Strong(key, result));
                     }
                     return new Simple<V>(result);
                 }
                 /*
                  * The weak reference is invalid but not yet discarded (it looks like that this
-                 * thread is going faster than WeakCollectionCleaner). Try to replace it by our
+                 * thread is going faster than ReferenceQueueConsumer). Try to replace it by our
                  * handler.
                  */
                 if (map.replace(key, ref, handler)) {
@@ -534,7 +531,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                      * lock for this code, then searches for OperationParameters associated to this
                      * operation. One of those parameters ("Bu0v4") has the same key (EPSG:8653).
                      * So we get a key collision. If we ignore the second occurrence, its value will
-                     * not be cached. This is okay since the value that we really want to cache
+                     * not be cached. This is okay since the value that we really want to cache is
                      * CoordinateOperation, which is associated to the first occurrence of that key.
                      */
                     return new Simple<V>(null);
@@ -654,7 +651,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * computing a value.
      */
     @SuppressWarnings("serial") // Actually not intended to be serialized.
-    final class Work extends ReentrantLock implements Handler<V>, CacheReferences.Handler {
+    final class Work extends ReentrantLock implements Handler<V>, Runnable {
         /**
          * The key to use for storing the result in the map.
          */
@@ -722,7 +719,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                 unlock();
             }
             if (done) {
-                CacheReferences.INSTANCE.add(this);
+                Threads.executeWork(this);
             }
         }
 
@@ -758,22 +755,12 @@ public class Cache<K,V> extends AbstractMap<K,V> {
         }
 
         /**
-         * Cancel the caching of the value. This method is typically never invoked
-         * unless some serious problem happen (for example new entries are coming
-         * much faster than we can process them).
-         */
-        @Override
-        public void cancel() {
-            map.remove(key, value);
-        }
-
-        /**
-         * Invoked by the {@link CacheReferences} thread after a value has been set in the map.
+         * Invoked in a background thread after a value has been set in the map.
          * This method computes a cost estimation of the new value. If the total cost is greater
          * than the cost limit, then oldest strong references are replaced by weak references.
          */
         @Override
-        public void adjustReferences() {
+        public void run() {
             final V value = this.value;
             if (value != null) {
                 Cache.this.adjustReferences(key, value);
@@ -782,41 +769,42 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     }
 
     /**
-     * Invoked by the {@link CacheReferences} thread after a value has been set in the map.
+     * Invoked in a background thread after a value has been set in the map.
      * This method computes a cost estimation of the new value. If the total cost is greater
      * than the cost limit, then oldest strong references are replaced by weak references.
      */
     final void adjustReferences(final K key, final V value) {
-        assert Thread.currentThread() == CacheReferences.INSTANCE;
         int cost = cost(value);
-        final Integer old = costs.put(key, cost);
-        if (old != null) {
-            cost -= old;
-        }
-        if ((totalCost += cost) > costLimit) {
-            final Iterator<Map.Entry<K,Integer>> it = costs.entrySet().iterator();
-            while (it.hasNext()) {
-                /*
-                 * Converts the current entry from strong reference to weak/soft reference.
-                 * We perform this conversion even if the entry is for the value just added
-                 * to the cache, if it happen that the cost is higher than the maximal one.
-                 * That entry should not be garbage collected to early anyway because the
-                 * caller should still have a strong reference to the value he just created.
-                 */
-                final Map.Entry<K,Integer> entry = it.next();
-                final K oldKey = entry.getKey();
-                final Object oldValue = map.get(oldKey);
-                if (oldValue != null && !isReservedType(oldValue)) {
-                    @SuppressWarnings("unchecked")
-                    final Reference<V> ref = soft ? new Soft<K,V>(map, oldKey, (V) oldValue)
-                                                  : new Weak<K,V>(map, oldKey, (V) oldValue);
-                    if (!map.replace(oldKey, oldValue, ref)) {
-                        ref.clear(); // Prevents the reference to be enqueued.
+        synchronized (costs) {
+            final Integer old = costs.put(key, cost);
+            if (old != null) {
+                cost -= old;
+            }
+            if ((totalCost += cost) > costLimit) {
+                final Iterator<Map.Entry<K,Integer>> it = costs.entrySet().iterator();
+                while (it.hasNext()) {
+                    /*
+                     * Converts the current entry from strong reference to weak/soft reference.
+                     * We perform this conversion even if the entry is for the value just added
+                     * to the cache, if it happen that the cost is higher than the maximal one.
+                     * That entry should not be garbage collected to early anyway because the
+                     * caller should still have a strong reference to the value he just created.
+                     */
+                    final Map.Entry<K,Integer> entry = it.next();
+                    final K oldKey = entry.getKey();
+                    final Object oldValue = map.get(oldKey);
+                    if (oldValue != null && !isReservedType(oldValue)) {
+                        @SuppressWarnings("unchecked")
+                        final Reference<V> ref = soft ? new Soft<K,V>(map, oldKey, (V) oldValue)
+                                                      : new Weak<K,V>(map, oldKey, (V) oldValue);
+                        if (!map.replace(oldKey, oldValue, ref)) {
+                            ref.clear(); // Prevents the reference to be enqueued.
+                        }
                     }
-                }
-                it.remove();
-                if ((totalCost -= entry.getValue()) <= costLimit) {
-                    break;
+                    it.remove();
+                    if ((totalCost -= entry.getValue()) <= costLimit) {
+                        break;
+                    }
                 }
             }
         }

@@ -29,11 +29,12 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
-import org.geotoolkit.gui.swing.WindowCreator;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.gui.swing.WindowCreator;
 
 
 /**
@@ -55,6 +56,13 @@ import org.geotoolkit.resources.Vocabulary;
  * @module
  */
 public final class SwingUtilities extends Static {
+    /**
+     * The thread group for Swing background tasks.
+     *
+     * @since 3.19
+     */
+    public static final ThreadGroup THREAD_GROUP = new ThreadGroup(Threads.GEOTOOLKIT, "Swing");
+
     /**
      * Do not allow any instance of this class to be created.
      */

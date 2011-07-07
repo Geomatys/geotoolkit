@@ -24,6 +24,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.geotoolkit.lang.Debug;
@@ -42,7 +45,7 @@ import org.geotoolkit.util.logging.Logging;
  * @module
  */
 @SuppressWarnings("serial")
-public final class Threads extends AtomicInteger implements ThreadFactory {
+public final class Threads extends AtomicInteger implements ThreadFactory, RejectedExecutionHandler {
     /**
      * The parent of every threads declared in this class.
      */
@@ -68,19 +71,40 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
 
     /**
      * The executor for non-disposal works. This executor is suitable for small tasks
-     * that complete relatively rapidly. Each tasks is executed immediately (they are
-     * not enqueued).
+     * that complete relatively rapidly.  We don't need too many threads, because the
+     * amount of tasks to submit is not that high.
+     * <p>
+     * Current implementation uses 2 threads and enqueue any additional tasks arriving
+     * faster than what the 2 threads can process. If 1000 tasks have been enqueued,
+     * then we will start creating more threads. If the maximal number of threads have
+     * been reached, then any additional tasks will be blocked until a slot is made
+     * available.
+     * <p>
+     * The optimal number of threads for CPU-bounds tasks is typically <va>n</var>+1
+     * where <va>n</var> is the number of processors. Here, we limit to <va>n</var>
+     * threads since the caller thread is the "+1".
      */
-    private static final ExecutorService WORK_EXECUTOR =
-            Executors.newCachedThreadPool(new Threads(false, true, "Pooled thread #"));
+    private static final ExecutorService WORK_EXECUTOR;
+    static {
+        final Threads handlers = new Threads(false, true, "Pooled thread #");
+        final int n = Math.max(2, Runtime.getRuntime().availableProcessors());
+        final ThreadPoolExecutor ex = new ThreadPoolExecutor(2, n, 5L, TimeUnit.MINUTES,
+                new LinkedBlockingQueue<Runnable>(1000), handlers, handlers);
+        ex.allowCoreThreadTimeOut(true);
+        WORK_EXECUTOR = ex;
+    }
 
     /**
      * The executor for disposal tasks. The tasks submitted to this executor should be only
      * house-keeping works. The threads in this executor have a priority slightly higher than
      * the normal priority. Their execution should complete quickly.
+     * <p>
+     * A single thread is sufficient since there is not so many tasks to submit, and they
+     * are expected to complete quickly. Because this executor acts as a fixed-size pool,
+     * we don't want to have too many threads spending 99% of their time idle.
      */
     private static final ScheduledExecutorService DISPOSAL_EXECUTOR =
-            Executors.newScheduledThreadPool(1, new Threads(true, true, "Pooled thread #"));
+            Executors.newScheduledThreadPool(1, new Threads(true, true, "Disposer thread #"));
 
     /**
      * {@code true} if the threads to be created are part of the {@link #RESOURCE_DISPOSERS}
@@ -124,8 +148,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * Executes the given task in a worker thread. The given work is executed immediately,
-     * creating a new thread if needed.
+     * Executes the given task in a worker thread.
      *
      * @param task The work to execute.
      *
@@ -152,7 +175,8 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * For internal usage by {@link #executor} only.
+     * Invoked when a new thread needs to be created. This method is public as an
+     * implementation side-effect and should not be invoked directly.
      *
      * @param  task The task to execute.
      * @return A new thread running the given task.
@@ -164,6 +188,22 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
         thread.setPriority(Thread.NORM_PRIORITY + 1); // WORKERS group will lower this value.
         thread.setDaemon(daemon);
         return thread;
+    }
+
+    /**
+     * Invoked when a task can not be accepted because the queue is full and the maximal number
+     * of threads have been reached. This method blocks until a slot is made available.
+     *
+     * @param task The task to execute.
+     * @param executor The executor that invoked this method.
+     */
+    @Override
+    public void rejectedExecution(final Runnable task, final ThreadPoolExecutor executor) {
+        try {
+            executor.getQueue().put(task);
+        } catch (InterruptedException e) {
+            throw new RejectedExecutionException(e);
+        }
     }
 
     /**
