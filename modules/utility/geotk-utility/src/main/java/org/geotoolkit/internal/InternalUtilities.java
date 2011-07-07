@@ -233,43 +233,41 @@ public final class InternalUtilities extends Static {
     public static int parseColor(String color) throws NumberFormatException {
         color = color.trim();
         if (color.startsWith("#")) {
-            color = color.substring(1);
-            int value = Integer.parseInt(color, 16);
-            switch (color.length()) {
+            final String code = color.substring(1);
+            // Parses as a long in order to accept ARGB codes in the 80000000 to FF000000 range.
+            // The check for the string length will ensure that we are not outside those bounds.
+            int value = (int) Long.parseLong(code, 16);
+            switch (code.length()) {
                 case 3: value |= 0xF000; // Fallthrough
                 case 4: {
-                    /*
-                     * Color shortcut for hexadecimal value.
-                     * Example: #0BC means #00BBCC.
-                     */
                     int t;
-                    value = (((t=(value & 0xF000)) | (t << 4)) << 24) |
-                            (((t=(value & 0x0F00)) | (t << 4)) << 16) |
-                            (((t=(value & 0x00F0)) | (t << 4)) <<  8) |
-                            (((t=(value & 0x000F)) | (t << 4)));
-                    break;
+                    return (((t=(value & 0xF000)) | (t << 4)) << 12) |
+                           (((t=(value & 0x0F00)) | (t << 4)) <<  8) |
+                           (((t=(value & 0x00F0)) | (t << 4)) <<  4) |
+                           (((t=(value & 0x000F)) | (t << 4)));
                 }
                 case 6: value |= 0xFF000000; // Fallthrough
-                case 8: break;
-                default: {
-                    throw new NumberFormatException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "color", color));
-                }
+                case 8: return value;
             }
-            return value;
+        } else {
+            /*
+             * Parses the string as an opaque color unless an alpha value was provided.
+             * This matches closing the default java.awt.Color.decode(String) behavior,
+             * which considers every colors as opaque. We relax slightly the condition
+             * by allowing non-zero alpha values. The inconvenient is that specifying
+             * a fully transparent color is not possible with syntax - please use the
+             * above "#" syntax instead.
+             */
+            final long n = Long.decode(color);
+            int value = (int) n;
+            if (value == n) {
+                if ((value & 0xFF000000) == 0) {
+                    value |= 0xFF000000;
+                }
+                return value;
+            }
         }
-        /*
-         * Parses the string as an opaque color unless an alpha value was provided.
-         * This matches closing the default java.awt.Color.decode(String) behavior,
-         * which considers every colors as opaque. We relax slightly the condition
-         * by allowing non-zero alpha values. The inconvenient is that specifying
-         * a fully transparent color is not possible with syntax - please use the
-         * above "#" syntax instead.
-         */
-        int value = Integer.decode(color);
-        if ((value & 0xFF000000) == 0) {
-            value |= 0xFF000000;
-        }
-        return value;
+        throw new NumberFormatException(Errors.format(
+                Errors.Keys.ILLEGAL_ARGUMENT_$2, "color", color));
     }
 }

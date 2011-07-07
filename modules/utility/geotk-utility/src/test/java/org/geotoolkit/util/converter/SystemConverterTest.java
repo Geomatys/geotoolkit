@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util.converter;
 
+import java.awt.Color;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
  * Tests a few conversions using the system converter.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -107,6 +108,20 @@ public class SystemConverterTest {
         InternationalString i18n = converter.convert("A localized string.");
         assertEquals("A localized string.", i18n.toString());
         assertSame("Should detect that the source is already of appropriate type.", i18n, converter.convert(i18n));
+    }
+
+    /**
+     * Tests conversions from strings to colors.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testStringToColor() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        assertEquals(0xD2787034, system.converter(String.class, Color.class).convert("#D2787034").getRGB());
+        assertEquals(0xAA11BB88, system.converter(String.class, Color.class).convert("#A1B8").getRGB());
     }
 
     /**

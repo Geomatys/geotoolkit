@@ -48,10 +48,19 @@ public final class InternalUtilitiesTest {
      *
      * @since 3.19
      */
+    @Test
     public void testParseColor() {
         assertEquals("#23456789", 0x23456789, parseColor("#23456789"));
         assertEquals("#456789",   0xFF456789, parseColor("#456789"));
         assertEquals("#A0BC",     0xAA00BBCC, parseColor("#A0BC"));
         assertEquals("#0BC",      0xFF00BBCC, parseColor("#0BC"));
+        assertEquals("#D2787034", 0xD2787034, parseColor("#D2787034"));
+        try {
+            parseColor("#1D2787034");
+            fail("Should not accept values greater than 32 bits.");
+        } catch (NumberFormatException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("#1D2787034"));
+        }
     }
 }
