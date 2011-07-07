@@ -42,6 +42,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 
@@ -158,21 +159,19 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
         String redCode = Integer.toHexString(color.getRed());
         String greenCode = Integer.toHexString(color.getGreen());
         String blueCode = Integer.toHexString(color.getBlue());
-
-        if (redCode.length() == 1) {
-            redCode = "0" + redCode;
-        }
-
-        if (greenCode.length() == 1) {
-            greenCode = "0" + greenCode;
-        }
-
-        if (blueCode.length() == 1) {
-            blueCode = "0" + blueCode;
-        }
-
-        final String colorCode = "#" + redCode + greenCode + blueCode;
-
+        if (redCode.length() == 1)      redCode = "0" + redCode;
+        if (greenCode.length() == 1)    greenCode = "0" + greenCode;
+        if (blueCode.length() == 1)     blueCode = "0" + blueCode;
+        
+        final String colorCode;
+        int alpha = color.getAlpha();
+        if(alpha != 255){
+            String alphaCode = Integer.toHexString(alpha);
+            if (alphaCode.length() == 1) alphaCode = "0" + alphaCode;
+            colorCode = "#" + alphaCode + redCode + greenCode + blueCode;
+        }else{
+            colorCode = "#" + redCode + greenCode + blueCode;
+        }        
         return FF.literal(colorCode.toUpperCase());
     }
 
