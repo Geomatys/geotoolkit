@@ -560,20 +560,24 @@ public final class DimapAccessor extends Static {
             final String algoName               = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_ALGORITHM_NAME, String.class);
             //final String algoActivation         = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_ALGORITHM_ACTIVATION, String.class);
 
-            final DefaultCitation citation = new DefaultCitation();
-            citation.setTitle(new SimpleInternationalString(algoName));
+            if(algoName != null && algoType != null){
+                final DefaultCitation citation = new DefaultCitation();
+                citation.setTitle(new SimpleInternationalString(algoName));
 
-            final DefaultAlgorithm algo = new DefaultAlgorithm();
-            algo.setDescription(new SimpleInternationalString(algoType));
-            algo.setCitation(citation);
+                final DefaultAlgorithm algo = new DefaultAlgorithm();
+                algo.setDescription(new SimpleInternationalString(algoType));
+                algo.setCitation(citation);
 
-            final DefaultProcessStep step = getProcessStep(metadata);
-            DefaultProcessing processing = (DefaultProcessing) step.getProcessingInformation();
-            if(processing == null){
-                processing = new DefaultProcessing();
-                step.setProcessingInformation(processing);
+                final DefaultProcessStep step = getProcessStep(metadata);
+                DefaultProcessing processing = (DefaultProcessing) step.getProcessingInformation();
+                if(processing == null){
+                    processing = new DefaultProcessing();
+                    step.setProcessingInformation(processing);
+                }
+            
+                processing.getAlgorithms().add(algo);
             }
-            processing.getAlgorithms().add(algo);
+
         }
 
         //<xsd:element minOccurs="0" ref="Data_Access"/> -----------------------
