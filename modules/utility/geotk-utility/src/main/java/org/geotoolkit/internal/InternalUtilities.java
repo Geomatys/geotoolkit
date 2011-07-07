@@ -28,6 +28,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
 
@@ -36,7 +37,7 @@ import static java.lang.Math.*;
  * Various utility methods not to be put in public API.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18 (derived from 3.00)
  * @module
@@ -206,5 +207,69 @@ public final class InternalUtilities extends Static {
             }
         }
         return ',';
+    }
+
+    /**
+     * Gets the ARGB values for the given hexadecimal value. If the given code begins with the
+     * {@code '#'} character, then this method accepts the following hexadecimal patterns:
+     * <p>
+     * <ul>
+     *   <li>{@code "#AARRGGBB"}: an explicit ARGB code used verbatim.</li>
+     *   <li>{@code "#RRGGBB"}: a fully opaque RGB color.</li>
+     *   <li>{@code "#ARGB"}: an abbreviation for {@code "#AARRGGBB"}.</li>
+     *   <li>{@code "#RGB"}: an abbreviation for {@code "#RRGGBB"}.
+     *       For example #0BC means #00BBCC.</li>
+     * </ul>
+     *
+     * @param  color The color code to parse.
+     * @throws NumberFormatException If the given code can not be parsed.
+     * @return The ARGB code.
+     *
+     * @see java.awt.Color#decode(String)
+     *
+     * @since 3.19
+     */
+    @SuppressWarnings("fallthrough")
+    public static int parseColor(String color) throws NumberFormatException {
+        color = color.trim();
+        if (color.startsWith("#")) {
+            color = color.substring(1);
+            int value = Integer.parseInt(color, 16);
+            switch (color.length()) {
+                case 3: value |= 0xF000; // Fallthrough
+                case 4: {
+                    /*
+                     * Color shortcut for hexadecimal value.
+                     * Example: #0BC means #00BBCC.
+                     */
+                    int t;
+                    value = (((t=(value & 0xF000)) | (t << 4)) << 24) |
+                            (((t=(value & 0x0F00)) | (t << 4)) << 16) |
+                            (((t=(value & 0x00F0)) | (t << 4)) <<  8) |
+                            (((t=(value & 0x000F)) | (t << 4)));
+                    break;
+                }
+                case 6: value |= 0xFF000000; // Fallthrough
+                case 8: break;
+                default: {
+                    throw new NumberFormatException(Errors.format(
+                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "color", color));
+                }
+            }
+            return value;
+        }
+        /*
+         * Parses the string as an opaque color unless an alpha value was provided.
+         * This matches closing the default java.awt.Color.decode(String) behavior,
+         * which considers every colors as opaque. We relax slightly the condition
+         * by allowing non-zero alpha values. The inconvenient is that specifying
+         * a fully transparent color is not possible with syntax - please use the
+         * above "#" syntax instead.
+         */
+        int value = Integer.decode(color);
+        if ((value & 0xFF000000) == 0) {
+            value |= 0xFF000000;
+        }
+        return value;
     }
 }

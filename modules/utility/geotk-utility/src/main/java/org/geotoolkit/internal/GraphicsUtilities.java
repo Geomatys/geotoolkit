@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal;
 
-import java.awt.Graphics2D;
 import javax.swing.UIManager;
 
 import org.geotoolkit.lang.Static;
@@ -25,7 +24,11 @@ import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * A set of utilities methods for painting in a {@link Graphics2D} handle.
+ * A set of utilities related to Swing. More utilities are provided in the
+ * {@link org.geotoolkit.internal.swing.SwingUtilities} static class, which is defined in the
+ * {@code geotk-widgets-swing} module. Here, we have a more minimalist class defined in the
+ * {@code geotk-utility} module only because it is used by other modules that do not depend
+ * on the Swing widgets module, as for example {@code geotk-setup} and some test suites.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.16

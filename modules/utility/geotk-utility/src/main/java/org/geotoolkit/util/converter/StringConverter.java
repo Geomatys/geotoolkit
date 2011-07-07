@@ -28,6 +28,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -509,7 +510,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
      *
      * @author Justin Deoliveira (TOPP)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.02
+     * @version 3.19
      *
      * @since 2.4
      */
@@ -532,7 +533,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             }
             source = source.trim();
             try {
-                return java.awt.Color.decode(source);
+                return new java.awt.Color(InternalUtilities.parseColor(source), true);
             } catch (NumberFormatException e) {
                 throw new NonconvertibleObjectException(e);
             }

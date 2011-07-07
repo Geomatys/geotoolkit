@@ -30,7 +30,7 @@ import static org.geotoolkit.internal.InternalUtilities.*;
  * Tests {@link InternalUtilities} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18 (derived from 3.00)
  */
@@ -41,5 +41,17 @@ public final class InternalUtilitiesTest {
     @Test
     public void testGetSeparator() {
         assertEquals(';', getSeparator(NumberFormat.getInstance(Locale.FRANCE)));
+    }
+
+    /**
+     * Tests the {@link InternalUtilities#parseColor(String)} method.
+     *
+     * @since 3.19
+     */
+    public void testParseColor() {
+        assertEquals("#23456789", 0x23456789, parseColor("#23456789"));
+        assertEquals("#456789",   0xFF456789, parseColor("#456789"));
+        assertEquals("#A0BC",     0xAA00BBCC, parseColor("#A0BC"));
+        assertEquals("#0BC",      0xFF00BBCC, parseColor("#0BC"));
     }
 }
