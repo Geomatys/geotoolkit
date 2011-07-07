@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.media.jai.DataBufferDouble;
 import javax.vecmath.Point3d;
@@ -294,11 +295,11 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
             final Envelope env, final double zmin, double zmax){
 
-        final int lower = 1;
-        final int upper = 255;
-        double scale = (zmax - zmin) / upper;
-        if(scale == 0) scale = 1;
-        final double offset = zmin - scale*lower;
+//        final int lower = 1;
+//        final int upper = 255;
+//        double scale = (zmax - zmin) / upper;
+//        if(scale == 0) scale = 1;
+//        final double offset = zmin - scale*lower;
 
         final byte[] zs = new byte[xs.length*ys.length];
 
@@ -306,7 +307,6 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         for(int i=0;i<xs.length;i++){
             for(int j=0;j<ys.length;j++){
                 double value = computed[i + j * xs.length];
-                value = (value - offset) / scale;
                 zs[i + (ys.length-1-j) * xs.length] = (byte) Math.round(value);
             }
         }
@@ -331,11 +331,11 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     new Color(1f,1f,1f,0f),
                     new Color(1f,1f,0f,0.5f),
                     new Color(1f,0f,0f,0.8f)},
-                NumberRange.create(lower, upper),
-                scale, offset);
+                NumberRange.create(zmin, zmax+1),
+                1, 0);
 
         final GridSampleDimension dim = new GridSampleDimension("cat", 
-                new Category[]{Category.NODATA,cat},SI.METRE);
+                new Category[]{cat},SI.METRE);
         final GridCoverageFactory gcf = new GridCoverageFactory();
         return gcf.create("catgrid", raster, env, new GridSampleDimension[]{dim});
     }
