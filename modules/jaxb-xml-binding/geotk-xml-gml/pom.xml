@@ -75,8 +75,12 @@
     </dependency>
     <!-- for utils -->
     <dependency>
+        <groupId>com.vividsolutions</groupId>
+        <artifactId>jts</artifactId>
+    </dependency>
+    <dependency>
         <groupId>org.geotoolkit.pending</groupId>
-        <artifactId>geotk-jtswrapper</artifactId>
+        <artifactId>geotk-geometry</artifactId>
         <version>${project.version}</version>
     </dependency>
   </dependencies>

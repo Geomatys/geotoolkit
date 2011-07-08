@@ -44,10 +44,6 @@
   <!-- =========================================================== -->
   <dependencies>      
       <dependency>
-          <groupId>org.geotoolkit</groupId>
-          <artifactId>geotk-utility</artifactId>
-      </dependency>
-      <dependency>
           <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-utility-pending</artifactId>
           <version>${project.version}</version>
