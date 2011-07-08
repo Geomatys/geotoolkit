@@ -52,14 +52,18 @@ public abstract class IdentifiedMetadata<T extends Identifier> extends Modifiabl
 
     /**
      * All identifiers associated with this metadata, or {@code null} if none.
+     *
+     * @see #getIdentifiers()
      */
     protected Collection<T> identifiers;
 
     /**
-     * The identifier map as a wrapper around the {@link #identifiers} collection.
-     * Created only when first needed.
+     * The {@linkplain #getIdentifierMap() identifier map} as a wrapper around the
+     * {@link #identifiers} collection. This map is created only when first needed.
+     *
+     * @see #getIdentifierMap()
      */
-    private transient IdentifierMap identifierMap;
+    protected transient IdentifierMap identifierMap;
 
     /**
      * Constructs an initially empty metadata entity.
@@ -108,7 +112,7 @@ public abstract class IdentifiedMetadata<T extends Identifier> extends Modifiabl
      * {@inheritDoc}
      * <p>
      * The default implementation returns a wrapper around the {@linkplain #getIdentifiers()
-     * identifiers collection}. Subclasses usually don't need to override.
+     * identifier collection}. Subclasses usually don't need to override.
      */
     @Override
     public synchronized IdentifierMap getIdentifierMap() {

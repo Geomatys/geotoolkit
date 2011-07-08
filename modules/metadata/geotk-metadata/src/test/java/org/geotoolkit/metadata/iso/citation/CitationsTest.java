@@ -15,26 +15,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.metadata;
+package org.geotoolkit.metadata.iso.citation;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Collection;
 import java.util.Collections;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import org.opengis.metadata.quality.Result;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.citation.CitationDate;
-import org.opengis.metadata.quality.ConformanceResult;
-
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
-import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
+import org.geotoolkit.metadata.UnmodifiableMetadataException;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -42,13 +33,14 @@ import static org.geotoolkit.test.Commons.*;
 
 
 /**
- * Tests {@link Citations} and related constants.
+ * Tests {@link Citations} constants.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.2
  */
+@Depend(DefaultCitationTest.class)
 public final class CitationsTest {
     /**
      * Tests the {@link AbstractMetadata#toString()} method first, since debugging
@@ -67,7 +59,7 @@ public final class CitationsTest {
     }
 
     /**
-     * Makes sure that {@link Citations} constants are immutables.
+     * Makes sure that {@link Citations} constants are immutable.
      */
     @Test
     public void testCitation() {
@@ -89,35 +81,6 @@ public final class CitationsTest {
         assertSame("Empty attributes of an unmodifiable metadata should be " +
                 "set to the Collections.EMPTY_SET or EMPTY_LIST constant.",
                 Collections.EMPTY_LIST, Citations.EPSG.getDates());
-    }
-
-    /**
-     * Tests {@link AbstractPositionalAccuracy} constants.
-     */
-    @Test
-    public void testPositionalAccuracy() {
-        assertEquals("Identity comparison",
-                     AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED,
-                     AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED);
-
-        assertEquals("Identity comparison",
-                     AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED,
-                     AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED);
-
-        assertNotSame(AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED,
-                      AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED);
-
-        final Collection<? extends Result> appliedResults = AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED.getResults();
-        final Collection<? extends Result> omittedResults = AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED.getResults();
-        final ConformanceResult applied = (ConformanceResult) appliedResults.iterator().next();
-        final ConformanceResult omitted = (ConformanceResult) omittedResults.iterator().next();
-        assertNotSame(applied, omitted);
-        assertTrue (applied.pass());
-        assertFalse(omitted.pass());
-        assertFalse(applied.equals(omitted));
-        assertFalse(appliedResults.equals(omittedResults));
-        assertFalse(AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED.equals(
-                    AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED));
     }
 
     /**
@@ -156,24 +119,5 @@ public final class CitationsTest {
         assertTrue(copy.equals(Citations.EPSG, ComparisonMode.BY_CONTRACT));
         assertTrue(copy.equals(Citations.EPSG, ComparisonMode.IGNORE_METADATA));
         assertEquals(Citations.EPSG.hashCode(), copy.hashCode());
-    }
-
-    /**
-     * Tests the shallow copy (through a constructor).
-     *
-     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-170">GEOTK-170</a>
-     *
-     * @since 3.18
-     */
-    @Test
-    public void testShallowCopy() {
-        final CitationDate original = new CitationDate() {
-            @Override public Date     getDate()     {return new Date(1305716658508L);}
-            @Override public DateType getDateType() {return DateType.CREATION;}
-        };
-        final DefaultCitationDate copy = new DefaultCitationDate(original);
-        assertEquals(new Date(1305716658508L), copy.getDate());
-        assertTrue(copy.equals(original, ComparisonMode.BY_CONTRACT));
-        assertFalse(copy.equals(original, ComparisonMode.STRICT)); // Opportunist test.
     }
 }

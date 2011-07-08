@@ -109,17 +109,22 @@ public interface IdentifiedObject {
      * {@linkplain java.util.Map.Entry#getValue() value} is the
      * {@linkplain Identifier#getCode() identifier code}.
      * <p>
-     * Notes:
-     * <p>
+     * There is usually a one-to-one relationship between the map entries and the identifier
+     * elements, but not always:
      * <ul>
-     *   <li><p>The map supports {@link IdentifierMap#put put} operations if and only if this
-     *   {@code IdentifiedObject} is modifiable.</p></li>
+     *   <li><p>The map view may contain less entries, because the map interface allows only one
+     *   entry per authority. If the {@linkplain #getIdentifiers() identifier collection} contains
+     *   many identifiers for the same authority, then only the first occurrence is visible through
+     *   this {@code Map} view.</p></li>
      *
-     *   <li><p>The map view may contain less entries then the {@linkplain #getIdentifiers()
-     *   identifiers collection}, because the map interface allows only one entry per authority.
-     *   If the identifiers collection contains many identifiers for the same authority, then
-     *   only the first occurrence is visible through this {@code Map} view.</p></li>
+     *   <li><p>The map view may also contain more entries than the {@linkplain #getIdentifiers()
+     *   identifier collection}. For example the {@link org.opengis.metadata.citation.Citation}
+     *   interface defines separated attributes for ISBN, ISSN and other identifiers. This map
+     *   view may choose to unify all those attributes in a single view.</p></li>
      * </ul>
+     * <p>
+     * The map supports {@link IdentifierMap#put put} operations if and only if this
+     * {@code IdentifiedObject} is modifiable.
      *
      * @return The identifiers as a map of (<var>authority</var>, <var>code</var>) entries,
      *         or an empty map if none.

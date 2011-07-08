@@ -65,9 +65,6 @@ public final class Threads extends AtomicInteger implements ThreadFactory, Rejec
      * @since 3.05
      */
     public static final ThreadGroup WORKERS = new ThreadGroup(GEOTOOLKIT, "Workers");
-    static {
-        WORKERS.setMaxPriority(Thread.NORM_PRIORITY - 1);
-    }
 
     /**
      * The executor for non-disposal works. This executor is suitable for small tasks

@@ -178,13 +178,11 @@ final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
     }
 
     /**
-     * Returns a string representation of this identifier space. Current implementation returns
-     * the XML attribute name in order to keep the content of {@link IdentifierMap#toString()}
-     * easier to read.
+     * Returns a string representation of this identifier space.
      */
     @Override
     public String toString() {
-        return attribute;
+        return "IdentifierSpace[" + attribute + ']';
     }
 
     /**

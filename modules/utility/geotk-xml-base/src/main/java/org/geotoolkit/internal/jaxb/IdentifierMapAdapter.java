@@ -34,6 +34,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.UnsupportedImplementationException;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifierMap;
 
@@ -42,18 +43,35 @@ import org.geotoolkit.xml.IdentifierMap;
  * A map of identifiers which can be used as a helper class for
  * {@link org.geotoolkit.xml.IdentifiedObject} implementations.
  * <p>
- * This class work as a wrapper around a collection of identifiers. Because all operations
+ * This class works as a wrapper around a collection of identifiers. Because all operations
  * are performed by an iteration over the collection elements, this implementation is
  * suitable only for small maps (less than 10 elements). Given that objects typically
  * have only one or two identifiers, this is considered acceptable.
+ *
+ * {@section Handling of duplicated authorities}
+ * The collection shall not contains more than one identifier for the same
+ * {@linkplain Identifier#getAuthority() authority}. Nevertheless if such duplication is
+ * found, then this map implementation applies the following rules:
  * <p>
+ * <ul>
+ *   <li>All getter methods (including the iterators and the values returned by the {@code put}
+ *       and {@code remove} methods) return only the identifier code associated to the first
+ *       occurrence of each authority. Any subsequent occurrences of the same authorities are
+ *       silently ignored.</li>
+ *   <li>All setter methods <em>may</em> affect <em>all</em> identifiers previously associated to
+ *       the given authority, not just the first occurrence. We do that in order to ensure that
+ *       the effect of setter methods are visible to subsequent calls to getter methods. Whatever
+ *       all occurrences or only the first one will be affected is implementation dependent.</li>
+ * </ul>
+ *
+ * {@section Handling of null identifiers}
  * The collection of identifiers shall not contains any null element. However, in order
  * to make the code more robust, any null element are skipped. Note however that it may
  * cause some inconsistency, for example {@link #isEmpty()} could returns {@code false}
  * while the more accurate {@link #size()} method returns 0.
  *
  * {@section Thread safety}
- * This class is thread safe if the underlying identifiers collection is thread safe.
+ * This class is thread safe if the underlying identifier collection is thread safe.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
@@ -77,7 +95,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
     /**
      * The identifiers to wrap in a map view.
      */
-    private final Collection<Identifier> identifiers;
+    public final Collection<Identifier> identifiers;
 
     /**
      * A view over the entries, created only when first needed.
@@ -161,24 +179,18 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      */
     @Override
     public boolean containsKey(final Object authority) {
-        return get(authority, false) != null;
+        return (authority instanceof Citation) && getIdentifier((Citation) authority) != null;
     }
 
     /**
-     * Returns the identifier for the given key, or {@code null} if none. The
-     * identifier found (if any) is removed if {@code remove} is {@code true}.
+     * Returns the identifier for the given key, or {@code null} if none.
      */
-    private Identifier get(final Object key, final boolean remove) {
-        if (key instanceof Citation) {
-            final Iterator<? extends Identifier> it = identifiers.iterator();
-            while (it.hasNext()) {
-                final Identifier identifier = it.next();
-                if (identifier != null && Utilities.equals(key, identifier.getAuthority())) {
-                    if (remove) {
-                        it.remove();
-                    }
-                    return identifier;
-                }
+    private Identifier getIdentifier(final Citation authority) {
+        final Iterator<? extends Identifier> it = identifiers.iterator();
+        while (it.hasNext()) {
+            final Identifier identifier = it.next();
+            if (identifier != null && Utilities.equals(authority, identifier.getAuthority())) {
+                return identifier;
             }
         }
         return null;
@@ -191,7 +203,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getSpecialized(final IdentifierSpace<T> authority) {
-        final Identifier identifier = get(authority, false);
+        final Identifier identifier = getIdentifier(authority);
         return (identifier instanceof IdentifierAdapter<?>) ? ((IdentifierAdapter<T>) identifier).value : null;
     }
 
@@ -204,26 +216,33 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      */
     @Override
     public String get(final Object authority) {
-        final Identifier identifier = get(authority, false);
-        return (identifier != null) ? identifier.getCode() : null;
+        if (authority instanceof Citation) {
+            final Identifier identifier = getIdentifier((Citation) authority);
+            if (identifier != null) {
+                return identifier.getCode();
+            }
+        }
+        return null;
     }
 
     /**
-     * Removes the first identifier associated with the given {@linkplain Identifier#getAuthority()
-     * authority}, if one is found.
+     * Removes all identifiers associated with the given
+     * {@linkplain Identifier#getAuthority() authority}.
      *
      * @param  authority The authority to search, which should be an instance of {@link Citation}.
      * @return The code of the identifier for the given authority, or {@code null} if none.
      */
     @Override
     public String remove(final Object authority) {
-        final Identifier identifier = get(authority, true);
-        return (identifier != null) ? identifier.getCode() : null;
+        return (authority instanceof Citation) ? put((Citation) authority, null) : null;
     }
 
     /**
      * Set the code of the identifier having the given authority to the given value.
-     * If no identifier is found for the given authority, a new one is created.
+     * If no identifier is found for the given authority, a new one is created. If
+     * more than one identifier is found for the given authority, then all previous
+     * identifiers may be removed in order to ensure that the new entry will be the
+     * first entry, so it can be find by the {@code get} method.
      *
      * @param  authority The authority for which to set the code.
      * @param  code The new code for the given authority.
@@ -241,11 +260,16 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
             } else if (Utilities.equals(authority, identifier.getAuthority())) {
                 if (code != null && identifier instanceof IdentifierEntry) {
                     return ((IdentifierEntry) identifier).setValue(code);
+                    // No need to suppress other occurrences of the key (if any)
+                    // because we made a replacement in the first entry, so the
+                    // new value will be visible by the getter methods.
                 }
                 if (old == null) {
                     old = identifier.getCode();
                 }
                 it.remove();
+                // Continue the iteration in order to remove all other occurrences,
+                // in order to ensure that the getter methods will see the new value.
             }
         }
         if (code != null) {
@@ -276,9 +300,14 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
                     if (value != null) {
                         id.value = value;
                         return old;
+                        // No need to suppress other occurrences of the key (if any)
+                        // because we made a replacement in the first entry, so the
+                        // new value will be visible by the getter methods.
                     }
                 }
                 it.remove();
+                // Continue the iteration in order to remove all other occurrences,
+                // in order to ensure that the getter methods will see the new value.
             }
         }
         if (value != null) {
@@ -377,6 +406,10 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      * <p>
      * This iterator supports the {@link #remove()} operation if the underlying collection
      * supports it.
+     * <p>
+     * The map entries are used as a safety against duplicated authority values. The map values are
+     * non-null only after we iterated over an authority. Then the value is {@link Boolean#TRUE} if
+     * the identifier has been removed, of {@code Boolean#FALSE} otherwise.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.18
@@ -399,6 +432,11 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
         private transient Entry<Citation,String> next;
 
         /**
+         * The current authority. Used only for removal operations.
+         */
+        private transient Citation authority;
+
+        /**
          * Creates a new iterator for the given collection of identifiers.
          */
         Iter(final Collection<? extends Identifier> identifiers) {
@@ -419,13 +457,20 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
                     final Identifier identifier = it.next();
                     if (identifier != null) {
                         final Citation authority = identifier.getAuthority();
-                        if (put(authority, Boolean.TRUE) == null) {
+                        final Boolean state = put(authority, Boolean.FALSE);
+                        if (state == null) {
                             if (identifier instanceof IdentifierEntry) {
                                 next = (IdentifierEntry) identifier;
                             } else {
                                 next = new IdentifierEntry.Immutable(authority, identifier.getCode());
                             }
+                            this.authority = authority;
                             return;
+                        }
+                        if (state == Boolean.TRUE) {
+                            // Found a duplicated entry, and user asked for the
+                            // removal of that authority.
+                            it.remove();
                         }
                     }
                 }
@@ -476,6 +521,25 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
                 throw new IllegalStateException();
             }
             it.remove();
+            put(authority, Boolean.TRUE);
         }
+    }
+
+    /**
+     * Overrides the string representation in order to use only the authority title as keys.
+     * We do that because the string representations of {@code DefaultCitation} objects are
+     * very big.
+     */
+    @Override
+    public String toString() {
+	final StringBuilder buffer = new StringBuilder(100);
+	buffer.append('{');
+	for (final Entry<Citation,String> entry : entrySet()) {
+	    if (buffer.length() != 1) {
+                buffer.append(", ");
+            }
+            buffer.append(Citations.getIdentifier(entry.getKey())).append("=“").append(entry.getValue()).append('”');
+	}
+        return buffer.append('}').toString();
     }
 }

@@ -133,7 +133,8 @@ final class IdentifierAdapter<T> implements Identifier {
     /**
      * Returns a string representation of this identifier.
      */
-    @Override public String toString() {
+    @Override
+    public String toString() {
         final String code = String.valueOf(value);
         final boolean quote = (value != null) && (code instanceof CharSequence || code.indexOf('[') >= 1);
         final StringBuilder buffer = new StringBuilder("Identifier[\"").append(authority).append("\", ");

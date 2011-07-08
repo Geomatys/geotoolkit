@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -70,33 +71,33 @@ public final class IdentifierMapAdapterTest extends TestBase {
         assertTrue  (map.containsValue("myID"));
         assertTrue  (map.containsValue("myUUID"));
         assertFalse (map.containsValue("myHREF"));
-        assertEquals("{gml:id=myID, gco:uuid=myUUID}", map.toString());
+        assertEquals("{gml:id=“myID”, gco:uuid=“myUUID”}", map.toString());
 
         assertEquals("myUUID", map.put(UUID, "myNewUUID"));
         assertFalse (map.containsValue("myUUID"));
         assertTrue  (map.containsValue("myNewUUID"));
-        assertEquals("{gml:id=myID, gco:uuid=myNewUUID}", map.toString());
+        assertEquals("{gml:id=“myID”, gco:uuid=“myNewUUID”}", map.toString());
         assertEquals(2, map.size());
         assertEquals(2, identifiers.size());
 
         assertNull  (map.put(HREF, "myHREF"));
         assertTrue  (map.containsValue("myHREF"));
         assertTrue  (map.containsKey(HREF));
-        assertEquals("{gml:id=myID, gco:uuid=myNewUUID, xlink:href=myHREF}", map.toString());
+        assertEquals("{gml:id=“myID”, gco:uuid=“myNewUUID”, xlink:href=“myHREF”}", map.toString());
         assertEquals(3, map.size());
         assertEquals(3, identifiers.size());
 
         assertEquals("myNewUUID", map.remove(UUID));
         assertFalse (map.containsValue("myNewUUID"));
         assertFalse (map.containsKey(UUID));
-        assertEquals("{gml:id=myID, xlink:href=myHREF}", map.toString());
+        assertEquals("{gml:id=“myID”, xlink:href=“myHREF”}", map.toString());
         assertEquals(2, map.size());
         assertEquals(2, identifiers.size());
 
         assertTrue  (map.values().remove("myHREF"));
         assertFalse (map.containsValue("myHREF"));
         assertFalse (map.containsKey(HREF));
-        assertEquals("{gml:id=myID}", map.toString());
+        assertEquals("{gml:id=“myID”}", map.toString());
         assertEquals(1, map.size());
         assertEquals(1, identifiers.size());
 
@@ -123,7 +124,7 @@ public final class IdentifierMapAdapterTest extends TestBase {
         map.putSpecialized(ID,   myID);
         map.putSpecialized(UUID, myUUID);
         map.putSpecialized(HREF, myURI);
-        assertEquals("{gml:id=myID, gco:uuid=a1eb6e53-93db-4942-84a6-d9e7fb9db2c7, xlink:href=http://mylink}", map.toString());
+        assertEquals("{gml:id=“myID”, gco:uuid=“a1eb6e53-93db-4942-84a6-d9e7fb9db2c7”, xlink:href=“http://mylink”}", map.toString());
         assertSame(myID,   map.getSpecialized(ID));
         assertSame(myUUID, map.getSpecialized(UUID));
         assertSame(myURI,  map.getSpecialized(HREF));
@@ -144,13 +145,43 @@ public final class IdentifierMapAdapterTest extends TestBase {
         map.put(ID,   "myID");
         map.put(UUID, "a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
         map.put(HREF, "http://mylink");
-        assertEquals("{gml:id=myID, gco:uuid=a1eb6e53-93db-4942-84a6-d9e7fb9db2c7, xlink:href=http://mylink}", map.toString());
+        assertEquals("{gml:id=“myID”, gco:uuid=“a1eb6e53-93db-4942-84a6-d9e7fb9db2c7”, xlink:href=“http://mylink”}", map.toString());
         assertEquals("myID",                                 map.get(ID));
         assertEquals("a1eb6e53-93db-4942-84a6-d9e7fb9db2c7", map.get(UUID));
         assertEquals("http://mylink",                        map.get(HREF));
         assertEquals("myID",                                                            map.getSpecialized(ID));
         assertEquals(URI.create("http://mylink"),                                       map.getSpecialized(HREF));
         assertEquals(java.util.UUID.fromString("a1eb6e53-93db-4942-84a6-d9e7fb9db2c7"), map.getSpecialized(UUID));
+    }
+
+    /**
+     * Tests the handling of duplicated authorities.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testDuplicatedAuthorities() {
+        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        identifiers.add(new IdentifierEntry(ID,   "myID1"));
+        identifiers.add(new IdentifierEntry(UUID, "myUUID"));
+        identifiers.add(new IdentifierEntry(ID,   "myID2"));
+
+        final IdentifierMap map = IdentifierMapAdapter.create(Identifier.class, identifiers);
+        assertEquals("Duplicated authorities shall be filtered.", 2, map.size());
+        assertEquals("Duplicated authorities shall still exist.", 3, identifiers.size());
+        assertEquals("myID1",  map.get(ID));
+        assertEquals("myUUID", map.get(UUID));
+
+        final Iterator<Citation> it = map.keySet().iterator();
+        assertTrue(it.hasNext());
+        assertSame(ID, it.next());
+        it.remove();
+        assertTrue(it.hasNext());
+        assertSame(UUID, it.next());
+        assertFalse("Duplicated authority shall have been removed.", it.hasNext());
+
+        assertEquals(1, identifiers.size());
+        assertEquals(1, map.size());
     }
 
     /**
