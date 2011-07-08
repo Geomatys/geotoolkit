@@ -38,7 +38,7 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.coverage.CoverageProcessFactory;
-import org.geotoolkit.process.coverage.CoverageToVectorDescriptor;
+import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.feature.simple.SimpleFeature;

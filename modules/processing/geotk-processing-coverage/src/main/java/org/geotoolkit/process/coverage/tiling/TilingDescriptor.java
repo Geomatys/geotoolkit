@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.coverage;
+package org.geotoolkit.process.coverage.tiling;
 
 import java.awt.geom.AffineTransform;
 import java.io.File;
@@ -25,6 +25,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.coverage.CoverageProcessFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 

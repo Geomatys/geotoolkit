@@ -17,6 +17,8 @@
 
 package org.geotoolkit.process.coverage;
 
+import org.geotoolkit.process.coverage.tiling.TilingDescriptor;
+import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import java.util.Collections;
 
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -24,6 +26,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
+import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -36,7 +39,7 @@ import org.opengis.metadata.identification.Identification;
 public class CoverageProcessFactory extends AbstractProcessFactory{
 
     public static final String NAME = "coverage";
-    static final DefaultServiceIdentification IDENTIFICATION;
+    public static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -48,8 +51,9 @@ public class CoverageProcessFactory extends AbstractProcessFactory{
 
     public CoverageProcessFactory(){
         super(CoverageToVectorDescriptor.INSTANCE,
+              CoverageToFeaturesDescriptor.INSTANCE,
               TilingDescriptor.INSTANCE,
-              CoverageToFeaturesDescriptor.INSTANCE);
+              KrigingDescriptor.INSTANCE);
     }
 
     @Override

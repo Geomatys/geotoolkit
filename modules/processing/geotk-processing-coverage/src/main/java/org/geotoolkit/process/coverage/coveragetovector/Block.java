@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.process.coverage;
+package org.geotoolkit.process.coverage.coveragetovector;
 
 import org.geotoolkit.util.NumberRange;
 

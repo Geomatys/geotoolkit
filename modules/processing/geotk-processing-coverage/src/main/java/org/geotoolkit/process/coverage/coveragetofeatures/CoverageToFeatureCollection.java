@@ -22,7 +22,6 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.process.coverage.RasterFeatureCollection;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.feature.Feature;

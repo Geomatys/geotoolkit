@@ -23,7 +23,7 @@
  *
  *          mailto:osl@osl.gc.ca
  */
-package org.geotoolkit.display2d.ext.isoline;
+package org.geotoolkit.process.coverage.kriging;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.Color;

@@ -16,12 +16,19 @@
  */
 package org.geotoolkit.process.coverage.coveragetofeatures;
 
+import java.util.Collection;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.coverage.RasterDescriptor;
+import org.geotoolkit.process.coverage.CoverageProcessFactory;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.feature.Feature;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -38,8 +45,19 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-public final class CoverageToFeaturesDescriptor extends RasterDescriptor {
+public final class CoverageToFeaturesDescriptor extends AbstractProcessDescriptor{
 
+    /**
+     * Mandatory - CoverageReader
+     */
+    public static final ParameterDescriptor<GridCoverageReader> READER_IN =
+            new DefaultParameterDescriptor("reader_in", "Inpute GridCoverageReader", GridCoverageReader.class, null, true);
+    /**
+     * Mandatory - Resulting Feature Collection
+     */
+    public static final ParameterDescriptor<Collection<Feature>> FEATURE_OUT =
+            new DefaultParameterDescriptor("feature_out", "Outpute Feature", Collection.class, null, true);
+    
     /**Process name : coveragetofeatures */
     public static final String NAME = "coveragetofeatures";
 
@@ -60,7 +78,9 @@ public final class CoverageToFeaturesDescriptor extends RasterDescriptor {
      * Default constructor
      */
     private CoverageToFeaturesDescriptor() {
-        super(NAME, "Parameter description of Coverage to Feature process.", INPUT_DESC, OUTPUT_DESC);
+        super(NAME, CoverageProcessFactory.IDENTIFICATION,
+                new SimpleInternationalString("Parameter description of Coverage to Feature process."),
+                INPUT_DESC, OUTPUT_DESC);
     }
 
     /**

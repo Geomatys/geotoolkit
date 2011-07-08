@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.process.coverage;
+package org.geotoolkit.process.coverage.tiling;
 
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
