@@ -95,18 +95,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * EPSG:4326 object.
      */
-    private static final CoordinateReferenceSystem EPSG_4326;
-    static {
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        EPSG_4326 = crs;
-    }
+    private final CoordinateReferenceSystem EPSG_4326;
 
     //TODO : we should use the envelope provided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(WGS84, -180,
@@ -185,6 +174,17 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         //register the default graphic builder for geotk 2D engine.
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
+
+        CoordinateReferenceSystem crs = null;
+        try {
+            crs = CRS.decode("EPSG:4326");
+        } catch (NoSuchAuthorityCodeException ex) {
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+        } catch (FactoryException ex) {
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+        }
+        EPSG_4326 = crs;
+
     }
 
     /**
