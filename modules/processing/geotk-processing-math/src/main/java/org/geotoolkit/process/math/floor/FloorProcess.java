@@ -14,28 +14,34 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.math;
+package org.geotoolkit.process.math.floor;
 
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.util.DefaultInternationalString;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class AddProcess extends AbstractProcess{
+public class FloorProcess extends AbstractProcess{
     
-    public AddProcess(){
-        super(AddDescriptor.INSTANCE);
+    public FloorProcess(){
+        super(FloorDescriptor.INSTANCE);
     }
     
     @Override
     public void run() {
         
         final double first = (Double)inputParameters.parameter("first").getValue();   
-        final double second = (Double)inputParameters.parameter("second").getValue();       
         
-        Double result = first + second;
+        Double result = 0.0;
+        try{
+            result = Math.floor(first);
+        }catch(Exception e){
+            getMonitor().failed(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
+        }
         final ParameterValueGroup res =  super.getOutput();
         res.parameter("result").setValue(result);
         
