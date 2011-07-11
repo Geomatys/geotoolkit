@@ -38,6 +38,9 @@ The Geotoolkit.org library
   The Geotoolkit.org project maintains a branch of the {{{./modules/metadata/index.html}metadata}} and
   {{{./modules/referencing/index.html}referencing}} modules implementing the GeoAPI 3.0 interfaces as
   published by OGC in their {{{http://www.opengeospatial.org/standards/geoapi}GeoAPI specification}}.
+  This branch is deployed on the {{{http://search.maven.org/#search|ga|1|Geotoolkit}Maven Central
+  repository}}, so Maven projects don't need to declare any <<<<repository>>>> section in their
+  <<<pom.xml>>> file for using it.
   Maven projects can use this branch by appending <<<-geoapi-3.0>>> to the Geotk version number in
   their dependencies.
 
