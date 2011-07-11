@@ -339,7 +339,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * method body.
      */
     @Override
-    void invalidate() {
+    final void invalidate() {
         super.invalidate();
         unmodifiable = null;
     }

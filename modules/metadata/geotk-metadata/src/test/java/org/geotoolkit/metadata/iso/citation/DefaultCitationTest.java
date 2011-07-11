@@ -23,7 +23,9 @@ import java.util.Collection;
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -45,14 +47,15 @@ public final class DefaultCitationTest {
     @Test
     public void testISBN() {
         final DefaultCitation citation = new DefaultCitation();
-        final Collection<Identifier> identifiers = citation.getIdentifiers(true);
+        final IdentifierMap identifierMap = citation.getIdentifierMap();
+        final Collection<Identifier> identifiers = ((IdentifierMapAdapter) identifierMap).identifiers;
         assertTrue("Expected an initially empty set of identifiers.", identifiers.isEmpty());
 
         citation.setISBN("MyISBN");
         assertEquals("ISBN code shall be included in the set of identifiers.", 1, identifiers.size());
         assertEquals("MyISBN", citation.getISBN());
         assertNull(citation.getISSN());
-        assertEquals("{ISBN=“MyISBN”}", citation.getIdentifierMap().toString());
+        assertEquals("{ISBN=“MyISBN”}", identifierMap.toString());
 
         citation.setIdentifiers(Arrays.asList(
                 new DefaultIdentifier(Citations.OGC,  "MyOGC"),
@@ -66,7 +69,6 @@ public final class DefaultCitationTest {
             // does not yet have the capability to convert Strings to arbitrary types.
             assertEquals("MyISSN", citation.getISSN());
         }
-        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISSN=“MyISSN”, ISBN=“MyISBN”}",
-                citation.getIdentifierMap().toString());
+        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISSN=“MyISSN”, ISBN=“MyISBN”}", identifierMap.toString());
     }
 }

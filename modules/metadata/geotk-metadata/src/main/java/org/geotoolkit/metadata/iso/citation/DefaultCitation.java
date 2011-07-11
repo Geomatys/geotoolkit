@@ -54,8 +54,8 @@ import org.geotoolkit.xml.IdentifierMap;
  * {@section Unified identifiers view}
  * The ISO 19115 model provides specific attributes for the {@linkplain #getISBN() ISBN} and
  * {@linkplain #getISSN() ISSN} codes. However from an application point of view, it is sometime
- * convenient to handle those codes like any other identifiers. The {@link #getIdentifiers(boolean)}
- * method allows to return a collection that include those identifiers.
+ * convenient to handle those codes like any other identifiers. The {@linkplain #getIdentifierMap()
+ * identifier map} view includes those ISBN and ISSN codes.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
@@ -358,44 +358,23 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     }
 
     /**
-     * Returns the unique identifier for the resource, optionally merged with the
-     * {@linkplain #getISBN() ISBN} or {@linkplain #getISSN() ISSN} attributes.
-     * <p>
-     * The collection returns by this method is <cite>live</cite>: changes in this
-     * {@code Citation} object will be reflected in the collection, and conversely.
-     *
-     * @param  unified {@code true} for including the ISBN and ISSN attributes in the
-     *         returned collection, if they exists.
-     * @return The identifiers, or an empty collection if none.
-     *
-     * @since 3.19
-     */
-    public synchronized Collection<Identifier> getIdentifiers(final boolean unified) {
-        if (unified && identifierMap instanceof IdentifierMapAdapter) {
-            // Reuse the existing collection if it already exists.
-            return ((IdentifierMapAdapter) identifierMap).identifiers;
-        }
-        Collection<Identifier> ids = super.getIdentifiers();
-        if (unified && ids instanceof List<?>) {
-            ids = new IdentifierList((List<Identifier>) ids);
-        }
-        return ids;
-    }
-
-    /**
      * Returns a map view of the {@linkplain #getIdentifiers(boolean) identifiers}. The view
      * includes the {@linkplain #getISBN() ISBN} or {@linkplain #getISSN() ISSN} attributes.
+     * <p>
+     * The map returns by this method is <cite>live</cite>: changes in this
+     * {@code Citation} object will be reflected in the map, and conversely.
      *
      * @since 3.19
      */
     @Override
     public synchronized IdentifierMap getIdentifierMap() {
         if (identifierMap == null) {
-            final Collection<Identifier> identifiers = getIdentifiers(true);
+            final Collection<Identifier> identifiers = getIdentifiers();
             if (identifiers == null) {
                 return IdentifierMapAdapter.EMPTY;
             }
-            identifierMap = IdentifierMapAdapter.create(Identifier.class, identifiers);
+            identifierMap = IdentifierMapAdapter.create(Identifier.class,
+                    new IdentifierList((List<Identifier>) identifiers));
         }
         return identifierMap;
     }

@@ -17,13 +17,20 @@
  */
 package org.geotoolkit.metadata.iso;
 
+import java.io.Serializable;
+import java.util.Collection;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.XLink;
+import org.geotoolkit.xml.IdentifierMap;
+import org.geotoolkit.xml.IdentifierSpace;
+import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.metadata.IdentifiedMetadata;
+import org.geotoolkit.metadata.ModifiableMetadata;
+import org.geotoolkit.metadata.UnmodifiableMetadataException;
+import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 
 
 /**
@@ -42,11 +49,31 @@ import org.geotoolkit.metadata.IdentifiedMetadata;
  * @module
  */
 @ThreadSafe
-public class MetadataEntity extends IdentifiedMetadata<Identifier> {
+public class MetadataEntity extends ModifiableMetadata implements IdentifiedObject, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5730550742604669102L;
+
+    /**
+     * All identifiers associated with this metadata, or {@code null} if none.
+     * This field is initialized to a non-null value when first needed.
+     *
+     * @see #getIdentifiers()
+     *
+     * @since 3.19
+     */
+    protected Collection<Identifier> identifiers;
+
+    /**
+     * The {@linkplain #getIdentifierMap() identifier map} as a wrapper around the
+     * {@linkplain #identifiers} collection. This map is created only when first needed.
+     *
+     * @see #getIdentifierMap()
+     *
+     * @since 3.19
+     */
+    protected transient IdentifierMap identifierMap;
 
     /**
      * Constructs an initially empty metadata entity.
@@ -81,13 +108,85 @@ public class MetadataEntity extends IdentifiedMetadata<Identifier> {
     }
 
     /**
-     * Returns the kind of identifiers associated with the metadata objects,
-     * which is {@code Identifier.class}.
+     * {@inheritDoc}
      *
      * @since 3.19
      */
     @Override
-    public final Class<Identifier> getIdentifierType() {
-        return Identifier.class;
+    public synchronized Collection<Identifier> getIdentifiers() {
+        return identifiers = nonNullCollection(identifiers, Identifier.class);
+    }
+
+    /**
+     * Sets all identifiers associated to this object.
+     *
+     * @param newValues The new identifiers.
+     *
+     * @since 3.19
+     */
+    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The default implementation returns a wrapper around the {@linkplain #getIdentifiers()
+     * identifier collection}. That map is <cite>live</cite>: changes in this metadata object
+     * will be reflected in the map, and conversely.
+     *
+     * @since 3.19
+     */
+    @Override
+    public synchronized IdentifierMap getIdentifierMap() {
+        if (identifierMap == null) {
+            final Collection<Identifier> identifiers = getIdentifiers();
+            if (identifiers == null) {
+                return IdentifierMapAdapter.EMPTY;
+            }
+            identifierMap = IdentifierMapAdapter.create(Identifier.class, identifiers);
+        }
+        return identifierMap;
+    }
+
+    /**
+     * Returns the XML {@code xlink} attributes associated to this identified object,
+     * or {@code null} if none. If non-null, the {@code xlink} attributes are marshalled
+     * in the outer property element, as in the example below:
+     *
+     * {@preformat xml
+     *   <gmd:CI_Citation>
+     *     <gmd:series xlink:href="http://myReference">
+     *       <gmd:CI_Series>
+     *         <gmd:name>...</gmd:name>
+     *       </gmd:CI_Series>
+     *     </gmd:series>
+     *   </gmd:CI_Citation>
+     * }
+     *
+     * @return XML {@code xlink} attributes, or {@code null} if none.
+     *
+     * @deprecated Replaced by <code>getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})</code>.
+     */
+    @Override
+    @Deprecated
+    public XLink getXLink() {
+        return getIdentifierMap().getSpecialized(IdentifierSpace.XLINK);
+    }
+
+    /**
+     * Sets the XML {@code xlink} attributes for this metadata object. Callers should define
+     * one or many {@link XLink} attributes ({@code href}, {@code role}, {@code arcrole},
+     * {@code title}, {@code show} and {@code actuate}) before to invoke this method.
+     *
+     * @param link XML {@code xlink} attributes, or {@code null} if none.
+     * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
+     *
+     * @deprecated Replaced by <code>getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)</code>.
+     */
+    @Override
+    @Deprecated
+    public void setXLink(final XLink link) throws UnmodifiableMetadataException {
+        getIdentifierMap().putSpecialized(IdentifierSpace.XLINK, link);
     }
 }
