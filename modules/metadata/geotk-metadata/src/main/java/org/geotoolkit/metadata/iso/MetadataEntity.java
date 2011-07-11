@@ -107,6 +107,11 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
         return MetadataStandard.ISO_19115;
     }
 
+    // IMPLEMENTATION NOTE: Subclasses typically define a private getIdentifiersGCO()
+    // method to be invoked by JAXB at marshaling time instead than this public method.
+    // The private method excludes "gml:id", "gco:uuid" and their friends from the list
+    // of MD_Identifier elements to marshal.
+
     /**
      * {@inheritDoc}
      *
@@ -115,17 +120,6 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     @Override
     public synchronized Collection<Identifier> getIdentifiers() {
         return identifiers = nonNullCollection(identifiers, Identifier.class);
-    }
-
-    /**
-     * Sets all identifiers associated to this object.
-     *
-     * @param newValues The new identifiers.
-     *
-     * @since 3.19
-     */
-    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        identifiers = copyCollection(newValues, identifiers, Identifier.class);
     }
 
     /**

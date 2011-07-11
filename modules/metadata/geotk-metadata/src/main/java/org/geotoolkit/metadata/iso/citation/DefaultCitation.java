@@ -44,8 +44,11 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.xml.IdentifierMap;
+
+import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
 
 
 /**
@@ -354,12 +357,13 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "identifier")
     public Collection<Identifier> getIdentifiers() {
-        return xmlOptional(super.getIdentifiers());
+        return filterIdentifiers(super.getIdentifiers(), false);
     }
 
     /**
-     * Returns a map view of the {@linkplain #getIdentifiers(boolean) identifiers}. The view
-     * includes the {@linkplain #getISBN() ISBN} or {@linkplain #getISSN() ISSN} attributes.
+     * Returns a map view of the {@linkplain #getIdentifiers() identifiers}. If the
+     * {@linkplain #getISBN() ISBN} or {@linkplain #getISSN() ISSN} properties are
+     * defined, then they will be included in the map view.
      * <p>
      * The map returns by this method is <cite>live</cite>: changes in this
      * {@code Citation} object will be reflected in the map, and conversely.
@@ -385,9 +389,8 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      *
      * @param newValues The new identifiers.
      */
-    @Override
-    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        super.setIdentifiers(newValues);
+    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        identifiers = copyCollection(newValues, identifiers, Identifier.class);
     }
 
     /**
@@ -639,6 +642,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
         @Override
         @SuppressWarnings("fallthrough")
         public Identifier set(final int index, final Identifier identifier) {
+            ArgumentChecks.ensureNonNull("identifier", identifier);
             synchronized (DefaultCitation.this) {
                 Identifier old;
                 switch (index - raw.size()) {
@@ -648,6 +652,35 @@ public class DefaultCitation extends MetadataEntity implements Citation {
                 }
                 return raw.set(index, identifier);
             }
+        }
+
+        /**
+         * Removes the identifier at the given index.
+         */
+        @Override
+        @SuppressWarnings("fallthrough")
+        public Identifier remove(final int index) {
+            synchronized (DefaultCitation.this) {
+                Identifier old;
+                switch (index - raw.size()) {
+                    // The same comment than in the getter method apply also here.
+                    case 0: if ((old=setCode(0, getISBN())) != null) {ISBN=null; return old;} // Fallthrough
+                    case 1: if ((old=setCode(1, getISSN())) != null) {ISSN=null; return old;} // Fallthrough
+                }
+                return raw.remove(index);
+            }
+        }
+
+        /**
+         * Adds the given identifier. This method is slightly inconsistent with the standard
+         * {@link List} contract in that the element may not be added at the end of the list.
+         * However since the public API declares a {@link Collection} rather than a list, we
+         * did not promised to add the element at the end of the list.
+         */
+        @Override
+        public boolean add(final Identifier identifier) {
+            ArgumentChecks.ensureNonNull("identifier", identifier);
+            return raw.add(identifier); // Already synchronized.
         }
     }
 

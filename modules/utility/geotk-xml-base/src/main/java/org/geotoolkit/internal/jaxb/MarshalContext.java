@@ -17,19 +17,26 @@
  */
 package org.geotoolkit.internal.jaxb;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.GregorianCalendar;
+
+import org.opengis.metadata.Identifier;
+
 import org.geotoolkit.xml.ObjectLinker;
 import org.geotoolkit.xml.ObjectConverters;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**
  * Thread-local status of a marshalling or unmarshalling process.
+ * Contains also static methods for managing the collections to be marshalled.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.07
  * @module
@@ -131,6 +138,36 @@ public final class MarshalContext {
             bitMasks      = previous.bitMasks;
             isMarshalling = previous.isMarshalling;
         }
+    }
+
+    /**
+     * If marshalling, filters the given collection of identifiers in order to omit any identifiers
+     * for which the authority is one of the {@link org.geotoolkit.xml.IdentifierSpace} constants.
+     *
+     * @param  identifiers The identifiers to filter, or {@code null}.
+     * @param  required {@code true} if the identifiers are mandatory.
+     * @return The identifiers to marshal, or {@code null} if none.
+     */
+    public static Collection<Identifier> filterIdentifiers(Collection<Identifier> identifiers, final boolean required) {
+        if (!isMarshalling()) {
+            return identifiers;
+        }
+        if (identifiers != null) {
+            int count = identifiers.size();
+            if (count != 0) {
+                final Identifier[] copy = identifiers.toArray(new Identifier[count]);
+                for (int i=count; --i>=0;) {
+                    final Identifier id = copy[i];
+                    if (id == null || (id.getAuthority() instanceof IdentifierAuthority)) {
+                        System.arraycopy(copy, i+1, copy, i, --count - i);
+                    }
+                }
+                if (count != 0) {
+                    return UnmodifiableArrayList.wrap(copy, 0, count);
+                }
+            }
+        }
+        return required ? Collections.<Identifier>emptyList() : null;
     }
 
     /**

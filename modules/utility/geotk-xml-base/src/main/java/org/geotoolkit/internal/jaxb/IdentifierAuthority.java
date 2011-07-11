@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.xml;
+package org.geotoolkit.internal.jaxb;
 
 import java.util.Date;
 import java.util.Collection;
@@ -33,33 +33,57 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.xml.IdentifierSpace;
 
 
 /**
- * Implementation of citations defined in the {@link IdentifierSpace} interfaces.
+ * Implementation of authorities defined in the {@link IdentifierSpace} interfaces. This class
+ * is actually a {@link org.opengis.metadata.citation.Citation} implementation. However it is
+ * not designed for XML marshalling at this time.
+ *
+ * @param <T> The type of object used as identifier values.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
+ * @see IdentifierSpace
+ *
  * @since 3.19
  * @module
  */
-final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
+public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Serializable {
     /**
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -550506361603915113L;
 
     /**
-     * The attribute name.
+     * Ordinal values for switch statements. The constant defined here shall
+     * mirror the constants defined in the {@link IdentifierSpace} interface.
+     */
+    public static final int ID=0, UUID=1, HREF=2, XLINK=3;
+
+    /**
+     * The attribute name, to be returned by {@link #getName()}.
      */
     private final String attribute;
 
     /**
-     * Creates a new enum for the given attribute.
+     * Ordinal values for switch statements, as one of the {@link #ID}, {@link #UUID},
+     * <i>etc.</i> constants.
      */
-    IdentifierCitation(final String attribute) {
+    final int ordinal;
+
+    /**
+     * Creates a new enum for the given attribute.
+     *
+     * @param attribute The XML attribute name, to be returned by {@link #getName()}.
+     * @param ordinal   Ordinal value for switch statement, as one of the {@link #ID},
+     *                  {@link #UUID}, <i>etc.</i> constants.
+     */
+    public IdentifierAuthority(final String attribute, final int ordinal) {
         this.attribute = attribute;
+        this.ordinal   = ordinal;
     }
 
     /**
@@ -191,12 +215,12 @@ final class IdentifierCitation<T> implements IdentifierSpace<T>, Serializable {
      */
     private Object readResolve() throws ObjectStreamException {
         for (final Field field : IdentifierSpace.class.getDeclaredFields()) {
-            final IdentifierCitation<?> id;
+            final IdentifierAuthority<?> id;
             try {
-                id = (IdentifierCitation<?>) field.get(null);
+                id = (IdentifierAuthority<?>) field.get(null);
             } catch (IllegalAccessException e) {
                 // We can still return 'this' as a fallback, so let continue.
-                Logging.unexpectedException(IdentifierCitation.class, "readResolve", e);
+                Logging.unexpectedException(IdentifierAuthority.class, "readResolve", e);
                 continue;
             }
             if (attribute.equals(id.attribute)) {

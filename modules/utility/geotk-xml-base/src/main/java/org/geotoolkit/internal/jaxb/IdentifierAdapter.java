@@ -64,24 +64,38 @@ final class IdentifierAdapter<T> implements Identifier {
      * Creates an identifier from a text value.
      */
     static Identifier create(final Citation authority, final String code) {
-        if (authority == IdentifierSpace.ID) {
-            return new IdentifierAdapter<String>(IdentifierSpace.ID, code);
-        } else if (authority == IdentifierSpace.UUID) try {
-            return new IdentifierAdapter<UUID>(IdentifierSpace.UUID, UUID.fromString(code));
-        } catch (IllegalArgumentException e) {
-            parseFailure(e);
-        } else if (authority == IdentifierSpace.HREF || authority == IdentifierSpace.XLINK) try {
-            final URI uri = new URI(code);
-            if (authority == IdentifierSpace.HREF) {
-                // TODO: Actually, should be stored as XLink using code below.
-                return new IdentifierAdapter<URI>(IdentifierSpace.HREF, uri);
+        if (authority instanceof IdentifierAuthority) {
+            switch (((IdentifierAuthority) authority).ordinal) {
+                case IdentifierAuthority.ID: {
+                    return new IdentifierAdapter<String>(IdentifierSpace.ID, code);
+                }
+                case IdentifierAuthority.UUID: {
+                    try {
+                        return new IdentifierAdapter<UUID>(IdentifierSpace.UUID, UUID.fromString(code));
+                    } catch (IllegalArgumentException e) {
+                        parseFailure(e);
+                        break;
+                    }
+                }
+                case IdentifierAuthority.HREF:
+                case IdentifierAuthority.XLINK: {
+                    final URI uri;
+                    try {
+                        uri = new URI(code);
+                    } catch (URISyntaxException e) {
+                        parseFailure(e);
+                        break;
+                    }
+                    if (authority == IdentifierSpace.HREF) {
+                        // TODO: Actually, should be stored as XLink using code below.
+                        return new IdentifierAdapter<URI>(IdentifierSpace.HREF, uri);
+                    }
+                    final XLink xlink = new XLink();
+                    xlink.setType(XLink.Type.SIMPLE);
+                    xlink.setHRef(uri);
+                    return new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
+                }
             }
-            final XLink xlink = new XLink();
-            xlink.setType(XLink.Type.SIMPLE);
-            xlink.setHRef(uri);
-            return new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
-        } catch (URISyntaxException e) {
-            parseFailure(e);
         }
         return new IdentifierEntry(authority, code);
     }

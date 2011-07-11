@@ -116,11 +116,15 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
         if (lower < 0 || upper > array.length || lower > upper) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
         }
+        if (lower == 0 && upper == array.length) {
+            return new UnmodifiableArrayList<E>(array);
+        }
         return new UnmodifiableArrayList.SubList<E>(array, lower, upper - lower);
     }
 
     /**
      * Returns the element type of the wrapped array.
+     * The default implementation returns the value of {@link Class#getComponentType()}.
      *
      * @return The type of elements in the list.
      */

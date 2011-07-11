@@ -37,6 +37,8 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
+import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
+
 
 /**
  * Describes the characteristics, spatial and temporal extent of the intended object to be
@@ -153,7 +155,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "identifier", required = true)
     public Collection<Identifier> getIdentifiers() {
-        return super.getIdentifiers();
+        return filterIdentifiers(super.getIdentifiers(), true);
     }
 
     /**
@@ -161,9 +163,8 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      *
      * @param newValues The new identifiers values.
      */
-    @Override
-    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        super.setIdentifiers(newValues);
+    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        identifiers = copyCollection(newValues, identifiers, Identifier.class);
     }
 
     /**

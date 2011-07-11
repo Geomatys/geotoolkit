@@ -34,6 +34,7 @@ import javax.measure.unit.SI;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.spatial.GeometricObjectType;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
@@ -66,6 +67,7 @@ import org.geotoolkit.test.TestData;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.test.Commons.getSingleton;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
 
@@ -82,7 +84,7 @@ import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
  *
- * @version 3.06
+ * @version 3.19
  *
  * @since 3.04
  */
@@ -190,7 +192,23 @@ public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
         pool.release(unmarshaller);
         assertTrue(obj instanceof DefaultMetadata);
         final DefaultMetadata result = (DefaultMetadata) obj;
-        assertEquals(expected, result);
+        final ReferenceIdentifier expectedID = getSingleton(expected.getReferenceSystemInfo()).getName();
+        final ReferenceIdentifier   resultID = getSingleton(  result.getReferenceSystemInfo()).getName();
+        /*
+         * Tests some property explcitely before to test the Metadata object as a whole, in
+         * order to make diagnostic and debugging easier. In particular, the identifiers are
+         * sensible to word in the org.geotoolkit.xml package.
+         */
+        assertEquals("gmd:fileIdentifier",            expected  .getFileIdentifier(),            result  .getFileIdentifier());
+        assertEquals("gmd:language",                  expected  .getLanguage(),                  result  .getLanguage());
+        assertEquals("gmd:characterSet",              expected  .getCharacterSet(),              result  .getCharacterSet());
+        assertEquals("gmd:spatialRepresentationInfo", expected  .getSpatialRepresentationInfo(), result  .getSpatialRepresentationInfo());
+        assertEquals("gmd:code",                      expectedID.getCode(),                      resultID.getCode());
+        assertEquals("gmd:codeSpace",                 expectedID.getCodeSpace(),                 resultID.getCodeSpace());
+        assertEquals("gmd:authority",                 expectedID.getAuthority(),                 resultID.getAuthority());
+        assertEquals("gmd:referenceSystemInfo",       expected  .getReferenceSystemInfo(),       result  .getReferenceSystemInfo());
+        assertEquals("gmd:identificationInfo",        expected  .getIdentificationInfo(),        result  .getIdentificationInfo());
+        assertEquals("gmd:MD_Metadata",               expected,                                  result);
     }
 
     /**

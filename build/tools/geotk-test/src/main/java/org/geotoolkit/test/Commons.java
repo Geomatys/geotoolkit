@@ -20,6 +20,7 @@ package org.geotoolkit.test;
 import java.io.*;
 import java.text.Format;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.zip.CRC32;
 import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
@@ -39,7 +40,7 @@ import static org.junit.Assert.*;
  * Provides shared methods and constants for Geotk tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -61,6 +62,25 @@ public class Commons {
      * For subclass constructor only.
      */
     protected Commons() {
+    }
+
+    /**
+     * Returns the single element from the given collection. If the given collection is null
+     * or does not contains exactly one element, then an {@link AssertionError} is thrown.
+     *
+     * @param  <E> The type of collection elements.
+     * @param  collection The collection from which to get the singleton.
+     * @return The singleton element from the collection.
+     *
+     * @since 3.19
+     */
+    public static <E> E getSingleton(final Iterable<? extends E> collection) {
+        assertNotNull("Null collection.", collection);
+        final Iterator<? extends E> it = collection.iterator();
+        assertTrue("The collection is empty.", it.hasNext());
+        final E element = it.next();
+        assertFalse("The collection has more than one element.", it.hasNext());
+        return element;
     }
 
     /**
