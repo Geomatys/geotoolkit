@@ -100,8 +100,8 @@ public class LuceneTest {
                 f.delete();
             }
         }
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_32);
-        final IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_32, analyzer);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_33);
+        final IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_33, analyzer);
         final Directory FSDirectory = new SimpleFSDirectory(directory);
         final IndexWriter writer = new IndexWriter(FSDirectory, config);
         fillTestData(writer);
@@ -2785,7 +2785,7 @@ public class LuceneTest {
         
         //we perform a lucene query
         Analyzer analyzer    = new KeywordAnalyzer();
-        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_32, "metafile", analyzer);
+        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
         Query query         = parser.parse("name:point*");
         
         docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
@@ -2814,7 +2814,7 @@ public class LuceneTest {
         
         //we perform two lucene query
         analyzer      = new KeywordAnalyzer();
-        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_32, "metafile", analyzer);
+        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
         query         = parser.parse("name:point*");
         
         TopDocs hits1 = searcher.search(query, 15);
@@ -2862,7 +2862,7 @@ public class LuceneTest {
         
         //we perform two lucene query
         analyzer                = new KeywordAnalyzer();
-        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_32, "metafile", analyzer);
+        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
         Query query1            = parser.parse("name:point*");
         Query query2            = parser.parse("name:box*");
 

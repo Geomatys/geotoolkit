@@ -272,7 +272,7 @@ public class AbstractIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
-            final QueryParser parser = new QueryParser(Version.LUCENE_32, field, analyzer);
+            final QueryParser parser = new QueryParser(Version.LUCENE_33, field, analyzer);
             parser.setDefaultOperator(Operator.AND);
 
             // we enable the leading wildcard mode if the first character of the query is a '*'
