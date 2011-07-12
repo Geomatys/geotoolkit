@@ -489,15 +489,7 @@ public final class Citations extends Static {
      * @category Code space
      * @since 3.19
      */
-    public static final IdentifierSpace<String> ISBN;
-    static {
-        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
-                "International Standard Book Number", "ISBN", "ISBN");
-        c.setAlternateTitle("ISBN");
-        c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.ISO));
-        c.freeze();
-        ISBN = c;
-    }
+    public static final IdentifierSpace<String> ISBN = DefaultCitation.ISBN;
 
     /**
      * <cite>International Standard Serial Number</cite> (ISSN) defined by
@@ -510,15 +502,7 @@ public final class Citations extends Static {
      * @category Code space
      * @since 3.19
      */
-    public static final IdentifierSpace<String> ISSN;
-    static {
-        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
-                "International Standard Serial Number", "ISSN", "ISSN");
-        c.setAlternateTitle("ISSN");
-        c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.ISO));
-        c.freeze();
-        ISSN = c;
-    }
+    public static final IdentifierSpace<String> ISSN = DefaultCitation.ISSN;
 
     /**
      * Unknown authority, vendor or specification.

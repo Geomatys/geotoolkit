@@ -95,7 +95,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
     /**
      * The identifiers to wrap in a map view.
      */
-    public final Collection<Identifier> identifiers;
+    private final Collection<Identifier> identifiers;
 
     /**
      * A view over the entries, created only when first needed.

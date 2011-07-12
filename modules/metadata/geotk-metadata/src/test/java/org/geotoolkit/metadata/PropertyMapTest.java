@@ -29,6 +29,7 @@ import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.extent.GeographicDescription;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.Commons;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -43,7 +44,7 @@ import static org.junit.Assert.*;
  * Tests {@link TypeMap} and {@link PropertyMap}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -110,12 +111,14 @@ public final class PropertyMapTest {
         assertNull(expected.put("title", title));
         assertNull(expected.put("ISBN", "9782505004509"));
         assertNull(expected.put("citedResponsibleParties", Collections.singletonList(author)));
+        assertNull(expected.put("identifiers", Collections.singletonList(Commons.getSingleton(citation.getIdentifiers()))));
         assertEquals(expected, map);
         /*
          * Removes a value.
          */
         assertEquals("9782505004509", expected.remove("ISBN"));
         assertEquals("9782505004509", map.remove("ISBN"));
+        assertNotNull(expected.remove("identifiers"));
         assertNull(citation.getISBN());
         assertEquals(expected, map);
         /*
@@ -131,6 +134,7 @@ public final class PropertyMapTest {
         assertNull(citation.getISBN());
         assertNull(expected.put("ISBN", "9782505004509"));
         assertNull(map.put("ISBN", "9782505004509"));
+        assertNull(expected.put("identifiers", Collections.singletonList(Commons.getSingleton(citation.getIdentifiers()))));
         assertEquals(expected, map);
         assertEquals("9782505004509", citation.getISBN());
         /*

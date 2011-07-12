@@ -33,11 +33,13 @@ import javax.swing.tree.TreeNode;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -382,7 +384,7 @@ final class PropertyTree {
             final Collection<?> values = (Collection<?>) value;
             int n = (values.size() > 1) ? 1 : 0;
             for (final Object element : values) {
-                if (!PropertyAccessor.isEmpty(element)) {
+                if (!ignore(element)) {
                     append(branch, element, n);
                     if (n != 0) n++;
                 }
@@ -442,7 +444,7 @@ final class PropertyTree {
         }
         for (final Map.Entry<?,?> entry : asMap.entrySet()) {
             final Object element = entry.getValue();
-            if (!PropertyAccessor.isEmpty(element)) {
+            if (!ignore(element)) {
                 final String name = localize((String) entry.getKey());
                 assert !isCollectionElement(name) : name;
                 final DefaultMutableTreeNode child = new NamedTreeNode(name, element, true);
@@ -584,6 +586,38 @@ final class PropertyTree {
             dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         }
         return dateFormat.format(value);
+    }
+
+    /**
+     * Implementation of {@link #ignore(Object)} without the recursive checks in collections.
+     * We usually don't need this recursivity, and omitting it allows us to omit the checks
+     * against infinite recursivity.
+     */
+    private static boolean ignoreElement(final Object value) {
+        return PropertyAccessor.isEmpty(value) || (value instanceof Identifier &&
+                ((Identifier) value).getAuthority() instanceof IdentifierAuthority<?>);
+    }
+
+    /**
+     * Returns {@code true} if the given element should be ignored. An element should be ignored
+     * if empty, or if it is a XML identifier (because we marshal them in a special way), or a
+     * collection containing only elements to omit.
+     *
+     * @since 3.19
+     */
+    private static boolean ignore(final Object value) {
+        if (ignoreElement(value)) {
+            return true;
+        }
+        if (!(value instanceof Iterable<?>)) {
+            return false;
+        }
+        for (final Object element : (Iterable<?>) value) {
+            if (!ignoreElement(element)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

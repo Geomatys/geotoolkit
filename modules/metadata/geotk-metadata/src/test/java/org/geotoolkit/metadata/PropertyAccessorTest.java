@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ import static org.geotoolkit.metadata.KeyNamePolicy.*;
  * by {@link MetadataStandard}).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.19
  *
  * @since 2.4
  */
@@ -234,20 +235,20 @@ public final class PropertyAccessorTest {
         int hashCode = accessor.hashCode(citation);
         assertEquals("Empty metadata.", 0, hashCode);
 
-        final String ISBN = "Dummy ISBN";
-        citation.setISBN(ISBN);
+        final Date editionDate = new Date();
+        citation.setEditionDate(editionDate);
         hashCode = accessor.hashCode(citation);
-        assertEquals("Metadata with a single String value.", ISBN.hashCode(), hashCode);
+        assertEquals("Metadata with a single String value.", editionDate.hashCode(), hashCode);
 
         final Set<Object> set = new HashSet<Object>();
         assertEquals("By Set.hashCode() contract.", 0, set.hashCode());
-        assertTrue(set.add(ISBN));
+        assertTrue(set.add(editionDate));
         assertEquals("Expected Metadata.hashCode() == Set.hashCode().", set.hashCode(), hashCode);
 
         final InternationalString title = new SimpleInternationalString("Dummy title");
         citation.setTitle(title);
         hashCode = accessor.hashCode(citation);
-        assertEquals("Metadata with two values.", ISBN.hashCode() + title.hashCode(), hashCode);
+        assertEquals("Metadata with two values.", editionDate.hashCode() + title.hashCode(), hashCode);
         assertTrue(set.add(title));
         assertEquals("Expected Metadata.hashCode() == Set.hashCode().", set.hashCode(), hashCode);
         assertEquals("CitationsImpl.hashCode() should delegate.", hashCode, citation.hashCode());

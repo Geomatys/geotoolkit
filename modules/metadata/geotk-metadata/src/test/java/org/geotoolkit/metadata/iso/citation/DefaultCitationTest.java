@@ -27,7 +27,6 @@ import org.geotoolkit.xml.XML;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.Strings;
 
@@ -51,8 +50,8 @@ public final class DefaultCitationTest {
     @Test
     public void testIdentifierMap() {
         final DefaultCitation citation = new DefaultCitation();
+        final Collection<Identifier> identifiers = citation.getIdentifiers();
         final IdentifierMap identifierMap = citation.getIdentifierMap();
-        final Collection<Identifier> identifiers = ((IdentifierMapAdapter) identifierMap).identifiers;
         assertTrue("Expected an initially empty set of identifiers.", identifiers.isEmpty());
 
         citation.setISBN("MyISBN");
@@ -66,16 +65,16 @@ public final class DefaultCitationTest {
                 new DefaultIdentifier(Citations.EPSG, "MyEPSG"),
                 new DefaultIdentifier(Citations.ISSN, "MyISSN")));
 
-        assertEquals(4, identifiers.size());
+        assertEquals(3, identifiers.size()); // The ISSN code has been ignored.
         assertEquals("MyISBN", citation.getISBN());
         assertNull("The current implementation of setIdentifiers(Collection) does not perform "
                 + "any special processing for ISBN and ISSN codes yet. However we may revisit "
                 + "this policy in a future version.", citation.getISSN());
-        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISSN=“MyISSN”, ISBN=“MyISBN”}", identifierMap.toString());
+        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISBN=“MyISBN”}", identifierMap.toString());
     }
 
     /**
-     * Ensures that the identifier collection, when marshalled, does not include the ISBN
+     * Ensures that the identifier collection, when marshaled, does not include the ISBN
      * and ID codes.
      *
      * @throws JAXBException Should never happen.
@@ -90,7 +89,7 @@ public final class DefaultCitationTest {
                 new DefaultIdentifier(Citations.OGC,  "MyOGC"),
                 new DefaultIdentifier(Citations.EPSG, "MyEPSG")));
         assertNull(map.put(IdentifierSpace.ID, "MyID"));
-        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, gml:id=“MyID”, ISBN=“MyISBN”, ISSN=“MyISSN”}", map.toString());
+        assertEquals("{OGC=“MyOGC”, EPSG=“MyEPSG”, ISBN=“MyISBN”, ISSN=“MyISSN”, gml:id=“MyID”}", map.toString());
         final String xml = XML.marshal(citation);
         /*
          * We don't compare the full XML tree, since this is a bit tedious.

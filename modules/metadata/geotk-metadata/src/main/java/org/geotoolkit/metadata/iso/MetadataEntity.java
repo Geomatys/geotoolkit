@@ -31,6 +31,7 @@ import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -73,7 +74,7 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      *
      * @since 3.19
      */
-    protected transient IdentifierMap identifierMap;
+    private transient IdentifierMap identifierMap;
 
     /**
      * Constructs an initially empty metadata entity.
@@ -107,11 +108,6 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
         return MetadataStandard.ISO_19115;
     }
 
-    // IMPLEMENTATION NOTE: Subclasses typically define a private getIdentifiersGCO()
-    // method to be invoked by JAXB at marshaling time instead than this public method.
-    // The private method excludes "gml:id", "gco:uuid" and their friends from the list
-    // of MD_Identifier elements to marshal.
-
     /**
      * {@inheritDoc}
      *
@@ -120,6 +116,21 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     @Override
     public synchronized Collection<Identifier> getIdentifiers() {
         return identifiers = nonNullCollection(identifiers, Identifier.class);
+    }
+
+    /**
+     * Sets the identifiers associated to this object, except the {@linkplain IdentifierSpace XML
+     * identifiers}. The XML identifiers ({@linkplain #ID}, {@linkplain #UUID}, <i>etc.</i>) are
+     * ignored because they are associated to particular metadata instances.
+     *
+     * @param newValues The new identifiers, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        final Collection<Identifier> oldIds = IdentifierAuthority.filter(identifiers);
+        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+        IdentifierAuthority.replace(identifiers, oldIds);
     }
 
     /**

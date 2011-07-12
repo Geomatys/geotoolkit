@@ -155,7 +155,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "identifier", required = true)
     public Collection<Identifier> getIdentifiers() {
-        return filterIdentifiers(super.getIdentifiers(), true);
+        return filterIdentifiers(super.getIdentifiers());
     }
 
     /**
@@ -163,8 +163,9 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      *
      * @param newValues The new identifiers values.
      */
-    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+    @Override
+    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        super.setIdentifiers(newValues);
     }
 
     /**

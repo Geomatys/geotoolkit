@@ -20,10 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.citation;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlType;
@@ -40,13 +37,10 @@ import org.opengis.metadata.citation.Series;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.UnmodifiableMetadataException;
-import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.xml.IdentifierMap;
+import org.geotoolkit.xml.IdentifierSpace;
 
 import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
 
@@ -56,9 +50,9 @@ import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
  *
  * {@section Unified identifiers view}
  * The ISO 19115 model provides specific attributes for the {@linkplain #getISBN() ISBN} and
- * {@linkplain #getISSN() ISSN} codes. However from an application point of view, it is sometime
- * convenient to handle those codes like any other identifiers. The {@linkplain #getIdentifierMap()
- * identifier map} view includes those ISBN and ISSN codes.
+ * {@linkplain #getISSN() ISSN} codes. However the Geotk library handles those codes like any
+ * other identifiers. Consequently the ISBN and ISSN codes are included in the collection
+ * returned by {@link #getIdentifiers()}, except at XML marshaling time (for ISO 19139 compliance).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
@@ -89,7 +83,17 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 490722440306018256L;
+    private static final long serialVersionUID = 2595269795652984755L;
+
+    /**
+     * The authority for International Standard Book Number.
+     */
+    static final IdentifierSpace<String> ISBN = new IdentifierAuthority<String>("ISBN", IdentifierAuthority.ISBN);
+
+    /**
+     * The authority for International Standard Serial Number.
+     */
+    static final IdentifierSpace<String> ISSN = new IdentifierAuthority<String>("ISSN", IdentifierAuthority.ISSN);
 
     /**
      * Name by which the cited resource is known.
@@ -147,16 +151,6 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * source cited. May be {@code null} if there is no title.
      */
     private InternationalString collectiveTitle;
-
-    /**
-     * International Standard Book Number, or {@code null} if none.
-     */
-    private String ISBN;
-
-    /**
-     * International Standard Serial Number, or {@code null} if none.
-     */
-    private String ISSN;
 
     /**
      * Constructs an initially empty citation.
@@ -353,44 +347,32 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * Returns the unique identifier for the resource. Example: Universal Product Code (UPC),
      * National Stock Number (NSN).
+     *
+     * {@section Unified identifiers view}
+     * In this Geotk implementation, the collection returned by this method includes the
+     * {@linkplain #getISBN() ISBN} and {@linkplain #getISSN() ISSN} codes (except at XML
+     * marshaling time for ISO 19139 compliance).
      */
     @Override
     @XmlElement(name = "identifier")
     public Collection<Identifier> getIdentifiers() {
-        return filterIdentifiers(super.getIdentifiers(), false);
-    }
-
-    /**
-     * Returns a map view of the {@linkplain #getIdentifiers() identifiers}. If the
-     * {@linkplain #getISBN() ISBN} or {@linkplain #getISSN() ISSN} properties are
-     * defined, then they will be included in the map view.
-     * <p>
-     * The map returns by this method is <cite>live</cite>: changes in this
-     * {@code Citation} object will be reflected in the map, and conversely.
-     *
-     * @since 3.19
-     */
-    @Override
-    public synchronized IdentifierMap getIdentifierMap() {
-        if (identifierMap == null) {
-            final Collection<Identifier> identifiers = getIdentifiers();
-            if (identifiers == null) {
-                return IdentifierMapAdapter.EMPTY;
-            }
-            identifierMap = IdentifierMapAdapter.create(Identifier.class,
-                    new IdentifierList((List<Identifier>) identifiers));
-        }
-        return identifierMap;
+        return filterIdentifiers(super.getIdentifiers());
     }
 
     /**
      * Sets the unique identifier for the resource. Example: Universal Product Code (UPC),
      * National Stock Number (NSN).
+     * <p>
+     * This method does not set the {@linkplain #getISBN() ISBN} and {@linkplain #getISSN() ISSN}
+     * codes, even if they are included in the given collection. The ISBN/ISSN codes shall be set
+     * by the {@link #setISBN(String)} or {@link #setISSN(String)} methods, for compliance with
+     * the ISO 19115 model.
      *
      * @param newValues The new identifiers.
      */
-    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+    @Override
+    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        super.setIdentifiers(newValues);
     }
 
     /**
@@ -498,213 +480,67 @@ public class DefaultCitation extends MetadataEntity implements Citation {
 
     /**
      * Returns the International Standard Book Number, or {@code null} if none.
+     * In this Geotk implementation, invoking this method is equivalent to:
+     *
+     * {@preformat java
+     *   return getIdentifierMap().getSpecialized(Citations.ISBN);
+     * }
      *
      * @see Citations#ISBN
      */
     @Override
     @XmlElement(name = "ISBN")
     public synchronized String getISBN() {
-        return ISBN;
+        return XCollections.isNullOrEmpty(identifiers) ? null : getIdentifierMap().getSpecialized(ISBN);
     }
 
     /**
      * Sets the International Standard Book Number, or {@code null} if none.
+     * In this Geotk implementation, invoking this method is equivalent to:
+     *
+     * {@preformat java
+     *   getIdentifierMap().putSpecialized(Citations.ISBN, newValue);
+     * }
      *
      * @param newValue The new ISBN.
      */
     public synchronized void setISBN(final String newValue) {
         checkWritePermission();
-        ISBN = newValue;
+        if (newValue != null || !XCollections.isNullOrEmpty(identifiers)) {
+            getIdentifierMap().putSpecialized(ISBN, newValue);
+        }
     }
 
     /**
      * Returns the International Standard Serial Number, or {@code null} if none.
+     * In this Geotk implementation, invoking this method is equivalent to:
+     *
+     * {@preformat java
+     *   return getIdentifierMap().getSpecialized(Citations.ISSN);
+     * }
      *
      * @see Citations#ISSN
      */
     @Override
     @XmlElement(name = "ISSN")
     public synchronized String getISSN() {
-        return ISSN;
+        return XCollections.isNullOrEmpty(identifiers) ? null : getIdentifierMap().getSpecialized(ISSN);
     }
 
     /**
      * Sets the International Standard Serial Number, or {@code null} if none.
+     * In this Geotk implementation, invoking this method is equivalent to:
+     *
+     * {@preformat java
+     *   getIdentifierMap().putSpecialized(Citations.ISSN, newValue);
+     * }
      *
      * @param newValue The new ISSN.
      */
     public synchronized void setISSN(final String newValue) {
         checkWritePermission();
-        ISSN = newValue;
-    }
-
-    /**
-     * The list of identifiers, which also include the ISBN and ISSN codes. This class wraps
-     * an existing identifier list and appends the ISBN and ISSN codes to it, if those codes
-     * are present.
-     *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.19
-     *
-     * @since 3.19
-     * @module
-     */
-    @ThreadSafe
-    private final class IdentifierList extends AbstractList<Identifier> implements Serializable {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -4827958271256100238L;
-
-        /**
-         * The original list of identifiers, without ISBN or ISSN codes.
-         */
-        private final List<Identifier> raw;
-
-        /**
-         * The ISBN and ISSN strings wrapped in {@link Identifier} objects when first needed.
-         */
-        private transient Identifier ISBN, ISSN;
-
-        /**
-         * Creates a new list of identifiers backed by the given "raw" (without ISBN or ISSN
-         * codes) list.
-         */
-        IdentifierList(final List<Identifier> raw) {
-            this.raw = raw;
-        }
-
-        /**
-         * Returns the length of this list.
-         */
-        @Override
-        public int size() {
-            synchronized (DefaultCitation.this) {
-                int size = raw.size();
-                if (getISBN() != null) size++;
-                if (getISSN() != null) size++;
-                return size;
-            }
-        }
-
-        /**
-         * Returns the identifier for the given code, or {@code null} if the given code is null.
-         *
-         * @param  index 0 for ISBN or 1 for ISSN.
-         * @param  code The code, or {@code null}
-         * @return The identifier for the given code, or {@code null}.
-         */
-        private Identifier setCode(final int index, final String code) {
-            if (code == null) {
-                return null;
-            }
-            final Identifier old = (index == 0) ? ISBN : ISSN;
-            final ISN_Identifier id;
-            if (old instanceof ISN_Identifier) {
-                id = (ISN_Identifier) old;
-            } else {
-                id = new ISN_Identifier(index == 0 ? Citations.ISBN : Citations.ISSN);
-                switch (index) {
-                    case 0: ISBN = id; break;
-                    case 1: ISSN = id; break;
-                }
-            }
-            id.setCode(code);
-            return id;
-        }
-
-        /**
-         * Returns the identifier at the given index. If ISBN and ISSN codes are present,
-         * then they are the two last elements in this list.
-         */
-        @Override
-        @SuppressWarnings("fallthrough")
-        public Identifier get(final int index) {
-            synchronized (DefaultCitation.this) {
-                String code;
-                switch (index - raw.size()) {
-                    /*
-                     * Strictly speaking we should also ensure that 'index < size()' since
-                     * get(size+1) should fail if ISBN code is null.  Currently, we return
-                     * the ISSN code anyway. We assume that it doesn't hurt so much, so we
-                     * keep the implementation simple for now...
-                     */
-                    case 0: if ((code = getISBN()) != null) return setCode(0, code); // Fallthrough
-                    case 1: if ((code = getISSN()) != null) return setCode(1, code); // Fallthrough
-                }
-                return raw.get(index);
-            }
-        }
-
-        /**
-         * Sets the identifier at the given index.
-         */
-        @Override
-        @SuppressWarnings("fallthrough")
-        public Identifier set(final int index, final Identifier identifier) {
-            ArgumentChecks.ensureNonNull("identifier", identifier);
-            synchronized (DefaultCitation.this) {
-                Identifier old;
-                switch (index - raw.size()) {
-                    // The same comment than in the getter method apply also here.
-                    case 0: if ((old=setCode(0, getISBN())) != null) {ISBN=identifier; return old;} // Fallthrough
-                    case 1: if ((old=setCode(1, getISSN())) != null) {ISSN=identifier; return old;} // Fallthrough
-                }
-                return raw.set(index, identifier);
-            }
-        }
-
-        /**
-         * Removes the identifier at the given index.
-         */
-        @Override
-        @SuppressWarnings("fallthrough")
-        public Identifier remove(final int index) {
-            synchronized (DefaultCitation.this) {
-                Identifier old;
-                switch (index - raw.size()) {
-                    // The same comment than in the getter method apply also here.
-                    case 0: if ((old=setCode(0, getISBN())) != null) {ISBN=null; return old;} // Fallthrough
-                    case 1: if ((old=setCode(1, getISSN())) != null) {ISSN=null; return old;} // Fallthrough
-                }
-                return raw.remove(index);
-            }
-        }
-
-        /**
-         * Adds the given identifier. This method is slightly inconsistent with the standard
-         * {@link List} contract in that the element may not be added at the end of the list.
-         * However since the public API declares a {@link Collection} rather than a list, we
-         * did not promised to add the element at the end of the list.
-         */
-        @Override
-        public boolean add(final Identifier identifier) {
-            ArgumentChecks.ensureNonNull("identifier", identifier);
-            return raw.add(identifier); // Already synchronized.
-        }
-    }
-
-    /**
-     * An identifier with unmodifiable authority, used for ISBN or ISSN identifiers only.
-     *
-     * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.19
-     *
-     * @since 3.19
-     * @module
-     */
-    private static final class ISN_Identifier extends DefaultIdentifier {
-        /** For cross-version compatibility. */
-        private static final long serialVersionUID = -6356207807115132812L;
-
-        /** Creates a new identifier for the given ISBN or ISSN authority. */
-        ISN_Identifier(final Citation authority) {
-            super.setAuthority(authority);
-        }
-
-        /** Do not allow modification of the authority. */
-        @Override public void setAuthority(final Citation newValue) {
-            throw new UnmodifiableMetadataException(Errors.format(Errors.Keys.UNMODIFIABLE_METADATA));
+        if (newValue != null || !XCollections.isNullOrEmpty(identifiers)) {
+            getIdentifierMap().putSpecialized(ISSN, newValue);
         }
     }
 }

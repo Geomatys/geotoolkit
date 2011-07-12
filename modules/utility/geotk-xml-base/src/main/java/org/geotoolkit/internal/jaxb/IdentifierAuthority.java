@@ -18,6 +18,8 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.io.Serializable;
@@ -41,6 +43,16 @@ import org.geotoolkit.xml.IdentifierSpace;
  * is actually a {@link org.opengis.metadata.citation.Citation} implementation. However it is
  * not designed for XML marshaling at this time.
  *
+ * {@section Identifiers filtering}
+ * In the current Geotk library, there is different places where identifiers are filtered on
+ * the basis of this class, will code like:
+ *
+ * {@preformat java
+ *     if (identifier.getAuthority() instanceof IdentifierAuthority<?>) {
+ *         // Omit that identifier.
+ *     }
+ * }
+ *
  * @param <T> The type of object used as identifier values.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -59,9 +71,11 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
 
     /**
      * Ordinal values for switch statements. The constant defined here shall
-     * mirror the constants defined in the {@link IdentifierSpace} interface.
+     * mirror the constants defined in the {@link IdentifierSpace} interface
+     * and {@link org.geotoolkit.metadata.iso.citation.DefaultCitation} class.
      */
-    public static final int ID=0, UUID=1, HREF=2, XLINK=3;
+    public static final int ID=0, UUID=1, HREF=2, XLINK=3, ISSN=4, ISBN=5;
+    // If more codes are added, please update readResolve() below.
 
     /**
      * The attribute name, to be returned by {@link #getName()}.
@@ -71,8 +85,12 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     /**
      * Ordinal values for switch statements, as one of the {@link #ID}, {@link #UUID},
      * <i>etc.</i> constants.
+     *
+     * This value is not serialized because its value may not be consistent between different
+     * versions of the Geotk library (the attribute name is more reliable). This instance
+     * should be replaced by one of the exiting constants at deserialization time anyway.
      */
-    final int ordinal;
+    final transient int ordinal;
 
     /**
      * Creates a new enum for the given attribute.
@@ -210,23 +228,86 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     }
 
     /**
+     * Returns a collection containing only the identifiers having an {@code IdentifierAuthority}.
+     *
+     * @param  identifiers The identifiers to filter, or {@code null} if none.
+     * @return The filtered identifiers, or {@code null} if none.
+     */
+    public static Collection<Identifier> filter(final Collection<? extends Identifier> identifiers) {
+        Collection<Identifier> filtered = null;
+        if (identifiers != null) {
+            int remaining = identifiers.size();
+            for (final Identifier candidate : identifiers) {
+                if (candidate != null && candidate.getAuthority() instanceof IdentifierAuthority<?>) {
+                    if (filtered == null) {
+                        filtered = new ArrayList<Identifier>(remaining);
+                    }
+                    filtered.add(candidate);
+                }
+                remaining--;
+            }
+        }
+        return filtered;
+    }
+
+    /**
+     * Removes from the given collection every identifiers having an {@code IdentifierAuthority},
+     * then add the previously filtered identifiers (if any).
+     *
+     * @param identifiers The collection from which to remove identifiers, or {@code null}.
+     * @param filtered The previous filtered identifiers returned by {@link #filter}.
+     */
+    public static void replace(final Collection<Identifier> identifiers, final Collection<Identifier> filtered) {
+        if (identifiers != null) {
+            for (final Iterator<Identifier> it=identifiers.iterator(); it.hasNext();) {
+                final Identifier id = it.next();
+                if (id == null || id.getAuthority() instanceof IdentifierAuthority<?>) {
+                    it.remove();
+                }
+            }
+            if (filtered != null) {
+                identifiers.addAll(filtered);
+            }
+        }
+    }
+
+    /**
+     * Returns one of the constants in the {@link DefaultCitation} class.
+     */
+    private static IdentifierSpace<?> getCitation(final String name) throws ObjectStreamException {
+        try {
+            final Field field = Class.forName("org.geotoolkit.metadata.iso.citation.DefaultCitation").getDeclaredField(name);
+            field.setAccessible(true);
+            return (IdentifierSpace<?>) field.get(null);
+        } catch (Exception e) { // Too many possible exceptions for enumerating them all.
+            Logging.unexpectedException(IdentifierAuthority.class, "readResolve", e);
+        }
+        return null;
+    }
+
+    /**
      * Invoked at deserialization time in order to replace the deserialized instance
      * by the appropriate instance defined in the {@link IdentifierSpace} interface.
      */
     private Object readResolve() throws ObjectStreamException {
-        for (final Field field : IdentifierSpace.class.getDeclaredFields()) {
-            final IdentifierAuthority<?> id;
-            try {
-                id = (IdentifierAuthority<?>) field.get(null);
-            } catch (IllegalAccessException e) {
-                // We can still return 'this' as a fallback, so let continue.
-                Logging.unexpectedException(IdentifierAuthority.class, "readResolve", e);
-                continue;
+        int code = 0;
+        while (true) {
+            final IdentifierSpace<?> candidate;
+            switch (code) {
+                case ID:    candidate = IdentifierSpace.ID;    break;
+                case UUID:  candidate = IdentifierSpace.UUID;  break;
+                case HREF:  candidate = IdentifierSpace.HREF;  break;
+                case XLINK: candidate = IdentifierSpace.XLINK; break;
+                case ISBN:  candidate = getCitation("ISBN");   break;
+                case ISSN:  candidate = getCitation("ISSN");   break;
+                default: return this;
             }
-            if (attribute.equals(id.attribute)) {
-                return id;
+            if (candidate instanceof IdentifierAuthority<?> &&
+                    ((IdentifierAuthority<?>) candidate).attribute.equals(attribute))
+            {
+                return candidate;
             }
+            code++;
         }
-        return this;
     }
 }

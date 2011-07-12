@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -146,14 +145,10 @@ public final class MarshalContext {
      * for which the authority is one of the {@link org.geotoolkit.xml.IdentifierSpace} constants.
      *
      * @param  identifiers The identifiers to filter, or {@code null}.
-     * @param  required {@code true} if the identifiers are mandatory.
      * @return The identifiers to marshal, or {@code null} if none.
      */
-    public static Collection<Identifier> filterIdentifiers(Collection<Identifier> identifiers, final boolean required) {
-        if (!isMarshaling()) {
-            return identifiers;
-        }
-        if (identifiers != null) {
+    public static Collection<Identifier> filterIdentifiers(Collection<Identifier> identifiers) {
+        if (identifiers != null && isMarshaling()) {
             int count = identifiers.size();
             if (count != 0) {
                 final Identifier[] copy = identifiers.toArray(new Identifier[count]);
@@ -163,12 +158,10 @@ public final class MarshalContext {
                         System.arraycopy(copy, i+1, copy, i, --count - i);
                     }
                 }
-                if (count != 0) {
-                    return UnmodifiableArrayList.wrap(copy, 0, count);
-                }
+                identifiers = (count != 0) ? UnmodifiableArrayList.wrap(copy, 0, count) : null;
             }
         }
-        return required ? Collections.<Identifier>emptyList() : null;
+        return identifiers;
     }
 
     /**
