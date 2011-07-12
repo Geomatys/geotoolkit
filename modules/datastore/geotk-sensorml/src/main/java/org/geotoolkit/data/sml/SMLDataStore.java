@@ -379,7 +379,7 @@ public class SMLDataStore extends AbstractDataStore {
                 final String version = rs.getString(1);
                 if (version != null && version.startsWith("2.0")) {
                     identifierStmt = cnx.prepareStatement(SQL_ALL_FORM_ID);
-                } else if (version != null && (version.startsWith("2.1") || version.startsWith("2.2") || version.startsWith("2.3"))) {
+                } else if (version != null && (version.startsWith("2.1") || version.startsWith("2.2") || version.startsWith("2.3") || version.startsWith("2.4"))) {
                     identifierStmt = cnx.prepareStatement(SQL_ALL_FORM_ID_21);
                 } else {
                     throw new IllegalArgumentException("unexpected database mdw version");
