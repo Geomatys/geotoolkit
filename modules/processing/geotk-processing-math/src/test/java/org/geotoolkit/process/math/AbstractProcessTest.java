@@ -23,7 +23,7 @@ import org.geotoolkit.process.ProcessFinder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
- * Abstract JUnit test for vector process
+ * Abstract JUnit test for math process
  * @author Quentin Boileau
  * @module pending
  */

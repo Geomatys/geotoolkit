@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.math.round;
+package org.geotoolkit.process.math.min;
 
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
@@ -26,37 +26,42 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * JUnit test of Round process
+ * JUnit test of Min process
  * @author Quentin Boileau
  * @module pending
  */
-public class RoundTest extends AbstractProcessTest{
+public class MinTest extends AbstractProcessTest{
 
    
 
-    public RoundTest() {
-        super("round");
+    public MinTest() {
+        super("min");
     }
 
     @Test
-    public void testFloor() {
+    public void testMin() {
 
         // Inputs first
-        final double first = 24.64;
+        final Double[] set = {new Double(15.5), 
+                              new Double(10.02), 
+                              new Double(1.43), 
+                              new Double(-3.03), 
+                              new Double(4.53), 
+                              new Double(-6.21)};
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "round");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "min");
         final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter("first").setValue(first);
+        in.parameter("set").setValue(set);
         proc.setInput(in);
         proc.run();
 
         //result
         final Double result = (Double) proc.getOutput().parameter("result").getValue();
        
-        assertEquals(new Double(25.0), result);
+        assertEquals(new Double(-6.21), result);
     }
     
 }

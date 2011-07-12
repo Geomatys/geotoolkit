@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.math.round;
+package org.geotoolkit.process.math.toradian;
 
+import org.geotoolkit.process.math.round.*;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.math.AbstractProcessTest;
@@ -26,26 +27,26 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * JUnit test of Round process
+ * JUnit test of ToRadian process
  * @author Quentin Boileau
  * @module pending
  */
-public class RoundTest extends AbstractProcessTest{
+public class ToRadianTest extends AbstractProcessTest{
 
    
 
-    public RoundTest() {
-        super("round");
+    public ToRadianTest() {
+        super("toRadian");
     }
 
     @Test
-    public void testFloor() {
+    public void testToRadian() {
 
         // Inputs first
         final double first = 24.64;
 
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "round");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "toRadian");
         final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
@@ -56,7 +57,7 @@ public class RoundTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.getOutput().parameter("result").getValue();
        
-        assertEquals(new Double(25.0), result);
+        assertEquals(0.4300, result.doubleValue(), 0.0001);
     }
     
 }
