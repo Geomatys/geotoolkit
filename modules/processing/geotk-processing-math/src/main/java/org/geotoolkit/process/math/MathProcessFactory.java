@@ -34,6 +34,7 @@ import org.geotoolkit.process.math.divide.DivideDescriptor;
 import org.geotoolkit.process.math.floor.FloorDescriptor;
 import org.geotoolkit.process.math.log.LogDescriptor;
 import org.geotoolkit.process.math.max.MaxDescriptor;
+import org.geotoolkit.process.math.median.MedianDescriptor;
 import org.geotoolkit.process.math.min.MinDescriptor;
 import org.geotoolkit.process.math.multiply.MultiplyDescriptor;
 import org.geotoolkit.process.math.power.PowerDescriptor;
@@ -76,7 +77,7 @@ public class MathProcessFactory extends AbstractProcessFactory{
               AtanDescriptor.INSTANCE, Atan2Descriptor.INSTANCE, CosDescriptor.INSTANCE, SinDescriptor.INSTANCE,
               TanDescriptor.INSTANCE, RoundDescriptor.INSTANCE, CeilDescriptor.INSTANCE, FloorDescriptor.INSTANCE,
               LogDescriptor.INSTANCE, ToDegreeDescriptor.INSTANCE, ToRadianDescriptor.INSTANCE, MinDescriptor.INSTANCE,
-              MaxDescriptor.INSTANCE, SumDescriptor.INSTANCE, AvgDescriptor.INSTANCE);
+              MaxDescriptor.INSTANCE, SumDescriptor.INSTANCE, AvgDescriptor.INSTANCE, MedianDescriptor.INSTANCE);
     }
     
     @Override
