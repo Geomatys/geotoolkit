@@ -88,7 +88,7 @@ public class FRA_DataIdentification extends DefaultDataIdentification {
      */
     @XmlElement(name = "relatedCitation")
     public synchronized Collection<Citation> getRelatedCitations() {
-        return xmlOptional(relatedCitations = nonNullCollection(relatedCitations, Citation.class));
+        return relatedCitations = optionalCollection(relatedCitations, Citation.class);
     }
 
     /**

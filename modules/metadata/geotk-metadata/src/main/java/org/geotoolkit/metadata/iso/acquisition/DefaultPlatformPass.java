@@ -162,7 +162,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
     @Override
     @XmlElement(name = "relatedEvent")
     public synchronized Collection<Event> getRelatedEvents() {
-        return xmlOptional(relatedEvents = nonNullCollection(relatedEvents, Event.class));
+        return relatedEvents = optionalCollection(relatedEvents, Event.class);
     }
 
     /**

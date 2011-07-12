@@ -43,18 +43,26 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  */
 public final class MarshalContext {
     /**
+     * The bit flag telling if a marshalling process is under progress.
+     * The value is unchanged for unmarshalling processes.
+     *
+     * @since 3.19
+     */
+    private static final int MARSHALING = 1;
+
+    /**
      * The bit flag for enabling substitution of language codes by character strings.
      *
      * @since 3.18
      */
-    public static final int SUBSTITUTE_LANGUAGE = 1;
+    public static final int SUBSTITUTE_LANGUAGE = 2;
 
     /**
      * The bit flag for enabling substitution of country codes by character strings.
      *
      * @since 3.18
      */
-    public static final int SUBSTITUTE_COUNTRY = 2;
+    public static final int SUBSTITUTE_COUNTRY = 4;
 
     /**
      * The thread-local context.
@@ -104,12 +112,6 @@ public final class MarshalContext {
     private int bitMasks;
 
     /**
-     * {@code true} if a marshalling process is under progress.
-     * The value is unchanged for unmarshalling processes.
-     */
-    private boolean isMarshalling;
-
-    /**
      * The context which was previously used. This form a linked list allowing
      * to push properties (e.g. {@link #pushLocale(Locale)}) and pull back the
      * context to its previous state once finished.
@@ -136,7 +138,6 @@ public final class MarshalContext {
             locale        = previous.locale;
             timezone      = previous.timezone;
             bitMasks      = previous.bitMasks;
-            isMarshalling = previous.isMarshalling;
         }
     }
 
@@ -149,7 +150,7 @@ public final class MarshalContext {
      * @return The identifiers to marshal, or {@code null} if none.
      */
     public static Collection<Identifier> filterIdentifiers(Collection<Identifier> identifiers, final boolean required) {
-        if (!isMarshalling()) {
+        if (!isMarshaling()) {
             return identifiers;
         }
         if (identifiers != null) {
@@ -262,9 +263,9 @@ public final class MarshalContext {
      *
      * @return {@code true} if a marshalling process is in progress.
      */
-    public static boolean isMarshalling() {
+    public static boolean isMarshaling() {
         final MarshalContext current = CURRENT.get();
-        return (current != null) ? current.isMarshalling : false;
+        return (current != null) && (current.bitMasks & MARSHALING) != 0;
     }
 
     /**
@@ -413,10 +414,10 @@ public final class MarshalContext {
     /**
      * Declares that the work which is about to begin is a marshalling.
      *
-     * @see #isMarshalling()
+     * @see #isMarshaling()
      */
     public void setMarshalling() {
-        isMarshalling = true;
+        bitMasks |= MARSHALING;
     }
 
     /**

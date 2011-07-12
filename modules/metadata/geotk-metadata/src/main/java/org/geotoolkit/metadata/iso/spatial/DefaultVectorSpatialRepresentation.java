@@ -137,7 +137,7 @@ public class DefaultVectorSpatialRepresentation extends AbstractSpatialRepresent
     @Override
     @XmlElement(name = "geometricObjects")
     public synchronized Collection<GeometricObjects> getGeometricObjects() {
-        return xmlOptional(geometricObjects = nonNullCollection(geometricObjects, GeometricObjects.class));
+        return geometricObjects = optionalCollection(geometricObjects, GeometricObjects.class);
     }
 
     /**

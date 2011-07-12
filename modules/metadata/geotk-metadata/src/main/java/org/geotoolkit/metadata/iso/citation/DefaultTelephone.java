@@ -120,7 +120,7 @@ public class DefaultTelephone extends MetadataEntity implements Telephone {
     @Override
     @XmlElement(name = "voice")
     public synchronized Collection<String> getVoices() {
-        return xmlOptional(voices = nonNullCollection(voices, String.class));
+        return voices = optionalCollection(voices, String.class);
     }
 
     /**
@@ -144,7 +144,7 @@ public class DefaultTelephone extends MetadataEntity implements Telephone {
     @Override
     @XmlElement(name = "facsimile")
     public synchronized Collection<String> getFacsimiles() {
-        return xmlOptional(facsimiles = nonNullCollection(facsimiles, String.class));
+        return facsimiles = optionalCollection(facsimiles, String.class);
     }
 
     /**

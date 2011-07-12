@@ -138,7 +138,7 @@ public class DefaultGCP extends MetadataEntity implements GCP {
     @Override
     @XmlElement(name = "accuracyReport", namespace = Namespaces.GMI)
     public synchronized Collection<Element> getAccuracyReports() {
-        return xmlOptional(accuracyReports = nonNullCollection(accuracyReports, Element.class));
+        return accuracyReports = optionalCollection(accuracyReports, Element.class);
     }
 
     /**

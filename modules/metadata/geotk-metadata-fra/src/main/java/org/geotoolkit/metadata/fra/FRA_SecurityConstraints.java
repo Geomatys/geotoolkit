@@ -89,7 +89,7 @@ public class FRA_SecurityConstraints extends DefaultSecurityConstraints {
      */
     @XmlElement(name = "citation")
     public synchronized Collection<Citation> getCitations() {
-        return xmlOptional(citations = nonNullCollection(citations, Citation.class));
+        return citations = optionalCollection(citations, Citation.class);
     }
 
     /**

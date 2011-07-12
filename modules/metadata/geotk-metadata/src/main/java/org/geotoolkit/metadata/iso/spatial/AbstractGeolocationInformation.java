@@ -119,7 +119,7 @@ public class AbstractGeolocationInformation extends MetadataEntity implements Ge
     @Override
     @XmlElement(name = "qualityInfo", namespace = Namespaces.GMI)
     public synchronized Collection<DataQuality> getQualityInfo() {
-        return xmlOptional(qualityInfo = nonNullCollection(qualityInfo, DataQuality.class));
+        return qualityInfo = optionalCollection(qualityInfo, DataQuality.class);
     }
 
     /**

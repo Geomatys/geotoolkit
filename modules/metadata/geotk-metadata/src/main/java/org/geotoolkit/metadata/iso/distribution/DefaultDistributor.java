@@ -162,8 +162,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @Override
     @XmlElement(name = "distributionOrderProcess")
     public synchronized Collection<StandardOrderProcess> getDistributionOrderProcesses() {
-        return xmlOptional(distributionOrderProcesses = nonNullCollection(distributionOrderProcesses,
-                                                              StandardOrderProcess.class));
+        return distributionOrderProcesses = optionalCollection(distributionOrderProcesses, StandardOrderProcess.class);
     }
 
     /**
@@ -172,11 +171,8 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
      *
      * @param newValues The new distribution order processes.
      */
-    public synchronized void setDistributionOrderProcesses(
-            final Collection<? extends StandardOrderProcess> newValues)
-    {
-        distributionOrderProcesses = copyCollection(newValues, distributionOrderProcesses,
-                                                    StandardOrderProcess.class);
+    public synchronized void setDistributionOrderProcesses(final Collection<? extends StandardOrderProcess> newValues) {
+        distributionOrderProcesses = copyCollection(newValues, distributionOrderProcesses, StandardOrderProcess.class);
     }
 
     /**
@@ -185,7 +181,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @Override
     @XmlElement(name = "distributorFormat")
     public synchronized Collection<Format> getDistributorFormats() {
-        return xmlOptional(distributorFormats = nonNullCollection(distributorFormats, Format.class));
+        return distributorFormats = optionalCollection(distributorFormats, Format.class);
     }
 
     /**
@@ -203,8 +199,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @Override
     @XmlElement(name = "distributorTransferOptions")
     public synchronized Collection<DigitalTransferOptions> getDistributorTransferOptions() {
-        return xmlOptional(distributorTransferOptions = nonNullCollection(distributorTransferOptions,
-                DigitalTransferOptions.class));
+        return distributorTransferOptions = optionalCollection(distributorTransferOptions, DigitalTransferOptions.class);
     }
 
     /**
@@ -212,10 +207,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
      *
      * @param newValues The new distributor transfer options.
      */
-    public synchronized void setDistributorTransferOptions(
-            final Collection<? extends DigitalTransferOptions> newValues)
-    {
-        distributorTransferOptions = copyCollection(newValues, distributorTransferOptions,
-                DigitalTransferOptions.class);
+    public synchronized void setDistributorTransferOptions(final Collection<? extends DigitalTransferOptions> newValues) {
+        distributorTransferOptions = copyCollection(newValues, distributorTransferOptions, DigitalTransferOptions.class);
     }
 }

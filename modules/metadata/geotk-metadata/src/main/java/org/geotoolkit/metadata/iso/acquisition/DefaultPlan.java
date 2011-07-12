@@ -195,7 +195,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
     @Override
     @XmlElement(name = "operation")
     public synchronized Collection<Operation> getOperations() {
-        return xmlOptional(operations = nonNullCollection(operations, Operation.class));
+        return operations = optionalCollection(operations, Operation.class);
     }
 
     /**
@@ -213,13 +213,13 @@ public class DefaultPlan extends MetadataEntity implements Plan {
     @Override
     @XmlElement(name = "satisfiedRequirement")
     public synchronized Collection<Requirement> getSatisfiedRequirements() {
-        return xmlOptional(satisfiedRequirements = nonNullCollection(satisfiedRequirements, Requirement.class));
+        return satisfiedRequirements = optionalCollection(satisfiedRequirements, Requirement.class);
     }
 
     /**
      * Sets the requirement satisfied by the plan.
      *
-     * @param newValues The new statisfied requirements.
+     * @param newValues The new satisfied requirements.
      */
     public synchronized void setSatisfiedRequirements(final Collection<? extends Requirement> newValues) {
         satisfiedRequirements = copyCollection(newValues, satisfiedRequirements, Requirement.class);

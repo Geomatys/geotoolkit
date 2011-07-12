@@ -151,7 +151,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
     @Override
     @XmlElement(name = "acquisitionPlan")
     public synchronized Collection<Plan> getAcquisitionPlans() {
-        return xmlOptional(acquisitionPlans = nonNullCollection(acquisitionPlans, Plan.class));
+        return acquisitionPlans = optionalCollection(acquisitionPlans, Plan.class);
     }
 
     /**
@@ -169,7 +169,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
     @Override
     @XmlElement(name = "acquisitionRequirement")
     public synchronized Collection<Requirement> getAcquisitionRequirements() {
-        return xmlOptional(acquisitionRequirements = nonNullCollection(acquisitionRequirements, Requirement.class));
+        return acquisitionRequirements = optionalCollection(acquisitionRequirements, Requirement.class);
     }
 
     /**
@@ -207,7 +207,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
     @Override
     @XmlElement(name = "instrument")
     public synchronized Collection<Instrument> getInstruments() {
-        return xmlOptional(instruments = nonNullCollection(instruments, Instrument.class));
+        return instruments = optionalCollection(instruments, Instrument.class);
     }
 
     /**
@@ -225,7 +225,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
     @Override
     @XmlElement(name = "objective")
     public synchronized Collection<Objective> getObjectives() {
-        return xmlOptional(objectives = nonNullCollection(objectives, Objective.class));
+        return objectives = optionalCollection(objectives, Objective.class);
     }
 
     /**
@@ -243,7 +243,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
     @Override
     @XmlElement(name = "operation")
     public synchronized Collection<Operation> getOperations() {
-        return xmlOptional(operations = nonNullCollection(operations, Operation.class));
+        return operations = optionalCollection(operations, Operation.class);
     }
 
     /**
@@ -261,7 +261,7 @@ public class DefaultAcquisitionInformation extends MetadataEntity implements Acq
     @Override
     @XmlElement(name = "platform")
     public synchronized Collection<Platform> getPlatforms() {
-        return xmlOptional(platforms = nonNullCollection(platforms, Platform.class));
+        return platforms = optionalCollection(platforms, Platform.class);
     }
 
     /**

@@ -133,6 +133,23 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
+     * Returns a shallow copy of this metadata.
+     * <p>
+     * While {@linkplain Cloneable cloneable}, this class do not provides the {@code clone()}
+     * operation as part of the public API. The clone operation is required for the internal
+     * working of the {@link #unmodifiable()} method, which expect from {@code clone()} a
+     * <strong>shallow</strong> copy of this metadata entity. The default implementation of
+     * {@link Object#clone()} is sufficient for most use.
+     *
+     * @return A <strong>shallow</strong> copy of this metadata.
+     * @throws CloneNotSupportedException if the clone is not supported.
+     */
+    @Override
+    protected ModifiableMetadata clone() throws CloneNotSupportedException {
+        return (ModifiableMetadata) super.clone();
+    }
+
+    /**
      * Returns {@code true} if this metadata is modifiable. This method returns
      * {@code false} if {@link #freeze()} has been invoked on this object.
      *
@@ -396,7 +413,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (List<E>) source;
             }
             checkWritePermission();
-            if (source == null) {
+            if (source == null || source.isEmpty()) {
                 target = null;
             } else {
                 if (target != null) {
@@ -447,7 +464,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (Set<E>) source;
             }
             checkWritePermission();
-            if (source == null) {
+            if (source == null || source.isEmpty()) {
                 target = null;
             } else {
                 if (target != null) {
@@ -511,7 +528,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (Collection<E>) source;
             }
             checkWritePermission();
-            if (source == null) {
+            if (source == null || source.isEmpty()) {
                 target = null;
             } else {
                 if (target != null) {
@@ -612,6 +629,26 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return Collections.emptyList();
             }
         }
+    }
+
+    /**
+     * Returns a {@linkplain #nonNullCollection(Collection, Class) non-null collection}, unless
+     * the collection {@linkplain XCollections#isNullOrEmpty(Collection) is null or empty} and
+     * we are marshaling a XML document. This is a convenience method for implementation of
+     * {@code getFoo()} methods when the XML schema declares the property as optional.
+     *
+     * @param  <E> The type of elements in the collection.
+     * @param  c The collection to checks.
+     * @param  elementType The element type (used only if {@code c} is null).
+     * @return {@code c}, or a new collection if {@code c} is null.
+     *
+     * @since 3.19
+     */
+    protected final <E> Collection<E> optionalCollection(final Collection<E> c, final Class<E> elementType) {
+        if (XCollections.isNullOrEmpty(c) && MarshalContext.isMarshaling()) {
+            return null;
+        }
+        return nonNullCollection(c, elementType);
     }
 
     /**
@@ -720,28 +757,14 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *
      * @since 3.18 (derived from 2.5)
      * @level advanced
+     *
+     * @deprecated It doesn't appear to work. No replacement for now.
      */
+    @Deprecated
     protected static <E> Collection<E> xmlOptional(final Collection<E> elements) {
-        if (elements != null && elements.isEmpty() && MarshalContext.isMarshalling()) {
+        if (elements != null && elements.isEmpty() && MarshalContext.isMarshaling()) {
             return null;
         }
         return elements;
-    }
-
-    /**
-     * Returns a shallow copy of this metadata.
-     * <p>
-     * While {@linkplain Cloneable cloneable}, this class do not provides the {@code clone()}
-     * operation as part of the public API. The clone operation is required for the internal
-     * working of the {@link #unmodifiable()} method, which expect from {@code clone()} a
-     * <strong>shallow</strong> copy of this metadata entity. The default implementation of
-     * {@link Object#clone()} is sufficient for most use.
-     *
-     * @return A <strong>shallow</strong> copy of this metadata.
-     * @throws CloneNotSupportedException if the clone is not supported.
-     */
-    @Override
-    protected ModifiableMetadata clone() throws CloneNotSupportedException {
-        return (ModifiableMetadata) super.clone();
     }
 }

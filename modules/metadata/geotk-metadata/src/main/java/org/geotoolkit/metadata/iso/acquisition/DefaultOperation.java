@@ -274,7 +274,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     @Override
     @XmlElement(name = "childOperation")
     public synchronized Collection<Operation> getChildOperations() {
-        return xmlOptional(childOperations = nonNullCollection(childOperations, Operation.class));
+        return childOperations = optionalCollection(childOperations, Operation.class);
     }
 
     /**
@@ -292,7 +292,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     @Override
     @XmlElement(name = "objective")
     public synchronized Collection<Objective> getObjectives() {
-        return xmlOptional(objectives = nonNullCollection(objectives, Objective.class));
+        return objectives = optionalCollection(objectives, Objective.class);
     }
 
     /**
@@ -348,7 +348,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     @Override
     @XmlElement(name = "platform")
     public synchronized Collection<Platform> getPlatforms() {
-        return xmlOptional(platforms = nonNullCollection(platforms, Platform.class));
+        return platforms = optionalCollection(platforms, Platform.class);
     }
 
     /**
@@ -366,7 +366,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     @Override
     @XmlElement(name = "significantEvent")
     public synchronized Collection<Event> getSignificantEvents() {
-        return significantEvents = nonNullCollection(significantEvents, Event.class);
+        return significantEvents = optionalCollection(significantEvents, Event.class);
     }
 
     /**

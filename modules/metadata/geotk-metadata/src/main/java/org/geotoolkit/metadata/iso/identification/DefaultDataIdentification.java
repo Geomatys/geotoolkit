@@ -179,8 +179,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "spatialRepresentationType")
     public synchronized Collection<SpatialRepresentationType> getSpatialRepresentationTypes() {
-        return xmlOptional(spatialRepresentationTypes = nonNullCollection(spatialRepresentationTypes,
-                SpatialRepresentationType.class));
+        return spatialRepresentationTypes = optionalCollection(spatialRepresentationTypes, SpatialRepresentationType.class);
     }
 
     /**
@@ -202,7 +201,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "spatialResolution")
     public synchronized Collection<Resolution> getSpatialResolutions() {
-        return xmlOptional(spatialResolutions = nonNullCollection(spatialResolutions, Resolution.class));
+        return spatialResolutions = optionalCollection(spatialResolutions, Resolution.class);
     }
 
     /**
@@ -239,7 +238,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "characterSet")
     public synchronized Collection<CharacterSet> getCharacterSets() {
-        return xmlOptional(characterSets = nonNullCollection(characterSets, CharacterSet.class));
+        return characterSets = optionalCollection(characterSets, CharacterSet.class);
     }
 
     /**
@@ -257,7 +256,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "topicCategory")
     public synchronized Collection<TopicCategory> getTopicCategories()  {
-        return xmlOptional(topicCategories = nonNullCollection(topicCategories, TopicCategory.class));
+        return topicCategories = optionalCollection(topicCategories, TopicCategory.class);
     }
 
     /**
@@ -296,7 +295,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "extent")
     public synchronized Collection<Extent> getExtents() {
-        return xmlOptional(extents = nonNullCollection(extents, Extent.class));
+        return extents = optionalCollection(extents, Extent.class);
     }
 
     /**

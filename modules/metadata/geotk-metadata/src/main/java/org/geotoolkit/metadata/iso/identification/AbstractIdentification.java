@@ -272,7 +272,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "credit")
     public synchronized Collection<String> getCredits() {
-        return xmlOptional(credits = nonNullCollection(credits, String.class));
+        return credits = optionalCollection(credits, String.class);
     }
 
     /**
@@ -290,7 +290,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "status")
     public synchronized Collection<Progress> getStatus() {
-        return xmlOptional(status = nonNullCollection(status, Progress.class));
+        return status = optionalCollection(status, Progress.class);
     }
 
     /**
@@ -309,7 +309,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "pointOfContact")
     public synchronized Collection<ResponsibleParty> getPointOfContacts() {
-        return xmlOptional(pointOfContacts = nonNullCollection(pointOfContacts, ResponsibleParty.class));
+        return pointOfContacts = optionalCollection(pointOfContacts, ResponsibleParty.class);
     }
 
     /**
@@ -327,8 +327,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceMaintenance")
     public synchronized Collection<MaintenanceInformation> getResourceMaintenances() {
-        return xmlOptional(resourceMaintenances = nonNullCollection(resourceMaintenances,
-                MaintenanceInformation.class));
+        return resourceMaintenances = optionalCollection(resourceMaintenances, MaintenanceInformation.class);
     }
 
     /**
@@ -346,7 +345,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "graphicOverview")
     public synchronized Collection<BrowseGraphic> getGraphicOverviews() {
-        return xmlOptional(graphicOverviews = nonNullCollection(graphicOverviews, BrowseGraphic.class));
+        return graphicOverviews = optionalCollection(graphicOverviews, BrowseGraphic.class);
     }
 
     /**
@@ -364,7 +363,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceFormat")
     public synchronized Collection<Format> getResourceFormats() {
-        return xmlOptional(resourceFormats = nonNullCollection(resourceFormats, Format.class));
+        return resourceFormats = optionalCollection(resourceFormats, Format.class);
     }
 
     /**
@@ -382,7 +381,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "descriptiveKeywords")
     public synchronized Collection<Keywords> getDescriptiveKeywords() {
-        return xmlOptional(descriptiveKeywords = nonNullCollection(descriptiveKeywords, Keywords.class));
+        return descriptiveKeywords = optionalCollection(descriptiveKeywords, Keywords.class);
     }
 
     /**
@@ -401,7 +400,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceSpecificUsage")
     public synchronized Collection<Usage> getResourceSpecificUsages() {
-        return xmlOptional(resourceSpecificUsages = nonNullCollection(resourceSpecificUsages, Usage.class));
+        return resourceSpecificUsages = optionalCollection(resourceSpecificUsages, Usage.class);
     }
 
     /**
@@ -419,7 +418,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceConstraints")
     public synchronized Collection<Constraints> getResourceConstraints() {
-        return xmlOptional(resourceConstraints = nonNullCollection(resourceConstraints, Constraints.class));
+        return resourceConstraints = optionalCollection(resourceConstraints, Constraints.class);
     }
 
     /**
@@ -439,7 +438,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "aggregationInfo")
     public synchronized Collection<AggregateInformation> getAggregationInfo() {
-        return aggregationInfo = nonNullCollection(aggregationInfo, AggregateInformation.class);
+        return aggregationInfo = optionalCollection(aggregationInfo, AggregateInformation.class);
     }
 
     /**

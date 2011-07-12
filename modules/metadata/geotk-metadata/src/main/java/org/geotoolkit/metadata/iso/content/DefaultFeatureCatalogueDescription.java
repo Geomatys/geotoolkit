@@ -156,7 +156,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
     @Override
     @XmlElement(name = "language")
     public synchronized Collection<Locale> getLanguages() {
-        return xmlOptional(languages = nonNullCollection(languages, Locale.class));
+        return languages = optionalCollection(languages, Locale.class);
     }
 
     /**
@@ -189,13 +189,11 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
 
     /**
      * Returns the subset of feature types from cited feature catalogue occurring in dataset.
-     *
-     * @todo annotate the org.geotoolkit.util package before.
      */
     @Override
     @XmlElement(name = "featureTypes")
     public synchronized Collection<GenericName> getFeatureTypes() {
-        return featureTypes = nonNullCollection(featureTypes, GenericName.class);
+        return featureTypes = optionalCollection(featureTypes, GenericName.class);
     }
 
     /**

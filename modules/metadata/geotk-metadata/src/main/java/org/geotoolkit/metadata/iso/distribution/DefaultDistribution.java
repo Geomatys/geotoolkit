@@ -126,7 +126,7 @@ public class DefaultDistribution extends MetadataEntity implements Distribution 
     @Override
     @XmlElement(name = "distributionFormat")
     public synchronized Collection<Format> getDistributionFormats() {
-        return xmlOptional(distributionFormats = nonNullCollection(distributionFormats, Format.class));
+        return distributionFormats = optionalCollection(distributionFormats, Format.class);
     }
 
     /**
@@ -144,7 +144,7 @@ public class DefaultDistribution extends MetadataEntity implements Distribution 
     @Override
     @XmlElement(name = "distributor")
     public synchronized Collection<Distributor> getDistributors() {
-        return xmlOptional(distributors = nonNullCollection(distributors, Distributor.class));
+        return distributors = optionalCollection(distributors, Distributor.class);
     }
 
     /**
@@ -163,7 +163,7 @@ public class DefaultDistribution extends MetadataEntity implements Distribution 
     @Override
     @XmlElement(name = "transferOptions")
     public synchronized Collection<DigitalTransferOptions> getTransferOptions() {
-        return xmlOptional(transferOptions = nonNullCollection(transferOptions, DigitalTransferOptions.class));
+        return transferOptions = optionalCollection(transferOptions, DigitalTransferOptions.class);
     }
 
     /**

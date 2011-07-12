@@ -201,7 +201,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
     @Override
     @XmlElement(name = "geographicElement")
     public synchronized Collection<GeographicExtent> getGeographicElements() {
-        return xmlOptional(geographicElements = nonNullCollection(geographicElements, GeographicExtent.class));
+        return geographicElements = optionalCollection(geographicElements, GeographicExtent.class);
     }
 
     /**
@@ -219,7 +219,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
     @Override
     @XmlElement(name = "temporalElement")
     public synchronized Collection<TemporalExtent> getTemporalElements() {
-        return xmlOptional(temporalElements = nonNullCollection(temporalElements, TemporalExtent.class));
+        return temporalElements = optionalCollection(temporalElements, TemporalExtent.class);
     }
 
     /**
@@ -237,7 +237,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
     @Override
     @XmlElement(name = "verticalElement")
     public synchronized Collection<VerticalExtent> getVerticalElements() {
-        return xmlOptional(verticalElements = nonNullCollection(verticalElements, VerticalExtent.class));
+        return verticalElements = optionalCollection(verticalElements, VerticalExtent.class);
     }
 
     /**

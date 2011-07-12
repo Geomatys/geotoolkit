@@ -297,7 +297,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
     @Override
     @XmlElement(name = "satisfiedPlan")
     public synchronized Collection<Plan> getSatisfiedPlans() {
-        return xmlOptional(satisfiedPlans = nonNullCollection(satisfiedPlans, Plan.class));
+        return satisfiedPlans = optionalCollection(satisfiedPlans, Plan.class);
     }
 
     /**

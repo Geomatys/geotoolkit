@@ -142,8 +142,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
     @Override
     @XmlElement(name = "extendedElementInformation")
     public synchronized Collection<ExtendedElementInformation> getExtendedElementInformation() {
-        return xmlOptional(extendedElementInformation = nonNullCollection(extendedElementInformation,
-                ExtendedElementInformation.class));
+        return extendedElementInformation = optionalCollection(extendedElementInformation, ExtendedElementInformation.class);
     }
 
     /**
@@ -151,9 +150,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
      *
      * @param newValues The new extended element information.
      */
-    public synchronized void setExtendedElementInformation(
-            final Collection<? extends ExtendedElementInformation> newValues) {
-        extendedElementInformation = copyCollection(newValues, extendedElementInformation,
-                                                    ExtendedElementInformation.class);
+    public synchronized void setExtendedElementInformation(final Collection<? extends ExtendedElementInformation> newValues) {
+        extendedElementInformation = copyCollection(newValues, extendedElementInformation, ExtendedElementInformation.class);
     }
 }

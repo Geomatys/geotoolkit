@@ -226,7 +226,7 @@ public class AbstractElement extends MetadataEntity implements Element {
     @Override
     @XmlElement(name = "nameOfMeasure")
     public synchronized Collection<InternationalString> getNamesOfMeasure() {
-        return namesOfMeasure = nonNullCollection(namesOfMeasure, InternationalString.class);
+        return namesOfMeasure = optionalCollection(namesOfMeasure, InternationalString.class);
     }
 
     /**

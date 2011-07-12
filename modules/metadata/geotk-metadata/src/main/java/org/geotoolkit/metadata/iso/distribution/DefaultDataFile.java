@@ -122,7 +122,7 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
     @Override
     @XmlElement(name = "featureType", namespace = Namespaces.GMX)
     public synchronized Collection<LocalName> getFeatureTypes() {
-        return xmlOptional(featureTypes = nonNullCollection(featureTypes, LocalName.class));
+        return featureTypes = optionalCollection(featureTypes, LocalName.class);
     }
 
     /**

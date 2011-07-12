@@ -157,7 +157,7 @@ public class DefaultScope extends MetadataEntity implements Scope {
     @Override
     @XmlElement(name = "levelDescription")
     public synchronized Collection<ScopeDescription> getLevelDescription() {
-        return levelDescription = nonNullCollection(levelDescription, ScopeDescription.class);
+        return levelDescription = optionalCollection(levelDescription, ScopeDescription.class);
     }
 
     /**

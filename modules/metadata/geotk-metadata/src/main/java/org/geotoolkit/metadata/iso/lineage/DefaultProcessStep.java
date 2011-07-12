@@ -243,7 +243,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     @Override
     @XmlElement(name = "processor")
     public synchronized Collection<ResponsibleParty> getProcessors() {
-        return xmlOptional(processors = nonNullCollection(processors, ResponsibleParty.class));
+        return processors = optionalCollection(processors, ResponsibleParty.class);
     }
 
     /**
@@ -263,7 +263,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     @Override
     @XmlElement(name = "source")
     public synchronized Collection<Source> getSources() {
-        return xmlOptional(sources = nonNullCollection(sources, Source.class));
+        return sources = optionalCollection(sources, Source.class);
     }
 
     /**
@@ -283,7 +283,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     @Override
     @XmlElement(name = "output", namespace = Namespaces.GMI)
     public synchronized Collection<Source> getOutputs() {
-        return xmlOptional(outputs = nonNullCollection(outputs, Source.class));
+        return outputs = optionalCollection(outputs, Source.class);
     }
 
     /**
@@ -332,7 +332,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     @Override
     @XmlElement(name = "report", namespace = Namespaces.GMI)
     public synchronized Collection<ProcessStepReport> getReports() {
-        return xmlOptional(reports = nonNullCollection(reports, ProcessStepReport.class));
+        return reports = optionalCollection(reports, ProcessStepReport.class);
     }
 
     /**

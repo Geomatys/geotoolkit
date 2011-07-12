@@ -178,7 +178,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
     @Override
     @XmlElement(name = "onLine")
     public synchronized Collection<OnlineResource> getOnLines() {
-        return xmlOptional(onLines = nonNullCollection(onLines, OnlineResource.class));
+        return onLines = optionalCollection(onLines, OnlineResource.class);
     }
 
     /**

@@ -168,7 +168,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
     @Override
     @XmlElement(name = "density")
     public synchronized Collection<Double> getDensities() {
-        return xmlOptional(densities = nonNullCollection(densities, Double.class));
+        return densities = optionalCollection(densities, Double.class);
     }
 
     /**
@@ -228,7 +228,7 @@ public class DefaultMedium extends MetadataEntity implements Medium {
     @Override
     @XmlElement(name = "mediumFormat")
     public synchronized Collection<MediumFormat> getMediumFormats() {
-        return xmlOptional(mediumFormats = nonNullCollection(mediumFormats, MediumFormat.class));
+        return mediumFormats = optionalCollection(mediumFormats, MediumFormat.class);
     }
 
     /**

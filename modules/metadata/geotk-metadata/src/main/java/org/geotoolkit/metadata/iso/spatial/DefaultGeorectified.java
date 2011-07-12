@@ -325,8 +325,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
     @Override
     @XmlElement(name = "transformationDimensionMapping")
     public synchronized Collection<InternationalString> getTransformationDimensionMapping() {
-        return xmlOptional(transformationDimensionMapping = nonNullCollection(transformationDimensionMapping,
-                InternationalString.class));
+        return transformationDimensionMapping = optionalCollection(transformationDimensionMapping, InternationalString.class);
     }
 
     /**
@@ -346,7 +345,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
     @Override
     @XmlElement(name = "checkPoint", namespace = Namespaces.GMI)
     public synchronized Collection<GCP> getCheckPoints() {
-        return xmlOptional(checkPoints = nonNullCollection(checkPoints, GCP.class));
+        return checkPoints = optionalCollection(checkPoints, GCP.class);
     }
 
     /**

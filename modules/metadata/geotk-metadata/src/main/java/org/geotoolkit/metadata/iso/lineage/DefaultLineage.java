@@ -156,7 +156,7 @@ public class DefaultLineage extends MetadataEntity implements Lineage {
     @Override
     @XmlElement(name = "processStep")
     public synchronized Collection<ProcessStep> getProcessSteps() {
-        return xmlOptional(processSteps = nonNullCollection(processSteps, ProcessStep.class));
+        return processSteps = optionalCollection(processSteps, ProcessStep.class);
     }
 
     /**
@@ -175,7 +175,7 @@ public class DefaultLineage extends MetadataEntity implements Lineage {
     @Override
     @XmlElement(name = "source")
     public synchronized Collection<Source> getSources() {
-        return xmlOptional(sources = nonNullCollection(sources, Source.class));
+        return sources = optionalCollection(sources, Source.class);
     }
 
     /**

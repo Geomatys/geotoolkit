@@ -164,7 +164,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
     @Override
     @XmlElement(name = "softwareReference", namespace = Namespaces.GMI)
     public synchronized Collection<Citation> getSoftwareReferences() {
-        return xmlOptional(softwareReferences = nonNullCollection(softwareReferences, Citation.class));
+        return softwareReferences = optionalCollection(softwareReferences, Citation.class);
     }
 
     /**
@@ -201,7 +201,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
     @Override
     @XmlElement(name = "documentation", namespace = Namespaces.GMI)
     public synchronized Collection<Citation> getDocumentations() {
-        return xmlOptional(documentations = nonNullCollection(documentations, Citation.class));
+        return documentations = optionalCollection(documentations, Citation.class);
     }
 
     /**
@@ -240,7 +240,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
     @Override
     @XmlElement(name = "algorithm", namespace = Namespaces.GMI)
     public synchronized Collection<Algorithm> getAlgorithms() {
-        return xmlOptional(algorithms = nonNullCollection(algorithms, Algorithm.class));
+        return algorithms = optionalCollection(algorithms, Algorithm.class);
     }
 
     /**

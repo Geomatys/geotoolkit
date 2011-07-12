@@ -81,7 +81,7 @@ public final class DefaultCitationTest {
      * @throws JAXBException Should never happen.
      */
     @Test
-    public void testMarshalling() throws JAXBException {
+    public void testIdentifiersMarshalling() throws JAXBException {
         final DefaultCitation citation = new DefaultCitation();
         citation.setISBN("MyISBN");
         citation.setISSN("MyISSN");
@@ -98,18 +98,40 @@ public final class DefaultCitationTest {
          * that ISBN is declared has its own element.
          */
         String previous = null;
-        int foundOGC=0, foundEPSG=0, foundISBN=0, foundISSN=0;
+        int foundID=0, foundOGC=0, foundEPSG=0, foundISBN=0, foundISSN=0;
         for (String line : Strings.getLinesFromMultilines(xml)) {
             line = line.trim();
+            if (line.contains("MyID"))   {foundID++;}
             if (line.contains("MyOGC"))  {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundOGC++;}
             if (line.contains("MyEPSG")) {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundEPSG++;}
             if (line.contains("MyISBN")) {assertEquals("Wrong parent element.", "<gmd:ISBN>", previous); foundISBN++;}
             if (line.contains("MyISSN")) {assertEquals("Wrong parent element.", "<gmd:ISSN>", previous); foundISSN++;}
             previous = line;
         }
+        assertEquals("MyID",   0, foundID);
         assertEquals("MyOGC",  1, foundOGC);
         assertEquals("MyEPSG", 1, foundEPSG);
         assertEquals("MyISBN", 1, foundISBN);
         assertEquals("MyISSN", 1, foundISSN);
+    }
+
+    /**
+     * Ensures that a mandatory element is marshaled even if empty.
+     *
+     * @throws JAXBException Should never happen.
+     *
+     * @todo Disabled for now, because it doesn't seem to work.
+     */
+    @Test
+    @Ignore
+    public void testMandatoryPropertyMarshaling() throws JAXBException {
+        final DefaultCitation citation = new DefaultCitation();
+        citation.getDates().add(new DefaultCitationDate());
+        String xml = XML.marshal(citation);
+        assertTrue(xml, xml.contains("<gmd:date>"));
+
+        citation.setDates(null);
+        xml = XML.marshal(citation);
+        assertTrue(xml, xml.contains("<gmd:date/>"));
     }
 }
