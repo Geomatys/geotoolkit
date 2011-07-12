@@ -22,6 +22,8 @@ import java.util.List;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.median.MedianDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -29,13 +31,13 @@ import org.opengis.parameter.ParameterValueGroup;
 public class MedianProcess extends AbstractProcess{
     
     public MedianProcess(){
-        super(MedianDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final Double[] set = (Double[])inputParameters.parameter("set").getValue();   
+        final Double[] set = value(SET, inputParameters);   
         List<Double> list = Arrays.asList(set);
         
         //Sort the set of double
@@ -51,8 +53,8 @@ public class MedianProcess extends AbstractProcess{
             median = list.get(indexMedian);
         }
        
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(median);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(median);
         
     }
     

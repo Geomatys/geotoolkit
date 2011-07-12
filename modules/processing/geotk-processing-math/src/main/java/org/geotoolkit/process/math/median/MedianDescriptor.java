@@ -40,12 +40,12 @@ public class MedianDescriptor extends AbstractProcessDescriptor{
     /**
      * Input parameters
      */
-    public static final ParameterDescriptor<Double> FIRST_NUMBER =
+    public static final ParameterDescriptor<Double[]> SET =
             new DefaultParameterDescriptor("set", "Set of double", Double[].class, null, true);
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FIRST_NUMBER});
+            new GeneralParameterDescriptor[]{SET});
     
     /**
      * OutputParameters

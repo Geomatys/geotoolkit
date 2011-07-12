@@ -19,6 +19,8 @@ package org.geotoolkit.process.math.sum;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.sum.SumDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -26,21 +28,21 @@ import org.opengis.parameter.ParameterValueGroup;
 public class SumProcess extends AbstractProcess{
     
     public SumProcess(){
-        super(SumDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final Double[] set = (Double[])inputParameters.parameter("set").getValue();   
+        final Double[] set = value(SET, inputParameters);  
         
         Double sum = 0.0;
         for(int i=0; i<set.length; i++){
             sum += set[i].doubleValue();
         }
        
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(sum);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(sum);  
         
     }
     

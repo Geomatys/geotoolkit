@@ -19,6 +19,9 @@ package org.geotoolkit.process.math.absolute;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.absolute.AbsoluteDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -26,18 +29,18 @@ import org.opengis.parameter.ParameterValueGroup;
 public class AbsoluteProcess extends AbstractProcess{
     
     public AbsoluteProcess(){
-        super(AbsoluteDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final double first = (Double)inputParameters.parameter("first").getValue();   
+        final double first = value(FIRST_NUMBER, inputParameters);
        
         Double result = Math.abs(first);
         
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(result);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(result);  
         
     }
     

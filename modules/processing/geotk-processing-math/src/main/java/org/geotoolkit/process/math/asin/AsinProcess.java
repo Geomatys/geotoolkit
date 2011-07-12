@@ -21,6 +21,9 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.asin.AsinDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -28,13 +31,13 @@ import org.opengis.parameter.ParameterValueGroup;
 public class AsinProcess extends AbstractProcess{
     
     public AsinProcess(){
-        super(AsinDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final double first = (Double)inputParameters.parameter("first").getValue();   
+        final double first = value(FIRST_NUMBER, inputParameters);  
         
         Double result = 0.0;
         try{
@@ -42,8 +45,8 @@ public class AsinProcess extends AbstractProcess{
         }catch(Exception e){
             getMonitor().failed(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
         }
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(result);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(result);  
         
     }
     

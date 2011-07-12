@@ -19,6 +19,8 @@ package org.geotoolkit.process.math.max;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.max.MaxDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -26,21 +28,21 @@ import org.opengis.parameter.ParameterValueGroup;
 public class MaxProcess extends AbstractProcess{
     
     public MaxProcess(){
-        super(MaxDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final Double[] set = (Double[])inputParameters.parameter("set").getValue();   
+        final Double[] set = value(SET, inputParameters);  
         
         Double max = Math.max(set[0], set[1]);
         for(int i=1; i<set.length; i++){
             max = Math.max(max.doubleValue(), set[i].doubleValue());
         }
        
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(max);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(max);  
         
     }
     

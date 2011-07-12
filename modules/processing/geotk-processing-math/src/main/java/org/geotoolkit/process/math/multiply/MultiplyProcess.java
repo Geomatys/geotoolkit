@@ -19,6 +19,8 @@ package org.geotoolkit.process.math.multiply;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.multiply.MultiplyDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -26,19 +28,19 @@ import org.opengis.parameter.ParameterValueGroup;
 public class MultiplyProcess extends AbstractProcess{
     
     public MultiplyProcess(){
-        super(MultiplyDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final double first = (Double)inputParameters.parameter("first").getValue();   
-        final double second = (Double)inputParameters.parameter("second").getValue();       
+        final double first = value(FIRST_NUMBER, inputParameters);  
+        final double second =  value(SECOND_NUMBER, inputParameters);      
         
         Double result = first * second;
         
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(result);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(result); 
         
     }
     

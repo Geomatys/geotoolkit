@@ -19,6 +19,8 @@ package org.geotoolkit.process.math.avg;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.math.avg.AvgDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -26,13 +28,13 @@ import org.opengis.parameter.ParameterValueGroup;
 public class AvgProcess extends AbstractProcess{
     
     public AvgProcess(){
-        super(AvgDescriptor.INSTANCE);
+        super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final Double[] set = (Double[])inputParameters.parameter("set").getValue();   
+        final Double[] set = value(SET, inputParameters);
         
         Double sum = 0.0;
         for(int i=0; i<set.length; i++){
@@ -41,8 +43,8 @@ public class AvgProcess extends AbstractProcess{
         
         Double result = sum / set.length;
         
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(result);
+        final ParameterValueGroup output =  getOutput();
+        getOrCreate(RESULT_NUMBER, output).setValue(result);  
         
     }
     
