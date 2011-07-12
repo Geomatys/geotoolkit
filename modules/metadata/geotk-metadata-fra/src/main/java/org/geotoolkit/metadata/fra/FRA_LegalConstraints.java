@@ -89,7 +89,7 @@ public class FRA_LegalConstraints extends DefaultLegalConstraints {
      */
     @XmlElement(name = "citation")
     public synchronized Collection<Citation> getCitations() {
-        return citations = optionalCollection(citations, Citation.class);
+        return citations = nonNullCollection(citations, Citation.class);
     }
 
     /**

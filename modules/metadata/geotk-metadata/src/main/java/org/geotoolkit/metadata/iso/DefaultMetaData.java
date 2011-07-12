@@ -392,7 +392,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "hierarchyLevel")
     public synchronized Collection<ScopeCode> getHierarchyLevels() {
-        return hierarchyLevels = optionalCollection(hierarchyLevels, ScopeCode.class);
+        return hierarchyLevels = nonNullCollection(hierarchyLevels, ScopeCode.class);
     }
 
     /**
@@ -410,7 +410,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "hierarchyLevelName")
     public synchronized Collection<String> getHierarchyLevelNames() {
-        return hierarchyLevelNames = optionalCollection(hierarchyLevelNames, String.class);
+        return hierarchyLevelNames = nonNullCollection(hierarchyLevelNames, String.class);
     }
 
     /**
@@ -504,7 +504,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "spatialRepresentationInfo")
     public synchronized Collection<SpatialRepresentation> getSpatialRepresentationInfo() {
-        return spatialRepresentationInfo = optionalCollection(spatialRepresentationInfo, SpatialRepresentation.class);
+        return spatialRepresentationInfo = nonNullCollection(spatialRepresentationInfo, SpatialRepresentation.class);
     }
 
     /**
@@ -524,7 +524,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "referenceSystemInfo")
     public synchronized Collection<ReferenceSystem> getReferenceSystemInfo() {
-        return referenceSystemInfo = optionalCollection(referenceSystemInfo, ReferenceSystem.class);
+        return referenceSystemInfo = nonNullCollection(referenceSystemInfo, ReferenceSystem.class);
     }
 
     /**
@@ -544,7 +544,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "metadataExtensionInfo")
     public synchronized Collection<MetadataExtensionInformation> getMetadataExtensionInfo() {
-        return metadataExtensionInfo = optionalCollection(metadataExtensionInfo, MetadataExtensionInformation.class);
+        return metadataExtensionInfo = nonNullCollection(metadataExtensionInfo, MetadataExtensionInformation.class);
     }
 
     /**
@@ -585,7 +585,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "contentInfo")
     public synchronized Collection<ContentInformation> getContentInfo() {
-        return contentInfo = optionalCollection(contentInfo, ContentInformation.class);
+        return contentInfo = nonNullCollection(contentInfo, ContentInformation.class);
     }
 
     /**
@@ -623,7 +623,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "dataQualityInfo")
     public synchronized Collection<DataQuality> getDataQualityInfo() {
-        return dataQualityInfo = optionalCollection(dataQualityInfo, DataQuality.class);
+        return dataQualityInfo = nonNullCollection(dataQualityInfo, DataQuality.class);
     }
 
     /**
@@ -642,7 +642,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "portrayalCatalogueInfo")
     public synchronized Collection<PortrayalCatalogueReference> getPortrayalCatalogueInfo() {
-        return portrayalCatalogueInfo = optionalCollection(portrayalCatalogueInfo, PortrayalCatalogueReference.class);
+        return portrayalCatalogueInfo = nonNullCollection(portrayalCatalogueInfo, PortrayalCatalogueReference.class);
     }
 
     /**
@@ -662,7 +662,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "metadataConstraints")
     public synchronized Collection<Constraints> getMetadataConstraints() {
-        return metadataConstraints = optionalCollection(metadataConstraints, Constraints.class);
+        return metadataConstraints = nonNullCollection(metadataConstraints, Constraints.class);
     }
 
     /**
@@ -682,7 +682,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "applicationSchemaInfo")
     public synchronized Collection<ApplicationSchemaInformation> getApplicationSchemaInfo() {
-        return applicationSchemaInfo = optionalCollection(applicationSchemaInfo, ApplicationSchemaInformation.class);
+        return applicationSchemaInfo = nonNullCollection(applicationSchemaInfo, ApplicationSchemaInformation.class);
     }
 
     /**
@@ -725,7 +725,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @XmlElement(name = "locale")
     @XmlJavaTypeAdapter(PT_Locale.class)
     public synchronized Collection<Locale> getLocales() {
-        return locales = optionalCollection(locales, Locale.class);
+        return locales = nonNullCollection(locales, Locale.class);
     }
 
     /**
@@ -771,7 +771,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "acquisitionInformation", namespace = Namespaces.GMI)
     public synchronized Collection<AcquisitionInformation> getAcquisitionInformation() {
-        return acquisitionInformation = optionalCollection(acquisitionInformation, AcquisitionInformation.class);
+        return acquisitionInformation = nonNullCollection(acquisitionInformation, AcquisitionInformation.class);
     }
 
     /**

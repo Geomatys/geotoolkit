@@ -260,7 +260,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
     @Override
     @XmlElement(name = "expectedObjective")
     public synchronized Collection<Objective> getExpectedObjectives() {
-        return expectedObjectives = optionalCollection(expectedObjectives, Objective.class);
+        return expectedObjectives = nonNullCollection(expectedObjectives, Objective.class);
     }
 
     /**
@@ -296,7 +296,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
     @Override
     @XmlElement(name = "relatedSensor")
     public synchronized Collection<? extends Instrument> getRelatedSensors() {
-        return relatedSensors = optionalCollection(relatedSensors, Instrument.class);
+        return relatedSensors = nonNullCollection(relatedSensors, Instrument.class);
     }
 
     /**

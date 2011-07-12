@@ -192,7 +192,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "type")
     public synchronized Collection<ObjectiveType> getTypes() {
-        return types = optionalCollection(types, ObjectiveType.class);
+        return types = nonNullCollection(types, ObjectiveType.class);
     }
 
     /**
@@ -210,7 +210,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "function")
     public synchronized Collection<InternationalString> getFunctions() {
-        return functions = optionalCollection(functions, InternationalString.class);
+        return functions = nonNullCollection(functions, InternationalString.class);
     }
 
     /**
@@ -229,7 +229,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "extent")
     public synchronized Collection<Extent> getExtents() {
-        return extents = optionalCollection(extents, Extent.class);
+        return extents = nonNullCollection(extents, Extent.class);
     }
 
     /**
@@ -266,7 +266,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "pass")
     public synchronized Collection<PlatformPass> getPass() {
-        return pass = optionalCollection(pass, PlatformPass.class);
+        return pass = nonNullCollection(pass, PlatformPass.class);
     }
 
     /**
@@ -284,7 +284,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     @Override
     @XmlElement(name = "sensingInstrument")
     public synchronized Collection<Instrument> getSensingInstruments() {
-        return sensingInstruments = optionalCollection(sensingInstruments, Instrument.class);
+        return sensingInstruments = nonNullCollection(sensingInstruments, Instrument.class);
     }
 
     /**

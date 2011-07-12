@@ -201,7 +201,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
     @Override
     @XmlElement(name = "deliveryPoint")
     public synchronized Collection<String> getDeliveryPoints() {
-        return deliveryPoints = optionalCollection(deliveryPoints, String.class);
+        return deliveryPoints = nonNullCollection(deliveryPoints, String.class);
     }
 
     /**
@@ -219,7 +219,7 @@ public class DefaultAddress extends MetadataEntity implements Address {
     @Override
     @XmlElement(name = "electronicMailAddress")
     public synchronized Collection<String> getElectronicMailAddresses() {
-        return electronicMailAddresses = optionalCollection(electronicMailAddresses, String.class);
+        return electronicMailAddresses = nonNullCollection(electronicMailAddresses, String.class);
     }
 
     /**

@@ -158,7 +158,7 @@ public class DefaultDataQuality extends MetadataEntity implements DataQuality {
     @Override
     @XmlElement(name = "report")
     public synchronized Collection<Element> getReports() {
-        return reports = optionalCollection(reports, Element.class);
+        return reports = nonNullCollection(reports, Element.class);
     }
 
     /**

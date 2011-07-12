@@ -128,7 +128,7 @@ public class DefaultLegalConstraints extends DefaultConstraints implements Legal
     @Override
     @XmlElement(name = "accessConstraints")
     public synchronized Collection<Restriction> getAccessConstraints() {
-        return accessConstraints = optionalCollection(accessConstraints, Restriction.class);
+        return accessConstraints = nonNullCollection(accessConstraints, Restriction.class);
     }
 
     /**
@@ -148,7 +148,7 @@ public class DefaultLegalConstraints extends DefaultConstraints implements Legal
     @Override
     @XmlElement(name = "useConstraints")
     public synchronized Collection<Restriction> getUseConstraints() {
-        return useConstraints = optionalCollection(useConstraints, Restriction.class);
+        return useConstraints = nonNullCollection(useConstraints, Restriction.class);
     }
 
     /**
@@ -170,7 +170,7 @@ public class DefaultLegalConstraints extends DefaultConstraints implements Legal
     @Override
     @XmlElement(name = "otherConstraints")
     public synchronized Collection<InternationalString> getOtherConstraints() {
-        return otherConstraints = optionalCollection(otherConstraints, InternationalString.class);
+        return otherConstraints = nonNullCollection(otherConstraints, InternationalString.class);
     }
 
     /**

@@ -194,7 +194,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
     @Override
     @XmlElement(name = "sponsor")
     public synchronized Collection<ResponsibleParty> getSponsors() {
-        return sponsors = optionalCollection(sponsors, ResponsibleParty.class);
+        return sponsors = nonNullCollection(sponsors, ResponsibleParty.class);
     }
 
     /**

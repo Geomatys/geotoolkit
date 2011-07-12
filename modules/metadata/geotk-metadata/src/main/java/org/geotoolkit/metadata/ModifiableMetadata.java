@@ -77,7 +77,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -95,8 +95,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * A flag used for {@link #unmodifiable} in order to specify that {@link #freeze}
-     * is under way.
+     * A flag used for {@link #unmodifiable} in order to specify that
+     * {@link #freeze()} is under way.
      */
     private static final ModifiableMetadata FREEZING = new Null();
 
@@ -383,8 +383,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * <ul>
      *   <li>Invokes {@link #checkWritePermission()} in order to ensure that this metadata is
      *       modifiable.</li>
-     *   <li>If {@code source} is null, returns {@code null} (meaning that the metadata is
-     *       not provided).</li>
+     *   <li>If {@code source} is {@linkplain XCollections#isNullOrEmpty(Collection) null or
+     *       empty}, returns {@code null} (meaning that the metadata is not provided).</li>
      *   <li>If {@code target} is null, creates a new {@link List}.</li>
      *   <li>Copies the content of the given {@code source} into the target.</li>
      * </ul>
@@ -413,7 +413,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (List<E>) source;
             }
             checkWritePermission();
-            if (source == null || source.isEmpty()) {
+            if (XCollections.isNullOrEmpty(source)) {
                 target = null;
             } else {
                 if (target != null) {
@@ -434,8 +434,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * <ul>
      *   <li>Invokes {@link #checkWritePermission()} in order to ensure that this metadata is
      *       modifiable.</li>
-     *   <li>If {@code source} is null, returns {@code null} (meaning that the metadata is
-     *       not provided).</li>
+     *   <li>If {@code source} is {@linkplain XCollections#isNullOrEmpty(Collection) null or
+     *       empty}, returns {@code null} (meaning that the metadata is not provided).</li>
      *   <li>If {@code target} is null, creates a new {@link Set}.</li>
      *   <li>Copies the content of the given {@code source} into the target.</li>
      * </ul>
@@ -464,7 +464,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (Set<E>) source;
             }
             checkWritePermission();
-            if (source == null || source.isEmpty()) {
+            if (XCollections.isNullOrEmpty(source)) {
                 target = null;
             } else {
                 if (target != null) {
@@ -485,8 +485,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * <ul>
      *   <li>Invokes {@link #checkWritePermission()} in order to ensure that this metadata is
      *       modifiable.</li>
-     *   <li>If {@code source} is null, returns {@code null} (meaning that the metadata is
-     *       not provided).</li>
+     *   <li>If {@code source} is {@linkplain XCollections#isNullOrEmpty(Collection) null or
+     *       empty}, returns {@code null} (meaning that the metadata is not provided).</li>
      *   <li>If {@code target} is null, creates a new {@link Set} or a new {@link List}
      *       depending on the value returned by {@link #collectionType(Class)}.</li>
      *   <li>Copies the content of the given {@code source} into the target.</li>
@@ -528,7 +528,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return (Collection<E>) source;
             }
             checkWritePermission();
-            if (source == null || source.isEmpty()) {
+            if (XCollections.isNullOrEmpty(source)) {
                 target = null;
             } else {
                 if (target != null) {
@@ -548,19 +548,38 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
+     * Returns {@code true} if the caller {@code nonNullCollection} method (or list, or set)
+     * is allowed to returns {@code null} instead than an empty list. This happen mostly at
+     * XML marshaling time.
+     */
+    private static boolean canReturnNull() {
+        return MarshalContext.isMarshaling();
+    }
+
+    /**
      * Returns the specified list, or a new one if {@code c} is null.
      * This is a convenience method for implementation of {@code getFoo()}
      * methods.
+     *
+     * {@section Special cases}
+     * The general contract of this method is to never return {@code null}. However this method
+     * may exceptionally returns {@code null} during XML marshaling or during copy operations.
+     * The intend is to reduce the amount of empty object creations and should be invisible
+     * from the public API.
      *
      * @param  <E> The type of elements in the list.
      * @param  c The list to checks.
      * @param  elementType The element type (used only if {@code c} is null).
      * @return {@code c}, or a new list if {@code c} is null.
      */
+    // See the comments in nonNullCollection(...) for implementation notes.
     protected final <E> List<E> nonNullList(final List<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
         if (c != null) {
-            return c;
+            return c.isEmpty() && canReturnNull() ? null : c;
+        }
+        if (canReturnNull()) {
+            return null;
         }
         if (isModifiable()) {
             return new MutableList<E>(elementType);
@@ -573,6 +592,12 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * This is a convenience method for implementation of {@code getFoo()}
      * methods.
      *
+     * {@section Special cases}
+     * The general contract of this method is to never return {@code null}. However this method
+     * may exceptionally returns {@code null} during XML marshaling or during copy operations.
+     * The intend is to reduce the amount of empty object creations and should be invisible
+     * from the public API.
+     *
      * @param  <E> The type of elements in the set.
      * @param  c The set to checks.
      * @param  elementType The element type (used only if {@code c} is null).
@@ -580,10 +605,14 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *
      * @since 2.5
      */
+    // See the comments in nonNullCollection(...) for implementation notes.
     protected final <E> Set<E> nonNullSet(final Set<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
         if (c != null) {
-            return c;
+            return c.isEmpty() && canReturnNull() ? null : c;
+        }
+        if (canReturnNull()) {
+            return null;
         }
         if (isModifiable()) {
             return new MutableSet<E>(elementType);
@@ -604,16 +633,30 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * {@link #collectionType(Class)} in order to get a hint about whatever a {@link List}
      * or a {@link Set} should be used.
      *
+     * {@section Special cases}
+     * The general contract of this method is to never return {@code null}. However this method
+     * may exceptionally returns {@code null} during XML marshaling or during copy operations.
+     * The intend is to reduce the amount of empty object creations and should be invisible
+     * from the public API.
+     *
      * @param  <E> The type of elements in the collection.
      * @param  c The collection to checks.
      * @param  elementType The element type (used only if {@code c} is null).
      * @return {@code c}, or a new collection if {@code c} is null.
      */
+    // Despite the javadoc claims, we do not yet return null during copy operations.
+    // However a future version may do so if it appears worth on a performance point of view.
     protected final <E> Collection<E> nonNullCollection(final Collection<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
+        if (XCollections.isNullOrEmpty(c) && MarshalContext.isMarshaling()) {
+            return null;
+        }
         if (c != null) {
             assert collectionType(elementType).isAssignableFrom(c.getClass());
-            return c;
+            return c.isEmpty() && canReturnNull() ? null : c;
+        }
+        if (canReturnNull()) {
+            return null;
         }
         final boolean isModifiable = isModifiable();
         if (useSet(elementType)) {
@@ -629,26 +672,6 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 return Collections.emptyList();
             }
         }
-    }
-
-    /**
-     * Returns a {@linkplain #nonNullCollection(Collection, Class) non-null collection}, unless
-     * the collection {@linkplain XCollections#isNullOrEmpty(Collection) is null or empty} and
-     * we are marshaling a XML document. This is a convenience method for implementation of
-     * {@code getFoo()} methods when the XML schema declares the property as optional.
-     *
-     * @param  <E> The type of elements in the collection.
-     * @param  c The collection to checks.
-     * @param  elementType The element type (used only if {@code c} is null).
-     * @return {@code c}, or a new collection if {@code c} is null.
-     *
-     * @since 3.19
-     */
-    protected final <E> Collection<E> optionalCollection(final Collection<E> c, final Class<E> elementType) {
-        if (XCollections.isNullOrEmpty(c) && MarshalContext.isMarshaling()) {
-            return null;
-        }
-        return nonNullCollection(c, elementType);
     }
 
     /**

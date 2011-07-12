@@ -133,7 +133,7 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
     @Override
     @XmlElement(name = "useLimitation")
     public synchronized Collection<InternationalString> getUseLimitations() {
-        return useLimitations = optionalCollection(useLimitations, InternationalString.class);
+        return useLimitations = nonNullCollection(useLimitations, InternationalString.class);
     }
 
     /**

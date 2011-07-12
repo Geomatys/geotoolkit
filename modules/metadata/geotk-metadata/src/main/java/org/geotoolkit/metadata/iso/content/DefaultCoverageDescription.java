@@ -183,7 +183,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
     @Override
     @XmlElement(name = "dimension")
     public synchronized Collection<RangeDimension> getDimensions() {
-        return dimensions = optionalCollection(dimensions, RangeDimension.class);
+        return dimensions = nonNullCollection(dimensions, RangeDimension.class);
     }
 
     /**
@@ -207,7 +207,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
     @Override
     @XmlElement(name = "rangeElementDescription", namespace = Namespaces.GMI)
     public synchronized Collection<RangeElementDescription> getRangeElementDescriptions() {
-        return rangeElementDescriptions = optionalCollection(rangeElementDescriptions, RangeElementDescription.class);
+        return rangeElementDescriptions = nonNullCollection(rangeElementDescriptions, RangeElementDescription.class);
     }
 
     /**

@@ -252,7 +252,7 @@ public class DefaultFormat extends MetadataEntity implements Format {
     @Override
     @XmlElement(name = "formatDistributor")
     public synchronized Collection<Distributor> getFormatDistributors() {
-        return formatDistributors = optionalCollection(formatDistributors, Distributor.class);
+        return formatDistributors = nonNullCollection(formatDistributors, Distributor.class);
     }
 
     /**

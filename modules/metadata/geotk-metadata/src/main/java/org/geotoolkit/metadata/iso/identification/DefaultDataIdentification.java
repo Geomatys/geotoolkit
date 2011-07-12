@@ -179,7 +179,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "spatialRepresentationType")
     public synchronized Collection<SpatialRepresentationType> getSpatialRepresentationTypes() {
-        return spatialRepresentationTypes = optionalCollection(spatialRepresentationTypes, SpatialRepresentationType.class);
+        return spatialRepresentationTypes = nonNullCollection(spatialRepresentationTypes, SpatialRepresentationType.class);
     }
 
     /**
@@ -201,7 +201,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "spatialResolution")
     public synchronized Collection<Resolution> getSpatialResolutions() {
-        return spatialResolutions = optionalCollection(spatialResolutions, Resolution.class);
+        return spatialResolutions = nonNullCollection(spatialResolutions, Resolution.class);
     }
 
     /**
@@ -238,7 +238,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "characterSet")
     public synchronized Collection<CharacterSet> getCharacterSets() {
-        return characterSets = optionalCollection(characterSets, CharacterSet.class);
+        return characterSets = nonNullCollection(characterSets, CharacterSet.class);
     }
 
     /**
@@ -256,7 +256,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "topicCategory")
     public synchronized Collection<TopicCategory> getTopicCategories()  {
-        return topicCategories = optionalCollection(topicCategories, TopicCategory.class);
+        return topicCategories = nonNullCollection(topicCategories, TopicCategory.class);
     }
 
     /**
@@ -295,7 +295,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     @Override
     @XmlElement(name = "extent")
     public synchronized Collection<Extent> getExtents() {
-        return extents = optionalCollection(extents, Extent.class);
+        return extents = nonNullCollection(extents, Extent.class);
     }
 
     /**

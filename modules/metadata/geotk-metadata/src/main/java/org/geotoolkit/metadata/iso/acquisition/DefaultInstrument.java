@@ -136,7 +136,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
     @Override
     @XmlElement(name = "citation")
     public synchronized Collection<Citation> getCitations() {
-        return citations = optionalCollection(citations, Citation.class);
+        return citations = nonNullCollection(citations, Citation.class);
     }
 
     /**

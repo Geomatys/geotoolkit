@@ -272,7 +272,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "credit")
     public synchronized Collection<String> getCredits() {
-        return credits = optionalCollection(credits, String.class);
+        return credits = nonNullCollection(credits, String.class);
     }
 
     /**
@@ -290,7 +290,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "status")
     public synchronized Collection<Progress> getStatus() {
-        return status = optionalCollection(status, Progress.class);
+        return status = nonNullCollection(status, Progress.class);
     }
 
     /**
@@ -309,7 +309,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "pointOfContact")
     public synchronized Collection<ResponsibleParty> getPointOfContacts() {
-        return pointOfContacts = optionalCollection(pointOfContacts, ResponsibleParty.class);
+        return pointOfContacts = nonNullCollection(pointOfContacts, ResponsibleParty.class);
     }
 
     /**
@@ -327,7 +327,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceMaintenance")
     public synchronized Collection<MaintenanceInformation> getResourceMaintenances() {
-        return resourceMaintenances = optionalCollection(resourceMaintenances, MaintenanceInformation.class);
+        return resourceMaintenances = nonNullCollection(resourceMaintenances, MaintenanceInformation.class);
     }
 
     /**
@@ -345,7 +345,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "graphicOverview")
     public synchronized Collection<BrowseGraphic> getGraphicOverviews() {
-        return graphicOverviews = optionalCollection(graphicOverviews, BrowseGraphic.class);
+        return graphicOverviews = nonNullCollection(graphicOverviews, BrowseGraphic.class);
     }
 
     /**
@@ -363,7 +363,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceFormat")
     public synchronized Collection<Format> getResourceFormats() {
-        return resourceFormats = optionalCollection(resourceFormats, Format.class);
+        return resourceFormats = nonNullCollection(resourceFormats, Format.class);
     }
 
     /**
@@ -381,7 +381,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "descriptiveKeywords")
     public synchronized Collection<Keywords> getDescriptiveKeywords() {
-        return descriptiveKeywords = optionalCollection(descriptiveKeywords, Keywords.class);
+        return descriptiveKeywords = nonNullCollection(descriptiveKeywords, Keywords.class);
     }
 
     /**
@@ -400,7 +400,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceSpecificUsage")
     public synchronized Collection<Usage> getResourceSpecificUsages() {
-        return resourceSpecificUsages = optionalCollection(resourceSpecificUsages, Usage.class);
+        return resourceSpecificUsages = nonNullCollection(resourceSpecificUsages, Usage.class);
     }
 
     /**
@@ -418,7 +418,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "resourceConstraints")
     public synchronized Collection<Constraints> getResourceConstraints() {
-        return resourceConstraints = optionalCollection(resourceConstraints, Constraints.class);
+        return resourceConstraints = nonNullCollection(resourceConstraints, Constraints.class);
     }
 
     /**
@@ -438,7 +438,7 @@ public class AbstractIdentification extends MetadataEntity implements Identifica
     @Override
     @XmlElement(name = "aggregationInfo")
     public synchronized Collection<AggregateInformation> getAggregationInfo() {
-        return aggregationInfo = optionalCollection(aggregationInfo, AggregateInformation.class);
+        return aggregationInfo = nonNullCollection(aggregationInfo, AggregateInformation.class);
     }
 
     /**

@@ -156,7 +156,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
     @Override
     @XmlElement(name = "language")
     public synchronized Collection<Locale> getLanguages() {
-        return languages = optionalCollection(languages, Locale.class);
+        return languages = nonNullCollection(languages, Locale.class);
     }
 
     /**
@@ -193,7 +193,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
     @Override
     @XmlElement(name = "featureTypes")
     public synchronized Collection<GenericName> getFeatureTypes() {
-        return featureTypes = optionalCollection(featureTypes, GenericName.class);
+        return featureTypes = nonNullCollection(featureTypes, GenericName.class);
     }
 
     /**

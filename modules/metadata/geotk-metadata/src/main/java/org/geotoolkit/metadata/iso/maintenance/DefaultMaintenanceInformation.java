@@ -233,7 +233,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     @Override
     @XmlElement(name = "updateScope")
     public synchronized Collection<ScopeCode> getUpdateScopes() {
-        return updateScopes = optionalCollection(updateScopes, ScopeCode.class);
+        return updateScopes = nonNullCollection(updateScopes, ScopeCode.class);
     }
 
     /**
@@ -255,7 +255,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     @Override
     @XmlElement(name = "updateScopeDescription")
     public synchronized Collection<ScopeDescription> getUpdateScopeDescriptions() {
-        return updateScopeDescriptions = optionalCollection(updateScopeDescriptions, ScopeDescription.class);
+        return updateScopeDescriptions = nonNullCollection(updateScopeDescriptions, ScopeDescription.class);
     }
 
     /**
@@ -277,7 +277,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     @Override
     @XmlElement(name = "maintenanceNote")
     public synchronized Collection<InternationalString> getMaintenanceNotes() {
-        return maintenanceNotes = optionalCollection(maintenanceNotes, InternationalString.class);
+        return maintenanceNotes = nonNullCollection(maintenanceNotes, InternationalString.class);
     }
 
     /**
@@ -300,7 +300,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     @Override
     @XmlElement(name = "contact")
     public synchronized Collection<ResponsibleParty> getContacts() {
-        return contacts = optionalCollection(contacts, ResponsibleParty.class);
+        return contacts = nonNullCollection(contacts, ResponsibleParty.class);
     }
 
     /**

@@ -252,7 +252,7 @@ public class DefaultSource extends MetadataEntity implements Source {
     @Override
     @XmlElement(name = "sourceExtent")
     public synchronized Collection<Extent> getSourceExtents()  {
-        return sourceExtents = optionalCollection(sourceExtents, Extent.class);
+        return sourceExtents = nonNullCollection(sourceExtents, Extent.class);
     }
 
     /**
@@ -270,7 +270,7 @@ public class DefaultSource extends MetadataEntity implements Source {
     @Override
     @XmlElement(name = "sourceStep")
     public synchronized Collection<ProcessStep> getSourceSteps() {
-        return sourceSteps = optionalCollection(sourceSteps, ProcessStep.class);
+        return sourceSteps = nonNullCollection(sourceSteps, ProcessStep.class);
     }
 
     /**

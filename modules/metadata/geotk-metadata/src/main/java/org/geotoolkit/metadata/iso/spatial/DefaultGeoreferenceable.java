@@ -257,7 +257,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
     @Override
     @XmlElement(name = "parameterCitation")
     public synchronized Collection<Citation> getParameterCitations() {
-        return parameterCitations = optionalCollection(parameterCitations, Citation.class);
+        return parameterCitations = nonNullCollection(parameterCitations, Citation.class);
     }
 
     /**

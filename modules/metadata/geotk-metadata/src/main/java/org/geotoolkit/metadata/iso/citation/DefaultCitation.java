@@ -280,7 +280,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "alternateTitle")
     public synchronized Collection<InternationalString> getAlternateTitles() {
-        return alternateTitles = optionalCollection(alternateTitles, InternationalString.class);
+        return alternateTitles = nonNullCollection(alternateTitles, InternationalString.class);
     }
 
     /**
@@ -400,7 +400,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "citedResponsibleParty")
     public synchronized Collection<ResponsibleParty> getCitedResponsibleParties() {
-        return citedResponsibleParties = optionalCollection(citedResponsibleParties, ResponsibleParty.class);
+        return citedResponsibleParties = nonNullCollection(citedResponsibleParties, ResponsibleParty.class);
     }
 
     /**
@@ -419,7 +419,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "presentationForm")
     public synchronized Collection<PresentationForm> getPresentationForms() {
-        return presentationForms = optionalCollection(presentationForms, PresentationForm.class);
+        return presentationForms = nonNullCollection(presentationForms, PresentationForm.class);
     }
 
     /**

@@ -162,7 +162,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @Override
     @XmlElement(name = "distributionOrderProcess")
     public synchronized Collection<StandardOrderProcess> getDistributionOrderProcesses() {
-        return distributionOrderProcesses = optionalCollection(distributionOrderProcesses, StandardOrderProcess.class);
+        return distributionOrderProcesses = nonNullCollection(distributionOrderProcesses, StandardOrderProcess.class);
     }
 
     /**
@@ -181,7 +181,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @Override
     @XmlElement(name = "distributorFormat")
     public synchronized Collection<Format> getDistributorFormats() {
-        return distributorFormats = optionalCollection(distributorFormats, Format.class);
+        return distributorFormats = nonNullCollection(distributorFormats, Format.class);
     }
 
     /**
@@ -199,7 +199,7 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     @Override
     @XmlElement(name = "distributorTransferOptions")
     public synchronized Collection<DigitalTransferOptions> getDistributorTransferOptions() {
-        return distributorTransferOptions = optionalCollection(distributorTransferOptions, DigitalTransferOptions.class);
+        return distributorTransferOptions = nonNullCollection(distributorTransferOptions, DigitalTransferOptions.class);
     }
 
     /**

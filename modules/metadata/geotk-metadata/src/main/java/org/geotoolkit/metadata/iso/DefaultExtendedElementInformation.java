@@ -455,7 +455,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
     @Override
     @XmlElement(name = "rationale")
     public synchronized Collection<InternationalString> getRationales() {
-        return rationales = optionalCollection(rationales, InternationalString.class);
+        return rationales = nonNullCollection(rationales, InternationalString.class);
     }
 
     /**
