@@ -35,7 +35,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshalling/unmarshalling of a few objects related to datum.
+ * Tests the XML marshaling/unmarshaling of a few objects related to datum.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
@@ -72,7 +72,7 @@ public final class DatumMarshallingTest {
      * Generates a XML tree using the annotations on the {@link SecondDefiningParameter} class,
      * and writes it in a temporary buffer.
      *
-     * @throws JAXBException If an error occurred during the marshalling process.
+     * @throws JAXBException If an error occurred during the marshaling process.
      * @throws IOException Should never happen since we are writing to a buffer.
      */
     @Test
@@ -94,11 +94,11 @@ public final class DatumMarshallingTest {
     /**
      * Creates a {@link SecondDefiningParameter} from a XML tree.
      *
-     * @throws JAXBException If an error occurred during the unmarshalling process.
+     * @throws JAXBException If an error occurred during the unmarshaling process.
      * @throws IOException Should never happen since we are reading from a buffer.
      */
     @Test
-    public void testUnmarshalling() throws JAXBException, IOException {
+    public void testUnmarshaling() throws JAXBException, IOException {
         final String xml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +

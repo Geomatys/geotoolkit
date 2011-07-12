@@ -80,7 +80,7 @@ public final class GO_Boolean extends XmlAdapter<GO_Boolean, Boolean> {
     }
 
     /**
-     * Allows JAXB to change the result of the marshalling process, according to the
+     * Allows JAXB to change the result of the marshaling process, according to the
      * ISO-19139 standard and its requirements about primitive types.
      *
      * @param value The boolean value we want to surround by an element representing its type.

@@ -181,7 +181,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * The equatorial radius. This field should be considered as final.
-     * It is modified only by JAXB at unmarshalling time.
+     * It is modified only by JAXB at unmarshaling time.
      *
      * @see #getSemiMajorAxis
      */
@@ -189,7 +189,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * The polar radius. This field should be considered as final.
-     * It is modified only by JAXB at unmarshalling time.
+     * It is modified only by JAXB at unmarshaling time.
      *
      * @see #getSemiMinorAxis
      */
@@ -198,7 +198,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     /**
      * The inverse of the flattening value, or {@link Double#POSITIVE_INFINITY}
      * if the ellipsoid is a sphere. This field should be considered as final.
-     * It is modified only by JAXB at unmarshalling time.
+     * It is modified only by JAXB at unmarshaling time.
      *
      * @see #getInverseFlattening
      */
@@ -206,7 +206,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * Tells if the Inverse Flattening is definitive for this ellipsoid. This field
-     * should be considered as final. It is modified only by JAXB at unmarshalling time.
+     * should be considered as final. It is modified only by JAXB at unmarshaling time.
      *
      * @see #isIvfDefinitive
      */
@@ -437,7 +437,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * Returns the semi-major axis value as a measurement.
-     * This method is invoked by JAXB for XML marshalling.
+     * This method is invoked by JAXB for XML marshaling.
      */
     @XmlElement(name = "semiMajorAxis", required = true)
     final Measure getSemiMajorAxisMeasure() {
@@ -446,7 +446,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * Sets the semi-major axis value. This method is invoked
-     * by JAXB at unmarshalling time only.
+     * by JAXB at unmarshaling time only.
      */
     private void setSemiMajorAxisMeasure(final Measure uom) {
         if (semiMajorAxis != 0) {
@@ -514,7 +514,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     /**
      * Returns the object to be marshalled as the {@code SecondDefiningParameter} XML element. The
      * returned object contains the values for {@link #semiMinorAxis} or {@link #inverseFlattening},
-     * according to the {@link #isIvfDefinitive()} value. This method is for JAXB marshalling only.
+     * according to the {@link #isIvfDefinitive()} value. This method is for JAXB marshaling only.
      */
     @XmlElement(name = "secondDefiningParameter")
     final SecondDefiningParameter getSecondDefiningParameter() {
@@ -524,7 +524,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     /**
      * Sets the second defining parameter value, either the inverse of the flattening
      * value or the semi minor axis value, according to what have been defined in the
-     * second defining parameter given. This is for JAXB unmarshalling process only.
+     * second defining parameter given. This is for JAXB unmarshaling process only.
      */
     private void setSecondDefiningParameter(SecondDefiningParameter second)
             throws ConversionException
@@ -561,7 +561,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * After the unmarshalling process, only one value between {@link #semiMinorAxis} and
+     * After the unmarshaling process, only one value between {@link #semiMinorAxis} and
      * {@link #inverseFlattening} has been defined. Since the {@link #semiMajorAxis} has
      * been defined, it is now possible to calculate the value of the missing parameter
      * using the values of those that are set.

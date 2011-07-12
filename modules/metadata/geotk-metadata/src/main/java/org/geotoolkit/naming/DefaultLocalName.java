@@ -78,7 +78,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
 
     /**
      * Empty constructor to be used by JAXB only. Despite its "final" declaration,
-     * the {@link #name} field will be set by JAXB during unmarshalling.
+     * the {@link #name} field will be set by JAXB during unmarshaling.
      */
     DefaultLocalName() {
         scope = null;

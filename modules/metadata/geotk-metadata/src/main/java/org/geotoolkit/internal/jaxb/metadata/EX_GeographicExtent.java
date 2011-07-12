@@ -42,7 +42,7 @@ public final class EX_GeographicExtent extends PropertyType<EX_GeographicExtent,
     }
 
     /**
-     * Wraps an GeographicExtent value with a {@code EX_GeographicExtent} element at marshalling time.
+     * Wraps an GeographicExtent value with a {@code EX_GeographicExtent} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class EX_GeographicExtent extends PropertyType<EX_GeographicExtent,
 
     /**
      * Returns the {@link AbstractGeographicExtent} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class EX_GeographicExtent extends PropertyType<EX_GeographicExtent,
 
     /**
      * Sets the value for the {@link AbstractGeographicExtent}. This method
-     * is systematically called at unmarshalling time by JAXB.
+     * is systematically called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

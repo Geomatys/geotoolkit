@@ -44,7 +44,7 @@ public final class MD_ScopeDescription
     }
 
     /**
-     * Wraps an ScopeDescription value with a {@code MD_ScopeDescription} element at marshalling time.
+     * Wraps an ScopeDescription value with a {@code MD_ScopeDescription} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class MD_ScopeDescription
 
     /**
      * Returns the {@link DefaultScopeDescription} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class MD_ScopeDescription
 
     /**
      * Sets the value for the {@link DefaultScopeDescription}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

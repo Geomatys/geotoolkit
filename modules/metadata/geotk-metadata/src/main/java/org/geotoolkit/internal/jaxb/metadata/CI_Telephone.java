@@ -42,7 +42,7 @@ public final class CI_Telephone extends PropertyType<CI_Telephone, Telephone> {
     }
 
     /**
-     * Wraps an Telephone value with a {@code CI_Telephone} element at marshalling time.
+     * Wraps an Telephone value with a {@code CI_Telephone} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CI_Telephone extends PropertyType<CI_Telephone, Telephone> {
 
     /**
      * Returns the {@link DefaultTelephone} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CI_Telephone extends PropertyType<CI_Telephone, Telephone> {
 
     /**
      * Sets the value for the {@link DefaultTelephone}. This method
-     * is systematically called at unmarshalling time by JAXB.
+     * is systematically called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

@@ -56,7 +56,7 @@ public class DefaultMemberName extends DefaultLocalName implements MemberName {
 
     /**
      * Empty constructor to be used by JAXB only. Despite its "final" declaration,
-     * the {@link #attributeType} field will be set by JAXB during unmarshalling.
+     * the {@link #attributeType} field will be set by JAXB during unmarshaling.
      */
     private DefaultMemberName() {
         attributeType = null;

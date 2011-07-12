@@ -114,7 +114,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
 
     /**
      * Converts a string read from a XML stream to the object containing
-     * the value. JAXB calls automatically this method at unmarshalling time.
+     * the value. JAXB calls automatically this method at unmarshaling time.
      *
      * @param value The adapter for this metadata value.
      * @return A {@link CharSequence} which represents the metadata value.
@@ -160,7 +160,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
 
     /**
      * Converts a {@linkplain CharSequence character sequence} to the object to be marshalled
-     * in a XML file or stream. JAXB calls automatically this method at marshalling time.
+     * in a XML file or stream. JAXB calls automatically this method at marshaling time.
      *
      * @param value The string value.
      * @return The wrapper for the given string.

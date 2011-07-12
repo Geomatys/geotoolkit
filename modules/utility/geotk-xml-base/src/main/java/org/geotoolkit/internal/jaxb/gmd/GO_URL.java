@@ -39,7 +39,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
 public final class GO_URL extends XmlAdapter<GO_URL, URI> {
     /**
      * The URI as a string. We uses a string in order to allow the user
-     * to catch potential error at unmarshalling time.
+     * to catch potential error at unmarshaling time.
      */
     @XmlElement(name = "URL")
     private String uri;
@@ -61,7 +61,7 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
 
     /**
      * Converts a URI read from a XML stream to the object which will contains
-     * the value. JAXB calls automatically this method at unmarshalling time.
+     * the value. JAXB calls automatically this method at unmarshaling time.
      *
      * @param value The adapter for this metadata value.
      * @return A {@link URI} which represents the metadata value.
@@ -74,7 +74,7 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
 
     /**
      * Converts a {@link URI} to the object to be marshalled in a XML file
-     * or stream. JAXB calls automatically this method at marshalling time.
+     * or stream. JAXB calls automatically this method at marshaling time.
      *
      * @param value The URI value.
      * @return The adapter for this URI.

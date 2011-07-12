@@ -176,7 +176,7 @@ public abstract class SwingTestBase<T extends JComponent> {
                 }
                 /*
                  * Optionally save to a file in the current directory, for checking purpose.
-                 * Actually the image is empty if we didn't overrided the Component.paint method,
+                 * Actually the image is empty if we didn't overridden the Component.paint method,
                  * so the above check is useful only for widgets doing their own painting like
                  * ColorRamp.
                  */

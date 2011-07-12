@@ -48,7 +48,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *   garbage collected.</p></li>
  * </ul>
  *
- * This class is convenient at XML marshalling and unmarshalling time for handling the {@code uuid}
+ * This class is convenient at XML marshaling and unmarshaling time for handling the {@code uuid}
  * and {@code uuidref} attributes. The {@code uuidref} attribute is used to refer to an XML element
  * that has a corresponding {@code uuid} attribute.
  *

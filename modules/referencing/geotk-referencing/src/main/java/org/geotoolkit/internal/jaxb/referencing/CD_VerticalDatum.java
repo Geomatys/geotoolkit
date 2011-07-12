@@ -42,7 +42,7 @@ public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, Verti
     }
 
     /**
-     * Wraps a Vertical Datum value with a {@code gml:verticalDatum} element at marshalling-time.
+     * Wraps a Vertical Datum value with a {@code gml:verticalDatum} element at marshaling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, Verti
 
     /**
      * Returns the {@link DefaultVerticalDatum} generated from the metadata value.
-     * This method is systematically called at marshalling-time by JAXB.
+     * This method is systematically called at marshaling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, Verti
 
     /**
      * Sets the value for the {@link DefaultVerticalDatum}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is systematically called at unmarshaling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

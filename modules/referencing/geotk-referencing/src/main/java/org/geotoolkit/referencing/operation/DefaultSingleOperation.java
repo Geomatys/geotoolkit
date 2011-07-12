@@ -304,7 +304,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
     // Do NOT override 'computeHashCode()', since we don't want to include the 'method' field in
     // hash code calculation. See the comment inside the above 'equals(Object, ComparisonMode)'
     // method for more information. Note that the parent class uses the 'transform' hash code,
-    // which should be suffisient.
+    // which should be sufficient.
 
     /**
      * {@inheritDoc}

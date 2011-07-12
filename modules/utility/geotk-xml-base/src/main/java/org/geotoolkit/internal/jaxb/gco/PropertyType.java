@@ -447,7 +447,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     /**
      * Converts a GeoAPI interface to the appropriate adapter for the way it will be
      * marshalled into an XML file or stream. JAXB calls automatically this method at
-     * marshalling time.
+     * marshaling time.
      *
      * @param value The bound type value, here the interface.
      * @return The adapter for the given value.
@@ -462,7 +462,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
 
     /**
      * Converts an adapter read from an XML stream to the GeoAPI interface which will
-     * contains this value. JAXB calls automatically this method at unmarshalling time.
+     * contains this value. JAXB calls automatically this method at unmarshaling time.
      *
      * @param  value The adapter for a metadata value.
      * @return An instance of the GeoAPI interface which represents the metadata value.
@@ -511,7 +511,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
 
     /**
      * Returns the Geotk implementation class generated from the metadata value. The overriding
-     * method in subclasses will be systematically called at marshalling time by JAXB.
+     * method in subclasses will be systematically called at marshaling time by JAXB.
      * <p>
      * The return value is usually an implementation of {@code BoundType}. But in
      * some situations this is Java type like {@link String}. For this raison the

@@ -103,7 +103,7 @@ public final class SecondDefiningParameter {
     }
 
     /**
-     * Sets the semi-minor axis value. This is invoked by JAXB for unmarshalling.
+     * Sets the semi-minor axis value. This is invoked by JAXB for unmarshaling.
      *
      * @param measure The semi-minor axis value.
      */
@@ -124,7 +124,7 @@ public final class SecondDefiningParameter {
     }
 
     /**
-     * Sets the inverse of the flattening value. This is invoked by JAXB for unmarshalling.
+     * Sets the inverse of the flattening value. This is invoked by JAXB for unmarshaling.
      * <p>
      * Note that some GML wrongly assign the "m" unit to this measure, which is wrong. This
      * method overwrite the unit with a dimensionless one. This is required anyway in order

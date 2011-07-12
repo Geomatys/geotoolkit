@@ -43,7 +43,7 @@ public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, Ellip
     }
 
     /**
-     * Wraps a {@link EllipsoidalCS} value with a {@code gml:ellipsoidalCS} element at marshalling-time.
+     * Wraps a {@link EllipsoidalCS} value with a {@code gml:ellipsoidalCS} element at marshaling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -72,7 +72,7 @@ public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, Ellip
 
     /**
      * Returns the {@link DefaultEllipsoidalCS} generated from the metadata value.
-     * This method is systematically called at marshalling-time by JAXB.
+     * This method is systematically called at marshaling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -84,7 +84,7 @@ public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, Ellip
 
     /**
      * Sets the value for the {@link DefaultCartesianCS}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is systematically called at unmarshaling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

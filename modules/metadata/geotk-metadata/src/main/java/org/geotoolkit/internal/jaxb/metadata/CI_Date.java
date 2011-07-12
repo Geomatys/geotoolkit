@@ -42,7 +42,7 @@ public final class CI_Date extends PropertyType<CI_Date, CitationDate> {
     }
 
     /**
-     * Wraps an CitationDate value with a {@code CI_Date} element at marshalling time.
+     * Wraps an CitationDate value with a {@code CI_Date} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CI_Date extends PropertyType<CI_Date, CitationDate> {
 
     /**
      * Returns the {@link DefaultCitationDate} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CI_Date extends PropertyType<CI_Date, CitationDate> {
 
     /**
      * Sets the value for the {@link DefaultCitationDate}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

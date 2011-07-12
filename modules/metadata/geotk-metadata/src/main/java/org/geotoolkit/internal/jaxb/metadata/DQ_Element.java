@@ -42,7 +42,7 @@ public final class DQ_Element extends PropertyType<DQ_Element, Element> {
     }
 
     /**
-     * Wraps an Element value with a {@code DQ_Element} element at marshalling time.
+     * Wraps an Element value with a {@code DQ_Element} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class DQ_Element extends PropertyType<DQ_Element, Element> {
 
     /**
      * Returns the {@link AbstractElement} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class DQ_Element extends PropertyType<DQ_Element, Element> {
 
     /**
      * Sets the value for the {@link AbstractElement}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

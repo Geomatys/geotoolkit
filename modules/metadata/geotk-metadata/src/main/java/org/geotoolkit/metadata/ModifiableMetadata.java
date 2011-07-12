@@ -769,13 +769,13 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * If a XML marshalling is under progress and the given collection is empty, returns
+     * If a XML marshaling is under progress and the given collection is empty, returns
      * {@code null}. Otherwise returns the collection unchanged. This method is invoked
      * by implementation having optional elements to omit when empty.
      *
      * @param  <E> The type of elements in the given collection.
      * @param  elements The collection to return.
-     * @return The given collection, or {@code null} if the collection is empty and a marshalling
+     * @return The given collection, or {@code null} if the collection is empty and a marshaling
      *         is under progress.
      *
      * @since 3.18 (derived from 2.5)

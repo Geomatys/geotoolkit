@@ -39,7 +39,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshalling of {@code CodeList}.
+ * Tests the XML marshaling of {@code CodeList}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Guilhem Legal (Geomatys)
@@ -88,9 +88,9 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests marshalling using the default URL.
+     * Tests marshaling using the default URL.
      *
-     * @throws JAXBException If an error occurred while marshalling the XML.
+     * @throws JAXBException If an error occurred while marshaling the XML.
      */
     @Test
     public void testDefaultURL() throws JAXBException {
@@ -106,9 +106,9 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests marshalling using the ISO URL.
+     * Tests marshaling using the ISO URL.
      *
-     * @throws JAXBException If an error occurred while marshalling the XML.
+     * @throws JAXBException If an error occurred while marshaling the XML.
      */
     @Test
     public void testISO_URL() throws JAXBException {
@@ -130,7 +130,7 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
     /**
      * Tests a code list localization.
      *
-     * @throws JAXBException If an error occurred while marshalling the XML.
+     * @throws JAXBException If an error occurred while marshaling the XML.
      */
     @Test
     public void testLocalization() throws JAXBException {
@@ -159,9 +159,9 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests marshalling of a code list which is not in the list of standard codes.
+     * Tests marshaling of a code list which is not in the list of standard codes.
      *
-     * @throws JAXBException If an error occurred while marshalling the XML.
+     * @throws JAXBException If an error occurred while marshaling the XML.
      */
     @Test
     public void testExtraCodes() throws JAXBException {

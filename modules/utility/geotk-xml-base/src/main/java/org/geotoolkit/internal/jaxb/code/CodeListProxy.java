@@ -140,7 +140,7 @@ public final class CodeListProxy {
 
     /**
      * Builds a proxy instance of {@link CodeList}. This constructors stores
-     * the values that will be used for marshalling.
+     * the values that will be used for marshaling.
      *
      * @param code The code list to wrap.
      */

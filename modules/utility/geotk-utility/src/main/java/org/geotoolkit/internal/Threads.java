@@ -230,7 +230,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory, Rejec
     public static synchronized void shutdown() {
         /*
          * We can wait for the work executors to terminate, because its tasks are
-         * executed immediatly. However we can't wait for delayed tasks, because
+         * executed immediately. However we can't wait for delayed tasks, because
          * the delay may be long. Executes those tasks now in this current thread.
          * We execute them in the same order than they would be executed if the
          * delay were honored.

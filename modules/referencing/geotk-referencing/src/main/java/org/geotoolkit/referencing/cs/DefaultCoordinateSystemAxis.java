@@ -1332,7 +1332,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             final String thatName = that.getName().getCode();
             if (!nameMatches(thatName)) {
                 // The above test checked for special cases ("Lat" / "Lon" aliases, etc.).
-                // The next line may not, but is tested anyway in case the user overrided
+                // The next line may not, but is tested anyway in case the user overridden
                 // the 'that.nameMatches(...)' method.
                 final String thisName = getName().getCode();
                 if (!IdentifiedObjects.nameMatches(that, thisName)) {

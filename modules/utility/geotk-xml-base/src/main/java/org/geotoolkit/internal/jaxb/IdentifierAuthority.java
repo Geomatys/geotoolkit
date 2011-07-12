@@ -39,7 +39,7 @@ import org.geotoolkit.xml.IdentifierSpace;
 /**
  * Implementation of authorities defined in the {@link IdentifierSpace} interfaces. This class
  * is actually a {@link org.opengis.metadata.citation.Citation} implementation. However it is
- * not designed for XML marshalling at this time.
+ * not designed for XML marshaling at this time.
  *
  * @param <T> The type of object used as identifier values.
  *

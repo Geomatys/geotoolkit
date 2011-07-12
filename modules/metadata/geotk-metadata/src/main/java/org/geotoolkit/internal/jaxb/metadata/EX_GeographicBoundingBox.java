@@ -44,7 +44,7 @@ public final class EX_GeographicBoundingBox extends
     }
 
     /**
-     * Wraps an GeographicBoundingBox value with a {@code EX_GeographicBoundingBox} element at marshalling time.
+     * Wraps an GeographicBoundingBox value with a {@code EX_GeographicBoundingBox} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class EX_GeographicBoundingBox extends
 
     /**
      * Returns the {@link DefaultGeographicBoundingBox} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class EX_GeographicBoundingBox extends
 
     /**
      * Sets the value for the {@link DefaultGeographicBoundingBox}. This
-     * method is systematically called at unmarshalling time by JAXB.
+     * method is systematically called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

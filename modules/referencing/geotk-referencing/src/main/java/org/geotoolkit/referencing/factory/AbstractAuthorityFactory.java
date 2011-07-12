@@ -955,8 +955,8 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
      */
     protected String trimAuthority(String code) {
         /*
-         * IMPLEMENTATION NOTE: This method is overrided in PropertyAuthorityFactory. If
-         * implementation below is modified, it is probably worth to revisit the overrided
+         * IMPLEMENTATION NOTE: This method is overridden in PropertyAuthorityFactory. If
+         * implementation below is modified, it is probably worth to revisit the overridden
          * method as well.
          */
         code = code.trim();

@@ -35,7 +35,7 @@ import org.geotoolkit.internal.CodeLists;
 public final class CS_AxisDirection extends XmlAdapter<AxisDirectionType, AxisDirection> {
     /**
      * Substitutes the adapter value read from an XML stream by the object which will
-     * contains the value. JAXB calls automatically this method at unmarshalling time.
+     * contains the value. JAXB calls automatically this method at unmarshaling time.
      *
      * @param  adapter The adapter for this metadata value.
      * @return A code list which represents the metadata value.
@@ -47,7 +47,7 @@ public final class CS_AxisDirection extends XmlAdapter<AxisDirectionType, AxisDi
 
     /**
      * Substitutes the code list by the adapter to be marshalled into an XML file
-     * or stream. JAXB calls automatically this method at marshalling time.
+     * or stream. JAXB calls automatically this method at marshaling time.
      *
      * @param  value The code list value.
      * @return The adapter for the given code list.

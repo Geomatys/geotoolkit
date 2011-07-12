@@ -53,7 +53,7 @@ final class LocalisedCharacterString {
 
     /**
      * The text in the locale of this localized string. JAXB uses this field for formatting
-     * the {@code <LocalisedCharacterString>} elements in the XML tree at marshalling-time.
+     * the {@code <LocalisedCharacterString>} elements in the XML tree at marshaling-time.
      */
     @XmlValue
     protected String text;

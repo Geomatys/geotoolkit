@@ -42,7 +42,7 @@ public final class EX_Extent extends PropertyType<EX_Extent, Extent> {
     }
 
     /**
-     * Wraps an Extent value with a {@code EX_Extent} element at marshalling time.
+     * Wraps an Extent value with a {@code EX_Extent} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class EX_Extent extends PropertyType<EX_Extent, Extent> {
 
     /**
      * Returns the {@link DefaultExtent} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class EX_Extent extends PropertyType<EX_Extent, Extent> {
 
     /**
      * Sets the value for the {@link DefaultExtent}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

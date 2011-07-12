@@ -42,7 +42,7 @@ public final class MI_RequestedDate extends PropertyType<MI_RequestedDate, Reque
     }
 
     /**
-     * Wraps an RequestedDate value with a {@code MI_RequestedDate} element at marshalling time.
+     * Wraps an RequestedDate value with a {@code MI_RequestedDate} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MI_RequestedDate extends PropertyType<MI_RequestedDate, Reque
 
     /**
      * Returns the {@link DefaultRequestedDate} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MI_RequestedDate extends PropertyType<MI_RequestedDate, Reque
 
     /**
      * Sets the value for the {@link DefaultRequestedDate}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

@@ -43,7 +43,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
 /**
  * A referencing object for which every methods return {@code null} or a neutral value.
  * <strong>This is not a valid object</strong>. It is used only for initialization of
- * objects to be used by JAXB at unmarshalling time, as a way to simulate "no-argument"
+ * objects to be used by JAXB at unmarshaling time, as a way to simulate "no-argument"
  * constructor required by JAXB.
  *
  * @author Martin Desruisseaux (Geomatys)

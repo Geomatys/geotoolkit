@@ -73,7 +73,7 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
      *
      * @throws IOException If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
+     *                       or during marshaling / unmarshaling processes.
      */
     @Test
     public void testMetadata() throws IOException, JAXBException {
@@ -250,7 +250,7 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
         final Object obj = XML.unmarshal(xml);
         assertNotNull(obj);
         assertTrue("The unmarshalled object gotten from the XML file marshalled is not an instance " +
-                   "of DefaultMetadata. So the unmarshalling process fails for that XML string.",
+                   "of DefaultMetadata. So the unmarshaling process fails for that XML string.",
                    obj instanceof DefaultMetadata);
 
         final DefaultMetadata dataUnmarsh = (DefaultMetadata) obj;
@@ -262,12 +262,12 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests the marshalling of {@link DefaultProcessStep}.
+     * Tests the marshaling of {@link DefaultProcessStep}.
      * This metadata mixes elements from ISO 19115 and ISO 19115-2 standards.
      *
      * @throws IOException If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
+     *                       or during marshaling / unmarshaling processes.
      *
      * @since 3.07
      */
@@ -279,7 +279,7 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
         process.setDescription(new SimpleInternationalString("Some process step."));
         process.setProcessingInformation(info);
         /*
-         * XML marshalling.
+         * XML marshaling.
          */
         final String xml = XML.marshal(process);
         assertFalse("Empty XML.", xml.isEmpty());
@@ -294,13 +294,13 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests the unmarshalling of a text group with a default {@code <gco:CharacterString>}
+     * Tests the unmarshaling of a text group with a default {@code <gco:CharacterString>}
      * element. This test is somewhat a duplicate of {@link FreeTextMarshallingTest}, but
      * the context is more elaborated.
      *
      * @throws IOException   If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
-     *                       or during marshalling / unmarshalling processes.
+     *                       or during marshaling / unmarshaling processes.
      *
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
      * @see FreeTextMarshallingTest

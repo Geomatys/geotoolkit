@@ -97,7 +97,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final InputStream input) throws JAXBException {
@@ -110,7 +110,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final URL input) throws JAXBException {
@@ -123,7 +123,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final File input) throws JAXBException {
@@ -136,7 +136,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final Reader input) throws JAXBException {
@@ -149,7 +149,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final InputSource input) throws JAXBException {
@@ -162,7 +162,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final Node input) throws JAXBException {
@@ -175,7 +175,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final Node input, final Class<T> declaredType) throws JAXBException {
@@ -188,7 +188,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final Source input) throws JAXBException {
@@ -201,7 +201,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final Source input, final Class<T> declaredType) throws JAXBException {
@@ -214,7 +214,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final XMLStreamReader input) throws JAXBException {
@@ -227,7 +227,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final XMLStreamReader input, final Class<T> declaredType) throws JAXBException {
@@ -240,7 +240,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public Object unmarshal(final XMLEventReader input) throws JAXBException {
@@ -253,7 +253,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     }
 
     /**
-     * Delegates the unmarshalling to the wrapped unmarshaller.
+     * Delegates the unmarshaling to the wrapped unmarshaller.
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final XMLEventReader input, final Class<T> declaredType) throws JAXBException {

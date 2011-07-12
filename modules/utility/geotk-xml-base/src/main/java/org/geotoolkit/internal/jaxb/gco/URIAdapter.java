@@ -37,7 +37,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  */
 public final class URIAdapter extends XmlAdapter<GO_CharacterString, URI> {
     /**
-     * The adapter on which to delegate the marshalling processes.
+     * The adapter on which to delegate the marshaling processes.
      */
     private final CharSequenceAdapter adapter;
 
@@ -59,7 +59,7 @@ public final class URIAdapter extends XmlAdapter<GO_CharacterString, URI> {
 
     /**
      * Converts a URI read from a XML stream to the object containing the
-     * value. JAXB calls automatically this method at unmarshalling time.
+     * value. JAXB calls automatically this method at unmarshaling time.
      *
      * @param  value The adapter for this metadata value.
      * @return An {@link URI} which represents the metadata value.
@@ -73,7 +73,7 @@ public final class URIAdapter extends XmlAdapter<GO_CharacterString, URI> {
 
     /**
      * Converts a {@link URI} to the object to be marshalled in a XML file
-     * or stream. JAXB calls automatically this method at marshalling time.
+     * or stream. JAXB calls automatically this method at marshaling time.
      *
      * @param  value The URI value.
      * @return The adapter for the given URI.

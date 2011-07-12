@@ -46,7 +46,7 @@ import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
  */
 public final class LocaleAdapter extends XmlAdapter<LanguageCode, Locale> {
     /**
-     * The adapter on which to delegate the marshalling processes.
+     * The adapter on which to delegate the marshaling processes.
      */
     private final CharSequenceAdapter adapter;
 
@@ -68,7 +68,7 @@ public final class LocaleAdapter extends XmlAdapter<LanguageCode, Locale> {
 
     /**
      * Converts the locale read from a XML stream to the object containing the value.
-     * JAXB calls automatically this method at unmarshalling time.
+     * JAXB calls automatically this method at unmarshaling time.
      *
      * @param  value The adapter for this metadata value.
      * @return A {@linkplain Locale locale} which represents the metadata value.
@@ -85,7 +85,7 @@ public final class LocaleAdapter extends XmlAdapter<LanguageCode, Locale> {
 
     /**
      * Converts the {@linkplain Locale locale} to the object to be marshalled in a
-     * XML file or stream. JAXB calls automatically this method at marshalling time.
+     * XML file or stream. JAXB calls automatically this method at marshaling time.
      *
      * {@note Current implementation formats the display name in the English locale. We use the UK
      * variant for consistency with the policy documented in <code>MarshalContext.getLocale()</code>}

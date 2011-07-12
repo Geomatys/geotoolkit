@@ -768,7 +768,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                 /*
                  * Search for the best thumbnail. Note that for any (n >= 2) cases, fetching the
                  * thumbnail width and height may be inefficient if the ImageReader in use didn't
-                 * overrided the default getThumbnail[Width|Height] implementations. This is the
+                 * overridden the default getThumbnail[Width|Height] implementations. This is the
                  * raison why we skip the search if n=1.
                  */
                 default: {

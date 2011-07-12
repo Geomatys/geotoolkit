@@ -73,7 +73,7 @@ public final class MI_TransferFunctionTypeCode
     }
 
     /**
-     * Invoked by JAXB on marshalling.
+     * Invoked by JAXB on marshaling.
      *
      * @return The value to be marshalled.
      */
@@ -84,7 +84,7 @@ public final class MI_TransferFunctionTypeCode
     }
 
     /**
-     * Invoked by JAXB on unmarshalling.
+     * Invoked by JAXB on unmarshaling.
      *
      * @param proxy The unmarshalled value.
      */

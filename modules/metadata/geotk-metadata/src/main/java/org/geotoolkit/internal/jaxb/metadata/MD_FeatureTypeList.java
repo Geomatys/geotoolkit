@@ -42,7 +42,7 @@ public final class MD_FeatureTypeList extends PropertyType<MD_FeatureTypeList, F
     }
 
     /**
-     * Wraps an FeatureTypeList value with a {@code MD_FeatureTypeList} element at marshalling time.
+     * Wraps an FeatureTypeList value with a {@code MD_FeatureTypeList} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MD_FeatureTypeList extends PropertyType<MD_FeatureTypeList, F
 
     /**
      * Returns the {@link DefaultFeatureTypeList} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MD_FeatureTypeList extends PropertyType<MD_FeatureTypeList, F
 
     /**
      * Sets the value for the {@link DefaultFeatureTypeList}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

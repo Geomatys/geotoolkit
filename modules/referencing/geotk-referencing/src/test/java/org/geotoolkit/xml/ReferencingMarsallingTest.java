@@ -73,7 +73,7 @@ import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
 
 
 /**
- * Tests the marshalling and unmarshalling of a few CRS objects.
+ * Tests the marshaling and unmarshaling of a few CRS objects.
  * <p>
  * <ul>
  *   <li>{@linkplain DefaultMetadata Metadata} object containing a
@@ -102,10 +102,10 @@ public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
     private static final String GEOGRAPHIC_CRS_XML = "GeographicCRS.xml";
 
     /**
-     * Tests the marshalling of a {@linkplain DefaultGeographicCRS geographic crs} object
+     * Tests the marshaling of a {@linkplain DefaultGeographicCRS geographic crs} object
      * compared to an XML file containing the gml representation of this object.
      *
-     * @throws JAXBException if the marshalling process fails.
+     * @throws JAXBException if the marshaling process fails.
      * @throws IOException if an error occurs while trying to read data from the resource file.
      */
     @Test
@@ -122,14 +122,14 @@ public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests the unmarshalling of a {@linkplain DefaultGeographicCRS geographic crs} object
+     * Tests the unmarshaling of a {@linkplain DefaultGeographicCRS geographic crs} object
      * from an XML file.
      *
-     * @throws JAXBException if the unmarshalling process fails.
+     * @throws JAXBException if the unmarshaling process fails.
      * @throws IOException if an error occurs while trying to read data from the resource file.
      */
     @Test
-    public void testGeographicCRSUnmarshalling() throws JAXBException, IOException {
+    public void testGeographicCRSUnmarshaling() throws JAXBException, IOException {
         final MarshallerPool pool = new MarshallerPool(DefaultGeographicCRS.class);
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final Object obj;
@@ -156,10 +156,10 @@ public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests the marshalling of a {@linkplain DefaultMetadata metadata} object, compared
+     * Tests the marshaling of a {@linkplain DefaultMetadata metadata} object, compared
      * to the resource XML file.
      *
-     * @throws JAXBException if the marshalling process fails.
+     * @throws JAXBException if the marshaling process fails.
      * @throws IOException if an error occurs while trying to read data from the resource file.
      */
     @Test
@@ -176,13 +176,13 @@ public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Tests the unmarshalling of a {@linkplain DefaultMetadata metadata} object from an XML file.
+     * Tests the unmarshaling of a {@linkplain DefaultMetadata metadata} object from an XML file.
      *
-     * @throws JAXBException if the unmarshalling process fails.
+     * @throws JAXBException if the unmarshaling process fails.
      * @throws IOException if an error occurs while trying to read data from the resource file.
      */
     @Test
-    public void testVerticalCRSUnmarshalling() throws JAXBException, IOException {
+    public void testVerticalCRSUnmarshaling() throws JAXBException, IOException {
         final MarshallerPool pool = new MarshallerPool(DefaultMetadata.class);
         final DefaultMetadata expected = createMetadataWithVerticalCRS();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
@@ -212,7 +212,7 @@ public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
     }
 
     /**
-     * Builds and returns a {@linkplain DefaultMetadata metadata} object for the marshalling tests.
+     * Builds and returns a {@linkplain DefaultMetadata metadata} object for the marshaling tests.
      */
     private static DefaultMetadata createMetadataWithVerticalCRS() {
         final DefaultMetadata metadata = new DefaultMetadata();

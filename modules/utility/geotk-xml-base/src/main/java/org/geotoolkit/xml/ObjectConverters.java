@@ -31,13 +31,13 @@ import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
- * Performs conversions of objects encountered during XML (un)marshalling. Each method in this
- * class is a converter and can be invoked at (un)marshalling time. The default implementation
+ * Performs conversions of objects encountered during XML (un)marshaling. Each method in this
+ * class is a converter and can be invoked at (un)marshaling time. The default implementation
  * is straightforward and documented in the javadoc of each method.
  * <p>
  * This class provides a way to handle the errors which may exist in some XML documents. For
  * example a URL in the document may be malformed, causing a {@link MalformedURLException} to
- * be thrown. If this error is not handled, it will cause the (un)marshalling of the entire
+ * be thrown. If this error is not handled, it will cause the (un)marshaling of the entire
  * document to fail. An application may want to change this behavior by replacing URLs that
  * are known to be erroneous by fixed versions of those URLs. Example:
  *
@@ -69,7 +69,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 public class ObjectConverters {
     /**
      * The default, thread-safe and immutable instance. This instance defines the
-     * converters used during every (un)marshalling if no {@code ObjectConverters}
+     * converters used during every (un)marshaling if no {@code ObjectConverters}
      * was explicitly set.
      */
     public static final ObjectConverters DEFAULT = new ObjectConverters();
@@ -83,7 +83,7 @@ public class ObjectConverters {
 
     /**
      * Invoked when an exception occurred in any {@code toXXX(...)} method. The default implementation
-     * does nothing and return {@code false}, which will cause the (un)marshalling process of the
+     * does nothing and return {@code false}, which will cause the (un)marshaling process of the
      * whole XML document to fail.
      * <p>
      * This method provides a single hook that subclasses can override in order to provide their
@@ -99,9 +99,9 @@ public class ObjectConverters {
      *         {@code URI.class} if the exception has been catched by the {@link #toURL(URI)} method.
      * @param  targetType The expected type of the converted object.
      * @param  exception The exception that occurred during the attempt to convert.
-     * @return {@code true} if the (un)marshalling process should continue despite this error,
+     * @return {@code true} if the (un)marshaling process should continue despite this error,
      *         or {@code false} (the default) if the exception should be propagated, thus causing
-     *         the (un)marshalling to fail.
+     *         the (un)marshaling to fail.
      */
     protected <T> boolean exceptionOccured(T value, Class<T> sourceType, Class<?> targetType,
             Exception exception)

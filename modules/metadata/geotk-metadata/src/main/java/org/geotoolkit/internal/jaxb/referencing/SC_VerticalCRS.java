@@ -43,7 +43,7 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
     }
 
     /**
-     * Wraps a Vertical CRS value with a {@code gml:VerticalCRS} element at marshalling-time.
+     * Wraps a Vertical CRS value with a {@code gml:VerticalCRS} element at marshaling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -72,7 +72,7 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
 
     /**
      * Returns the {@link DefaultVerticalCRS} generated from the metadata value.
-     * This method is systematically called at marshalling-time by JAXB.
+     * This method is systematically called at marshaling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -84,7 +84,7 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
 
     /**
      * Sets the value for the {@link DefaultVerticalCRS}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is systematically called at unmarshaling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

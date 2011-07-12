@@ -76,7 +76,7 @@ public class GO_CharacterString {
     }
 
     /**
-     * Returns the text. This method is called by JAXB at marshalling time.
+     * Returns the text. This method is called by JAXB at marshaling time.
      *
      * @return The text, or {@code null}.
      */
@@ -87,7 +87,7 @@ public class GO_CharacterString {
     }
 
     /**
-     * Sets the value to the given string. This method is called by JAXB at unmarshalling time.
+     * Sets the value to the given string. This method is called by JAXB at unmarshaling time.
      *
      * @param text The new text.
      */
@@ -103,7 +103,7 @@ public class GO_CharacterString {
 
     /**
      * Returns the text associated with a reference.
-     * This method is called by JAXB at marshalling time.
+     * This method is called by JAXB at marshaling time.
      *
      * @return The anchor, or {@code null}.
      */
@@ -115,7 +115,7 @@ public class GO_CharacterString {
 
     /**
      * Sets the value for the metadata string.
-     * This method is called by JAXB at unmarshalling time.
+     * This method is called by JAXB at unmarshaling time.
      *
      * @param anchor The new anchor.
      */

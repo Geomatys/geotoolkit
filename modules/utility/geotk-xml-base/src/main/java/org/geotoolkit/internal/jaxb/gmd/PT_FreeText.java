@@ -48,7 +48,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  *
  * If there is more than one locale, the whole {@code <gmd:textGroup>} block is repeated for each
  * locale, instead than repeating {@code <gmd:LocalisedCharacterString>} inside the same group as
- * we could expect. However at unmarshalling time, both forms are accepted. See GEOTK-152 for more
+ * we could expect. However at unmarshaling time, both forms are accepted. See GEOTK-152 for more
  * information.
  * <p>
  * The {@code <gco:CharacterString>} element is inherited from the {@link GO_CharacterString}

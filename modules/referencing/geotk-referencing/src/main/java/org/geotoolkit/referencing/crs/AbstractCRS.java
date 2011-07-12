@@ -67,7 +67,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
 
     /**
      * The coordinate system. This field should be considered as final.
-     * It is modified only by JAXB at unmarshalling time.
+     * It is modified only by JAXB at unmarshaling time.
      */
     private CoordinateSystem coordinateSystem;
 
@@ -140,7 +140,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
 
     /**
      * Sets the coordinate system to the given value. This method is invoked only by JAXB at
-     * unmarshalling time and can be invoked only if the coordinate system has never been set.
+     * unmarshaling time and can be invoked only if the coordinate system has never been set.
      *
      * @throws IllegalStateException If the coordinate system has already been set.
      */

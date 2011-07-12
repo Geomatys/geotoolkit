@@ -37,8 +37,8 @@ import org.geotoolkit.util.converter.Classes;
  * strings. It was done that way prior Geotk 3.17. However it appears that despite
  * its name, {@code TextGroup} shall always contains exactly 1 localized strings
  * and the whole {@code TextGroup} element shall be repeated for each additional
- * languages. Geotk 3.17 uses the ISO 19139 compliant form is used for marshalling,
- * but accepts both forms during unmarshalling.
+ * languages. Geotk 3.17 uses the ISO 19139 compliant form is used for marshaling,
+ * but accepts both forms during unmarshaling.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
@@ -53,7 +53,7 @@ import org.geotoolkit.util.converter.Classes;
 final class TextGroup {
     /**
      * The set of {@linkplain LocalisedCharacterString localized string}.
-     * JAXB uses this field at marshalling-time in order to wrap {@code N}
+     * JAXB uses this field at marshaling-time in order to wrap {@code N}
      * {@code <LocalisedCharacterString>} elements inside a single {@code <textGroup>} element.
      * <p>
      * In ISO 19139 compliant documents, the length of this array shall be exactly 1.

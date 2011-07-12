@@ -57,7 +57,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
     }
 
     /**
-     * Wraps an name at marshalling-time.
+     * Wraps an name at marshaling-time.
      *
      * @param name The metadata value to marshall.
      */
@@ -78,7 +78,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Returns the {@code LocalName} generated from the metadata value.
-     * This method is called at marshalling-time by JAXB.
+     * This method is called at marshaling-time by JAXB.
      *
      * @return The current name, or {@code null} if none.
      */
@@ -90,7 +90,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Sets the value for the {@code LocalName}.
-     * This method is called at unmarshalling-time by JAXB.
+     * This method is called at unmarshaling-time by JAXB.
      *
      * @param name The new name.
      * @throws IllegalStateException If a name is already defined.
@@ -110,7 +110,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Returns the {@code ScopedName} generated from the metadata value.
-     * This method is called at marshalling-time by JAXB.
+     * This method is called at marshaling-time by JAXB.
      *
      * @return The current name, or {@code null} if none.
      */
@@ -122,7 +122,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Sets the value for the {@code ScopedName}.
-     * This method is called at unmarshalling-time by JAXB.
+     * This method is called at unmarshaling-time by JAXB.
      *
      * @param name The new name.
      * @throws IllegalStateException If a name is already defined.
@@ -134,7 +134,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Returns the {@code TypeName} generated from the metadata value.
-     * This method is called at marshalling-time by JAXB.
+     * This method is called at marshaling-time by JAXB.
      *
      * @return The current name, or {@code null} if none.
      */
@@ -146,7 +146,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Sets the value for the {@code TypeName}.
-     * This method is called at unmarshalling-time by JAXB.
+     * This method is called at unmarshaling-time by JAXB.
      *
      * @param name The new name.
      * @throws IllegalStateException If a name is already defined.
@@ -158,7 +158,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Returns the {@code MemberName} generated from the metadata value.
-     * This method is called at marshalling-time by JAXB.
+     * This method is called at marshaling-time by JAXB.
      *
      * @return The current name, or {@code null} if none.
      */
@@ -170,7 +170,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Sets the value for the {@code MemberName}.
-     * This method is called at unmarshalling-time by JAXB.
+     * This method is called at unmarshaling-time by JAXB.
      *
      * @param name The new name.
      * @throws IllegalStateException If a name is already defined.
@@ -182,7 +182,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Does the link between an {@link AbstractName} and the adapter associated.
-     * JAXB calls automatically this method at marshalling-time.
+     * JAXB calls automatically this method at marshaling-time.
      *
      * @param value The implementing class for this metadata value.
      * @return An adapter which represents the metadata value.
@@ -207,7 +207,7 @@ public final class GO_GenericName extends XmlAdapter<GO_GenericName, GenericName
 
     /**
      * Does the link between adapters and the way they will be unmarshalled.
-     * JAXB calls automatically this method at unmarshalling-time.
+     * JAXB calls automatically this method at unmarshaling-time.
      *
      * @param value The adapter value.
      * @return The implementing class.

@@ -44,7 +44,7 @@ public final class MI_RangeElementDescription
     }
 
     /**
-     * Wraps an Citation value with a {@code MI_RangeElementDescription} element at marshalling time.
+     * Wraps an Citation value with a {@code MI_RangeElementDescription} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class MI_RangeElementDescription
 
     /**
      * Returns the {@link DefaultRangeElementDescription} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class MI_RangeElementDescription
 
     /**
      * Sets the value for the {@link DefaultRangeElementDescription}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

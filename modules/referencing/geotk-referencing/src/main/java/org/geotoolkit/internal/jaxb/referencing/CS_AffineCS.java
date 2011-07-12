@@ -42,7 +42,7 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
     }
 
     /**
-     * Wraps a {@link AffineCS} value with a {@code gml:affineCS} element at marshalling-time.
+     * Wraps a {@link AffineCS} value with a {@code gml:affineCS} element at marshaling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
 
     /**
      * Returns the {@link DefaultAffineCS} generated from the metadata value.
-     * This method is systematically called at marshalling-time by JAXB.
+     * This method is systematically called at marshaling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
 
     /**
      * Sets the value for the {@link DefaultAffineCS}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is systematically called at unmarshaling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

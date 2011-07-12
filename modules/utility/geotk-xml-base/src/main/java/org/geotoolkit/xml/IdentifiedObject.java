@@ -46,7 +46,7 @@ import org.opengis.metadata.citation.Citation;
  * ({@link org.opengis.metadata.citation.Citation}, {@link org.opengis.metadata.acquisition.Objective},
  * referencing {@link org.opengis.referencing.IdentifiedObject}, <i>etc.</i>) allow an arbitrary
  * number of identifiers. However GeoAPI does not define explicit methods for handling the {@code id},
- * {@code uuid} or {@code href} attributes, since they are specific to XML marshalling (they do not
+ * {@code uuid} or {@code href} attributes, since they are specific to XML marshaling (they do not
  * appear in OGC/ISO abstract specifications). This {@code IdentifiedObject} interface provides a
  * way to handle those identifiers.
  * <p>

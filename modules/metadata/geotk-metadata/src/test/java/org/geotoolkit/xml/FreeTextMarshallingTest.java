@@ -28,7 +28,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshalling of {@code FreeText}.
+ * Tests the XML marshaling of {@code FreeText}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.17
@@ -53,7 +53,7 @@ public final class FreeTextMarshallingTest extends TestBase {
 
     /**
      * Tests parsing of a free text in an ISO 19139-compliant way.
-     * The free text is wrapped inside a citation for marshalling
+     * The free text is wrapped inside a citation for marshaling
      * purpose, but only the free text is actually tested.
      *
      * @throws JAXBException If the XML in this test can not be parsed by JAXB.

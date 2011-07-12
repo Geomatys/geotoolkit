@@ -25,7 +25,7 @@ import org.geotoolkit.lang.Static;
 
 
 /**
- * List some namespaces URLs used by JAXB when (un)marshalling.
+ * List some namespaces URLs used by JAXB when (un)marshaling.
  *
  * @author Cédric Briançon (Geomatys)
  * @version 3.07

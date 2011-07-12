@@ -42,7 +42,7 @@ public final class CD_TemporalDatum extends PropertyType<CD_TemporalDatum, Tempo
     }
 
     /**
-     * Wraps a Vertical Datum value with a {@code gml:temporalDatum} element at marshalling-time.
+     * Wraps a Vertical Datum value with a {@code gml:temporalDatum} element at marshaling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CD_TemporalDatum extends PropertyType<CD_TemporalDatum, Tempo
 
     /**
      * Returns the {@link DefaultTemporalDatum} generated from the metadata value.
-     * This method is systematically called at marshalling-time by JAXB.
+     * This method is systematically called at marshaling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CD_TemporalDatum extends PropertyType<CD_TemporalDatum, Tempo
 
     /**
      * Sets the value for the {@link DefaultTemporalDatum}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is systematically called at unmarshaling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

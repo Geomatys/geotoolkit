@@ -33,7 +33,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
  */
 public final class CI_OnlineResource extends MetadataAdapter<OnlineResource, DefaultOnlineResource> {
     /**
-     * Converts a GeoAPI interface to the Geotk implementation for XML marshalling.
+     * Converts a GeoAPI interface to the Geotk implementation for XML marshaling.
      *
      * @param  value The bound type value, here the GeoAPI interface.
      * @return The adapter for the given value, here the Geotk implementation.

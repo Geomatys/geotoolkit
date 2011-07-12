@@ -627,7 +627,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         final double cosλdcosb = cosλ * dcosb_dφ;
         /*
          * In equatorial case, sinb1=0 and cosb1=1. We could do a special case
-         * with the simplification, but the result is not that much simplier.
+         * with the simplification, but the result is not that much simpler.
          */
         final double c     = 2*(sinb1*sinb + cosb1*cosλcosb + 1);
         final double T     =    cosb1*sinb - sinb1*cosλcosb;

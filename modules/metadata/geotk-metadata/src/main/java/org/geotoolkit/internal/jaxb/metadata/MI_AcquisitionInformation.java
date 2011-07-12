@@ -44,7 +44,7 @@ public final class MI_AcquisitionInformation
     }
 
     /**
-     * Wraps an AcquisitionInformation value with a {@code MI_AcquisitionInformation} element at marshalling time.
+     * Wraps an AcquisitionInformation value with a {@code MI_AcquisitionInformation} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class MI_AcquisitionInformation
 
     /**
      * Returns the {@link DefaultAcquisitionInformation} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class MI_AcquisitionInformation
 
     /**
      * Sets the value for the {@link DefaultAcquisitionInformation}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

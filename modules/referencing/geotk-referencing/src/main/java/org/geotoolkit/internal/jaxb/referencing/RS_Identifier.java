@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, ReferenceIdentifier> {
     /**
      * Substitutes the adapter value read from an XML stream by the object which will
-     * contains the value. JAXB calls automatically this method at unmarshalling time.
+     * contains the value. JAXB calls automatically this method at unmarshaling time.
      *
      * @param  adapter The adapter for this metadata value.
      * @return A metadata which represents the value.
@@ -61,7 +61,7 @@ public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, R
 
     /**
      * Substitutes the identifier by the adapter to be marshalled into an XML file
-     * or stream. JAXB calls automatically this method at marshalling time.
+     * or stream. JAXB calls automatically this method at marshaling time.
      *
      * @param  value The metadata value.
      * @return The adapter for the given metadata.
@@ -84,7 +84,7 @@ public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, R
     public static final class ToString extends XmlAdapter<String, ReferenceIdentifier> {
         /**
          * Substitutes the value read from an XML stream by the object which will
-         * contains the value. JAXB calls automatically this method at unmarshalling time.
+         * contains the value. JAXB calls automatically this method at unmarshaling time.
          *
          * @param  adapter The metadata value.
          * @return A metadata which represents the metadata value.
@@ -99,7 +99,7 @@ public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, R
 
         /**
          * Substitutes the identifier by the adapter to be marshalled into an XML file
-         * or stream. JAXB calls automatically this method at marshalling time.
+         * or stream. JAXB calls automatically this method at marshaling time.
          *
          * @param  value The code list value.
          * @return The adapter for the given code list.

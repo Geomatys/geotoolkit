@@ -42,7 +42,7 @@ public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepRepor
     }
 
     /**
-     * Wraps an ProcessStepReport value with a {@code LE_ProcessStepReport} element at marshalling time.
+     * Wraps an ProcessStepReport value with a {@code LE_ProcessStepReport} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepRepor
 
     /**
      * Returns the {@link DefaultProcessStepReport} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepRepor
 
     /**
      * Sets the value for the {@link DefaultProcessStepReport}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

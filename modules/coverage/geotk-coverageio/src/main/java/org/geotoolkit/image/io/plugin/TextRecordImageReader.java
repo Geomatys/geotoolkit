@@ -456,7 +456,7 @@ public class TextRecordImageReader extends TextImageReader {
                     /*
                      * Modify (if needed) the values of the record we just read, replacing pad
                      * values by NaN and fixing the geodetic coordinates for rounding errors
-                     * (if the user overrided the 'round' method).
+                     * (if the user overridden the 'round' method).
                      */
                     for (int i=0; i<values.length; i++) {
                         if (i != xColumn && i != yColumn && values[i] == padValue) {

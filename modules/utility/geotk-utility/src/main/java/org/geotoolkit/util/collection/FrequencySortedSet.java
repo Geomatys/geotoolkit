@@ -385,7 +385,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
      * {@code FrequencySortedSet}, the comparator is always {@code this}.
      * <p>
      * This method is final because the {@code FrequencySortedSet} implementation makes
-     * assumptions on the comparator that would not hold if this method were overrided.
+     * assumptions on the comparator that would not hold if this method were overridden.
      */
     @Override
     public final Comparator<E> comparator() {
@@ -401,7 +401,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
      * converse.
      * <p>
      * This method is final because the {@code FrequencySortedSet} implementation makes
-     * assumptions on the comparator that would not hold if this method were overrided.
+     * assumptions on the comparator that would not hold if this method were overridden.
      */
     @Override
     public final int compare(final E o1, final E o2) {

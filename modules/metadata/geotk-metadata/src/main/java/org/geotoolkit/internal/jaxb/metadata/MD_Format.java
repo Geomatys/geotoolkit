@@ -42,7 +42,7 @@ public final class MD_Format extends PropertyType<MD_Format, Format> {
     }
 
     /**
-     * Wraps an Format value with a {@code MD_Format} element at marshalling time.
+     * Wraps an Format value with a {@code MD_Format} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MD_Format extends PropertyType<MD_Format, Format> {
 
     /**
      * Returns the {@link DefaultFormat} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MD_Format extends PropertyType<MD_Format, Format> {
 
     /**
      * Sets the value for the {@link DefaultFormat}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

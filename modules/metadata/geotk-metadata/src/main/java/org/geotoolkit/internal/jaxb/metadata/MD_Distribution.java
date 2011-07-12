@@ -42,7 +42,7 @@ public final class MD_Distribution extends PropertyType<MD_Distribution, Distrib
     }
 
     /**
-     * Wraps an Distribution value with a {@code MD_Distribution} element at marshalling time.
+     * Wraps an Distribution value with a {@code MD_Distribution} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MD_Distribution extends PropertyType<MD_Distribution, Distrib
 
     /**
      * Returns the {@link DefaultDistribution} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MD_Distribution extends PropertyType<MD_Distribution, Distrib
 
     /**
      * Sets the value for the {@link DefaultDistribution}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

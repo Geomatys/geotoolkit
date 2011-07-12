@@ -323,7 +323,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
 
     /**
      * Returns the language used for documenting metadata. This {@code DefaultMetadata} object and
-     * its children will use that locale for marshalling {@link org.opengis.util.InternationalString}
+     * its children will use that locale for marshaling {@link org.opengis.util.InternationalString}
      * and {@link org.opengis.util.CodeList} instances in ISO 19139 compliant XML documents.
      */
     @Override
@@ -334,7 +334,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
 
     /**
      * Sets the language used for documenting metadata. This {@code DefaultMetadata} object and its
-     * children will use the given locale for marshalling {@link org.opengis.util.InternationalString}
+     * children will use the given locale for marshaling {@link org.opengis.util.InternationalString}
      * and {@link org.opengis.util.CodeList} instances in ISO 19139 compliant XML documents.
      *
      * @param newValue The new language.
@@ -789,7 +789,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
 
     /**
      * Invoked by JAXB {@link javax.xml.bind.Marshaller} before this object is marshalled to XML.
-     * This method sets the locale to be used for XML marshalling to the metadata language.
+     * This method sets the locale to be used for XML marshaling to the metadata language.
      *
      * @since 3.17
      */
@@ -799,7 +799,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
 
     /**
      * Invoked by JAXB {@link javax.xml.bind.Marshaller} after this object has been marshalled to
-     * XML. This method restores the locale to be used for XML marshalling to its previous value.
+     * XML. This method restores the locale to be used for XML marshaling to its previous value.
      *
      * @since 3.17
      */

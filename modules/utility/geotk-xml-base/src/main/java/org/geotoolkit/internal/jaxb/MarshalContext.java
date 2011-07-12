@@ -32,7 +32,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**
- * Thread-local status of a marshalling or unmarshalling process.
+ * Thread-local status of a marshaling or unmarshaling process.
  * Contains also static methods for managing the collections to be marshalled.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -43,8 +43,8 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  */
 public final class MarshalContext {
     /**
-     * The bit flag telling if a marshalling process is under progress.
-     * The value is unchanged for unmarshalling processes.
+     * The bit flag telling if a marshaling process is under progress.
+     * The value is unchanged for unmarshaling processes.
      *
      * @since 3.19
      */
@@ -90,7 +90,7 @@ public final class MarshalContext {
     private Map<String, String> schemas;
 
     /**
-     * The locale to use for marshalling, or {@code null} if no locale were explicitly specified.
+     * The locale to use for marshaling, or {@code null} if no locale were explicitly specified.
      *
      * @since 3.17
      */
@@ -142,7 +142,7 @@ public final class MarshalContext {
     }
 
     /**
-     * If marshalling, filters the given collection of identifiers in order to omit any identifiers
+     * If marshaling, filters the given collection of identifiers in order to omit any identifiers
      * for which the authority is one of the {@link org.geotoolkit.xml.IdentifierSpace} constants.
      *
      * @param  identifiers The identifiers to filter, or {@code null}.
@@ -172,7 +172,7 @@ public final class MarshalContext {
     }
 
     /**
-     * Returns the object linker in use for the current marshalling or unmarshalling process. If
+     * Returns the object linker in use for the current marshaling or unmarshaling process. If
      * no linker were explicitely set, then this method returns {@link ObjectLinker#DEFAULT}.
      *
      * @return The current object linker (never null).
@@ -191,7 +191,7 @@ public final class MarshalContext {
     }
 
     /**
-     * Returns the object converters in use for the current marshalling or unmarshalling process. If
+     * Returns the object converters in use for the current marshaling or unmarshaling process. If
      * no converter were explicitely set, then this method returns {@link ObjectConverters#DEFAULT}.
      *
      * @return The current object converters (never null).
@@ -259,9 +259,9 @@ public final class MarshalContext {
     }
 
     /**
-     * Returns whatever a marshalling process is under progress.
+     * Returns whatever a marshaling process is under progress.
      *
-     * @return {@code true} if a marshalling process is in progress.
+     * @return {@code true} if a marshaling process is in progress.
      */
     public static boolean isMarshaling() {
         final MarshalContext current = CURRENT.get();
@@ -311,7 +311,7 @@ public final class MarshalContext {
     }
 
     /**
-     * Returns the locale to use for marshalling, or {@code null} if no locale were explicitly
+     * Returns the locale to use for marshaling, or {@code null} if no locale were explicitly
      * specified. A {@code null} value means that some locale-neutral language should be used
      * if available, or an implementation-default locale (typically English) otherwise.
      * <p>
@@ -378,7 +378,7 @@ public final class MarshalContext {
     }
 
     /**
-     * Invoked when a marshalling or unmarshalling process is about to begin.
+     * Invoked when a marshaling or unmarshaling process is about to begin.
      * Must be followed by a call to {@link #finish()} in a {@code finally} block.
      *
      * {@preformat java
@@ -396,7 +396,7 @@ public final class MarshalContext {
      * @param  locale     The locale, or {@code null} if unspecified.
      * @param  timezone   The timezone, or {@code null} if unspecified.
      * @param  bitMasks   A combination of {@link #SUBSTITUTE_LANGUAGE}, {@link #SUBSTITUTE_COUNTRY} or others.
-     * @return The context on which to invoke {@link #finish()} when the (un)marshalling is finished.
+     * @return The context on which to invoke {@link #finish()} when the (un)marshaling is finished.
      */
     public static MarshalContext begin(final ObjectConverters converters, final ObjectLinker linker,
             final Map<String,String> schemas, final Locale locale, final TimeZone timezone, final int bitMasks)
@@ -412,7 +412,7 @@ public final class MarshalContext {
     }
 
     /**
-     * Declares that the work which is about to begin is a marshalling.
+     * Declares that the work which is about to begin is a marshaling.
      *
      * @see #isMarshaling()
      */
@@ -421,7 +421,7 @@ public final class MarshalContext {
     }
 
     /**
-     * Invoked in a {@code finally} block when a unmarshalling process is finished.
+     * Invoked in a {@code finally} block when a unmarshaling process is finished.
      */
     public void finish() {
         if (previous != null) {

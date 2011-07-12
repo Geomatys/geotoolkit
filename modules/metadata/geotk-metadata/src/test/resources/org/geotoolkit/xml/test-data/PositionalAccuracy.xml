@@ -18,7 +18,7 @@
   </gmd:nameOfMeasure>
   <gmd:result>
     <!-- The xsi:type declaration below is useless, but we put it
-         in order to test that it doesn't break unmarshalling. -->
+         in order to test that it doesn't break unmarshaling. -->
     <gmd:DQ_ConformanceResult xsi:type="gmd:DQ_ConformanceResult_Type">
       <gmd:specification>
         <gmd:CI_Citation>

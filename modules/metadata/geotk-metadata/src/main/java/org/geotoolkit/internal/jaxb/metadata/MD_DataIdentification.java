@@ -44,7 +44,7 @@ public final class MD_DataIdentification
     }
 
     /**
-     * Wraps an DataIdentification value with a {@code MD_DataIdentification} element at marshalling time.
+     * Wraps an DataIdentification value with a {@code MD_DataIdentification} element at marshaling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class MD_DataIdentification
 
     /**
      * Returns the {@link DefaultDataIdentification} generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
+     * This method is systematically called at marshaling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class MD_DataIdentification
 
     /**
      * Sets the value for the {@link DefaultDataIdentification}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * called at unmarshaling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

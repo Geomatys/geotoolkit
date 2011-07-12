@@ -42,7 +42,7 @@ public final class CS_TimeCS extends PropertyType<CS_TimeCS, TimeCS> {
     }
 
     /**
-     * Wraps a {@link TimeCS} value with a {@code gml:timeCS} element at marshalling-time.
+     * Wraps a {@link TimeCS} value with a {@code gml:timeCS} element at marshaling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CS_TimeCS extends PropertyType<CS_TimeCS, TimeCS> {
 
     /**
      * Returns the {@link DefaultTimeCS} generated from the metadata value.
-     * This method is systematically called at marshalling-time by JAXB.
+     * This method is systematically called at marshaling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CS_TimeCS extends PropertyType<CS_TimeCS, TimeCS> {
 
     /**
      * Sets the value for the {@link DefaultTimeCS}.
-     * This method is systematically called at unmarshalling-time by JAXB.
+     * This method is systematically called at unmarshaling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

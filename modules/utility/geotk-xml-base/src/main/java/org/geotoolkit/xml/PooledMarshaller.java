@@ -97,7 +97,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final Result output) throws JAXBException {
@@ -111,7 +111,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final OutputStream output) throws JAXBException {
@@ -125,7 +125,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final File output) throws JAXBException {
@@ -139,7 +139,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final Writer output) throws JAXBException {
@@ -153,7 +153,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final ContentHandler output) throws JAXBException {
@@ -167,7 +167,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final Node output) throws JAXBException {
@@ -181,7 +181,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final XMLStreamWriter output) throws JAXBException {
@@ -195,7 +195,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public void marshal(final Object object, final XMLEventWriter output) throws JAXBException {
@@ -209,7 +209,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     }
 
     /**
-     * Delegates the marshalling to the wrapped marshaller.
+     * Delegates the marshaling to the wrapped marshaller.
      */
     @Override
     public Node getNode(final Object object) throws JAXBException {
