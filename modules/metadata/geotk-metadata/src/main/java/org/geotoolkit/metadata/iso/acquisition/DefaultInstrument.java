@@ -34,6 +34,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -59,17 +60,12 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 6356044176200794577L;
+    private static final long serialVersionUID = 6356044176200794578L;
 
     /**
      * Complete citation of the instrument.
      */
     private Collection<Citation> citations;
-
-    /**
-     * Unique identification of the instrument.
-     */
-    private Identifier identifier;
 
     /**
      * Name of the type of instrument. Examples: framing, line-scan, push-broom, pan-frame.
@@ -153,8 +149,8 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -164,7 +160,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

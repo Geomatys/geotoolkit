@@ -38,6 +38,7 @@ import org.opengis.metadata.identification.Progress;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -69,7 +70,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -4247450339144267882L;
+    private static final long serialVersionUID = -4247450339144267883L;
 
     /**
      * Description of the mission on which the platform observations are made and the
@@ -81,11 +82,6 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      * Identification of the mission.
      */
     private Citation citation;
-
-    /**
-     * Unique identification of the operation.
-     */
-    private Identifier identifier;
 
     /**
      * Status of the data acquisition.
@@ -216,8 +212,8 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -227,7 +223,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

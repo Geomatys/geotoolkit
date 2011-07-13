@@ -35,7 +35,9 @@ import org.opengis.metadata.acquisition.PlatformPass;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
 
@@ -161,11 +163,16 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     /**
      * Sets the code used to identify the objective.
      *
+     * The {@linkplain IdentifierSpace XML identifiers} ({@linkplain IdentifierSpace#ID ID},
+     * {@linkplain IdentifierSpace#UUID UUID}, <i>etc.</i>) are ignored because they are
+     * associated to particular metadata instances.
+     *
      * @param newValues The new identifiers values.
      */
-    @Override
-    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        super.setIdentifiers(newValues);
+    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        final Collection<Identifier> oldIds = IdentifierAuthority.filter(identifiers);
+        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+        IdentifierAuthority.replace(identifiers, oldIds);
     }
 
     /**

@@ -32,8 +32,9 @@ import org.opengis.metadata.lineage.Algorithm;
 import org.opengis.metadata.lineage.Processing;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -62,12 +63,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -8032712379901591271L;
-
-    /**
-     * Information to identify the processing package that produced the data.
-     */
-    private Identifier identifier;
+    private static final long serialVersionUID = -8032712379901591272L;
 
     /**
      * Reference to document describing processing software.
@@ -144,8 +140,8 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     @Override
     @XmlElement(name = "identifier", namespace = Namespaces.GMI, required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -155,7 +151,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

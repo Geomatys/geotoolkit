@@ -228,19 +228,65 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     }
 
     /**
+     * Returns the first identifier from the given collection which is not a "special" identifier
+     * (ISO 19139 attributes).
+     *
+     * @param <T> The type of object used as identifier values.
+     * @param  identifiers The collection from which to get identifiers, or {@code null}.
+     * @return The first identifier, or {@code null} if none.
+     */
+    public static <T extends Identifier> T getIdentifier(final Collection<? extends T> identifiers) {
+        if (identifiers != null) {
+            for (final T id : identifiers) {
+                if (id != null && !(id.getAuthority() instanceof IdentifierAuthority<?>)) {
+                    return id;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the given identifier in the given collection. This method removes all identifiers
+     * that are not ISO 19139 identifiers before to adds the given one in the collection. This
+     * method is used when the given collection is expected to contains only one ISO 19115
+     * identifier.
+     *
+     * @param <T> The type of object used as identifier values.
+     * @param identifiers The collection in which to add the identifier.
+     * @param id The identifier to add, or {@code null}.
+     */
+    public static <T extends Identifier> void setIdentifier(final Collection<T> identifiers, final T id) {
+        final Iterator<T> it = identifiers.iterator();
+        while (it.hasNext()) {
+            final T old = it.next();
+            if (old != null) {
+                if (old.getAuthority() instanceof IdentifierAuthority<?>) {
+                    continue; // Don't touch this identifier.
+                }
+            }
+            it.remove();
+        }
+        if (id != null) {
+            identifiers.add(id);
+        }
+    }
+
+    /**
      * Returns a collection containing only the identifiers having an {@code IdentifierAuthority}.
      *
+     * @param  <T> The type of object used as identifier values.
      * @param  identifiers The identifiers to filter, or {@code null} if none.
      * @return The filtered identifiers, or {@code null} if none.
      */
-    public static Collection<Identifier> filter(final Collection<? extends Identifier> identifiers) {
-        Collection<Identifier> filtered = null;
+    public static <T extends Identifier> Collection<T> filter(final Collection<? extends T> identifiers) {
+        Collection<T> filtered = null;
         if (identifiers != null) {
             int remaining = identifiers.size();
-            for (final Identifier candidate : identifiers) {
+            for (final T candidate : identifiers) {
                 if (candidate != null && candidate.getAuthority() instanceof IdentifierAuthority<?>) {
                     if (filtered == null) {
-                        filtered = new ArrayList<Identifier>(remaining);
+                        filtered = new ArrayList<T>(remaining);
                     }
                     filtered.add(candidate);
                 }
@@ -254,13 +300,14 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
      * Removes from the given collection every identifiers having an {@code IdentifierAuthority},
      * then add the previously filtered identifiers (if any).
      *
+     * @param <T> The type of object used as identifier values.
      * @param identifiers The collection from which to remove identifiers, or {@code null}.
      * @param filtered The previous filtered identifiers returned by {@link #filter}.
      */
-    public static void replace(final Collection<Identifier> identifiers, final Collection<Identifier> filtered) {
+    public static <T extends Identifier> void replace(final Collection<T> identifiers, final Collection<T> filtered) {
         if (identifiers != null) {
-            for (final Iterator<Identifier> it=identifiers.iterator(); it.hasNext();) {
-                final Identifier id = it.next();
+            for (final Iterator<T> it=identifiers.iterator(); it.hasNext();) {
+                final T id = it.next();
                 if (id == null || id.getAuthority() instanceof IdentifierAuthority<?>) {
                     it.remove();
                 }

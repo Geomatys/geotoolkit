@@ -38,9 +38,20 @@ import org.geotoolkit.internal.jaxb.IdentifierAuthority;
  * The base class of ISO 19115 implementation classes. Each sub-classes implements one
  * of the ISO Metadata interface provided by <A HREF="http://www.geoapi.org">GeoAPI</A>.
  * <p>
- * In addition to ISO 19115 elements, every subclasses can have implicit ISO 19139 attributes
- * used during (un)marshalling to XML. For example the {@code xlink:href} attribute can be
- * accessed by a {@link XLink} object associated with this metadata.
+ * This base class implements the {@link IdentifiedObject} interface, which implies that
+ * every subclasses can be associated to one or many {@linkplain Identifier identifiers}.
+ * Those identifiers fall in two categories:
+ *
+ * <ul>
+ *   <li><p>The ISO 19115 standard associates identifiers to <strong>some</strong> metadata objects.
+ *       The {@linkplain Identifier#getAuthority() authority} of those identifiers are often (but
+ *       not limited to) one of the constants defined in the {@link org.geotoolkit.metadata.iso.citation.Citations}
+ *       class. At XML marshalling time, those identifiers appear as {@code <MD_Identifier>} elements.</p></li>
+ *   <li><p>The ISO 19139 standard associates identifiers to <strong>all</strong> metadata objects.
+ *       The {@linkplain Identifier#getAuthority() authority} of those identifiers are one of the
+ *       constants defined in the {@link IdentifierSpace} interface. At XML marshalling time, those
+ *       identifiers appear as attributes.</p></li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
@@ -109,6 +120,19 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     }
 
     /**
+     * Convenience method returning the first identifier which is not an ISO 19139 identifier. The
+     * default implementation iterates over the {@linkplain #identifiers} collection, ignoring the
+     * identifiers having one of the {@link org.geotoolkit.xml.IdentifierSpace} authority.
+     *
+     * @return The first ISO 19115 identifier, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    public synchronized Identifier getIdentifier() {
+        return IdentifierAuthority.getIdentifier(identifiers);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @since 3.19
@@ -116,21 +140,6 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     @Override
     public synchronized Collection<Identifier> getIdentifiers() {
         return identifiers = nonNullCollection(identifiers, Identifier.class);
-    }
-
-    /**
-     * Sets the identifiers associated to this object, except the {@linkplain IdentifierSpace XML
-     * identifiers}. The XML identifiers ({@linkplain #ID}, {@linkplain #UUID}, <i>etc.</i>) are
-     * ignored because they are associated to particular metadata instances.
-     *
-     * @param newValues The new identifiers, or {@code null} if none.
-     *
-     * @since 3.19
-     */
-    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        final Collection<Identifier> oldIds = IdentifierAuthority.filter(identifiers);
-        identifiers = copyCollection(newValues, identifiers, Identifier.class);
-        IdentifierAuthority.replace(identifiers, oldIds);
     }
 
     /**

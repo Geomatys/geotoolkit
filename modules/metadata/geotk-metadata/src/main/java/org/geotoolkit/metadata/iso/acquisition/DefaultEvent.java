@@ -37,6 +37,7 @@ import org.opengis.metadata.acquisition.Sequence;
 import org.opengis.metadata.acquisition.Trigger;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -65,12 +66,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -5625600499628778406L;
-
-    /**
-     * Event name or number.
-     */
-    private Identifier identifier;
+    private static final long serialVersionUID = -5625600499628778407L;
 
     /**
      * Initiator of the event.
@@ -163,8 +159,8 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -174,7 +170,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

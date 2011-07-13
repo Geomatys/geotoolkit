@@ -34,6 +34,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -59,17 +60,12 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -6870357428019309409L;
+    private static final long serialVersionUID = -6870357428019309408L;
 
     /**
      * Source where information about the platform is described.
      */
     private Citation citation;
-
-    /**
-     * Unique identification of the platform.
-     */
-    private Identifier identifier;
 
     /**
      * Narrative description of the platform supporting the instrument.
@@ -155,8 +151,8 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -166,7 +162,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

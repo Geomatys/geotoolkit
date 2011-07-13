@@ -32,6 +32,7 @@ import org.opengis.metadata.acquisition.Event;
 import org.opengis.metadata.acquisition.PlatformPass;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -55,12 +56,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -1695097227120034433L;
-
-    /**
-     * Unique name of the pass.
-     */
-    private Identifier identifier;
+    private static final long serialVersionUID = -1695097227120034432L;
 
     /**
      * Area covered by the pass.
@@ -121,8 +117,8 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -132,7 +128,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

@@ -36,6 +36,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 
 
 /**
@@ -64,17 +65,12 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 7305276418007196949L;
+    private static final long serialVersionUID = 7305276418007196948L;
 
     /**
      * Identification of reference or guidance material for the requirement.
      */
     private Citation citation;
-
-    /**
-     * Unique name, or code, for the requirement.
-     */
-    private Identifier identifier;
 
     /**
      * Origin of requirement.
@@ -183,8 +179,8 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     @Override
     @XmlElement(name = "identifier", required = true)
-    public synchronized Identifier getIdentifier() {
-        return identifier;
+    public Identifier getIdentifier() {
+        return super.getIdentifier();
     }
 
     /**
@@ -194,7 +190,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        identifier = newValue;
+        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
     }
 
     /**

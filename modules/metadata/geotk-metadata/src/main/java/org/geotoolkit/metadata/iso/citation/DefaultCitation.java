@@ -363,16 +363,24 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * Sets the unique identifier for the resource. Example: Universal Product Code (UPC),
      * National Stock Number (NSN).
      * <p>
-     * This method does not set the {@linkplain #getISBN() ISBN} and {@linkplain #getISSN() ISSN}
-     * codes, even if they are included in the given collection. The ISBN/ISSN codes shall be set
-     * by the {@link #setISBN(String)} or {@link #setISSN(String)} methods, for compliance with
-     * the ISO 19115 model.
+     * The following exceptions apply:
+     * <p>
+     * <ul>
+     *   <li>This method does not set the {@linkplain #getISBN() ISBN} and {@linkplain #getISSN() ISSN}
+     *       codes, even if they are included in the given collection. The ISBN/ISSN codes shall be set
+     *       by the {@link #setISBN(String)} or {@link #setISSN(String)} methods, for compliance with
+     *       the ISO 19115 model.</li>
+     *   <li>The {@linkplain IdentifierSpace XML identifiers} ({@linkplain IdentifierSpace#ID ID},
+     *       {@linkplain IdentifierSpace#UUID UUID}, <i>etc.</i>) are ignored because they are
+     *       associated to particular metadata instances.</li>
+     * </ul>
      *
      * @param newValues The new identifiers.
      */
-    @Override
-    public void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        super.setIdentifiers(newValues);
+    public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
+        final Collection<Identifier> oldIds = IdentifierAuthority.filter(identifiers);
+        identifiers = copyCollection(newValues, identifiers, Identifier.class);
+        IdentifierAuthority.replace(identifiers, oldIds);
     }
 
     /**
