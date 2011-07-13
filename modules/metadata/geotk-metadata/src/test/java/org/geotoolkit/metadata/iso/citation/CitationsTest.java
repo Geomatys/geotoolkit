@@ -43,22 +43,6 @@ import static org.geotoolkit.test.Commons.*;
 @Depend(DefaultCitationTest.class)
 public final class CitationsTest {
     /**
-     * Tests the {@link AbstractMetadata#toString()} method first, since debugging
-     * will relying a lot on this method for the remaining of the test suite.
-     */
-    @Test
-    public void testToString() {
-        final String text = Citations.EPSG.toString();
-        /*
-         * Reminder: (?s) allows .* to skip new line characters.
-         *           (?m) enable the multi-lines mode for ^ and $.
-         *           ^ and $ match the beginning and end of a line respectively.
-         */
-        assertTrue(text.matches("(?s)(?m).*^\\s+Identifiers:\\s+Code:\\s+EPSG$.*"));
-        assertTrue(text.matches("(?s)(?m).*^\\s+Linkage:\\s+http://www.epsg.org$.*"));
-    }
-
-    /**
      * Makes sure that {@link Citations} constants are immutable.
      */
     @Test

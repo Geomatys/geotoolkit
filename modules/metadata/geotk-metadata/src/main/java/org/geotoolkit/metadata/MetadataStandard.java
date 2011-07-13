@@ -37,6 +37,7 @@ import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -120,7 +121,7 @@ public final class MetadataStandard {
     }
 
     /**
-     * The name, of {@link #toString()} purpose only.
+     * The name, for {@link #toString()} purpose only.
      */
     private final String name;
 
@@ -767,7 +768,7 @@ public final class MetadataStandard {
      */
     public String toString(final Object metadata) throws ClassCastException {
         final PropertyTree builder = treeBuilders.get();
-        return PropertyTree.toString(builder.asTree(metadata));
+        return Trees.toString(builder.asTreeTable(metadata));
     }
 
     /**

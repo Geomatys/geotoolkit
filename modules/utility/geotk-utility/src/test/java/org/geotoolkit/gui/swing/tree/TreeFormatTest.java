@@ -29,7 +29,7 @@ import static org.geotoolkit.test.Assert.*;
  * Note that {@link Trees} also perform indirectly more tests..
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18 (derived from 3.00)
  */
@@ -95,5 +95,32 @@ public final class TreeFormatTest {
                 "└───Node #3\n";
         final TreeNode root = tf.parseObject(text);
         assertMultilinesEquals(text, tf.format(root));
+    }
+
+    /**
+     * Tests the formatting of a tree table.
+     */
+    @Test
+    public void testTable() {
+        final TestNode root = new TestNode("Node #1", "More #1");
+        final NamedTreeNode branch = new NamedTreeNode("Node #2", "More #2");
+        root.add(branch);
+        root.add(new TestNode("Node #3", "More #3"));
+        branch.add(new TestNode("Node #4", "More #4", "ext #4\tafter tab\nand a new line"));
+
+        final TreeFormat tf = new TreeFormat();
+        tf.setVerticalLinePosition(1);
+        assertMultilinesEquals(
+                "[Node #1, More #1]\n" +
+                " ├──Node #2\n" +
+                " │   └──[Node #4, More #4, ext #4       after tab and a new line]\n" +
+                " └──[Node #3, More #3]\n", tf.format(root));
+
+        tf.setTableFormatEnabled(true);
+        assertMultilinesEquals(
+                "Node #1……………………… More #1\n" +
+                " ├──Node #2\n" +
+                " │   └──Node #4… More #4… ext #4  after tab and a new line\n" +
+                " └──Node #3…………… More #3\n", tf.format(root));
     }
 }

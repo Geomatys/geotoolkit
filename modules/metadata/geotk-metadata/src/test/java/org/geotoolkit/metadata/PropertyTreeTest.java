@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import java.util.Iterator;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,10 +25,12 @@ import java.text.ParseException;
 import javax.swing.tree.TreeModel;
 
 import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
@@ -62,13 +65,9 @@ public final class PropertyTreeTest {
     }
 
     /**
-     * Creates a tree from a metadata object and verifies that the tree contains
-     * the expected values. Then remove values from the map and test again.
-     *
-     * @throws ParseException Should not happen.
+     * Creates the citation to use for testing purpose.
      */
-    @Test
-    public void testTree() throws ParseException {
+    private static DefaultCitation createCitation() {
         final DefaultCitation citation = new DefaultCitation();
         final InternationalString title = new SimpleInternationalString("Undercurrent");
         citation.setTitle(title);
@@ -85,7 +84,54 @@ public final class PropertyTreeTest {
         final DefaultResponsibleParty duplicated = new DefaultResponsibleParty();
         duplicated.setIndividualName("A japanese author");
         citation.getCitedResponsibleParties().add(duplicated);
+        return citation;
+    }
 
+    /**
+     * Creates a tree table from a metadata object and verifies that the tree contains
+     * the expected values.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testTreeTable() {
+        final DefaultCitation citation = createCitation();
+        final PropertyTree pt = new PropertyTree(citation.getStandard());
+        final String text = Trees.toString(pt.asTreeTable(citation));
+        assertMultilinesEquals(
+            "Citation\n" +
+            "├───Title………………………………………………………………………………………………………… Undercurrent\n" +
+            "├───Alternate Titles\n" +
+            "│   ├───[1]…………………………………………………………………………………………………… Alt A\n" +
+            "│   └───[2]…………………………………………………………………………………………………… Alt B\n" +
+            "├───Cited Responsible Parties\n" +
+            "│   ├───[1] Responsible party ‒ Testsuya Toyoda\n" +
+            "│   │   ├───Role……………………………………………………………………………………… author\n" +
+            "│   │   └───Individual Name………………………………………………………… Testsuya Toyoda\n" +
+            "│   └───[2] Responsible party ‒ A japanese author\n" +
+            "│       └───Individual Name………………………………………………………… A japanese author\n" +
+            "├───ISBN…………………………………………………………………………………………………………… 9782505004509\n" +
+            "└───Presentation Forms\n" +
+            "    ├───[1]…………………………………………………………………………………………………… document hardcopy\n" +
+            "    └───[2]…………………………………………………………………………………………………… image hardcopy\n", text);
+    }
+
+    /**
+     * Creates a tree from a metadata object and verifies that the tree contains
+     * the expected values. Then remove values from the map and test again.
+     *
+     * @throws ParseException Should not happen.
+     */
+    @Test
+    public void testTree() throws ParseException {
+        final DefaultCitation citation = createCitation();
+        final ResponsibleParty author, duplicated;
+        if (true) {
+            final Iterator<ResponsibleParty> it = citation.getCitedResponsibleParties().iterator();
+            assertTrue (it.hasNext()); author     = it.next();
+            assertTrue (it.hasNext()); duplicated = it.next();
+            assertFalse(it.hasNext());
+        }
         TreeModel tree = citation.asTree();
         assertMultilinesEquals(
             "Citation\n" +
@@ -118,7 +164,7 @@ public final class PropertyTreeTest {
         assertEquals(5, root.getChildCount());
         TreeNode node = (TreeNode) root.getChildAt(2);
         assertEquals("Cited Responsible Parties", node.toString());
-        final Collection<DefaultResponsibleParty> authors = new ArrayList<DefaultResponsibleParty>();
+        final Collection<ResponsibleParty> authors = new ArrayList<ResponsibleParty>();
         authors.add(author);
         authors.add(duplicated);
         assertEquals(authors, node.getUserObject());

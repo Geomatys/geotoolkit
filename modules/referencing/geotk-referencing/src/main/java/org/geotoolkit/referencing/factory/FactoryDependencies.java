@@ -371,7 +371,7 @@ public class FactoryDependencies {
                 buffer.append(')');
             }
         }
-        return new NamedTreeNode(buffer.toString(), factory, true);
+        return new NamedTreeNode(buffer.toString(), factory);
     }
 
     /**

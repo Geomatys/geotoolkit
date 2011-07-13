@@ -17,9 +17,13 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import java.io.Writer;
+import java.io.Flushable;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Enumeration;
 import java.text.Format;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
@@ -30,7 +34,10 @@ import javax.swing.tree.DefaultTreeModel; // Really the Swing implementation, no
 
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
+import org.geotoolkit.io.LineWriter;
+import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
@@ -58,12 +65,22 @@ import org.geotoolkit.resources.Errors;
  *   └───Node #3
  * }
  *
+ * If the {@linkplain #isTableFormatEnabled() table format is enabled} and the tree nodes are
+ * instances of {@link TreeTableNode}, then the output format will be like the example below:
+ *
+ * {@preformat text
+ *   Node #1……………………… More #1
+ *   ├───Node #2…………… More #2
+ *   │   └───Node #4… More #4
+ *   └───Node #3…………… More #3
+ * }
+ *
  * This representation can be printed to the {@linkplain System#out standard output stream}
  * (for example) if it uses a monospaced font and supports unicode. Indentation and position
  * of the vertical line can be modified by calls to the setter methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18 (derived from 2.0)
  * @module
@@ -93,6 +110,20 @@ public class TreeFormat extends Format {
     private String lineSeparator;
 
     /**
+     * The column separator to use if the table format is enabled.
+     *
+     * @since 3.19
+     */
+    private char columnSeparator = '…';
+
+    /**
+     * {@code true} for enabling the formating of tree tables. The default value is {@code false}.
+     *
+     * @since 3.19
+     */
+    private boolean isTableFormatEnabled;
+
+    /**
      * The tree symbols to write in the left margin, or {@code null} if not yet computed.
      * The default symbols are as below:
      * <p>
@@ -104,6 +135,21 @@ public class TreeFormat extends Format {
      * </ul>
      */
     private transient String treeBlank, treeLine, treeCross, treeEnd;
+
+    /**
+     * The writer to use for formatting a possible multi-line text to a monoline text.
+     * Will be created only when first needed.
+     *
+     * @since 3.19
+     */
+    private transient Writer lineWriter;
+
+    /**
+     * The buffer which is backing {@link #lineWriter}.
+     *
+     * @since 3.19
+     */
+    private transient StringBuffer lineBuffer;
 
     /**
      * Creates a new format.
@@ -192,6 +238,80 @@ public class TreeFormat extends Format {
     public void setLineSeparator(final String separator) {
         ArgumentChecks.ensureNonNull("separator", separator);
         lineSeparator = separator;
+    }
+
+    /**
+     * Returns the character used as column separator. This character will be inserted between the
+     * columns only if the {@linkplain #isTableFormatEnabled() table format is enabled} and the
+     * tree to format contains {@link TreeTableNode} elements.
+     * <p>
+     * The default value if <code>'&hellip;'</code>.
+     *
+     * @return The column separator.
+     *
+     * @since 3.19
+     */
+    public char getColumnSeparator() {
+        return columnSeparator;
+    }
+
+    /**
+     * Sets the column character to insert between the columns in a {@link TreeTableNode}.
+     *
+     * @param separator The column separator.
+     *
+     * @since 3.19
+     */
+    public void setColumnSeparator(final char separator) {
+        columnSeparator = separator;
+    }
+
+    /**
+     * Returns {@code true} if this {@code TreeFormat} is allowed to format the tree using many
+     * columns. The default value is {@code false}. Setting this property to {@code true} is
+     * useful only if the tree to format contains {@link TreeTableNode} elements.
+     *
+     * @return {@code true} if this {@code TreeFormat} object is allowed to format many columns.
+     *
+     * @since 3.19
+     */
+    public boolean isTableFormatEnabled() {
+        return isTableFormatEnabled;
+    }
+
+    /**
+     * Sets whatever this {@code TreeFormat} is allowed to format the tree as a table.
+     * <p>
+     * <b>NOTE:</b> parsing of table format is not yet implemented.
+     *
+     * @param enabled {@code true} for enabling the table format.
+     *
+     * @since 3.19
+     */
+    public void setTableFormatEnabled(final boolean enabled) {
+        isTableFormatEnabled = enabled;
+    }
+
+    /**
+     * Returns {@code true} if the given tree should be formatted as a tree table.
+     * The default implementation returns {@code true} if the given tree contains
+     * at least one node of kind {@link TreeTableNode}.
+     *
+     * @param  node The root node to inspect.
+     * @return {@code false} if at least one tree table node was found.
+     */
+    private static boolean formatAsTable(final TreeNode node) {
+        if (node instanceof TreeTableNode) {
+            return true;
+        }
+        @SuppressWarnings("unchecked")
+        final Enumeration<TreeNode> e = node.children();
+        if (e != null) while (e.hasMoreElements()) {
+            if (formatAsTable(e.nextElement())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -370,6 +490,26 @@ public class TreeFormat extends Format {
     }
 
     /**
+     * Returns a string representation of the given value, or {@code null} if the value is
+     * null. If the given value contains tabulation or line terminators, they are replaced
+     * by spaces. This is necessary in order to avoid conflict with the characters expected
+     * by {@link TableWriter}.
+     */
+    private String toString(final Object value) throws IOException {
+        Writer writer = lineWriter;
+        if (writer == null) {
+            final StringWriter buffer = new StringWriter();
+            lineWriter = writer = new ExpandedTabWriter(new LineWriter(buffer, " "));
+            lineBuffer = buffer.getBuffer();
+        }
+        writer.write(String.valueOf(value));
+        final String text = lineBuffer.toString();
+        writer.write('\n'); // Reset tabulation count and discart trailing spaces.
+        lineBuffer.setLength(0);
+        return text;
+    }
+
+    /**
      * Appends to the given buffer the string representation of the given node and all
      * its children. This method invokes itself recursively.
      *
@@ -390,7 +530,22 @@ public class TreeFormat extends Format {
                     ? (isLast ? treeBlank : treeLine)
                     : (isLast ? treeEnd   : treeCross));
         }
-        toAppendTo.append(String.valueOf(node)).append(lineSeparator);
+        if ((node instanceof TreeTableNode) && (toAppendTo instanceof TableWriter)) {
+            final TreeTableNode tableNode = (TreeTableNode) node;
+            final int columnCount = tableNode.getColumnCount();
+            for (int i=0; i<columnCount; i++) {
+                if (i != 0) {
+                    ((TableWriter) toAppendTo.append(columnSeparator)).nextColumn(columnSeparator);
+                }
+                final Object value = tableNode.getValueAt(i);
+                if (value != null) {
+                    toAppendTo.append(toString(value));
+                }
+            }
+        } else {
+            toAppendTo.append(toString(node));
+        }
+        toAppendTo.append(lineSeparator);
         if (level >= last.length) {
             last = Arrays.copyOf(last, level*2);
         }
@@ -417,8 +572,20 @@ public class TreeFormat extends Format {
     public void format(final TreeModel tree, final Appendable toAppendTo) throws IOException {
         final Object root = tree.getRoot();
         if (root != null) {
+            boolean isDirect = true;
+            Appendable out = toAppendTo;
+            if (isTableFormatEnabled && root instanceof TreeNode && formatAsTable((TreeNode) root)) {
+                isDirect = (toAppendTo instanceof Writer);
+                out = new TableWriter(isDirect ? (Writer) toAppendTo : null, " ");
+            }
             ensureInitialized();
-            format(tree, root, toAppendTo, 0, new boolean[64]);
+            format(tree, root, out, 0, new boolean[64]);
+            if (!isDirect) {
+                out = toAppendTo.append(out.toString());
+            }
+            if (out instanceof Flushable) {
+                ((Flushable) out).flush(); // Needed for writing the table content.
+            }
         }
     }
 

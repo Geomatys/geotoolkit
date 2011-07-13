@@ -40,6 +40,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -68,6 +69,11 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  *       and make it public.
  */
 final class PropertyTree {
+    /**
+     * The character used for formating number when enumerating the elements of a collection.
+     */
+    static final char OPEN_BRACKET = '[', CLOSE_BRACKET = ']';
+
     /**
      * The default number of significant digits (may or may not be fraction digits).
      */
@@ -338,7 +344,20 @@ final class PropertyTree {
      */
     public MutableTreeNode asTree(final Object metadata) {
         final String name = Classes.getShortName(standard.getInterface(metadata.getClass()));
-        final DefaultMutableTreeNode root = new NamedTreeNode(localize(name), metadata, true);
+        final DefaultMutableTreeNode root = new NamedTreeNode(localize(name), metadata);
+        append(root, metadata, 0);
+        return root;
+    }
+
+
+    /**
+     * Creates a tree table for the specified metadata.
+     *
+     * @since 3.19
+     */
+    public TreeTableNode asTreeTable(final Object metadata) {
+        final String name = Classes.getShortName(standard.getInterface(metadata.getClass()));
+        final PropertyTreeNode root = new PropertyTreeNode(localize(name), metadata);
         append(root, metadata, 0);
         return root;
     }
@@ -353,7 +372,9 @@ final class PropertyTree {
      *
      * @param  branch The node where to add childs.
      * @param  value the value to add as a child.
-     * @param  number Greater than 0 if metadata elements (not code list) should be numbered.
+     * @param  number Greater than 0 if the given value is a numbered metadata elements.
+     *         Element are numbered if the value is an element of a collection having a
+     *         size greater than 1.
      */
     private void append(final DefaultMutableTreeNode branch, final Object value, final int number) {
         if (value == null) {
@@ -381,33 +402,54 @@ final class PropertyTree {
              * The value is a collection of any other cases. Add all the childs recursively,
              * putting them in a numbered element if this is needed for avoiding ambiguity.
              */
-            final Collection<?> values = (Collection<?>) value;
-            int n = (values.size() > 1) ? 1 : 0;
+            final Object[] values = ((Collection<?>) value).toArray();
+            int count = 0; // Will be the count of non-ignored elements.
             for (final Object element : values) {
                 if (!ignore(element)) {
-                    append(branch, element, n);
-                    if (n != 0) n++;
+                    values[count++] = element;
                 }
+            }
+            int n = (count > 1) ? 1 : 0;
+            for (int i=0; i<count; i++) {
+                append(branch, values[i], n);
+                if (n != 0) n++;
             }
             return;
         } else {
             /*
              * The value is anything else, to be converted to String.
              */
-            final String asText;
+            final String valueAsText;
             if (value instanceof CodeList<?>) {
-                asText = localize((CodeList<?>) value);
+                valueAsText = localize((CodeList<?>) value);
             } else if (value instanceof Date) {
-                asText = format((Date) value);
+                valueAsText = format((Date) value);
             } else if (value instanceof Number) {
-                asText = format((Number) value);
+                valueAsText = format((Number) value);
             } else if (value instanceof InternationalString) {
-                asText = ((InternationalString) value).toString(locale);
+                valueAsText = ((InternationalString) value).toString(locale);
             } else {
-                asText = String.valueOf(value);
+                valueAsText = String.valueOf(value);
             }
-            assert !isCollectionElement(asText) : asText;
-            branch.add(new NamedTreeNode(asText, value, false));
+            /*
+             * If we are creating a TreeTable, write the value in the second column of current
+             * node. Otherwise (for an ordinary tree), create a leaf node with only the value.
+             */
+            final DefaultMutableTreeNode child;
+            if (branch instanceof PropertyTreeNode) {
+                if (number == 0) {
+                    ((PropertyTreeNode) branch).valueAsText = valueAsText;
+                    branch.setUserObject(value);
+                    return;
+                }
+                child = new PropertyTreeNode(format(number), valueAsText, value);
+            } else {
+                // TODO: actually we could have an AssertionError here if the user value is a
+                // CharSequence begining with [number]. This is an issue only for the parser.
+                assert !isCollectionElement(valueAsText) : valueAsText;
+                child = new NamedTreeNode(valueAsText, value, false);
+            }
+            branch.add(child);
             return;
         }
         /*
@@ -420,7 +462,7 @@ final class PropertyTree {
         if (number != 0) {
             // String formatted below must comply with the isCollectionElement(...) condition.
             final StringBuilder buffer = new StringBuilder(32);
-            buffer.append('[').append(format(number)).append("] ");
+            buffer.append(OPEN_BRACKET).append(format(number)).append(CLOSE_BRACKET).append(' ');
             Class<?> type = value.getClass();
             if (standard.isMetadata(type)) {
                 type = standard.getInterface(type);
@@ -439,7 +481,7 @@ final class PropertyTree {
             }
             title = buffer.toString();
             assert isCollectionElement(title) : title;
-            addTo = new NamedTreeNode(title, value, true);
+            addTo = new NamedTreeNode(title, value);
             branch.add(addTo);
         }
         for (final Map.Entry<?,?> entry : asMap.entrySet()) {
@@ -447,7 +489,8 @@ final class PropertyTree {
             if (!ignore(element)) {
                 final String name = localize((String) entry.getKey());
                 assert !isCollectionElement(name) : name;
-                final DefaultMutableTreeNode child = new NamedTreeNode(name, element, true);
+                final DefaultMutableTreeNode child = (branch instanceof PropertyTreeNode) ?
+                        new PropertyTreeNode(name, element) : new NamedTreeNode(name, element);
                 append(child, element, 0);
                 addTo.add(child);
             }
@@ -467,9 +510,9 @@ final class PropertyTree {
      * @return {@code true} if a node having the given label is an element of a collection.
      */
     private static boolean isCollectionElement(final String label) {
-        int start = label.indexOf('[');
+        int start = label.indexOf(OPEN_BRACKET);
         if (start >= 0) {
-            final int end = label.indexOf(']', start);
+            final int end = label.indexOf(CLOSE_BRACKET, start);
             if (end > start) {
                 while (--start >= 0) {
                     if (Character.isJavaIdentifierPart(label.charAt(start))) {
@@ -669,52 +712,5 @@ final class PropertyTree {
      */
     private String localize(final CodeList<?> code) {
         return code.name().trim().replace('_', ' ').toLowerCase(locale);
-    }
-
-    /**
-     * Returns a string representation of the specified tree node.
-     */
-    public static String toString(final TreeNode node) {
-        final StringBuilder buffer = new StringBuilder();
-        toString(node, buffer, 0, System.getProperty("line.separator", "\n"));
-        return buffer.toString();
-    }
-
-    /**
-     * Append a string representation of the specified node to the specified buffer.
-     */
-    private static void toString(final TreeNode      node,
-                                 final StringBuilder buffer,
-                                 final int           indent,
-                                 final String        lineSeparator)
-    {
-        final int count = node.getChildCount();
-        if (count == 0) {
-            if (node.isLeaf()) {
-                /*
-                 * If the node has no child and is a leaf, then it is some value like a number,
-                 * a date or a string.  We just display this value, which is usually part of a
-                 * collection. If the node has no child and is NOT a leaf, then it is an empty
-                 * metadata and we just omit it.
-                 */
-                buffer.append(Strings.spaces(indent)).append(node).append(lineSeparator);
-            }
-            return;
-        }
-        buffer.append(Strings.spaces(indent)).append(node).append(':');
-        if (count == 1) {
-            final TreeNode child = node.getChildAt(0);
-            if (child.isLeaf()) {
-                buffer.append(' ').append(child).append(lineSeparator);
-                return;
-            }
-        }
-        for (int i=0; i<count; i++) {
-            final TreeNode child = node.getChildAt(i);
-            if (i == 0) {
-                buffer.append(lineSeparator);
-            }
-            toString(child, buffer, indent+2, lineSeparator);
-        }
     }
 }

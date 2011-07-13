@@ -222,7 +222,7 @@ public final class Trees extends Static {
         if (value != null) {
             label += "=\"" + value + '"';
         }
-        final DefaultMutableTreeNode root = new NamedTreeNode(label, node, true);
+        final DefaultMutableTreeNode root = new NamedTreeNode(label, node);
         final NamedNodeMap attributes = node.getAttributes();
         if (attributes != null) {
             final int length = attributes.getLength();
@@ -310,6 +310,7 @@ public final class Trees extends Static {
      */
     public static String toString(final TreeModel tree) {
         final TreeFormat tf = new TreeFormat();
+        tf.setTableFormatEnabled(true);
         final StringBuilder buffer = new StringBuilder();
         tf.format(tree, buffer);
         return buffer.toString();
@@ -329,6 +330,7 @@ public final class Trees extends Static {
      */
     public static String toString(final TreeNode node) {
         final TreeFormat tf = new TreeFormat();
+        tf.setTableFormatEnabled(true);
         final StringBuilder buffer = new StringBuilder();
         tf.format(node, buffer);
         return buffer.toString();
@@ -357,6 +359,7 @@ public final class Trees extends Static {
      */
     public static String toString(final String root, final Iterable<?> nodes) {
         final TreeFormat tf = new TreeFormat();
+        tf.setTableFormatEnabled(true);
         final StringBuilder buffer = new StringBuilder(root).append(tf.getLineSeparator());
         tf.format(nodes, buffer);
         return buffer.toString();
