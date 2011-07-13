@@ -48,14 +48,14 @@ public final class XMLBindingsTest {
     private static final String RESOURCE_FILE = "DirectReferenceSystem.xml";
 
     /**
-     * Ensures that the marshaling process of a {@link DefaultMetadata} produces
+     * Ensures that the marshalling process of a {@link DefaultMetadata} produces
      * an XML document which complies with the one expected.
      *
      * @throws IOException if an error occurred while reading the resource file.
-     * @throws JAXBException if the marshaling process fails.
+     * @throws JAXBException if the marshalling process fails.
      */
     @Test
-    public void marshalingTest() throws IOException, JAXBException {
+    public void marshallingTest() throws IOException, JAXBException {
         final DefaultMetadata metadata = new DefaultMetadata();
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
@@ -67,14 +67,14 @@ public final class XMLBindingsTest {
     }
 
     /**
-     * Ensures that the unmarshaling process of a {@link DefaultMetadata} stored in an XML
+     * Ensures that the unmarshalling process of a {@link DefaultMetadata} stored in an XML
      * document produces an object containing all the information.
      *
-     * @throws JAXBException if the unmarshaling process fails.
+     * @throws JAXBException if the unmarshalling process fails.
      * @throws IOException if an error occurred while reading the resource file.
      */
     @Test
-    public void unmarshalingTest() throws JAXBException, IOException {
+    public void unmarshallingTest() throws JAXBException, IOException {
         final InputStream in = TestData.openStream(this, RESOURCE_FILE);
         final DefaultMetadata result = (DefaultMetadata) XML.unmarshal(in);
         in.close();

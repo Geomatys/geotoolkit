@@ -31,7 +31,7 @@
  *
  * <ul>
  *   <li><p>JAXB adapters for primitive types.
- *   JAXB can write directly Java primitive type at marshaling time "as is". However ISO-19139
+ *   JAXB can write directly Java primitive type at marshalling time "as is". However ISO-19139
  *   requires those values to be surrounded by elements representing the data type. The role of
  *   these adapters is to add these elements around the value.</p></li>
  *

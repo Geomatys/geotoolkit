@@ -79,7 +79,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
 
     /**
      * The datum. This field should be considered as final.
-     * It is modified only by JAXB at unmarshaling time.
+     * It is modified only by JAXB at unmarshalling time.
      */
     private Datum datum;
 
@@ -137,7 +137,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
     }
 
     /**
-     * Sets the datum. This method is invoked only by JAXB at unmarshaling time
+     * Sets the datum. This method is invoked only by JAXB at unmarshalling time
      * and can be invoked only if the datum has never been set.
      *
      * @throws IllegalStateException If the datum has already been set.

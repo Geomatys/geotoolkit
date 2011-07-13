@@ -42,7 +42,7 @@ public final class LE_Processing extends PropertyType<LE_Processing, Processing>
     }
 
     /**
-     * Wraps an Processing value with a {@code LE_Processing} element at marshaling time.
+     * Wraps an Processing value with a {@code LE_Processing} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class LE_Processing extends PropertyType<LE_Processing, Processing>
 
     /**
      * Returns the {@link DefaultProcessing} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class LE_Processing extends PropertyType<LE_Processing, Processing>
 
     /**
      * Sets the value for the {@link DefaultProcessing}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

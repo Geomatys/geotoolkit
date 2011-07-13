@@ -30,7 +30,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
 
 /**
  * A measurement value together with its unit of measure.
- * This is used for marshaling an element defined by ISO-19103.
+ * This is used for marshalling an element defined by ISO-19103.
  * <p>
  * This class duplicates {@link org.geotoolkit.measure.Measure}, but we had to do that way
  * because {@link org.geotoolkit.measure.Measure} extends {@link Number} and we are not
@@ -82,7 +82,7 @@ public final class Measure {
 
     /**
      * Constructs a string representation of the units as defined in the ISO-19103 standard.
-     * This method is invoked during XML marshaling. For example in the units are "metre",
+     * This method is invoked during XML marshalling. For example in the units are "metre",
      * then this method returns:
      *
      * {@preformat text
@@ -106,7 +106,7 @@ public final class Measure {
     }
 
     /**
-     * Sets the unit of measure. This method is invoked by JAXB at unmarshaling
+     * Sets the unit of measure. This method is invoked by JAXB at unmarshalling
      * time, and can be invoked only once.
      *
      * @param uom The unit of measure as a string.

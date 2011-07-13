@@ -85,7 +85,7 @@ public final class XmlUtilities extends Static {
 
     /**
      * Converts the given date to a XML Gregorian calendar using the locale and timezone
-     * from the current {@linkplain MarshalContext marshaling context}.
+     * from the current {@linkplain MarshalContext marshalling context}.
      *
      * @param  date The date to convert to a XML calendar, or {@code null}.
      * @return The XML calendar, or {@code null} if {@code date} was null.

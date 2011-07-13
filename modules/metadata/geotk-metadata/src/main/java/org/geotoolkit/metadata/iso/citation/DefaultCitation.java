@@ -52,7 +52,7 @@ import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
  * The ISO 19115 model provides specific attributes for the {@linkplain #getISBN() ISBN} and
  * {@linkplain #getISSN() ISSN} codes. However the Geotk library handles those codes like any
  * other identifiers. Consequently the ISBN and ISSN codes are included in the collection
- * returned by {@link #getIdentifiers()}, except at XML marshaling time (for ISO 19139 compliance).
+ * returned by {@link #getIdentifiers()}, except at XML marshalling time (for ISO 19139 compliance).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
@@ -351,7 +351,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * {@section Unified identifiers view}
      * In this Geotk implementation, the collection returned by this method includes the
      * {@linkplain #getISBN() ISBN} and {@linkplain #getISSN() ISSN} codes (except at XML
-     * marshaling time for ISO 19139 compliance).
+     * marshalling time for ISO 19139 compliance).
      */
     @Override
     @XmlElement(name = "identifier")

@@ -27,7 +27,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshaling of object having {@code nilReason} attribute.
+ * Tests the XML marshalling of object having {@code nilReason} attribute.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18

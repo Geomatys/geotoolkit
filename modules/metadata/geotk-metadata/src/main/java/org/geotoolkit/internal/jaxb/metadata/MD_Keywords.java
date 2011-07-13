@@ -42,7 +42,7 @@ public final class MD_Keywords extends PropertyType<MD_Keywords, Keywords> {
     }
 
     /**
-     * Wraps an Keywords value with a {@code MD_Keywords} element at marshaling time.
+     * Wraps an Keywords value with a {@code MD_Keywords} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MD_Keywords extends PropertyType<MD_Keywords, Keywords> {
 
     /**
      * Returns the {@link DefaultKeywords} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MD_Keywords extends PropertyType<MD_Keywords, Keywords> {
 
     /**
      * Sets the value for the {@link DefaultKeywords}. This method
-     * is systematically called at unmarshaling time by JAXB.
+     * is systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

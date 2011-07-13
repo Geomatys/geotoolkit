@@ -570,7 +570,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
 
     /**
      * Returns the first identifier found, or {@code null} if none.
-     * This method is invoked by JAXB at marshaling time.
+     * This method is invoked by JAXB at marshalling time.
      */
     @XmlElement
     final ReferenceIdentifier getIdentifier() {

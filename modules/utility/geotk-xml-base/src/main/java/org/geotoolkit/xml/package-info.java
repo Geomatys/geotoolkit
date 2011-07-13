@@ -17,7 +17,7 @@
  */
 
 /**
- * Provides methods for marshaling and unmarshaling Geotk objects in XML.
+ * Provides methods for marshalling and unmarshalling Geotk objects in XML.
  * The XML format is compliant with ISO 19139 specification for metadata, and
  * compliant with GML for referencing objects.
  * <p>
@@ -48,7 +48,7 @@
  * (which are actually wrappers around standard instances). Those instances are created
  * and cached by {@link org.geotoolkit.xml.MarshallerPool}, which is used internally by
  * the above-cited {@code XML} class. However developers can instantiate their own
- * {@code MarshallerPool} in order to get more control on the marshaling and unmarshaling
+ * {@code MarshallerPool} in order to get more control on the marshalling and unmarshalling
  * processes, including the namespace URLs and the errors handling.
  * <p>
  * The most common namespace URLs are defined in the {@link org.geotoolkit.xml.Namespaces} class.

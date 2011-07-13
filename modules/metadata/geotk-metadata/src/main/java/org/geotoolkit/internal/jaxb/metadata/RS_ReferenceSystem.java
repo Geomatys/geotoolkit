@@ -43,7 +43,7 @@ public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, Referen
     }
 
     /**
-     * Wraps a Reference System value with a {@code MD_ReferenceSystem} element at marshaling-time.
+     * Wraps a Reference System value with a {@code MD_ReferenceSystem} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -72,7 +72,7 @@ public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, Referen
 
     /**
      * Returns the {@link ReferenceSystem} generated from the metadata value.
-     * This method is systematically called at marshaling-time by JAXB.
+     * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -90,7 +90,7 @@ public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, Referen
 
     /**
      * Sets the value for the {@link ReferenceSystem}.
-     * This method is systematically called at unmarshaling-time by JAXB.
+     * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
@@ -112,7 +112,7 @@ public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, Referen
 
     /**
      * Sets the value for the {@link ReferenceSystem}.
-     * This method is called at unmarshaling-time by JAXB.
+     * This method is called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
@@ -134,7 +134,7 @@ public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, Referen
 
     /**
      * Sets the value for the {@link ReferenceSystem}.
-     * This method is called at unmarshaling-time by JAXB.
+     * This method is called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

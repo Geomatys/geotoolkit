@@ -42,7 +42,7 @@ public final class CI_Series extends PropertyType<CI_Series, Series> {
     }
 
     /**
-     * Wraps an Series value with a {@code CI_Series} element at marshaling time.
+     * Wraps an Series value with a {@code CI_Series} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CI_Series extends PropertyType<CI_Series, Series> {
 
     /**
      * Returns the {@link DefaultSeries} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CI_Series extends PropertyType<CI_Series, Series> {
 
     /**
      * Sets the value for the {@link DefaultSeries}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

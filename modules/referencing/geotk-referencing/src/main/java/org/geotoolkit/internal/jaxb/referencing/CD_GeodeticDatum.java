@@ -42,7 +42,7 @@ public final class CD_GeodeticDatum extends PropertyType<CD_GeodeticDatum, Geode
     }
 
     /**
-     * Wraps a Vertical Datum value with a {@code gml:geodeticDatum} element at marshaling-time.
+     * Wraps a Vertical Datum value with a {@code gml:geodeticDatum} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CD_GeodeticDatum extends PropertyType<CD_GeodeticDatum, Geode
 
     /**
      * Returns the {@link DefaultGeodeticDatum} generated from the metadata value.
-     * This method is systematically called at marshaling-time by JAXB.
+     * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CD_GeodeticDatum extends PropertyType<CD_GeodeticDatum, Geode
 
     /**
      * Sets the value for the {@link DefaultGeodeticDatum}.
-     * This method is systematically called at unmarshaling-time by JAXB.
+     * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

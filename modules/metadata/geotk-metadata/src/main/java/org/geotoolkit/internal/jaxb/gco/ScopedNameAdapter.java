@@ -73,7 +73,7 @@ public final class ScopedNameAdapter extends XmlAdapter<DefaultScopedName,Scoped
 
     /**
      * Does the link between a {@link ScopedName} and the string associated.
-     * JAXB calls automatically this method at marshaling-time.
+     * JAXB calls automatically this method at marshalling-time.
      *
      * @param value The implementing class for this metadata value.
      * @return A {@linkplain DefaultScopedName scoped name} which represents the metadata value.
@@ -102,7 +102,7 @@ public final class ScopedNameAdapter extends XmlAdapter<DefaultScopedName,Scoped
 
     /**
      * Does the link between {@linkplain DefaultScopedName scoped names} and the way they
-     * will be unmarshalled. JAXB calls automatically this method at unmarshaling-time.
+     * will be unmarshalled. JAXB calls automatically this method at unmarshalling-time.
      *
      * @param value The {@linkplain DefaultScopedName scoped name} value.
      * @return The implementing class for this string.

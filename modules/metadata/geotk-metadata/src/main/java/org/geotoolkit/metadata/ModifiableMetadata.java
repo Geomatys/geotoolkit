@@ -550,7 +550,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     /**
      * Returns {@code true} if the caller {@code nonNullCollection} method (or list, or set)
      * is allowed to returns {@code null} instead than an empty list. This happen mostly at
-     * XML marshaling time.
+     * XML marshalling time.
      */
     private static boolean canReturnNull() {
         return MarshalContext.isMarshaling();
@@ -563,7 +563,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *
      * {@section Special cases}
      * The general contract of this method is to never return {@code null}. However this method
-     * may exceptionally returns {@code null} during XML marshaling or during copy operations.
+     * may exceptionally returns {@code null} during XML marshalling or during copy operations.
      * The intend is to reduce the amount of empty object creations and should be invisible
      * from the public API.
      *
@@ -594,7 +594,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *
      * {@section Special cases}
      * The general contract of this method is to never return {@code null}. However this method
-     * may exceptionally returns {@code null} during XML marshaling or during copy operations.
+     * may exceptionally returns {@code null} during XML marshalling or during copy operations.
      * The intend is to reduce the amount of empty object creations and should be invisible
      * from the public API.
      *
@@ -635,7 +635,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *
      * {@section Special cases}
      * The general contract of this method is to never return {@code null}. However this method
-     * may exceptionally returns {@code null} during XML marshaling or during copy operations.
+     * may exceptionally returns {@code null} during XML marshalling or during copy operations.
      * The intend is to reduce the amount of empty object creations and should be invisible
      * from the public API.
      *
@@ -769,13 +769,13 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * If a XML marshaling is under progress and the given collection is empty, returns
+     * If a XML marshalling is under progress and the given collection is empty, returns
      * {@code null}. Otherwise returns the collection unchanged. This method is invoked
      * by implementation having optional elements to omit when empty.
      *
      * @param  <E> The type of elements in the given collection.
      * @param  elements The collection to return.
-     * @return The given collection, or {@code null} if the collection is empty and a marshaling
+     * @return The given collection, or {@code null} if the collection is empty and a marshalling
      *         is under progress.
      *
      * @since 3.18 (derived from 2.5)

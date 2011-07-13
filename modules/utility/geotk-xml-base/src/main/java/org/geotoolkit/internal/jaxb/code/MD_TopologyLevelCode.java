@@ -70,7 +70,7 @@ public final class MD_TopologyLevelCode extends CodeListAdapter<MD_TopologyLevel
     }
 
     /**
-     * Invoked by JAXB on marshaling.
+     * Invoked by JAXB on marshalling.
      *
      * @return The value to be marshalled.
      */
@@ -81,7 +81,7 @@ public final class MD_TopologyLevelCode extends CodeListAdapter<MD_TopologyLevel
     }
 
     /**
-     * Invoked by JAXB on unmarshaling.
+     * Invoked by JAXB on unmarshalling.
      *
      * @param proxy The unmarshalled value.
      */

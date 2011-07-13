@@ -42,7 +42,7 @@ public final class DQ_Result extends PropertyType<DQ_Result, Result> {
     }
 
     /**
-     * Wraps an Source value with a {@code DQ_Result} element at marshaling time.
+     * Wraps an Source value with a {@code DQ_Result} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class DQ_Result extends PropertyType<DQ_Result, Result> {
 
     /**
      * Returns the {@link AbstractResult} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class DQ_Result extends PropertyType<DQ_Result, Result> {
 
     /**
      * Sets the value for the {@link AbstractResult}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

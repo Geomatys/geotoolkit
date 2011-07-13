@@ -31,7 +31,7 @@ import org.geotoolkit.lang.Static;
 
 
 /**
- * Provides convenience methods for marshaling and unmarshaling Geotk objects.
+ * Provides convenience methods for marshalling and unmarshalling Geotk objects.
  * This class defines also some property keys that can be given to the {@link Marshaller}
  * and {@link Unmarshaller} instances created by {@link PooledMarshaller}:
  * <p>
@@ -54,18 +54,18 @@ import org.geotoolkit.lang.Static;
  */
 public final class XML extends Static {
     /**
-     * Allows client code to specify the locale to use for marshaling
+     * Allows client code to specify the locale to use for marshalling
      * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
      * instances. The value for this property shall be an instance of {@link Locale}.
      * <p>
      * This property is mostly for marshallers. However this property can also be used at
-     * unmarshaling time, for example if a {@code <gmd:PT_FreeText>} element containing
+     * unmarshalling time, for example if a {@code <gmd:PT_FreeText>} element containing
      * many localized strings need to be represented in a Java {@link String} object. In
      * such case, the unmarshaller will try to pickup a string in the language specified
      * by this property.
      *
      * {@section Default behavior}
-     * If this property is never set, then (un)marshaling will try to use "unlocalized" strings -
+     * If this property is never set, then (un)marshalling will try to use "unlocalized" strings -
      * typically some programmatic strings like {@linkplain org.opengis.annotation.UML#identifier()
      * UML identifiers}. While such identifiers often look like English words, they are not
      * considered as the {@linkplain Locale#ENGLISH English} localization.
@@ -87,10 +87,10 @@ public final class XML extends Static {
     public static final String LOCALE = "org.geotoolkit.xml.locale";
 
     /**
-     * The timezone to use for marshaling dates and times.
+     * The timezone to use for marshalling dates and times.
      *
      * {@section Default behavior}
-     * If this property is never set, then (un)marshaling will use the
+     * If this property is never set, then (un)marshalling will use the
      * {@linkplain java.util.TimeZone#getDefault() default timezone}.
      *
      * @since 3.17
@@ -100,12 +100,12 @@ public final class XML extends Static {
     /**
      * Allows client code to specify the root URL of schemas. The value for this property shall
      * be an instance of {@link java.util.Map Map&lt;String,String&gt;}. This property controls
-     * the URL to be used when marshaling the following elements:
+     * the URL to be used when marshalling the following elements:
      * <p>
      * <ul>
-     *   <li>The value of the {@code codeList} attribute when marshaling subclasses of
+     *   <li>The value of the {@code codeList} attribute when marshalling subclasses of
      *       {@link org.opengis.util.CodeList} in ISO 19139 compliant XML document.</li>
-     *   <li>The value of the {@code uom} attribute when marshaling measures (for example
+     *   <li>The value of the {@code uom} attribute when marshalling measures (for example
      *       {@code <gco:Distance>}) in ISO 19139 compliant XML document.</li>
      * </ul>
      * <p>
@@ -155,25 +155,25 @@ public final class XML extends Static {
     public static final String LINKER = "org.geotoolkit.xml.linker";
 
     /**
-     * Allows client code to control the behavior of the (un)marshaling process when an element
+     * Allows client code to control the behavior of the (un)marshalling process when an element
      * can not be processed, or alter the element values. The value for this property shall be an
      * instance of {@link ObjectConverters}.
      * <p>
      * If an element in a XML document can not be parsed (for example if a {@linkplain java.net.URL}
      * string is not valid), the default behavior is to throw an exception which cause the
-     * (un)marshaling of the entire document to fail. This default behavior can be customized by
+     * (un)marshalling of the entire document to fail. This default behavior can be customized by
      * invoking {@link Marshaller#setProperty(String, Object)} with this {@code CONVERTERS} property
      * key and a custom {@link ObjectConverters} instance. {@code ObjectConverters} can also be used
      * for replacing an erroneous URL by a fixed URL. See the {@link ObjectConverters} javadoc for
      * more details.
      *
      * {@section Example}
-     * The following example collect the failures in a list without stopping the (un)marshaling
+     * The following example collect the failures in a list without stopping the (un)marshalling
      * process.
      *
      * {@preformat java
      *     class Warnings extends ObjectConverters {
-     *         // The warnings collected during (un)marshaling.
+     *         // The warnings collected during (un)marshalling.
      *         List<String> messages = new ArrayList<String>();
      *
      *         // Override the default implementation in order to
@@ -257,7 +257,7 @@ public final class XML extends Static {
      *
      * @param  object The root of content tree to be marshalled.
      * @return The XML representation of the given object.
-     * @throws JAXBException If an error occurred during the marshaling.
+     * @throws JAXBException If an error occurred during the marshalling.
      */
     public static String marshal(final Object object) throws JAXBException {
         final StringWriter output = new StringWriter();
@@ -272,7 +272,7 @@ public final class XML extends Static {
      *
      * @param  object The root of content tree to be marshalled.
      * @param  output The stream where to write.
-     * @throws JAXBException If an error occurred during the marshaling.
+     * @throws JAXBException If an error occurred during the marshalling.
      */
     public static void marshal(final Object object, final OutputStream output) throws JAXBException {
         final Marshaller marshaller = POOL.acquireMarshaller();
@@ -285,7 +285,7 @@ public final class XML extends Static {
      *
      * @param  object The root of content tree to be marshalled.
      * @param  output The file to be written.
-     * @throws JAXBException If an error occurred during the marshaling.
+     * @throws JAXBException If an error occurred during the marshalling.
      */
     public static void marshal(final Object object, final File output) throws JAXBException {
         final Marshaller marshaller = POOL.acquireMarshaller();
@@ -298,7 +298,7 @@ public final class XML extends Static {
      *
      * @param  input The XML representation of an object.
      * @return The object unmarshalled from the given input.
-     * @throws JAXBException If an error occurred during the unmarshaling.
+     * @throws JAXBException If an error occurred during the unmarshalling.
      */
     public static Object unmarshal(final String input) throws JAXBException {
         final StringReader in = new StringReader(input);
@@ -313,7 +313,7 @@ public final class XML extends Static {
      *
      * @param  input The stream from which to read a XML representation.
      * @return The object unmarshalled from the given input.
-     * @throws JAXBException If an error occurred during the unmarshaling.
+     * @throws JAXBException If an error occurred during the unmarshalling.
      */
     public static Object unmarshal(final InputStream input) throws JAXBException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();
@@ -327,7 +327,7 @@ public final class XML extends Static {
      *
      * @param  input The file from which to read a XML representation.
      * @return The object unmarshalled from the given input.
-     * @throws JAXBException If an error occurred during the unmarshaling.
+     * @throws JAXBException If an error occurred during the unmarshalling.
      */
     public static Object unmarshal(final File input) throws JAXBException {
         final Unmarshaller unmarshaller = POOL.acquireUnmarshaller();

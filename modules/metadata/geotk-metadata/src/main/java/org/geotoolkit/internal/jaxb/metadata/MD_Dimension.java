@@ -42,7 +42,7 @@ public final class MD_Dimension extends PropertyType<MD_Dimension, Dimension> {
     }
 
     /**
-     * Wraps an Dimension value with a {@code MD_Dimension} element at marshaling time.
+     * Wraps an Dimension value with a {@code MD_Dimension} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MD_Dimension extends PropertyType<MD_Dimension, Dimension> {
 
     /**
      * Returns the {@link DefaultDimension} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MD_Dimension extends PropertyType<MD_Dimension, Dimension> {
 
     /**
      * Sets the value for the {@link DefaultDimension}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

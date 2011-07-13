@@ -44,7 +44,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
     }
 
     /**
-     * Wraps a Reference System value with a {@code MD_ReferenceSystem} element at marshaling-time.
+     * Wraps a Reference System value with a {@code MD_ReferenceSystem} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -100,7 +100,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
 
     /**
      * Returns the {@link ReferenceSystem} generated from the metadata value for the
-     * French profile of metadata. This method is called at marshaling-time by JAXB.
+     * French profile of metadata. This method is called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -115,7 +115,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
 
     /**
      * Returns the {@link ReferenceSystem} generated from the metadata value for the
-     * French profile of metadata. This method is called at marshaling-time by JAXB.
+     * French profile of metadata. This method is called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */

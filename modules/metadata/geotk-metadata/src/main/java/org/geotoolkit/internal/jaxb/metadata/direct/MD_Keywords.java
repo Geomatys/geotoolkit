@@ -33,7 +33,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
  */
 public final class MD_Keywords extends MetadataAdapter<Keywords, DefaultKeywords> {
     /**
-     * Converts a GeoAPI interface to the Geotk implementation for XML marshaling.
+     * Converts a GeoAPI interface to the Geotk implementation for XML marshalling.
      *
      * @param  value The bound type value, here the GeoAPI interface.
      * @return The adapter for the given value, here the Geotk implementation.

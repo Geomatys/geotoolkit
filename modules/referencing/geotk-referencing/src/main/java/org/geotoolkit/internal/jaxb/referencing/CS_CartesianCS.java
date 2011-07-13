@@ -42,7 +42,7 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
     }
 
     /**
-     * Wraps a {@link CartesianCS} value with a {@code gml:cartesianCS} element at marshaling-time.
+     * Wraps a {@link CartesianCS} value with a {@code gml:cartesianCS} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
 
     /**
      * Returns the {@link DefaultCartesianCS} generated from the metadata value.
-     * This method is systematically called at marshaling-time by JAXB.
+     * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
 
     /**
      * Sets the value for the {@link DefaultCartesianCS}.
-     * This method is systematically called at unmarshaling-time by JAXB.
+     * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

@@ -70,7 +70,7 @@ public final class MD_CellGeometryCode extends CodeListAdapter<MD_CellGeometryCo
     }
 
     /**
-     * Invoked by JAXB on marshaling.
+     * Invoked by JAXB on marshalling.
      *
      * @return The value to be marshalled.
      */
@@ -81,7 +81,7 @@ public final class MD_CellGeometryCode extends CodeListAdapter<MD_CellGeometryCo
     }
 
     /**
-     * Invoked by JAXB on unmarshaling.
+     * Invoked by JAXB on unmarshalling.
      *
      * @param proxy The unmarshalled value.
      */

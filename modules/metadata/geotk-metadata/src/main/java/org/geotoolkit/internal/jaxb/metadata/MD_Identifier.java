@@ -47,7 +47,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
     }
 
     /**
-     * Wraps an Identifier value with a {@code MD_Identifier} element at marshaling time.
+     * Wraps an Identifier value with a {@code MD_Identifier} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -76,7 +76,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
 
     /**
      * Returns the {@link DefaultIdentifier} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -93,7 +93,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
 
     /**
      * Sets the value for the {@link DefaultIdentifier}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
@@ -103,7 +103,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
 
     /**
      * Returns the {@link DefaultIdentifier} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -121,7 +121,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
 
     /**
      * Sets the value for the {@link DefaultIdentifier}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

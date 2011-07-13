@@ -29,7 +29,7 @@ import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
 /**
  * JAXB adapter wrapping the date value in a {@code <gco:Date>} or {@code <gco:DateTime>} element,
  * for ISO-19139 compliance. Only one of {@code Date} or {@code DateTime} field shall be non-null.
- * At marshaling time, the choice is performed depending on whatever the given date contains
+ * At marshalling time, the choice is performed depending on whatever the given date contains
  * hour, minute or seconds information different than zero.
  *
  * @author Cédric Briançon (Geomatys)
@@ -101,7 +101,7 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
 
     /**
      * Converts a date read from a XML stream to the object which will contains
-     * the value. JAXB calls automatically this method at unmarshaling time.
+     * the value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param value The adapter for this metadata value.
      * @return A {@linkplain Date date} which represents the metadata value.
@@ -113,7 +113,7 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
 
     /**
      * Converts the {@linkplain Date date} to the object to be marshalled in a XML
-     * file or stream. JAXB calls automatically this method at marshaling time.
+     * file or stream. JAXB calls automatically this method at marshalling time.
      * The use of {@code <gco:Date>} or {@code <gco:DateTime>} is determined automatically.
      *
      * @param value The date value.

@@ -35,7 +35,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  */
 public final class InternationalStringAdapter extends XmlAdapter<GO_CharacterString, InternationalString> {
     /**
-     * The adapter on which to delegate the marshaling processes.
+     * The adapter on which to delegate the marshalling processes.
      */
     private final CharSequenceAdapter adapter;
 
@@ -57,7 +57,7 @@ public final class InternationalStringAdapter extends XmlAdapter<GO_CharacterStr
 
     /**
      * Converts an object read from a XML stream to an {@link InternationalString}
-     * implementation. JAXB invokes automatically this method at unmarshaling time.
+     * implementation. JAXB invokes automatically this method at unmarshalling time.
      *
      * @param value The adapter for the string value.
      * @return An {@link InternationalString} for the string value.
@@ -76,7 +76,7 @@ public final class InternationalStringAdapter extends XmlAdapter<GO_CharacterStr
 
     /**
      * Converts an {@link InternationalString} to an object to format into a
-     * XML stream. JAXB invokes automatically this method at marshaling time.
+     * XML stream. JAXB invokes automatically this method at marshalling time.
      *
      * @param  value The string value.
      * @return The adapter for the string.

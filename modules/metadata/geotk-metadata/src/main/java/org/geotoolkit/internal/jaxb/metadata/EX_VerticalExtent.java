@@ -42,7 +42,7 @@ public final class EX_VerticalExtent extends PropertyType<EX_VerticalExtent, Ver
     }
 
     /**
-     * Wraps an VerticalExtent value with a {@code EX_VerticalExtent} element at marshaling time.
+     * Wraps an VerticalExtent value with a {@code EX_VerticalExtent} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class EX_VerticalExtent extends PropertyType<EX_VerticalExtent, Ver
 
     /**
      * Returns the {@link DefaultVerticalExtent} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class EX_VerticalExtent extends PropertyType<EX_VerticalExtent, Ver
 
     /**
      * Sets the value for the {@link DefaultVerticalExtent}. This
-     * method is systematically called at unmarshaling time by JAXB.
+     * method is systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

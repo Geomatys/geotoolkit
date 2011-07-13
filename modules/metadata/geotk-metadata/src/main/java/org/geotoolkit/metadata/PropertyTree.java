@@ -622,7 +622,7 @@ final class PropertyTree {
 
     /**
      * Localize the specified property name. In current version, this is merely
-     * a hook for future development. For now we reformat the programatic name.
+     * a hook for future development. For now we reformat the programmatic name.
      * <p>
      * NOTE: If we localize the name, then we must find some way to allow the reverse
      * association in the {@link #parse(AbstractMetadata, TreeNode)} method.
@@ -665,7 +665,7 @@ final class PropertyTree {
 
     /**
      * Localize the specified property name. In current version, this is merely
-     * a hook for future development.  For now we reformat the programatic name.
+     * a hook for future development.  For now we reformat the programmatic name.
      */
     private String localize(final CodeList<?> code) {
         return code.name().trim().replace('_', ' ').toLowerCase(locale);

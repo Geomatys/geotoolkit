@@ -47,7 +47,7 @@ public final class RS_Identifier extends PropertyType<RS_Identifier, ReferenceId
     }
 
     /**
-     * Wraps an Identifier value with a {@code RS_Identifier} element at marshaling-time.
+     * Wraps an Identifier value with a {@code RS_Identifier} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -76,7 +76,7 @@ public final class RS_Identifier extends PropertyType<RS_Identifier, ReferenceId
 
     /**
      * Returns the {@link DefaultReferenceIdentifier} generated from the metadata value.
-     * This method is systematically called at marshaling-time by JAXB.
+     * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -94,7 +94,7 @@ public final class RS_Identifier extends PropertyType<RS_Identifier, ReferenceId
 
     /**
      * Sets the value for the {@link DefaultReferenceIdentifier}.
-     * This method is systematically called at unmarshaling-time by JAXB.
+     * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

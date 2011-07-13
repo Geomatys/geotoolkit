@@ -43,7 +43,7 @@ public final class LI_ProcessStep extends PropertyType<LI_ProcessStep, ProcessSt
     }
 
     /**
-     * Wraps an ProcessStep value with a {@code LI_ProcessStep} element at marshaling time.
+     * Wraps an ProcessStep value with a {@code LI_ProcessStep} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -72,7 +72,7 @@ public final class LI_ProcessStep extends PropertyType<LI_ProcessStep, ProcessSt
 
     /**
      * Returns the {@link DefaultProcessStep} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -84,7 +84,7 @@ public final class LI_ProcessStep extends PropertyType<LI_ProcessStep, ProcessSt
 
     /**
      * Sets the value for the {@link DefaultProcessStep}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

@@ -44,7 +44,7 @@ public final class MI_GeolocationInformation
     }
 
     /**
-     * Wraps an GeolocationInformation value with a {@code MI_GeolocationInformation} element at marshaling time.
+     * Wraps an GeolocationInformation value with a {@code MI_GeolocationInformation} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class MI_GeolocationInformation
 
     /**
      * Returns the {@link AbstractGeolocationInformation} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class MI_GeolocationInformation
 
     /**
      * Sets the value for the {@link AbstractGeolocationInformation}.
-     * This method is systematically called at unmarshaling time by JAXB.
+     * This method is systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

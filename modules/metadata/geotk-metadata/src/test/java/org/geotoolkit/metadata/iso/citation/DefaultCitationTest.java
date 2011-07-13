@@ -74,7 +74,7 @@ public final class DefaultCitationTest {
     }
 
     /**
-     * Ensures that the identifier collection, when marshaled, does not include the ISBN
+     * Ensures that the identifier collection, when marshalled, does not include the ISBN
      * and ID codes.
      *
      * @throws JAXBException Should never happen.
@@ -115,7 +115,7 @@ public final class DefaultCitationTest {
     }
 
     /**
-     * Ensures that a mandatory element is marshaled even if empty.
+     * Ensures that a mandatory element is marshalled even if empty.
      *
      * @throws JAXBException Should never happen.
      *

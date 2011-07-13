@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests XML marshaling of custom implementation of metadata interfaces. The custom implementations
+ * Tests XML marshalling of custom implementation of metadata interfaces. The custom implementations
  * need to be converted to implementations from the {@link org.geotoolkit.metadata.iso} package by
  * the JAXB converters.
  *
@@ -59,7 +59,7 @@ import static org.junit.Assert.*;
  */
 public final class CustomMetadataTest extends TestBase {
     /**
-     * Tests the marshaling of a metadata implemented by {@link java.lang.reflect.Proxy}.
+     * Tests the marshalling of a metadata implemented by {@link java.lang.reflect.Proxy}.
      *
      * @throws JAXBException Should never happen.
      */

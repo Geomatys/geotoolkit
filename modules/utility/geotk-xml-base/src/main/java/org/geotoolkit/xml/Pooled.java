@@ -77,7 +77,7 @@ abstract class Pooled {
     private final Map<Object, Object> initial;
 
     /**
-     * The object converters to use during (un)marshaling.
+     * The object converters to use during (un)marshalling.
      * Can be set by the {@link XML#CONVERTERS} property.
      *
      * @since 3.07
@@ -85,7 +85,7 @@ abstract class Pooled {
     private ObjectConverters converters;
 
     /**
-     * The object linker to use during unmarshaling.
+     * The object linker to use during unmarshalling.
      * Can be set by the {@link XML#LINKER} property.
      *
      * @since 3.18
@@ -356,7 +356,7 @@ abstract class Pooled {
     public abstract ValidationEventHandler getEventHandler() throws JAXBException;
 
     /**
-     * Must be invoked by subclasses before a {@code try} block performing a (un)marshaling
+     * Must be invoked by subclasses before a {@code try} block performing a (un)marshalling
      * operation. Must be followed by a call to {@code finish()} in a {@code finally} block.
      *
      * {@preformat java

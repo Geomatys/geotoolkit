@@ -42,7 +42,7 @@ public final class MD_BrowseGraphic extends PropertyType<MD_BrowseGraphic, Brows
     }
 
     /**
-     * Wraps an BrowseGraphic value with a {@code MD_BrowseGraphic} element at marshaling time.
+     * Wraps an BrowseGraphic value with a {@code MD_BrowseGraphic} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MD_BrowseGraphic extends PropertyType<MD_BrowseGraphic, Brows
 
     /**
      * Returns the {@link DefaultBrowseGraphic} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MD_BrowseGraphic extends PropertyType<MD_BrowseGraphic, Brows
 
     /**
      * Sets the value for the {@link DefaultBrowseGraphic}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

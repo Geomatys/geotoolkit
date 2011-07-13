@@ -42,7 +42,7 @@ public final class MX_DataFile extends PropertyType<MX_DataFile, DataFile> {
     }
 
     /**
-     * Wraps an DataFile value with a {@code MX_DataFile} element at marshaling time.
+     * Wraps an DataFile value with a {@code MX_DataFile} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MX_DataFile extends PropertyType<MX_DataFile, DataFile> {
 
     /**
      * Returns the {@link DefaultDataFile} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MX_DataFile extends PropertyType<MX_DataFile, DataFile> {
 
     /**
      * Sets the value for the {@link DefaultDataFile}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

@@ -135,10 +135,10 @@ Metadata
 ** How Metadata are marshalled
 
   The ISO 19139 standard defines how ISO 19115 metadata shall be represented in XML.
-  The Geotk library supports XML marshaling and unmarshaling with JAXB annotations.
+  The Geotk library supports XML marshalling and unmarshalling with JAXB annotations.
 
   Only the implementation classes defined in the <<<org.geotoolkit.metadata.iso>>> packages
-  are annotated for JAXB marshaling. If a metadata is implemented by an other package (for
+  are annotated for JAXB marshalling. If a metadata is implemented by an other package (for
   example <<<org.geotoolkit.metadata.sql>>>), then it shall be converted to an annotated class
   before to be marshalled. All Geotk annotated classes provide a copy constructor for this
   purpose. A shallow copy is sufficient; JAXB adapters will convert the elements on-the-fly

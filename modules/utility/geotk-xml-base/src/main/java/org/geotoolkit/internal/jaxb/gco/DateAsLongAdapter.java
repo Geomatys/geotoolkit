@@ -43,7 +43,7 @@ public final class DateAsLongAdapter extends XmlAdapter<GO_DateTime, Long> {
 
     /**
      * Converts a date read from a XML stream to the object which will contains
-     * the value. JAXB calls automatically this method at unmarshaling time.
+     * the value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param value The adapter for this metadata value.
      * @return A {@linkplain Long long} which represents the metadata value.
@@ -64,7 +64,7 @@ public final class DateAsLongAdapter extends XmlAdapter<GO_DateTime, Long> {
 
     /**
      * Converts the {@linkplain Long long} to the object to be marshalled in a XML
-     * file or stream. JAXB calls automatically this method at marshaling time.
+     * file or stream. JAXB calls automatically this method at marshalling time.
      *
      * @param value The date value as a long.
      * @return The adapter for the date.

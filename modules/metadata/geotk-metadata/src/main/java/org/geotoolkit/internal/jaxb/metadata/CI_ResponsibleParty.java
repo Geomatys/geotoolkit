@@ -44,7 +44,7 @@ public final class CI_ResponsibleParty
     }
 
     /**
-     * Wraps an ResponsibleParty value with a {@code CI_ResponsibleParty} element at marshaling time.
+     * Wraps an ResponsibleParty value with a {@code CI_ResponsibleParty} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -73,7 +73,7 @@ public final class CI_ResponsibleParty
 
     /**
      * Returns the {@link DefaultResponsibleParty} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -85,7 +85,7 @@ public final class CI_ResponsibleParty
 
     /**
      * Sets the value for the {@link DefaultResponsibleParty}. This method
-     * is systematically called at unmarshaling time by JAXB.
+     * is systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

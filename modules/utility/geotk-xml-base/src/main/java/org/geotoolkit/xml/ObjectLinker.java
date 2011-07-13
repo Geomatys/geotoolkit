@@ -42,7 +42,7 @@ import org.geotoolkit.util.LenientComparable;
 public class ObjectLinker {
     /**
      * The default, thread-safe and immutable instance. This instance defines the methods
-     * used during every unmarshaling if no {@code ObjectLinker} was explicitly set.
+     * used during every unmarshalling if no {@code ObjectLinker} was explicitly set.
      */
     public static final ObjectLinker DEFAULT = new ObjectLinker();
 

@@ -54,7 +54,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
     }
 
     /**
-     * Wraps a Temporal Primitive value at marshaling-time.
+     * Wraps a Temporal Primitive value at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -83,7 +83,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
 
     /**
      * Returns the {@link TemporalPrimitive} generated from the metadata value.
-     * This method is systematically called at marshaling-time by JAXB.
+     * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The temporal primitive, or {@code null}.
      *
@@ -102,7 +102,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
 
     /**
      * Sets the value from the {@link TemporalPrimitive}.
-     * This method is called at unmarshaling-time by JAXB.
+     * This method is called at unmarshalling-time by JAXB.
      *
      * @param period The adapter to set.
      */

@@ -45,7 +45,7 @@ public final class MD_PortrayalCatalogueReference
 
     /**
      * Wraps an PortrayalCatalogueReference value with a {@code MD_PortrayalCatalogueReference}
-     * element at marshaling time.
+     * element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -75,7 +75,7 @@ public final class MD_PortrayalCatalogueReference
 
     /**
      * Returns the {@link DefaultPortrayalCatalogueReference} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -87,7 +87,7 @@ public final class MD_PortrayalCatalogueReference
 
     /**
      * Sets the value for the {@link DefaultPortrayalCatalogueReference}. This method is
-     * systematically called at unmarshaling time by JAXB.
+     * systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

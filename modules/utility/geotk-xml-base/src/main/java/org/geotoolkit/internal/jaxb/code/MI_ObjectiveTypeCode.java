@@ -71,7 +71,7 @@ public final class MI_ObjectiveTypeCode extends CodeListAdapter<MI_ObjectiveType
     }
 
     /**
-     * Invoked by JAXB on marshaling.
+     * Invoked by JAXB on marshalling.
      *
      * @return The value to be marshalled.
      */
@@ -82,7 +82,7 @@ public final class MI_ObjectiveTypeCode extends CodeListAdapter<MI_ObjectiveType
     }
 
     /**
-     * Invoked by JAXB on unmarshaling.
+     * Invoked by JAXB on unmarshalling.
      *
      * @param proxy The unmarshalled value.
      */

@@ -35,7 +35,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshaling of {@code Locale} when used for a language.
+ * Tests the XML marshalling of {@code Locale} when used for a language.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18

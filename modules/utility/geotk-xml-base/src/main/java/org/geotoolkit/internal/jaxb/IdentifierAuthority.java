@@ -41,7 +41,7 @@ import org.geotoolkit.xml.IdentifierSpace;
 /**
  * Implementation of authorities defined in the {@link IdentifierSpace} interfaces. This class
  * is actually a {@link org.opengis.metadata.citation.Citation} implementation. However it is
- * not designed for XML marshaling at this time.
+ * not designed for XML marshalling at this time.
  *
  * {@section Identifiers filtering}
  * In the current Geotk library, there is different places where identifiers are filtered on

@@ -73,7 +73,7 @@ public abstract class GMLAdapter {
     /**
      * Creates a new GML object with no ID.
      * <p>
-     * This constructor is typically invoked at unmarshaling time.
+     * This constructor is typically invoked at unmarshalling time.
      * The {@link #id} value will then be set by JAXB.
      *
      * @see #copyIdTo(Object)
@@ -85,7 +85,7 @@ public abstract class GMLAdapter {
      * Creates a new GML object wrapping the given GeoAPI implementation.
      * The ID will be determined from the given object.
      * <p>
-     * This constructor is typically invoked at marshaling time. The {@link #id}
+     * This constructor is typically invoked at marshalling time. The {@link #id}
      * value set by this constructor will be used by JAXB for producing the XML.
      *
      * @param wrapped An instance of a GeoAPI interface to be wrapped.
@@ -96,7 +96,7 @@ public abstract class GMLAdapter {
 
     /**
      * Assign the {@link #id} value (if non-null) to the given object. This method
-     * is typically invoked at unmarshaling time in order to assign the ID of this
+     * is typically invoked at unmarshalling time in order to assign the ID of this
      * temporary wrapper to the "real" GeoAPI implementation instance.
      *
      * @param wrapped The GeoAPI implementation for which to assign the ID.

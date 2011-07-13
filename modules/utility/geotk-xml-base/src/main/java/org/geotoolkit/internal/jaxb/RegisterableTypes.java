@@ -22,7 +22,7 @@ import java.util.Collection;
 
 /**
  * Declares the classes of objects to be marshalled using a default {@code MarshallerPool}. This
- * interface is not strictly necessary for marshaling a Geotk object using JAXB, but makes
+ * interface is not strictly necessary for marshalling a Geotk object using JAXB, but makes
  * the job easier by allowing {@code MarshallerPool} to configure the JAXB context automatically.
  * To allow such automatic configuration, modules must declare the implemented base classes in the
  * following file:

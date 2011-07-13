@@ -42,7 +42,7 @@ public final class CD_ImageDatum extends PropertyType<CD_ImageDatum, ImageDatum>
     }
 
     /**
-     * Wraps a Vertical Datum value with a {@code gml:imageDatum} element at marshaling-time.
+     * Wraps a Vertical Datum value with a {@code gml:imageDatum} element at marshalling-time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class CD_ImageDatum extends PropertyType<CD_ImageDatum, ImageDatum>
 
     /**
      * Returns the {@link DefaultImageDatum} generated from the metadata value.
-     * This method is systematically called at marshaling-time by JAXB.
+     * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class CD_ImageDatum extends PropertyType<CD_ImageDatum, ImageDatum>
 
     /**
      * Sets the value for the {@link DefaultImageDatum}.
-     * This method is systematically called at unmarshaling-time by JAXB.
+     * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

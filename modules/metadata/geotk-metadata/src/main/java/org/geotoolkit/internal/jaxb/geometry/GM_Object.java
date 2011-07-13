@@ -55,7 +55,7 @@ public class GM_Object extends XmlAdapter<GM_Object, Geometry> {
 
     /**
      * Converts an adapter read from an XML stream to the GeoAPI interface which will
-     * contains this value. JAXB calls automatically this method at unmarshaling time.
+     * contains this value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param value The adapter for a geometry value.
      * @return An instance of the GeoAPI interface which represents the geometry value.
@@ -68,7 +68,7 @@ public class GM_Object extends XmlAdapter<GM_Object, Geometry> {
     /**
      * Converts a GeoAPI interface to the appropriate adapter for the way it will be
      * marshalled into an XML file or stream. JAXB calls automatically this method at
-     * marshaling time.
+     * marshalling time.
      *
      * @param value The geometry value, here the interface.
      * @return The adapter for the given value.
@@ -84,7 +84,7 @@ public class GM_Object extends XmlAdapter<GM_Object, Geometry> {
     /**
      * Returns the geometry value to be covered by a {@code gml:**} element.
      * The default implementation returns {@code null} if all cases. Subclasses
-     * must override this method in order to provide useful marshaling.
+     * must override this method in order to provide useful marshalling.
      *
      * @param value The value to marshall.
      * @return The adapter which covers the geometry value.

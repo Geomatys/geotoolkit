@@ -90,7 +90,7 @@ public final class GO_Decimal extends XmlAdapter<GO_Decimal, Double> {
     }
 
     /**
-     * Allows JAXB to change the result of the marshaling process, according to the
+     * Allows JAXB to change the result of the marshalling process, according to the
      * ISO-19139 standard and its requirements about primitive types.
      *
      * @param value The double value we want to surround by an element representing its type.
@@ -177,7 +177,7 @@ public final class GO_Decimal extends XmlAdapter<GO_Decimal, Double> {
         }
 
         /**
-         * Allows JAXB to change the result of the marshaling process, according to the
+         * Allows JAXB to change the result of the marshalling process, according to the
          * ISO-19139 standard and its requirements about primitive types.
          *
          * @param value The float value we want to surround by an element representing its type.

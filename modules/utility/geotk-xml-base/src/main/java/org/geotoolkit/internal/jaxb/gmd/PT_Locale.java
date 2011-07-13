@@ -127,7 +127,7 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
             final Locale marshalLocale = MarshalContext.getLocale();
             languageCode = LanguageCode.create(locale, marshalLocale, null);
             country      = Country     .create(locale, marshalLocale, null);
-            // The characterEncoding field will be initialized at marshaling time
+            // The characterEncoding field will be initialized at marshalling time
             // (see the method below).
         }
 
@@ -166,7 +166,7 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
 
     /**
      * Substitutes the locale by the adapter to be marshalled into an XML file
-     * or stream. JAXB calls automatically this method at marshaling time.
+     * or stream. JAXB calls automatically this method at marshalling time.
      *
      * @param value The locale value.
      * @return The adapter for the locale value.
@@ -178,7 +178,7 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
 
     /**
      * Substitutes the adapter value read from an XML stream by the object which will
-     * contains the value. JAXB calls automatically this method at unmarshaling time.
+     * contains the value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param value The adapter for this metadata value.
      * @return A locale which represents the metadata value.

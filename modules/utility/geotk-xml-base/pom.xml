@@ -27,7 +27,7 @@
   <name>XML base</name>
 
   <description>
-    Basic utilities for XML marshaling and unmarshaling. Those utilities are built on
+    Basic utilities for XML marshalling and unmarshalling. Those utilities are built on
     top of the JAXB framework.
   </description>
 

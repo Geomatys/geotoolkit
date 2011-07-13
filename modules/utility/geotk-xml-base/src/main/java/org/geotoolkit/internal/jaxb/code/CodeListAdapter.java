@@ -108,7 +108,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
 
     /**
      * Substitutes the adapter value read from an XML stream by the object which will
-     * contains the value. JAXB calls automatically this method at unmarshaling time.
+     * contains the value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param  adapter The adapter for this metadata value.
      * @return A code list which represents the metadata value.
@@ -123,7 +123,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
 
     /**
      * Substitutes the code list by the adapter to be marshalled into an XML file
-     * or stream. JAXB calls automatically this method at marshaling time.
+     * or stream. JAXB calls automatically this method at marshalling time.
      *
      * @param  value The code list value.
      * @return The adapter for the given code list.
@@ -149,7 +149,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
     }
 
     /**
-     * Invoked by JAXB on marshaling. Subclasses must override this
+     * Invoked by JAXB on marshalling. Subclasses must override this
      * method with the appropriate {@code @XmlElement} annotation.
      *
      * @return The {@code CodeList} value to be marshalled.

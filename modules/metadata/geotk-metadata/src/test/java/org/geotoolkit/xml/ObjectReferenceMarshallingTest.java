@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshaling of object having {@code xlink} attributes.
+ * Tests the XML marshalling of object having {@code xlink} attributes.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
@@ -112,7 +112,7 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
             assertTrue(e.getMessage().contains("Series"));
         }
         /*
-         * Tests marshaling.
+         * Tests marshalling.
          */
         final String actual = XML.marshal(citation);
         assertDomEquals(expected, actual, "xmlns:*");
@@ -132,7 +132,7 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
         link.setHRef(new URI("org:dummy"));
         final DefaultSeries series = new DefaultSeries();
         if (false) {
-            // Used only for manual test of XML marshaling.
+            // Used only for manual test of XML marshalling.
             series.setName(new SimpleInternationalString("A name"));
         }
         series.setXLink(link);

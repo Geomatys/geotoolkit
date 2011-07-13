@@ -39,7 +39,7 @@ import org.geotoolkit.internal.jaxb.IdentifierAuthority;
  * of the ISO Metadata interface provided by <A HREF="http://www.geoapi.org">GeoAPI</A>.
  * <p>
  * In addition to ISO 19115 elements, every subclasses can have implicit ISO 19139 attributes
- * used during (un)marshaling to XML. For example the {@code xlink:href} attribute can be
+ * used during (un)marshalling to XML. For example the {@code xlink:href} attribute can be
  * accessed by a {@link XLink} object associated with this metadata.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

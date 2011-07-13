@@ -64,9 +64,9 @@ import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
  *       except {@link #shallowEquals}, {@link #shallowCopy} and {@link #freeze}.</li>
  *
  *   <li>Extra properties defined by the {@link IdentifiedObject} interface. Those properties
- *       invisible in the ISO 19115 model, but appears in ISO 19139 XML marshaling. So we do
+ *       invisible in the ISO 19115 model, but appears in ISO 19139 XML marshalling. So we do
  *       the same in the Geotk implementation: invisible in map and tree view, but visible in
- *       XML marshaling.</li>
+ *       XML marshalling.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -115,7 +115,7 @@ final class PropertyAccessor {
     /**
      * Additional getter to declare in every list of getter methods that do not already provide
      * their own {@code getIdentifiers()} method. We handle this method specially because it is
-     * needed for XML marshaling in ISO 19139 compliant document, while not part of abstract
+     * needed for XML marshalling in ISO 19139 compliant document, while not part of abstract
      * ISO 19115 specification.
      *
      * @see IdentifiedObject#getIdentifiers()

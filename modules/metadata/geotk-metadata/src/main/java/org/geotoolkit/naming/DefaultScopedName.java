@@ -86,7 +86,7 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
 
     /**
      * Empty constructor to be used by JAXB only. Despite its "final" declaration,
-     * the {@link #parsedNames} field will be set by JAXB during unmarshaling.
+     * the {@link #parsedNames} field will be set by JAXB during unmarshalling.
      */
     private DefaultScopedName() {
         parsedNames = null;

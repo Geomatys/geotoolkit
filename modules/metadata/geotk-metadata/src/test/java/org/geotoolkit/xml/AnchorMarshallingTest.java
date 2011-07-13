@@ -28,7 +28,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshaling of {@code Anchor}.
+ * Tests the XML marshalling of {@code Anchor}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18

@@ -34,7 +34,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  */
 public final class StringAdapter extends XmlAdapter<GO_CharacterString, String> {
     /**
-     * The adapter on which to delegate the marshaling processes.
+     * The adapter on which to delegate the marshalling processes.
      */
     private final CharSequenceAdapter adapter;
 
@@ -76,7 +76,7 @@ public final class StringAdapter extends XmlAdapter<GO_CharacterString, String> 
 
     /**
      * Converts a string read from a XML stream to the object containing
-     * the value. JAXB calls automatically this method at unmarshaling time.
+     * the value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param value The adapter for this metadata value.
      * @return A {@link String} which represents the metadata value.
@@ -88,7 +88,7 @@ public final class StringAdapter extends XmlAdapter<GO_CharacterString, String> 
 
     /**
      * Converts a {@linkplain String string} to the object to be marshalled in a
-     * XML file or stream. JAXB calls automatically this method at marshaling time.
+     * XML file or stream. JAXB calls automatically this method at marshalling time.
      *
      * @param value The string value.
      * @return The adapter for this string.

@@ -56,7 +56,7 @@ public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
      * Fetches the name factory. The returned factory shall be an instance
      * of {@link DefaultNameFactory}, not a subclass, because we are going
      * to cast the created {@code GenericName} to {@code AbstractName} for
-     * XML marshaling and we know that {@code DefaultNameFactory} creates
+     * XML marshalling and we know that {@code DefaultNameFactory} creates
      * the expected type. A subclass could create other types, so we are
      * better to avoid them.
      */
@@ -73,7 +73,7 @@ public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
 
     /**
      * Does the link between a {@link LocalName} and the string associated.
-     * JAXB calls automatically this method at marshaling-time.
+     * JAXB calls automatically this method at marshalling-time.
      *
      * @param value The implementing class for this metadata value.
      * @return A {@link String} which represents the metadata value.
@@ -85,7 +85,7 @@ public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
 
     /**
      * Does the link between {@linkplain String strings} and the way they will be unmarshalled.
-     * JAXB calls automatically this method at unmarshaling-time.
+     * JAXB calls automatically this method at unmarshalling-time.
      *
      * @param value The string value.
      * @return The implementing class for this string.

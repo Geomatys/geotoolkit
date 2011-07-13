@@ -46,7 +46,7 @@ public final class MD_RangeDimension extends PropertyType<MD_RangeDimension, Ran
     }
 
     /**
-     * Wraps an RangeDimension value with a {@code MD_RangeDimension} element at marshaling time.
+     * Wraps an RangeDimension value with a {@code MD_RangeDimension} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -75,7 +75,7 @@ public final class MD_RangeDimension extends PropertyType<MD_RangeDimension, Ran
 
     /**
      * Returns the {@link DefaultRangeDimension} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -92,7 +92,7 @@ public final class MD_RangeDimension extends PropertyType<MD_RangeDimension, Ran
 
     /**
      * Sets the value for the {@link DefaultRangeDimension}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

@@ -42,7 +42,7 @@ public final class MI_Instrument extends PropertyType<MI_Instrument, Instrument>
     }
 
     /**
-     * Wraps an Instrument value with a {@code MI_Instrument} element at marshaling time.
+     * Wraps an Instrument value with a {@code MI_Instrument} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
@@ -71,7 +71,7 @@ public final class MI_Instrument extends PropertyType<MI_Instrument, Instrument>
 
     /**
      * Returns the {@link DefaultInstrument} generated from the metadata value.
-     * This method is systematically called at marshaling time by JAXB.
+     * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
@@ -83,7 +83,7 @@ public final class MI_Instrument extends PropertyType<MI_Instrument, Instrument>
 
     /**
      * Sets the value for the {@link DefaultInstrument}. This method is systematically
-     * called at unmarshaling time by JAXB.
+     * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
