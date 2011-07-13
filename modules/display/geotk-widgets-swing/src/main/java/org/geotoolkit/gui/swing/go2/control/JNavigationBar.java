@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.navigation.NavigateToAction;
 import org.geotoolkit.gui.swing.go2.control.navigation.ZoomAllAction;
 import org.geotoolkit.gui.swing.go2.control.navigation.ZoomInAction;
 import org.geotoolkit.gui.swing.go2.control.navigation.PanAction;
@@ -38,6 +39,7 @@ public class JNavigationBar extends AbstractMapControlBar{
     private final ZoomOutAction actionZoomOut;
     private final PanAction actionZoomPan;
     private final RefreshAction actionRefresh;
+    private final NavigateToAction actionNavto;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -56,12 +58,14 @@ public class JNavigationBar extends AbstractMapControlBar{
         actionZoomOut = new ZoomOutAction();
         actionZoomPan = new PanAction();
         actionRefresh = new RefreshAction();
-
+        actionNavto = new NavigateToAction();
+        
         add(actionZoomAll);
         add(actionRefresh);
         add(actionZoomIn);
         add(actionZoomOut);
         add(actionZoomPan);
+        add(actionNavto);
         setMap(pane);
     }
 
@@ -77,6 +81,7 @@ public class JNavigationBar extends AbstractMapControlBar{
         actionZoomIn.setMap(map);
         actionZoomOut.setMap(map);
         actionZoomPan.setMap(map);
+        actionNavto.setMap(map);
     }
 
 }

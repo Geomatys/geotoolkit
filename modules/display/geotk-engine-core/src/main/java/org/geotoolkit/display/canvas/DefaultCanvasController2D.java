@@ -48,7 +48,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -81,14 +83,26 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setCenter(final DirectPosition center) {
+    public void setCenter(DirectPosition center) {
+        
         try {
             final DirectPosition oldCenter = getCenter();
+            
+            final CoordinateReferenceSystem candidateCRS = center.getCoordinateReferenceSystem();
+            if(candidateCRS != null && !CRS.equalsIgnoreMetadata(candidateCRS, oldCenter.getCoordinateReferenceSystem())){
+                final MathTransform trs = CRS.findMathTransform(candidateCRS,oldCenter.getCoordinateReferenceSystem());
+                center = trs.transform(center, null);
+            }            
+            
             final double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
             final double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
             translateObjective(diffX, diffY);
         } catch (NoninvertibleTransformException ex) {
-            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
+            canvas.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        } catch (FactoryException ex) {
+            canvas.getLogger().log(Level.WARNING, ex.getMessage(),ex);
+        } catch (TransformException ex) {
+            canvas.getLogger().log(Level.WARNING, ex.getMessage(),ex);
         }
     }
 
@@ -112,7 +126,9 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     public DirectPosition getCenter() throws NoninvertibleTransformException {
         final Point2D center = getDisplayCenter();
         canvas.getObjectiveToDisplay().inverseTransform(center, center);
-        return new GeneralDirectPosition(center);
+        final GeneralDirectPosition pt = new GeneralDirectPosition(canvas.getObjectiveCRS2D());
+        pt.setLocation(center);
+        return pt;
     }
 
     @Override
