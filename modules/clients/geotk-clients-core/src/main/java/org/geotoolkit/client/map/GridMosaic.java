@@ -31,6 +31,11 @@ import org.opengis.geometry.Envelope;
 public interface GridMosaic {
     
     /**
+     * @return unique id.
+     */
+    String getId();
+    
+    /**
      * @return pyramid containing this mosaic.
      */
     Pyramid getPyramid();

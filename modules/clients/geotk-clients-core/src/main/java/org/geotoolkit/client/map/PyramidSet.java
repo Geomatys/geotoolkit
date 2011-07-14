@@ -27,6 +27,11 @@ import java.util.Collection;
 public interface PyramidSet {
     
     /**
+     * @return unique id.
+     */
+    String getId();
+    
+    /**
      * 
      * @return Collection of pyramid, each pyramid has a different CRS.
      */

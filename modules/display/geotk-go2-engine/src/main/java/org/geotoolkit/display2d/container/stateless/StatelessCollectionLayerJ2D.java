@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.opengis.feature.type.FeatureType;
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.style.MutableStyle;
 import java.util.ArrayList;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -37,6 +33,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -60,6 +59,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
+import org.opengis.feature.type.FeatureType;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;

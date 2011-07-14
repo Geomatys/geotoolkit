@@ -23,6 +23,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.beans.PropertyChangeEvent;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
@@ -84,7 +86,8 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
     };
 
     private final LayerListener.Weak weakListener = new LayerListener.Weak(ll);
-
+    private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
+    
     public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer){
         this(canvas, layer, false);
     }
@@ -148,10 +151,21 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
      */
     protected void paintLayer(final RenderingContext2D context){
 
-        final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);
-
+        //get graphics from the cache first
+        if(weakGraphic != null){
+            final Collection<? extends GraphicJ2D> graphics = weakGraphic.get();
+            if(graphics != null){
+                for(GraphicJ2D g : graphics){
+                    g.paint(context);
+                }
+            }
+            return;
+        }
+        
+        final GraphicBuilder<? extends GraphicJ2D> builder = item.getGraphicBuilder(GraphicJ2D.class);        
         if(builder != null){
             final Collection<? extends GraphicJ2D> graphics = builder.createGraphics(item, canvas);
+            weakGraphic = new SoftReference<Collection<? extends GraphicJ2D>>(graphics);
             for(GraphicJ2D g : graphics){
                 g.paint(context);
             }

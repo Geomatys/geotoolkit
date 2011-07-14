@@ -17,6 +17,7 @@
 package org.geotoolkit.wmts.model;
 
 import java.awt.geom.Point2D;
+import java.util.UUID;
 import org.geotoolkit.client.map.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
@@ -29,7 +30,8 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class WMTSMosaic implements GridMosaic{
-
+    
+    private final String id = UUID.randomUUID().toString();
     private final WMTSPyramid pyramid;
     private final TileMatrix matrix;
     private final TileMatrixLimits limit;
@@ -42,6 +44,11 @@ public class WMTSMosaic implements GridMosaic{
     
     public TileMatrix getMatrix() {
         return matrix;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
     
     @Override

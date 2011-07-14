@@ -24,18 +24,17 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
-import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractTiledGraphic;
+import org.geotoolkit.client.map.TileReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -59,7 +58,6 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -154,23 +152,24 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             }
 
             //render a single tile            
-            final Map<Entry<CoordinateReferenceSystem,MathTransform>,Request> queries = 
-                    new HashMap<Entry<CoordinateReferenceSystem, MathTransform>, Request>();
+            final Collection<TileReference> queries = new ArrayList<TileReference>();
             
-            final Entry<CoordinateReferenceSystem,MathTransform> key;
             try {
                 final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
                 final Envelope env2D = CRS.transform(env, crs2d);
                 final AffineTransform2D gridToCRS = new AffineTransform2D(GO2Utilities.toAffine(dim, env2D));
 
-                key = new SimpleImmutableEntry<CoordinateReferenceSystem, MathTransform>(
-                        CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), gridToCRS);
+                
+                final String id = UUID.randomUUID().toString();
+                final TileReference ref = new TileReference(id,
+                        CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), 
+                        gridToCRS, request);
+                queries.add(ref);
             } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
             }
-            
-            queries.put(key, request);            
+                     
             paint(context2D, queries);            
         }
 

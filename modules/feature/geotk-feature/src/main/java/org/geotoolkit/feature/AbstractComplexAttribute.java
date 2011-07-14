@@ -159,6 +159,10 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
     @Override
     public String toString() {
+        return toString(3);
+    }
+    
+    public String toString(int depth) {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(" ");
         sb.append(getName());
@@ -174,7 +178,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         tablewriter.write("name\t value\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
-        toString(tablewriter, this, null, true);
+        toString(tablewriter, this, null, true, depth);
 
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -188,6 +192,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
         return sb.toString();
     }
+    
 
     private static final String BLANCK = "\u00A0\u00A0\u00A0\u00A0";
     private static final String LINE =    "\u00A0\u00A0\u2502\u00A0";
@@ -202,7 +207,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * @param path
      * @param last node of the tree
      */
-    private static void toString(final TableWriter tablewriter, final Property property, final Integer index, final boolean last, final String... path){
+    private static void toString(final TableWriter tablewriter, final Property property, 
+            final Integer index, final boolean last, final int depth, final String... path){
 
         //draw the path.
         for(String t : path){
@@ -214,6 +220,12 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         if(name != null){
             tablewriter.write(DefaultName.toJCRExtendedForm(name));
         }
+        
+        if(depth == 0){
+            tablewriter.write("⋅⋅⋅ \n");
+            return;
+        }
+        
         //write the index if one
         if(index != null){
             tablewriter.write('[');
@@ -244,7 +256,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                         nb++;
                         if(last){ subPath = last(path, BLANCK); }
 
-                        toString(tablewriter, sub, null, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                        toString(tablewriter, sub, null, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
+                        
                     }
                 }else{
                     final Collection<? extends Property> properties = ca.getProperties(desc.getName());
@@ -255,11 +268,11 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                         if(last){ subPath = last(path, BLANCK); }
                         
                         if(i==n){
-                            toString(tablewriter, sub, i, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
                         }else if(i == 0){
-                            toString(tablewriter, sub, i, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
                         }else{
-                            toString(tablewriter, sub, i, nb==nbProperty, append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
                         }
                         i++;
                     }

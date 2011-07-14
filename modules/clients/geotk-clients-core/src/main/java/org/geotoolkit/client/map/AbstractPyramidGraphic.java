@@ -17,9 +17,9 @@
 package org.geotoolkit.client.map;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
@@ -131,8 +131,7 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
         //find all the tiles we need --------------------------------------
         //tiles to render         
-        final Map<Entry<CoordinateReferenceSystem,MathTransform>,Request> queries = 
-                new HashMap<Entry<CoordinateReferenceSystem, MathTransform>, Request>();
+        final Collection<TileReference> queries = new ArrayList<TileReference>();
 
         final double epsilon = 1e-6;
         final double bBoxMinX = wantedEnv.getMinimum(0);
@@ -184,7 +183,10 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
                 final Entry<CoordinateReferenceSystem,MathTransform> key;
                 key = new SimpleImmutableEntry<CoordinateReferenceSystem, MathTransform>(pyramidCRS, gridToCRS);
 
-                queries.put(key,request);
+                final String tileId = mosaic.getId() +"_"+tileRow+"_"+tileCol;
+                final TileReference ref = new TileReference(tileId, pyramidCRS, gridToCRS, request);
+                
+                queries.add(ref);
                 //break loopCol;
             }
         }

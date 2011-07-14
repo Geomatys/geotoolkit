@@ -28,6 +28,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public interface Pyramid {
     
     /**
+     * @return unique id.
+     */
+    String getId();
+    
+    /**
      * @return the pyramid set in which this pyramid is contained.
      */
     PyramidSet getPyramidSet();

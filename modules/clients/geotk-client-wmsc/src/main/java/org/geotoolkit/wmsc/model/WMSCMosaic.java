@@ -17,6 +17,7 @@
 package org.geotoolkit.wmsc.model;
 
 import java.awt.geom.Point2D;
+import java.util.UUID;
 
 import org.geotoolkit.client.map.GridMosaic;
 import org.geotoolkit.client.map.Pyramid;
@@ -32,6 +33,7 @@ import org.opengis.geometry.Envelope;
  */
 public class WMSCMosaic implements GridMosaic{
 
+    private final String id = UUID.randomUUID().toString();
     private final WMSCPyramid pyramid;
     private final double scale;
     
@@ -58,6 +60,11 @@ public class WMSCMosaic implements GridMosaic{
         
         tileSpanX = spanX / gridWidth ;
         tileSpanY = spanY / gridHeight ;   
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
     
     @Override

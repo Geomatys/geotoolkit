@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -30,6 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DefaultPyramid implements Pyramid{
 
+    private final String id = UUID.randomUUID().toString();
     private final PyramidSet set;
     private final CoordinateReferenceSystem crs;
     private final SortedMap<Double,GridMosaic> mosaics = new TreeMap<Double, GridMosaic>(            
@@ -46,6 +48,11 @@ public class DefaultPyramid implements Pyramid{
         this.crs = crs;
     }
 
+    @Override
+    public String getId() {
+        return id;
+    }
+    
     public SortedMap<Double, GridMosaic> getMosaics() {
         return mosaics;
     }

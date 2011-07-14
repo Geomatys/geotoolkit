@@ -19,6 +19,7 @@ package org.geotoolkit.wmts.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.geotoolkit.client.map.Pyramid;
 import org.geotoolkit.client.map.PyramidSet;
@@ -35,6 +36,7 @@ import org.geotoolkit.wmts.xml.v100.TileMatrixSetLink;
  */
 public class WMTSPyramidSet implements PyramidSet{
 
+    private final String id = UUID.randomUUID().toString();
     private final Capabilities capabilities;
     private final String layerName;
     
@@ -52,7 +54,12 @@ public class WMTSPyramidSet implements PyramidSet{
     public String getLayerName() {
         return layerName;
     }
-        
+
+    @Override
+    public String getId() {
+        return id;
+    }
+    
     @Override
     public Collection<Pyramid> getPyramids() {        
         final List<Pyramid> pyramids = new ArrayList<Pyramid>();

@@ -17,6 +17,7 @@
 package org.geotoolkit.client.map;
 
 import java.awt.geom.Point2D;
+import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 
@@ -28,6 +29,7 @@ import org.opengis.geometry.Envelope;
  */
 public class DefaultGridMosaic implements GridMosaic{
 
+    private final String id = UUID.randomUUID().toString();
     private final Pyramid pyramid;
     private final Point2D upperLeft;
     private final int width;
@@ -49,7 +51,10 @@ public class DefaultGridMosaic implements GridMosaic{
         this.tileSpanY = tileSpanY;
     }
 
-    
+    @Override
+    public String getId() {
+        return id;
+    }
     
     @Override
     public Pyramid getPyramid() {

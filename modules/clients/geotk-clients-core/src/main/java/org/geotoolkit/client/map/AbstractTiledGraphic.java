@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.client.map;
 
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -34,18 +34,20 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
-import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.collection.Cache;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
@@ -54,6 +56,11 @@ import org.opengis.referencing.operation.MathTransform;
  */
 public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
 
+    /**
+     * Cache the last queried tiles
+     */
+    private final Map<String,GridCoverage2D> tileCache = new Cache<String, GridCoverage2D>(4, 20, true);
+    
     private boolean silentErrors = false;
     
     public AbstractTiledGraphic(final J2DCanvas canvas, final CoordinateReferenceSystem crs){
@@ -72,7 +79,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
      * Render each query response as a coverage with the given gridToCRS and CRS.
      */
     protected void paint(final RenderingContext2D context, 
-            final Map<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request>  queries) {
+            final Collection<TileReference>  queries) {
         final CanvasMonitor monitor = context.getMonitor();
         
         //bypass all if no queries
@@ -82,7 +89,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
         
         //bypass thread creation when only a single tile
         if(queries.size() == 1){
-            paint(context, queries.entrySet().iterator().next());            
+            paint(context, queries.iterator().next());            
             return;
         }
                   
@@ -92,7 +99,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
         
         final Collection<FutureTask> tasks = new ArrayList<FutureTask>();
         
-        for(final Entry<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request> entry : queries.entrySet()){
+        for(final TileReference entry : queries){
                         
             if(monitor.stopRequested()){
                 return;
@@ -130,17 +137,27 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
     }
     
     private void paint(final RenderingContext2D context, 
-            final Entry<Entry<CoordinateReferenceSystem,MathTransform>,? extends Request> entry){
+            final TileReference tileRef){
         final CanvasMonitor monitor = context.getMonitor();
+        final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
         
-        final CoordinateReferenceSystem tileCRS = entry.getKey().getKey();
-        final MathTransform gridToCRS = entry.getKey().getValue();
-        final Request request = entry.getValue();
-
-        final BufferedImage image;
+        
+        //use the cache if available
+        GridCoverage2D coverage = tileCache.get(tileRef.id);
+        if(coverage != null && objCRS2D == coverage.getCoordinateReferenceSystem2D()){
+            //cache is still valid
+            try {
+                GO2Utilities.portray(context, coverage);
+            } catch (PortrayalException ex) {
+                monitor.exceptionOccured(ex, Level.WARNING);
+            }
+            return;
+        }
+        
+        BufferedImage image;
         InputStream is = null;
         try {
-            is = request.getResponseStream();
+            is = tileRef.query.getResponseStream();
             image = ImageIO.read(is);
         } catch (IOException io) {
             monitor.exceptionOccured(io, Level.WARNING);
@@ -159,7 +176,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
             if(!silentErrors){
                 String path;
                 try {
-                    path = request.getURL().toString();
+                    path = tileRef.query.getURL().toString();
                 } catch (MalformedURLException ex) {
                     path = "Malformed URL";
                 }
@@ -169,9 +186,29 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
         }
 
         final GridCoverageFactory gc = new GridCoverageFactory();
-
-        final GridCoverage2D coverage = gc.create("tile", image,
-            tileCRS, gridToCRS, null, null, null);
+        
+        //check the crs
+        final CoordinateReferenceSystem candidate2D = tileRef.crs;
+        if(!CRS.equalsIgnoreMetadata(candidate2D,objCRS2D) ){
+            
+            //will be reprojected, we must check that image has alpha support
+            //otherwise we will have black borders after reprojection
+            if(!image.getColorModel().hasAlpha()){
+                final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
+                image = buffer;
+            }
+            
+            coverage = gc.create("tile", image,
+            tileRef.crs, tileRef.gridToCRS, null, null, null);            
+            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
+            
+        }else{
+            coverage = gc.create("tile", image,
+            tileRef.crs, tileRef.gridToCRS, null, null, null);
+        }
+        
+        tileCache.put(tileRef.id, coverage); //cache the tile
         try {
             GO2Utilities.portray(context, coverage);
         } catch (PortrayalException ex) {

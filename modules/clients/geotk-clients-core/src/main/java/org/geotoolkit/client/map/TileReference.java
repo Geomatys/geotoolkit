@@ -16,30 +16,28 @@
  */
 package org.geotoolkit.client.map;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import org.geotoolkit.client.Request;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
- * Default PyramidSet.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPyramidSet implements PyramidSet{
-
-    private final String id = UUID.randomUUID().toString();
-    private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
+public final class TileReference {
     
-    @Override
-    public Collection<Pyramid> getPyramids() {
-        return pyramids;
-    }
+    public final CoordinateReferenceSystem crs;
+    public final MathTransform gridToCRS;
+    public final String id;
+    public final Request query;
 
-    @Override
-    public String getId() {
-        return id;
+    public TileReference(final String id, final CoordinateReferenceSystem crs, 
+            final MathTransform gridToCRS, final Request query) {
+        this.crs = crs;
+        this.gridToCRS = gridToCRS;
+        this.id = id;
+        this.query = query;
     }
     
 }
