@@ -683,7 +683,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         private static final long serialVersionUID = 2337350768744454264L;
 
         public MutableSet(Class<E> type) {
-            super(type);
+            super(type, 4); // Use a small capacity because we typically have few elements.
         }
 
         public MutableSet(Class<E> type, int capacity) {
@@ -710,7 +710,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         private static final long serialVersionUID = -5016778173550153002L;
 
         public MutableList(Class<E> type) {
-            super(type);
+            super(type, 4); // Use a small capacity because we typically have few elements.
         }
 
         public MutableList(Class<E> type, int capacity) {

@@ -44,7 +44,7 @@
  *         {@link org.geotoolkit.util.Utilities},
  *         {@link org.geotoolkit.util.Ranks}.</li>
  *     <li>Other standard Java types:
- *         {@link org.geotoolkit.util.Comparators},
+ *         {@link org.geotoolkit.util.collection.XCollections},
  *         {@link org.geotoolkit.util.Exceptions}.</li>
  *   </ul></li>
  * </ul>

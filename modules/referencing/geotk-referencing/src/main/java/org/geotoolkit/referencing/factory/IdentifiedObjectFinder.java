@@ -34,6 +34,7 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.naming.DefaultNameSpace;

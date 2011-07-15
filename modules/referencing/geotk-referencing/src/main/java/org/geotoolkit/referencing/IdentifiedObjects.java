@@ -39,6 +39,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -465,7 +466,7 @@ public final class IdentifiedObjects extends Static {
     /**
      * Looks up an EPSG code of the given {@linkplain CoordinateReferenceSystem
      * coordinate reference system}). This is a convenience method for <code>{@linkplain
-     * #lookupIdentifier(Citation, CoordinateReferenceSystem, boolean) lookupIdentifier}({@linkplain
+     * #lookupIdentifier(Citation, IdentifiedObject, boolean) lookupIdentifier}({@linkplain
      * Citations#EPSG EPSG}, crs, fullScan)</code> with the returned code parsed as an integer.
      *
      * @param  object The object (usually a {@linkplain CoordinateReferenceSystem coordinate

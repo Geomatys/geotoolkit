@@ -17,12 +17,6 @@
  */
 package org.geotoolkit.lang;
 
-import java.lang.annotation.Target;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.RetentionPolicy;
-
 
 /**
  * Parent of classes that contain only static utility methods. This parent is for documentation
@@ -51,8 +45,6 @@ import java.lang.annotation.RetentionPolicy;
  *   <li><p>Structures (trees, collections, arrays, parameters)</p></li>
  *   <ul>
  *     <li>{@link org.geotoolkit.util.collection.XCollections}: Additions to the {@link java.util.Collections} methods.</li>
- *     <li>{@link org.geotoolkit.util.Comparators}: Predefined comparators for comparing collections
- *         as a whole.</li>
  *     <li>{@link org.geotoolkit.util.Ranks}: Sorts elements in an array while remembering their ranks.</li>
  *     <li>{@link org.geotoolkit.util.XArrays}: Insert or remove elements in the middle of arrays.</li>
  *     <li>{@link org.geotoolkit.gui.swing.tree.Trees}: Parse and format trees in text format.
