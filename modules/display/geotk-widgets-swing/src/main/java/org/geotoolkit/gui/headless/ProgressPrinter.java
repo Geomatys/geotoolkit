@@ -21,7 +21,6 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.text.BreakIterator;
 
-import org.opengis.util.ProgressListener;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Strings;
@@ -30,6 +29,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.gui.swing.event.ProgressListener;
 
 
 /**

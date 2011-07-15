@@ -27,9 +27,9 @@ import javax.swing.*;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTitledSeparator;
 
-import org.opengis.util.ProgressListener;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.gui.swing.event.ProgressListener;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;

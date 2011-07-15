@@ -35,9 +35,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.AddressException;
 
-import org.opengis.util.ProgressListener;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.gui.swing.event.ProgressListener;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;

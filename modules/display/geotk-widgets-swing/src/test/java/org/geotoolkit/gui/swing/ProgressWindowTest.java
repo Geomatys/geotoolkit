@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing;
 
 import java.awt.HeadlessException;
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.gui.swing.event.ProgressListener;
 
 import org.junit.*;
 
