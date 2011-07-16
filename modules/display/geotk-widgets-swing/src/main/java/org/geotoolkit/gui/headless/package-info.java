@@ -20,8 +20,8 @@
  * A set of non-graphical classes sending informations to the standard output stream
  * or through emails.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.19
  *
  * @since 2.0
  * @module

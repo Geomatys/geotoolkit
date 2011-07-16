@@ -34,72 +34,49 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.AddressException;
+import net.jcip.annotations.ThreadSafe;
 
-import org.opengis.util.InternationalString;
-
-import org.geotoolkit.gui.swing.event.ProgressListener;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.Disposable;
+import org.geotoolkit.gui.swing.event.ProgressController;
 
 
 /**
  * Reports progress by sending email to the specified address at regular interval.
  *
- * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (MPO, IRD, Geomatys)
+ * @version 3.19
  *
  * @since 2.0
  * @module
  */
-public class ProgressMailer implements ProgressListener, Disposable {
+@ThreadSafe
+public class ProgressMailer extends ProgressController {
     /**
-     * Nom de l'opération en cours. Le pourcentage sera écris à la droite de ce nom.
-     */
-    private InternationalString description;
-
-    /**
-     * Langue à utiliser pour le formattage.
-     */
-    private final Locale locale;
-
-    /**
-     * Session à utiliser pour envoyer des courriels.
+     * The session for sending emails.
      */
     private final Session session;
 
     /**
-     * Adresses des personnes à qui envoyer un rapport sur les progrès.
+     * Where to send the emails.
      */
     private final Address[] address;
 
     /**
-     * Laps de temps entre deux courriers électroniques informant des progrès.
-     * On attendra que ce laps de temps soit écoulés avant d'envoyer un nouveau courriel.
+     * How long to wait before 2 emails.
      */
     private long timeInterval = 3*60*60*1000L;
 
     /**
-     * Date et heure à laquelle envoyer le prochain courriel.
+     * When to send the next email.
      */
     private long nextTime;
-
-    /**
-     * The percentage executed up to date.
-     */
-    private float percent;
-
-    /**
-     * {@code true} if the action has been canceled.
-     */
-    private volatile boolean canceled;
 
     /**
      * Constructs an objects reporting progress to the specified email address.
      *
      * @param  host The server to use for sending emails.
-     * @param  address Email adress where to send progress reports.
+     * @param  address Email address where to send progress reports.
      * @throws AddressException if the specified address use an invalid syntax.
      */
     public ProgressMailer(final String host, final String address) throws AddressException {
@@ -108,24 +85,24 @@ public class ProgressMailer implements ProgressListener, Disposable {
     }
 
     /**
-     * Constructs an objects reporting progress to the specified email adresses.
+     * Constructs an objects reporting progress to the specified email addresses.
      *
      * @param session Session to use for sending emails.
-     * @param address
+     * @param address Email address where to send progress reports.
      */
-    public ProgressMailer(final Session session, final Address[] address) {
+    public ProgressMailer(final Session session, final Address... address) {
         this.session = session;
         this.address = address;
-        this.locale  = Locale.getDefault();
         nextTime = System.currentTimeMillis();
     }
 
     /**
-     * Retourne un ensemble de propriétés nécessaires pour ouvrir une session.
+     * Returns the set of properties required for opening a new session. This is a workaround for
+     * RFE #4093999 ("Relax constraint on placement of this()/super() call in constructors").
      *
-     * @param host Nom du serveur à utiliser pour envoyer des courriels.
+     * @param host The name of the server where to send the emails.
      */
-    private static final Properties properties(final String host) {
+    private static Properties properties(final String host) {
         final Properties props = new Properties();
         props.setProperty("mail.smtp.host", host);
         return props;
@@ -141,7 +118,7 @@ public class ProgressMailer implements ProgressListener, Disposable {
     }
 
     /**
-     * Set the time laps (in milliseconds) between two emails.
+     * Sets the time laps (in milliseconds) between two emails.
      * The default value is 3 hours.
      *
      * @param interval The new time laps in milliseconds.
@@ -151,63 +128,15 @@ public class ProgressMailer implements ProgressListener, Disposable {
     }
 
     /**
-     * Returns the description of the current task being performed, or {@code null} if none.
+     * Sends the given message by email.
      *
-     * @since 2.3
-     */
-    @Override
-    public InternationalString getTask() {
-        return description;
-    }
-
-    /**
-     * Description for the lengthly operation to be reported, or {@code null} if none.
-     *
-     * @deprecated Replaced by getTask().toString()
-     */
-    @Override
-    @Deprecated
-    public String getDescription() {
-        return (description != null) ? description.toString() : null;
-    }
-
-    /**
-     * Sets the description of the current task being performed. This method is usually invoked
-     * before any progress begins. However, it is legal to invoke this method at any time during
-     * the operation, in which case the description display is updated without any change to the
-     * percentage accomplished.
-     *
-     * @since 2.3
-     */
-    @Override
-    public void setTask(final InternationalString task) {
-        description = task;
-    }
-
-    /**
-     * Sets the description for the lenghtly operation to be reported. This method is usually
-     * invoked before any progress begins. However, it is legal to invoke this method at any
-     * time during the operation, in which case the description display is updated without
-     * any change to the percentage accomplished.
-     *
-     * @deprecated Replaced by setTask
-     */
-    @Override
-    @Deprecated
-    public synchronized void setDescription(final String description) {
-        this.description = new SimpleInternationalString(description);
-    }
-
-    /**
-     * Envoie le message spécifié par courrier électronique.
-     *
-     * @param method Nom de la méthode qui appelle celle-ci. Cette information
-     *        est utilisée pour produire un message d'erreur en cas d'échec.
-     * @param subjectKey Clé du sujet: {@link ResourceKeys#PROGRESS},
-     *        {@link ResourceKeys#WARNING} ou {@link ResourceKeys#EXCEPTION}.
-     * @param messageText Message à envoyer par courriel.
+     * @param method Name of the caller method. Used only in case of failure.
+     * @param subjectKey Subject resource key: {@link ResourceKeys#PROGRESS},
+     *        {@link ResourceKeys#WARNING} or {@link ResourceKeys#EXCEPTION}.
+     * @param messageText The message to send by email.
      */
     private void send(final String method, final int subjectKey, final String messageText) {
+        final Locale locale = getLocale();
         try {
             final Message message = new MimeMessage(session);
             message.setFrom();
@@ -222,23 +151,25 @@ public class ProgressMailer implements ProgressListener, Disposable {
     }
 
     /**
-     * Envoie par courrier électronique un rapport des progrès.
+     * Send a progress report by email.
      *
-     * @param method Nom de la méthode qui appelle celle-ci. Cette information
-     *        est utilisée pour produire un message d'erreur en cas d'échec.
-     * @param percent Pourcentage effectué (entre 0 et 100).
+     * @param method Name of the caller method. Used only in case of failure.
+     * @param percent percentage.
      */
     private void send(final String method, final float percent) {
-        this.percent = percent;
+        super.setProgress(percent);
+        final Locale        locale = getLocale();
         final Runtime       system = Runtime.getRuntime();
         final float    MEMORY_UNIT = (1024f*1024f);
         final float     freeMemory = system.freeMemory()  / MEMORY_UNIT;
         final float    totalMemory = system.totalMemory() / MEMORY_UNIT;
         final Vocabulary resources = Vocabulary.getResources(locale);
         final NumberFormat  format = NumberFormat.getPercentInstance(locale);
-        final StringBuffer  buffer = new StringBuffer(description != null ?
-                description : resources.getString(Vocabulary.Keys.PROGRESSION));
-        buffer.append(": ");
+        CharSequence task = getTask();
+        if (task == null) {
+            task = resources.getString(Vocabulary.Keys.PROGRESSION);
+        }
+        final StringBuffer buffer = new StringBuffer(task).append(": ");
         format.format(percent/100, buffer, new FieldPosition(0)).append('\n');
         buffer.append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1, totalMemory)).append('\n')
               .append(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_$1, 1f - freeMemory/totalMemory)).append('\n');
@@ -258,7 +189,7 @@ public class ProgressMailer implements ProgressListener, Disposable {
      * of time specified by {@link #setTimeInterval} is elapsed since the last email.
      */
     @Override
-    public synchronized void progress(float percent) {
+    public synchronized void setProgress(float percent) {
         final long time = System.currentTimeMillis();
         if (time > nextTime) {
             nextTime = time + timeInterval;
@@ -269,33 +200,11 @@ public class ProgressMailer implements ProgressListener, Disposable {
     }
 
     /**
-     * Returns the current progress as a percent completed.
-     *
-     * @since 2.3
+     * Sends an emails saying that the operation finished.
      */
     @Override
-    public float getProgress() {
-        return percent;
-    }
-
-    /**
-     * Returns {@code true} if this job is cancelled.
-     *
-     * @since 2.3
-     */
-    @Override
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    /**
-     * Indicates that task should be cancelled.
-     *
-     * @since 2.3
-     */
-    @Override
-    public void setCanceled(final boolean cancel) {
-        canceled = cancel;
+    public synchronized void complete() {
+        send(Vocabulary.format(Vocabulary.Keys.COMPLETED), 100);
     }
 
     /**
@@ -338,17 +247,12 @@ public class ProgressMailer implements ProgressListener, Disposable {
     }
 
     /**
-     * Sends an emails saying that the operation finished.
-     */
-    @Override
-    public synchronized void complete() {
-        send(Vocabulary.format(Vocabulary.Keys.COMPLETED), 100);
-    }
-
-    /**
      * Releases any resource used by this object.
+     *
+     * @deprecated Not needed for this controller.
      */
     @Override
+    @Deprecated
     public void dispose() {
     }
 }

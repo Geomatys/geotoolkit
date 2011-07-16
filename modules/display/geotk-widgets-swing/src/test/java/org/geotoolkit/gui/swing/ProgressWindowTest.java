@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing;
 
 import java.awt.HeadlessException;
-import org.geotoolkit.gui.swing.event.ProgressListener;
+import org.geotoolkit.gui.swing.event.ProgressController;
 
 import org.junit.*;
 
@@ -46,13 +46,21 @@ public final class ProgressWindowTest {
     @Test
     public void display() throws InterruptedException {
         if (displayEnabled) try {
-            final ProgressListener progress = new ProgressWindow(null);
+            final ProgressController progress = new ProgressWindow(null);
             progress.started();
             for (int i=0; i<=100; i++) {
-                progress.progress(i);
+                progress.setProgress(i);
                 Thread.sleep(100);
-                if (i==40 || i==80) {
-                    progress.warningOccurred("Some source", "(" + i + ")", "A dummy warning.");
+                switch (i) {
+                    case 20: {
+                        progress.setTask("Description of the task.");
+                        break;
+                    }
+                    case 40:
+                    case 80: {
+                        progress.warningOccurred("Some source", "(" + i + ")", "A dummy warning.");
+                        break;
+                    }
                 }
             }
             progress.complete();

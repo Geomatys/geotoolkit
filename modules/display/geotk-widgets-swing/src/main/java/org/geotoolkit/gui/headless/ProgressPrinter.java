@@ -17,19 +17,19 @@
  */
 package org.geotoolkit.gui.headless;
 
+import java.util.Locale;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.text.BreakIterator;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.Disposable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.gui.swing.event.ProgressListener;
+import org.geotoolkit.gui.swing.event.ProgressController;
 
 
 /**
@@ -37,86 +37,70 @@ import org.geotoolkit.gui.swing.event.ProgressListener;
  * as percentage on a single line. This class can also prints warning, which is useful for
  * notifications without stopping the lengthly task.
  *
- * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (MPO, IRD, Geomatys)
+ * @version 3.19
  *
  * @since 1.0
  * @module
  */
-public class ProgressPrinter implements ProgressListener, Disposable {
+@ThreadSafe
+public class ProgressPrinter extends ProgressController {
     /**
-     * Nom de l'opération en cours. Le pourcentage sera écris à la droite de ce nom.
-     */
-    private InternationalString description;
-
-    /**
-     * Flot utilisé pour l'écriture de l'état d'avancement d'un
-     * processus ainsi que pour les écritures des commentaires.
+     * The stream where to write progress reports.
      */
     private final PrintWriter out;
 
     /**
-     * Indique si le caractère '\r' ramène au début de la ligne courante sur
-     * ce système. On supposera que ce sera le cas si le système n'utilise
-     * pas la paire "\r\n" pour changer de ligne (comme le system VAX-VMS).
+     * {@code true} if {@code '\r'} brings the cursor back to the beginning of current line.
+     * We assume {@code true} if the system do not uses the {@code "\r\n"} pair for going
+     * to the next line (like VAX-VMS systems).
      */
     private final boolean CR_supported;
 
     /**
-     * Longueur maximale des lignes. L'espace utilisable sera un peu
-     * moindre car quelques espaces seront laissés en début de ligne.
+     * The maximal line length. Note that the amount of spaces really available is slightly
+     * less since some spaces will be used at the beginning of the line.
      */
     private final int maxLength;
 
     /**
-     * Nombre de caractères utilisés lors de l'écriture de la dernière ligne.
-     * Ce champ est mis à jour par la méthode {@link #carriageReturn} chaque
-     * fois que l'on déclare que l'on vient de terminer l'écriture d'une ligne.
+     * Amount of characters used last time a line was sent to the output stream.
+     * This field is updated by the {@link #carriageReturn} method.
      */
     private int lastLength;
 
     /**
-     * Position à laquelle commencer à écrire le pourcentage. Cette information
-     * est gérée automatiquement par la méthode {@link #progress}. La valeur -1
-     * signifie que ni le pourcentage ni la description n'ont encore été écrits.
+     * Position where to write the percentage.
+     * This field is updated by the {@link #progress} method.
      */
-    private int percentPosition = -1;
+    private int percentPosition;
 
     /**
-     * Dernier pourcentage écrit. Cette information est utilisée afin d'éviter d'écrire
-     * deux fois le même pourcentage, ce qui ralentirait inutilement le système.
-     * La valeur -1 signifie qu'on n'a pas encore écrit de pourcentage.
+     * The last percentage written, or {@code null} if none. This is used in order to avoid
+     * sending many time the same line with invisible change.
      */
-    private float lastPercent = -1;
+    private String lastPercent;
 
     /**
-     * Format à utiliser pour écrire les pourcentages.
+     * The format to use for writing the percentage.
      */
     private NumberFormat format;
 
     /**
-     * Objet utilisé pour couper les lignes correctements lors de l'affichage
-     * de messages d'erreurs qui peuvent prendre plusieurs lignes.
+     * Object used for breaking a long warning message on many lines.
      */
     private BreakIterator breaker;
 
     /**
-     * Indique si cet objet a déjà écrit des avertissements. Si
-     * oui, on ne réécrira pas le gros titre "avertissements".
+     * {@code true} if this printer has written at least one warning.
      */
     private boolean hasPrintedWarning;
 
     /**
-     * Source du dernier message d'avertissement. Cette information est
-     * conservée afin d'éviter de répéter la source lors d'éventuels
-     * autres messages d'avertissements.
+     * The source of the last warnings, or {@code null} if unknown.
+     * Used in order to avoid repeating this information many time.
      */
     private String lastSource;
-
-    /**
-     * {@code true} if the action has been canceled.
-     */
-    private volatile boolean canceled;
 
     /**
      * Constructs a new object sending progress reports to the
@@ -152,15 +136,12 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Efface le reste de la ligne (si nécessaire) puis repositionne le curseur au début
-     * de la ligne. Si les retours chariot ne sont pas supportés, alors cette méthode va
-     * plutôt passer à la ligne suivante. Dans tous les cas, le curseur se trouvera au
-     * début d'une ligne et la valeur {@code length} sera affecté au champ
-     * {@link #lastLength}.
+     * Erases the remainder of current line (if needed), then moves the cursor to the beginning
+     * of current line. If carriage returns are not supported, then this method will rather move
+     * to the next line. If every cases, the cursor will be at the beginning of a line and the
+     * {@link #lastLength} field will have the {@code length} value.
      *
-     * @param length Nombre de caractères qui ont été écrit jusqu'à maintenant sur cette ligne.
-     *        Cette information est utilisée pour ne mettre que le nombre d'espaces nécessaires
-     *        à la fin de la ligne.
+     * @param length Number of characters which have been written on the current line.
      */
     private void carriageReturn(final int length) {
         if (CR_supported && length<maxLength) {
@@ -176,15 +157,13 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Ajoute des points à la fin de la ligne jusqu'à représenter le pourcentage spécifié.
-     * Cette méthode est utilisée pour représenter les progrès sur un terminal qui ne supporte
-     * pas les retours chariots.
+     * Adds dots at the end of current line, just before to write the progress percentage.
+     * This method is used only for terminals that do not support carriage returns.
      *
-     * @param percent Pourcentage accompli de l'opération. Cette valeur doit obligatoirement
-     *        se trouver entre 0 et 100 (ça ne sera pas vérifié).
+     * @param percent Progress percentage between 0 and 100.
      */
     private void completeBar(final float percent) {
-        final int end = (int) ((percent/100)*((maxLength-2)-percentPosition)); // Round toward 0.
+        final int end = (int) ((percent/100) * ((maxLength-2) - percentPosition)); // Round toward 0.
         while (lastLength < end) {
             out.print('.');
             lastLength++;
@@ -192,81 +171,35 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Sets the description of the current task being performed. This method is usually invoked
-     * before any progress begins. However, it is legal to invoke this method at any time during
-     * the operation, in which case the description display is updated without any change to the
-     * percentage accomplished.
-     *
-     * @since 2.3
-     */
-    @Override
-    public void setTask(final InternationalString task) {
-        description = task;
-    }
-
-    /**
-     * Returns the description of the current task being performed, or {@code null} if none.
-     *
-     * @since 2.3
-     */
-    @Override
-    public InternationalString getTask() {
-        return description;
-    }
-
-    /**
-     * Sets the description for the lenghtly operation to be reported. This method is usually
-     * invoked before any progress begins. However, it is legal to invoke this method at any
-     * time during the operation, in which case the description display is updated without
-     * any change to the percentage accomplished.
-     *
-     * @deprecated Replaced by setTask
-     */
-    @Override
-    @Deprecated
-    public synchronized void setDescription(final String description) {
-        this.description = new SimpleInternationalString(description);
-    }
-
-    /**
-     * Description for the lengthly operation to be reported, or {@code null} if none.
-     *
-     * @deprecated Replaced by getTask().toString()
-     */
-    @Override
-    @Deprecated
-    public synchronized String getDescription() {
-        return (description != null) ? description.toString() : null;
-    }
-
-    /**
-     * Notifies this listener that the operation begins.
+     * Notifies this controller that the operation begins.
      */
     @Override
     public synchronized void started() {
         int length = 0;
-        if (description != null) {
-            out.print(description);
-            length=description.length();
+        final InternationalString task = getTask();
+        if (task != null) {
+            final String asString = task.toString(getLocale());
+            out.print(asString);
+            length = asString.length();
         }
         if (CR_supported) {
             carriageReturn(length);
         }
         out.flush();
         percentPosition   = length;
-        lastPercent       = -1;
+        lastPercent       = null;
         lastSource        = null;
         hasPrintedWarning = false;
     }
 
     /**
-     * Notifies this listener of progress in the lengthly operation. Progress are reported
+     * Notifies this controller of progress in the lengthly operation. Progress are reported
      * as a value between 0 and 100 inclusive. Values out of bounds will be clamped.
      *
      * @param percent The progress as a value between 0 and 100 inclusive.
      */
     @Override
-    public synchronized void progress(float percent) {
+    public synchronized void setProgress(float percent) {
         if (percent < 0  ) percent = 0;
         if (percent > 100) percent = 100;
         if (CR_supported) {
@@ -275,24 +208,29 @@ public class ProgressPrinter implements ProgressListener, Disposable {
              * on écrira l'état d'avancement comme un pourcentage après
              * la description, comme dans "Lecture des données (38%)".
              */
-            if (percent != lastPercent) {
+            if (lastPercent == null || percent != super.getProgress()) {
                 if (format == null) {
                     format = NumberFormat.getPercentInstance();
                 }
                 final String text = format.format(percent / 100.0);
-                int length = text.length();
-                percentPosition = 0;
-                if (description != null) {
-                    out.print(description);
-                    out.print(' ');
-                    length += (percentPosition=description.length()) + 1;
+                if (!text.equals(lastPercent)) {
+                    int length = text.length();
+                    percentPosition = 0;
+                    final InternationalString task = getTask();
+                    if (task != null) {
+                        final String asString = task.toString(getLocale());
+                        out.print(asString);
+                        out.print(' ');
+                        length += (percentPosition = asString.length()) + 1;
+                    }
+                    out.print('(');
+                    out.print(text);
+                    out.print(')');
+                    length += 2;
+                    carriageReturn(length);
+                    lastPercent = text;
                 }
-                out.print('(');
-                out.print(text);
-                out.print(')');
-                length += 2;
-                carriageReturn(length);
-                lastPercent = percent;
+                super.setProgress(percent);
             }
         } else {
             /*
@@ -301,39 +239,9 @@ public class ProgressPrinter implements ProgressListener, Disposable {
              * après la description, comme dans "Lecture des données......"
              */
             completeBar(percent);
-            lastPercent = percent;
+            super.setProgress(percent);
             out.flush();
         }
-    }
-
-    /**
-     * Returns the current progress as a percent completed.
-     *
-     * @since 2.3
-     */
-    @Override
-    public float getProgress() {
-        return lastPercent;
-    }
-
-    /**
-     * Indicates that task should be canceled.
-     *
-     * @since 2.3
-     */
-    @Override
-    public void setCanceled(final boolean cancel) {
-        canceled = cancel;
-    }
-
-    /**
-     * Returns {@code true} if this job is canceled.
-     *
-     * @since 2.3
-     */
-    @Override
-    public boolean isCanceled() {
-        return canceled;
     }
 
     /**
@@ -353,13 +261,14 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     @Override
     public synchronized void warningOccurred(final String source, String margin, final String warning) {
         carriageReturn(0);
+        final Locale locale = getLocale();
         if (!hasPrintedWarning) {
-            printInBox(Vocabulary.format(Vocabulary.Keys.WARNING));
+            printInBox(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING));
             hasPrintedWarning = true;
         }
         if (!Utilities.equals(source, lastSource)) {
             out.println();
-            out.println(source!=null ? source : Vocabulary.format(Vocabulary.Keys.UNTITLED));
+            out.println(source != null ? source : Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED));
             lastSource = source;
         }
         /*
@@ -397,9 +306,10 @@ public class ProgressPrinter implements ProgressListener, Disposable {
             out.print(prefix);
             out.println(warning.substring(start, end));
         }
-        if (!CR_supported && description != null) {
-            out.print(description);
-            completeBar(lastPercent);
+        final InternationalString task = getTask();
+        if (!CR_supported && task != null) {
+            out.print(task.toString(locale));
+            completeBar(super.getProgress());
         }
         out.flush();
     }
@@ -410,15 +320,14 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     @Override
     public synchronized void exceptionOccurred(final Throwable exception) {
         carriageReturn(0);
-        printInBox(Vocabulary.format(Vocabulary.Keys.EXCEPTION));
+        printInBox(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.EXCEPTION));
         exception.printStackTrace(out);
         hasPrintedWarning = false;
         out.flush();
     }
 
     /**
-     * Retourne la chaîne {@code margin} sans les éventuelles parenthèses qu'elle pourrait avoir
-     * de part et d'autre.
+     * Returns the {@code margin} string without parenthesis.
      */
     private static String trim(String margin) {
         margin = margin.trim();
@@ -430,10 +339,8 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Écrit dans une boîte entouré d'astérix le texte spécifié en argument.
-     * Ce texte doit être sur une seule ligne et ne pas comporter de retour
-     * chariot. Les dimensions de la boîte seront automatiquement ajustées.
-     * @param text Texte à écrire (une seule ligne).
+     * Writes the given text in a box. The given string shall be a single line.
+     * The box dimension will be adjusted automatically.
      */
     private void printInBox(String text) {
         int length = text.length();
@@ -476,9 +383,12 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Releases any resource hold by this object.
+     * Releases any resource used by this object.
+     *
+     * @deprecated Not needed for this controller.
      */
     @Override
+    @Deprecated
     public void dispose() {
     }
 }

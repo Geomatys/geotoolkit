@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing;
 
-import java.util.Locale;
 import java.awt.*;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -26,14 +25,14 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTitledSeparator;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.gui.swing.event.ProgressListener;
+import org.geotoolkit.gui.swing.event.ProgressController;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.Utilities;
 
@@ -48,13 +47,14 @@ import org.geotoolkit.util.Utilities;
  * <p align="center"><img src="doc-files/ProgressWindow.png"></p>
  * <p>&nbsp;</p>
  *
- * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (MPO, IRD, Geomatys)
+ * @version 3.19
  *
  * @since 1.0
  * @module
  */
-public class ProgressWindow implements ProgressListener, Disposable {
+@ThreadSafe
+public class ProgressWindow extends ProgressController implements Disposable {
     /**
      * Initial width for the progress window, in pixels.
      */
@@ -126,11 +126,6 @@ public class ProgressWindow implements ProgressListener, Disposable {
     private String lastSource;
 
     /**
-     * {@code true} if the action has been canceled.
-     */
-    private volatile boolean canceled;
-
-    /**
      * Creates a window for reporting progress. The window will not appears immediately.
      * It will appears only when the {@link #started} method will be invoked.
      *
@@ -188,8 +183,8 @@ public class ProgressWindow implements ProgressListener, Disposable {
          */
         cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
         cancel.addActionListener(new ActionListener() {
-            @Override public void actionPerformed( ActionEvent e ) {
-                setCanceled(true);
+            @Override public void actionPerformed(ActionEvent e) {
+                cancel();
             }
         });
         final Box cancelBox = Box.createHorizontalBox();
@@ -241,59 +236,17 @@ public class ProgressWindow implements ProgressListener, Disposable {
     }
 
     /**
-     * Sets the description of the current task being performed. This method is usually invoked
-     * before any progress begins. However, it is legal to invoke this method at any time during
-     * the operation, in which case the description display is updated without any change to the
-     * percentage accomplished.
-     *
-     * @param task Description of the task being performed, or {@code null} if none.
+     * {@inheritDoc}
      *
      * @since 2.3
      */
     @Override
-    public void setTask(final InternationalString task) {
+    public void setTask(CharSequence task) {
+        super.setTask(task);
+        if (task instanceof InternationalString) {
+            task = ((InternationalString) task).toString(getLocale());
+        }
         set(Caller.LABEL, task);
-    }
-
-    /**
-     * Returns the description of the current task being performed, or {@code null} if none.
-     *
-     * @return Description of the task being performed.
-     *
-     * @since 2.3
-     */
-    @Override
-    public InternationalString getTask() {
-        return new SimpleInternationalString((String) get(Caller.LABEL));
-    }
-
-    /**
-     * Sets the description for the lenghtly operation to be reported. This method is usually
-     * invoked before any progress begins. However, it is legal to invoke this method at any
-     * time during the operation, in which case the description display is updated without
-     * any change to the percentage accomplished.
-     *
-     * @param description The new description, or {@code null} if none.
-     *
-     * @deprecated Replaced by setTask
-     */
-    @Override
-    @Deprecated
-    public void setDescription(final String description) {
-        setTask(new SimpleInternationalString(description));
-    }
-
-    /**
-     * Description for the lengthly operation to be reported, or {@code null} if none.
-     *
-     * @return The current description, or {@code null} if none.
-     *
-     * @deprecated Replaced by getTask().toString()
-     */
-    @Override
-    @Deprecated
-    public String getDescription() {
-        return getTask().toString();
     }
 
     /**
@@ -306,54 +259,13 @@ public class ProgressWindow implements ProgressListener, Disposable {
     }
 
     /**
-     * Notifies this listener of progress in the lengthly operation. Progress are reported
-     * as a value between 0 and 100 inclusive. Values out of bounds will be clamped.
-     *
-     * @param percent The progress as a value between 0 and 100 inclusive.
+     * {@inheritDoc}
      */
     @Override
-    public void progress(final float percent) {
+    public void setProgress(final float percent) {
+        super.setProgress(percent);
         final int p = Math.max(0, Math.min(100, (int) percent));
         set(Caller.PROGRESS, Integer.valueOf(p));
-    }
-
-    /**
-     * Returns the current progress as a percent completed.
-     *
-     * @return Percent completed between 0 and 100 inclusive.
-     *
-     * @since 2.3
-     */
-    @Override
-    public float getProgress() {
-        BoundedRangeModel model = progressBar.getModel();
-        float progress = (float) (model.getValue() - model.getMinimum());
-        float limit = (float) model.getMaximum();
-        return progress / limit;
-    }
-
-    /**
-     * Indicates that task should be cancelled.
-     *
-     * @param cancel {@code true} for cancelling the task.
-     *
-     * @since 2.3
-     */
-    @Override
-    public void setCanceled(final boolean cancel) {
-        canceled = cancel;
-    }
-
-    /**
-     * Returns {@code true} if this job is cancelled.
-     *
-     * @return {@code true} if this job is cancelled.
-     *
-     * @since 2.3
-     */
-    @Override
-    public boolean isCanceled() {
-        return canceled;
     }
 
     /**
@@ -516,13 +428,7 @@ public class ProgressWindow implements ProgressListener, Disposable {
                     return;
                 }
                 case +LABEL: {
-                    Locale locale;
-                    try {
-                        locale = content.getLocale();
-                    } catch (IllegalComponentStateException e) {
-                        locale = Locale.getDefault();
-                    }
-                    description.setText(((InternationalString) value).toString(locale));
+                    description.setText(value.toString());
                     return;
                 }
                 case PROGRESS: {
