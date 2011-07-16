@@ -19,7 +19,7 @@ package org.geotoolkit.resources.jaxb.feature.catalog;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.util.XmlUnlimitedInteger;
-import org.opengis.util.UnlimitedInteger;
+import org.geotoolkit.util.UnlimitedInteger;
 
 /**
  * JAXB adapter in order to map implementing class with the GeoAPI String. See
@@ -30,9 +30,9 @@ import org.opengis.util.UnlimitedInteger;
  * @author Guilhem Legal
  */
 public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter, UnlimitedInteger> {
-    
+
     private UnlimitedInteger multiplicity;
-    
+
     /**
      * Empty constructor for JAXB only.
      */
@@ -77,7 +77,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
                 this.multiplicity = new UnlimitedInteger(Integer.MAX_VALUE);
             else
                 this.multiplicity = new UnlimitedInteger(multiplicity.getValue());
-        } 
+        }
     }
 
     /**
@@ -107,7 +107,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
         return new UnlimitedIntegerAdapter(value);
     }
 
-    
-    
+
+
 
 }

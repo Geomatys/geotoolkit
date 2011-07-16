@@ -2,7 +2,6 @@
 
 package org.geotoolkit.util;
 
-import org.opengis.util.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.UnlimitedIntegerAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,16 +9,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.gco.GO_Integer;
-import org.geotoolkit.util.Utilities;
 
 
 /**
  * A component of a multiplicity, consisting of an non-negative lower bound, and a potentially infinite upper bound.
- * 
+ *
  * <p>Java class for MultiplicityRange_Type complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MultiplicityRange_Type">
  *   &lt;complexContent>
@@ -32,8 +30,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,7 +44,7 @@ public class MultiplicityRange {
     @XmlJavaTypeAdapter(GO_Integer.class)
     @XmlElement(required = true)
     private Integer lower;
-    
+
     @XmlJavaTypeAdapter(UnlimitedIntegerAdapter.class)
     @XmlElement(required = true)
     private UnlimitedInteger upper;
@@ -55,9 +53,9 @@ public class MultiplicityRange {
      * An empty constructor used by JAXB
      */
     public MultiplicityRange() {
-        
+
     }
-    
+
     /**
      * An empty constructor used by JAXB
      */
@@ -65,7 +63,7 @@ public class MultiplicityRange {
         this.lower = lower;
         this.upper = upper;
     }
-    
+
     /**
      * Gets the value of the lower property.
      */
@@ -75,7 +73,7 @@ public class MultiplicityRange {
 
     /**
      * Sets the value of the lower property.
-     * 
+     *
     */
     public void setLower(final Integer value) {
         this.lower = value;
@@ -90,21 +88,21 @@ public class MultiplicityRange {
 
     /**
      * Sets the value of the upper property.
-     * 
+     *
      */
     public void setUpper(final UnlimitedInteger value) {
         this.upper = value;
     }
-    
+
     @Override
     public String toString() {
-        return "[MultiplicityRange]: lower=" + lower + " upper=" + upper; 
+        return "[MultiplicityRange]: lower=" + lower + " upper=" + upper;
     }
     public String toString(final String margin) {
-        return margin + "[MultiplicityRange]: lower=" + lower + " upper=" + upper; 
+        return margin + "[MultiplicityRange]: lower=" + lower + " upper=" + upper;
     }
-    
-    
+
+
     /**
      * Verify if this entry is identical to the specified object.
      */

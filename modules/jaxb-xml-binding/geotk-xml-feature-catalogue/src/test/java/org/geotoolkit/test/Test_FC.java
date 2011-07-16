@@ -64,7 +64,7 @@ import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.ListedValue;
 import org.opengis.feature.catalog.PropertyType;
 import org.opengis.feature.catalog.RoleType;
-import org.opengis.util.UnlimitedInteger;
+import org.geotoolkit.util.UnlimitedInteger;
 
 /**
  *
@@ -73,52 +73,52 @@ import org.opengis.util.UnlimitedInteger;
  */
 @Ignore
 public class Test_FC {
-    
+
      /**
      * The main method.
      * @param args the path to file to read.
      * @throws Exception*/
     public static Logger logger = Logger.getLogger("main");
-     
+
     public static void main(final String[] args) throws Exception {
 
-        
+
         //String fileName = "generated19110-InheritanceRelation-.xml";
         //String fileName = "generated19110-featureCatalogue-.xml";
-        //String fileName = "generated19110-featureOperation-.xml"; 
+        //String fileName = "generated19110-featureOperation-.xml";
         String fileName = "generated19110-featureAssociation-.xml";
         // Unmarshalles the given XML file to objects
         JAXBContext context;
-        
+
         context = JAXBContext.newInstance(
                          DefaultMetadata.class,
                          AssociationRoleImpl.class, BindingImpl.class, BoundFeatureAttributeImpl.class,
                          ConstraintImpl.class, DefinitionReferenceImpl.class, DefinitionSourceImpl.class,
                          FeatureAssociationImpl.class, FeatureAttributeImpl.class, FeatureCatalogueImpl.class,
                          FeatureOperationImpl.class, FeatureTypeImpl.class, InheritanceRelationImpl.class,
-                         ListedValueImpl.class, PropertyTypeImpl.class, Multiplicity.class);   
-        
+                         ListedValueImpl.class, PropertyTypeImpl.class, Multiplicity.class);
+
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Marshaller marshaller     = context.createMarshaller();
          try {
-            //unmarshaller.setProperty("com.sun.xml.bind.IDResolver", new DocumentIDResolver()); 
+            //unmarshaller.setProperty("com.sun.xml.bind.IDResolver", new DocumentIDResolver());
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         } catch (PropertyException e) {
             System.out.println("prefix non trouv");
         }
-        
+
         Object request;
         if (true){
 
             //request = unmarshaller.unmarshal(new FileReader(fileName));
-           
-        
+
+
             String name = "Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)";
             List<String> scopes = new ArrayList<String>();
             scopes.add("Hydrography");scopes.add("Ports and Harbours");scopes.add("Transportation Networks");
             String versionNumber = "2.1";
             Date versionDate = new Date(2000, 9, 30);
-            
+
             // producer
             DefaultResponsibleParty producer = new DefaultResponsibleParty();
             producer.setIndividualName("John Q.Public");
@@ -143,7 +143,7 @@ public class Test_FC {
             contact.setAddress(address);
             producer.setContactInfo(contact);
             producer.setRole(Role.POINT_OF_CONTACT);
-            
+
             //definition source
             List<DefinitionSource> defSources = new ArrayList<DefinitionSource>();
             DefaultCitation source = new DefaultCitation();
@@ -164,10 +164,10 @@ public class Test_FC {
             source.setOtherCitationDetails(new SimpleInternationalString("Special publication n°32"));
             DefinitionSource defSource = new DefinitionSourceImpl("ds-IHO", source);
             defSources.add(defSource);
-            
+
             //featureTypes 1
-            
-            
+
+
             List<FeatureType> ftypes = new ArrayList<FeatureType>();
             String def = "An excavation made in the earth for the purpose of extracting natural deposit. (see also AQ090)";
             String code = "DEP";
@@ -176,13 +176,13 @@ public class Test_FC {
 
             aliases.add(factory.createLocalName(null, "Extraction Mine"));
             List<PropertyType> cof = new ArrayList<PropertyType>();
-            
-            
+
+
             //attribute constraint
             Constraint constraint   = new ConstraintImpl("Positive values represent distance below the refernce point from wixh the measurement is made");
             List<Constraint> consts = new ArrayList<Constraint>();
             consts.add(constraint);
-            
+
             // feature attribute 1 with constraint
             FeatureAttributeImpl attr = new FeatureAttributeImpl("attribute-1",
                                                                  factory.createLocalName(null, "Depth"),
@@ -194,39 +194,39 @@ public class Test_FC {
                                                                  null,
                                                                  factory.createTypeName(null, "Real"));
             cof.add(attr);
-            
+
             // listed values
             List<ListedValue> values = new ArrayList<ListedValue>();
-            
+
             ListedValue v1 = new ListedValueImpl("0", "Unknown", "The attribute value is missing", null);
             values.add(v1);
-            
+
             //definition reference
             DefinitionReference defRef      = new DefinitionReferenceImpl("3833, pier", defSource);
-            
+
             ListedValue v2 = new ListedValueImpl("1", "Pier", null, defRef);
             values.add(v2);
-            
+
             DefinitionReference defRef2 = new DefinitionReferenceImpl("5985, wharf",defSource);
-            
+
             ListedValue v3 = new ListedValueImpl("2", "Wharf", null, defRef2);
             values.add(v3);
-            
+
             DefinitionReference defRef3 = new DefinitionReferenceImpl("4125, quay", defSource);
-            
+
             ListedValue v4 = new ListedValueImpl("3", "Quay", null, defRef3);
             values.add(v4);
-            
+
             ListedValue v5 = new ListedValueImpl("997", "Unpopulated", "The attribute value exist, but due to the policy considerations it cannot be given", null);
             values.add(v5);
-            
+
             ListedValue v6 = new ListedValueImpl("998", "Not applicable", "No attribute value in the range of possible attribute values is applicable", null);
             values.add(v6);
-            
+
             ListedValue v7 = new ListedValueImpl("999", "Other", "The attribute value cannot be given for some reason other than it is 'Multiple', 'Not applicable', 'Unknown', or 'Unpopulated'", null);
             values.add(v7);
-            
-            
+
+
             // feature attribute 2 with listed value
             FeatureAttributeImpl attr2 = new FeatureAttributeImpl("attribute-2",
                                                                  factory.createLocalName(null, "Pier/Wharf/Quay classification"),
@@ -238,31 +238,31 @@ public class Test_FC {
                                                                  values,
                                                                  factory.createTypeName(null,"Real"));
             cof.add(attr2);
-            
+
             code = "AA010";
             FeatureTypeImpl ft1 = new FeatureTypeImpl(factory.createLocalName(null, "Mine"),
-                                                      def, 
-                                                      code, 
-                                                      false, 
-                                                      aliases, 
-                                                      null, 
+                                                      def,
+                                                      code,
+                                                      false,
+                                                      aliases,
+                                                      null,
                                                       cof);
-            
+
             attr.setFeatureType(ft1);
-            
-            
+
+
             ftypes.add(ft1);
-            
-            
-            
-            
-            
+
+
+
+
+
             //field of application
             List<String> foa = new ArrayList<String>();
             foa.add("Military Engineering");
             foa.add("Marine Navigation");
             FeatureCatalogueImpl catalogue = new FeatureCatalogueImpl("cat-1",
-                                                                  name, 
+                                                                  name,
                                                                   scopes,
                                                                   producer,
                                                                   versionDate,
@@ -271,36 +271,36 @@ public class Test_FC {
                                                                   defSources,
                                                                   foa,
                                                                   "Gofer");
-            
+
             ft1.setFeatureCatalogue(catalogue);
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
             //feature type 2
             List<PropertyType> cof2 = new ArrayList<PropertyType>();
-            
+
             FeatureTypeImpl ft2 = new FeatureTypeImpl(factory.createLocalName(null,"Road"),
-                                                      "An open way maintained for vehicular use.", 
-                                                      "AP030", 
-                                                      false, 
-                                                      null, 
-                                                      catalogue, 
+                                                      "An open way maintained for vehicular use.",
+                                                      "AP030",
+                                                      false,
+                                                      null,
+                                                      catalogue,
                                                       cof2);
-            
+
             //feature type 3
             List<PropertyType> cof3 = new ArrayList<PropertyType>();
-            
+
             FeatureTypeImpl ft3 = new FeatureTypeImpl(factory.createLocalName(null,"Bidge"),
-                                                      "A man made structure spanning and providing passage over a body of water", 
-                                                      "AQ040", 
-                                                      false, 
-                                                      null, 
-                                                      catalogue, 
+                                                      "A man made structure spanning and providing passage over a body of water",
+                                                      "AQ040",
+                                                      false,
+                                                      null,
+                                                      catalogue,
                                                       cof3);
-            
+
             // Assoication role
             AssociationRoleImpl role1 = new AssociationRoleImpl("role-1",
                                                             factory.createLocalName(null,"Over"),
@@ -315,7 +315,7 @@ public class Test_FC {
                                                             null,
                                                             ft3);
             cof2.add(role1);
-            
+
              // Assoication role
             AssociationRoleImpl role2 = new AssociationRoleImpl("role-2",
                                                             factory.createLocalName(null,"Under"),
@@ -330,10 +330,10 @@ public class Test_FC {
                                                             null,
                                                             ft2);
             cof3.add(role2);
-            
+
             // Feature association
             List<AssociationRole> roles = new ArrayList<AssociationRole>();
-            
+
             FeatureAssociationImpl fassoc = new FeatureAssociationImpl(factory.createLocalName(null,"Stacked On"),
                                                                     "An object is over another object",
                                                                     "101",
@@ -344,35 +344,35 @@ public class Test_FC {
                                                                     roles);
             roles.add(role1);
             roles.add(role2);
-            
+
             role1.setRelation(fassoc);
             role2.setRelation(fassoc);
-            
-            
+
+
             //// inheritance relation
-            
-            
+
+
             //feature type 4
-            
+
             FeatureTypeImpl ft4 = new FeatureTypeImpl(factory.createLocalName(null,"Building"),
-                                                      "A relatively permanent structure, roofed and usually walled and designed for some particular use.", 
-                                                      "AL015", 
-                                                      false, 
-                                                      null, 
-                                                      catalogue, 
+                                                      "A relatively permanent structure, roofed and usually walled and designed for some particular use.",
+                                                      "AL015",
+                                                      false,
+                                                      null,
+                                                      catalogue,
                                                       null);
              //feature type 5
-            
+
             FeatureTypeImpl ft5 = new FeatureTypeImpl(factory.createLocalName(null,"Lighthouse"),
-                                                      "A distinctive structure exhibiting light(s) designed to serve as an aid to navigation.", 
-                                                      "BC050", 
-                                                      false, 
-                                                      null, 
-                                                      catalogue, 
+                                                      "A distinctive structure exhibiting light(s) designed to serve as an aid to navigation.",
+                                                      "BC050",
+                                                      false,
+                                                      null,
+                                                      catalogue,
                                                       null);
-            
+
             // inheritanceRelation
-            
+
             InheritanceRelationImpl inherit = new InheritanceRelationImpl("is a",
                                                                          "An object is classified as a specialization of another object",
                                                                          false,
@@ -381,8 +381,8 @@ public class Test_FC {
             inherit.setId("inherits-1");
             ft4.getInheritsTo().add(inherit);
             ft5.getInheritsFrom().add(inherit);
-            
-            
+
+
             // feature operation
             FeatureOperationImpl operation = new FeatureOperationImpl();
             operation.setId("operation-1");
@@ -396,14 +396,14 @@ public class Test_FC {
                                           " damRaise(Operate (d,i,j), h)" +
                                           "   | (h >i)    && (h < maxHeight(d)) = Operate(d,h,j)" +
                                           "   | otherwise = error 'illegal new height for dam'  ");
-            
+
             BoundFeatureAttributeImpl bf1 = new BoundFeatureAttributeImpl();
             bf1.setId("boundatt-1");
             bf1.setAttribute(attr2);
             bf1.setFeatureType(ft5);
-            
+
             operation.getObservesValuesOf().add(bf1);
-            
+
             if (false) {
                 request = catalogue;
             } else if (false) {
@@ -413,36 +413,36 @@ public class Test_FC {
             } else if (false) {
                 request = operation;
             }
-            
+
             /*System.out.println("beforeEquals");
             System.out.println("equals?" + (request.equals(catalogue)));
             System.out.println("after equals");
-            
+
             System.out.println(request);*/
 
             marshaller.marshal(catalogue, System.out);
             /*FeatureAssociationImpl requtt = (FeatureAssociationImpl) request;
-            
-            
-            
-            
+
+
+
+
             */
             //logger.info("construit:   " + operation.toString(""));
             //logger.info("unmarshallé: " + requtt.toString(""));
         }
-        
+
         /*FeatureCatalogueImpl cata = new FeatureCatalogueImpl();
         FeatureTypeImpl ft = new FeatureTypeImpl();
         ft.setId("ft-1");
-        
+
         cata.setId("cat-1");
         cata.setFeatureType(ft);
         ft.setFeatureCatalogue(cata);*/
-       
+
         String fileOutput = "output.xml";
         //marshaller.marshal(request, new File(fileOutput));
 
-       
+
     }
 
 }

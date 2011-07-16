@@ -35,7 +35,6 @@ import java.util.logging.Level;
 import java.io.Serializable;
 
 import org.opengis.referencing.operation.OperationNotFoundException;
-import org.opengis.util.Cloneable;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -48,6 +47,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -109,7 +109,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      * {@linkplain Feature feature} under the mouse cursor.
      */
     private Object userObject;
-    
+
     /**
      * A generic identifier for this geometry.
      */
@@ -141,7 +141,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
     public String getName(final Locale locale) {
         return null;
     }
-    
+
     /**
      * Returns the geometry ID. The ID is string that identifies the current
      * geometry and its application specific, that is, the renderer won't use it
@@ -218,7 +218,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      * @return A transformation from <code>sourceCS</code> to <code>targetCS</code>.
      */
     static CoordinateOperation getCoordinateTransformation(final CoordinateReferenceSystem sourceCS,
-                                                                final CoordinateReferenceSystem targetCS) 
+                                                                final CoordinateReferenceSystem targetCS)
                                                                 throws OperationNotFoundException, FactoryException {
         return CRS.getCoordinateOperationFactory(true).createOperation(sourceCS, targetCS);
     }
@@ -232,7 +232,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      *         or <code>null</code>.
      */
     static CoordinateOperation getIdentityTransform(final CoordinateReferenceSystem coordinateSystem) {
-        if (coordinateSystem != null) 
+        if (coordinateSystem != null)
             try {
             return getCoordinateTransformation(coordinateSystem, coordinateSystem);
         } catch (OperationNotFoundException exception) {
@@ -308,7 +308,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      *
      * @param  x the specified <var>x</var> coordinates in this geometry coordinate system.
      * @param  y the specified <var>y</var> coordinates in this geometry coordinate system.
-     * @return <code>true</code> if the specified coordinates are inside 
+     * @return <code>true</code> if the specified coordinates are inside
      *         the geometry boundary; <code>false</code> otherwise.
      */
     @Override
@@ -321,7 +321,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      * Tests if a specified {@link Point2D} is inside the boundary of this geometry.
      *
      * @param  point the specified point in this geometry coordinate system.
-     * @return <code>true</code> if the specified point is inside 
+     * @return <code>true</code> if the specified point is inside
      *         the geometry boundary; <code>false</code> otherwise.
      */
     @Override
@@ -713,7 +713,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
         format.format(minY, buffer, dummy).append(" \u2026 ");
         format.format(maxY, buffer, dummy).append("} (");
         buffer.append(getPointCount()); buffer.append(" pts)");
-        
+
         buffer.append(']');
         return buffer.toString();
     }

@@ -20,7 +20,7 @@ import java.util.List;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.Description;
-import org.opengis.util.Cloneable;
+import org.geotoolkit.util.Cloneable;
 
 /**
  *
@@ -28,29 +28,29 @@ import org.opengis.util.Cloneable;
  * @module pending
  */
 public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Cloneable{
-    
+
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";
     public static final String VERSION_PROPERTY = "version";
-    
+
     /**
      * Set the name of the sld.
      * @param name : new name
      */
     void setName(String name);
-    
+
     /**
      * Set the description of the sld.
      * @param description : new description
      */
     void setDescription(Description description);
-            
+
     @Override
     List<SLDLibrary> libraries();
-    
+
     @Override
     List<MutableLayer> layers();
-    
+
     /**
      * Set the version of the sld
      * @param version : new version
@@ -60,9 +60,9 @@ public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Clo
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
+
     void addListener(SLDListener listener);
-    
+
     void removeListener(SLDListener listener);
-    
+
 }

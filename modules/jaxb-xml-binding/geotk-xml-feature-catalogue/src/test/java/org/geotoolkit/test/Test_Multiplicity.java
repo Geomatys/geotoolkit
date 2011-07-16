@@ -26,7 +26,7 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.util.Multiplicity;
 import org.geotoolkit.util.MultiplicityRange;
 import org.junit.Ignore;
-import org.opengis.util.UnlimitedInteger;
+import org.geotoolkit.util.UnlimitedInteger;
 
 /**
  *
@@ -35,14 +35,14 @@ import org.opengis.util.UnlimitedInteger;
  */
 @Ignore
 public class Test_Multiplicity {
-    
+
     public static void main(final String[] args) throws Exception {
-        
-    
+
+
      String fileName = "multiplicity.xml";
         // Unmarshalles the given XML file to objects
-        JAXBContext context = JAXBContext.newInstance(Multiplicity.class);   
-        
+        JAXBContext context = JAXBContext.newInstance(Multiplicity.class);
+
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Marshaller marshaller     = context.createMarshaller();
         try {
@@ -50,18 +50,18 @@ public class Test_Multiplicity {
         } catch (PropertyException e) {
             System.out.println("prefix non trouv");
         }
-        
+
         MultiplicityRange range = new MultiplicityRange(1, new UnlimitedInteger(Integer.MAX_VALUE));
         Multiplicity mul = new Multiplicity(range);
-        
+
         UnlimitedInteger i = new UnlimitedInteger(Integer.MAX_VALUE);
-        
+
         Object request = unmarshaller.unmarshal(new FileReader(fileName));
-        
+
         System.out.println("unmarshalled: " + request);
-        
+
         String fileOutput = "output.xml";
-        
+
         marshaller.marshal(mul, new File(fileOutput));
     }
 }

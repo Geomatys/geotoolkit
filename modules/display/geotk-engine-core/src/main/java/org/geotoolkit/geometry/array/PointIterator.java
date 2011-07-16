@@ -22,7 +22,7 @@ import java.awt.geom.Point2D;
 import java.util.Iterator;
 
 // OpenGIS dependencies
-import org.opengis.util.Cloneable;
+import org.geotoolkit.util.Cloneable;
 
 
 /**

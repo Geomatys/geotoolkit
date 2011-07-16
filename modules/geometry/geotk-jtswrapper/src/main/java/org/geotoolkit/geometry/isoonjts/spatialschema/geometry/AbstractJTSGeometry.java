@@ -24,6 +24,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoin
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
 import org.geotoolkit.internal.jaxb.CoordinateReferenceSystemAdapter;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.Cloneable;
 
 import org.geotoolkit.util.Utilities;
 import org.opengis.util.FactoryException;
@@ -40,11 +41,10 @@ import org.opengis.geometry.Precision;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.Ring;
-import org.opengis.util.Cloneable;
 
 /**
  * Base class for our JTS-based implementation of the various ISO 19107 geometry classes.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -212,7 +212,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         int d = jtsGeom.getDimension();
         if (d == 0) {
             // If d is zero, then our geometry is a point.  So the boundary is
-            // empty.  ISO 19107 defines the boundary of a point to 
+            // empty.  ISO 19107 defines the boundary of a point to
             // be NULL.
             return null;
         } else if (d == 1) {

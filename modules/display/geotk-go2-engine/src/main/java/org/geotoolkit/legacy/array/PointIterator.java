@@ -20,7 +20,7 @@ package org.geotoolkit.legacy.array;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 
-import org.opengis.util.Cloneable;
+import org.geotoolkit.util.Cloneable;
 
 
 /**
