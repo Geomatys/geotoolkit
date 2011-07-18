@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.util.Utilities;
@@ -60,6 +59,7 @@ propOrder = {
     "changeNote",
     "name",
     "narrower",
+    "narrowerTransitive",
     "modified",
     "example",
     "geometry"
@@ -69,9 +69,12 @@ public class Concept implements Serializable {
     
     @XmlAttribute(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     private String about;
+    
+    @XmlAttribute(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    private String resource;
 
     @XmlElement(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
-    private String type;
+    private Concept type;
 
     @XmlElement(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     private String value;
@@ -89,7 +92,7 @@ public class Concept implements Serializable {
     private List<String> altLabel;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private String related;
+    private Concept related;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String scopeNote;
@@ -101,16 +104,13 @@ public class Concept implements Serializable {
     private String name;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private List<String> broader;
-
-    @XmlTransient
-    private List<Concept> broaderConcept;
+    private List<Concept> broader;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private List<String> narrower;
-
-    @XmlTransient
-    private List<Concept> narrowerConcept;
+    private List<Concept> narrower;
+    
+    @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
+    private List<Concept> narrowerTransitive;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String definition;
@@ -120,9 +120,6 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String creator;
-
-    @XmlTransient
-    private Concept creatorConcept;
 
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String date;
@@ -209,32 +206,44 @@ public class Concept implements Serializable {
     public Map<String, String> getRelations() {
         Map<String, String> response = new HashMap<String, String>();
         if (narrower != null) {
-            for (String naro : narrower)
-                response.put(naro, "http://www.w3.org/2004/02/skos/core#narrower");
+            for (Concept naro : narrower) {
+                response.put(naro.resource, "http://www.w3.org/2004/02/skos/core#narrower");
+            }
         }
         if (broader != null) {
-            for (String bro : broader)
-                response.put(bro, "http://www.w3.org/2004/02/skos/core#broader");
+            for (Concept bro : broader) {
+                response.put(bro.resource, "http://www.w3.org/2004/02/skos/core#broader");
+            }
         }
 
         if (related != null) {
-            response.put(related, "http://www.w3.org/2004/02/skos/core#related");
+            response.put(related.resource, "http://www.w3.org/2004/02/skos/core#related");
         }
         return response;
     }
 
     public List<String> getRelations(final String property) {
+        final List<String> result = new ArrayList<String>();
         if ("http://www.w3.org/2004/02/skos/core#narrower".equals(property)) {
-            return narrower;
+            if (narrower != null) {
+                for (Concept c : narrower) {
+                    result.add(c.resource);
+                }
+            }
         }
         if ("http://www.w3.org/2004/02/skos/core#broader".equals(property)) {
-            return broader;
+            if (broader != null) {
+                for (Concept c : broader) {
+                    result.add(c.resource);
+                }
+            }
         }
-
         if ("http://www.w3.org/2004/02/skos/core#related".equals(property)) {
-            return Arrays.asList(related);
+            if (related != null) {
+                result.add(related.resource);
+            }
         }
-        return null;
+        return result;
     }
 
     public String getAbout() {
@@ -382,14 +391,14 @@ public class Concept implements Serializable {
     /**
      * @return the type
      */
-    public String getType() {
+    public Concept getType() {
         return type;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(final String type) {
+    public void setType(final Concept type) {
         this.type = type;
     }
 
@@ -438,9 +447,9 @@ public class Concept implements Serializable {
     /**
      * @return the broader
      */
-    public List<String> getBroader() {
+    public List<Concept> getBroader() {
         if (broader == null) {
-            broader = new ArrayList<String>();
+            broader = new ArrayList<Concept>();
         }
         return broader;
     }
@@ -448,47 +457,20 @@ public class Concept implements Serializable {
     /**
      * @param broader the broader to set
      */
-    public void setBroader(final List<String> broader) {
+    public void setBroader(final List<Concept> broader) {
         this.broader = broader;
     }
 
     /**
      * @param broader the broader to add
      */
-    public void addBroader(final String broader) {
+    public void addBroader(final Concept broader) {
         if (this.broader == null) {
-            this.broader = new ArrayList<String>();
+            this.broader = new ArrayList<Concept>();
         }
-        if (broader != null)
+        if (broader != null) {
             this.broader.add(broader);
-    }
-
-    /**
-     * @return the broaderConcept
-     */
-    public List<Concept> getBroaderConcept() {
-        return broaderConcept;
-    }
-
-    /**
-     * @param broaderConcept the broaderConcept to set
-     */
-    public void setBroaderConcept(final List<Concept> broaderConcept) {
-        this.broaderConcept = broaderConcept;
-    }
-
-    /**
-     * @return the creatorConcept
-     */
-    public Concept getCreatorConcept() {
-        return creatorConcept;
-    }
-
-    /**
-     * @param creatorConcept the creatorConcept to set
-     */
-    public void setCreatorConcept(final Concept creatorConcept) {
-        this.creatorConcept = creatorConcept;
+        }
     }
 
     /**
@@ -508,53 +490,54 @@ public class Concept implements Serializable {
     /**
      * @return the narrower
      */
-    public List<String> getNarrower() {
+    public List<Concept> getNarrower() {
         return narrower;
     }
 
     /**
      * @param narrower the narrower to set
      */
-    public void setNarrower(final List<String> narrower) {
+    public void setNarrower(final List<Concept> narrower) {
         this.narrower = narrower;
     }
 
     /**
      * @param broader the broader to add
      */
-    public void addNarrower(final String narrower) {
+    public void addNarrower(final Concept narrower) {
         if (this.narrower == null) {
-            this.narrower = new ArrayList<String>();
+            this.narrower = new ArrayList<Concept>();
         }
-        if (narrower != null)
+        if (narrower != null) {
             this.narrower.add(narrower);
+        }
     }
 
     /**
-     * @return the narrowerConcept
+     * @return the narrowerTransitive
      */
-    public List<Concept> getNarrowerConcept() {
-        return narrowerConcept;
+    public List<Concept> getNarrowerTransitive() {
+        return narrowerTransitive;
     }
 
     /**
-     * @param narrowerConcept the narrowerConcept to set
+     * @param narrowerTransitive the narrowerTransitive to set
      */
-    public void setNarrowerConcept(final List<Concept> narrowerConcept) {
-        this.narrowerConcept = narrowerConcept;
+    public void setNarrowerTransitive(List<Concept> narrowerTransitive) {
+        this.narrowerTransitive = narrowerTransitive;
     }
-
+    
     /**
      * @return the related
      */
-    public String getRelated() {
+    public Concept getRelated() {
         return related;
     }
 
     /**
      * @param related the related to set
      */
-    public void setRelated(final String related) {
+    public void setRelated(final Concept related) {
         this.related = related;
     }
 
@@ -601,6 +584,20 @@ public class Concept implements Serializable {
     }
 
     /**
+     * @return the resource
+     */
+    public String getResource() {
+        return resource;
+    }
+
+    /**
+     * @param resource the resource to set
+     */
+    public void setResource(final String resource) {
+        this.resource = resource;
+    }
+    
+    /**
      * @return the geometry
      */
     public List<AbstractGMLType> getGeometry() {
@@ -627,7 +624,7 @@ public class Concept implements Serializable {
         }
         if (broader != null) {
             sb.append("broder:").append('\n');
-            for (String b : broader) {
+            for (Concept b : broader) {
                 sb.append(b).append('\n');
             }
         }
@@ -720,6 +717,7 @@ public class Concept implements Serializable {
     public int hashCode() {
         int hash = 7;
         hash = 47 * hash + (this.about != null ? this.about.hashCode() : 0);
+        hash = 47 * hash + (this.resource != null ? this.resource.hashCode() : 0);
         hash = 47 * hash + (this.externalID != null ? this.externalID.hashCode() : 0);
         return hash;
     }

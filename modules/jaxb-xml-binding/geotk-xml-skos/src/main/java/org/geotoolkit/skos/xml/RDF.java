@@ -38,6 +38,9 @@ public class RDF implements Serializable {
     
     @XmlElement(name="Concept", namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> concept;
+    
+    @XmlElement(name="Description", namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    private List<Concept> description;
 
     public RDF() {
         concept = new ArrayList<Concept>();
@@ -45,6 +48,11 @@ public class RDF implements Serializable {
     
     public RDF(final List<Concept> concept) {
         this.concept = concept;
+    }
+    
+    public RDF(final List<Concept> concept, final List<Concept> description) {
+        this.concept = concept;
+        this.description = description;
     }
     
     public List<Concept> getConcept() {
@@ -55,6 +63,20 @@ public class RDF implements Serializable {
 
     public void setConcept(final List<Concept> concept) {
         this.concept = concept;
+    }
+    
+    /**
+     * @return the description
+     */
+    public List<Concept> getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(List<Concept> description) {
+        this.description = description;
     }
     
     @Override
@@ -68,8 +90,8 @@ public class RDF implements Serializable {
     }
 
     public Map<String, String> getShortMap() {
-        Map<String, String> map = new HashMap<String, String>();
-        if (getConcept().size() != 0) {
+        final Map<String, String> map = new HashMap<String, String>();
+        if (getConcept().isEmpty()) {
             for (Concept c : getConcept()) {
                 String id = c.getExternalID();
                 id = id.substring(id.lastIndexOf(':') + 1);
@@ -101,5 +123,5 @@ public class RDF implements Serializable {
         hash = 73 * hash + (this.concept != null ? this.concept.hashCode() : 0);
         return hash;
     }
-    
+
 }
