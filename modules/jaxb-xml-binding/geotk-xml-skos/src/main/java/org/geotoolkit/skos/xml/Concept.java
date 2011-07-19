@@ -39,19 +39,25 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "Concept", 
 namespace = "http://www.w3.org/2004/02/skos/core#",
 propOrder = {
+    "hierarchyRoot",
+    "hierarchyRootType",
     "externalID",
     "prefLabel",
     "altLabel",
     "definition",
-    "date",
     "description",
     "language",
     "rights",
-    "title",
     "issued",
     "type",
     "value",
     "label",
+    "hasTopConcept",
+    "hasVersion",
+    "date",
+    "contributor",
+    "title",
+    "subject",
     "creator",
     "broader",
     "related",
@@ -81,7 +87,16 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace="http://www.w3.org/2000/01/rdf-schema#")
     private String label;
-
+    
+    @XmlElement(namespace="http://semantic-web.at/ontologies/csw.owl#")
+    private Boolean hierarchyRoot;
+    
+    @XmlElement(namespace="http://semantic-web.at/ontologies/csw.owl#")
+    private Concept hierarchyRootType;
+    
+    @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
+    private List<Concept> hasTopConcept;
+            
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String externalID;
     
@@ -100,9 +115,6 @@ public class Concept implements Serializable {
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String example;
 
-    @XmlElement(namespace = "http://xmlns.com/foaf/0.1")
-    private String name;
-
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> broader;
 
@@ -118,6 +130,12 @@ public class Concept implements Serializable {
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String changeNote;
 
+    @XmlElement(namespace = "http://xmlns.com/foaf/0.1")
+    private String name;
+    
+    @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
+    private String subject;
+    
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String creator;
 
@@ -135,7 +153,13 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String title;
+    
+    @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
+    private String contributor;
 
+    @XmlElement(namespace="http://purl.org/dc/terms")
+    private String hasVersion;
+    
     @XmlElement(namespace="http://purl.org/dc/terms")
     private String issued;
 
@@ -183,19 +207,15 @@ public class Concept implements Serializable {
             if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equals("definition")) {
                 return definition;
             }
-
             if (property.equals("http://www.w3.org/2004/02/skos/core#prefLabel") || property.equals("preferredLabel")) {
                 return prefLabel;
             }
-
             if (property.equals("http://www.w3.org/2004/02/skos/core#scopeNote") || property.equals("scopeNote")) {
                 return scopeNote;
             }
-
             if ((property.equals("http://www.w3.org/2004/02/skos/core#altLabel") || property.equals("nonPreferredLabels")) && altLabel!= null && altLabel.size() > 0) {
                 return altLabel.get(0);
             }
-
             if (property.equals("http://www.w3.org/2004/02/skos/core#example") || property.equals("example")) {
                 return example;
             }
@@ -215,7 +235,6 @@ public class Concept implements Serializable {
                 response.put(bro.resource, "http://www.w3.org/2004/02/skos/core#broader");
             }
         }
-
         if (related != null) {
             response.put(related.resource, "http://www.w3.org/2004/02/skos/core#related");
         }
@@ -595,6 +614,102 @@ public class Concept implements Serializable {
      */
     public void setResource(final String resource) {
         this.resource = resource;
+    }
+    
+    /**
+     * @return the hierarchyRoot
+     */
+    public Boolean getHierarchyRoot() {
+        return hierarchyRoot;
+    }
+
+    /**
+     * @param hierarchyRoot the hierarchyRoot to set
+     */
+    public void setHierarchyRoot(Boolean hierarchyRoot) {
+        this.hierarchyRoot = hierarchyRoot;
+    }
+
+    /**
+     * @return the hierarchyRootType
+     */
+    public Concept getHierarchyRootType() {
+        return hierarchyRootType;
+    }
+
+    /**
+     * @param hierarchyRootType the hierarchyRootType to set
+     */
+    public void setHierarchyRootType(Concept hierarchyRootType) {
+        this.hierarchyRootType = hierarchyRootType;
+    }
+
+    /**
+     * @return the hasTopConcept
+     */
+    public List<Concept> getHasTopConcept() {
+        return hasTopConcept;
+    }
+
+    /**
+     * @param hasTopConcept the hasTopConcept to set
+     */
+    public void setHasTopConcept(final List<Concept> hasTopConcept) {
+        this.hasTopConcept = hasTopConcept;
+    }
+
+    /**
+     * @param broader the broader to add
+     */
+    public void addHasTopConcept(final Concept topConcept) {
+        if (this.hasTopConcept == null) {
+            this.hasTopConcept = new ArrayList<Concept>();
+        }
+        if (hasTopConcept != null) {
+            this.hasTopConcept.add(topConcept);
+        }
+    }
+    
+    /**
+     * @return the subject
+     */
+    public String getSubject() {
+        return subject;
+    }
+
+    /**
+     * @param subject the subject to set
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    /**
+     * @return the contributor
+     */
+    public String getContributor() {
+        return contributor;
+    }
+
+    /**
+     * @param contributor the contributor to set
+     */
+    public void setContributor(String contributor) {
+        this.contributor = contributor;
+    }
+
+    /**
+     * @return the hasVersion
+     */
+    public String getHasVersion() {
+        return hasVersion;
+    }
+
+    /**
+     * @param hasVersion the hasVersion to set
+     */
+    public void setHasVersion(String hasVersion) {
+        this.hasVersion = hasVersion;
     }
     
     /**
