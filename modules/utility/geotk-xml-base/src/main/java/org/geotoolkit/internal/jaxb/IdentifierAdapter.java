@@ -32,8 +32,10 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * Wraps a {@code XLink}, {@code UUID} or other objects as an identifier
+ * Wraps a {@link XLink}, {@link UUID} or other objects as an identifier
  * in the {@link IdentifierMap}.
+ *
+ * @param  <T> The value type, typically {@link XLink}, {@link UUID} or {@link String}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
@@ -41,7 +43,7 @@ import org.geotoolkit.util.Utilities;
  * @since 3.19
  * @module
  */
-final class IdentifierAdapter<T> implements Identifier {
+public final class IdentifierAdapter<T> implements Identifier {
     /**
      * The authority.
      */
@@ -54,8 +56,11 @@ final class IdentifierAdapter<T> implements Identifier {
 
     /**
      * Creates a new adapter for the given authority and identifier value.
+     *
+     * @param authority The identifier authority.
+     * @param value The identifier value.
      */
-    IdentifierAdapter(final IdentifierSpace<T> authority, final T value) {
+    public IdentifierAdapter(final IdentifierSpace<T> authority, final T value) {
         this.authority = authority;
         this.value = value;
     }

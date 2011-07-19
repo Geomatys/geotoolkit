@@ -27,7 +27,6 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.internal.jaxb.gco.ObjectReference;
 import org.geotoolkit.metadata.iso.citation.DefaultSeries;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.util.LenientComparable;
@@ -102,7 +101,7 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
         final Series series = citation.getSeries();
         assertInstanceOf("Should have instantiated a proxy.", IdentifiedObject.class, series);
         assertEquals("href", "org:dummy", ((IdentifiedObject) series).getXLink().getHRef().toString());
-        assertEquals("Series[ObjectReference[type=\"simple\", href=\"org:dummy\"]]", series.toString());
+        assertEquals("Series[{xlink=“XLink[type=\"simple\", href=\"org:dummy\"]”}]", series.toString());
         assertNull("All attributes are expected to be null.", series.getName());
         try {
             ((IdentifiedObject) series).setXLink(null);
@@ -127,7 +126,7 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
      */
     @Test
     public void testEquals() throws URISyntaxException, JAXBException {
-        final XLink link = new ObjectReference();
+        final XLink link = new XLink();
         link.setType(XLink.Type.SIMPLE);
         link.setHRef(new URI("org:dummy"));
         final DefaultSeries series = new DefaultSeries();

@@ -18,17 +18,22 @@
 package org.geotoolkit.xml;
 
 import java.util.Map;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 
+import org.opengis.metadata.Identifier;
+
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 
 
 /**
@@ -41,14 +46,14 @@ import org.geotoolkit.resources.Errors;
  *        it doesn't seem worth to cache the handlers.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18
  * @module
  */
 final class NilObjectHandler implements InvocationHandler {
     /**
-     * The {@code xlink} attribute as an {@link XLink} object, or the {@code nilReason}
+     * The identifiers as an {@link IdentifierMapAdapter} object, or the {@code nilReason}
      * attribute as a {@link NilReason} object. We don't use separated fields because
      * those attributes are exclusive, and some operations like {@code toString()},
      * {@code hashCode()} and {@code equals(Object)} are the same for both types.
@@ -56,10 +61,12 @@ final class NilObjectHandler implements InvocationHandler {
     private final Object attribute;
 
     /**
-     * Creates a new handler for an object identified by the given {@code xlink} attributes.
+     * Creates a new handler for an object identified by the given identifiers.
+     * The identifiers are wrapped in a mutable list, so users can add, remove
+     * or modify identifiers.
      */
-    NilObjectHandler(final XLink xlink) {
-        attribute = xlink;
+    <T extends Identifier> NilObjectHandler(final Class<T> type, final T[] identifiers) {
+        attribute = IdentifierMapAdapter.create(type, new ArrayList<T>(Arrays.asList(identifiers)));
     }
 
     /**
@@ -96,13 +103,16 @@ final class NilObjectHandler implements InvocationHandler {
      * a choice:
      * <p>
      * <ul>
-     *   <li>If the invoked method is {@code getXLink()}, returns the {@link #xlink} attribute.</li>
+     *   <li>If the invoked method is {@code getIdentifiers()}, returns the identifiers given at
+     *       construction time.</li>
+     *   <li>If the invoked method is {@code getIdentifierMap()}, returns a view over the
+     *       identifiers given at construction time.</li>
      *   <li>If the invoked method is any other kind of getter, returns null except if the return
      *       type is a collection, in which case an empty collection is returned.</li>
      *   <li>If the invoked method is a setter method, throw a {@link UnsupportedOperationException}
      *       since the proxy instance is assumed unmodifiable.</li>
      *   <li>If the invoked method is one of the {@link Object} method, delegate to the
-     *       {@link XLink}.</li>
+     *       {@link #reference}.</li>
      * </ul>
      */
     @Override
@@ -113,8 +123,16 @@ final class NilObjectHandler implements InvocationHandler {
             if (name.equals("getNilReason")) {
                 return (attribute instanceof NilReason) ? (NilReason) attribute : null;
             }
-            if (name.equals("getXLink")) {
-                return (attribute instanceof XLink) ? (XLink) attribute : null;
+            if (name.equals("getIdentifierMap")) {
+                return (attribute instanceof IdentifierMap) ? (IdentifierMap) attribute : null;
+            }
+            if (name.equals("getIdentifiers")) {
+                return (attribute instanceof IdentifierMapAdapter) ?
+                        ((IdentifierMapAdapter) attribute).identifiers : null;
+            }
+            if (name.equals("getXLink")) { // @Deprecated method
+                return (attribute instanceof IdentifierMap) ?
+                        ((IdentifierMap) attribute).getSpecialized(IdentifierSpace.XLINK) : null;
             }
             if (name.equals("toString")) {
                 return getInterface(proxy).getSimpleName() + '[' + attribute + ']';
@@ -165,24 +183,25 @@ final class NilObjectHandler implements InvocationHandler {
         switch (mode) {
             case STRICT: return false; // The above test is the only relevant one for this mode.
             case BY_CONTRACT: {
-                Object ox = null;
-                if (attribute instanceof XLink) {
+                Object tx = attribute, ox = null;
+                if (tx instanceof IdentifierMapAdapter) {
+                    tx = ((IdentifierMapAdapter) tx).identifiers;
                     if (other instanceof IdentifiedObject) {
-                        ox = ((IdentifiedObject) other).getXLink();
+                        ox = ((IdentifiedObject) other).getIdentifiers();
                     }
                 } else {
                     if (other instanceof NilObject) {
                         ox = ((NilObject) other).getNilReason();
                     }
                 }
-                if (!Utilities.equals(attribute, ox)) {
+                if (!Utilities.equals(tx, ox)) {
                     return false;
                 }
                 break;
             }
         }
         /*
-         * Having two objects declaring the same xlink and implementing the same interface,
+         * Having two objects declaring the same identifiers and implementing the same interface,
          * ensures that all properties in the other objects are null or empty collections.
          */
         final Class<?> type = getInterface(proxy);

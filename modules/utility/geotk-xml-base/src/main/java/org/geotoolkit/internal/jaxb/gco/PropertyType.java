@@ -23,14 +23,21 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.XLink;
+import org.geotoolkit.xml.NilObject;
 import org.geotoolkit.xml.NilReason;
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.xml.NilObject;
+import org.geotoolkit.xml.IdentifierMap;
+import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
+import org.geotoolkit.internal.jaxb.IdentifierAuthority;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -69,7 +76,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see XmlAdapter
  *
@@ -88,7 +95,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Either an {@link ObjectReference} or a {@link String}.
      * <p>
      * <ul>
-     *   <li>{@link ObjectReference} defines the {@code uuidref}, {@code type}, {@code xlink:href},
+     *   <li>{@link ObjectReference} defines the {@code idref}, {@code uuidref}, {@code xlink:href},
      *       {@code xlink:role}, {@code xlink:arcrole}, {@code xlink:title}, {@code xlink:show} and
      *       {@code xlink:actuate} attributes.</li>
      *   <li>{@link String} defines the {@code nilReason} attribute.</li>
@@ -115,9 +122,16 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     protected PropertyType(final BoundType metadata) {
         this.metadata = metadata;
         if (metadata instanceof IdentifiedObject) {
-            reference = ((IdentifiedObject) metadata).getXLink();
+            final IdentifierMap map = ((IdentifiedObject) metadata).getIdentifierMap();
+            final String id   = map.get(IdentifierSpace.ID);
+            final String uuid = map.get(IdentifierSpace.UUID);
+            final XLink  link = map.getSpecialized(IdentifierSpace.XLINK);
+            if (id != null || uuid != null || link != null) {
+                reference = new ObjectReference(id, uuid, link);
+                return;
+            }
         }
-        if (reference == null && metadata instanceof NilObject) {
+        if (metadata instanceof NilObject) {
             final NilReason reason = ((NilObject) metadata).getNilReason();
             if (reason != null) {
                 reference = reason.toString();
@@ -126,23 +140,41 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     }
 
     /**
-     * Returns the object reference, or {@code null} if none.
+     * Returns the object reference, or {@code null} if none and the {@code create} argument is
+     * {@code false}. If the {@code create} argument is {@code true}, then this method will create
+     * the object reference when first needed. In the later case, any previous {@code gco:nilReason}
+     * will be overwritten since the object is not nil.
      */
-    final XLink reference() {
+    private ObjectReference reference(final boolean create) {
         final Object ref = reference;
-        return (ref instanceof XLink) ? (XLink) ref : null;
+        if (ref instanceof ObjectReference) {
+            return (ObjectReference) ref;
+        } else if (create) {
+            final ObjectReference newRef = new ObjectReference();
+            reference = newRef;
+            return newRef;
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Returns the object reference, creating it if needed. Note that if a {@code gco:nilReason}
-     * were defined, then it will be overwritten since the object is not nil.
+     * Returns the {@code xlink}, or {@code null} if none and {@code create} is {@code false}.
+     * If the {@code create} argument is {@code true}, then this method will create the XLink
+     * when first needed. In the later case, any previous {@code gco:nilReason} will be
+     * overwritten since the object is not nil.
      */
-    private XLink referenceNotNull() {
-        Object ref = reference;
-        if (!(ref instanceof XLink)) {
-            reference = ref = new ObjectReference();
+    private XLink xlink(final boolean create) {
+        final ObjectReference ref = reference(create);
+        if (ref == null) {
+            return null;
         }
-        return (XLink) ref;
+        XLink xlink = ref.xlink;
+        if (create && xlink == null) {
+            ref.xlink = xlink = new XLink();
+            xlink.setType(XLink.Type.SIMPLE);
+        }
+        return xlink;
     }
 
     /**
@@ -186,7 +218,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
             return true;
         }
         final Object ref = reference;
-        return (ref instanceof ObjectReference) && ((ObjectReference) ref).uuidref != null;
+        return (ref instanceof ObjectReference) && ((ObjectReference) ref).uuid != null;
     }
 
     /**
@@ -200,23 +232,19 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "uuidref")
     public final String getUUIDREF() {
-        final Object ref = reference;
-        return (ref instanceof ObjectReference) ? ((ObjectReference) ref).uuidref : null;
+        final ObjectReference ref = reference(false);
+        return (ref != null) ? ref.uuid : null;
     }
 
     /**
      * Sets the {@code uuidref} attribute value.
      *
-     * @param uuidref The new attribute value.
+     * @param uuid The new attribute value.
      * @category gco:ObjectReference
      * @since 3.18
      */
-    public final void setUUIDREF(final String uuidref) {
-        XLink link = referenceNotNull();
-        if (!(link instanceof ObjectReference)) {
-            link = new ObjectReference(link);
-        }
-        ((ObjectReference) link).uuidref = uuidref;
+    public final void setUUIDREF(final String uuid) {
+        reference(true).uuid = uuid;
     }
 
     /**
@@ -227,10 +255,10 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     }
 
     /**
-     * Parses the given URI, or returns {@code null} if the given argument is null.
+     * Parses the given URI, or returns {@code null} if the given argument is null or empty.
      */
     private static URI toURI(final String uri) throws URISyntaxException {
-        return (uri != null) ? MarshalContext.converters().toURI(uri) : null;
+        return MarshalContext.converters().toURI(uri);
     }
 
     /**
@@ -244,8 +272,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "href", namespace = Namespaces.XLINK)
     public final String getHRef() {
-        final XLink reference = reference();
-        return (reference != null) ? toString(reference.getHRef()) : null;
+        final XLink link = xlink(false);
+        return (link != null) ? toString(link.getHRef()) : null;
     }
 
     /**
@@ -257,7 +285,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setHRef(final String href) throws URISyntaxException {
-        referenceNotNull().setHRef(toURI(href));
+        xlink(true).setHRef(toURI(href));
     }
 
     /**
@@ -269,8 +297,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "role", namespace = Namespaces.XLINK)
     public final String getRole() {
-        final XLink reference = reference();
-        return (reference != null) ? toString(reference.getRole()) : null;
+        final XLink link = xlink(false);
+        return (link != null) ? toString(link.getRole()) : null;
     }
 
     /**
@@ -282,7 +310,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setRole(final String role) throws URISyntaxException {
-        referenceNotNull().setRole(toURI(role));
+        xlink(true).setRole(toURI(role));
     }
 
     /**
@@ -294,8 +322,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "arcrole", namespace = Namespaces.XLINK)
     public final String getArcRole() {
-        final XLink reference = reference();
-        return (reference != null) ? toString(reference.getArcRole()) : null;
+        final XLink link = xlink(false);
+        return (link != null) ? toString(link.getArcRole()) : null;
     }
 
     /**
@@ -307,7 +335,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setArcRole(final String arcrole) throws URISyntaxException {
-        referenceNotNull().setArcRole(toURI(arcrole));
+        xlink(true).setArcRole(toURI(arcrole));
     }
 
     /**
@@ -320,8 +348,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
     public final String getTitle() {
-        final XLink reference = reference();
-        return (reference != null) ? toString(reference.getTitle()) : null;
+        final XLink link = xlink(false);
+        return (link != null) ? toString(link.getTitle()) : null;
     }
 
     /**
@@ -331,9 +359,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @category xlink
      * @since 3.18
      */
-    public final void setTitle(final String title) {
-        if (title != null) {
-            referenceNotNull().setTitle(new SimpleInternationalString(title));
+    public final void setTitle(String title) {
+        if (title != null && !(title = title.trim()).isEmpty()) {
+            xlink(true).setTitle(new SimpleInternationalString(title));
         }
     }
 
@@ -355,8 +383,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "show", namespace = Namespaces.XLINK)
     public final XLink.Show getShow() {
-        final XLink reference = reference();
-        return (reference != null) ? reference.getShow() : null;
+        final XLink link = xlink(false);
+        return (link != null) ? link.getShow() : null;
     }
 
     /**
@@ -367,7 +395,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setShow(final XLink.Show show) {
-        referenceNotNull().setShow(show);
+        xlink(true).setShow(show);
     }
 
     /**
@@ -387,8 +415,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "actuate", namespace = Namespaces.XLINK)
     public final XLink.Actuate getActuate() {
-        final XLink reference = reference();
-        return (reference != null) ? reference.getActuate() : null;
+        final XLink link = xlink(false);
+        return (link != null) ? link.getActuate() : null;
     }
 
     /**
@@ -399,7 +427,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setActuate(final XLink.Actuate actuate) {
-        referenceNotNull().setActuate(actuate);
+        xlink(true).setActuate(actuate);
     }
 
     // Do NOT declare attributes xlink:label, xlink:from and xlink:to,
@@ -478,18 +506,24 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     }
 
     /**
-     * If the {@linkplain #metadata} is still null, try to resolve it using UUID, XLink
-     * or NilReason information.
+     * If the {@linkplain #metadata} is still null, tries to resolve it using UUID, XLink
+     * or NilReason information. This method is invoked at unmarshalling time.
      *
      * @throws URISyntaxException If a URI can not be parsed.
+     * @throws IllegalArgumentException If the UUID can not be parsed.
      */
-    final void resolve() throws URISyntaxException {
-        final XLink xlink = reference();
-        if (xlink != null) {
-            if (metadata == null) {
-                metadata = MarshalContext.linker().resolve(getBoundType(), xlink);
-            } else if (metadata instanceof IdentifiedObject) {
-                ((IdentifiedObject) metadata).setXLink(xlink);
+    final void resolve() throws URISyntaxException, IllegalArgumentException {
+        final ObjectReference ref = reference(false);
+        if (ref != null) {
+            final Identifier[] identifiers = ref.getIdentifiers();
+            if (identifiers != null) {
+                if (metadata == null) {
+                    metadata = MarshalContext.linker().resolve(getBoundType(), identifiers);
+                } else if (metadata instanceof IdentifiedObject) {
+                    // TODO: need to find some way to get type safety here.
+                    final Collection currentIds = ((IdentifiedObject) metadata).getIdentifiers();
+                    IdentifierAuthority.replace(currentIds, Arrays.asList(identifiers));
+                }
             }
         }
         if (metadata == null) {

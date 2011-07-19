@@ -18,9 +18,11 @@
 package org.geotoolkit.xml;
 
 import java.lang.reflect.Proxy;
+import org.opengis.metadata.Identifier;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.LenientComparable;
+import org.geotoolkit.internal.jaxb.IdentifierAdapter;
 
 
 /**
@@ -34,7 +36,7 @@ import org.geotoolkit.util.LenientComparable;
  * {@code ObjectLinker} to a unmarshaller.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.18
  * @module
@@ -54,12 +56,46 @@ public class ObjectLinker {
     }
 
     /**
+     * Returns an object of the given type for the given set of identifiers. The default implementation
+     * returns an object which implement the given interface together with the {@link IdentifiedObject}
+     * interface. The methods are implemented as below:
+     * <p>
+     * <ul>
+     *   <li>{@link IdentifiedObject#getIdentifiers()} will return the given identifiers</li>
+     *   <li>{@link IdentifiedObject#getIdentifierMap()} will return a view over those identifiers</li>
+     *   <li>and all other methods (except the ones inherited from the {@link Object} class) will return
+     *       {@code null} or an empty collection as appropriate.</li>
+     * </ul>
+     * <p>
+     * Subclasses can inspect the identifiers in order to return an existing instance before
+     * to fallback on this default implementation.
+     *
+     * @param  <T> The compile-time type of the {@code type} argument.
+     * @param  type The type of object to be unmarshalled as an <strong>interface</strong>.
+     *         This is usually a <a href="http://www.geoapi.org">GeoAPI</a> interface.
+     * @param  identifiers An arbitrary amount of identifiers. For each identifier, the
+     *         {@linkplain Identifier#getAuthority() authority} is typically (but not
+     *         necessarily) one of the constants defined in {@link IdentifierSpace}.
+     * @return An object of the given type for the given identifiers, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T resolve(final Class<T> type, final Identifier... identifiers) {
+        ArgumentChecks.ensureNonNull("type", type);
+        ArgumentChecks.ensureNonNull("identifiers", identifiers);
+        if (NilObjectHandler.isIgnoredInterface(type)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+        }
+        return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
+                new Class<?>[] {type, IdentifiedObject.class, NilObject.class, LenientComparable.class},
+                new NilObjectHandler(Identifier.class, identifiers));
+    }
+
+    /**
      * Returns an object of the given type for the given {@code xlink} attributes.
-     * The default implementation returns an immutable object which implement the
-     * given interface together with the {@link IdentifiedObject} interface. The
-     * {@link IdentifiedObject#getXLink()} method will return the given link, and
-     * all other methods (except the ones inherited from the {@link Object} class)
-     * will return {@code null} or an empty collection as appropriate.
+     * This convenience method delegates to {@link #resolve(Class, Identifier[])}.
+     * Subclasses need to override the above method rather than this one.
      *
      * @param  <T> The compile-time type of the {@code type} argument.
      * @param  type The type of object to be unmarshalled as an <strong>interface</strong>.
@@ -68,16 +104,8 @@ public class ObjectLinker {
      * @return An object of the given type for the given {@code xlink} attributes,
      *         or {@code null} if none.
      */
-    @SuppressWarnings("unchecked")
-    public <T> T resolve(final Class<T> type, final XLink link) {
-        ArgumentChecks.ensureNonNull("type", type);
-        ArgumentChecks.ensureNonNull("link", link);
-        if (NilObjectHandler.isIgnoredInterface(type)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
-        }
-        return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
-                new Class<?>[] {type, IdentifiedObject.class, NilObject.class, LenientComparable.class},
-                new NilObjectHandler(link));
+    public final <T> T resolve(final Class<T> type, final XLink link) {
+        return resolve(type, new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, link));
     }
 
     /**

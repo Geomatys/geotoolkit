@@ -298,7 +298,7 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
 
     /**
      * Removes from the given collection every identifiers having an {@code IdentifierAuthority},
-     * then add the previously filtered identifiers (if any).
+     * then adds the previously filtered identifiers (if any).
      *
      * @param <T> The type of object used as identifier values.
      * @param identifiers The collection from which to remove identifiers, or {@code null}.

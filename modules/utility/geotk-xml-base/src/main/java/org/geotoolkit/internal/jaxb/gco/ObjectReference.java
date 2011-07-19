@@ -17,16 +17,21 @@
  */
 package org.geotoolkit.internal.jaxb.gco;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import java.util.UUID;
+
+import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.XLink;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.xml.IdentifierSpace;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.internal.jaxb.IdentifierAdapter;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
  * The {@code gco:ObjectReference} XML attribute group is included by all metadata wrappers defined
  * in the {@link org.geotoolkit.internal.jaxb.metadata} package. The attributes of interest defined
- * in this group are {@code uuidref}, {@code type}, {@code xlink:href}, {@code xlink:role},
+ * in this group are {@code idref}, {@code uuidref}, {@code xlink:href}, {@code xlink:role},
  * {@code xlink:arcrole}, {@code xlink:title}, {@code xlink:show} and {@code xlink:actuate}.
  * <p>
  * This {@code gco:ObjectReference} group is complementary to {@code gco:ObjectIdentification},
@@ -40,14 +45,14 @@ import org.geotoolkit.util.Utilities;
  * @see <a href="http://schemas.opengis.net/iso/19139/20070417/gco/gcoBase.xsd">OGC schema</a>
  * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-165">GEOTK-165</a>
  *
- * @since 3.18
+ * @since 3.19
  * @module
  */
-public final class ObjectReference extends XLink {
+final class ObjectReference {
     /**
-     * For cross-version compatibility.
+     * The identifier, or {@code null} if undefined.
      */
-    private static final long serialVersionUID = 8626892072241872154L;
+    String id;
 
     /**
      * A URN to an external resources, or to an other part of a XML document, or an identifier.
@@ -56,50 +61,48 @@ public final class ObjectReference extends XLink {
      *
      * @see <a href="http://www.schemacentral.com/sc/niem21/a-uuidref-1.html">Usage of uuidref</a>
      */
-    @XmlAttribute
-    public String uuidref;
+    String uuid;
 
     /**
-     * Creates a new object reference of kind {@code xlink:simpleLink}.
+     * The {@code xlink} attributes, or {@code null} if none.
      */
-    public ObjectReference() {
-        setType(Type.SIMPLE);
+    XLink xlink;
+
+    /**
+     * Creates an initially empty object reference.
+     */
+    ObjectReference() {
     }
 
     /**
-     * Creates a new reference as a copy of the given link.
+     * Creates an object reference initialized to the given value.
+     */
+    ObjectReference(final String id, final String uuid, final XLink link) {
+        this.id   = id;
+        this.uuid = uuid;
+        this.xlink = link;
+    }
+
+    /**
+     * Returns the field values as an array of identifiers.
      *
-     * @param link The link to copy, or {@code null} if none.
+     * @throws IllegalArgumentException If the UUID can not be parsed.
      */
-    public ObjectReference(final XLink link) {
-        super(link);
-        if (link instanceof ObjectReference) {
-            uuidref = ((ObjectReference) link).uuidref;
+    Identifier[] getIdentifiers() throws IllegalArgumentException {
+        final Identifier[] identifiers = new Identifier[3];
+        int count = 0;
+        if (id != null) {
+            identifiers[count++] = new IdentifierAdapter<String>(IdentifierSpace.ID, id);
         }
-    }
-
-    /**
-     * Compares this {@code ObjectReference} with the given object for equality.
-     *
-     * @param object The object to compare with this object reference.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object == this) {
-            return true;
+        if (uuid != null) {
+            final UUID parsed = MarshalContext.converters().toUUID(uuid);
+            if (parsed != null) {
+                identifiers[count++] = new IdentifierAdapter<UUID>(IdentifierSpace.UUID, parsed);
+            }
         }
-        if (super.equals(object)) {
-            final ObjectReference that = (ObjectReference) object;
-            return Utilities.equals(this.uuidref, that.uuidref);
+        if (xlink != null) {
+            identifiers[count++] = new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
         }
-        return false;
-    }
-
-    /**
-     * Returns a hash code value for this object reference.
-     */
-    @Override
-    public int hashCode() {
-        return Utilities.hash(uuidref, super.hashCode());
+        return XArrays.resize(identifiers, count);
     }
 }
