@@ -230,6 +230,11 @@ public class Concept implements Serializable {
                 response.put(naro.resource, "http://www.w3.org/2004/02/skos/core#narrower");
             }
         }
+        if (narrowerTransitive != null) {
+            for (Concept naro : narrowerTransitive) {
+                response.put(naro.resource, "http://www.w3.org/2004/02/skos/core#narrowerTransitive");
+            }
+        }
         if (broader != null) {
             for (Concept bro : broader) {
                 response.put(bro.resource, "http://www.w3.org/2004/02/skos/core#broader");
@@ -246,6 +251,13 @@ public class Concept implements Serializable {
         if ("http://www.w3.org/2004/02/skos/core#narrower".equals(property)) {
             if (narrower != null) {
                 for (Concept c : narrower) {
+                    result.add(c.resource);
+                }
+            }
+        }
+        if ("http://www.w3.org/2004/02/skos/core#narrowerTransitive".equals(property)) {
+            if (narrowerTransitive != null) {
+                for (Concept c : narrowerTransitive) {
                     result.add(c.resource);
                 }
             }
@@ -544,6 +556,18 @@ public class Concept implements Serializable {
      */
     public void setNarrowerTransitive(List<Concept> narrowerTransitive) {
         this.narrowerTransitive = narrowerTransitive;
+    }
+    
+    /**
+     * @param broader the broader to add
+     */
+    public void addNarrowerTransitive(final Concept narrower) {
+        if (this.narrowerTransitive == null) {
+            this.narrowerTransitive = new ArrayList<Concept>();
+        }
+        if (narrower != null) {
+            this.narrowerTransitive.add(narrower);
+        }
     }
     
     /**
