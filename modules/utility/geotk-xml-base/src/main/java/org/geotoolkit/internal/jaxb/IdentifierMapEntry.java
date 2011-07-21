@@ -23,15 +23,19 @@ import org.opengis.metadata.citation.Citation;
 
 
 /**
- * An entry in the {@link IdentifierMap}.
+ * An entry in the {@link IdentifierMap}. This class implements both the
+ * {@link Map.Entry} interface (for inclusion in the set to be returned
+ * by {@link IdentifierMapAdapter#entrySet()}) and the {@link Identifier}
+ * interface (for inclusion in the {@link IdentifierMapAdapter#identifiers}
+ * collection).
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
- * @since 3.18
+ * @since 3.19
  * @module
  */
-final class IdentifierEntry extends AbstractMap.SimpleEntry<Citation,String> implements Identifier {
+final class IdentifierMapEntry extends AbstractMap.SimpleEntry<Citation,String> implements Identifier {
     /**
      * For cross-version compatibility.
      */
@@ -40,7 +44,7 @@ final class IdentifierEntry extends AbstractMap.SimpleEntry<Citation,String> imp
     /**
      * Creates a new entry for the given authority and code.
      */
-    IdentifierEntry(final Citation authority, final String code) {
+    IdentifierMapEntry(final Citation authority, final String code) {
         super(authority, code);
     }
 

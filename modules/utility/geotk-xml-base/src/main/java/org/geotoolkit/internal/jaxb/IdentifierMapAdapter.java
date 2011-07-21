@@ -34,7 +34,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.UnsupportedImplementationException;
-import org.geotoolkit.internal.Citations;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifierMap;
 
@@ -81,7 +80,7 @@ import org.geotoolkit.xml.IdentifierMap;
  * @since 3.18
  * @module
  */
-public final class IdentifierMapAdapter extends AbstractMap<Citation,String> implements IdentifierMap, Serializable {
+public class IdentifierMapAdapter extends AbstractMap<Citation,String> implements IdentifierMap, Serializable {
     /**
      * For cross-version compatibility.
      */
@@ -107,7 +106,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
      *
      * @param identifiers The identifiers to wrap in a map view.
      */
-    private IdentifierMapAdapter(final Collection<Identifier> identifiers) {
+    IdentifierMapAdapter(final Collection<Identifier> identifiers) {
         this.identifiers = identifiers;
     }
 
@@ -124,7 +123,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
             final Class<T> type, final Collection<T> identifiers)
     {
         if (type == Identifier.class) {
-            return new IdentifierMapAdapter((Collection) identifiers);
+            return new IdentifierMapWithSpecialCases((Collection) identifiers);
         }
         // TODO: add more cases.
         throw new UnsupportedImplementationException(type);
@@ -238,7 +237,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
     }
 
     /**
-     * Set the code of the identifier having the given authority to the given value.
+     * Sets the code of the identifier having the given authority to the given value.
      * If no identifier is found for the given authority, a new one is created. If
      * more than one identifier is found for the given authority, then all previous
      * identifiers may be removed in order to ensure that the new entry will be the
@@ -258,8 +257,8 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
             if (identifier == null) {
                 it.remove(); // Opportunist cleaning, but should not happen.
             } else if (Utilities.equals(authority, identifier.getAuthority())) {
-                if (code != null && identifier instanceof IdentifierEntry) {
-                    return ((IdentifierEntry) identifier).setValue(code);
+                if (code != null && identifier instanceof IdentifierMapEntry) {
+                    return ((IdentifierMapEntry) identifier).setValue(code);
                     // No need to suppress other occurrences of the key (if any)
                     // because we made a replacement in the first entry, so the
                     // new value will be visible by the getter methods.
@@ -273,13 +272,13 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
             }
         }
         if (code != null) {
-            identifiers.add(IdentifierAdapter.create(authority, code));
+            identifiers.add(IdentifierAdapter.parse(authority, code));
         }
         return old;
     }
 
     /**
-     * Returns the identifier associated with the given authority.
+     * Sets the identifier associated with the given authority, and returns the previous value.
      */
     @Override
     public <T> T putSpecialized(final IdentifierSpace<T> authority, final T value) throws UnsupportedOperationException {
@@ -459,10 +458,10 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
                         final Citation authority = identifier.getAuthority();
                         final Boolean state = put(authority, Boolean.FALSE);
                         if (state == null) {
-                            if (identifier instanceof IdentifierEntry) {
-                                next = (IdentifierEntry) identifier;
+                            if (identifier instanceof IdentifierMapEntry) {
+                                next = (IdentifierMapEntry) identifier;
                             } else {
-                                next = new IdentifierEntry.Immutable(authority, identifier.getCode());
+                                next = new IdentifierMapEntry.Immutable(authority, identifier.getCode());
                             }
                             this.authority = authority;
                             return;
@@ -538,7 +537,7 @@ public final class IdentifierMapAdapter extends AbstractMap<Citation,String> imp
 	    if (buffer.length() != 1) {
                 buffer.append(", ");
             }
-            buffer.append(Citations.getIdentifier(entry.getKey())).append("=“").append(entry.getValue()).append('”');
+            IdentifierAdapter.format(buffer, entry.getKey(), entry.getValue());
 	}
         return buffer.append('}').toString();
     }

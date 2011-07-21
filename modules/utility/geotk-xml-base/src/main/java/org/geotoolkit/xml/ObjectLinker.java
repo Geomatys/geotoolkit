@@ -105,6 +105,8 @@ public class ObjectLinker {
      *         or {@code null} if none.
      */
     public final <T> T resolve(final Class<T> type, final XLink link) {
+        ArgumentChecks.ensureNonNull("type",  type);
+        ArgumentChecks.ensureNonNull("xlink", link);
         return resolve(type, new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, link));
     }
 
@@ -124,6 +126,7 @@ public class ObjectLinker {
      */
     @SuppressWarnings("unchecked")
     public <T> T resolve(final Class<T> type, final NilReason nilReason) {
+        ArgumentChecks.ensureNonNull("type", type);
         ArgumentChecks.ensureNonNull("nilReason", nilReason);
         return nilReason.createNilObject(type);
     }

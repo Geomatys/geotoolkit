@@ -78,13 +78,14 @@ final class ObjectReference {
      * Creates an object reference initialized to the given value.
      */
     ObjectReference(final String id, final String uuid, final XLink link) {
-        this.id   = id;
-        this.uuid = uuid;
+        this.id    = id;
+        this.uuid  = uuid;
         this.xlink = link;
     }
 
     /**
      * Returns the field values as an array of identifiers.
+     * Those identifiers will be assigned to the unmarshalled metadata object.
      *
      * @throws IllegalArgumentException If the UUID can not be parsed.
      */

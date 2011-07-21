@@ -29,11 +29,13 @@ import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.internal.Citations;
 
 
 /**
- * Wraps a {@link XLink}, {@link UUID} or other objects as an identifier
- * in the {@link IdentifierMap}.
+ * Wraps a {@link XLink}, {@link UUID} or other objects as an identifier in the {@link IdentifierMap}.
+ * The {@linkplain #authority} is typically an instance of {@link IdentifierAuthority}. The value is
+ * an object of a type constrained by the authority.
  *
  * @param  <T> The value type, typically {@link XLink}, {@link UUID} or {@link String}.
  *
@@ -45,19 +47,23 @@ import org.geotoolkit.util.Utilities;
  */
 public final class IdentifierAdapter<T> implements Identifier {
     /**
-     * The authority.
+     * The authority, typically as an {@link IdentifierAuthority) instance.
+     * This authority is not allowed to be null.
+     *
+     * @see #getAuthority()
      */
-    final IdentifierSpace<T> authority;
+    private final IdentifierSpace<T> authority;
 
     /**
-     * The identifier value.
+     * The identifier value. The identifier {@linkplain #getCode() code} will be the
+     * {@linkplain Object#toString() string representation} of this value, if non-null.
      */
     T value;
 
     /**
      * Creates a new adapter for the given authority and identifier value.
      *
-     * @param authority The identifier authority.
+     * @param authority The identifier authority (can not be null).
      * @param value The identifier value.
      */
     public IdentifierAdapter(final IdentifierSpace<T> authority, final T value) {
@@ -66,9 +72,15 @@ public final class IdentifierAdapter<T> implements Identifier {
     }
 
     /**
-     * Creates an identifier from a text value.
+     * Creates an identifier from a text value. This method creates an instance of
+     * {@code IdentifierAdapter} if the given authority is one of the "special"
+     * authorities declared in the {@link IdentifierSpace} interface. Otherwise
+     * a plain {@link IdentifierMapEntry} is created.
+     *
+     * @param authority The authority, typically as one of the {@link IdentifierSpace} constants.
+     * @param code The identifier code to parse.
      */
-    static Identifier create(final Citation authority, final String code) {
+    static Identifier parse(final Citation authority, final String code) {
         if (authority instanceof IdentifierAuthority) {
             switch (((IdentifierAuthority) authority).ordinal) {
                 case IdentifierAuthority.ID: {
@@ -82,34 +94,41 @@ public final class IdentifierAdapter<T> implements Identifier {
                         break;
                     }
                 }
-                case IdentifierAuthority.HREF:
-                case IdentifierAuthority.XLINK: {
-                    final URI uri;
+                case IdentifierAuthority.HREF: {
+                    final URI href;
                     try {
-                        uri = new URI(code);
+                        href = new URI(code);
                     } catch (URISyntaxException e) {
                         parseFailure(e);
                         break;
                     }
-                    if (authority == IdentifierSpace.HREF) {
-                        // TODO: Actually, should be stored as XLink using code below.
-                        return new IdentifierAdapter<URI>(IdentifierSpace.HREF, uri);
+                    return new IdentifierAdapter<URI>(IdentifierSpace.HREF, href);
+                }
+                case IdentifierAuthority.XLINK: {
+                    final URI href;
+                    try {
+                        href = new URI(code);
+                    } catch (URISyntaxException e) {
+                        parseFailure(e);
+                        break;
                     }
                     final XLink xlink = new XLink();
                     xlink.setType(XLink.Type.SIMPLE);
-                    xlink.setHRef(uri);
+                    xlink.setHRef(href);
                     return new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
                 }
             }
         }
-        return new IdentifierEntry(authority, code);
+        return new IdentifierMapEntry(authority, code);
     }
 
     /**
-     * Invoked when a string can not be parsed in the identifier type to be stored in the map.
+     * Invoked by {@link #parse(Citation, String)} when a string can not be parsed. This is
+     * considered as a non-fatal error, because the parse method can fallback on the generic
+     * {@link IdentifierMapEntry} in such case.
      */
     private static void parseFailure(final Exception e) {
-        Logging.recoverableException(IdentifierMap.class, "putSpecialized", e);
+        Logging.recoverableException(IdentifierMap.class, "put", e);
     }
 
     /**
@@ -121,11 +140,12 @@ public final class IdentifierAdapter<T> implements Identifier {
     }
 
     /**
-     * Returns a string representation of the identifier given at construction time.
+     * Returns a string representation of the identifier given at construction time,
+     * or {@code null} if none.
      */
     @Override
     public String getCode() {
-        return value.toString();
+        return (value != null) ? value.toString() : null;
     }
 
     /**
@@ -138,6 +158,8 @@ public final class IdentifierAdapter<T> implements Identifier {
 
     /**
      * Compares this identifier with the given object for equality.
+     *
+     * @param other The object to compare with this identifier for equality.
      */
     @Override
     public boolean equals(final Object other) {
@@ -154,12 +176,19 @@ public final class IdentifierAdapter<T> implements Identifier {
      */
     @Override
     public String toString() {
-        final String code = String.valueOf(value);
-        final boolean quote = (value != null) && (code instanceof CharSequence || code.indexOf('[') >= 1);
-        final StringBuilder buffer = new StringBuilder("Identifier[\"").append(authority).append("\", ");
-        if (quote) buffer.append('"');
-        buffer.append(code);
-        if (quote) buffer.append('"');
+        final StringBuilder buffer = new StringBuilder("Identifier[");
+        format(buffer, authority, getCode());
         return buffer.append(']').toString();
+    }
+
+    /**
+     * Formats the given (authority, code) par value in the given buffer.
+     */
+    static void format(final StringBuilder buffer, final Citation authority, final String code) {
+        buffer.append(Citations.getIdentifier(authority)).append('=');
+        final boolean quote = (code != null) && (code.indexOf('[') < 0);
+        if (quote) buffer.append('“');
+        buffer.append(code);
+        if (quote) buffer.append('”');
     }
 }

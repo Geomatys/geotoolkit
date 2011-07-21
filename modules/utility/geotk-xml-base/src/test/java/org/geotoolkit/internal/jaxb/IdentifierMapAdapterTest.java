@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Collection;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -36,14 +37,44 @@ import static org.geotoolkit.xml.IdentifierSpace.*;
 
 
 /**
- * Test {@link IdentifierMapAdapter}.
+ * Tests {@link IdentifierMapAdapter}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
  * @since 3.18
  */
-public final class IdentifierMapAdapterTest extends TestBase {
+public class IdentifierMapAdapterTest extends TestBase {
+    /**
+     * Creates the {@link IdentifierMapAdapter} instance to test for the given identifiers.
+     * Subclasses will override this method.
+     *
+     * @param  identifiers The identifiers to wrap in an {@code IdentifierMapAdapter}.
+     * @return The {@code IdentifierMapAdapter} to test.
+     */
+    IdentifierMapAdapter create(final Collection<Identifier> identifiers) {
+        return new IdentifierMapAdapter(identifiers);
+    }
+
+    /**
+     * Asserts that the content of the given map is equals to the given content, represented
+     * as a string. Subclasses can override this method in order to alter the expected string.
+     *
+     * @param  expected The expected content.
+     * @return The map to compare with the expected content.
+     */
+    void assertMapEquals(final String expected, final Map<Citation,String> map) {
+        assertEquals(expected, map.toString());
+    }
+
+    /**
+     * Returns a string representation of the given {@code href} value.
+     * The default implementation returns the value unchanged.
+     */
+    String toHRefString(final String href) {
+        return href;
+    }
+
     /**
      * Tests read and write operations on an {@link IdentifierMapAdapter}, using a well-formed
      * identifier collection (no null values, no duplicated authorities).
@@ -53,12 +84,12 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testGetAndPut() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final Map<Citation,String> map = IdentifierMapAdapter.create(Identifier.class, identifiers);
+        final Map<Citation,String> map = create(identifiers);
         assertTrue(map.isEmpty());
         assertEquals(0, map.size());
 
-        identifiers.add(new IdentifierEntry(ID, "myID"));
-        identifiers.add(new IdentifierEntry(UUID, "myUUID"));
+        identifiers.add(new IdentifierMapEntry(ID,   "myID"));
+        identifiers.add(new IdentifierMapEntry(UUID, "myUUID"));
         assertFalse (map.isEmpty());
         assertEquals(2, map.size());
         assertEquals(2, identifiers.size());
@@ -71,40 +102,40 @@ public final class IdentifierMapAdapterTest extends TestBase {
         assertTrue  (map.containsValue("myID"));
         assertTrue  (map.containsValue("myUUID"));
         assertFalse (map.containsValue("myHREF"));
-        assertEquals("{gml:id=“myID”, gco:uuid=“myUUID”}", map.toString());
+        assertMapEquals("{gml:id=“myID”, gco:uuid=“myUUID”}", map);
 
         assertEquals("myUUID", map.put(UUID, "myNewUUID"));
         assertFalse (map.containsValue("myUUID"));
         assertTrue  (map.containsValue("myNewUUID"));
-        assertEquals("{gml:id=“myID”, gco:uuid=“myNewUUID”}", map.toString());
+        assertMapEquals("{gml:id=“myID”, gco:uuid=“myNewUUID”}", map);
         assertEquals(2, map.size());
         assertEquals(2, identifiers.size());
 
         assertNull  (map.put(HREF, "myHREF"));
         assertTrue  (map.containsValue("myHREF"));
         assertTrue  (map.containsKey(HREF));
-        assertEquals("{gml:id=“myID”, gco:uuid=“myNewUUID”, xlink:href=“myHREF”}", map.toString());
+        assertMapEquals("{gml:id=“myID”, gco:uuid=“myNewUUID”, xlink:href=“myHREF”}", map);
         assertEquals(3, map.size());
         assertEquals(3, identifiers.size());
 
         assertEquals("myNewUUID", map.remove(UUID));
         assertFalse (map.containsValue("myNewUUID"));
         assertFalse (map.containsKey(UUID));
-        assertEquals("{gml:id=“myID”, xlink:href=“myHREF”}", map.toString());
+        assertMapEquals("{gml:id=“myID”, xlink:href=“myHREF”}", map);
         assertEquals(2, map.size());
         assertEquals(2, identifiers.size());
 
-        assertTrue  (map.values().remove("myHREF"));
+        assertTrue  (map.values().remove(toHRefString("myHREF")));
         assertFalse (map.containsValue("myHREF"));
         assertFalse (map.containsKey(HREF));
-        assertEquals("{gml:id=“myID”}", map.toString());
+        assertMapEquals("{gml:id=“myID”}", map);
         assertEquals(1, map.size());
         assertEquals(1, identifiers.size());
 
         assertTrue  (map.keySet().remove(ID));
         assertFalse (map.containsValue("myID"));
         assertFalse (map.containsKey(ID));
-        assertEquals("{}", map.toString());
+        assertMapEquals("{}", map);
         assertEquals(0, map.size());
         assertEquals(0, identifiers.size());
     }
@@ -117,14 +148,14 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testPutSpecialized() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final IdentifierMap map = IdentifierMapAdapter.create(Identifier.class, identifiers);
+        final IdentifierMap map = create(identifiers);
         final String myID = "myID";
         final java.util.UUID myUUID = java.util.UUID.fromString("a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
         final URI myURI = URI.create("http://mylink");
         map.putSpecialized(ID,   myID);
         map.putSpecialized(UUID, myUUID);
         map.putSpecialized(HREF, myURI);
-        assertEquals("{gml:id=“myID”, gco:uuid=“a1eb6e53-93db-4942-84a6-d9e7fb9db2c7”, xlink:href=“http://mylink”}", map.toString());
+        assertMapEquals("{gml:id=“myID”, gco:uuid=“a1eb6e53-93db-4942-84a6-d9e7fb9db2c7”, xlink:href=“http://mylink”}", map);
         assertSame(myID,   map.getSpecialized(ID));
         assertSame(myUUID, map.getSpecialized(UUID));
         assertSame(myURI,  map.getSpecialized(HREF));
@@ -141,11 +172,11 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testGetSpecialized() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final IdentifierMap map = IdentifierMapAdapter.create(Identifier.class, identifiers);
+        final IdentifierMap map = create(identifiers);
         map.put(ID,   "myID");
         map.put(UUID, "a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
         map.put(HREF, "http://mylink");
-        assertEquals("{gml:id=“myID”, gco:uuid=“a1eb6e53-93db-4942-84a6-d9e7fb9db2c7”, xlink:href=“http://mylink”}", map.toString());
+        assertMapEquals("{gml:id=“myID”, gco:uuid=“a1eb6e53-93db-4942-84a6-d9e7fb9db2c7”, xlink:href=“http://mylink”}", map);
         assertEquals("myID",                                 map.get(ID));
         assertEquals("a1eb6e53-93db-4942-84a6-d9e7fb9db2c7", map.get(UUID));
         assertEquals("http://mylink",                        map.get(HREF));
@@ -162,11 +193,11 @@ public final class IdentifierMapAdapterTest extends TestBase {
     @Test
     public void testDuplicatedAuthorities() {
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        identifiers.add(new IdentifierEntry(ID,   "myID1"));
-        identifiers.add(new IdentifierEntry(UUID, "myUUID"));
-        identifiers.add(new IdentifierEntry(ID,   "myID2"));
+        identifiers.add(new IdentifierMapEntry(ID,   "myID1"));
+        identifiers.add(new IdentifierMapEntry(UUID, "myUUID"));
+        identifiers.add(new IdentifierMapEntry(ID,   "myID2"));
 
-        final IdentifierMap map = IdentifierMapAdapter.create(Identifier.class, identifiers);
+        final IdentifierMap map = create(identifiers);
         assertEquals("Duplicated authorities shall be filtered.", 2, map.size());
         assertEquals("Duplicated authorities shall still exist.", 3, identifiers.size());
         assertEquals("myID1",  map.get(ID));
@@ -196,9 +227,9 @@ public final class IdentifierMapAdapterTest extends TestBase {
         assertSame(HREF, Commons.serialize(HREF));
 
         final List<Identifier> identifiers = new ArrayList<Identifier>();
-        final Map<Citation,String> map = IdentifierMapAdapter.create(Identifier.class, identifiers);
-        identifiers.add(new IdentifierEntry(ID, "myID"));
-        identifiers.add(new IdentifierEntry(UUID, "myUUID"));
+        final Map<Citation,String> map = create(identifiers);
+        identifiers.add(new IdentifierMapEntry(ID,   "myID"));
+        identifiers.add(new IdentifierMapEntry(UUID, "myUUID"));
 
         final Map<Citation,String> copy = Commons.serialize(map);
         assertNotSame(map, copy);
