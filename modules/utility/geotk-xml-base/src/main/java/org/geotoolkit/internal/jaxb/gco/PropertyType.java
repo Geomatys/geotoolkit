@@ -172,7 +172,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
         XLink xlink = ref.xlink;
         if (create && xlink == null) {
             ref.xlink = xlink = new XLink();
-            xlink.setType(XLink.Type.SIMPLE);
+            xlink.setType(XLink.Type.SIMPLE); // The "simple" type is fixed in the "gco" schema.
         }
         return xlink;
     }

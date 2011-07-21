@@ -113,7 +113,6 @@ public final class IdentifierAdapter<T> implements Identifier {
                         break;
                     }
                     final XLink xlink = new XLink();
-                    xlink.setType(XLink.Type.SIMPLE);
                     xlink.setHRef(href);
                     return new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
                 }

@@ -72,7 +72,7 @@ public final class IdentifierMapWithSpecialCasesTest extends IdentifierMapAdapte
             final int close = expected.indexOf('”', end);
             final StringBuilder buffer = new StringBuilder(expected);
             buffer.replace(close, close+1, "\"]");
-            buffer.replace(start, end, "xlink=XLink[type=\"simple\", href=\"");
+            buffer.replace(start, end, "xlink=XLink[href=\"");
             expected = buffer.toString();
         }
         super.assertMapEquals(expected, map);
@@ -83,7 +83,7 @@ public final class IdentifierMapWithSpecialCasesTest extends IdentifierMapAdapte
      */
     @Override
     String toHRefString(final String href) {
-        return "XLink[type=\"simple\", href=\"" + href + "\"]";
+        return "XLink[href=\"" + href + "\"]";
     }
 
     // Inherits all test methods from the super class.

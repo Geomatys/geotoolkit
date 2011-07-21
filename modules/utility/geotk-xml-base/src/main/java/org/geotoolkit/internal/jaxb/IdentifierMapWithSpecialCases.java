@@ -73,7 +73,9 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
     }
 
     /**
-     * Extracts the {@code xlink:href} value from the {@link XLink} if presents.
+     * Extracts the {@code xlink:href} value from the {@link XLink} if presents. This method does
+     * not test if an explicit {@code xlink:href} identifier exists - this check must be done by
+     * the caller <strong>before</strong> to invoke this method.
      */
     private String getHRef() {
         final XLink link = super.getSpecialized(IdentifierSpace.XLINK);
@@ -87,9 +89,12 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
     }
 
     /**
-     * Sets the {@code xlink:href} value, which may be null.
+     * Sets the {@code xlink:href} value, which may be null. If an explicit {@code xlink:href}
+     * identifier exists, it is removed before to set the new {@code href} in the {@link XLink}
+     * object.
      */
     private URI setHRef(final URI href) {
+        super.putSpecialized(IdentifierSpace.HREF, null);
         XLink link = super.getSpecialized(IdentifierSpace.XLINK);
         if (link != null) {
             final URI old = link.getHRef();
@@ -98,7 +103,6 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
         }
         if (href != null) {
             link = new XLink();
-            link.setType(XLink.Type.SIMPLE);
             link.setHRef(href);
             super.putSpecialized(IdentifierSpace.XLINK, link);
         }
@@ -118,11 +122,16 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
      */
     @Override
     public boolean containsKey(final Object authority) {
+        if (super.containsKey(authority)) {
+            return true;
+        }
         if (isSpecialCase(authority)) {
             final XLink link = super.getSpecialized(IdentifierSpace.XLINK);
-            return (link != null) && link.getHRef() != null;
+            if (link != null) {
+                return link.getHRef() != null;
+            }
         }
-        return super.containsKey(authority);
+        return false;
     }
 
     /**
@@ -131,11 +140,14 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getSpecialized(final IdentifierSpace<T> authority) {
-        if (isSpecialCase(authority)) {
+        T value = super.getSpecialized(authority);
+        if (value == null && isSpecialCase(authority)) {
             final XLink link = super.getSpecialized(IdentifierSpace.XLINK);
-            return (link != null) ? (T) link.getHRef() : null;
+            if (link != null) {
+                value = (T) link.getHRef();
+            }
         }
-        return super.getSpecialized(authority);
+        return value;
     }
 
     /**
@@ -143,10 +155,11 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
      */
     @Override
     public String get(final Object authority) {
-        if (isSpecialCase(authority)) {
-            return getHRef();
+        String value = super.get(authority);
+        if (value == null && isSpecialCase(authority)) {
+            value = getHRef();
         }
-        return super.get(authority);
+        return value;
     }
 
     /**
