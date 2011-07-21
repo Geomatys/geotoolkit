@@ -316,6 +316,26 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
     }
 
     /**
+     * Adds the given entry in this map. The current implementation adds the identifier
+     * unconditionally, but future implementations may have some restrictions on the type.
+     *
+     * @param  entry The entry to add.
+     * @return {@code true} if the entry has been added.
+     */
+    final boolean putSpecialized(final IdentifierAdapter<?> entry) throws UnsupportedOperationException {
+        /*
+         * The following line removes the previous entry, if any. For now we do that in an assert
+         * statement because this cleaning should not be needed, since this method is invoked for
+         * new instances created during XML unmarshalling.   However if this assertion appears to
+         * fail in practice, then the proper fix is to just move the call to the 'put' method
+         * outside the assert statement and remove the 'assert' check.
+         */
+        assert put(entry.getAuthority(), null) == null : entry;
+        identifiers.add(entry);
+        return true;
+    }
+
+    /**
      * Returns a view over the collection of identifiers. This view supports removal operation
      * if the underlying collection of identifiers supports the {@link Iterator#remove()} method.
      *

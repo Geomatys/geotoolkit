@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.xml;
 
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.xml.bind.JAXBException;
@@ -54,8 +55,8 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
     @Test
     public void testSimple() throws JAXBException {
         final String expected =
-            "<gmd:CI_Citation xmlns:gmd=\"" + Namespaces.GMD + '"' +
-                            " xmlns:gco=\"" + Namespaces.GCO + '"' +
+            "<gmd:CI_Citation xmlns:gmd=\""   + Namespaces.GMD + '"' +
+                            " xmlns:gco=\""   + Namespaces.GCO + '"' +
                             " xmlns:xlink=\"" + Namespaces.XLINK + "\">\n" +
             "  <gmd:title>\n" +
             "    <gco:CharacterString>A title</gco:CharacterString>\n" +
@@ -68,10 +69,16 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
             "    </gmd:CI_Series>\n" +
             "  </gmd:series>\n" +
             "</gmd:CI_Citation>";
+
         final Citation citation = (Citation) XML.unmarshal(expected);
+        final Series series = citation.getSeries();
+        assertFalse("Unexpected proxy", Proxy.isProxyClass(series.getClass()));
+        assertInstanceOf("Expected IdentifiedObject", IdentifiedObject.class, series);
+        final IdentifierMap map = ((IdentifiedObject) series).getIdentifierMap();
+
         assertEquals("title",  "A title",   citation.getTitle().toString());
-        assertEquals("series", "A series",  citation.getSeries().getName().toString());
-        assertEquals("href",   "org:dummy", ((IdentifiedObject) citation.getSeries()).getIdentifierMap().get(IdentifierSpace.HREF));
+        assertEquals("series", "A series",  series.getName().toString());
+        assertEquals("href",   "org:dummy", map.get(IdentifierSpace.HREF));
 
         final String actual = XML.marshal(citation);
         assertDomEquals(expected, actual, "xmlns:*");
@@ -96,20 +103,17 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
             "  </gmd:title>\n" +
             "  <gmd:series xlink:href=\"org:dummy\"/>\n" +
             "</gmd:CI_Citation>";
+
         final Citation citation = (Citation) XML.unmarshal(expected);
-        assertEquals("title", "A title", citation.getTitle().toString());
         final Series series = citation.getSeries();
-        assertInstanceOf("Should have instantiated a proxy.", IdentifiedObject.class, series);
-        assertEquals("href", "org:dummy", ((IdentifiedObject) series).getIdentifierMap().get(IdentifierSpace.HREF));
+        assertTrue("Expected proxy", Proxy.isProxyClass(series.getClass()));
+        assertInstanceOf("Expected IdentifiedObject", IdentifiedObject.class, series);
+        final IdentifierMap map = ((IdentifiedObject) series).getIdentifierMap();
+
+        assertEquals("title", "A title",  citation.getTitle().toString());
+        assertEquals("href", "org:dummy", map.get(IdentifierSpace.HREF));
         assertEquals("Series[{xlink=XLink[type=\"simple\", href=\"org:dummy\"]}]", series.toString());
         assertNull("All attributes are expected to be null.", series.getName());
-        if (false) try { // TODO: disabled because proxy are actually modifiable for now.
-            ((IdentifiedObject) series).getIdentifierMap().remove(IdentifierSpace.HREF);
-            fail("The proxy instance should be unmodifiable.");
-        } catch (UnsupportedOperationException e) {
-            // This is the expected exception.
-            assertTrue(e.getMessage().contains("Series"));
-        }
         /*
          * Tests marshalling.
          */

@@ -23,10 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.NilObject;
@@ -37,7 +33,7 @@ import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.IdentifierAdapter;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -515,14 +511,15 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     final void resolve() throws URISyntaxException, IllegalArgumentException {
         final ObjectReference ref = reference(false);
         if (ref != null) {
-            final Identifier[] identifiers = ref.getIdentifiers();
+            final IdentifierAdapter<?>[] identifiers = ref.getIdentifiers();
             if (identifiers != null) {
                 if (metadata == null) {
                     metadata = MarshalContext.linker().resolve(getBoundType(), identifiers);
                 } else if (metadata instanceof IdentifiedObject) {
-                    // TODO: need to find some way to get type safety here.
-                    final Collection currentIds = ((IdentifiedObject) metadata).getIdentifiers();
-                    IdentifierAuthority.replace(currentIds, Arrays.asList(identifiers));
+                    final IdentifierMap map = ((IdentifiedObject) metadata).getIdentifierMap();
+                    for (final IdentifierAdapter<?> id : identifiers) {
+                        id.putInto(map);
+                    }
                 }
             }
         }

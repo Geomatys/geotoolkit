@@ -131,6 +131,17 @@ public final class IdentifierAdapter<T> implements Identifier {
     }
 
     /**
+     * Adds this identifier to the given map.
+     *
+     * @param map The map in which to write this identifier.
+     */
+    public void putInto(final IdentifierMap map) {
+        if (!(map instanceof IdentifierMapAdapter) || !((IdentifierMapAdapter) map).putSpecialized(this)) {
+            map.putSpecialized(authority, value); // Fallback if the above 'putSpecialized' can't be used.
+        }
+    }
+
+    /**
      * Returns the authority specified at construction time.
      */
     @Override

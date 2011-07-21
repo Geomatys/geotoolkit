@@ -19,8 +19,6 @@ package org.geotoolkit.internal.jaxb.gco;
 
 import java.util.UUID;
 
-import org.opengis.metadata.Identifier;
-
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.util.XArrays;
@@ -89,8 +87,8 @@ final class ObjectReference {
      *
      * @throws IllegalArgumentException If the UUID can not be parsed.
      */
-    Identifier[] getIdentifiers() throws IllegalArgumentException {
-        final Identifier[] identifiers = new Identifier[3];
+    IdentifierAdapter<?>[] getIdentifiers() throws IllegalArgumentException {
+        final IdentifierAdapter<?>[] identifiers = new IdentifierAdapter<?>[3];
         int count = 0;
         if (id != null) {
             identifiers[count++] = new IdentifierAdapter<String>(IdentifierSpace.ID, id);
