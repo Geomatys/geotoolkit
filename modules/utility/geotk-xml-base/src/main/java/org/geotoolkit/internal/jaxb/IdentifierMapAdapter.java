@@ -203,7 +203,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
     @SuppressWarnings("unchecked")
     public <T> T getSpecialized(final IdentifierSpace<T> authority) {
         final Identifier identifier = getIdentifier(authority);
-        return (identifier instanceof IdentifierAdapter<?>) ? ((IdentifierAdapter<T>) identifier).value : null;
+        return (identifier instanceof SpecializedIdentifier<?>) ? ((SpecializedIdentifier<T>) identifier).value : null;
     }
 
     /**
@@ -272,7 +272,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
             }
         }
         if (code != null) {
-            identifiers.add(IdentifierAdapter.parse(authority, code));
+            identifiers.add(SpecializedIdentifier.parse(authority, code));
         }
         return old;
     }
@@ -290,9 +290,9 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
             if (identifier == null) {
                 it.remove(); // Opportunist cleaning, but should not happen.
             } else if (Utilities.equals(authority, identifier.getAuthority())) {
-                if (identifier instanceof IdentifierAdapter<?>) {
+                if (identifier instanceof SpecializedIdentifier<?>) {
                     @SuppressWarnings("unchecked")
-                    final IdentifierAdapter<T> id = (IdentifierAdapter<T>) identifier;
+                    final SpecializedIdentifier<T> id = (SpecializedIdentifier<T>) identifier;
                     if (old == null) {
                         old = id.value;
                     }
@@ -310,7 +310,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
             }
         }
         if (value != null) {
-            identifiers.add(new IdentifierAdapter<T>(authority, value));
+            identifiers.add(new SpecializedIdentifier<T>(authority, value));
         }
         return old;
     }
@@ -322,7 +322,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
      * @param  entry The entry to add.
      * @return {@code true} if the entry has been added.
      */
-    final boolean putSpecialized(final IdentifierAdapter<?> entry) throws UnsupportedOperationException {
+    final boolean putSpecialized(final SpecializedIdentifier<?> entry) throws UnsupportedOperationException {
         /*
          * The following line removes the previous entry, if any. For now we do that in an assert
          * statement because this cleaning should not be needed, since this method is invoked for
@@ -557,7 +557,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
 	    if (buffer.length() != 1) {
                 buffer.append(", ");
             }
-            IdentifierAdapter.format(buffer, entry.getKey(), entry.getValue());
+            SpecializedIdentifier.format(buffer, entry.getKey(), entry.getValue());
 	}
         return buffer.append('}').toString();
     }

@@ -39,7 +39,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.CheckedCollection;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -638,7 +638,7 @@ final class PropertyTree {
      */
     private static boolean ignoreElement(final Object value) {
         return PropertyAccessor.isEmpty(value) || (value instanceof Identifier &&
-                ((Identifier) value).getAuthority() instanceof IdentifierAuthority<?>);
+                ((Identifier) value).getAuthority() instanceof NonMarshalledAuthority<?>);
     }
 
     /**

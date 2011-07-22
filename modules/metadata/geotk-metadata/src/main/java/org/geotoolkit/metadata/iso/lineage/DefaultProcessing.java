@@ -34,7 +34,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 
 
 /**
@@ -151,7 +151,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
+        NonMarshalledAuthority.setMarshallable(super.getIdentifiers(), newValue);
     }
 
     /**

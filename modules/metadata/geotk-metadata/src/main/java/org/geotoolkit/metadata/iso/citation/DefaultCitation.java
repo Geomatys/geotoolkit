@@ -37,7 +37,7 @@ import org.opengis.metadata.citation.Series;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.xml.IdentifierSpace;
@@ -88,12 +88,12 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * The authority for International Standard Book Number.
      */
-    static final IdentifierSpace<String> ISBN = new IdentifierAuthority<String>("ISBN", IdentifierAuthority.ISBN);
+    static final IdentifierSpace<String> ISBN = new NonMarshalledAuthority<String>("ISBN", NonMarshalledAuthority.ISBN);
 
     /**
      * The authority for International Standard Serial Number.
      */
-    static final IdentifierSpace<String> ISSN = new IdentifierAuthority<String>("ISSN", IdentifierAuthority.ISSN);
+    static final IdentifierSpace<String> ISSN = new NonMarshalledAuthority<String>("ISSN", NonMarshalledAuthority.ISSN);
 
     /**
      * Name by which the cited resource is known.
@@ -378,9 +378,9 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * @param newValues The new identifiers.
      */
     public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        final Collection<Identifier> oldIds = IdentifierAuthority.filter(identifiers);
+        final Collection<Identifier> oldIds = NonMarshalledAuthority.getIdentifiers(identifiers);
         identifiers = copyCollection(newValues, identifiers, Identifier.class);
-        IdentifierAuthority.replace(identifiers, oldIds);
+        NonMarshalledAuthority.setIdentifiers(identifiers, oldIds);
     }
 
     /**

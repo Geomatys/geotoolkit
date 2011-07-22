@@ -34,8 +34,8 @@ import org.geotoolkit.internal.Citations;
 
 /**
  * Wraps a {@link XLink}, {@link UUID} or other objects as an identifier in the {@link IdentifierMap}.
- * The {@linkplain #authority} is typically an instance of {@link IdentifierAuthority}. The value is
- * an object of a type constrained by the authority.
+ * The {@linkplain #authority} is typically an instance of {@link NonMarshalledAuthority}. The value
+ * is an object of a type constrained by the authority.
  *
  * @param  <T> The value type, typically {@link XLink}, {@link UUID} or {@link String}.
  *
@@ -45,9 +45,9 @@ import org.geotoolkit.internal.Citations;
  * @since 3.19
  * @module
  */
-public final class IdentifierAdapter<T> implements Identifier {
+public final class SpecializedIdentifier<T> implements Identifier {
     /**
-     * The authority, typically as an {@link IdentifierAuthority) instance.
+     * The authority, typically as an {@link NonMarshalledAuthority) instance.
      * This authority is not allowed to be null.
      *
      * @see #getAuthority()
@@ -66,14 +66,14 @@ public final class IdentifierAdapter<T> implements Identifier {
      * @param authority The identifier authority (can not be null).
      * @param value The identifier value.
      */
-    public IdentifierAdapter(final IdentifierSpace<T> authority, final T value) {
+    public SpecializedIdentifier(final IdentifierSpace<T> authority, final T value) {
         this.authority = authority;
         this.value = value;
     }
 
     /**
      * Creates an identifier from a text value. This method creates an instance of
-     * {@code IdentifierAdapter} if the given authority is one of the "special"
+     * {@code SpecializedIdentifier} if the given authority is one of the "special"
      * authorities declared in the {@link IdentifierSpace} interface. Otherwise
      * a plain {@link IdentifierMapEntry} is created.
      *
@@ -81,20 +81,20 @@ public final class IdentifierAdapter<T> implements Identifier {
      * @param code The identifier code to parse.
      */
     static Identifier parse(final Citation authority, final String code) {
-        if (authority instanceof IdentifierAuthority) {
-            switch (((IdentifierAuthority) authority).ordinal) {
-                case IdentifierAuthority.ID: {
-                    return new IdentifierAdapter<String>(IdentifierSpace.ID, code);
+        if (authority instanceof NonMarshalledAuthority) {
+            switch (((NonMarshalledAuthority) authority).ordinal) {
+                case NonMarshalledAuthority.ID: {
+                    return new SpecializedIdentifier<String>(IdentifierSpace.ID, code);
                 }
-                case IdentifierAuthority.UUID: {
+                case NonMarshalledAuthority.UUID: {
                     try {
-                        return new IdentifierAdapter<UUID>(IdentifierSpace.UUID, UUID.fromString(code));
+                        return new SpecializedIdentifier<UUID>(IdentifierSpace.UUID, UUID.fromString(code));
                     } catch (IllegalArgumentException e) {
                         parseFailure(e);
                         break;
                     }
                 }
-                case IdentifierAuthority.HREF: {
+                case NonMarshalledAuthority.HREF: {
                     final URI href;
                     try {
                         href = new URI(code);
@@ -102,9 +102,9 @@ public final class IdentifierAdapter<T> implements Identifier {
                         parseFailure(e);
                         break;
                     }
-                    return new IdentifierAdapter<URI>(IdentifierSpace.HREF, href);
+                    return new SpecializedIdentifier<URI>(IdentifierSpace.HREF, href);
                 }
-                case IdentifierAuthority.XLINK: {
+                case NonMarshalledAuthority.XLINK: {
                     final URI href;
                     try {
                         href = new URI(code);
@@ -114,7 +114,7 @@ public final class IdentifierAdapter<T> implements Identifier {
                     }
                     final XLink xlink = new XLink();
                     xlink.setHRef(href);
-                    return new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
+                    return new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, xlink);
                 }
             }
         }
@@ -173,8 +173,8 @@ public final class IdentifierAdapter<T> implements Identifier {
      */
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof IdentifierAdapter<?>) {
-            final IdentifierAdapter<?> that = (IdentifierAdapter<?>) other;
+        if (other instanceof SpecializedIdentifier<?>) {
+            final SpecializedIdentifier<?> that = (SpecializedIdentifier<?>) other;
             return Utilities.equals(authority, that.authority) &&
                    Utilities.equals(value, that.value);
         }

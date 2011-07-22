@@ -22,7 +22,7 @@ import org.opengis.metadata.Identifier;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.LenientComparable;
-import org.geotoolkit.internal.jaxb.IdentifierAdapter;
+import org.geotoolkit.internal.jaxb.SpecializedIdentifier;
 
 
 /**
@@ -107,7 +107,7 @@ public class ObjectLinker {
     public final <T> T resolve(final Class<T> type, final XLink link) {
         ArgumentChecks.ensureNonNull("type",  type);
         ArgumentChecks.ensureNonNull("xlink", link);
-        return resolve(type, new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, link));
+        return resolve(type, new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, link));
     }
 
     /**

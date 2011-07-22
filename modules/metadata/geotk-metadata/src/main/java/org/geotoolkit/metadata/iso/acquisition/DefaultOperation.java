@@ -38,7 +38,7 @@ import org.opengis.metadata.identification.Progress;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 
 
 /**
@@ -223,7 +223,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
+        NonMarshalledAuthority.setMarshallable(super.getIdentifiers(), newValue);
     }
 
     /**

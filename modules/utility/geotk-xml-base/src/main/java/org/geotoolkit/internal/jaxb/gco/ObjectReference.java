@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.internal.jaxb.IdentifierAdapter;
+import org.geotoolkit.internal.jaxb.SpecializedIdentifier;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
@@ -87,20 +87,20 @@ final class ObjectReference {
      *
      * @throws IllegalArgumentException If the UUID can not be parsed.
      */
-    IdentifierAdapter<?>[] getIdentifiers() throws IllegalArgumentException {
-        final IdentifierAdapter<?>[] identifiers = new IdentifierAdapter<?>[3];
+    SpecializedIdentifier<?>[] getIdentifiers() throws IllegalArgumentException {
+        final SpecializedIdentifier<?>[] identifiers = new SpecializedIdentifier<?>[3];
         int count = 0;
         if (id != null) {
-            identifiers[count++] = new IdentifierAdapter<String>(IdentifierSpace.ID, id);
+            identifiers[count++] = new SpecializedIdentifier<String>(IdentifierSpace.ID, id);
         }
         if (uuid != null) {
             final UUID parsed = MarshalContext.converters().toUUID(uuid);
             if (parsed != null) {
-                identifiers[count++] = new IdentifierAdapter<UUID>(IdentifierSpace.UUID, parsed);
+                identifiers[count++] = new SpecializedIdentifier<UUID>(IdentifierSpace.UUID, parsed);
             }
         }
         if (xlink != null) {
-            identifiers[count++] = new IdentifierAdapter<XLink>(IdentifierSpace.XLINK, xlink);
+            identifiers[count++] = new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, xlink);
         }
         return XArrays.resize(identifiers, count);
     }

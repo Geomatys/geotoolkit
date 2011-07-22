@@ -37,7 +37,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 
 import static org.geotoolkit.internal.jaxb.MarshalContext.filterIdentifiers;
 
@@ -170,9 +170,9 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      * @param newValues The new identifiers values.
      */
     public synchronized void setIdentifiers(final Collection<? extends Identifier> newValues) {
-        final Collection<Identifier> oldIds = IdentifierAuthority.filter(identifiers);
+        final Collection<Identifier> oldIds = NonMarshalledAuthority.getIdentifiers(identifiers);
         identifiers = copyCollection(newValues, identifiers, Identifier.class);
-        IdentifierAuthority.replace(identifiers, oldIds);
+        NonMarshalledAuthority.setIdentifiers(identifiers, oldIds);
     }
 
     /**

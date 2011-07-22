@@ -154,7 +154,7 @@ public final class MarshalContext {
                 final Identifier[] copy = identifiers.toArray(new Identifier[count]);
                 for (int i=count; --i>=0;) {
                     final Identifier id = copy[i];
-                    if (id == null || (id.getAuthority() instanceof IdentifierAuthority)) {
+                    if (id == null || (id.getAuthority() instanceof NonMarshalledAuthority)) {
                         System.arraycopy(copy, i+1, copy, i, --count - i);
                     }
                 }

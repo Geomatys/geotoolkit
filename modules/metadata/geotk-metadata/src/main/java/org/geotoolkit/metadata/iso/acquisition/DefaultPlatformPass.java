@@ -32,7 +32,7 @@ import org.opengis.metadata.acquisition.Event;
 import org.opengis.metadata.acquisition.PlatformPass;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 
 
 /**
@@ -128,7 +128,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      */
     public synchronized void setIdentifier(final Identifier newValue) {
         checkWritePermission();
-        IdentifierAuthority.setIdentifier(super.getIdentifiers(), newValue);
+        NonMarshalledAuthority.setMarshallable(super.getIdentifiers(), newValue);
     }
 
     /**

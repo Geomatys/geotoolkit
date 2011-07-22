@@ -33,7 +33,7 @@ import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.IdentifierAdapter;
+import org.geotoolkit.internal.jaxb.SpecializedIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -511,13 +511,13 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     final void resolve() throws URISyntaxException, IllegalArgumentException {
         final ObjectReference ref = reference(false);
         if (ref != null) {
-            final IdentifierAdapter<?>[] identifiers = ref.getIdentifiers();
+            final SpecializedIdentifier<?>[] identifiers = ref.getIdentifiers();
             if (identifiers != null) {
                 if (metadata == null) {
                     metadata = MarshalContext.linker().resolve(getBoundType(), identifiers);
                 } else if (metadata instanceof IdentifiedObject) {
                     final IdentifierMap map = ((IdentifiedObject) metadata).getIdentifierMap();
-                    for (final IdentifierAdapter<?> id : identifiers) {
+                    for (final SpecializedIdentifier<?> id : identifiers) {
                         id.putInto(map);
                     }
                 }

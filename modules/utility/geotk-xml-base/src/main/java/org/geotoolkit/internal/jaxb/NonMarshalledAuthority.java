@@ -39,16 +39,28 @@ import org.geotoolkit.xml.IdentifierSpace;
 
 
 /**
- * Implementation of authorities defined in the {@link IdentifierSpace} interfaces. This class
- * is actually a {@link org.opengis.metadata.citation.Citation} implementation. However it is
- * not designed for XML marshalling at this time.
+ * The {@linkplain Identifier#getAuthority() authority of identifiers} that are not expected to be
+ * marshalled in a {@code MD_Identifier} XML element. Those identifiers are also excluded from the
+ * tree formatted by {@link org.geotoolkit.metadata.AbstractMetadata#asTree()}.
+ * <p>
+ * There is two kind of non-marshalled identifiers:
  *
- * {@section Identifiers filtering}
- * In the current Geotk library, there is different places where identifiers are filtered on
- * the basis of this class, will code like:
+ * <ul>
+ *   <li><p>The XML attributes declared by ISO 19139 specification in the {@code gco:PropertyType}
+ *       element: {@code gml:id}, {@code gco:uuid} and {@code xlink:href}. Those attributes are not
+ *       part of the ISO 19115 specification. Those authorities are declared in the
+ *       {@link IdentifierSpace} interfaces.</p></li>
+ *
+ *   <li><p>ISO 19115 attributes that we choose, for the Geotk implementation, to merge with
+ *       other identifiers: ISBN and ISSN codes. Those attributes are declared in the
+ *       {@link org.geotoolkit.metadata.iso.citation.Citations} class.</p></li>
+ * </ul>
+ *
+ * In the current Geotk library, there is different places where identifiers are filtered on the
+ * basis of this class, as below:
  *
  * {@preformat java
- *     if (identifier.getAuthority() instanceof IdentifierAuthority<?>) {
+ *     if (identifier.getAuthority() instanceof NonMarshalledAuthority<?>) {
  *         // Omit that identifier.
  *     }
  * }
@@ -63,7 +75,7 @@ import org.geotoolkit.xml.IdentifierSpace;
  * @since 3.19
  * @module
  */
-public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Serializable {
+public final class NonMarshalledAuthority<T> implements IdentifierSpace<T>, Serializable {
     /**
      * For cross-version compatibility.
      */
@@ -85,7 +97,7 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     /**
      * Ordinal values for switch statements, as one of the {@link #ID}, {@link #UUID},
      * <i>etc.</i> constants.
-     *
+     * <p>
      * This value is not serialized because its value may not be consistent between different
      * versions of the Geotk library (the attribute name is more reliable). This instance
      * should be replaced by one of the exiting constants at deserialization time anyway.
@@ -99,7 +111,7 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
      * @param ordinal   Ordinal value for switch statement, as one of the {@link #ID},
      *                  {@link #UUID}, <i>etc.</i> constants.
      */
-    public IdentifierAuthority(final String attribute, final int ordinal) {
+    public NonMarshalledAuthority(final String attribute, final int ordinal) {
         this.attribute = attribute;
         this.ordinal   = ordinal;
     }
@@ -115,8 +127,7 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
 
     /**
      * Returns the attribute name as an international string. This is the same value than the one
-     * returned by {@link #getName()}, wrapped in a {@link SimpleInternationalString}
-     * object.
+     * returned by {@link #getName()}, wrapped in a {@link SimpleInternationalString} object.
      */
     @Override
     public InternationalString getTitle() {
@@ -228,17 +239,18 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     }
 
     /**
-     * Returns the first identifier from the given collection which is not a "special" identifier
-     * (ISO 19139 attributes).
+     * Returns the first marshallable identifier from the given collection. This method omits
+     * "special" identifiers (ISO 19139 attributes, ISBN codes...), which are recognized by
+     * the implementation class of their authority.
      *
      * @param <T> The type of object used as identifier values.
      * @param  identifiers The collection from which to get identifiers, or {@code null}.
      * @return The first identifier, or {@code null} if none.
      */
-    public static <T extends Identifier> T getIdentifier(final Collection<? extends T> identifiers) {
+    public static <T extends Identifier> T getMarshallable(final Collection<? extends T> identifiers) {
         if (identifiers != null) {
             for (final T id : identifiers) {
-                if (id != null && !(id.getAuthority() instanceof IdentifierAuthority<?>)) {
+                if (id != null && !(id.getAuthority() instanceof NonMarshalledAuthority<?>)) {
                     return id;
                 }
             }
@@ -256,12 +268,12 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
      * @param identifiers The collection in which to add the identifier.
      * @param id The identifier to add, or {@code null}.
      */
-    public static <T extends Identifier> void setIdentifier(final Collection<T> identifiers, final T id) {
+    public static <T extends Identifier> void setMarshallable(final Collection<T> identifiers, final T id) {
         final Iterator<T> it = identifiers.iterator();
         while (it.hasNext()) {
             final T old = it.next();
             if (old != null) {
-                if (old.getAuthority() instanceof IdentifierAuthority<?>) {
+                if (old.getAuthority() instanceof NonMarshalledAuthority<?>) {
                     continue; // Don't touch this identifier.
                 }
             }
@@ -273,18 +285,18 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     }
 
     /**
-     * Returns a collection containing only the identifiers having an {@code IdentifierAuthority}.
+     * Returns a collection containing only the identifiers having an {@code NonMarshalledAuthority}.
      *
      * @param  <T> The type of object used as identifier values.
-     * @param  identifiers The identifiers to filter, or {@code null} if none.
+     * @param  identifiers The identifiers to getIdentifiers, or {@code null} if none.
      * @return The filtered identifiers, or {@code null} if none.
      */
-    public static <T extends Identifier> Collection<T> filter(final Collection<? extends T> identifiers) {
+    public static <T extends Identifier> Collection<T> getIdentifiers(final Collection<? extends T> identifiers) {
         Collection<T> filtered = null;
         if (identifiers != null) {
             int remaining = identifiers.size();
             for (final T candidate : identifiers) {
-                if (candidate != null && candidate.getAuthority() instanceof IdentifierAuthority<?>) {
+                if (candidate != null && candidate.getAuthority() instanceof NonMarshalledAuthority<?>) {
                     if (filtered == null) {
                         filtered = new ArrayList<T>(remaining);
                     }
@@ -297,18 +309,18 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
     }
 
     /**
-     * Removes from the given collection every identifiers having an {@code IdentifierAuthority},
+     * Removes from the given collection every identifiers having an {@code NonMarshalledAuthority},
      * then adds the previously filtered identifiers (if any).
      *
      * @param <T> The type of object used as identifier values.
      * @param identifiers The collection from which to remove identifiers, or {@code null}.
-     * @param filtered The previous filtered identifiers returned by {@link #filter}.
+     * @param filtered The previous filtered identifiers returned by {@link #getIdentifiers}.
      */
-    public static <T extends Identifier> void replace(final Collection<T> identifiers, final Collection<T> filtered) {
+    public static <T extends Identifier> void setIdentifiers(final Collection<T> identifiers, final Collection<T> filtered) {
         if (identifiers != null) {
             for (final Iterator<T> it=identifiers.iterator(); it.hasNext();) {
                 final T id = it.next();
-                if (id == null || id.getAuthority() instanceof IdentifierAuthority<?>) {
+                if (id == null || id.getAuthority() instanceof NonMarshalledAuthority<?>) {
                     it.remove();
                 }
             }
@@ -327,13 +339,13 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
             field.setAccessible(true);
             return (IdentifierSpace<?>) field.get(null);
         } catch (Exception e) { // Too many possible exceptions for enumerating them all.
-            Logging.unexpectedException(IdentifierAuthority.class, "readResolve", e);
+            Logging.unexpectedException(NonMarshalledAuthority.class, "readResolve", e);
         }
         return null;
     }
 
     /**
-     * Invoked at deserialization time in order to replace the deserialized instance
+     * Invoked at deserialization time in order to setIdentifiers the deserialized instance
      * by the appropriate instance defined in the {@link IdentifierSpace} interface.
      */
     private Object readResolve() throws ObjectStreamException {
@@ -349,8 +361,8 @@ public final class IdentifierAuthority<T> implements IdentifierSpace<T>, Seriali
                 case ISSN:  candidate = getCitation("ISSN");   break;
                 default: return this;
             }
-            if (candidate instanceof IdentifierAuthority<?> &&
-                    ((IdentifierAuthority<?>) candidate).attribute.equals(attribute))
+            if (candidate instanceof NonMarshalledAuthority<?> &&
+                    ((NonMarshalledAuthority<?>) candidate).attribute.equals(attribute))
             {
                 return candidate;
             }

@@ -31,7 +31,7 @@ import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
 import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 
 
 /**
@@ -129,7 +129,7 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      * @since 3.19
      */
     public synchronized Identifier getIdentifier() {
-        return IdentifierAuthority.getIdentifier(identifiers);
+        return NonMarshalledAuthority.getMarshallable(identifiers);
     }
 
     /**

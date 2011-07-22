@@ -20,7 +20,7 @@ package org.geotoolkit.xml;
 import java.net.URI;
 import java.util.UUID;
 import org.opengis.metadata.citation.Citation;
-import org.geotoolkit.internal.jaxb.IdentifierAuthority;
+import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 
 
 /**
@@ -65,7 +65,7 @@ public interface IdentifierSpace<T> extends Citation {
      *
      * @see javax.xml.bind.annotation.XmlID
      */
-    IdentifierSpace<String> ID = new IdentifierAuthority<String>("gml:id", IdentifierAuthority.ID);
+    IdentifierSpace<String> ID = new NonMarshalledAuthority<String>("gml:id", NonMarshalledAuthority.ID);
 
     /**
      * An optional attribute available on every object-with-identity provided in the GMD schemas
@@ -76,7 +76,7 @@ public interface IdentifierSpace<T> extends Citation {
      *
      * @see UUID
      */
-    IdentifierSpace<UUID> UUID = new IdentifierAuthority<UUID>("gco:uuid", IdentifierAuthority.UUID);
+    IdentifierSpace<UUID> UUID = new NonMarshalledAuthority<UUID>("gco:uuid", NonMarshalledAuthority.UUID);
 
     /**
      * An optional attribute for URN to an external resources, or to an other part of a XML
@@ -88,7 +88,7 @@ public interface IdentifierSpace<T> extends Citation {
      *
      * @see XLink#getHRef()
      */
-    IdentifierSpace<URI> HREF = new IdentifierAuthority<URI>("xlink:href", IdentifierAuthority.HREF);
+    IdentifierSpace<URI> HREF = new NonMarshalledAuthority<URI>("xlink:href", NonMarshalledAuthority.HREF);
 
     /**
      * Any XML attributes defined by OGC in the
@@ -100,7 +100,7 @@ public interface IdentifierSpace<T> extends Citation {
      *
      * @since 3.19
      */
-    IdentifierSpace<XLink> XLINK = new IdentifierAuthority<XLink>("xlink", IdentifierAuthority.XLINK);
+    IdentifierSpace<XLink> XLINK = new NonMarshalledAuthority<XLink>("xlink", NonMarshalledAuthority.XLINK);
 
     /**
      * Returns the name of this identifier space.
