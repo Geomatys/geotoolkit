@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.content.Band;
@@ -35,6 +36,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.gco.GO_Real;
 
 
 /**
@@ -206,6 +208,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "maxValue")
+    @XmlJavaTypeAdapter(GO_Real.class)
     public synchronized Double getMaxValue() {
         return maxValue;
     }
@@ -227,6 +230,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @XmlElement(name = "minValue")
+    @XmlJavaTypeAdapter(GO_Real.class)
     public synchronized Double getMinValue() {
         return minValue;
     }
