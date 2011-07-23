@@ -12,12 +12,13 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.opengis.geometry.coordinate.GenericCurve;
+import org.opengis.geometry.primitive.CurveBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
  * The {@code GenericCurveImpl} class/interface...
- * 
+ *
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
@@ -30,5 +31,10 @@ public abstract class AbstractJTSGenericCurve extends AbstractJTSGeometry implem
 
     public AbstractJTSGenericCurve(final CoordinateReferenceSystem crs) {
         super(crs);
+    }
+
+    @Override
+    public CurveBoundary getBoundary() {
+        return (CurveBoundary) super.getBoundary();
     }
 }

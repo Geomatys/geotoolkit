@@ -44,7 +44,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * The {@code LineStringImpl} class implements the {@link LineString}
  * interface.
- * 
+ *
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
@@ -61,7 +61,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
     //*************************************************************************
     //  Constructors
     //*************************************************************************
-    
+
     /**
      * Creates a new {@code LineStringImpl}.
      */
@@ -82,7 +82,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
     //*************************************************************************
     //  implement the *** interface
     //*************************************************************************
-    
+
     /**
      * {@inheritDoc }
      */
@@ -256,7 +256,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
      * {@inheritDoc }
      */
     @Override
-    public double length(final Position point1, final Position point2) {
+    public double length(final DirectPosition point1, final DirectPosition point2) {
         return 0;
     }
 
@@ -329,7 +329,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
                 if (pos instanceof GeneralDirectPosition) {
                     ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
                     newPositions.add(pos);
-                } 
+                }
             }
             controlPoints.clear();
             controlPoints.addAll(newPositions);

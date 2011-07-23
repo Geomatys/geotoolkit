@@ -28,8 +28,10 @@ import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
+import org.opengis.geometry.coordinate.GenericCurve;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
+import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveSegment;
@@ -187,7 +189,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * Not implemented.  Always returns zero.
      */
     @Override
-    public double length(final Position point1, final Position point2) {
+    public double length(final DirectPosition point1, final DirectPosition point2) {
         return 0.0;
     }
 
@@ -295,6 +297,22 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      */
     @Override
     public OrientableCurve[] getProxy() {
+        return null;
+    }
+
+    /**
+     * Not implemented.  Returns null.
+     */
+    @Override
+    public GenericCurve reverse() {
+        return null;
+    }
+
+    /**
+     * Not implemented.  Returns null.
+     */
+    @Override
+    public PointArray getSamplePoints() {
         return null;
     }
 
