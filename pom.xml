@@ -534,8 +534,15 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
-            <forced>false</forced>   <!-- Recreate the archive only if needed.     -->
-            <index>true</index>      <!-- Archive will contain an INDEX.LIST file. -->
+            <forced>false</forced> <!-- Recreate the archive only if needed. -->
+            <index>false</index>
+            <!-- Note: A previous Geotk version set <index> to "true" in order to generate
+                 the META-INF/INDEX.LIST file. However that index file has precedence over
+                 the "Class-Path" entry in the META-INF/MANIFEST.MF file: the later class-
+                 path is then totally ignored.   Unfortunately, for an unknown raison, the
+                 INDEX.LIST file does not contain any GeoAPI-SNAPSHOT package declaration,
+                 which cause java.lang.NoClassDefFoundError to be thrown at runtime.
+                 Consequently we have to forget about INDEX.LIST for now. -->
             <manifest>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>

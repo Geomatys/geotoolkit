@@ -31,8 +31,8 @@
       <item name="Mailing list" href="http://www.geotoolkit.org/mail-lists.html"/>
     </menu>
 
-    <menu ref="modules"/> <!-- Replaced by menu for submodules. -->
-    <menu ref="reports"/> <!-- Replaced by menus for any configured reports (mailing lists, etc.) -->
+    <menu ref="modules" inherit="bottom"/> <!-- Replaced by menu for submodules. -->
+    <menu ref="reports" inherit="bottom"/> <!-- Replaced by menus for any configured reports (mailing lists, etc.) -->
 
   </body>
 </project>
