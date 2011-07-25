@@ -39,6 +39,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -333,7 +334,7 @@ final class GridGeometryEntry extends DefaultEntry {
                         center.getX(), center.getY(), resolution[0], resolution[1]);
                 pixel.x -= 0.5 * pixel.width;
                 pixel.y -= 0.5 * pixel.height;
-                CRS.transform(toDatabaseHorizontalCRS, pixel, pixel);
+                Envelopes.transform(toDatabaseHorizontalCRS, pixel, pixel);
                 return new DoubleDimension2D(pixel.width, pixel.height);
             }
         }

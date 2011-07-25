@@ -44,9 +44,9 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -393,7 +393,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
                 region.setRange(i, min, max);
             }
             try {
-                region = CRS.transform(geometry.getGridToCRS(PixelInCell.CELL_CORNER), region);
+                region = Envelopes.transform(geometry.getGridToCRS(PixelInCell.CELL_CORNER), region);
             } catch (TransformException e) {
                 throw new IIOException(e.getLocalizedMessage(), e);
             }

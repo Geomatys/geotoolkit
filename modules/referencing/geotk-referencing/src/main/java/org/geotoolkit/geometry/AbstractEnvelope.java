@@ -46,19 +46,6 @@ import static org.geotoolkit.util.Strings.trimFractionalPart;
  */
 public abstract class AbstractEnvelope implements Envelope {
     /**
-     * Enumeration of the 4 corners in an envelope, with repetition of the first point.
-     * The values are (x,y) pairs with {@code false} meaning "minimal value" and {@code true}
-     * meaning "maximal value". This is used by {@link #toPolygonString(Envelope)} only.
-     */
-    private static final boolean[] CORNERS = {
-        false, false,
-        false, true,
-        true,  true,
-        true,  false,
-        false, false
-    };
-
-    /**
      * Constructs an envelope.
      */
     protected AbstractEnvelope() {
@@ -157,7 +144,11 @@ public abstract class AbstractEnvelope implements Envelope {
      * @see org.geotoolkit.io.wkt
      *
      * @since 3.09
+     *
+     * @deprecated Moved to {@link Envelopes#toWKT(Envelope)}.
      */
+    // After deprecation cycle, don't remove this method. Just make it package-privated.
+    @Deprecated
     public static String toString(final Envelope envelope) {
         final int dimension = envelope.getDimension();
         final StringBuilder buffer = new StringBuilder("BOX").append(dimension).append("D(");
@@ -189,38 +180,12 @@ public abstract class AbstractEnvelope implements Envelope {
      * @see org.geotoolkit.io.wkt
      *
      * @since 3.09
+     *
+     * @deprecated Moved to {@link Envelopes#toPolygonWKT(Envelope)}.
      */
+    @Deprecated
     public static String toPolygonString(final Envelope envelope) {
-        /*
-         * Get the dimension, ignoring the trailing ones which have infinite values.
-         */
-        int dimension = envelope.getDimension();
-        while (dimension != 0) {
-            final double length = envelope.getSpan(dimension - 1);
-            if (!Double.isNaN(length) && !Double.isInfinite(length)) {
-                break;
-            }
-            dimension--;
-        }
-        final StringBuilder buffer = new StringBuilder("POLYGON(");
-        String separator = "(";
-        for (int corner=0; corner<CORNERS.length; corner+=2) {
-            for (int i=0; i<dimension; i++) {
-                final double value;
-                switch (i) {
-                    case  0: // Fall through
-                    case  1: value = CORNERS[corner+i] ? envelope.getMaximum(i) : envelope.getMinimum(i); break;
-                    default: value = envelope.getMedian(i); break;
-                }
-                trimFractionalPart(buffer.append(separator).append(value));
-                separator = " ";
-            }
-            separator = ", ";
-        }
-        if (separator == ", ") { // NOSONAR: identity comparison is okay here.
-            buffer.append(')');
-        }
-        return buffer.append(')').toString();
+        return Envelopes.toPolygonWKT(envelope);
     }
 
     /**

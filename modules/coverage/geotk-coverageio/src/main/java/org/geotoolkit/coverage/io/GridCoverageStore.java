@@ -65,6 +65,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.Envelopes;
 
 
 /**
@@ -499,7 +500,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             if (requestToDataCRS.isIdentity()) {
                 requestToDataCRS = null;
             } else {
-                envelopeInDataCRS = CRS.transform(op, envelope);
+                envelopeInDataCRS = Envelopes.transform(op, envelope);
             }
         }
         if (envelopeInDataCRS != null) {
@@ -637,7 +638,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                 crs = dataCRS; // 'dataCRS' is already 2D.
             } else if (dataCRS != null && !CRS.equalsIgnoreMetadata(dataCRS, crs)) {
                 final CoordinateOperation op = createOperation(dataCRS, crs);
-                geodeticBounds = CRS.transform(op, geodeticBounds, geodeticBounds);
+                geodeticBounds = Envelopes.transform(op, geodeticBounds, geodeticBounds);
                 ensureNonEmpty(geodeticBounds);
             }
             validEnvelope = new Envelope2D(crs, geodeticBounds);

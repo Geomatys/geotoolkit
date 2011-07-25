@@ -43,6 +43,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
@@ -185,14 +186,14 @@ public class GridCoverageBuilder {
     {
         if (envelope == null) {
             if (crs != null) {
-                envelope = wrap(CRS.getEnvelope(crs));
+                envelope = wrap(Envelopes.getDomainOfValidity(crs));
                 if (envelope == null) {
                     envelope = new GeneralEnvelope(crs);
                     envelope.setToNull();
                 }
             }
         } else try {
-            envelope = wrap(CRS.transform(envelope, crs));
+            envelope = wrap(Envelopes.transform(envelope, crs));
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), exception);
@@ -230,7 +231,7 @@ public class GridCoverageBuilder {
             return envelope.clone();
         } else {
             final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
-            Envelope candidate = CRS.getEnvelope(crs);
+            Envelope candidate = Envelopes.getDomainOfValidity(crs);
             if (candidate == null) {
                 final GeneralEnvelope copy = new GeneralEnvelope(crs);
                 copy.setToNull();
@@ -252,7 +253,7 @@ public class GridCoverageBuilder {
      */
     public void setEnvelope(Envelope envelope) throws IllegalArgumentException {
         if (this.envelope != null) try {
-            envelope = CRS.transform(envelope, this.envelope.getCoordinateReferenceSystem());
+            envelope = Envelopes.transform(envelope, this.envelope.getCoordinateReferenceSystem());
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), exception);

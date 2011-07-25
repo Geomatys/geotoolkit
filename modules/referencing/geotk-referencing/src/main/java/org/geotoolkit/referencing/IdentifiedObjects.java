@@ -78,6 +78,9 @@ import static org.geotoolkit.internal.Citations.identifierMatches;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
+ * @see CRS
+ * @see Envelopes
+ *
  * @since 3.18 (derived from 1.2)
  * @module
  */

@@ -36,6 +36,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -353,7 +354,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         }
         final GeneralEnvelope transformed;
         try {
-            transformed = org.geotoolkit.referencing.CRS.transform(gridToCRS.inverse(), envelope);
+            transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
                     Classes.getClass(gridToCRS)), exception);

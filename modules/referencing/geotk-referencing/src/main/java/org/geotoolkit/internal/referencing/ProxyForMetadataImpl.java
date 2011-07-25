@@ -35,6 +35,7 @@ import org.opengis.geometry.Envelope;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -125,7 +126,7 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
                     } catch (FactoryException e) {
                         throw new TransformPathNotFoundException(e);
                     }
-                    bounds = CRS.transform(op, bounds, null);
+                    bounds = Envelopes.transform(op, bounds, null);
                 }
             }
         }
@@ -160,7 +161,7 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
                     throw new TransformPathNotFoundException(Errors.format(
                             Errors.Keys.CANT_TRANSFORM_ENVELOPE, exception));
                 }
-                envelope = CRS.transform(operation, envelope);
+                envelope = Envelopes.transform(operation, envelope);
             }
         }
         target.setBounds(envelope.getMinimum(0), envelope.getMaximum(0),

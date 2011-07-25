@@ -67,6 +67,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -347,7 +348,7 @@ final class Resampler2D extends GridCoverage2D {
                      */
                     Envelope gridEnvelope;
                     gridEnvelope = toEnvelope(sourceGG.getGridRange());
-                    gridEnvelope = CRS.transform(allSteps.inverse(), gridEnvelope);
+                    gridEnvelope = Envelopes.transform(allSteps.inverse(), gridEnvelope);
                     targetGG  = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
                             PixelInCell.CELL_CORNER, false), step1, targetCRS);
                 }
@@ -363,7 +364,7 @@ final class Resampler2D extends GridCoverage2D {
             step2          = factory.createOperation(targetCRS, compatibleSourceCRS).getMathTransform();
             step3          = (force2D ? sourceGG.getGridToCRS2D(CORNER) : sourceGG.getGridToCRS(CORNER)).inverse();
             sourceEnvelope = sourceCoverage.getEnvelope(); // Don't force this one to 2D.
-            targetEnvelope = CRS.transform(operation, sourceEnvelope);
+            targetEnvelope = Envelopes.transform(operation, sourceEnvelope);
             targetEnvelope.setCoordinateReferenceSystem(targetCRS);
             // 'targetCRS' may be different than the one set by CRS.transform(...).
             /*
@@ -393,7 +394,7 @@ final class Resampler2D extends GridCoverage2D {
             } else {
                 step1 = targetGG.getGridToCRS(CORNER);
                 if (!targetGG.isDefined(GridGeometry2D.GRID_RANGE)) {
-                    final GeneralEnvelope gridEnvelope = CRS.transform(step1.inverse(), targetEnvelope);
+                    final GeneralEnvelope gridEnvelope = Envelopes.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
                     targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
                             PixelInCell.CELL_CENTER, false), step1, targetCRS);
@@ -590,8 +591,8 @@ final class Resampler2D extends GridCoverage2D {
                 switch (sourceImage.getSampleModel().getTransferType()) {
                     case DataBuffer.TYPE_DOUBLE:
                     case DataBuffer.TYPE_FLOAT: {
-                        Envelope source = CRS.transform(sourceGG.getEnvelope(), targetCRS);
-                        Envelope target = CRS.transform(targetGG.getEnvelope(), targetCRS);
+                        Envelope source = Envelopes.transform(sourceGG.getEnvelope(), targetCRS);
+                        Envelope target = Envelopes.transform(targetGG.getEnvelope(), targetCRS);
                         source = targetGG.reduce(source);
                         target = targetGG.reduce(target);
                         if (!(new GeneralEnvelope(source).contains(target, true))) {

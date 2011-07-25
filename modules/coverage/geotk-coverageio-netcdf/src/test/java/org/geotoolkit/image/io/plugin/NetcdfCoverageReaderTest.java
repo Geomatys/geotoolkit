@@ -26,7 +26,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.geometry.Envelopes;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -70,7 +70,7 @@ public final class NetcdfCoverageReaderTest extends NetcdfTestBase {
         Envelope envelope = coverage.getEnvelope();
         assertEquals(-19987288, envelope.getMinimum(0), 1);
         assertEquals(-13815969, envelope.getMinimum(1), 1);
-        envelope = CRS.transform(envelope, DefaultGeographicCRS.SPHERE);
+        envelope = Envelopes.transform(envelope, DefaultGeographicCRS.SPHERE);
         /*
          * Note: Coriolis data have a 0.25° offset in longitude. This is a known
          * problem of the tested data, not a problem of the Geotk library.

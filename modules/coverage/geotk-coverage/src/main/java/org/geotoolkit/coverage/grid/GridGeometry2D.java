@@ -39,6 +39,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
@@ -917,7 +918,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
     final Rectangle inverseTransform(Rectangle2D bounds) {
         if (bounds!=null && gridFromCRS2D!=null) {
             try {
-                bounds = org.geotoolkit.referencing.CRS.transform(gridFromCRS2D, bounds, null);
+                bounds = Envelopes.transform(gridFromCRS2D, bounds, null);
                 final int xmin = (int) Math.floor(bounds.getMinX() - 0.5);
                 final int ymin = (int) Math.floor(bounds.getMinY() - 0.5);
                 final int xmax = (int) Math.ceil (bounds.getMaxX() - 0.5);

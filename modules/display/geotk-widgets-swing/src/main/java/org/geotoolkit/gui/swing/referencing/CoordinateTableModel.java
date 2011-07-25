@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 
@@ -95,7 +95,7 @@ public class CoordinateTableModel extends AbstractTableModel {
     private final GeneralEnvelope validArea;
 
     /**
-     * For transformation frop the table CRS to WGS84.
+     * For transformation from the table CRS to WGS84.
      */
     private final TransformedDirectPosition toWGS84 = new TransformedDirectPosition();
 
@@ -111,7 +111,7 @@ public class CoordinateTableModel extends AbstractTableModel {
         for (int i=0; i<columnNames.length; i++){
             columnNames[i] = crs.getCoordinateSystem().getAxis(i).getName().getCode();
         }
-        validArea = new GeneralEnvelope(CRS.getEnvelope(crs));
+        validArea = new GeneralEnvelope(Envelopes.getDomainOfValidity(crs));
     }
 
     /**

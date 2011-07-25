@@ -47,7 +47,6 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
@@ -315,7 +314,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
         }
         final GeneralEnvelope transformed;
         try {
-            transformed = CRS.transform(gridToCRS, this);
+            transformed = Envelopes.transform(gridToCRS, this);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
                     Classes.getClass(gridToCRS)), exception);
@@ -508,7 +507,7 @@ scanNumber: while (++i < length) {
      * later can be enforced by a call to {@link #reduceToDomain(boolean)}.
      * <p>
      * If the envelope coordinates need to be transformed to the new CRS, consider
-     * using {@link CRS#transform(Envelope, CoordinateReferenceSystem)} instead.
+     * using {@link Envelopes#transform(Envelope, CoordinateReferenceSystem)} instead.
      *
      * @param  crs The new coordinate reference system, or {@code null}.
      * @throws MismatchedDimensionException if the specified CRS doesn't have the expected
@@ -597,7 +596,7 @@ scanNumber: while (++i < length) {
                 }
             }
             if (useDomainOfCRS) {
-                final Envelope domain = CRS.getEnvelope(crs);
+                final Envelope domain = Envelopes.getDomainOfValidity(crs);
                 if (domain != null) {
                     final CoordinateReferenceSystem domainCRS = domain.getCoordinateReferenceSystem();
                     if (domainCRS == null) {

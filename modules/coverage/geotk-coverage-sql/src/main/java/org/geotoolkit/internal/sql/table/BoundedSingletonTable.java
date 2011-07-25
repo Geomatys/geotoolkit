@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.util.DateRange;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -233,7 +234,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
             if (index != 0) {
                 final Envelope2D env = new Envelope2D();
                 Rectangle2D.intersect(envelope.getHorizontalRange(), DEFAULT_LIMIT, env);
-                statement.setString(index, GeneralEnvelope.toPolygonString(env));
+                statement.setString(index, Envelopes.toPolygonWKT(env));
             }
         }
     }

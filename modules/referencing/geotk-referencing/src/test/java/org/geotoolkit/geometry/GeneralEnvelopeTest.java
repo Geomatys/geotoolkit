@@ -68,8 +68,7 @@ public final class GeneralEnvelopeTest {
     public void testWktFormatting() {
         Envelope2D envelope2D = new Envelope2D(null, -180, -90, 360, 180);
         assertEquals("BOX2D(-180 -90, 180 90)", envelope2D.toString());
-        assertEquals("POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))",
-                AbstractEnvelope.toPolygonString(envelope2D));
+        assertEquals("POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))", Envelopes.toPolygonWKT(envelope2D));
 
         GeneralEnvelope envelope = new GeneralEnvelope(3);
         envelope.setRange(0, -180, +180);

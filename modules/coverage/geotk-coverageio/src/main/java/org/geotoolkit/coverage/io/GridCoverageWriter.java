@@ -29,8 +29,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 
@@ -153,7 +153,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
             throws TransformException, CoverageStoreException
     {
         final GridEnvelope gridEnvelope = new GeneralGridEnvelope(
-                CRS.transform(destToExtractedGrid.inverse(), requestEnvelope),
+                Envelopes.transform(destToExtractedGrid.inverse(), requestEnvelope),
                 PixelInCell.CELL_CORNER, false);
         for (int i=gridEnvelope.getDimension(); --i>=0;) {
             if (gridEnvelope.getSpan(i) <= 0) {

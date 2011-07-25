@@ -33,8 +33,8 @@ import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.math.Statistics;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
@@ -125,7 +125,7 @@ public final class WarpFactoryTest extends ReferencingTestBase {
         mapper.setEnvelope(domain);
         final MathTransform2D pre = (MathTransform2D)
                 ProjectiveTransform.create(mapper.createAffineTransform());
-        mapper.setEnvelope(CRS.transform(projection, domain, null));
+        mapper.setEnvelope(Envelopes.transform(projection, domain, null));
         final MathTransform2D post = (MathTransform2D)
                 ProjectiveTransform.create(mapper.createAffineTransform()).inverse();
         return ConcatenatedTransform.create(pre, projection, post);
