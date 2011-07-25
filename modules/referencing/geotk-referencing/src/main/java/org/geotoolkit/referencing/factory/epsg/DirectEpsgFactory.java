@@ -2269,7 +2269,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 } else {
                     param.setValue(value);
                 }
-            } catch (InvalidParameterValueException exception) {
+            } catch (RuntimeException exception) { // Catch InvalidParameterValueException, ArithmeticException
                 throw new FactoryException(Errors.format(
                         Errors.Keys.CANT_SET_PARAMETER_VALUE_$1, name), exception);
             }
