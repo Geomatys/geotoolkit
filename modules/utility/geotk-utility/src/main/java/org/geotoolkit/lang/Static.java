@@ -60,7 +60,8 @@ package org.geotoolkit.lang;
  *     <li>{@link org.geotoolkit.referencing.CRS}: Create
  *         {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference
  *         Systems} (CRS) from authority codes. Find {@linkplain org.opengis.referencing.operation.MathTransform
- *         math transforms} between two CRS. Transform {@linkplain org.opengis.geometry.Envelope envelopes}.</li>
+ *         math transforms} between two CRS.</li>
+ *     <li>{@link org.geotoolkit.geometry.Envelopes}: Transform {@linkplain org.opengis.geometry.Envelope envelopes}.</li>
  *   </ul>
  *   <li><p>Images (except I/O)</p></li>
  *   <ul>
