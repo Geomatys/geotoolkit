@@ -79,7 +79,7 @@ import static org.geotoolkit.internal.Citations.identifierMatches;
  * @version 3.18
  *
  * @see CRS
- * @see Envelopes
+ * @see org.geotoolkit.geometry.Envelopes
  *
  * @since 3.18 (derived from 1.2)
  * @module

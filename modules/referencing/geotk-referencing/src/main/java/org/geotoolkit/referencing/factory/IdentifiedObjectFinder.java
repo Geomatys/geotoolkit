@@ -73,7 +73,7 @@ import static org.geotoolkit.util.Utilities.deepEquals;
  * @version 3.18
  *
  * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
- * @see CRS#lookupIdentifier(IdentifiedObject, boolean)
+ * @see IdentifiedObjects#lookupIdentifier(IdentifiedObject, boolean)
  *
  * @since 2.4
  * @module

@@ -722,6 +722,39 @@ public final class Envelopes extends Static {
     }
 
     /**
+     * Returns an envelope from the given <cite>Well Known Text</cite> (WKT).
+     * This method is quite lenient. For example all the following strings are accepted:
+     * <p>
+     * <ul>
+     *   <li>{@code BOX(-180 -90, 180 90)}</li>
+     *   <li>{@code POINT(6 10)}</li>
+     *   <li>{@code MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))}</li>
+     *   <li>{@code GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))}</li>
+     * </ul>
+     * <p>
+     * See {@link GeneralEnvelope#GeneralEnvelope(String)} for more information about the
+     * parsing rules.
+     *
+     * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.
+     * @return The envelope of the given geometry.
+     * @throws FactoryException If the given WKT can not be parsed.
+     *
+     * @see CRS#parseWKT(String)
+     * @see #toWKT(Envelope)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     * @see org.geotoolkit.io.wkt
+     */
+    public static Envelope parseWKT(final String wkt) throws FactoryException {
+        ensureNonNull("wkt", wkt);
+        try {
+            return new GeneralEnvelope(wkt);
+        } catch (RuntimeException e) {
+            throw new FactoryException(Errors.format(
+                    Errors.Keys.CANT_CREATE_FROM_TEXT_$1, Envelope.class), e);
+        }
+    }
+
+    /**
      * Formats a {@code BOX} element from an envelope. This method formats the given envelope in
      * the <cite>Well Known Text</cite> (WKT) format. The output is like below, where <var>n</var>
      * is the {@linkplain Envelope#getDimension() number of dimensions}:
@@ -735,7 +768,7 @@ public final class Envelopes extends Static {
      * @param  envelope The envelope to format.
      * @return The envelope as a {@code BOX2D} or {@code BOX3D} in WKT format.
      *
-     * @see GeneralEnvelope#GeneralEnvelope(String)
+     * @see #parseWKT(String)
      * @see org.geotoolkit.measure.CoordinateFormat
      * @see org.geotoolkit.io.wkt
      */

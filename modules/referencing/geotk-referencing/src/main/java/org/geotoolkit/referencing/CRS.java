@@ -44,7 +44,6 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
@@ -250,6 +249,8 @@ public final class CRS extends Static {
      *        even when there is no information available for a datum shift.
      * @return The coordinate operation factory used for finding math transform in this class.
      *
+     * @see Hints#LENIENT_DATUM_SHIFT
+     *
      * @category factory
      * @since 2.4
      */
@@ -283,6 +284,8 @@ public final class CRS extends Static {
      * @return The version number of the authority database, or {@code null} if unknown.
      * @throws FactoryRegistryException if no {@link CRSAuthorityFactory} implementation
      *         was found for the specified authority.
+     *
+     * @see Hints#VERSION
      *
      * @category factory
      * @since 2.4
@@ -346,6 +349,7 @@ public final class CRS extends Static {
      * @param  authority The authority name (for example {@code "EPSG"}).
      * @return The set of supported codes. May be empty, but never null.
      *
+     * @see AuthorityFactory#getAuthorityCodes(Class)
      * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory
@@ -479,6 +483,9 @@ public final class CRS extends Static {
      * @return The parsed coordinate reference system.
      * @throws FactoryException if the given WKT can't be parsed.
      *
+     * @see Envelopes#parseWKT(String)
+     * @see CoordinateReferenceSystem#toWKT()
+     *
      * @category factory
      */
     public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
@@ -502,7 +509,7 @@ public final class CRS extends Static {
      *       {@linkplain #getGeographicBoundingBox geographic bounding boxes} are
      *       used as a fallback.</li>
      * </ul>
-     *
+     * <p>
      * Note that this method is also accessible from the {@link Envelopes} class.
      *
      * @param  crs The coordinate reference system, or {@code null}.
@@ -666,6 +673,8 @@ public final class CRS extends Static {
      * @param  crs The coordinate reference system, or {@code null}.
      * @return {@code true} if the given CRS is non-null and comply with one of the above
      *         conditions, or {@code false} otherwise.
+     *
+     * @see #getHorizontalCRS(CoordinateReferenceSystem)
      *
      * @category information
      * @since 3.05
@@ -1110,10 +1119,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * then {@link #equalsApproximatively(Object, Object)} can be used instead.
      *
      * {@section Implementation note}
-     * If at least one object implements the {@link LenientComparable} interface, then this method
-     * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(&hellip;,
-     * {@linkplain ComparisonMode#IGNORE_METADATA})</code>. The actual work of this convenience
-     * method is performed by the following method call:
+     * This is a convenience method for the following method call:
      *
      * {@preformat java
      *     return Utilities.deepEquals(object1, object2, ComparisonMode.IGNORE_METADATA);
@@ -1149,10 +1155,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * </ul>
      *
      * {@section Implementation note}
-     * If at least one object implements the {@link LenientComparable} interface, then this method
-     * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(&hellip;,
-     * {@linkplain ComparisonMode#APPROXIMATIVE})</code>. The actual work of this convenience
-     * method is performed by the following method call:
+     * This is a convenience method for the following method call:
      *
      * {@preformat java
      *     return Utilities.deepEquals(object1, object2, ComparisonMode.APPROXIMATIVE);
@@ -1200,6 +1203,8 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @throws FactoryException If no math transform can be created for the specified source and
      *         target CRS.
      *
+     * @see CoordinateOperationFactory#createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)
+     *
      * @category transform
      */
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
@@ -1221,7 +1226,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * findMathTransform}(sourceCRS, targetCRS)</code>, except that it specifies whatever this
      * method should tolerate <cite>lenient datum shift</cite>. If the {@code lenient} argument
      * is {@code true}, then this method will not throw a "<cite>Bursa-Wolf parameters required</cite>"
-     * exception during datum shifts if the Bursa-Wolf paramaters are not specified.
+     * exception during datum shifts if the Bursa-Wolf parameters are not specified.
      * Instead it will assume a no datum shift.
      *
      * @param  sourceCRS The source CRS.
@@ -1235,6 +1240,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      *         target CRS.
      *
      * @see Hints#LENIENT_DATUM_SHIFT
+     * @see CoordinateOperationFactory#createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)
      *
      * @category transform
      */

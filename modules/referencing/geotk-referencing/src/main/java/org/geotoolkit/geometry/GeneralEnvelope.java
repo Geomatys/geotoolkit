@@ -353,17 +353,17 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * {@code BOX} element. This constructor creates the bounding box of those geometries:
      * <p>
      * <ul>
-     *   <li><code>POINT(6 10)</code></li>
-     *   <li><code>MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))</code></li>
-     *   <li><code>GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))</code></li>
+     *   <li>{@code POINT(6 10)}</li>
+     *   <li>{@code MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))}</li>
+     *   <li>{@code GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))}</li>
      * </ul>
      *
      * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.
      * @throws NumberFormatException If a number can not be parsed.
      * @throws IllegalArgumentException If the parenthesis are not balanced.
      *
-     * @see #toString(Envelope)
-     * @see org.geotoolkit.measure.CoordinateFormat
+     * @see Envelopes#parseWKT(String)
+     * @see Envelopes#toWKT(Envelope)
      *
      * @since 3.09
      */
