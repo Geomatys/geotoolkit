@@ -25,6 +25,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -317,7 +318,7 @@ public final class Envelopes extends Static {
          * some map projections will interpret 200° as if it was -160°, and consequently produce
          * an envelope which do not include the 180°W extremum. We will add those extremum points
          * explicitly as a safety. It may leads to bigger than necessary target envelope, but the
-         * contract is to include at least the source envelope, not to returns the smallest one.
+         * contract is to include at least the source envelope, not to return the smallest one.
          */
         if (sourceCRS != null) {
             final CoordinateSystem cs = sourceCRS.getCoordinateSystem();
@@ -372,41 +373,48 @@ public final class Envelopes extends Static {
         }
         /*
          * Checks for singularity points. For example the south pole is a singularity point in
-         * geographic CRS because we reach the maximal value allowed on one particular geographic
+         * geographic CRS because is is located at the maximal value allowed by one particular
          * axis, namely latitude. This point is not a singularity in the stereographic projection,
-         * where axis extends toward infinity in all directions (mathematically) and south pole
-         * has nothing special apart being the origin (0,0).
+         * because axes extends toward infinity in all directions (mathematically) and because the
+         * South pole has nothing special apart being the origin (0,0).
          *
          * Algorithm:
          *
          * 1) Inspect the target axis, looking if there is any bounds. If bounds are found, get
          *    the coordinates of singularity points and project them from target to source CRS.
          *
-         *    Example: if the transformed envelope above is (80°S to 85°S, 10°W to 50°W), and if
-         *             target axis inspection reveal us that the latitude in target CRS is bounded
-         *             at 90°S, then project (90°S,30°W) to source CRS. Note that the longitude is
-         *             set to the the center of the envelope longitude range (more on this later).
+         *    Example: If the transformed envelope above is (80 … 85°S, 10 … 50°W), and if the
+         *             latitude in the target CRS is bounded at 90°S, then project (90°S, 30°W)
+         *             to the source CRS. Note that the longitude is set to the the center of
+         *             the envelope longitude range (more on this below).
          *
          * 2) If the singularity point computed above is inside the source envelope, add that
          *    point to the target (transformed) envelope.
          *
-         * Note: We could choose to project the (-180, -90), (180, -90), (-180, 90), (180, 90)
-         * points, or the (-180, centerY), (180, centerY), (centerX, -90), (centerX, 90) points
-         * where (centerX, centerY) are transformed from the source envelope center. It make
-         * no difference for polar projections because the longitude is irrelevant at pole, but
-         * may make a difference for the 180° longitude bounds.  Consider a Mercator projection
-         * where the transformed envelope is between 20°N and 40°N. If we try to project (-180,90),
-         * we will get a TransformException because the Mercator projection is not supported at
-         * pole. If we try to project (-180, 30) instead, we will get a valid point. If this point
-         * is inside the source envelope because the later overlaps the 180° longitude, then the
-         * transformed envelope will be expanded to the full (-180 to 180) range. This is quite
-         * large, but at least it is correct (while the envelope without expansion is not).
+         * 3) If step #2 added the point, iterate over all other axes. If an other bounded axis
+         *    is found and that axis is of kind "WRAPAROUND", test for inclusion the same point
+         *    than the point tested at step #1, except for the ordinate of the axis found in this
+         *    step. That ordinate is set to the minimal and maximal values of that axis.
+         *
+         *    Example: If the above steps found that the point (90°S, 30°W) need to be included,
+         *             then this step #3 will also test phe points (90°S, 180°W) and (90°S, 180°E).
+         *
+         * NOTE: we test (-180°, centerY), (180°, centerY), (centerX, -90°) and (centerX, 90°)
+         * at step #1 before to test (-180°, -90°), (180°, -90°), (-180°, 90°) and (180°, 90°)
+         * at step #3 because the later may not be supported by every projections. For example
+         * if the target envelope is located between 20°N and 40°N, then a Mercator projection
+         * may fail to transform the (-180°, 90°) coordinate while the (-180°, 30°) coordinate
+         * is a valid point.
          */
         GeneralEnvelope generalEnvelope = null;
         DirectPosition sourcePt = null;
         DirectPosition targetPt = null;
+        long includedMinValue = 0; // A bitmask for each dimension.
+        long includedMaxValue = 0;
+        long isWrapAroundAxis = 0;
+        long dimensionBitMask = 1;
         final int dimension = targetCS.getDimension();
-        for (int i=0; i<dimension; i++) {
+        for (int i=0; i<dimension; i++, dimensionBitMask <<= 1) {
             final CoordinateSystemAxis axis = targetCS.getAxis(i);
             if (axis == null) { // Should never be null, but check as a paranoiac safety.
                 continue;
@@ -438,7 +446,7 @@ public final class Envelopes extends Static {
                          * lost dimensions. So we don't log any warning in this case.
                          */
                         if (dimension >= mt.getSourceDimensions()) {
-                            unexpectedException("transform", exception);
+                            unexpectedException(exception);
                         }
                         return transformed;
                     }
@@ -447,7 +455,7 @@ public final class Envelopes extends Static {
                         targetPt.setOrdinate(j, centerPt.getOrdinate(j));
                     }
                     // TODO: avoid the hack below if we provide a contains(DirectPosition)
-                    //       method in GeoAPI Envelope interface.
+                    //       method in the GeoAPI org.opengis.geometry.Envelope interface.
                     if (envelope instanceof GeneralEnvelope) {
                         generalEnvelope = (GeneralEnvelope) envelope;
                     } else {
@@ -457,20 +465,98 @@ public final class Envelopes extends Static {
                 targetPt.setOrdinate(i, extremum);
                 try {
                     sourcePt = mt.transform(targetPt, sourcePt);
-                } catch (TransformException e) {
+                } catch (TransformException exception) {
                     /*
-                     * This exception may be normal. For example we are sure to get this exception
-                     * when trying to project the latitude extremums with a cylindrical Mercator
-                     * projection. Do not log any message and try the other points.
+                     * This exception may be normal. For example if may occur when projecting
+                     * the latitude extremums with a cylindrical Mercator projection.  Do not
+                     * log any message (unless logging level is fine) and try the other points.
                      */
+                    recoverableException(exception);
                     continue;
                 }
                 if (generalEnvelope.contains(sourcePt)) {
                     transformed.add(targetPt);
+                    if (testMax) includedMaxValue |= dimensionBitMask;
+                    else         includedMinValue |= dimensionBitMask;
                 }
             } while ((testMax = !testMax) == true);
+            /*
+             * Keep trace of axes of kind WRAPAROUND, except if the two extremum values of that
+             * axis have been included in the envelope  (in which case the next step after this
+             * loop doesn't need to be executed for that axis).
+             */
+            if ((includedMinValue & includedMaxValue & dimensionBitMask) == 0) {
+                if (RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
+                    isWrapAroundAxis |= dimensionBitMask;
+                }
+            }
+            // Restore 'targetPt' to its initial state, which is equals to 'centerPt'.
             if (targetPt != null) {
                 targetPt.setOrdinate(i, centerPt.getOrdinate(i));
+            }
+        }
+        /*
+         * Step #3 described in the above "Algorithm" section: iterate over all dimensions
+         * of type "WRAPAROUND" for which minimal or maximal axis values have not yet been
+         * included in the envelope. The set of axes is specified by a bitmask computed in
+         * the above loop.  We examine only the points that have not already been included
+         * in the envelope.
+         */
+        final long includedBoundsValue = (includedMinValue | includedMaxValue);
+        if (includedBoundsValue != 0) {
+            while (isWrapAroundAxis != 0) {
+                final int wrapAroundDimension = Long.numberOfTrailingZeros(isWrapAroundAxis);
+                dimensionBitMask = 1 << wrapAroundDimension;
+                isWrapAroundAxis &= ~dimensionBitMask; // Clear now the bit, for the next iteration.
+                final CoordinateSystemAxis wrapAroundAxis = targetCS.getAxis(wrapAroundDimension);
+                final double min = wrapAroundAxis.getMinimumValue();
+                final double max = wrapAroundAxis.getMaximumValue();
+                /*
+                 * Iterate over all axes for which a singularity point has been previously found,
+                 * excluding the "wrap around axis" currently under consideration.
+                 */
+                for (long am=(includedBoundsValue & ~dimensionBitMask), bm; am != 0; am &= ~bm) {
+                    bm = Long.lowestOneBit(am);
+                    final int axisIndex = Long.numberOfTrailingZeros(bm);
+                    final CoordinateSystemAxis axis = targetCS.getAxis(axisIndex);
+                    /*
+                     * switch (c) {
+                     *   case 0: targetPt = (..., singularityMin, ..., wrapAroundMin, ...)
+                     *   case 1: targetPt = (..., singularityMin, ..., wrapAroundMax, ...)
+                     *   case 2: targetPt = (..., singularityMax, ..., wrapAroundMin, ...)
+                     *   case 3: targetPt = (..., singularityMax, ..., wrapAroundMax, ...)
+                     * }
+                     */
+                    for (int c=0; c<4; c++) {
+                        /*
+                         * Set the ordinate value along the axis having the singularity point
+                         * (cases c=0 and c=2). If the envelope did not included that point,
+                         * then skip completly this case and the next one, i.e. skip c={0,1}
+                         * or skip c={2,3}.
+                         */
+                        double value = max;
+                        if ((c & 1) == 0) { // 'true' if we are testing "wrapAroundMin".
+                            if (((c == 0 ? includedMinValue : includedMaxValue) & bm) == 0) {
+                                c++; // Skip also the case for "wrapAroundMax".
+                                continue;
+                            }
+                            targetPt.setOrdinate(axisIndex, (c == 0) ? axis.getMinimumValue() : axis.getMaximumValue());
+                            value = min;
+                        }
+                        targetPt.setOrdinate(wrapAroundDimension, value);
+                        try {
+                            sourcePt = mt.transform(targetPt, sourcePt);
+                        } catch (TransformException exception) {
+                            recoverableException(exception);
+                            continue;
+                        }
+                        if (generalEnvelope.contains(sourcePt)) {
+                            transformed.add(targetPt);
+                        }
+                    }
+                    targetPt.setOrdinate(axisIndex, centerPt.getOrdinate(axisIndex));
+                }
+                targetPt.setOrdinate(wrapAroundDimension, centerPt.getOrdinate(wrapAroundDimension));
             }
         }
         return transformed;
@@ -669,16 +755,20 @@ public final class Envelopes extends Static {
          * Checks for singularity points. See the transform(CoordinateOperation, Envelope)
          * method for comments about the algorithm. The code below is the same algorithm
          * adapted for the 2D case and the related objects (Point2D, Rectangle2D, etc.).
+         *
+         * The 'border' variable in the loop below is used in order to compress 2 dimensions
+         * and 2 extremums in a single loop, in this order: (xmin, xmax, ymin, ymax).
          */
         Point2D sourcePt = null;
         Point2D targetPt = null;
-        for (int flag=0; flag<4; flag++) { // 2 dimensions and 2 extremums compacted in a flag.
-            final int i = flag >> 1; // The dimension index being examined.
-            final CoordinateSystemAxis axis = targetCS.getAxis(i);
+        int includedBoundsValue = 0; // A bitmask for each (dimension, extremum) pairs.
+        for (int border=0; border<4; border++) { // 2 dimensions and 2 extremums compacted in a flag.
+            final int dimension = border >>> 1;  // The dimension index being examined.
+            final CoordinateSystemAxis axis = targetCS.getAxis(dimension);
             if (axis == null) { // Should never be null, but check as a paranoiac safety.
                 continue;
             }
-            final double extremum = (flag & 1) == 0 ? axis.getMinimumValue() : axis.getMaximumValue();
+            final double extremum = (border & 1) == 0 ? axis.getMinimumValue() : axis.getMaximumValue();
             if (Double.isInfinite(extremum) || Double.isNaN(extremum)) {
                 continue;
             }
@@ -686,24 +776,90 @@ public final class Envelopes extends Static {
                 try {
                     mt = mt.inverse();
                 } catch (NoninvertibleTransformException exception) {
-                    unexpectedException("transform", exception);
+                    unexpectedException(exception);
                     return destination;
                 }
                 targetPt = new Point2D.Double();
             }
-            switch (i) {
+            switch (dimension) {
                 case 0: targetPt.setLocation(extremum, center.y); break;
                 case 1: targetPt.setLocation(center.x, extremum); break;
-                default: throw new AssertionError(flag);
+                default: throw new AssertionError(border);
             }
             try {
                 sourcePt = mt.transform(targetPt, sourcePt);
-            } catch (TransformException e) {
-                // Do not log; this exception is often expected here.
+            } catch (TransformException exception) {
+                recoverableException(exception);
                 continue;
             }
             if (envelope.contains(sourcePt)) {
                 destination.add(targetPt);
+                includedBoundsValue |= (1 << border);
+            }
+        }
+        /*
+         * Iterate over all dimensions of type "WRAPAROUND" for which minimal or maximal axis
+         * values have not yet been included in the envelope. We could inline this check inside
+         * the above loop, but we don't in order to have a chance to exclude the dimensions for
+         * which the point have already been added.
+         *
+         * See transform(CoordinateOperation, Envelope) for more comments about the algorithm.
+         */
+        if (includedBoundsValue != 0) {
+            /*
+             * Bits mask transformation:
+             *   1) Swaps the two dimensions               (YyXx  →  XxYy)
+             *   2) Insert a space between each bits       (XxYy  →  X.x.Y.y.)
+             *   3) Fill the space with duplicated values  (X.x.Y.y.  →  XXxxYYyy)
+             *
+             * In terms of bit positions 1,2,4,8 (not bit values), we have:
+             *
+             *   8421  →  22881144
+             *   i.e. (ymax, ymin, xmax, xmin)  →  (xmax², ymax², xmin², ymin²)
+             *
+             * Now look at the last part: (xmin², ymin²). The next step is to perform a bitwise
+             * AND operation in order to have only both of the following conditions:
+             *
+             *   Borders not yet added to the envelope: ~(ymax, ymin, xmax, xmin)
+             *   Borders in which a singularity exists:  (xmin, xmin, ymin, ymin)
+             *
+             * The same operation is repeated on the next 4 bits for (xmax, xmax, ymax, ymax).
+             */
+            int toTest = ((includedBoundsValue & 1) << 3) | ((includedBoundsValue & 4) >>> 1) |
+                         ((includedBoundsValue & 2) << 6) | ((includedBoundsValue & 8) << 2);
+            toTest |= (toTest >>> 1); // Duplicate the bit values.
+            toTest &= ~(includedBoundsValue | (includedBoundsValue << 4));
+            /*
+             * Now, we have a bit pattern indicating which points to test.
+             */
+            while (toTest != 0) {
+                final int border = Integer.numberOfTrailingZeros(toTest);
+                final int bitMask = 1 << border;
+                toTest &= ~bitMask; // Clear now the bit, for the next iteration.
+                final int dimensionToAdd = (border >>> 1) & 1;
+                final CoordinateSystemAxis toAdd = targetCS.getAxis(dimensionToAdd);
+                if (!RangeMeaning.WRAPAROUND.equals(toAdd.getRangeMeaning())) {
+                    // The axis is not of the expected type. Clear all bits referencing this
+                    // axis. This is just a slight optimization for stopping the loop sooner.
+                    toTest &= (dimensionToAdd == 0) ? 0xCCCCCCCC : 0x33333333;
+                    continue;
+                }
+                final CoordinateSystemAxis added = targetCS.getAxis(dimensionToAdd ^ 1);
+                double x = (border & 1) == 0 ? toAdd.getMinimumValue() : toAdd.getMaximumValue();
+                double y = (border & 4) == 0 ? added.getMinimumValue() : added.getMaximumValue();
+                if ((border & 2) != 0) {
+                    final double t=x; x=y; y=t;
+                }
+                targetPt.setLocation(x, y);
+                try {
+                    sourcePt = mt.transform(targetPt, sourcePt);
+                } catch (TransformException exception) {
+                    recoverableException(exception);
+                    continue;
+                }
+                if (envelope.contains(sourcePt)) {
+                    destination.add(targetPt);
+                }
             }
         }
         // Attempt the 'equalsEpsilon' assertion only if source and destination are not same.
@@ -717,8 +873,16 @@ public final class Envelopes extends Static {
      * i.e. the caller <strong>must</strong> have a reasonable fallback (otherwise it
      * should propagate the exception).
      */
-    private static void unexpectedException(final String methodName, final Exception exception) {
-        Logging.unexpectedException(Envelopes.class, methodName, exception);
+    private static void unexpectedException(final Exception exception) {
+        Logging.unexpectedException(Envelopes.class, "transform", exception);
+    }
+
+    /**
+     * Invoked when a recoverable exception occurred. Those exceptions must be minor enough
+     * that they can be silently ignored in most cases.
+     */
+    private static void recoverableException(final Exception exception) {
+        Logging.recoverableException(Envelopes.class, "transform", exception);
     }
 
     /**

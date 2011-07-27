@@ -65,21 +65,32 @@ public final class EnvelopesTest extends ReferencingTestBase {
     public void testEnvelopeTransformation() throws FactoryException, TransformException {
         final CoordinateReferenceSystem mapCRS = CRS.parseWKT(WKT.PROJCS_UTM_10N);
         final CoordinateReferenceSystem WGS84  = DefaultGeographicCRS.WGS84;
-        final MathTransform crsTransform = CRS.findMathTransform(WGS84, mapCRS, true);
+        final MathTransform2D crsTransform = (MathTransform2D) CRS.findMathTransform(WGS84, mapCRS, true);
         assertFalse(crsTransform.isIdentity());
 
-        final GeneralEnvelope firstEnvelope, transformedEnvelope, oldEnvelope;
-        firstEnvelope = new GeneralEnvelope(new double[] {-124, 42}, new double[] {-122, 43});
-        firstEnvelope.setCoordinateReferenceSystem(WGS84);
+        final GeneralEnvelope originalEnvelope, transformedEnvelope, confirmEnvelope;
+        originalEnvelope = new GeneralEnvelope(new double[] {-124, 42}, new double[] {-122, 43});
+        originalEnvelope.setCoordinateReferenceSystem(WGS84);
 
-        transformedEnvelope = Envelopes.transform(crsTransform, firstEnvelope);
+        transformedEnvelope = Envelopes.transform(crsTransform, originalEnvelope);
         transformedEnvelope.setCoordinateReferenceSystem(mapCRS);
 
-        oldEnvelope = Envelopes.transform(crsTransform.inverse(), transformedEnvelope);
-        oldEnvelope.setCoordinateReferenceSystem(WGS84);
+        confirmEnvelope = Envelopes.transform(crsTransform.inverse(), transformedEnvelope);
+        confirmEnvelope.setCoordinateReferenceSystem(WGS84);
 
-        assertTrue(oldEnvelope.contains(firstEnvelope, true));
-        assertTrue(oldEnvelope.equals  (firstEnvelope, 0.02, true));
+        assertTrue("The transformed envelope should not be smaller than the original one.",
+                   confirmEnvelope.contains(originalEnvelope, true));
+        assertTrue("The transformed envelope should be almost equals to the original one, maybe sligtly bigger.",
+                   confirmEnvelope.equals(originalEnvelope, 0.02, true));
+        /*
+         * Comparison with the API working on Rectangle2D instead than Envelope.
+         */
+        final Rectangle2D originalRect    = originalEnvelope.toRectangle2D();
+        final Rectangle2D transformedRect = Envelopes.transform(crsTransform, originalRect, null);
+        final Rectangle2D confirmRect     = Envelopes.transform(crsTransform.inverse(), transformedRect, null);
+        assertEquals(   originalEnvelope.toRectangle2D(),    originalRect);
+        assertEquals(transformedEnvelope.toRectangle2D(), transformedRect);
+        assertEquals(    confirmEnvelope.toRectangle2D(),     confirmRect);
     }
 
     /**
@@ -114,22 +125,38 @@ public final class EnvelopesTest extends ReferencingTestBase {
          * Tests what we actually get.
          */
         Rectangle2D actual = Envelopes.transform((MathTransform2D) transform, envelope, null);
-        assertTrue(XRectangle2D.equalsEpsilon(expected, actual));
+        assertTrue("Transform without axes information.", XRectangle2D.equalsEpsilon(expected, actual));
+        assertEquals("Same transform, using the API on Envelope objects.", actual,
+                Envelopes.transform(transform, new GeneralEnvelope(envelope)).toRectangle2D());
         /*
          * Using the transform(CoordinateOperation, ...) method,
          * the singularity at South pole is taken in account.
          */
         expected = XRectangle2D.createFromExtremums(-180, -90, 180, -40.905775004205864);
         actual = Envelopes.transform(operation, envelope, actual);
-        assertTrue(XRectangle2D.equalsEpsilon(expected, actual));
+        assertTrue("Transform with axes information.", XRectangle2D.equalsEpsilon(expected, actual));
+        assertEquals("Same transform, using the API on Envelope objects.", actual,
+                Envelopes.transform(operation, new GeneralEnvelope(envelope)).toRectangle2D());
         /*
-         * The rectangle to test, which contains the South pole, but this time the south
+         * Another rectangle containing the South pole, but this time the south
          * pole is almost in a corner of the rectangle
          */
         envelope = XRectangle2D.createFromExtremums(-4000000, -4000000, 300000, 30000);
         expected = XRectangle2D.createFromExtremums(-180, -90, 180, -41.03163170198091);
         actual = Envelopes.transform(operation, envelope, actual);
-        assertTrue(XRectangle2D.equalsEpsilon(expected, actual));
+        assertTrue("South pole in corner.", XRectangle2D.equalsEpsilon(expected, actual));
+        assertEquals("Same transform, using the API on Envelope objects.", actual,
+                Envelopes.transform(operation, new GeneralEnvelope(envelope)).toRectangle2D());
+        /*
+         * Another rectangle with the South pole close to the border.
+         * This test should execute the step #3 in the transform method code.
+         */
+        envelope = XRectangle2D.createFromExtremums(-2000000, -1000000, 200000, 2000000);
+        expected = XRectangle2D.createFromExtremums(-180, -90, 180, -64.3861643256928);
+        actual = Envelopes.transform(operation, envelope, actual);
+        assertTrue("South pole close to a border.", XRectangle2D.equalsEpsilon(expected, actual));
+        assertEquals("Same transform, using the API on Envelope objects.", actual,
+                Envelopes.transform(operation, new GeneralEnvelope(envelope)).toRectangle2D());
     }
 
     /**
