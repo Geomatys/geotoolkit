@@ -91,7 +91,8 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.18
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 1.0
  * @module
@@ -461,31 +462,70 @@ public class LambertConformal extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.14
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final double λ    = rollLongitude(point.getX());
+            final double φ    = point.getY();
+            final double sinλ = sin(λ);
+            final double cosλ = cos(λ);
+            final double ρ, dρ;
+            final double a = abs(φ);
+            if (a < PI/2) {
+                ρ  = pow(tan(PI/4 + 0.5*φ), -n);
+                dρ = -n*ρ/cos(φ);
+            } else if (a < PI/2 + ANGLE_TOLERANCE) {
+                dρ = ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
+            } else {
+                dρ = ρ = NaN;
+            }
+            final Matrix derivative = new Matrix2(
+                    ρ  *  cosλ,    // dx/dλ
+                    dρ *  sinλ,    // dx/dφ
+                    ρ  * -sinλ,    // dy/dλ
+                    dρ *  cosλ);   // dy/dφ
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
     }
 
     /**
      * Gets the derivative of this transform at a point.
-     * The current implementation is derived from the spherical formulas.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.
      * @throws ProjectionException if the derivative can't be evaluated at the specified point.
      *
-     * @since 3.14
+     * @since 3.19
      */
     @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ    = point.getX();
-        final double φ    = point.getY();
+    public Matrix derivative(Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ = sin(φ);
         final double sinλ = sin(λ);
         final double cosλ = cos(λ);
-        final double ρ    = pow(tan(PI/4 + 0.5*φ), -n);
-        final double dρ   = -n*ρ / cos(φ);
-        return new Matrix2(
-                ρ  *  cosλ,    // dx/dλ
-                dρ *  sinλ,    // dx/dφ
-                ρ  * -sinλ,    // dy/dλ
-                dρ *  cosλ);   // dy/dφ
+        final double ρ, dρ_dφ; // Snyder p. 108
+        final double a = abs(φ);
+        if (a < PI/2) {
+            ρ = pow(tsfn(φ, sinφ), n);
+            dρ_dφ = n * dtsfn_dφ(φ, sinφ, cos(φ)) * ρ;
+        } else if (a < PI/2 + ANGLE_TOLERANCE) {
+            dρ_dφ = ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
+        } else {
+            dρ_dφ = ρ = NaN;
+        }
+        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,
+                          -sinλ * ρ, dρ_dφ * cosλ);
     }
 
     /**

@@ -38,6 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  * long as we make this value varying, the latitude of origin is the simplest approach.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Rémi Maréchal (Geomatys)
  * @version 3.19
  *
  * @since 3.00
@@ -205,6 +206,11 @@ public final class LambertConformalTest extends ProjectionTestBase {
         verifyDerivative(toRadians( 0), toRadians( 0));
         verifyDerivative(toRadians(15), toRadians(30));
         verifyDerivative(toRadians(10), toRadians(60));
+
+        transform = create(true, 45);
+        assertFalse(isSpherical());
+        validate();
+        verifyDerivative(toRadians(15), toRadians(40));
     }
 
     /**

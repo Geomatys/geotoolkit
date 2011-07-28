@@ -488,7 +488,7 @@ public class TransverseMercator extends CassiniOrMercator {
      */
     @Override
     public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ    = point.getX();
+        final double λ    = rollLongitude(point.getX());
         final double φ    = point.getY();
         final double sinλ = sin(λ);
         final double cosλ = cos(λ);
