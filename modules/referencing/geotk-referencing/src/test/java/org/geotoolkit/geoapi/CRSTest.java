@@ -25,6 +25,9 @@ import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
@@ -35,6 +38,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
  *
  * @since 3.01
  */
+@RunWith(JUnit4.class)
 public final class CRSTest extends org.opengis.test.referencing.CRSTest {
     /**
      * Creates a new test suite using the singleton factory instance.

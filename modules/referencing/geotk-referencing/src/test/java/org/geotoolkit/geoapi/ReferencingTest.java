@@ -21,6 +21,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.factory.ReferencingObjectFactory;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
@@ -31,6 +34,7 @@ import org.geotoolkit.referencing.factory.ReferencingObjectFactory;
  *
  * @since 3.01
  */
+@RunWith(JUnit4.class)
 public final class ReferencingTest extends org.opengis.test.referencing.ReferencingTest {
     /**
      * Creates a new test suite using the singleton factory instance.

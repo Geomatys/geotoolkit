@@ -33,12 +33,15 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.metadata.iso.citation.Citations;
+
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 
@@ -47,7 +50,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * A factory for {@link AbstractName} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @see org.geotoolkit.factory.FactoryFinder#getNameFactory
  *
@@ -61,6 +64,16 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * Use {@link org.geotoolkit.factory.FactoryFinder#getNameFactory} instead.
      */
     public DefaultNameFactory() {
+    }
+
+    /**
+     * Returns the implementor of this factory, which is {@link Citations#GEOTOOLKIT GEOTOOLKIT}.
+     *
+     * @since 3.19
+     */
+    @Override
+    public Citation getVendor() {
+        return Citations.GEOTOOLKIT;
     }
 
     /**

@@ -20,6 +20,8 @@ package org.geotoolkit.naming;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.opengis.test.util.NameTest;
 
 
@@ -32,6 +34,7 @@ import org.opengis.test.util.NameTest;
  *
  * @since 3.00
  */
+@RunWith(JUnit4.class)
 public class GeoapiTest extends NameTest {
     /**
      * Creates a new test suite using the singleton factory instance.
