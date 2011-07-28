@@ -62,8 +62,8 @@ public final class GoogleMapsUtilities {
         //this is not an exact extent, google once again do not respect anything
         //MERCATOR_EXTEND = CRS.getEnvelope(GoogleMapsUtilities.GOOGLE_MERCATOR);
         MERCATOR_EXTEND = new GeneralEnvelope(GOOGLE_MERCATOR);
-        ((GeneralEnvelope)MERCATOR_EXTEND).setRange(0, -2e7, 2e7);
-        ((GeneralEnvelope)MERCATOR_EXTEND).setRange(1, -2e7, 2e7);
+        ((GeneralEnvelope)MERCATOR_EXTEND).setRange(0, -20037508.342789244d, 20037508.342789244d);
+        ((GeneralEnvelope)MERCATOR_EXTEND).setRange(1, -20037508.342789244d, 20037508.342789244d);
         
         ZOOM_ZERO_RESOLUTION = MERCATOR_EXTEND.getSpan(0) / BASE_TILE_SIZE;
         try {

@@ -17,14 +17,11 @@
 package org.geotoolkit.googlemaps.model;
 
 import java.awt.geom.Point2D;
-import org.geotoolkit.client.map.DefaultGridMosaic;
 import org.geotoolkit.client.map.DefaultPyramid;
 import org.geotoolkit.client.map.DefaultPyramidSet;
-import org.geotoolkit.client.map.GridMosaic;
 import org.geotoolkit.client.map.PyramidSet;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.map.GoogleMapsUtilities;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -40,9 +37,8 @@ public class GoogleMapsPyramidSet extends DefaultPyramidSet{
         
         final int tileWidth = (int) GoogleMapsUtilities.BASE_TILE_SIZE;        
         final int tileHeight = (int) GoogleMapsUtilities.BASE_TILE_SIZE;        
-        final Envelope extent = CRS.getEnvelope(GoogleMapsUtilities.GOOGLE_MERCATOR);
-        final Point2D upperLeft = new Point2D.Double(extent.getMinimum(0), extent.getMaximum(1));
-        
+        final Envelope extent = GoogleMapsUtilities.MERCATOR_EXTEND;
+        final Point2D upperLeft = new Point2D.Double(extent.getMinimum(0), extent.getMaximum(1));        
         final double scale0Resolution = extent.getSpan(0) / GoogleMapsUtilities.BASE_TILE_SIZE;
         
         for(int i=0; i<=maxScale; i++){
