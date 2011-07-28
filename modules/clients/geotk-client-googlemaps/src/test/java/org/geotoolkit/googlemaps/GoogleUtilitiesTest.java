@@ -47,77 +47,79 @@ public class GoogleUtilitiesTest {
         assertEquals(MERCATOR_EXTEND.getMedian(1), position.getOrdinate(1), DELTA);
         
         //ZOOM LEVEL 1 test
+        double n = MERCATOR_EXTEND.getMaximum(0) / 2;
         
         position = getCenter(1, 1, 1);
-        assertEquals(1e7, position.getOrdinate(0), DELTA);
-        assertEquals(-1e7, position.getOrdinate(1), DELTA);
+        assertEquals(n, position.getOrdinate(0), DELTA);
+        assertEquals(-n, position.getOrdinate(1), DELTA);
         
         position = getCenter(1, 0, 1);
-        assertEquals(-1e7, position.getOrdinate(0), DELTA);
-        assertEquals(-1e7, position.getOrdinate(1), DELTA);
+        assertEquals(-n, position.getOrdinate(0), DELTA);
+        assertEquals(-n, position.getOrdinate(1), DELTA);
         
         position = getCenter(1, 1, 0);
-        assertEquals(1e7, position.getOrdinate(0), DELTA);
-        assertEquals(1e7, position.getOrdinate(1), DELTA);
+        assertEquals(n, position.getOrdinate(0), DELTA);
+        assertEquals(n, position.getOrdinate(1), DELTA);
         
         position = getCenter(1, 0, 0);
-        assertEquals(-1e7, position.getOrdinate(0), DELTA);
-        assertEquals(1e7, position.getOrdinate(1), DELTA);
+        assertEquals(-n, position.getOrdinate(0), DELTA);
+        assertEquals(n, position.getOrdinate(1), DELTA);
         
         
         //ZOOM LEVEL 2 test
+        double k = MERCATOR_EXTEND.getMaximum(0) / 4;
         
         position = getCenter(2, 0, 0);
-        assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(1.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-(n+k), position.getOrdinate(0), DELTA);
+        assertEquals((n+k), position.getOrdinate(1), DELTA);        
         position = getCenter(2, 1, 0);
-        assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(1.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-k, position.getOrdinate(0), DELTA);
+        assertEquals((n+k), position.getOrdinate(1), DELTA);        
         position = getCenter(2, 2, 0);
-        assertEquals(0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(1.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(k, position.getOrdinate(0), DELTA);
+        assertEquals((n+k), position.getOrdinate(1), DELTA);        
         position = getCenter(2, 3, 0);
-        assertEquals(1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(1.5e7, position.getOrdinate(1), DELTA);
+        assertEquals((n+k), position.getOrdinate(0), DELTA);
+        assertEquals((n+k), position.getOrdinate(1), DELTA);
         
         position = getCenter(2, 0, 1);
-        assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(0.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-(n+k), position.getOrdinate(0), DELTA);
+        assertEquals(k, position.getOrdinate(1), DELTA);        
         position = getCenter(2, 1, 1);
-        assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(0.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-k, position.getOrdinate(0), DELTA);
+        assertEquals(k, position.getOrdinate(1), DELTA);        
         position = getCenter(2, 2, 1);
-        assertEquals(0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(0.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(k, position.getOrdinate(0), DELTA);
+        assertEquals(k, position.getOrdinate(1), DELTA);        
         position = getCenter(2, 3, 1);
-        assertEquals(1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(0.5e7, position.getOrdinate(1), DELTA);
+        assertEquals((n+k), position.getOrdinate(0), DELTA);
+        assertEquals(k, position.getOrdinate(1), DELTA);
         
         position = getCenter(2, 0, 2);
-        assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-0.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-(n+k), position.getOrdinate(0), DELTA);
+        assertEquals(-k, position.getOrdinate(1), DELTA);        
         position = getCenter(2, 1, 2);
-        assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-0.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-k, position.getOrdinate(0), DELTA);
+        assertEquals(-k, position.getOrdinate(1), DELTA);        
         position = getCenter(2, 2, 2);
-        assertEquals(0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-0.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(k, position.getOrdinate(0), DELTA);
+        assertEquals(-k, position.getOrdinate(1), DELTA);        
         position = getCenter(2, 3, 2);
-        assertEquals(1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-0.5e7, position.getOrdinate(1), DELTA);
+        assertEquals((n+k), position.getOrdinate(0), DELTA);
+        assertEquals(-k, position.getOrdinate(1), DELTA);
         
         position = getCenter(2, 0, 3);
-        assertEquals(-1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-1.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-(n+k), position.getOrdinate(0), DELTA);
+        assertEquals(-(n+k), position.getOrdinate(1), DELTA);        
         position = getCenter(2, 1, 3);
-        assertEquals(-0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-1.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(-k, position.getOrdinate(0), DELTA);
+        assertEquals(-(n+k), position.getOrdinate(1), DELTA);        
         position = getCenter(2, 2, 3);
-        assertEquals(0.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-1.5e7, position.getOrdinate(1), DELTA);        
+        assertEquals(k, position.getOrdinate(0), DELTA);
+        assertEquals(-(n+k), position.getOrdinate(1), DELTA);        
         position = getCenter(2, 3, 3);
-        assertEquals(1.5e7, position.getOrdinate(0), DELTA);
-        assertEquals(-1.5e7, position.getOrdinate(1), DELTA);
+        assertEquals((n+k), position.getOrdinate(0), DELTA);
+        assertEquals(-(n+k), position.getOrdinate(1), DELTA);
         
         
     }
