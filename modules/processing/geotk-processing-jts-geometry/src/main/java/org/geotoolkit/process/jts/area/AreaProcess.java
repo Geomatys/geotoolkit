@@ -14,23 +14,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.jts.buffer;
+package org.geotoolkit.process.jts.area;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import java.util.Collections;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.process.jts.buffer.BufferDescriptor.*;
+import static org.geotoolkit.process.jts.area.AreaDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class BufferProcess extends AbstractProcess{
+public class AreaProcess extends AbstractProcess{
     
-    public BufferProcess(){
+    public AreaProcess(){
         super(INSTANCE);
     }
     
@@ -38,32 +36,13 @@ public class BufferProcess extends AbstractProcess{
     public void run() {
         
         final Geometry geom = value(GEOM, inputParameters);  
-        final double distance = value(DISTANCE, inputParameters);
+       
         
-        int segments = 0;
-        if(value(SEGMENTS, inputParameters) != null){
-            segments = value(SEGMENTS, inputParameters);  
-        }
+        final Double result = geom.getArea();
         
-        int endStyle = 0;
-        if(value(ENDSTYLE, inputParameters) != null){
-             endStyle = value(ENDSTYLE, inputParameters);   
-        }
-        
-        Geometry result = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-        
-        if(segments > 0){
-            if(endStyle != 0){
-                 result = geom.buffer(distance, segments, endStyle);
-            }else{
-                 result = geom.buffer(distance, segments);
-            }
-        }else{
-            result = geom.buffer(distance);
-        }
-     
+       
         final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_GEOM, output).setValue(result); 
+        getOrCreate(RESULT, output).setValue(result); 
         
     }
     

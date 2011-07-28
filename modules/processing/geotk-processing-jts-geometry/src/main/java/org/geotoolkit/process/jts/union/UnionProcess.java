@@ -14,54 +14,32 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.jts.buffer;
+package org.geotoolkit.process.jts.union;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import java.util.Collections;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.process.jts.buffer.BufferDescriptor.*;
+import static org.geotoolkit.process.jts.union.UnionDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class BufferProcess extends AbstractProcess{
+public class UnionProcess extends AbstractProcess{
     
-    public BufferProcess(){
+    public UnionProcess(){
         super(INSTANCE);
     }
     
     @Override
     public void run() {
         
-        final Geometry geom = value(GEOM, inputParameters);  
-        final double distance = value(DISTANCE, inputParameters);
+        final Geometry geom1 = value(GEOM1, inputParameters); 
+        final Geometry geom2 = value(GEOM2, inputParameters); 
         
-        int segments = 0;
-        if(value(SEGMENTS, inputParameters) != null){
-            segments = value(SEGMENTS, inputParameters);  
-        }
+        final Geometry result = (Geometry) geom1.union(geom2);
         
-        int endStyle = 0;
-        if(value(ENDSTYLE, inputParameters) != null){
-             endStyle = value(ENDSTYLE, inputParameters);   
-        }
-        
-        Geometry result = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-        
-        if(segments > 0){
-            if(endStyle != 0){
-                 result = geom.buffer(distance, segments, endStyle);
-            }else{
-                 result = geom.buffer(distance, segments);
-            }
-        }else{
-            result = geom.buffer(distance);
-        }
-     
         final ParameterValueGroup output =  getOutput();
         getOrCreate(RESULT_GEOM, output).setValue(result); 
         

@@ -21,7 +21,26 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.jts.area.AreaDescriptor;
+import org.geotoolkit.process.jts.boundary.BoundaryDescriptor;
 import org.geotoolkit.process.jts.buffer.BufferDescriptor;
+import org.geotoolkit.process.jts.centroid.CentroidDescriptor;
+import org.geotoolkit.process.jts.contain.ContainDescriptor;
+import org.geotoolkit.process.jts.convexhull.ConvexHullDescriptor;
+import org.geotoolkit.process.jts.coveredby.CoveredByDescriptor;
+import org.geotoolkit.process.jts.covers.CoversDescriptor;
+import org.geotoolkit.process.jts.crosses.CrossesDescriptor;
+import org.geotoolkit.process.jts.difference.DifferenceDescriptor;
+import org.geotoolkit.process.jts.envelope.EnvelopeDescriptor;
+import org.geotoolkit.process.jts.equals2d.Equals2dDescriptor;
+import org.geotoolkit.process.jts.intersection.IntersectionDescriptor;
+import org.geotoolkit.process.jts.intersects.IntersectsDescriptor;
+import org.geotoolkit.process.jts.isempty.IsEmptyDescriptor;
+import org.geotoolkit.process.jts.lenght.LenghtDescriptor;
+import org.geotoolkit.process.jts.overlaps.OverlapsDescriptor;
+import org.geotoolkit.process.jts.touches.TouchesDescriptor;
+import org.geotoolkit.process.jts.union.UnionDescriptor;
+import org.geotoolkit.process.jts.within.WithinDescriptor;
 
 
 import org.opengis.metadata.Identifier;
@@ -50,7 +69,11 @@ public class JTSProcessFactory extends AbstractProcessFactory{
     }
 
     public JTSProcessFactory() {
-        super(BufferDescriptor.INSTANCE);
+        super(BufferDescriptor.INSTANCE, AreaDescriptor.INSTANCE, BoundaryDescriptor.INSTANCE, CentroidDescriptor.INSTANCE,
+                ContainDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE, CoveredByDescriptor.INSTANCE, CoversDescriptor.INSTANCE,
+                CrossesDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE, EnvelopeDescriptor.INSTANCE, Equals2dDescriptor.INSTANCE,
+                IntersectionDescriptor.INSTANCE, IntersectsDescriptor.INSTANCE, IsEmptyDescriptor.INSTANCE, LenghtDescriptor.INSTANCE,
+                OverlapsDescriptor.INSTANCE, TouchesDescriptor.INSTANCE, UnionDescriptor.INSTANCE, WithinDescriptor.INSTANCE);
     }
     
     @Override
