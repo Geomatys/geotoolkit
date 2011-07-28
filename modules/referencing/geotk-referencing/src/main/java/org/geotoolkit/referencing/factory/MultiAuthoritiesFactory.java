@@ -744,6 +744,8 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
             } catch (NoSuchAuthorityCodeException exception) {
                 if (failure == null) {
                     failure = exception;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
                 continue;
             }
@@ -795,6 +797,8 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
             } catch (NoSuchAuthorityCodeException exception) {
                 if (failure == null) {
                     failure = exception;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
                 continue;
             }

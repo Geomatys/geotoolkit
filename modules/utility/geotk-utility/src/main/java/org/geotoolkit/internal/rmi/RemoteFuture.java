@@ -108,6 +108,8 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
                 // before to report that failure.
                 if (failure == null) {
                     failure = e;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
             }
         }

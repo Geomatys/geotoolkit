@@ -32,6 +32,7 @@ import javax.measure.quantity.Quantity;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.FactoryException;
@@ -715,21 +716,38 @@ public class ReferencingParser extends MathTransformParser {
                 parameters.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
             }
             while ((param = parent.pullOptionalElement("PARAMETER")) != null) {
-                final String paramName  = param.pullString("name");
-                final double paramValue = param.pullDouble("value");
+                final String paramName = param.pullString("name");
                 final ParameterValue<?> parameter = parameters.parameter(paramName);
-                final Unit<?> expected = parameter.getDescriptor().getUnit();
-                if (expected!=null && !Unit.ONE.equals(expected)) {
-                    if (linearUnit!=null && METRE.isCompatible(expected)) {
-                        parameter.setValue(paramValue, linearUnit);
-                        continue;
+                final ParameterDescriptor<?> descriptor = parameter.getDescriptor();
+                final Class<?> valueClass = descriptor.getValueClass();
+                if (valueClass == String.class) {
+                    parameter.setValue(param.pullString("value"));
+                } else if (valueClass == Boolean.class) {
+                    parameter.setValue(param.pullBoolean("value"));
+                } else {
+                    /*
+                     * Usually, projection parameters contain only double values.  The above
+                     * check for other types was done as a safety, but having those types in
+                     * a PROJECTION[...] element is unusual. Consequently we make the double
+                     * type the default for all unknown types.
+                     */
+                    final double paramValue = param.pullDouble("value");
+                    final Unit<?> expected = descriptor.getUnit();
+                    Unit<?> unit = null;
+                    if (expected != null && !Unit.ONE.equals(expected)) {
+                        if (linearUnit != null && METRE.isCompatible(expected)) {
+                            unit = linearUnit;
+                        } else if (angularUnit != null && RADIAN.isCompatible(expected)) {
+                            unit = angularUnit;
+                        }
                     }
-                    if (angularUnit!=null && RADIAN.isCompatible(expected)) {
-                        parameter.setValue(paramValue, angularUnit);
-                        continue;
+                    if (unit != null) {
+                        parameter.setValue(paramValue, unit);
+                    } else {
+                        parameter.setValue(paramValue);
                     }
                 }
-                parameter.setValue(paramValue);
+                param.close();
             }
         } catch (ParameterNotFoundException exception) {
             throw param.parseFailed(exception, Errors.format(

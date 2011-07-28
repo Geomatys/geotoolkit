@@ -406,6 +406,7 @@ public final class Envelopes extends Static {
          * may fail to transform the (-180°, 90°) coordinate while the (-180°, 30°) coordinate
          * is a valid point.
          */
+        TransformException warning = null;
         GeneralEnvelope generalEnvelope = null;
         DirectPosition sourcePt = null;
         DirectPosition targetPt = null;
@@ -446,7 +447,7 @@ public final class Envelopes extends Static {
                          * lost dimensions. So we don't log any warning in this case.
                          */
                         if (dimension >= mt.getSourceDimensions()) {
-                            unexpectedException(exception);
+                            recoverableException(exception);
                         }
                         return transformed;
                     }
@@ -471,7 +472,11 @@ public final class Envelopes extends Static {
                      * the latitude extremums with a cylindrical Mercator projection.  Do not
                      * log any message (unless logging level is fine) and try the other points.
                      */
-                    recoverableException(exception);
+                    if (warning == null) {
+                        warning = exception;
+                    } else {
+                        // TODO: addSuppress with JDK7.
+                    }
                     continue;
                 }
                 if (generalEnvelope.contains(sourcePt)) {
@@ -485,10 +490,8 @@ public final class Envelopes extends Static {
              * axis have been included in the envelope  (in which case the next step after this
              * loop doesn't need to be executed for that axis).
              */
-            if ((includedMinValue & includedMaxValue & dimensionBitMask) == 0) {
-                if (RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
-                    isWrapAroundAxis |= dimensionBitMask;
-                }
+            if ((includedMinValue & includedMaxValue & dimensionBitMask) == 0 && isWrapAround(axis)) {
+                isWrapAroundAxis |= dimensionBitMask;
             }
             // Restore 'targetPt' to its initial state, which is equals to 'centerPt'.
             if (targetPt != null) {
@@ -547,7 +550,11 @@ public final class Envelopes extends Static {
                         try {
                             sourcePt = mt.transform(targetPt, sourcePt);
                         } catch (TransformException exception) {
-                            recoverableException(exception);
+                            if (warning == null) {
+                                warning = exception;
+                            } else {
+                                // TODO: addSuppress with JDK7.
+                            }
                             continue;
                         }
                         if (generalEnvelope.contains(sourcePt)) {
@@ -558,6 +565,9 @@ public final class Envelopes extends Static {
                 }
                 targetPt.setOrdinate(wrapAroundDimension, centerPt.getOrdinate(wrapAroundDimension));
             }
+        }
+        if (warning != null) {
+            recoverableException(warning);
         }
         return transformed;
     }
@@ -759,6 +769,7 @@ public final class Envelopes extends Static {
          * The 'border' variable in the loop below is used in order to compress 2 dimensions
          * and 2 extremums in a single loop, in this order: (xmin, xmax, ymin, ymax).
          */
+        TransformException warning = null;
         Point2D sourcePt = null;
         Point2D targetPt = null;
         int includedBoundsValue = 0; // A bitmask for each (dimension, extremum) pairs.
@@ -776,7 +787,7 @@ public final class Envelopes extends Static {
                 try {
                     mt = mt.inverse();
                 } catch (NoninvertibleTransformException exception) {
-                    unexpectedException(exception);
+                    recoverableException(exception);
                     return destination;
                 }
                 targetPt = new Point2D.Double();
@@ -789,7 +800,11 @@ public final class Envelopes extends Static {
             try {
                 sourcePt = mt.transform(targetPt, sourcePt);
             } catch (TransformException exception) {
-                recoverableException(exception);
+                if (warning == null) {
+                    warning = exception;
+                } else {
+                    // TODO: addSuppress with JDK7.
+                }
                 continue;
             }
             if (envelope.contains(sourcePt)) {
@@ -830,37 +845,41 @@ public final class Envelopes extends Static {
             toTest |= (toTest >>> 1); // Duplicate the bit values.
             toTest &= ~(includedBoundsValue | (includedBoundsValue << 4));
             /*
-             * Now, we have a bit pattern indicating which points to test.
+             * Forget any axes that are not of kind "WRAPAROUND". Then get the final
+             * bit pattern indicating which points to test. Iterate over that bits.
              */
+            if ((toTest & 0x33333333) != 0 && !isWrapAround(targetCS.getAxis(0))) toTest &= 0xCCCCCCCC;
+            if ((toTest & 0xCCCCCCCC) != 0 && !isWrapAround(targetCS.getAxis(1))) toTest &= 0x33333333;
             while (toTest != 0) {
                 final int border = Integer.numberOfTrailingZeros(toTest);
                 final int bitMask = 1 << border;
                 toTest &= ~bitMask; // Clear now the bit, for the next iteration.
                 final int dimensionToAdd = (border >>> 1) & 1;
                 final CoordinateSystemAxis toAdd = targetCS.getAxis(dimensionToAdd);
-                if (!RangeMeaning.WRAPAROUND.equals(toAdd.getRangeMeaning())) {
-                    // The axis is not of the expected type. Clear all bits referencing this
-                    // axis. This is just a slight optimization for stopping the loop sooner.
-                    toTest &= (dimensionToAdd == 0) ? 0xCCCCCCCC : 0x33333333;
-                    continue;
-                }
                 final CoordinateSystemAxis added = targetCS.getAxis(dimensionToAdd ^ 1);
                 double x = (border & 1) == 0 ? toAdd.getMinimumValue() : toAdd.getMaximumValue();
                 double y = (border & 4) == 0 ? added.getMinimumValue() : added.getMaximumValue();
-                if ((border & 2) != 0) {
+                if (dimensionToAdd != 0) {
                     final double t=x; x=y; y=t;
                 }
                 targetPt.setLocation(x, y);
                 try {
                     sourcePt = mt.transform(targetPt, sourcePt);
                 } catch (TransformException exception) {
-                    recoverableException(exception);
+                    if (warning == null) {
+                        warning = exception;
+                    } else {
+                        // TODO: addSuppress with JDK7.
+                    }
                     continue;
                 }
                 if (envelope.contains(sourcePt)) {
                     destination.add(targetPt);
                 }
             }
+        }
+        if (warning != null) {
+            recoverableException(warning);
         }
         // Attempt the 'equalsEpsilon' assertion only if source and destination are not same.
         assert (destination == envelope) || XRectangle2D.equalsEpsilon(destination,
@@ -869,12 +888,10 @@ public final class Envelopes extends Static {
     }
 
     /**
-     * Invoked when an unexpected exception occurred. Those exceptions must be non-fatal,
-     * i.e. the caller <strong>must</strong> have a reasonable fallback (otherwise it
-     * should propagate the exception).
+     * Returns {@code true} if the given axis is of kind "Wrap Around".
      */
-    private static void unexpectedException(final Exception exception) {
-        Logging.unexpectedException(Envelopes.class, "transform", exception);
+    private static boolean isWrapAround(final CoordinateSystemAxis axis) {
+        return RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning());
     }
 
     /**

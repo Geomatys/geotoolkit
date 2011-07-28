@@ -109,6 +109,8 @@ public final class StressTest extends EpsgFactoryTestBase {
                 // Remember the first exception (to be throw below).
                 if (exception == null) {
                     exception = e;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
                 System.err.println(Classes.getShortClassName(e) + " in thread " +
                         thread.id + " for code " + thread.badCode);

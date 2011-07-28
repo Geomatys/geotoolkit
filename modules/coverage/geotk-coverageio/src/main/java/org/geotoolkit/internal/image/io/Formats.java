@@ -203,6 +203,8 @@ attmpt: while (true) {
                 } catch (IOException e) {
                     if (failure == null) {
                         failure = e; // Remember only the first failure.
+                    } else {
+                        // TODO: addSuppress with JDK7.
                     }
                 } finally {
                     /*

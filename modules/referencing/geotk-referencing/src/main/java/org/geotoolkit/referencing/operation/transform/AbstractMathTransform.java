@@ -447,9 +447,12 @@ public abstract class AbstractMathTransform extends FormattableObject
                 if (failure == null) {
                     failure = exception; // Keep only the first failure.
                     blockStart = srcOff;
-                } else if (Math.abs(srcOff - blockStart) > MAXIMUM_BUFFER_SIZE) {
-                    failureCount = 0; // We started a new block of coordinates.
-                    blockStart = srcOff;
+                } else {
+                    // TODO: addSuppress with JDK7.
+                    if (Math.abs(srcOff - blockStart) > MAXIMUM_BUFFER_SIZE) {
+                        failureCount = 0; // We started a new block of coordinates.
+                        blockStart = srcOff;
+                    }
                 }
             }
             srcOff += srcInc;
@@ -582,6 +585,8 @@ public abstract class AbstractMathTransform extends FormattableObject
                     throw exception;
                 } else if (failure == null) {
                     failure = exception; // Keep only the first exception.
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
             }
             for (int i=0; i<dstStop; i++) {
@@ -649,6 +654,8 @@ public abstract class AbstractMathTransform extends FormattableObject
                     throw exception;
                 } else if (failure == null) {
                     failure = exception;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
             }
             for (int i=0; i<dstLength; i++) {
@@ -726,6 +733,8 @@ public abstract class AbstractMathTransform extends FormattableObject
                     throw exception;
                 } else if (failure == null) {
                     failure = exception;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
             }
             dstOff += dstLength;

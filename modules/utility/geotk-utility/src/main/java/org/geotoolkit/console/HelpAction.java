@@ -385,6 +385,8 @@ final class HelpAction {
             } catch (MissingResourceException e) {
                 if (failure == null) {
                     failure = e;
+                } else {
+                    // TODO: addSuppress with JDK7.
                 }
             }
         }
