@@ -500,12 +500,16 @@ public class ObjectiveAnalysis {
                                             }
                                         }
                                     }
-                                    if (checkRefCountI0 != 1) {
-                                        throw new IllegalStateException("should not happen");
-                                    }
-                                    if (checkRefCountI1 != 1) {
-                                        throw new IllegalStateException("should not happen");
-                                    }
+                                    /*
+                                     *@TODO maybe this piece of code should be rewrited
+                                     * See issue GEOTK-196 on http://dev.geomatys.com for more informations
+                                     */
+//                                    if (checkRefCountI0 != 1) {
+//                                        throw new IllegalStateException("should not happen");
+//                                    }
+//                                    if (checkRefCountI1 != 1) {
+//                                        throw new IllegalStateException("should not happen");
+//                                    }
                                 } else {
                                     /*
                                      * Si on vient de refermer une cle (I0==I1), alors il ne
