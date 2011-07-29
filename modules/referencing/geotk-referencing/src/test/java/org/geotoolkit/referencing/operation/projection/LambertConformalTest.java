@@ -246,8 +246,12 @@ public final class LambertConformalTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testLambertConformal1SP() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Conic Conformal (1SP)");
         parameters.parameter("semi-major axis").setValue(6378206.400);
@@ -281,8 +285,12 @@ public final class LambertConformalTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testLambertConformal2SP() throws FactoryException, TransformException {
         final double feets = 3.2808333333333333333; // Conversion from metre to feets.
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Conic Conformal (2SP)");
@@ -319,8 +327,12 @@ public final class LambertConformalTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testBelgium() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Conic Conformal (2SP Belgium)");
         parameters.parameter("semi-major axis").setValue(6378388);
