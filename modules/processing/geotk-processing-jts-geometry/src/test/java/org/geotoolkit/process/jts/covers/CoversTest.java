@@ -38,7 +38,7 @@ public class CoversTest extends AbstractProcessTest{
 
    
     public CoversTest() {
-        super("coveredBy");
+        super("covers");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CoversTest extends AbstractProcessTest{
         final Geometry geom2 = fact.createPoint(new Coordinate(5, 5)) ;
       
         // Process
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "coveredBy");
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "covers");
         final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
@@ -74,7 +74,7 @@ public class CoversTest extends AbstractProcessTest{
         final Boolean result = (Boolean) proc.getOutput().parameter("result").getValue();
        
         
-        final Boolean expected = geom1.contains(geom2);
+        final Boolean expected = geom1.covers(geom2);
         
         assertTrue(expected.equals(result));
     }

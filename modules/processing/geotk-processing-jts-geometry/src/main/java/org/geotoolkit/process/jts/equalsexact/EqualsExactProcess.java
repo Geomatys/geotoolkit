@@ -14,21 +14,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.jts.equals2d;
+package org.geotoolkit.process.jts.equalsexact;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
-import static org.geotoolkit.process.jts.equals2d.Equals2dDescriptor.*;
+import static org.geotoolkit.process.jts.equalsexact.EqualsExactDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class Equals2dProcess extends AbstractProcess{
+public class EqualsExactProcess extends AbstractProcess{
     
-    public Equals2dProcess(){
+    public EqualsExactProcess(){
         super(INSTANCE);
     }
     

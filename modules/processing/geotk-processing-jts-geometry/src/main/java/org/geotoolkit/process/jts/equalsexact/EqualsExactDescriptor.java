@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.jts.equals2d;
+package org.geotoolkit.process.jts.equalsexact;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -33,7 +33,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class Equals2dDescriptor extends AbstractProcessDescriptor{
+public class EqualsExactDescriptor extends AbstractProcessDescriptor{
         
     /**Process name : equals2d */
     public static final String NAME = "equals2d";
@@ -63,9 +63,9 @@ public class Equals2dDescriptor extends AbstractProcessDescriptor{
             new GeneralParameterDescriptor[]{RESULT});
 
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new Equals2dDescriptor();
+    public static final ProcessDescriptor INSTANCE = new EqualsExactDescriptor();
 
-    private Equals2dDescriptor() {
+    private EqualsExactDescriptor() {
         super(NAME, JTSProcessFactory.IDENTIFICATION,
                 new SimpleInternationalString("Return true if source geometry (geom1) is equals to the other geometry (geom2) ."),
                 INPUT_DESC, OUTPUT_DESC);
@@ -73,7 +73,7 @@ public class Equals2dDescriptor extends AbstractProcessDescriptor{
 
     @Override
     public Process createProcess() {
-        return new Equals2dProcess();
+        return new EqualsExactProcess();
     }
     
 }

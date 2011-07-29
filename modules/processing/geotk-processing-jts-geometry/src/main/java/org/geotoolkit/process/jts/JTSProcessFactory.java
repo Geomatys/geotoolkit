@@ -32,7 +32,7 @@ import org.geotoolkit.process.jts.covers.CoversDescriptor;
 import org.geotoolkit.process.jts.crosses.CrossesDescriptor;
 import org.geotoolkit.process.jts.difference.DifferenceDescriptor;
 import org.geotoolkit.process.jts.envelope.EnvelopeDescriptor;
-import org.geotoolkit.process.jts.equals2d.Equals2dDescriptor;
+import org.geotoolkit.process.jts.equalsexact.EqualsExactDescriptor;
 import org.geotoolkit.process.jts.intersection.IntersectionDescriptor;
 import org.geotoolkit.process.jts.intersects.IntersectsDescriptor;
 import org.geotoolkit.process.jts.isempty.IsEmptyDescriptor;
@@ -71,7 +71,7 @@ public class JTSProcessFactory extends AbstractProcessFactory{
     public JTSProcessFactory() {
         super(BufferDescriptor.INSTANCE, AreaDescriptor.INSTANCE, BoundaryDescriptor.INSTANCE, CentroidDescriptor.INSTANCE,
                 ContainDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE, CoveredByDescriptor.INSTANCE, CoversDescriptor.INSTANCE,
-                CrossesDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE, EnvelopeDescriptor.INSTANCE, Equals2dDescriptor.INSTANCE,
+                CrossesDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE, EnvelopeDescriptor.INSTANCE, EqualsExactDescriptor.INSTANCE,
                 IntersectionDescriptor.INSTANCE, IntersectsDescriptor.INSTANCE, IsEmptyDescriptor.INSTANCE, LenghtDescriptor.INSTANCE,
                 OverlapsDescriptor.INSTANCE, TouchesDescriptor.INSTANCE, UnionDescriptor.INSTANCE, WithinDescriptor.INSTANCE);
     }

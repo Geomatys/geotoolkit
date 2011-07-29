@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.jts.equals2d;
+package org.geotoolkit.process.jts.equalsexact;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -34,10 +34,10 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class Equals2dTest extends AbstractProcessTest{
+public class EqualsExactTest extends AbstractProcessTest{
 
    
-    public Equals2dTest() {
+    public EqualsExactTest() {
         super("equals2d");
     }
 
