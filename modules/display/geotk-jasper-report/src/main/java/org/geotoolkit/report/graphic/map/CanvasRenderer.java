@@ -183,8 +183,6 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
         double rotation = getController().getRotation();
 
-        final Rectangle2D dim = new Rectangle2D.Double(0, 0, rect.getWidth(), rect.getHeight());
-
         setDisplayBounds(rect);
         try {
             getController().setVisibleArea(area);
@@ -198,6 +196,8 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         g2d = (Graphics2D) g.create();
         g2d.clip(rect);
         g2d.translate(rect.getMinX(), rect.getMinY());
+        //fix Itext library not supported translucent images
+        g2d = new PDFFixGraphics2D(g2d);
         repaint();
     }
     

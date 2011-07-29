@@ -148,7 +148,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
             if(renderingContext.getMonitor().stopRequested()) break;
             final GraphicJ2D gra = itemGraphics.get(child);
             if(gra != null){
-                itemGraphics.get(child).paint(renderingContext);
+                gra.paint(renderingContext);
             }else{
                 getLogger().log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
             }
