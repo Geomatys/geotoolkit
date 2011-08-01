@@ -22,7 +22,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -46,8 +45,12 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
             final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
         super(sql, cx, store, groupName, type, pkey, hints);
-        last = new ResultSetFeature( rs, cx );        
-        batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
+        last = new ResultSetFeature( rs, cx );
+        if(hints != null){
+            batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
+        }else{
+            batchInsert = Boolean.FALSE;
+        }
         toAdd = (batchInsert) ? new ArrayList<SimpleFeature>() : null;
     }
 
