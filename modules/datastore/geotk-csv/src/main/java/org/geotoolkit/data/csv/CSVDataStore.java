@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.io.WKTWriter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -357,7 +358,8 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, 
+            final Hints hints) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter();
         return handleRemaining(fw, filter);
@@ -373,8 +375,9 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures,hints);
     }
 
     @Override

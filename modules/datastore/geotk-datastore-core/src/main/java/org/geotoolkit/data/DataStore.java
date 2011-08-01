@@ -26,6 +26,7 @@ import java.util.Set;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -186,6 +187,18 @@ public interface DataStore {
      * @throws DataStoreException
      */
     List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
+    
+    /**
+     * Add a collection of features in a group of features.
+     *
+     * @param groupName , group where features must be added
+     * @param newFeatures , collection of new features
+     * @param hints , writer hints
+     * @return List of featureId of the added features, may be null or inexact
+     * if the datastore can not handle persistent ids.
+     * @throws DataStoreException
+     */
+    List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures, Hints hints) throws DataStoreException;
 
     /**
      * convenient method to update a single attribute.
@@ -230,6 +243,17 @@ public interface DataStore {
      * @throws DataStoreException
      */
     FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException;
+    
+    /**
+     * Aquire a writer on a given feature type in modify mode.
+     *
+     * @param typeName , type name
+     * @param filter , limit features to only those that match this filter
+     * @param hints , writer hints
+     * @return FeatureWriter , never null but can be empty.
+     * @throws DataStoreException
+     */
+    FeatureWriter getFeatureWriter(Name typeName, Filter filter, Hints hints) throws DataStoreException;
 
     /**
      * Aquire a writer on a given feature type in append mode.
@@ -239,6 +263,16 @@ public interface DataStore {
      * @throws DataStoreException
      */
     FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException;
+    
+    /**
+     * Aquire a writer on a given feature type in append mode.
+     *
+     * @param typeName , type name
+     * @param hints , writer hints
+     * @return FeatureWriter , empty.
+     * @throws DataStoreException
+     */
+    FeatureWriter getFeatureWriterAppend(Name typeName, Hints hints) throws DataStoreException;
 
     /**
      * Dispose the datastore caches and underlying resources.

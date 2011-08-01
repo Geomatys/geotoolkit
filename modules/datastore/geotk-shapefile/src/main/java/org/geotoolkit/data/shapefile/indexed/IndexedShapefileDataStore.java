@@ -677,8 +677,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final Name typeName, final Filter filter)
-            throws DataStoreException {
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final Name typeName, 
+            final Filter filter, final Hints hints) throws DataStoreException {
 
         //will raise an error if it does not exist
         final SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.memory;
 
+import org.geotoolkit.factory.Hints;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -274,7 +275,8 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> collection) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> collection, 
+            final Hints hints) throws DataStoreException {
         typeCheck(groupName);
         final Group grp = groups.get(groupName);
 
@@ -434,8 +436,8 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, Filter filter) throws DataStoreException {
-        return handleWriter(typeName, filter);
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+        return handleWriter(typeName, filter, hints);
     }
 
     /**

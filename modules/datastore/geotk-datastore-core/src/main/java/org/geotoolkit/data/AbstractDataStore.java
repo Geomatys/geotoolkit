@@ -227,6 +227,11 @@ public abstract class AbstractDataStore implements DataStore{
         return query;
     }
 
+    @Override
+    public final List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        return addFeatures(groupName,newFeatures,null);
+    }
+
     /**
      * {@inheritDoc }
      *
@@ -238,14 +243,29 @@ public abstract class AbstractDataStore implements DataStore{
         updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
+    @Override
+    public final FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+        return getFeatureWriter(typeName, filter, null);
+    }
+    
     /**
      * {@inheritDoc }
      *
      * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
-        final FeatureWriter writer = getFeatureWriter(typeName,Filter.INCLUDE);
+    public final FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
+        return getFeatureWriterAppend(typeName,null);
+    }
+    
+    /**
+     * {@inheritDoc }
+     *
+     * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
+     */
+    @Override
+    public FeatureWriter getFeatureWriterAppend(final Name typeName,final Hints hints) throws DataStoreException {
+        final FeatureWriter writer = getFeatureWriter(typeName,Filter.INCLUDE, hints);
 
         while (writer.hasNext()) {
             writer.next(); // skip to the end to switch in append mode
@@ -550,10 +570,10 @@ public abstract class AbstractDataStore implements DataStore{
      * @return list of ids of the features added.
      * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(final Name groupName, final Collection<? extends Feature> newFeatures)
-            throws DataStoreException{
+    protected List<FeatureId> handleAddWithFeatureWriter(final Name groupName, final Collection<? extends Feature> newFeatures,
+            final Hints hints) throws DataStoreException{
         try{
-            return DataUtilities.write(getFeatureWriterAppend(groupName), newFeatures);
+            return DataUtilities.write(getFeatureWriterAppend(groupName,hints), newFeatures);
         }catch(DataStoreRuntimeException ex){
             throw new DataStoreException(ex);
         }
@@ -619,11 +639,11 @@ public abstract class AbstractDataStore implements DataStore{
      * @param filter
      * @throws DataStoreException
      */
-    protected FeatureWriter handleWriter(final Name groupName, final Filter filter) throws DataStoreException {
+    protected FeatureWriter handleWriter(final Name groupName, final Filter filter, final Hints hints) throws DataStoreException {
         return GenericFeatureWriter.wrap(this, groupName, filter);
     }
 
-    protected FeatureWriter handleWriterAppend(final Name groupName) throws DataStoreException {
+    protected FeatureWriter handleWriterAppend(final Name groupName, final Hints hints) throws DataStoreException {
         return GenericFeatureWriter.wrapAppend(this, groupName);
     }
 

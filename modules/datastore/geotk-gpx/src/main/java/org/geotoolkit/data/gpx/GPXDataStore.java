@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.gpx;
 
-import org.geotoolkit.data.gpx.xml.GPXWriter100;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -37,10 +36,12 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.xml.GPXConstants;
 import org.geotoolkit.data.gpx.xml.GPXReader;
+import org.geotoolkit.data.gpx.xml.GPXWriter100;
 import org.geotoolkit.data.gpx.xml.GPXWriter110;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -139,7 +140,8 @@ public class GPXDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, 
+            final Filter filter, final Hints hints) throws DataStoreException {
         final FeatureType ft = getFeatureType(typeName);
         final FeatureWriter fw = new GPXFeatureWriter(ft);
         return handleRemaining(fw, filter);
@@ -170,8 +172,9 @@ public class GPXDataStore extends AbstractDataStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override

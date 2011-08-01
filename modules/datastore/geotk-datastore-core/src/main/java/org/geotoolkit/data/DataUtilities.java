@@ -161,16 +161,23 @@ public class DataUtilities {
                 ids.add(candidate.getIdentifier());
             }
         }finally{
+            
+            writer.close();
+            
+            DataStoreRuntimeException e = null;
             //todo must close safely both iterator
             if(ite instanceof Closeable){
                 try {
                     ((Closeable) ite).close();
-                } catch (IOException ex) {
-                    throw new DataStoreRuntimeException(ex);
+                } catch (Exception ex) {
+                    e = new DataStoreRuntimeException(ex);
                 }
             }
 
-            writer.close();
+            
+            if(e != null){
+                throw e;
+            }
         }
 
         return ids;

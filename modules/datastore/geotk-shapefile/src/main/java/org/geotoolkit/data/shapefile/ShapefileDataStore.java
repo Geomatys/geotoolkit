@@ -293,8 +293,9 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     /**
@@ -393,7 +394,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         typeCheck(typeName);
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);

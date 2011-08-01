@@ -41,6 +41,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.calculated.CalculatedLineStringAttribute;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultName;
@@ -184,7 +185,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         throw new UnsupportedOperationException("Not yet.");
     }
 
@@ -213,8 +214,9 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     @Override

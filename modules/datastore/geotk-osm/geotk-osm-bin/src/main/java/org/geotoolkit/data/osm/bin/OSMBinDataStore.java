@@ -30,6 +30,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -134,8 +135,9 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     /**
@@ -161,7 +163,8 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, 
+            final Hints hints) throws DataStoreException {
         if(isWritable(typeName)){
             throw new DataStoreException("Writer not handled yet.");
         }else{

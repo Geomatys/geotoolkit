@@ -323,7 +323,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -331,7 +331,8 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

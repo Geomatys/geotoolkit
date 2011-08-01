@@ -50,6 +50,7 @@ import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -292,15 +293,16 @@ public class WFSDataStore extends AbstractDataStore{
      * Writer that fall back on add,remove, update methods.
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
-        return handleWriter(typeName, filter);
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
+        return handleWriter(typeName, filter, hints);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
         lastCollection = null;
 
         final TransactionRequest request = server.createTransaction();

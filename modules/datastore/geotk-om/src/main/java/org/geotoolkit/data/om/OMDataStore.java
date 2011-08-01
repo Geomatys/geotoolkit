@@ -141,15 +141,15 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
-        return handleWriterAppend(typeName);
+    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Hints hints) throws DataStoreException {
+        return handleWriterAppend(typeName,hints);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         final FeatureType sft = getFeatureType(typeName);
         try {
             return handleRemaining(new OMWriter(sft), filter);
@@ -200,7 +200,8 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
         final FeatureType featureType = getFeatureType(groupName); //raise an error if type doesn't exist
         final List<FeatureId> result = new ArrayList<FeatureId>();
 

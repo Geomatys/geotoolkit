@@ -71,6 +71,17 @@ public final class HintsPending extends Hints {
      * @since 2.4
      */
     public static final Key FEATURE_DETACHED = new Key(Boolean.class);
+    
+    /**
+     * When adding features in a datastore, it is not always necessary to have 
+     * the returned id of the inserted feature.
+     * JDBC datastore for exemple are much more efficient when inserting datas
+     * in batch mode. setting this value to false may bring a huge performance
+     * gain.
+     * 
+     * Default value is true.
+     */
+    public static final Key UPDATE_ID_ON_INSERT = new Key(Boolean.class);
 
     /**
      * An implementation of datastore might use some properties of the feature type

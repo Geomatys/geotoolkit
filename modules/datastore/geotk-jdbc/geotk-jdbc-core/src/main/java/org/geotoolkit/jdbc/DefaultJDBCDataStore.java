@@ -18,8 +18,6 @@
 package org.geotoolkit.jdbc;
 
 
-import org.geotoolkit.jdbc.reverse.DataBaseModel;
-import java.io.Closeable;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -31,7 +29,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +43,7 @@ import org.geotoolkit.jdbc.fid.PrimaryKeyFIDValidator;
 import org.geotoolkit.jdbc.fid.NullPrimaryKey;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.jdbc.reverse.DataBaseModel;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.DataUtilities;
@@ -495,25 +493,25 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         try {
-            return getFeatureWriterInternal(typeName, filter, EditMode.UPDATE_AND_INSERT);
+            return getFeatureWriterInternal(typeName, filter, EditMode.UPDATE_AND_INSERT, hints);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Hints hints) throws DataStoreException {
         try {
-            return getFeatureWriterInternal(typeName, Filter.EXCLUDE, EditMode.INSERT);
+            return getFeatureWriterInternal(typeName, Filter.EXCLUDE, EditMode.INSERT, hints);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
 
-    private FeatureWriter getFeatureWriterInternal(final Name typeName, final Filter filter, final EditMode mode)
-            throws DataStoreException, IOException {
+    private FeatureWriter getFeatureWriterInternal(final Name typeName, final Filter filter, 
+            final EditMode mode, final Hints hints) throws DataStoreException, IOException {
 
         if(!isWritable(typeName)){
             throw new DataStoreException("Type "+ typeName + " is not writeable.");
@@ -538,11 +536,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 final Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
                 if ( getDialect() instanceof PreparedStatementSQLDialect ) {
                     final PreparedStatement ps = queryBuilder.selectSQLPS(type, queryNone, cx);
-                    return new JDBCInsertFeatureWriter( ps, cx, this, typeName, type, pkey, null);
+                    return new JDBCInsertFeatureWriter( ps, cx, this, typeName, type, pkey, hints);
                 }else{
                     final String sql = queryBuilder.selectSQL(type, queryNone);
                     getLogger().fine(sql);
-                    return new JDBCInsertFeatureWriter( sql, cx, this, typeName, type, pkey, null);
+                    return new JDBCInsertFeatureWriter( sql, cx, this, typeName, type, pkey, hints);
                 }
             }
 
@@ -553,20 +551,20 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             if(getDialect() instanceof PreparedStatementSQLDialect) {
                 final PreparedStatement ps = queryBuilder.selectSQLPS(type, preQuery, cx);
                 if ( EditMode.UPDATE == mode ) {
-                    writer = new JDBCUpdateFeatureWriter(ps, cx, this, typeName, type, pkey, null);
+                    writer = new JDBCUpdateFeatureWriter(ps, cx, this, typeName, type, pkey, hints);
                 } else {
                     //update insert case
-                    writer = new JDBCUpdateInsertFeatureWriter(ps, cx, this, typeName, type, pkey, null, null);
+                    writer = new JDBCUpdateInsertFeatureWriter(ps, cx, this, typeName, type, pkey, null, hints);
                 }
             } else {
                 final String sql = queryBuilder.selectSQL(type, preQuery);
                 getLogger().fine(sql);
 
                 if ( EditMode.UPDATE == mode ) {
-                    writer = new JDBCUpdateFeatureWriter( sql, cx, this, typeName, type, pkey, null);
+                    writer = new JDBCUpdateFeatureWriter( sql, cx, this, typeName, type, pkey, hints);
                 } else {
                     //update insert case
-                    writer = new JDBCUpdateInsertFeatureWriter( sql, cx, this, typeName, type, pkey, null);
+                    writer = new JDBCUpdateInsertFeatureWriter( sql, cx, this, typeName, type, pkey, hints);
                 }
             }
 
@@ -780,6 +778,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     /**
      * Inserts a collection of new features into the database for a particular
      * feature type / table.
+     * This method does not return the featureID.
      */
     protected void insert(final Collection<? extends Feature> features, final SimpleFeatureType featureType,
             final Connection cx) throws DataStoreException {
@@ -789,7 +788,35 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         // first to figure out what the id will be, then the insert statement
         synchronized (this) {
             Statement st = null;
-            Iterator<? extends Feature> ite = null;
+            try {
+                st = cx.createStatement();
+                
+                final List<Object> nextKeyValues = getNextValues(key, cx);
+                final String sql = queryBuilder.insertSQL(featureType, features, nextKeyValues, cx);
+                st.execute(sql);
+                
+            } catch (SQLException e) {
+                throw new DataStoreException("Error inserting features",e);
+            } catch (IOException e) {
+                throw new DataStoreException("Error inserting features",e);
+            }finally {
+                closeSafe(st);
+            }
+        }
+    }
+    
+    /**
+     * Inserts a collection of new features into the database for a particular
+     * feature type / table.
+     */
+    protected void insert(final Feature ffeature, final SimpleFeatureType featureType,
+            final Connection cx) throws DataStoreException {
+        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
+
+        // we do this in a synchronized block because we need to do two queries,
+        // first to figure out what the id will be, then the insert statement
+        synchronized (this) {
+            Statement st = null;
             try {
                 if (!(dialect instanceof PreparedStatementSQLDialect)) {
                     st = cx.createStatement();
@@ -797,40 +824,36 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
                 //figure out what the next fid will be
                 final List<Object> nextKeyValues = getNextValues(key, cx);
-                ite = features.iterator();
+                final SimpleFeature feature = (SimpleFeature) ffeature;
 
-                while(ite.hasNext()){
-                    final SimpleFeature feature = (SimpleFeature) ite.next();
-
-                    if (dialect instanceof PreparedStatementSQLDialect) {
-                        final PreparedStatement ps = queryBuilder.insertSQLPS(featureType, feature, nextKeyValues, cx);
-                        try {
-                            ps.execute();
-                        } finally {
-                            closeSafe(ps);
-                        }
-                    } else {
-                        //this technic must be generalize to all primary keys, must revisite tests for this
-                        final String sql = queryBuilder.insertSQL(featureType, feature, nextKeyValues, cx);
-                        getLogger().log(Level.FINE, "Inserting new feature: {0}", sql);
-
-                        if(nextKeyValues.isEmpty() || nextKeyValues.get(0) == null){
-                            st.execute(sql,Statement.RETURN_GENERATED_KEYS);
-                            ResultSet rs = st.getGeneratedKeys();
-                            rs.next();
-                            final int id = rs.getInt(1);
-                            nextKeyValues.set(0, id);
-                            rs.close();
-                            feature.setAttribute(key.getColumns().get(0).getName(), id);
-                        }else{
-                            st.execute(sql);
-                        }
+                if (dialect instanceof PreparedStatementSQLDialect) {
+                    final PreparedStatement ps = queryBuilder.insertSQLPS(featureType, feature, nextKeyValues, cx);
+                    try {
+                        ps.execute();
+                    } finally {
+                        closeSafe(ps);
                     }
+                } else {
+                    //this technic must be generalize to all primary keys, must revisite tests for this
+                    final String sql = queryBuilder.insertSQL(featureType, feature, nextKeyValues, cx);
+                    getLogger().log(Level.FINE, "Inserting new feature: {0}", sql);
 
-                    //report the feature id as user data since we cant set the fid
-                    final String fid = featureType.getTypeName() + "." + PrimaryKey.encodeFID(nextKeyValues);
-                    feature.getUserData().put("fid", fid);
+                    if(nextKeyValues.isEmpty() || nextKeyValues.get(0) == null){
+                        st.execute(sql,Statement.RETURN_GENERATED_KEYS);
+                        ResultSet rs = st.getGeneratedKeys();
+                        rs.next();
+                        final int id = rs.getInt(1);
+                        nextKeyValues.set(0, id);
+                        rs.close();
+                        feature.setAttribute(key.getColumns().get(0).getName(), id);
+                    }else{
+                        st.execute(sql);
+                    }
                 }
+
+                //report the feature id as user data since we cant set the fid
+                final String fid = featureType.getTypeName() + "." + PrimaryKey.encodeFID(nextKeyValues);
+                feature.getUserData().put("fid", fid);
 
             //st.executeBatch();
             } catch (SQLException e) {
@@ -839,15 +862,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 throw new DataStoreException("Error inserting features",e);
             }finally {
                 closeSafe(st);
-
-                if(ite != null && ite instanceof Closeable){
-                    try {
-                        ((Closeable) ite).close();
-                    } catch (IOException ex) {
-                        getLogger().log(Level.FINE, "Failed to close collection iterator.", ex);
-                    }
-                }
-
             }
         }
     }
@@ -1127,8 +1141,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
     }
 
     /**

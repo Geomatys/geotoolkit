@@ -35,6 +35,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.session.SessionDecorator;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
@@ -168,11 +169,11 @@ public final class ExtendedDataStore extends AbstractDataStore{
 
     @Override
     public List<FeatureId> addFeatures(final Name groupName, 
-            final Collection<? extends Feature> newFeatures) throws DataStoreException {
+            final Collection<? extends Feature> newFeatures, final Hints hints) throws DataStoreException {
         if(getQueryNames().contains(groupName)){
             throw new DataStoreException("Group name corresponed to a stored query, it can not be updated.");
         }
-        return wrapped.addFeatures(groupName, newFeatures);
+        return wrapped.addFeatures(groupName, newFeatures, hints);
     }
 
     @Override
@@ -214,7 +215,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
             throw new DataStoreException("Group name corresponed to a stored query, writing is not possible.");
         }
@@ -222,7 +223,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final Name typeName, final Hints hints) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
             throw new DataStoreException("Group name corresponed to a stored query, writing is not possible.");
         }
