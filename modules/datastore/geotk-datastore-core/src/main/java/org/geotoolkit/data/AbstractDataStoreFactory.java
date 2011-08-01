@@ -26,12 +26,14 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Converters;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -134,11 +136,18 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         final ParameterValueGroup values = desc.createValue();
 
         for(final Entry<String, ? extends Serializable> entry : params.entrySet()){
+            
+            final ParameterValue param;
             try{
-                values.parameter(entry.getKey()).setValue(entry.getValue());
+                param = values.parameter(entry.getKey());
             }catch(ParameterNotFoundException ex){
                 //do nothing, the map may contain other values for other uses
+                continue;
             }
+            
+            Object val = entry.getValue();
+            val = Converters.convert(val, param.getDescriptor().getValueClass());
+            param.setValue(val);
         }
 
         return values;
