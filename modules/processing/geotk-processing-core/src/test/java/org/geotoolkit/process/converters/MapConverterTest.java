@@ -41,7 +41,7 @@ public class MapConverterTest {
 
         final ObjectConverter<String,Map> converter = StringToMapConverter.getInstance();
         
-        final String inputString = "{login:jean, password:secret}";
+        final String inputString = "{login=jean, password=secret}";
         final Map result = converter.convert(inputString);
         
         assertEquals(2, result.size());

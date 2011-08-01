@@ -66,7 +66,7 @@ import org.opengis.metadata.Identifier;
 public final class ProcessConsole {
 
     private static final boolean X364_SUPPORTED = X364.isSupported();
-    private static final List listConverter = UnmodifiableArrayList.wrap(
+    private static final List LIST_CONVERTERS = UnmodifiableArrayList.wrap(
                 StringToFeatureCollectionConverter.getInstance(),
                 StringToUnitConverter.getInstance(),
                 StringToGeometryConverter.getInstance(),
@@ -78,7 +78,7 @@ public final class ProcessConsole {
                 StringToMapConverter.getInstance());
 
 
-    public static void main(String[] args) {
+    public static void main(String ... args) {
 
         Setup.initialize(null);
 
@@ -308,7 +308,7 @@ public final class ProcessConsole {
         try{
             converter = ConverterRegistry.system().converter(String.class, binding);
         }catch(NonconvertibleObjectException ex){
-            for(ObjectConverter conv : (List<ObjectConverter>)listConverter){
+            for(ObjectConverter conv : (List<ObjectConverter>)LIST_CONVERTERS){
                 if(conv.getTargetClass().equals(binding)){
                     converter = conv;
                 }

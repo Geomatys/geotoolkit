@@ -25,7 +25,7 @@ import org.geotoolkit.util.converter.SimpleConverter;
 
 /**
  * Implementation of ObjectConverter to convert a String into a Map.
- * Structure is : {login:max, password:secret}
+ * Structure is : {login=max, password=secret}
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -54,24 +54,31 @@ public class StringToMapConverter extends SimpleConverter<String, Map> {
         return Map.class ;
     }
     @Override
-    public Map convert(String s) throws NonconvertibleObjectException {
-        if(s == null) throw new NonconvertibleObjectException("Null string");
+    public Map convert(final String str) throws NonconvertibleObjectException {
+        if(str == null) throw new NonconvertibleObjectException("Null string");
         
-        s = s.trim();
-        if(s.charAt(0) != '{' || s.charAt(s.length()-1) != '}'){
-            throw new NonconvertibleObjectException("Invalid string format, string must start with '{' and end with '}' .");
+        String trimmed = str.trim();
+        
+        if(trimmed.charAt(0) != '{' || trimmed.charAt(trimmed.length()-1) != '}'){
+            throw new NonconvertibleObjectException("Invalid string format, string must start with '{' and end with '}' . String is : "+trimmed );
         }
-        s = s.substring(1, s.length()-1);
+        trimmed = trimmed.substring(1, trimmed.length()-1);
         
         final Map<String,Object> parameters = new HashMap<String, Object>();
         
-        for(String part : s.split(",")){
-            part = part.trim();
-            final int i = part.indexOf(':');
-            if(i<= 0){
-                throw new NonconvertibleObjectException("Invalid string format, parameter structure must be 'key:value' .");
-            }            
-            parameters.put(part.substring(0, i), part.substring(i+1));
+        if(!trimmed.isEmpty()){
+            for(String part : trimmed.split(",")){
+                part = part.trim();
+                if(part.isEmpty()){
+                    throw new NonconvertibleObjectException("Invalid string format, empty parameter . String is : "+str );
+                }
+
+                final int i = part.indexOf('=');
+                if(i<= 0){
+                    throw new NonconvertibleObjectException("Invalid string format, parameter structure must be 'key=value' . String is : "+part );
+                }            
+                parameters.put(part.substring(0, i), part.substring(i+1));
+            }
         }
         
         return parameters;
