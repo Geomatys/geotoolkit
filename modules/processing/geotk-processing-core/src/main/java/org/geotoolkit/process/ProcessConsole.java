@@ -19,7 +19,6 @@ package org.geotoolkit.process;
 
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleEntry;
-
 import java.util.Map.Entry;
 import java.util.List;
 import java.util.ArrayList;
@@ -40,6 +39,7 @@ import org.geotoolkit.process.converters.StringToFilterConverter;
 import org.geotoolkit.process.converters.StringToGeometryConverter;
 import org.geotoolkit.process.converters.StringToSortByConverter;
 import org.geotoolkit.process.converters.StringToUnitConverter;
+import org.geotoolkit.process.converters.StringToMapConverter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ConverterRegistry;
@@ -74,7 +74,8 @@ public final class ProcessConsole {
                 StringToFeatureTypeConverter.getInstance(),
                 StringToAffineTransformConverter.getInstance(),
                 StringToFilterConverter.getInstance(),
-                StringToSortByConverter.getInstance());
+                StringToSortByConverter.getInstance(),
+                StringToMapConverter.getInstance());
 
 
     public static void main(String[] args) {
