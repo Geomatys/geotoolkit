@@ -593,6 +593,17 @@ public final class SQLQueryBuilder {
         return sql.toString();
     }
 
+    /**
+     * Generates a 'DROP TABLE' sql statement.
+     */
+    public String dropSQL(final FeatureType featureType){
+        final StringBuilder sql = new StringBuilder();
+        sql.append("DROP TABLE ");
+        encodeTableName(featureType.getName().getLocalPart(), sql);
+        sql.append(";");
+        return sql.toString();
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // PREPARED STATEMENT QUERIES //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

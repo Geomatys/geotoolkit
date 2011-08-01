@@ -996,7 +996,32 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     @Override
     public void deleteSchema(final Name typeName) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported.");
+        final FeatureType featureType = getFeatureType(typeName);
+        
+        //execute the drop table statement
+        Connection cx = null;
+
+        try {
+            cx = getDataSource().getConnection();
+            final String sql = queryBuilder.dropSQL(featureType);
+            getLogger().log(Level.FINE, "Drop schema: {0}", sql);
+
+            final Statement st = cx.createStatement();
+
+            try {
+                st.execute(sql);
+            } finally {
+                closeSafe(st);
+            }
+            
+            // reset the type name cache, will be recreated when needed.
+            dbmodel.clearCache();
+
+        } catch (Exception e) {
+            throw new DataStoreException("Error occurred drop table", e);
+        } finally {
+            closeSafe(cx);
+        }
     }
 
 
