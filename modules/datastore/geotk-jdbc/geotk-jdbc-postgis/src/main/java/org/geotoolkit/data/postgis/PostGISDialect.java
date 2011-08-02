@@ -149,8 +149,13 @@ public class PostGISDialect extends AbstractSQLDialect {
     public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
                                 throws SQLException{
         if (tableName.equals("geometry_columns")) {
+            //table
             return false;
         } else if (tableName.startsWith("spatial_ref_sys")) {
+            //table
+            return false;
+        } else if (tableName.startsWith("geography_columns")) {
+            //view
             return false;
         }
 

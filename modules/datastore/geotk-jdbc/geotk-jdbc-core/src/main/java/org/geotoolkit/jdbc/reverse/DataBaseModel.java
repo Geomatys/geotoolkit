@@ -132,8 +132,19 @@ public final class DataBaseModel {
         Set<Name> ref = nameCache;
         if(ref == null){
             analyze();
-            ref = Collections.unmodifiableSet(new HashSet<Name>(typeIndex.keySet()));
-            nameCache = ref;
+            ref = new HashSet<Name>(typeIndex.keySet());
+            final SQLDialect dialect = store.getDialect();
+            for(Name n : typeIndex.keySet()){
+                try{
+                    if(!dialect.includeTable(null, n.getLocalPart(), null)){
+                        ref.remove(n);
+                    }
+                }catch(SQLException ex){
+                    throw new DataStoreException(ex);
+                }
+            }
+            
+            nameCache = Collections.unmodifiableSet(ref);
         }
         return ref;
     }
