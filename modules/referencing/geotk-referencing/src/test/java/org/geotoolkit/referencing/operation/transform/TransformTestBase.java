@@ -189,37 +189,44 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
     }
 
     /**
-     * Returns the index within the given position of an ordinate value which is not approximatively
-     * equals to the expected value. If all ordinate values are approximatively equal to the expected
-     * values, then this method returns -1.
-     * <p>
+     * Ensures that longitude values are contained in the ±180° range, applying 360° shifts if needed.
+     *
+     * @param expected The expected ordinate value provided by the test case.
+     * @param actual   The ordinate value computed by the {@linkplain #transform}.
+     *
+     * @since 3.19
+     */
+    @Override
+    protected final void normalize(final DirectPosition expected, final DirectPosition actual,
+            final ComparisonType mode)
+    {
+        final int λDimension = forComparison(this.λDimension, mode);
+        if (λDimension >= 0) {
+            double e;
+            e = expected.getOrdinate(λDimension); e -= 360*floor(e/360); expected.setOrdinate(λDimension, e);
+            e =   actual.getOrdinate(λDimension); e -= 360*floor(e/360);   actual.setOrdinate(λDimension, e);
+        }
+    }
+
+    /**
+     * Returns the tolerance threshold for comparing the given ordinate value.
      * We override the method defined in GeoAPI in order to take in account some special cases.
      */
     @Override
-    protected int indexOfMismatch(final DirectPosition expected, final DirectPosition actual, final ComparisonType mode) {
-        if (mode == ComparisonType.STRICT) {
-            return super.indexOfMismatch(expected, actual, mode);
-        }
-        final int dimension = expected.getDimension();
-        assertEquals(dimension, actual.getDimension());
-        final int λDimension = forComparison(this.λDimension, mode);
-        final int zDimension = forComparison(this.zDimension, mode);
-        for (int i=0; i<dimension; i++) {
-            double a = actual.getOrdinate(i);
-            double e = expected.getOrdinate(i);
-            if (i == λDimension) {
-                a -= 360*floor(a/360);
-                e -= 360*floor(e/360);
+    protected final double tolerance(final DirectPosition coordinate, final int dimension, final ComparisonType mode) {
+        double tol = super.tolerance(coordinate, dimension, mode);
+        if (mode != ComparisonType.STRICT) {
+            if (dimension == forComparison(this.zDimension, mode)) {
+                tol = zTolerance;
             }
-            double tol = (i == zDimension) ? zTolerance : tolerance;
-            if (relativeTolerance && e != 0) {
-                tol *= abs(e);
-            }
-            if (!(abs(a - e) <= tol) && Double.doubleToLongBits(a) != Double.doubleToLongBits(e)) {
-                return i;
+            if (relativeTolerance) {
+                final double e = coordinate.getOrdinate(dimension);
+                if (e != 0) {
+                    tol *= abs(e);
+                }
             }
         }
-        return -1;
+        return tol;
     }
 
     /**

@@ -214,8 +214,12 @@ public final class MercatorTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testMercator1SP() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Mercator (1SP)");
         parameters.parameter("semi-major axis").setValue(6377397.155);
@@ -260,8 +264,12 @@ public final class MercatorTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testMercator2SP() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Mercator (2SP)");
         parameters.parameter("semi-major axis").setValue(6378245.0);
@@ -306,8 +314,12 @@ public final class MercatorTest extends ProjectionTestBase {
      * @throws TransformException Should never happen.
      *
      * @since 3.03
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testGoogle() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Popular Visualisation Pseudo Mercator");
         parameters.parameter("semi-major axis").setValue(6378137.0);
@@ -331,8 +343,12 @@ public final class MercatorTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testMiller() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Miller_Cylindrical");
         parameters.parameter("semi-major axis").setValue(6378137);
