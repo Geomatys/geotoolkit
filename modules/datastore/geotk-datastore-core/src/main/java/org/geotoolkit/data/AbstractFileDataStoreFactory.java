@@ -51,7 +51,7 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
             if(obj != null && obj instanceof URL){
                 final String path = ((URL)obj).toString().toLowerCase();
                 for(final String ext : getFileExtensions()){
-                    if(path.endsWith(ext)){
+                    if(path.endsWith(ext) && !path.endsWith("*"+ext)){
                         return true;
                     }
                 }
