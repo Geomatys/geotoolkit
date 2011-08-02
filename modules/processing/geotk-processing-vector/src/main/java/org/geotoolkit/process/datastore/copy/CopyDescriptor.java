@@ -65,16 +65,37 @@ public final class CopyDescriptor extends VectorDescriptor {
             new DefaultParameterDescriptor("target_params", "The target datastore parameters", 
             Map.class, null, true);
     
-
+    /**
+     * Mandatory - create target datastore if it do not exist.
+     */
+    public static final ParameterDescriptor<Boolean> CREATE =
+            new DefaultParameterDescriptor("create", "Create the datastore if it doesn't exist", 
+            Boolean.class, false, true);
+    
+    /**
+     * Mandatory - drop before insertion or not.
+     */
+    public static final ParameterDescriptor<Boolean> ERASE =
+            new DefaultParameterDescriptor("erase", "Erase type if it already exist before insertion.", 
+            Boolean.class, false, true);
+    
+    /**
+     * Mandatory - Feature type names to  copy.
+     */
+    public static final ParameterDescriptor<String> TYPE_NAME =
+            new DefaultParameterDescriptor("type_name", "Name of the feature type to copy. '*' for all.", 
+            String.class, "*", true);
+    
+    
     /** 
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_STORE_PARAMS, TARGET_STORE_PARAMS});
+            new GeneralParameterDescriptor[]{SOURCE_STORE_PARAMS, TARGET_STORE_PARAMS,CREATE,ERASE,TYPE_NAME});
 
     /** 
-     * Ouput Parameters 
+     * Output Parameters 
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",

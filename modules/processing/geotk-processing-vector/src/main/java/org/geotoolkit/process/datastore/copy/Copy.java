@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.process.datastore.copy;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -57,11 +60,14 @@ public class Copy extends AbstractProcess {
     public void run() {
         getMonitor().started(new ProcessEvent(this, 0, null, null));
                 
-        final Map sourceDSparams = Parameters.value(CopyDescriptor.SOURCE_STORE_PARAMS, inputParameters);
-        final Map targetDSparams = Parameters.value(CopyDescriptor.TARGET_STORE_PARAMS, inputParameters);
+        final Map sourceDSparams    = Parameters.value(CopyDescriptor.SOURCE_STORE_PARAMS,  inputParameters);
+        final Map targetDSparams    = Parameters.value(CopyDescriptor.TARGET_STORE_PARAMS,  inputParameters);
+        final Boolean eraseParam    = Parameters.value(CopyDescriptor.ERASE,                inputParameters);
+        final Boolean createParam   = Parameters.value(CopyDescriptor.CREATE,               inputParameters);
+        final String typenameParam  = Parameters.value(CopyDescriptor.TYPE_NAME,            inputParameters);
         
         final DataStore sourceDS;
-        final DataStore targetDS;
+        DataStore targetDS = null;
         try{
             sourceDS = DataStoreFinder.getDataStore(sourceDSparams);
             if(sourceDS == null){
@@ -71,28 +77,68 @@ public class Copy extends AbstractProcess {
             getMonitor().failed(new ProcessEvent(this, 5, null, ex));
             return;
         }
-                
+        
+        DataStoreException exp = null;
         try{
             targetDS = DataStoreFinder.getDataStore(targetDSparams);
             if(targetDS == null){
-                throw new DataStoreException("No datastore for parameters :"+targetDSparams);
+                exp = new DataStoreException("No datastore for parameters :"+targetDSparams);
             }
         }catch(DataStoreException ex){
-            getMonitor().failed(new ProcessEvent(this, 5, null, ex));
+            exp = ex;
+        }
+        
+        if(exp != null){
+            if(createParam){
+                //try to create the datastore
+                final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableDataStores();
+                while(ite.hasNext()){
+                    final DataStoreFactory factory = ite.next();
+                    if(factory.canProcess(targetDSparams)){
+                        try{
+                            targetDS = factory.createNewDataStore(targetDSparams);
+                        }catch(DataStoreException ex){
+                            getMonitor().failed(new ProcessEvent(this, 8, null, ex));
+                            return;
+                        }
+                    }
+                }
+
+                if(targetDS == null){
+                    getMonitor().failed(new ProcessEvent(this, 8, null, new DataStoreException(
+                            "Failed to found a factory to create datastore for parameters : "+targetDSparams)));
+                    return;
+                }
+            }
+            
+            //through error
+            getMonitor().failed(new ProcessEvent(this, 8, null, exp));
             return;
         }
         
         final Set<Name> names;
-        try {
-            names = sourceDS.getNames();
-        } catch (DataStoreException ex) {
-            getMonitor().failed(new ProcessEvent(this, 10, null, ex));
-            return;
+        if("*".equals(typenameParam)){
+            //all values
+            try {
+                names = sourceDS.getNames();
+            } catch (DataStoreException ex) {
+                getMonitor().failed(new ProcessEvent(this, 20, null, ex));
+                return;
+            }
+        }else{
+            //pick only the wanted names
+            try{
+                FeatureType type = sourceDS.getFeatureType(typenameParam);
+                names = Collections.singleton(type.getName());
+            } catch (DataStoreException ex) {
+                getMonitor().failed(new ProcessEvent(this, 20, null, ex));
+                return;
+            }
         }
-        
+                
         for(Name n : names){
             try {
-                insert(n, sourceDS, targetDS);
+                insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
                 getMonitor().failed(new ProcessEvent(this, 50, null, ex));
                 return;
@@ -102,13 +148,20 @@ public class Copy extends AbstractProcess {
         getMonitor().ended(new ProcessEvent(this, 100, null, null));
     }
     
-    private void insert(final Name name, final DataStore source, final DataStore target) throws DataStoreException{
+    private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
         
         final FeatureType type = source.getFeatureType(name);        
         final Session session = source.createSession(false);
         final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
         
-        target.createSchema(name, type);
+        if(target.getNames().contains(name)){
+            if(erase){
+                target.deleteSchema(name);
+                target.createSchema(name, type);
+            }
+        }else{
+            target.createSchema(name, type);
+        }
         
         final Hints hints = new Hints();
         hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
