@@ -50,6 +50,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
@@ -138,11 +139,11 @@ public class CSVDataStore extends AbstractDataStore{
                   final int dep = field.indexOf('(');
                   final int fin = field.lastIndexOf(')');
 
-                  final String fieldName;
+                  final Name fieldName;
                   Class type = String.class;
                   CoordinateReferenceSystem crs = null;
                   if(dep >0 && fin>dep){
-                      fieldName = field.substring(0, dep);
+                      fieldName = new DefaultName(namespace, field.substring(0, dep));
                       //there is a defined type
                       final String name = field.substring(dep + 1, fin).toLowerCase();
                       if ("integer".equalsIgnoreCase(name)) {
@@ -164,7 +165,7 @@ public class CSVDataStore extends AbstractDataStore{
                       }
                   }
                   else{
-                    fieldName = field;
+                    fieldName = new DefaultName(namespace, field);
                     type = String.class;
                   }
 
@@ -205,7 +206,7 @@ public class CSVDataStore extends AbstractDataStore{
                 sb.append("Double");
             }else if(clazz.equals(String.class)){
                 sb.append("String");
-            }else if(clazz.equals(Geometry.class)){
+            }else if(Geometry.class.isAssignableFrom(clazz)){
                 GeometryDescriptor gd = (GeometryDescriptor) desc;
                 try {
                     sb.append(IdentifiedObjects.lookupIdentifier(gd.getCoordinateReferenceSystem(), true));
