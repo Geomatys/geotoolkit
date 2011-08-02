@@ -43,6 +43,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.test.referencing.CalculationType;
 
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.factory.Hints;
@@ -178,7 +179,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * given comparison mode, or -1 if none.
      */
     @SuppressWarnings("fallthrough")
-    private static int forComparison(final int[] config, final ComparisonType mode) {
+    private static int forComparison(final int[] config, final CalculationType mode) {
         if (config != null) {
             switch (mode) {
                 case INVERSE_TRANSFORM: if (config.length >= 2) return config[1];
@@ -198,7 +199,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      */
     @Override
     protected final void normalize(final DirectPosition expected, final DirectPosition actual,
-            final ComparisonType mode)
+            final CalculationType mode)
     {
         final int λDimension = forComparison(this.λDimension, mode);
         if (λDimension >= 0) {
@@ -213,9 +214,9 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * We override the method defined in GeoAPI in order to take in account some special cases.
      */
     @Override
-    protected final double tolerance(final DirectPosition coordinate, final int dimension, final ComparisonType mode) {
+    protected final double tolerance(final DirectPosition coordinate, final int dimension, final CalculationType mode) {
         double tol = super.tolerance(coordinate, dimension, mode);
-        if (mode != ComparisonType.STRICT) {
+        if (mode != CalculationType.STRICT) {
             if (dimension == forComparison(this.zDimension, mode)) {
                 tol = zTolerance;
             }

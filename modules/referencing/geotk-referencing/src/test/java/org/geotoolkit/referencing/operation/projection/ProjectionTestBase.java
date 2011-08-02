@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.test.referencing.CalculationType;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;
@@ -216,7 +217,7 @@ public abstract class ProjectionTestBase extends TransformTestBase {
         projection. transform(target, 0, target, 0, numPts);
         inverse.    transform(target, 0, target, 0, numPts);
         denormalize.transform(target, 0, target, 0, numPts);
-        assertCoordinatesEqual("Longitude rolling", 2, source, 0, target, 0, numPts, ComparisonType.DIRECT_TRANSFORM);
+        assertCoordinatesEqual("Longitude rolling", 2, source, 0, target, 0, numPts, CalculationType.DIRECT_TRANSFORM);
     }
 
     /**

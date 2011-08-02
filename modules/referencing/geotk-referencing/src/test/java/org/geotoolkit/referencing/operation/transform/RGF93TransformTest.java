@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.ReferencingCommons;
+import org.opengis.test.referencing.CalculationType;
 
 import org.junit.*;
 import static org.junit.Assume.*;
@@ -210,12 +211,12 @@ public class RGF93TransformTest extends TransformTestBase {
         transform.transform(sourcePts, 0, actualPts, 0, sourcePts.length / 2);
         tolerance = 4E-4;
         assertCoordinatesEqual("RGF93 transform (compared to NTv2)",
-                2, expectedPts, 0, actualPts, 0, expectedPts.length/2, ComparisonType.DIRECT_TRANSFORM);
+                2, expectedPts, 0, actualPts, 0, expectedPts.length/2, CalculationType.DIRECT_TRANSFORM);
 
         tolerance = 2E-3;
         final double[] circePts = getPoints(2);
         assertCoordinatesEqual("RGF93 transform (compared to CIRCE)",
-                2, circePts, 0, actualPts, 0, circePts.length/2, ComparisonType.DIRECT_TRANSFORM);
+                2, circePts, 0, actualPts, 0, circePts.length/2, CalculationType.DIRECT_TRANSFORM);
         /*
          * Optional statistics for comparing our errors with the ones reported by IGN. We perform
          * equal or better than IGN in 42% of cases, and we perform worst in the remaining 58% of

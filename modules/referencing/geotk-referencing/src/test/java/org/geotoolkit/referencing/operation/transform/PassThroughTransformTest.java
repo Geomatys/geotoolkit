@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.test.referencing.CalculationType;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
@@ -258,7 +259,7 @@ public final class PassThroughTransformTest extends TransformTestBase {
         }
         transform.transform(sourceData, 0, sourceData, 0, numPts);
         assertCoordinatesEqual("Expected a plain copy.", fullDimension,
-                targetData, 0, sourceData, 0, numPts, ComparisonType.STRICT);
+                targetData, 0, sourceData, 0, numPts, CalculationType.STRICT);
         /*
          * Below is a relatively high tolerance value, because result are
          * computed using inputs stored as float values.
@@ -268,11 +269,11 @@ public final class PassThroughTransformTest extends TransformTestBase {
         final float[] targetAsFloat = verifyConsistency(sourceAsFloat);
         assertEquals("Unexpected length of transformed array.", targetData.length, targetAsFloat.length);
         assertCoordinatesEqual("A transformed value is wrong.", fullDimension,
-                targetData, 0, targetAsFloat, 0, numPts, ComparisonType.DIRECT_TRANSFORM);
+                targetData, 0, targetAsFloat, 0, numPts, CalculationType.DIRECT_TRANSFORM);
         if (isInverseTransformSupported) {
             transform.inverse().transform(sourceData, 0, sourceData, 0, numPts);
             assertCoordinatesEqual("A transformed value is wrong.", fullDimension,
-                    sourceAsFloat, 0, sourceData, 0, numPts, ComparisonType.DIRECT_TRANSFORM);
+                    sourceAsFloat, 0, sourceData, 0, numPts, CalculationType.DIRECT_TRANSFORM);
         } else try {
             assertNotNull(transform.inverse());
             fail("Expected a non-invertible transform.");
