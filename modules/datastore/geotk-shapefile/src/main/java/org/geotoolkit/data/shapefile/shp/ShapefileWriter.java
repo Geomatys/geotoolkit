@@ -173,20 +173,16 @@ public class ShapefileWriter {
         if (shapeBuffer == null)
             throw new IOException("Must write headers first");
         lp = shapeBuffer.position();
-        int length = handler.getLength(g);
-
-        // must allocate enough for shape + header (2 ints)
-        checkShapeBuffer(length + 8);
-
-        length /= 2;
-
-        shapeBuffer.order(ByteOrder.BIG_ENDIAN);
-        shapeBuffer.putInt(++cnt);
-        shapeBuffer.putInt(length);
-        shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        shapeBuffer.putInt(type.id);
-        handler.write(shapeBuffer, g);
-
+        
+        //see doc for handling null geometries
+        //http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
+        int length;
+        if(g == null){
+            length = writeNullGeometry();
+        } else {
+            length = writeNonNullGeometry(g);
+        }
+        
         assert (length * 2 == (shapeBuffer.position() - lp) - 8);
 
         lp = shapeBuffer.position();
@@ -199,6 +195,38 @@ public class ShapefileWriter {
         assert (shapeBuffer.position() == 0);
     }
 
+    private int writeNonNullGeometry(final Geometry g) {
+            int length = handler.getLength(g);
+                
+        // must allocate enough for shape + header (2 ints)
+        checkShapeBuffer(length + 8);
+
+        length /= 2;
+
+        shapeBuffer.order(ByteOrder.BIG_ENDIAN);
+        shapeBuffer.putInt(++cnt);
+        shapeBuffer.putInt(length);
+        shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        shapeBuffer.putInt(type.id);
+        handler.write(shapeBuffer, g);	
+        return length;
+    }
+    
+    private int writeNullGeometry() throws IOException {
+    	// two for the headers + the null shape mark
+    	int length = 4;
+    	checkShapeBuffer(8 + length);
+    	
+    	length /= 2;
+    	
+    	shapeBuffer.order(ByteOrder.BIG_ENDIAN);
+        shapeBuffer.putInt(++cnt);
+        shapeBuffer.putInt(length);
+        shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        shapeBuffer.putInt(ShapeType.NULL.id);
+        return length;
+    }
+    
     /**
      * Close the underlying Channels.
      */

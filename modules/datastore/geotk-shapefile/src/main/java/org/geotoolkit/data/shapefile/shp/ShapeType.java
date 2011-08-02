@@ -176,6 +176,8 @@ public enum ShapeType {
 
     public ShapeHandler getShapeHandler(final boolean read3D, final double[] res) throws DataStoreException {
         switch (id) {
+            case 0:
+                return new NullHandler(read3D);
             case 1:
             case 11:
             case 21:

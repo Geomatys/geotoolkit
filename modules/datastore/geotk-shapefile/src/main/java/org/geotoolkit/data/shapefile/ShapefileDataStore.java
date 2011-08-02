@@ -452,10 +452,19 @@ public class ShapefileDataStore extends AbstractDataStore{
         name = typeName;
         schema = (SimpleFeatureType) featureType;
 
-        CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem();
-        final Class<?> geomType = featureType.getGeometryDescriptor().getType().getBinding();
-        final ShapeType shapeType =ShapeType.findBestGeometryType(geomType);
-
+        final GeometryDescriptor desc = featureType.getGeometryDescriptor();
+        CoordinateReferenceSystem crs = null;
+        final Class<?> geomType;
+        final ShapeType shapeType;
+        if(desc != null){
+            crs = desc.getCoordinateReferenceSystem();
+            geomType = desc.getType().getBinding();
+            shapeType =ShapeType.findBestGeometryType(geomType);
+        }else{
+            geomType = null;
+            shapeType = ShapeType.NULL;
+        }
+        
         if(shapeType == ShapeType.UNDEFINED){
             throw new DataStoreException("Cannot create a shapefile whose geometry type is "+ geomType);
         }

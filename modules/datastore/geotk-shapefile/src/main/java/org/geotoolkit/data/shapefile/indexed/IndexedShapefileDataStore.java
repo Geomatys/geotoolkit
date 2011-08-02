@@ -422,7 +422,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }else{
             dbfR = openDbfReader();
         }
-
+        
         return new IndexedShapefileAttributeReader(properties, openShapeReader(read3D,resample), dbfR,
                 goodRecs, ((goodRecs!=null)?goodRecs.iterator():null),resample);
     }

@@ -162,10 +162,14 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // another problem.
         if ((records <= 0) && (shapeType == null)) {
             final GeometryDescriptor geometryAttributeType = featureType.getGeometryDescriptor();
-            final Class gat = geometryAttributeType.getType().getBinding();
-            shapeType = ShapeType.findBestGeometryType(gat);
-            if (shapeType == ShapeType.UNDEFINED) {
-                throw new IOException("Cannot handle geometry class : "+ (gat == null ? "null" : gat.getName()));
+            if(geometryAttributeType != null){
+                final Class gat = geometryAttributeType.getType().getBinding();
+                shapeType = ShapeType.findBestGeometryType(gat);
+                if (shapeType == ShapeType.UNDEFINED) {
+                    throw new IOException("Cannot handle geometry class : "+ (gat == null ? "null" : gat.getName()));
+                }
+            }else{
+                shapeType = ShapeType.NULL;
             }
         }
 
@@ -379,10 +383,13 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
 
         // writing of Geometry
         Geometry g = (Geometry) currentFeature.getDefaultGeometry();
-
+        
         // if this is the first Geometry, find the shapeType and handler
         if (shapeType == null) {
-            int dims = JTSUtilities.guessCoorinateDims(g.getCoordinates());
+            int dims = 2;
+            if(g != null){
+                dims = JTSUtilities.guessCoorinateDims(g.getCoordinates());
+            }
 
             try {
                 shapeType = JTSUtilities.getShapeType(g, dims);

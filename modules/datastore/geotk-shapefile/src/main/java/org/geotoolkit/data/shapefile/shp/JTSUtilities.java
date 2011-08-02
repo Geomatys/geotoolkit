@@ -190,7 +190,10 @@ public final class JTSUtilities {
     public static Geometry convertToCollection(final Geometry geom, final ShapeType type) {
         Geometry retVal = null;
 
-        if (type.isPointType()) {
+        if(type == ShapeType.NULL){
+            Point[] pNull = null;
+            retVal = FACTORY.createMultiPoint(pNull);
+        } else if (type.isPointType()) {
             if (geom instanceof Point) {
                 retVal = geom;
             } else {
@@ -246,7 +249,9 @@ public final class JTSUtilities {
 
         ShapeType type = null;
 
-        if (geom instanceof Point) {
+        if (geom == null) {
+            type = ShapeType.NULL;
+        } else if (geom instanceof Point) {
             switch (shapeFileDimentions) {
             case 2: type = ShapeType.POINT;  break;
             case 3: type = ShapeType.POINTM; break;

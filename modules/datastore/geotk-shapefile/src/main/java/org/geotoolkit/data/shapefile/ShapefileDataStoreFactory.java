@@ -183,7 +183,12 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
         //index loading hints
         final Boolean loadQix = (Boolean) params.parameter(LOAD_QIX.getName().toString()).getValue();
 
-        final ShpFiles shpFiles = new ShpFiles(url, (loadQix == null) ? false : loadQix );
+        final ShpFiles shpFiles;
+        try{
+            shpFiles = new ShpFiles(url, (loadQix == null) ? false : loadQix );
+        }catch(IllegalArgumentException ex){
+            throw new DataStoreException(ex.getMessage(),ex);
+        }
         final boolean isLocal = shpFiles.isLocal();
 
         if (isLocal && !shpFiles.exists(ShpFileType.SHP)) {
