@@ -61,7 +61,7 @@ public class Copy extends AbstractProcess {
      */
     @Override
     public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, null, null));
+        fireStartEvent(new ProcessEvent(this, 0, new SimpleInternationalString("Starting copy."), null));
                 
         final Map sourceDSparams    = Parameters.value(CopyDescriptor.SOURCE_STORE_PARAMS,  inputParameters);
         final Map targetDSparams    = Parameters.value(CopyDescriptor.TARGET_STORE_PARAMS,  inputParameters);
@@ -146,7 +146,7 @@ public class Copy extends AbstractProcess {
         final float size = names.size();
         int inc = 0;
         for(Name n : names){
-            fireProgressEvent(new ProcessEvent(this, (int)((inc*100f)/size), new SimpleInternationalString("Coying "+n), null));
+            fireProgressEvent(new ProcessEvent(this, (int)((inc*100f)/size), new SimpleInternationalString("Copying "+n+"."), null));
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
@@ -156,7 +156,7 @@ public class Copy extends AbstractProcess {
             inc++;
         }
         
-        fireEndEvent(new ProcessEvent(this, 100, null, null));
+        fireEndEvent(new ProcessEvent(this, 100, new SimpleInternationalString("Copy successful."), null));
     }
     
     private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
