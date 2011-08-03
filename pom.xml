@@ -188,7 +188,7 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-jdk14</artifactId> <!-- Logging system used by NetCDF. -->
-        <version>1.4.0</version>
+        <version>1.6.1</version>
       </dependency>
       <!-- Server -->
       <dependency>
