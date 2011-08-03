@@ -309,7 +309,7 @@ public final class DataBaseModel {
             }
 
             if (cols.isEmpty()) {
-                store.getLogger().log(Level.INFO, "No primary key found for {0}.", tableName);
+                store.getLogger().log(Level.FINE, "No primary key found for {0}.", tableName);
                 table.key = new NullPrimaryKey(tableName);
             } else {
                 table.key = new PrimaryKey(tableName, cols);
@@ -351,7 +351,7 @@ public final class DataBaseModel {
                 }catch(final SQLException ex){
                     //not implemented by database
                     handleSuperTableMetadata = Boolean.FALSE;
-                    store.getLogger().log(Level.INFO, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
+                    store.getLogger().log(Level.FINE, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
                 }finally{
                     store.closeSafe(result);
                 }
