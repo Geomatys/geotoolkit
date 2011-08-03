@@ -16,8 +16,9 @@
  */
 package org.geotoolkit.process.datastore.copy;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +34,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -74,7 +77,7 @@ public class Copy extends AbstractProcess {
                 throw new DataStoreException("No datastore for parameters :"+sourceDSparams);
             }
         }catch(DataStoreException ex){
-            getMonitor().failed(new ProcessEvent(this, 5, null, ex));
+            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
             return;
         }
         
@@ -98,21 +101,21 @@ public class Copy extends AbstractProcess {
                         try{
                             targetDS = factory.createNewDataStore(targetDSparams);
                         }catch(DataStoreException ex){
-                            getMonitor().failed(new ProcessEvent(this, 8, null, ex));
+                            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
                             return;
                         }
                     }
                 }
 
                 if(targetDS == null){
-                    getMonitor().failed(new ProcessEvent(this, 8, null, new DataStoreException(
+                    getMonitor().failed(new ProcessEvent(this, 0, null, new DataStoreException(
                             "Failed to found a factory to create datastore for parameters : "+targetDSparams)));
                     return;
                 }
             }
             
             //through error
-            getMonitor().failed(new ProcessEvent(this, 8, null, exp));
+            getMonitor().failed(new ProcessEvent(this, 0, null, exp));
             return;
         }
         
@@ -122,27 +125,35 @@ public class Copy extends AbstractProcess {
             try {
                 names = sourceDS.getNames();
             } catch (DataStoreException ex) {
-                getMonitor().failed(new ProcessEvent(this, 20, null, ex));
+                getMonitor().failed(new ProcessEvent(this, 0, null, ex));
                 return;
             }
         }else{
             //pick only the wanted names
-            try{
-                FeatureType type = sourceDS.getFeatureType(typenameParam);
-                names = Collections.singleton(type.getName());
-            } catch (DataStoreException ex) {
-                getMonitor().failed(new ProcessEvent(this, 20, null, ex));
-                return;
+            names = new HashSet<Name>();
+            final List<String> wanted = UnmodifiableArrayList.wrap(typenameParam.split(","));
+            for(String s : wanted){
+                try{
+                    final FeatureType type = sourceDS.getFeatureType(s);
+                    names.add(type.getName());
+                } catch (DataStoreException ex) {
+                    getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+                    return;
+                }
             }
         }
                 
+        final float size = names.size();
+        int inc = 0;
         for(Name n : names){
+            getMonitor().progressing(new ProcessEvent(this, (int)((inc*100f)/size), new SimpleInternationalString("Coying "+n), null));
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
                 getMonitor().failed(new ProcessEvent(this, 50, null, ex));
                 return;
             }
+            inc++;
         }
         
         getMonitor().ended(new ProcessEvent(this, 100, null, null));

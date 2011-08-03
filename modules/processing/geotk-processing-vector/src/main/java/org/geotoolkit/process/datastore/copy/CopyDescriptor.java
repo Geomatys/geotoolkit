@@ -80,7 +80,7 @@ public final class CopyDescriptor extends VectorDescriptor {
             Boolean.class, false, true);
     
     /**
-     * Mandatory - Feature type names to  copy.
+     * Mandatory - Feature type names to  copy. several names can be passed separated by commas.
      */
     public static final ParameterDescriptor<String> TYPE_NAME =
             new DefaultParameterDescriptor("type_name", "Name of the feature type to copy. '*' for all.", 
