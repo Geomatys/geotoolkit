@@ -50,7 +50,7 @@ public final class TilingProcess extends AbstractProcess{
     @Override
     public void run() {
         if (inputParameters == null) {
-            getMonitor().failed(new ProcessEvent(this, -1,
+            fireFailEvent(new ProcessEvent(this, -1,
                     new SimpleInternationalString("Input parameters not set."),
                     new NullPointerException("Input parameters not set.")));
         }
@@ -93,9 +93,9 @@ public final class TilingProcess extends AbstractProcess{
             final ParameterValueGroup result = super.getOutput();
             result.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
             result.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
-            getMonitor().ended(new ProcessEvent(this));
+            fireStartEvent(new ProcessEvent(this));
         } catch (Exception ex) {
-            getMonitor().failed(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getLocalizedMessage()), ex));
+            fireFailEvent(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getLocalizedMessage()), ex));
             return;
         }
 

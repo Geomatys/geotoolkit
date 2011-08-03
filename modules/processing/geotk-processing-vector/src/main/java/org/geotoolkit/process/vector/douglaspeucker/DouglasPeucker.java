@@ -68,7 +68,7 @@ public class DouglasPeucker extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this,0,null,null));
+        fireStartEvent(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DouglasPeuckerDescriptor.FEATURE_IN, inputParameters);
         final double inputAccuracy = Parameters.value(DouglasPeuckerDescriptor.ACCURACY_IN, inputParameters).doubleValue();
         final Unit<Length> inputUnit = Parameters.value(DouglasPeuckerDescriptor.UNIT_IN, inputParameters);
@@ -80,7 +80,7 @@ public class DouglasPeucker extends AbstractProcess {
 
         final ParameterValueGroup result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        getMonitor().ended(new ProcessEvent(this,100,null,null));
+        fireEndEvent(new ProcessEvent(this,100,null,null));
     }
 
     /**

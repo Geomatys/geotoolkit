@@ -46,8 +46,8 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessMonitor;
-import org.geotoolkit.process.ProcessMonitorAdapter;
+import org.geotoolkit.process.ProcessListener;
+import org.geotoolkit.process.ProcessListenerAdapter;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
@@ -158,7 +158,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 iterator.close();
             }
 
-            final ProcessMonitor redirect = new ProcessMonitorAdapter(){
+            final ProcessListener redirect = new ProcessListenerAdapter(){
                 @Override
                 public void failed(ProcessEvent event) {
                     if(event.getThrowable() != null){
@@ -184,7 +184,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     .setValue(step);
             
             p.setInput(input);
-            p.setMonitor(redirect);
+            p.addListener(redirect);
             p.run();
             final ParameterValueGroup output = p.getOutput();
             final GridCoverage2D coverage = Parameters.value(KrigingDescriptor.OUT_COVERAGE, output);

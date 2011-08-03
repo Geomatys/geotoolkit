@@ -68,7 +68,7 @@ public class SpatialJoin extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this,0,null,null));
+        fireStartEvent(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> sourceFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_TARGET, inputParameters);
         final boolean method = Parameters.value(SpatialJoinDescriptor.INTERSECT, inputParameters);
@@ -78,7 +78,7 @@ public class SpatialJoin extends AbstractProcess {
 
         final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        getMonitor().ended(new ProcessEvent(this,100,null,null));
+        fireEndEvent(new ProcessEvent(this,100,null,null));
     }
 
     /**

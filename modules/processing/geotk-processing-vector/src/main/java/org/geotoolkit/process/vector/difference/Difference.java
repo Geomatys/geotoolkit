@@ -57,7 +57,7 @@ public class Difference extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this, 0, null, null));
+        fireStartEvent(new ProcessEvent(this, 0, null, null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
 
@@ -65,7 +65,7 @@ public class Difference extends AbstractProcess {
 
         final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        getMonitor().ended(new ProcessEvent(this, 100, null, null));
+        fireEndEvent(new ProcessEvent(this, 100, null, null));
     }
 
     /**

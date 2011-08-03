@@ -46,7 +46,7 @@ public class Intersect extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this,0,null,null));
+        fireStartEvent(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectDescriptor.FEATURE_IN, inputParameters);
         final Geometry interGeom = Parameters.value(IntersectDescriptor.GEOMETRY_IN, inputParameters);
 
@@ -54,6 +54,6 @@ public class Intersect extends AbstractProcess {
 
         final ParameterValueGroup result = getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        getMonitor().ended(new ProcessEvent(this,100,null,null));
+        fireEndEvent(new ProcessEvent(this,100,null,null));
     }
 }

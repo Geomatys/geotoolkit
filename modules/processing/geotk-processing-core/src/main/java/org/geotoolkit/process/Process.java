@@ -55,16 +55,20 @@ public interface Process extends Runnable {
     ParameterValueGroup getOutput();
 
     /**
-     * Set the monitor. The process progression will be send
-     * to it.
-     * @param monitor ProcessMonitor
+     * Add a listener. The process progression will be send to it.
+     * @param listener ProcessListener
      */
-    void setMonitor(ProcessMonitor monitor);
+    void addListener(ProcessListener listener);
 
     /**
-     * Get the current monitor.
-     * @return ProcessMonitor
+     * Remove a listener.
+     * @return ProcessListener
      */
-    ProcessMonitor getMonitor();
+    void removeListener(ProcessListener listener);
 
+    /**
+     * @return array of all ProcessListener
+     */
+    ProcessListener[] getListeners();
+    
 }

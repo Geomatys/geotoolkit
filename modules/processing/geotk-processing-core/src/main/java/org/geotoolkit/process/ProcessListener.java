@@ -17,13 +17,15 @@
 
 package org.geotoolkit.process;
 
+import java.util.EventListener;
+
 /**
- * Monitor informed of the process progression.
+ * Listener informed of the process progression.
  *
  * @author johann Sorel (Geomatys)
  * @module pending
  */
-public interface ProcessMonitor {
+public interface ProcessListener extends EventListener{
 
     /**
      * Called when thr process starts.
@@ -36,12 +38,12 @@ public interface ProcessMonitor {
     void progressing(ProcessEvent event);
 
     /**
-     * Called when thr process ends.
+     * Called when the process ends.
      */
     void ended(ProcessEvent event);
 
     /**
-     * Called when thr process fails.
+     * Called when the process fails.
      * the cause can be found on the processevent
      */
     void failed(ProcessEvent event);

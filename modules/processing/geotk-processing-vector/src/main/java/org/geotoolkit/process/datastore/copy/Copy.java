@@ -61,7 +61,7 @@ public class Copy extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this, 0, null, null));
+        fireStartEvent(new ProcessEvent(this, 0, null, null));
                 
         final Map sourceDSparams    = Parameters.value(CopyDescriptor.SOURCE_STORE_PARAMS,  inputParameters);
         final Map targetDSparams    = Parameters.value(CopyDescriptor.TARGET_STORE_PARAMS,  inputParameters);
@@ -77,7 +77,7 @@ public class Copy extends AbstractProcess {
                 throw new DataStoreException("No datastore for parameters :"+sourceDSparams);
             }
         }catch(DataStoreException ex){
-            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, 0, null, ex));
             return;
         }
         
@@ -101,21 +101,21 @@ public class Copy extends AbstractProcess {
                         try{
                             targetDS = factory.createNewDataStore(targetDSparams);
                         }catch(DataStoreException ex){
-                            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+                            fireFailEvent(new ProcessEvent(this, 0, null, ex));
                             return;
                         }
                     }
                 }
 
                 if(targetDS == null){
-                    getMonitor().failed(new ProcessEvent(this, 0, null, new DataStoreException(
+                    fireFailEvent(new ProcessEvent(this, 0, null, new DataStoreException(
                             "Failed to found a factory to create datastore for parameters : "+targetDSparams)));
                     return;
                 }
             }
             
             //through error
-            getMonitor().failed(new ProcessEvent(this, 0, null, exp));
+            fireFailEvent(new ProcessEvent(this, 0, null, exp));
             return;
         }
         
@@ -125,7 +125,7 @@ public class Copy extends AbstractProcess {
             try {
                 names = sourceDS.getNames();
             } catch (DataStoreException ex) {
-                getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+                fireFailEvent(new ProcessEvent(this, 0, null, ex));
                 return;
             }
         }else{
@@ -137,7 +137,7 @@ public class Copy extends AbstractProcess {
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());
                 } catch (DataStoreException ex) {
-                    getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+                    fireFailEvent(new ProcessEvent(this, 0, null, ex));
                     return;
                 }
             }
@@ -146,17 +146,17 @@ public class Copy extends AbstractProcess {
         final float size = names.size();
         int inc = 0;
         for(Name n : names){
-            getMonitor().progressing(new ProcessEvent(this, (int)((inc*100f)/size), new SimpleInternationalString("Coying "+n), null));
+            fireProgressEvent(new ProcessEvent(this, (int)((inc*100f)/size), new SimpleInternationalString("Coying "+n), null));
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
-                getMonitor().failed(new ProcessEvent(this, 50, null, ex));
+                fireFailEvent(new ProcessEvent(this, 50, null, ex));
                 return;
             }
             inc++;
         }
         
-        getMonitor().ended(new ProcessEvent(this, 100, null, null));
+        fireEndEvent(new ProcessEvent(this, 100, null, null));
     }
     
     private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{

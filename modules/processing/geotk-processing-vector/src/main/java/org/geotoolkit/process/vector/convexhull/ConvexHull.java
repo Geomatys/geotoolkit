@@ -54,7 +54,7 @@ public class ConvexHull extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this, 0, null, null));
+        fireStartEvent(new ProcessEvent(this, 0, null, null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ConvexHullDescriptor.FEATURE_IN, inputParameters);
         final String geometryName = Parameters.value(ConvexHullDescriptor.GEOMETRY_NAME, inputParameters);
 
@@ -62,7 +62,7 @@ public class ConvexHull extends AbstractProcess {
 
         final ParameterValueGroup result = super.getOutput();
         result.parameter(ConvexHullDescriptor.GEOMETRY_OUT.getName().getCode()).setValue(hull);
-        getMonitor().ended(new ProcessEvent(this, 100, null, null));
+        fireEndEvent(new ProcessEvent(this, 100, null, null));
     }
 
     /**

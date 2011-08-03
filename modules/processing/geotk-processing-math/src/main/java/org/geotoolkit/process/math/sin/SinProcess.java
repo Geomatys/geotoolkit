@@ -42,7 +42,7 @@ public class SinProcess extends AbstractProcess{
         try{
             result = Math.sin(first);
         }catch(Exception e){
-            getMonitor().failed(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
+            fireFailEvent(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
         }
         final ParameterValueGroup output =  getOutput();
         getOrCreate(RESULT_NUMBER, output).setValue(result); 

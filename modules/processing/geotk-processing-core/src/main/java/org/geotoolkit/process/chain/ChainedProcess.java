@@ -47,7 +47,7 @@ public class ChainedProcess extends AbstractProcess{
     
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this, 0, null, null));
+        fireStartEvent(new ProcessEvent(this, 0, null, null));
         
         ParameterValueGroup intermediateResult = inputParameters;;
         
@@ -69,7 +69,7 @@ public class ChainedProcess extends AbstractProcess{
         final ParameterValueGroup result = getOutput();
         result.values().addAll(intermediateResult.values());
         
-        getMonitor().ended(new ProcessEvent(this, 100, null, null));
+        fireEndEvent(new ProcessEvent(this, 100, null, null));
     }
         
 }

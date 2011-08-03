@@ -23,7 +23,7 @@ package org.geotoolkit.process;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ProcessMonitorAdapter implements ProcessMonitor{
+public class ProcessListenerAdapter implements ProcessListener{
 
     @Override
     public void started(ProcessEvent event) {

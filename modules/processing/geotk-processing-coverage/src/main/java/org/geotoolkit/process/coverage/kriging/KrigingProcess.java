@@ -99,7 +99,7 @@ public class KrigingProcess extends AbstractProcess{
         try{
             computed = ob.interpole(x, y, z);
         }catch(Exception ex){
-            getMonitor().failed(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getMessage()), ex));
+            fireFailEvent(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getMessage()), ex));
             return;
         }
         final double[] cx = ob.getXs();
@@ -132,7 +132,7 @@ public class KrigingProcess extends AbstractProcess{
         } catch(Exception ex){
             //this task rais some IllegalStateExceptio
             //TODO, fix objective analysis
-            getMonitor().progressing(new ProcessEvent(this, 0, new SimpleInternationalString("Creating isolines geometries failed"), ex));
+            fireStartEvent(new ProcessEvent(this, 0, new SimpleInternationalString("Creating isolines geometries failed"), ex));
             return;
         }
 

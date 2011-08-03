@@ -75,7 +75,7 @@ public class Nearest extends AbstractProcess {
     @Override
     public void run() {
         try {
-            getMonitor().started(new ProcessEvent(this, 0, null, null));
+            fireStartEvent(new ProcessEvent(this, 0, null, null));
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             final Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
 
@@ -84,18 +84,18 @@ public class Nearest extends AbstractProcess {
 
             final ParameterValueGroup result = getOutput();
             result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            getMonitor().ended(new ProcessEvent(this, 100, null, null));
+            fireEndEvent(new ProcessEvent(this, 100, null, null));
 
         } catch (NoSuchAuthorityCodeException ex) {
-            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, 0, null, ex));
         } catch (FactoryException ex) {
-            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, 0, null, ex));
         } catch (DataStoreException ex) {
-            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, 0, null, ex));
         } catch (MismatchedDimensionException ex) {
-            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, 0, null, ex));
         } catch (TransformException ex) {
-            getMonitor().failed(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, 0, null, ex));
         }
     }
 

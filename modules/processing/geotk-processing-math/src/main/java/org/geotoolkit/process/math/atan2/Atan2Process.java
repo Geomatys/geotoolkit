@@ -43,7 +43,7 @@ public class Atan2Process extends AbstractProcess{
         try{
             result = Math.atan2(second, first);
         }catch(Exception e){
-            getMonitor().failed(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
+            fireFailEvent(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
         }
         
         final ParameterValueGroup output =  getOutput();

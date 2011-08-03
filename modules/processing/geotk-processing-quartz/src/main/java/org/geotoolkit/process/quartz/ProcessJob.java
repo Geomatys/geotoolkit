@@ -20,7 +20,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.ProcessMonitor;
+import org.geotoolkit.process.ProcessListener;
 
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -71,7 +71,7 @@ public class ProcessJob implements Job{
         final StoreExceptionMonitor monitor = new StoreExceptionMonitor();
         final Process process = desc.createProcess();        
         process.setInput(params);
-        process.setMonitor(monitor);
+        process.addListener(monitor);
         process.run();
         
         //set the result int he context, for listener that might want it.
@@ -84,7 +84,7 @@ public class ProcessJob implements Job{
         }        
     }
 
-    private final class StoreExceptionMonitor implements ProcessMonitor{
+    private final class StoreExceptionMonitor implements ProcessListener{
 
         JobExecutionException failed = null;
         

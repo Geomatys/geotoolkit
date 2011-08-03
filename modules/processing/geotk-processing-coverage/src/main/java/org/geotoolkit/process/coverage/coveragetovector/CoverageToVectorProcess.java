@@ -396,7 +396,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     @Override
     public void run() {
         if (inputParameters == null) {
-            getMonitor().failed(new ProcessEvent(this, -1,
+            fireFailEvent(new ProcessEvent(this, -1,
                     new SimpleInternationalString("Input parameters not set."),
                     new NullPointerException("Input parameters not set.")));
         }
@@ -412,9 +412,9 @@ public class CoverageToVectorProcess extends AbstractProcess {
         try {
             result = toPolygon(coverage, ranges, 0);
         } catch (IOException ex) {
-            getMonitor().failed(new ProcessEvent(this, -1, null, ex));
+            fireFailEvent(new ProcessEvent(this, -1, null, ex));
         } catch (TransformException ex) {
-            getMonitor().failed(new ProcessEvent(this, -1, null, ex));
+            fireFailEvent(new ProcessEvent(this, -1, null, ex));
         }
         
         //avoid memory use
@@ -424,7 +424,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         final ParameterValueGroup group = getOutput();
         group.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).setValue(result);
 
-        getMonitor().ended(new ProcessEvent(this));
+        fireEndEvent(new ProcessEvent(this));
 
     }
 

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.process;
 
+import javax.swing.event.EventListenerList;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
@@ -30,45 +31,11 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 public abstract class AbstractProcess implements Process{
 
-    private static final ProcessMonitor DUMMY_MONITOR = new ProcessMonitor() {
-
-        @Override
-        public void started(ProcessEvent event) {
-            final Throwable error = event.getThrowable();
-            if(error != null){
-                error.printStackTrace();
-            }
-        }
-
-        @Override
-        public void progressing(ProcessEvent event) {
-            final Throwable error = event.getThrowable();
-            if(error != null){
-                error.printStackTrace();
-            }
-        }
-
-        @Override
-        public void ended(ProcessEvent event) {
-            final Throwable error = event.getThrowable();
-            if(error != null){
-                error.printStackTrace();
-            }
-        }
-
-        @Override
-        public void failed(ProcessEvent event) {
-            final Throwable error = event.getThrowable();
-            if(error != null){
-                error.printStackTrace();
-            }
-        }
-    };
-
+    protected final EventListenerList listeners = new EventListenerList();
+    
     protected final ProcessDescriptor descriptor;
     protected final ParameterValueGroup outputParameters;
     protected ParameterValueGroup inputParameters;
-    private ProcessMonitor monitor = null;
 
     public AbstractProcess(final ProcessDescriptor desc){
         ensureNonNull("descriptor", desc);
@@ -96,18 +63,58 @@ public abstract class AbstractProcess implements Process{
     }
 
     @Override
-    public void setMonitor(final ProcessMonitor monitor) {
-        this.monitor = monitor;
+    public void addListener(final ProcessListener listener) {
+        listeners.add(ProcessListener.class, listener);
     }
 
     @Override
-    public ProcessMonitor getMonitor() {
-        if(monitor == null){
-            return DUMMY_MONITOR;
-        }else{
-            return monitor;
-        }
+    public void removeListener(final ProcessListener listener){        
+        listeners.remove(ProcessListener.class, listener);
     }
 
+    @Override
+    public ProcessListener[] getListeners(){
+        return listeners.getListeners(ProcessListener.class);
+    }
+    
+    /**
+     * Forward a start event to all listeners.
+     * @param event 
+     */
+    protected void fireStartEvent(final ProcessEvent event){
+        for(ProcessListener listener : listeners.getListeners(ProcessListener.class)){
+            listener.started(event);
+        }
+    }
+    
+    /**
+     * Forward a progress event to all listeners.
+     * @param event 
+     */
+    protected void fireProgressEvent(final ProcessEvent event){
+        for(ProcessListener listener : listeners.getListeners(ProcessListener.class)){
+            listener.progressing(event);
+        }
+    }
+    
+    /**
+     * Forward a fail event to all listeners.
+     * @param event 
+     */
+    protected void fireFailEvent(final ProcessEvent event){
+        for(ProcessListener listener : listeners.getListeners(ProcessListener.class)){
+            listener.failed(event);
+        }
+    }
+    
+    /**
+     * Forward an end event to all listeners.
+     * @param event 
+     */
+    protected void fireEndEvent(final ProcessEvent event){
+        for(ProcessListener listener : listeners.getListeners(ProcessListener.class)){
+            listener.ended(event);
+        }
+    }
 
 }
