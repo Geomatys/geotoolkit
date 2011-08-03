@@ -18,6 +18,7 @@
 package org.geotoolkit.process;
 
 import java.lang.reflect.Array;
+import java.text.NumberFormat;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.List;
@@ -76,7 +77,52 @@ public final class ProcessConsole {
                 StringToFilterConverter.getInstance(),
                 StringToSortByConverter.getInstance(),
                 StringToMapConverter.getInstance());
-
+    
+    private static final ProcessListener CONSOLE_ADAPTER = new ProcessListener() {
+        @Override
+        public void started(final ProcessEvent event) {
+            printEvent(event, FOREGROUND_DEFAULT.sequence());
+        }
+        @Override
+        public void progressing(final ProcessEvent event) {
+            printEvent(event, FOREGROUND_DEFAULT.sequence());
+        }
+        @Override
+        public void ended(final ProcessEvent event) {
+            printEvent(event, BOLD.sequence()+FOREGROUND_GREEN.sequence());
+        }
+        @Override
+        public void failed(final ProcessEvent event) {
+            printEvent(event, FOREGROUND_RED.sequence());
+        }
+        
+        private void printEvent(final ProcessEvent event, final String color) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(color);
+            sb.append(BOLD.sequence());
+            sb.append(event.getProgress());
+            sb.append("%\t");
+            sb.append(RESET.sequence());
+            sb.append(color);
+            
+            final InternationalString message = event.getMessage();
+            if(message != null){
+                sb.append(message.toString());
+            }
+            
+            final Throwable ex = event.getThrowable();
+            if(ex != null && message == null){
+                sb.append(FOREGROUND_RED.sequence());
+                sb.append(ex.getMessage());
+                sb.append(FOREGROUND_DEFAULT.sequence());
+            }
+            sb.append(RESET.sequence());
+            sb.append("\n");
+            
+            print(sb.toString());
+        }
+        
+    };
 
     public static void main(String ... args) {
 
@@ -142,11 +188,12 @@ public final class ProcessConsole {
         
         //execute process
         final Process process = desc.createProcess();
+        process.addListener(CONSOLE_ADAPTER);
         process.setInput(params);
         process.run();
 
-        //show result
-        if(!silent){
+        //show result only if in non-silent mode and result have values
+        if(!silent && !desc.getOutputDescriptor().descriptors().isEmpty()){
             final ParameterValueGroup result = process.getOutput();
             System.out.println(result);
         }
