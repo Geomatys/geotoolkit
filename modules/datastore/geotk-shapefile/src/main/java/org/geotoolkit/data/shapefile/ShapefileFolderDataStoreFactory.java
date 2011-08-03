@@ -19,6 +19,7 @@ package org.geotoolkit.data.shapefile;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  * DataStore for a folder of Shapefiles.
@@ -27,6 +28,13 @@ import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
  * @module pending
  */
 public class ShapefileFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
+    
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
+            createDescriptor(ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
+    
+    public ShapefileFolderDataStoreFactory(){
+        super(PARAMETERS_DESCRIPTOR);
+    }
     
     @Override
     public FileDataStoreFactory getSingleFileFactory() {

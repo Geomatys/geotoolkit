@@ -28,6 +28,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
 
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -55,10 +56,11 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
             new DefaultParameterDescriptor<Boolean>("recursive","Recursively explore the given folder. default is true.",
             Boolean.class,true,true);
     
-    private ParameterDescriptorGroup DESC = null;
+    private ParameterDescriptorGroup paramDesc = null;
     
-    public AbstractFolderDataStoreFactory(){
-        
+    public AbstractFolderDataStoreFactory(final ParameterDescriptorGroup desc){
+        ArgumentChecks.ensureNonNull("desc", desc);
+        paramDesc = desc;
     }
     
     public abstract FileDataStoreFactory getSingleFileFactory();
@@ -92,22 +94,8 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
     }
     
     @Override
-    public synchronized ParameterDescriptorGroup getParametersDescriptor() {
-        
-        if(DESC == null){
-            final FileDataStoreFactory dsf = getSingleFileFactory();
-            final ParameterDescriptorGroup sd = dsf.getParametersDescriptor();
-            
-            final List<GeneralParameterDescriptor> params = new ArrayList<GeneralParameterDescriptor>(sd.descriptors());
-            params.remove(AbstractFileDataStoreFactory.URLP);
-            params.add(0,URLFOLDER);
-            params.add(1,RECURSIVE);
-            
-            DESC = new DefaultParameterDescriptorGroup("FolderParameters",
-                    params.toArray(new GeneralParameterDescriptor[params.size()]));
-        }
-        
-        return DESC;
+    public ParameterDescriptorGroup getParametersDescriptor() {
+        return paramDesc;
     }
 
     @Override
@@ -123,4 +111,21 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
         return createDataStore(params);
     }
      
+    /**
+     * Create a Folder datastore descriptor group based on the single file factory
+     * parameters.
+     * 
+     * @return ParameterDescriptorGroup
+     */
+    protected static ParameterDescriptorGroup createDescriptor(final ParameterDescriptorGroup sd){
+
+        final List<GeneralParameterDescriptor> params = new ArrayList<GeneralParameterDescriptor>(sd.descriptors());
+        params.remove(AbstractFileDataStoreFactory.URLP);
+        params.add(0,URLFOLDER);
+        params.add(1,RECURSIVE);
+
+        return new DefaultParameterDescriptorGroup("FolderParameters",
+                params.toArray(new GeneralParameterDescriptor[params.size()]));
+    }
+    
 }

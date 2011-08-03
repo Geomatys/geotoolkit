@@ -19,6 +19,7 @@ package org.geotoolkit.data.dbf;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  * DataStore for a folder of DBF files.
@@ -27,6 +28,13 @@ import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
  * @module pending
  */
 public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
+    
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
+            createDescriptor(DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);
+    
+    public DbaseFolderDataStoreFactory(){
+        super(PARAMETERS_DESCRIPTOR);
+    }
     
     @Override
     public FileDataStoreFactory getSingleFileFactory() {
