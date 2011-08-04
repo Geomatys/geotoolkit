@@ -429,7 +429,8 @@ public final class SQLQueryBuilder {
         }
 
         sqlValues.setLength(sqlValues.length() - 1);
-
+        sqlValues.append(';');        
+        
         return sqlType.toString() + sqlValues.toString();
     }
     

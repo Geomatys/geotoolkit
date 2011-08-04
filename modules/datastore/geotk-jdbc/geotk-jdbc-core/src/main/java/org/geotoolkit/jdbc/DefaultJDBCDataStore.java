@@ -793,7 +793,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 
                 final List<Object> nextKeyValues = getNextValues(key, cx);
                 final String sql = queryBuilder.insertSQL(featureType, features, nextKeyValues, cx);
-                st.execute(sql);
+                st.executeUpdate(sql);
                 
             } catch (SQLException e) {
                 throw new DataStoreException("Error inserting features",e);
