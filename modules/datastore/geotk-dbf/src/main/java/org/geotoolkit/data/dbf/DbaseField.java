@@ -201,7 +201,7 @@ abstract class DbaseField {
                 } else
                     break;
             }
-            while (end > start) {
+            while (end >= start) {
                 char c = charBuffer.get(end);
                 if (c == 0 || Character.isWhitespace(c)) {
                     end--;
