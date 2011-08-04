@@ -36,7 +36,7 @@ public class ShadedReliefDescriptor extends OperationDescriptorImpl {
     /**
      * The operation name, which is {@value}.
      */
-    public static final String OPERATION_NAME = "ShadedRelief";
+    public static final String OPERATION_NAME = "org.geotoolkit.ShadedRelief";
 
     /**
      * Constructs the descriptor.
@@ -44,9 +44,9 @@ public class ShadedReliefDescriptor extends OperationDescriptorImpl {
     public ShadedReliefDescriptor() {
         super(new String[][]{{"GlobalName",  OPERATION_NAME},
                              {"LocalName",   OPERATION_NAME},
-                             {"Vendor",      "org.geotidy"},
+                             {"Vendor",      "org.geotoolkit"},
                              {"Description", "Make a hill shading image"},
-                             {"DocURL",      "http://geotidy.geomatys.fr"},
+                             {"DocURL",      "http://www.geotoolkit.org"},
                              {"Version",     "1.0"},
                              {"arg0Desc",    "The azimuth value, this is the direction of lighting in deg (default 315)"},
                              {"arg1Desc",    "The altitude value, this is the altitude of the lighting source in degrees above horizontal (default 45)"},
