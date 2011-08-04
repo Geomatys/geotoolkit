@@ -15,15 +15,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geoapi;
+package org.geotoolkit.referencing.factory;
+
+import org.opengis.test.referencing.ReferencingFactoryTest;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.factory.FactoryNotFoundException;
-import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
-
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,31 +28,27 @@ import org.junit.runners.JUnit4;
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link ThreadedEpsgFactory} instance registered in {@link FactoryFinder}.
+ * the {@link ReferencingObjectFactory} instance registered in {@link FactoryFinder}.
+ * <p>
+ * Note that there is another test, {@link org.geotoolkit.referencing.factory.epsg.GeoapiTest},
+ * which is dedicated to the GeoAPI tests using authority factories.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.01
+ * @version 3.19
+ *
+ * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
  *
  * @since 3.01
  */
 @RunWith(JUnit4.class)
-public final class CRSTest extends org.opengis.test.referencing.CRSTest {
+public final class GeoapiTest extends ReferencingFactoryTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */
-    public CRSTest() {
-        super(getFactory());
-    }
-
-    /**
-     * Returns the authority factory to be used for the tests, or {@code null} if none.
-     */
-    private static CRSAuthorityFactory getFactory() {
-        try {
-            return AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG",
-                    new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class));
-        } catch (FactoryNotFoundException e) {
-            return null; // Have the effect of skipping the tests.
-        }
+    public GeoapiTest() {
+        super(FactoryFinder.getDatumFactory(new Hints(Hints.DATUM_FACTORY, ReferencingObjectFactory.class)),
+              FactoryFinder.getCSFactory   (new Hints(Hints.CS_FACTORY,    ReferencingObjectFactory.class)),
+              FactoryFinder.getCRSFactory  (new Hints(Hints.CRS_FACTORY,   ReferencingObjectFactory.class)),
+              FactoryFinder.getCoordinateOperationFactory(null));
     }
 }

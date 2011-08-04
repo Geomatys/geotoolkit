@@ -745,7 +745,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                     // Don't check the Projection case; it is confusing
                     // since users expect a well known projection name.
                 }
-                method = new DefaultOperationMethod(Collections.singletonMap(OperationMethod.NAME_KEY,
+                method = createOperationMethod(Collections.singletonMap(OperationMethod.NAME_KEY,
                         Descriptions.format(Descriptions.Keys.CONCATENATED_OPERATION_ADAPTED_$1, buffer)),
                         srcDim, tgtDim, null);
             }

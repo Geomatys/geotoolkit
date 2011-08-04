@@ -28,8 +28,10 @@ import javax.measure.converter.ConversionException;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.metadata.quality.PositionalAccuracy;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -65,8 +67,8 @@ import static org.geotoolkit.resources.Vocabulary.formatInternational;
  * construction of building blocks. It doesn't figure out any operation path by itself. This
  * more "intelligent" job is left to subclasses.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.19
  *
  * @since 2.1
  * @level advanced
@@ -217,6 +219,34 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     }
 
     /**
+     * Returns the operation method of the given name. The default implementation returns the first
+     * method from the set returned by {@link MathTransformFactory#getAvailableMethods(Class)}
+     * which have a {@linkplain IdentifiedObjects#nameMatches matching name}.
+     *
+     * @param  name The name of the operation method to fetch.
+     * @return The operation method of the given name.
+     * @throws FactoryException if the requested operation method can not be fetched.
+     *
+     * @see #createOperationMethod(Map, Integer, Integer, ParameterDescriptorGroup)
+     *
+     * @since 3.19
+     */
+    @Override
+    public OperationMethod getOperationMethod(final String name) throws FactoryException {
+        final MathTransformFactory mtFactory = getMathTransformFactory();
+        if (mtFactory instanceof DefaultMathTransformFactory) {
+            return ((DefaultMathTransformFactory) mtFactory).getOperationMethod(name);
+        }
+        for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
+            if (IdentifiedObjects.nameMatches(method, name)) {
+                return method;
+            }
+        }
+        throw new NoSuchIdentifierException(Errors.format(
+                Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_$1, name), name);
+    }
+
+    /**
      * Returns the underlying math transform factory. This factory
      * is used for constructing {@link MathTransform} objects for
      * all {@linkplain CoordinateOperation coordinate operations}.
@@ -244,13 +274,18 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      *     └      ┘   └              ┘ └     ┘
      * }
      *
+     * The default implementation performs the same work than the static method in the
+     * {@link AbstractCS#swapAndScaleAxis(CoordinateSystem, CoordinateSystem) AbstractCS}
+     * class, except that the unchecked exceptions are wrapped into the checked
+     * {@link OperationNotFoundException}.
+     *
      * @param  sourceCS The source coordinate system.
      * @param  targetCS The target coordinate system.
      * @return The transformation from {@code sourceCS} to {@code targetCS} as
      *         an affine transform. Only axis orientation and units are taken in account.
      * @throws OperationNotFoundException If the affine transform can't be constructed.
      *
-     * @see AbstractCS#swapAndScaleAxis
+     * @see AbstractCS#swapAndScaleAxis(CoordinateSystem, CoordinateSystem)
      */
     protected Matrix swapAndScaleAxis(final CoordinateSystem sourceCS,
                                       final CoordinateSystem targetCS)
@@ -367,7 +402,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         final Map<String,?> properties = singletonMap(NAME_KEY, name);
         return createFromMathTransform(properties, sourceCRS, targetCRS, transform,
-                new DefaultOperationMethod(properties, sourceCRS.getCoordinateSystem().getDimension(),
+                createOperationMethod(properties, sourceCRS.getCoordinateSystem().getDimension(),
                 targetCRS.getCoordinateSystem().getDimension(), null), CoordinateOperation.class);
     }
 
@@ -437,6 +472,28 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         Conversion conversion = new DefiningConversion(properties, method, parameters);
         conversion = pool.unique(conversion);
         return conversion;
+    }
+
+    /**
+     * Creates an operation method from a set of properties and a descriptor group. The default
+     * implementation delegates to the {@link DefaultOperationMethod#DefaultOperationMethod(Map,
+     * Integer, Integer, ParameterDescriptorGroup) DefaultOperationMethod} constructor.
+     *
+     * @param  properties Set of properties. Shall contains at least {@code "name"}.
+     * @param  sourceDimension Number of dimensions in the source CRS of this operation method.
+     * @param  targetDimension Number of dimensions in the target CRS of this operation method.
+     * @param  parameters The set of parameters, or {@code null} if none.
+     *
+     * @see #getOperationMethod(String)
+     *
+     * @since 3.19
+     */
+    @Override
+    public OperationMethod createOperationMethod(final Map<String,?> properties,
+            final Integer sourceDimension, final Integer targetDimension,
+            final ParameterDescriptorGroup parameters) throws FactoryException
+    {
+        return new DefaultOperationMethod(properties, sourceDimension, targetDimension, parameters);
     }
 
     /**

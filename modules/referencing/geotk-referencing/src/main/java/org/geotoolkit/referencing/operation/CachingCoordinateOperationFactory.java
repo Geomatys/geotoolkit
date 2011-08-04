@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.referencing.operation;
 
+import java.util.Map;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -47,8 +49,8 @@ import org.geotoolkit.util.Utilities;
  * by {@link FactoryFinder} in default Geotk configuration.
  *
  * @author Simone Giannecchini (Geosolutions)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.19
  *
  * @since 2.3
  * @level advanced
@@ -276,5 +278,31 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
         ensureNonNull("targetCRS", targetCRS);
         ensureNonNull("method",    method);
         return createOperation(new CRSPair(sourceCRS, targetCRS, method));
+    }
+
+    /**
+     * Creates an operation method from a set of properties and a descriptor group. The default
+     * implementation delegates to the backing factory.
+     *
+     * @since 3.19
+     */
+    @Override
+    public OperationMethod createOperationMethod(final Map<String,?> properties,
+            final Integer sourceDimension, final Integer targetDimension,
+            final ParameterDescriptorGroup parameters) throws FactoryException
+    {
+        return getBackingFactory().createOperationMethod(properties, sourceDimension, targetDimension, parameters);
+    }
+
+    /**
+     * Returns the operation method of the given name. The default implementation delegates
+     * to the backing factory without caching, since invoking this method usually don't
+     * imply any object creation.
+     *
+     * @since 3.19
+     */
+    @Override
+    public OperationMethod getOperationMethod(final String name) throws FactoryException {
+        return getBackingFactory().getOperationMethod(name);
     }
 }
