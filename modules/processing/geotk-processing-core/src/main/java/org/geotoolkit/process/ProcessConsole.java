@@ -17,6 +17,8 @@
 
 package org.geotoolkit.process;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.util.AbstractMap.SimpleEntry;
@@ -78,7 +80,10 @@ public final class ProcessConsole {
                 StringToSortByConverter.getInstance(),
                 StringToMapConverter.getInstance());
     
+    private static boolean failed = false;
+        
     private static final ProcessListener CONSOLE_ADAPTER = new ProcessListener() {
+        
         @Override
         public void started(final ProcessEvent event) {
             printEvent(event, FOREGROUND_DEFAULT.sequence());
@@ -93,6 +98,7 @@ public final class ProcessConsole {
         }
         @Override
         public void failed(final ProcessEvent event) {
+            failed = true;
             printEvent(event, FOREGROUND_RED.sequence());
         }
         
@@ -116,6 +122,19 @@ public final class ProcessConsole {
                 sb.append(ex.getMessage());
                 sb.append(FOREGROUND_DEFAULT.sequence());
             }
+            if(ex != null){
+                final StringWriter buffer = new StringWriter();
+                final PrintWriter writer = new PrintWriter(buffer);
+                ex.printStackTrace(writer);
+                writer.flush();
+                buffer.flush();
+                final String str = buffer.toString();
+                sb.append("\n");
+                sb.append(FOREGROUND_RED.sequence());
+                sb.append(str);
+                sb.append(FOREGROUND_DEFAULT.sequence());
+            }
+            
             sb.append(RESET.sequence());
             sb.append("\n");
             
@@ -199,6 +218,11 @@ public final class ProcessConsole {
         }
 
         Setup.shutdown();
+        
+        if(failed){
+            System.exit(1);
+        }
+        
     }
 
     /**
