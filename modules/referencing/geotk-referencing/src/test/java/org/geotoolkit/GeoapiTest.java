@@ -26,10 +26,9 @@ import org.opengis.test.TestSuite;
  * {@code META-INF/services/*} files found on the classpath, excluding some of them
  * according the criterion defined in {@link org.geotoolkit.test.ImplementationDetails}.
  * <p>
- * Note that there is a few other Java files named {@code GeoapiTest} in various sub-packages
- * of the {@code geotk-referencing} module. Those files extend directly one specific GeoAPI
- * {@link org.opengis.test.TestCase} in order to control better the test configuration, and
- * for easier debugging.
+ * Note that there is a few other Java files named {@code GeoapiTest} in various sub-packages.
+ * Those files extend directly one specific GeoAPI {@link org.opengis.test.TestCase} in order
+ * to control better the test configuration, and for easier debugging.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
