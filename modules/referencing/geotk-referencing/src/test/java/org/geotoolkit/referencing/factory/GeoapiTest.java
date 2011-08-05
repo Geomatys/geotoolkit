@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.factory;
 
-import org.opengis.test.referencing.ReferencingFactoryTest;
+import org.opengis.test.referencing.ObjectFactoryTest;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -28,7 +28,7 @@ import org.junit.runners.JUnit4;
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link ReferencingObjectFactory} instance registered in {@link FactoryFinder}.
+ * the referencing {@link ObjectFactory} instances registered in {@link FactoryFinder}.
  * <p>
  * Note that there is another test, {@link org.geotoolkit.referencing.factory.epsg.GeoapiTest},
  * which is dedicated to the GeoAPI tests using authority factories.
@@ -36,12 +36,16 @@ import org.junit.runners.JUnit4;
  * @author Cédric Briançon (Geomatys)
  * @version 3.19
  *
+ * @see org.geotoolkit.naming.GeoapiTest
+ * @see org.geotoolkit.referencing.factory.GeoapiTest
  * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
+ * @see org.geotoolkit.referencing.operation.projection.integration.GeoapiTest
+ * @see org.geotoolkit.GeoapiTest
  *
  * @since 3.01
  */
 @RunWith(JUnit4.class)
-public final class GeoapiTest extends ReferencingFactoryTest {
+public final class GeoapiTest extends ObjectFactoryTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */

@@ -151,12 +151,28 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
     protected TransformTestBase(final Class<? extends MathTransform> type, final Hints hints) {
+        this(FactoryFinder.getDatumFactory(hints),
+             FactoryFinder.getCRSFactory(hints),
+             FactoryFinder.getMathTransformFactory(hints),
+             FactoryFinder.getCoordinateOperationFactory(hints));
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
+    }
 
-        datumFactory = FactoryFinder.getDatumFactory(hints);
-        crsFactory   = FactoryFinder.getCRSFactory(hints);
-        mtFactory    = FactoryFinder.getMathTransformFactory(hints);
-        opFactory    = FactoryFinder.getCoordinateOperationFactory(hints);
+    /**
+     * Work around for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
+     */
+    private TransformTestBase(
+            final DatumFactory            datumFactory,
+            final CRSFactory                crsFactory,
+            final MathTransformFactory       mtFactory,
+            final CoordinateOperationFactory opFactory)
+    {
+        super(datumFactory, crsFactory, mtFactory, opFactory);
+        this.datumFactory = datumFactory;
+        this.mtFactory    = mtFactory;
+        this.crsFactory   = crsFactory;
+        this.opFactory    = opFactory;
     }
 
     /**

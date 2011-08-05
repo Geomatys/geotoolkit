@@ -27,6 +27,7 @@ import javax.media.jai.WarpAffine;
 import javax.media.jai.WarpQuadratic;
 import javax.media.jai.WarpPolynomial;
 
+import org.opengis.util.Factory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -49,6 +50,13 @@ public final class WarpTransformTest extends TransformTestCase {
      * Width and height of a pseudo-image source image.
      */
     private static final int WIDTH = 1000, HEIGHT = 2000;
+
+    /**
+     * Creates a new test case without factory.
+     */
+    public WarpTransformTest() {
+        super(new Factory[0]);
+    }
 
     /**
      * Transforms in place a point. This is used for testing

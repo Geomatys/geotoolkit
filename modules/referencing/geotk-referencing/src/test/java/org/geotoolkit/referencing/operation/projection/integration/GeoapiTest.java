@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,22 +15,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.naming;
+package org.geotoolkit.referencing.operation.projection.integration;
 
-import org.geotoolkit.factory.Hints;
+import org.opengis.test.referencing.MathTransformTest;
+
 import org.geotoolkit.factory.FactoryFinder;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.opengis.test.util.NameTest;
 
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link DefaultNameFactory} instance registered in {@link FactoryFinder}.
+ * the {@link MathTransformFactory} instance registered in {@link FactoryFinder}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.19
  *
  * @see org.geotoolkit.naming.GeoapiTest
  * @see org.geotoolkit.referencing.factory.GeoapiTest
@@ -38,14 +38,14 @@ import org.opengis.test.util.NameTest;
  * @see org.geotoolkit.referencing.operation.projection.integration.GeoapiTest
  * @see org.geotoolkit.GeoapiTest
  *
- * @since 3.00
+ * @since 3.19
  */
 @RunWith(JUnit4.class)
-public class GeoapiTest extends NameTest {
+public final class GeoapiTest extends MathTransformTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(FactoryFinder.getNameFactory(new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class)));
+        super(FactoryFinder.getMathTransformFactory(null));
     }
 }

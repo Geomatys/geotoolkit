@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,22 +15,24 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.naming;
+package org.geotoolkit;
 
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.opengis.test.util.NameTest;
+import org.opengis.test.TestSuite;
 
 
 /**
- * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link DefaultNameFactory} instance registered in {@link FactoryFinder}.
+ * Runs the GeoAPI {@link TestSuite}. This class inherits all the tests defined in the
+ * {@code geoapi-conformance} module. GeoAPI scans for all factories declared in the
+ * {@code META-INF/services/*} files found on the classpath, excluding some of them
+ * according the criterion defined in {@link org.geotoolkit.test.ImplementationDetails}.
+ * <p>
+ * Note that there is a few other Java files named {@code GeoapiTest} in various sub-packages
+ * of the {@code geotk-referencing} module. Those files extend directly one specific GeoAPI
+ * {@link org.opengis.test.TestCase} in order to control better the test configuration, and
+ * for easier debugging.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.19
  *
  * @see org.geotoolkit.naming.GeoapiTest
  * @see org.geotoolkit.referencing.factory.GeoapiTest
@@ -38,14 +40,7 @@ import org.opengis.test.util.NameTest;
  * @see org.geotoolkit.referencing.operation.projection.integration.GeoapiTest
  * @see org.geotoolkit.GeoapiTest
  *
- * @since 3.00
+ * @since 3.19
  */
-@RunWith(JUnit4.class)
-public class GeoapiTest extends NameTest {
-    /**
-     * Creates a new test suite using the singleton factory instance.
-     */
-    public GeoapiTest() {
-        super(FactoryFinder.getNameFactory(new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class)));
-    }
+public final class GeoapiTest extends TestSuite {
 }

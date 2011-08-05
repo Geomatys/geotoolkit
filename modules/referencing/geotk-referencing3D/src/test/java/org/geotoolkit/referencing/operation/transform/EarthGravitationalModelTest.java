@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.IOException;
 
+import org.opengis.util.Factory;
 import org.opengis.util.FactoryException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -45,6 +46,13 @@ import static org.junit.Assert.*;
  * @since 2.3
  */
 public final class EarthGravitationalModelTest extends TransformTestCase {
+    /**
+     * Creates a new test case without factory.
+     */
+    public EarthGravitationalModelTest() {
+        super(new Factory[0]);
+    }
+
     /**
      * Verifies the coefficients of the binary file with the coefficients from the ASCII file.
      *
