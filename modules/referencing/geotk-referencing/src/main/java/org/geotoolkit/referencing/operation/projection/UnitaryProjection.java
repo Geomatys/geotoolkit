@@ -109,7 +109,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
@@ -708,6 +708,22 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     final double msfn(final double sinφ, final double cosφ) {
         assert !(abs(sinφ*sinφ + cosφ*cosφ - 1) > ARGUMENT_TOLERANCE);
         return cosφ / sqrt(1.0 - (sinφ*sinφ) * excentricitySquared);
+    }
+
+    /**
+     * Computes the derivative of this {@link #msfn(double, double)} method divided by {@code msfn}.
+     * Callers must multiply the return value by {@code msfn} in order to get the actual value.
+     *
+     * @param  sinφ The sinus of latitude.
+     * @param  cosφ The cosine of latitude.
+     * @param  msfn The value of {@code msfn(sinφ, cosφ)}.
+     * @return The {@code msfn} derivative at the specified latitude.
+     *
+     * @since 3.19
+     */
+    final double dmsfn_dφ(final double sinφ, final double cosφ, double msfn) {
+        msfn *= excentricity;
+        return (sinφ/cosφ) * (msfn - 1) * (msfn + 1);
     }
 
     /**

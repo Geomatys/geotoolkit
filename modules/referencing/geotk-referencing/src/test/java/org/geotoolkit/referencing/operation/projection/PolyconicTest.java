@@ -33,7 +33,8 @@ import static org.geotoolkit.referencing.operation.provider.Polyconic.*;
  *
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 3.11
  */
@@ -148,5 +149,29 @@ public final class PolyconicTest extends ProjectionTestBase {
             assertEquals(points[i  ], buffer[i  ], tolerance);
             assertEquals(points[i+1], buffer[i+1], tolerance);
         }
+    }
+
+    /**
+     * Creates a projection and tests the derivatives at a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-1;
+        transform = create(false, 0);
+        assertTrue(isSpherical());
+        validate();
+
+        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(Math.toRadians(5), Math.toRadians(3));
+
+        transform = create(true, 0);
+        assertFalse(isSpherical());
+        validate();
+        verifyDerivative(Math.toRadians(5), Math.toRadians(3));
     }
 }

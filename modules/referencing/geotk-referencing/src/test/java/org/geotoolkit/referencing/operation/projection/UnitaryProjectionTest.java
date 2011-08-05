@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.TransformException;
  * for testing purpose, because it is the simplest non-trivial projection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -192,6 +192,33 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
                 assertEquals("Expected sinphi and qsfn(sinphi) to have same sign.", signum(sinphi), signum(q), 0);
             }
         } while ((ellipse = !ellipse) == false);
+    }
+
+    /**
+     * Tests the {@link UnitaryProjection#dmsfn_dφ} method.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testDmsfn() throws TransformException {
+        boolean ellipse = false;
+        do {
+            final Mercator mercator = MercatorTest.create(ellipse);
+            transform = new AbstractMathTransform1D() {
+                @Override public double transform (final double φ) {
+                    return mercator.msfn(sin(φ), cos(φ));
+                }
+                @Override public double derivative(final double φ) {
+                    final double sinφ = sin(φ);
+                    final double cosφ = cos(φ);
+                    final double msfn = mercator.msfn(sinφ, cosφ);
+                    return mercator.dmsfn_dφ(sinφ, cosφ, msfn) * msfn;
+                }
+            };
+            verifyInDomain(-PI/3, PI/3);
+        } while ((ellipse = !ellipse) == true);
     }
 
     /**

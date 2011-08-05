@@ -21,13 +21,16 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 
@@ -60,7 +63,8 @@ import static java.lang.Math.*;
  *
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 3.11
  * @module
@@ -120,7 +124,7 @@ public class Polyconic extends CassiniOrMercator {
         double y = srcPts[srcOff + 1];
         final double sinφ = sin(y);
         final double cosφ = cos(y);
-        final double ms = msfn(sinφ, cosφ) / sinφ;
+        final double msfn = msfn(sinφ, cosφ) / sinφ;
         /*
          * If y == 0, then we have (1/0) == infinity. Then we would have below
          * y = 0 + infinity * (1 - 1)  ==  infinity * zero  ==  indetermination.
@@ -131,9 +135,9 @@ public class Polyconic extends CassiniOrMercator {
          * In Geotk, we try to avoid threshold as much as possible in order to have
          * more continuous function.
          */
-        if (!Double.isInfinite(ms)) {
-            y = mlfn(y, sinφ, cosφ) + ms * (1 - cos(x *= sinφ));
-            x = ms * sin(x);
+        if (!Double.isInfinite(msfn)) {
+            y = mlfn(y, sinφ, cosφ) + msfn * (1 - cos(x *= sinφ));
+            x = msfn * sin(x);
         }
         dstPts[dstOff  ] = x;
         dstPts[dstOff+1] = y;
@@ -307,6 +311,70 @@ public class Polyconic extends CassiniOrMercator {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.19
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final double λ     = rollLongitude(point.getX());
+            final double φ     = point.getY();
+            final double sinφ  = sin(φ);
+            final double cosφ  = cos(φ);
+            final double sin2φ = sinφ * sinφ;
+            final double cot2φ = (cosφ*cosφ) / sin2φ;
+            final double E     = λ*sinφ;
+            final double cosE  = cos(E);
+            final double sinE  = sin(E);
+            final Matrix derivative = new Matrix2(
+                    cosφ  * (cosE),                            // dx/dλ
+                    cot2φ * (cosE*E - sinE) - sinE,            // dx/dφ
+                    cosφ  * (sinE),                            // dy/dλ
+                    cot2φ * (sinE*E) + (cosE - 1)/sin2φ + 1);  // dy/dφ
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.19
+     */
+    @Override
+    public Matrix derivative(Point2D point) throws ProjectionException {
+        final double λ     = rollLongitude(point.getX());
+        final double φ     = point.getY();
+        final double sinφ  = sin(φ);
+        final double cosφ  = cos(φ);
+        final double msfn  = msfn(sinφ, cosφ) / sinφ;
+        final double dmsdφ = (dmsfn_dφ(sinφ, cosφ, msfn) - cosφ/sinφ) * msfn;
+        if (Double.isInfinite(msfn)) {
+            // Returns an identity transform for consistency
+            // with the case implemented in transform(...).
+            return new Matrix2();
+        }
+        final double X2    = λ*sinφ;
+        final double sinX2 = sin(X2);
+        final double cosX2 = cos(X2);
+        final double mssin = msfn * sinX2;
+        final double mscos = msfn * cosX2;
+        final double dX2dφ = λ*cosφ;
+        return new Matrix2(
+                sinφ  * mscos,
+                dmsdφ * sinX2 + dX2dφ * mscos,
+                sinφ  * mssin,
+                dmlfn_dφ(sinφ*sinφ, cosφ*cosφ) + dmsdφ * (1-cosX2) + dX2dφ * mssin);
     }
 
     /**
