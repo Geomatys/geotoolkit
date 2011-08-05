@@ -17,9 +17,11 @@
 package org.geotoolkit.osmtms.map;
 
 import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -36,28 +38,24 @@ public final class OSMTMSUtilities {
     public static final double BASE_TILE_SIZE = 256d;
     
     public static final CoordinateReferenceSystem GOOGLE_MERCATOR;
-    
-    public static DirectPosition UPPER_LEFT_CORNER;
-    
+    public static final Envelope MERCATOR_EXTEND;
+        
     static {
         try {
             GOOGLE_MERCATOR = CRS.decode("EPSG:3857");
             
             //X goes from 0 (left edge is 180 °W) to 2^zoom -1 (right edge is 180 °E) 
             //Y goes from 0 (top edge is 85.0511 °N) to 2^zoom -1 (bottom edge is 85.0511 °S) in a Mercator projection
-
-            DirectPosition lonlatupper = new DirectPosition2D(DefaultGeographicCRS.WGS84, -180, 85.0511);
-
-            final MathTransform trs = CRS.findMathTransform(DefaultGeographicCRS.WGS84, OSMTMSUtilities.GOOGLE_MERCATOR);
-            UPPER_LEFT_CORNER = trs.transform(lonlatupper, null);
+            MERCATOR_EXTEND = new GeneralEnvelope(GOOGLE_MERCATOR);
+            ((GeneralEnvelope)MERCATOR_EXTEND).setRange(0, -20037508.342789244d, 20037508.342789244d);
+            ((GeneralEnvelope)MERCATOR_EXTEND).setRange(1, -20037508.342789244d, 20037508.342789244d);
+            
             
         } catch (NoSuchAuthorityCodeException ex) {
             throw new RuntimeException(ex);
         } catch (FactoryException ex) {
             throw new RuntimeException(ex);
-        } catch (TransformException ex) {
-            throw new RuntimeException(ex);
-        }        
+        }       
     }
     
     private OSMTMSUtilities(){}

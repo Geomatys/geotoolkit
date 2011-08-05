@@ -38,11 +38,9 @@ public class OSMTMSPyramidSet extends DefaultPyramidSet{
         
         final int tileWidth = (int) OSMTMSUtilities.BASE_TILE_SIZE;        
         final int tileHeight = (int) OSMTMSUtilities.BASE_TILE_SIZE;        
-        final Envelope extent = CRS.getEnvelope(OSMTMSUtilities.GOOGLE_MERCATOR);
+        final Envelope extent = OSMTMSUtilities.MERCATOR_EXTEND;
                 
-        final Point2D upperLeft = new Point2D.Double(
-                OSMTMSUtilities.UPPER_LEFT_CORNER.getOrdinate(0), 
-                OSMTMSUtilities.UPPER_LEFT_CORNER.getOrdinate(1));
+        final Point2D upperLeft = new Point2D.Double(extent.getMinimum(0), extent.getMaximum(1));    
         
         final double scale0Resolution = extent.getSpan(0) / OSMTMSUtilities.BASE_TILE_SIZE;
         
