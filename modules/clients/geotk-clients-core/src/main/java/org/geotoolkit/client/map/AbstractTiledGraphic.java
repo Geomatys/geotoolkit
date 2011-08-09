@@ -21,17 +21,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -55,11 +51,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
-
+        
     /**
      * Cache the last queried tiles
      */
-    private final Map<String,GridCoverage2D> tileCache = new Cache<String, GridCoverage2D>(4, 20, true);
+    private final Map<String,GridCoverage2D> tileCache = new Cache<String, GridCoverage2D>(4, 10, false);
     
     private boolean silentErrors = false;
     
@@ -92,55 +88,41 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
             paint(context, queries.iterator().next());            
             return;
         }
-                  
-        final ThreadPoolExecutor exec = new ThreadPoolExecutor(0, 8, 100, TimeUnit.MILLISECONDS, 
-                new ArrayBlockingQueue<Runnable>(queries.size()));
-            
         
-        final Collection<FutureTask> tasks = new ArrayList<FutureTask>();
+        final ExecutorService executor = Executors.newFixedThreadPool(6);
         
-        for(final TileReference entry : queries){
-                        
+        for(final TileReference entry : queries){            
             if(monitor.stopRequested()){
                 return;
             }
             
-            final FutureTask task = new FutureTask(new Callable() {
+            final Runnable call = new Runnable() {
                 @Override
-                public Object call() throws Exception {
+                public void run() {
                     paint(context, entry);
-                    return null;
                 }
-            });
+            };
             
-            tasks.add(task);
-            exec.execute(task);            
+            executor.execute(call);            
         }
         
-        //wait for all thread to end
-        for(FutureTask t : tasks){
-            if(monitor.stopRequested()){
-                return;
-            }
-            
-            try {
-                t.get(2000,TimeUnit.MILLISECONDS);
-            } catch (InterruptedException ex) {
-                getLogger().log(Level.WARNING, ex.getMessage(), ex);
-            } catch (ExecutionException ex) {
-                getLogger().log(Level.WARNING, ex.getMessage(), ex);
-            } catch (TimeoutException ex) {
-                getLogger().log(Level.WARNING, ex.getMessage(), ex);
-            }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(2, TimeUnit.MINUTES);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(AbstractTiledGraphic.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
     
     private void paint(final RenderingContext2D context, 
-            final TileReference tileRef){
+            final TileReference tileRef){        
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
-        
+                
+        if(monitor.stopRequested()){
+            return;
+        }
         
         //use the cache if available
         GridCoverage2D coverage = tileCache.get(tileRef.id);
