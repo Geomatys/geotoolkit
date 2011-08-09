@@ -1,13 +1,12 @@
 
 package org.geotoolkit.pending.demo.processing;
 
-import java.util.Date;
 import java.util.UUID;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.quartz.ProcessJobDetail;
 import org.opengis.parameter.ParameterValueGroup;
-import org.quartz.JobDetail;
+import org.opengis.util.NoSuchIdentifierException;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
@@ -16,17 +15,13 @@ import org.quartz.Matcher;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
-import org.quartz.SchedulerListener;
 import org.quartz.SimpleTrigger;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
-import org.quartz.impl.DirectSchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 public class QuartzDemo {
     
-    public static void main(String[] args) throws SchedulerException {
+    public static void main(String[] args) throws SchedulerException, NoSuchIdentifierException {
         
         //create a quartz scheduler
         final SchedulerFactory factory = new StdSchedulerFactory();

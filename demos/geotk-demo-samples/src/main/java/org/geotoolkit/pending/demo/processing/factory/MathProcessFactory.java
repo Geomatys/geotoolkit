@@ -6,15 +6,15 @@ import java.util.Collections;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.AbstractProcessFactory;
 
+import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
 /**
  * The factory is registered in META-INF/
  */
-public class MathProcessFactory extends AbstractProcessFactory{
+public class MathProcessFactory extends AbstractProcessingRegistry{
     
     /** factory name **/
     public static final String NAME = "mymaths";

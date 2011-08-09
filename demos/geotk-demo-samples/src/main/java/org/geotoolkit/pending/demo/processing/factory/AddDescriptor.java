@@ -10,6 +10,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 public class AddDescriptor extends AbstractProcessDescriptor{
         
@@ -46,8 +47,8 @@ public class AddDescriptor extends AbstractProcessDescriptor{
     }
 
     @Override
-    public Process createProcess() {
-        return new AddProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new AddProcess(input);
     }
     
 }

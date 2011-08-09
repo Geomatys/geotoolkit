@@ -6,19 +6,19 @@ import org.opengis.parameter.ParameterValueGroup;
 
 public class AddProcess extends AbstractProcess{
     
-    public AddProcess(){
-        super(AddDescriptor.INSTANCE);
+    public AddProcess(final ParameterValueGroup input){
+        super(AddDescriptor.INSTANCE, input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final double first = (Double)inputParameters.parameter("first").getValue();   
         final double second = (Double)inputParameters.parameter("second").getValue();       
         
         Double result = first + second;
-        final ParameterValueGroup res =  super.getOutput();
-        res.parameter("result").setValue(result);
+        outputParameters.parameter("result").setValue(result);
+        return outputParameters;
     }
 
     
