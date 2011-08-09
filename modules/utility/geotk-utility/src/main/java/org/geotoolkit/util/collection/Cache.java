@@ -321,6 +321,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
         final Object previous;
         if (value != null) {
             previous = map.put(key, value);
+            Threads.executeWork(new Strong(key, value));
         } else {
             previous = map.remove(key);
         }
