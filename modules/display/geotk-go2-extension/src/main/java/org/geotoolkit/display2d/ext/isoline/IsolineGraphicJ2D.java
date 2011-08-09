@@ -24,12 +24,12 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
@@ -50,9 +50,8 @@ import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.process.ProcessListenerAdapter;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.style.MutableStyle;
-import org.opengis.feature.Feature;
 
-import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -161,20 +160,19 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             final ProcessListener redirect = new ProcessListenerAdapter(){
                 @Override
                 public void failed(ProcessEvent event) {
-                    if(event.getThrowable() != null){
-                        monitor.exceptionOccured((Exception)event.getThrowable(), Level.WARNING);
+                    if(event.getException() != null){
+                        monitor.exceptionOccured((Exception)event.getException(), Level.WARNING);
                     }
                 }
                 @Override
                 public void progressing(ProcessEvent event) {
-                    if(event.getThrowable() != null){
-                        monitor.exceptionOccured((Exception)event.getThrowable(), Level.WARNING);
+                    if(event.getException() != null){
+                        monitor.exceptionOccured((Exception)event.getException(), Level.WARNING);
                     }
                 }
             };
             
             final ProcessDescriptor desc = KrigingDescriptor.INSTANCE;
-            final Process p = desc.createProcess();
             final ParameterValueGroup input = desc.getInputDescriptor().createValue();
             Parameters.getOrCreate(KrigingDescriptor.IN_POINTS, input)
                     .setValue(coordinates.toArray(new DirectPosition[coordinates.size()]));
@@ -182,11 +180,16 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     .setValue(collection.getFeatureType().getCoordinateReferenceSystem());
             Parameters.getOrCreate(KrigingDescriptor.IN_STEP, input)
                     .setValue(step);
+            final Process p = desc.createProcess(input);
             
-            p.setInput(input);
             p.addListener(redirect);
-            p.run();
-            final ParameterValueGroup output = p.getOutput();
+            final ParameterValueGroup output;
+            try {
+                output = p.call();
+            } catch (ProcessException ex) {
+                getLogger().log(Level.WARNING, null, ex);
+                return;
+            }
             final GridCoverage2D coverage = Parameters.value(KrigingDescriptor.OUT_COVERAGE, output);
             final FeatureCollection isolines = Parameters.value(KrigingDescriptor.OUT_LINES, output);
             
@@ -214,7 +217,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }
             
         } catch (DataStoreRuntimeException ex) {
-            Logger.getLogger(IsolineGraphicJ2D.class.getName()).log(Level.WARNING, null, ex);
+            getLogger().log(Level.WARNING, null, ex);
         }
 
     }

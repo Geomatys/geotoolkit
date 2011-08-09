@@ -23,12 +23,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.coverage.CoverageProcessFactory;
+import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -91,14 +92,14 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
 
 
     private KrigingDescriptor(){
-        super(NAME, CoverageProcessFactory.IDENTIFICATION,
+        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Transform an array of points in a coverage"
                 + "by using a kriging operation."),INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new KrigingProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new KrigingProcess(input);
     }
 
 }

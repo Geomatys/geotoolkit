@@ -36,12 +36,12 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.util.SimpleInternationalString;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -51,12 +51,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class KrigingProcess extends AbstractProcess{
 
-    KrigingProcess() {
-        super(KrigingDescriptor.INSTANCE);
+    KrigingProcess(final ParameterValueGroup input) {
+        super(KrigingDescriptor.INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         final CoordinateReferenceSystem crs = Parameters.value(KrigingDescriptor.IN_CRS, inputParameters);
         final double step                   = Parameters.value(KrigingDescriptor.IN_STEP, inputParameters);
         final DirectPosition[] coords       = Parameters.value(KrigingDescriptor.IN_POINTS, inputParameters);
@@ -99,8 +99,8 @@ public class KrigingProcess extends AbstractProcess{
         try{
             computed = ob.interpole(x, y, z);
         }catch(Exception ex){
-            fireFailEvent(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getMessage()), ex));
-            return;
+            fireFailEvent(new ProcessEvent(this, ex.getMessage(),0, ex));
+            return outputParameters;
         }
         final double[] cx = ob.getXs();
         final double[] cy = ob.getYs();
@@ -118,7 +118,7 @@ public class KrigingProcess extends AbstractProcess{
         //create the isolines //////////////////////////////////////////////////
         if(step <= 0){
             //do not generate isolines
-            return;
+            return outputParameters;
         }
         
         final double[] palier = new double[(int)((maxz-minz)/step)];
@@ -132,8 +132,8 @@ public class KrigingProcess extends AbstractProcess{
         } catch(Exception ex){
             //this task rais some IllegalStateExceptio
             //TODO, fix objective analysis
-            fireStartEvent(new ProcessEvent(this, 0, new SimpleInternationalString("Creating isolines geometries failed"), ex));
-            return;
+            fireStartEvent(new ProcessEvent(this, "Creating isolines geometries failed",0, ex));
+            return outputParameters;
         }
 
         final GeometryFactory GF = new GeometryFactory();
@@ -165,6 +165,7 @@ public class KrigingProcess extends AbstractProcess{
         }
         
         Parameters.getOrCreate(KrigingDescriptor.OUT_LINES, outputParameters).setValue(col);
+        return outputParameters;
     }
     
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,

@@ -24,7 +24,7 @@ import java.util.Collections;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 
@@ -36,7 +36,7 @@ import org.opengis.metadata.identification.Identification;
  * @author Johann sorel (Geomatys)
  * @module pending
  */
-public class CoverageProcessFactory extends AbstractProcessFactory{
+public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
 
     public static final String NAME = "coverage";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -49,7 +49,7 @@ public class CoverageProcessFactory extends AbstractProcessFactory{
         IDENTIFICATION.setCitation(citation);
     }
 
-    public CoverageProcessFactory(){
+    public CoverageProcessingRegistry(){
         super(CoverageToVectorDescriptor.INSTANCE,
               CoverageToFeaturesDescriptor.INSTANCE,
               TilingDescriptor.INSTANCE,

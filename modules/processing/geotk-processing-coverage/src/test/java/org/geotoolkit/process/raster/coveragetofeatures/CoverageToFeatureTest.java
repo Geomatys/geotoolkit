@@ -45,6 +45,7 @@ import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -81,7 +82,7 @@ public class CoverageToFeatureTest {
      * @throws FactoryException
      */
     @Test
-    public void coverageToFeatureTestPixelCenter() throws NoSuchAuthorityCodeException, FactoryException {
+    public void coverageToFeatureTestPixelCenter() throws NoSuchAuthorityCodeException, FactoryException, ProcessException {
 
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
@@ -89,13 +90,12 @@ public class CoverageToFeatureTest {
         GridCoverageReader reader = buildReader(pixPos);
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
-        org.geotoolkit.process.Process proc = desc.createProcess();
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
+        
         //Features out
-        final Collection<Feature> featureListOut = (Collection<Feature>) proc.getOutput().parameter("feature_out").getValue();
+        final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
 
         final List<Feature> featureListResult = (List<Feature>) buildFCResultPixelCenter();
 
@@ -142,7 +142,7 @@ public class CoverageToFeatureTest {
      * @throws FactoryException
      */
     @Test
-    public void coverageToFeatureTestPixelCorner() throws NoSuchAuthorityCodeException, FactoryException {
+    public void coverageToFeatureTestPixelCorner() throws NoSuchAuthorityCodeException, FactoryException, ProcessException {
 
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
@@ -150,13 +150,12 @@ public class CoverageToFeatureTest {
         GridCoverageReader reader = buildReader(pixPos);
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("coverage", "coveragetofeatures");
-        org.geotoolkit.process.Process proc = desc.createProcess();
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("reader_in").setValue(reader);
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
+        
         //Features out
-        final Collection<Feature> featureListOut = (Collection<Feature>) proc.getOutput().parameter("feature_out").getValue();
+        final Collection<Feature> featureListOut = (Collection<Feature>) proc.call().parameter("feature_out").getValue();
 
         final List<Feature> featureListResult = (List<Feature>) buildFCResultPixelCorner();
 

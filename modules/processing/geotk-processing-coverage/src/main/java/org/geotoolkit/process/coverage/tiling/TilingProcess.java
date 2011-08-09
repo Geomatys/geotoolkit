@@ -30,7 +30,6 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.parameter.ParameterValueGroup;
@@ -43,15 +42,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class TilingProcess extends AbstractProcess{
 
-    TilingProcess(){
-        super(TilingDescriptor.INSTANCE);
+    TilingProcess(final ParameterValueGroup input){
+        super(TilingDescriptor.INSTANCE,input);
     }
 
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         if (inputParameters == null) {
-            fireFailEvent(new ProcessEvent(this, -1,
-                    new SimpleInternationalString("Input parameters not set."),
+            fireFailEvent(new ProcessEvent(this,
+                    "Input parameters not set.",0,
                     new NullPointerException("Input parameters not set.")));
         }
 
@@ -90,15 +89,15 @@ public final class TilingProcess extends AbstractProcess{
             params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
             final TileManager tileManager = builder.writeFromInput(input, params);
             
-            final ParameterValueGroup result = super.getOutput();
-            result.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
-            result.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
+            outputParameters.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
+            outputParameters.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
             fireStartEvent(new ProcessEvent(this));
         } catch (Exception ex) {
-            fireFailEvent(new ProcessEvent(this, 0, new SimpleInternationalString(ex.getLocalizedMessage()), ex));
-            return;
+            fireFailEvent(new ProcessEvent(this, ex.getLocalizedMessage(),0, ex));
+            return outputParameters;
         }
 
+        return outputParameters;
     }
 
 }

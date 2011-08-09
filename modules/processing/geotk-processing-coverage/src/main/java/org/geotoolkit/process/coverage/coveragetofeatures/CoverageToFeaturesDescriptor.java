@@ -23,13 +23,14 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.coverage.CoverageProcessFactory;
+import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.Feature;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameter description of Coverage to Feature process.
@@ -78,7 +79,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
      * Default constructor
      */
     private CoverageToFeaturesDescriptor() {
-        super(NAME, CoverageProcessFactory.IDENTIFICATION,
+        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Parameter description of Coverage to Feature process."),
                 INPUT_DESC, OUTPUT_DESC);
     }
@@ -87,7 +88,7 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new CoverageToFeatures();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new CoverageToFeatures(input);
     }
 }

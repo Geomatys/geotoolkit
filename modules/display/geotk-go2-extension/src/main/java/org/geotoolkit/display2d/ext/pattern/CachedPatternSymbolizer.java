@@ -27,6 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -36,8 +38,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
-import org.geotoolkit.process.coverage.CoverageProcessFactory;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.util.NumberRange;
 
@@ -105,22 +106,25 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
                 getCached(categorizes.get(steps[i])) );
 
         //calculate the polygons -----------------------------------------------
-        final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor(
-                CoverageProcessFactory.NAME, CoverageToVectorDescriptor.NAME);
+        final ProcessDescriptor descriptor = CoverageToVectorDescriptor.INSTANCE;
 
         final Integer band = styleElement.getChannel().evaluate(null,Integer.class);
 
-        final Process process = descriptor.createProcess();
         final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
         input.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
         final Set<NumberRange> nrs = styles.keySet();
         input.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(nrs.toArray(new NumberRange[nrs.size()]));
         input.parameter(CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(band);
-        process.setInput(input);
-        process.run();
+        final Process process = descriptor.createProcess(input);
 
-        final Geometry[] polygons = (Geometry[]) process.getOutput().parameter(
+        final Geometry[] polygons;
+        try {
+            polygons = (Geometry[]) process.call().parameter(
                 CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
+        } catch (ProcessException ex) {
+            Logger.getLogger(CachedPatternSymbolizer.class.getName()).log(Level.WARNING, null, ex);
+            return features;
+        }
 
 
         //build the features ---------------------------------------------------

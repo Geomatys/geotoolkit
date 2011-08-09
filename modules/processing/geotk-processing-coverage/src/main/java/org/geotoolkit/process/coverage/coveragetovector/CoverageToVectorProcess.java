@@ -37,7 +37,6 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -64,8 +63,8 @@ public class CoverageToVectorProcess extends AbstractProcess {
     //current pixel block
     private final Block block = new Block();
 
-    CoverageToVectorProcess() {
-        super(CoverageToVectorDescriptor.INSTANCE);
+    CoverageToVectorProcess(final ParameterValueGroup input) {
+        super(CoverageToVectorDescriptor.INSTANCE,input);
     }
 
     public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, final int band)
@@ -394,10 +393,10 @@ public class CoverageToVectorProcess extends AbstractProcess {
     }
 
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         if (inputParameters == null) {
-            fireFailEvent(new ProcessEvent(this, -1,
-                    new SimpleInternationalString("Input parameters not set."),
+            fireFailEvent(new ProcessEvent(this,
+                    "Input parameters not set.",0,
                     new NullPointerException("Input parameters not set.")));
         }
 
@@ -412,20 +411,20 @@ public class CoverageToVectorProcess extends AbstractProcess {
         try {
             result = toPolygon(coverage, ranges, 0);
         } catch (IOException ex) {
-            fireFailEvent(new ProcessEvent(this, -1, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
         } catch (TransformException ex) {
-            fireFailEvent(new ProcessEvent(this, -1, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
         }
         
         //avoid memory use
         buffers = null;
         polygons.clear();
         
-        final ParameterValueGroup group = getOutput();
-        group.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).setValue(result);
+        outputParameters.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).setValue(result);
 
         fireEndEvent(new ProcessEvent(this));
 
+        return outputParameters;
     }
 
     private static class NaNRange extends NumberRange{

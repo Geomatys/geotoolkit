@@ -22,8 +22,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.geom.Point2D;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -64,17 +62,17 @@ public class CoverageToFeatures extends AbstractProcess {
     /**
      * Default constructor
      */
-    public CoverageToFeatures() {
-        super(CoverageToFeaturesDescriptor.INSTANCE);
+    public CoverageToFeatures(final ParameterValueGroup input) {
+        super(CoverageToFeaturesDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         try {
-            fireStartEvent(new ProcessEvent(this,0,null,null));
+            fireStartEvent(new ProcessEvent(this));
             GridCoverageReader reader = Parameters.value(CoverageToFeaturesDescriptor.READER_IN, inputParameters);
             GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
             GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
@@ -82,13 +80,13 @@ public class CoverageToFeatures extends AbstractProcess {
             final CoverageToFeatureCollection resultFeatureList =
                     new CoverageToFeatureCollection(reader, gridGeom.getGridRange(), coverage, gridGeom);
 
-            final ParameterValueGroup result = getOutput();
-            result.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            fireEndEvent(new ProcessEvent(this,100,null,null));
+            outputParameters.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+            fireEndEvent(new ProcessEvent(this,null,100));
         } catch (CoverageStoreException ex) {
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
-            Logger.getLogger(CoverageToFeatures.class.getName()).log(Level.SEVERE, null, ex);
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
         }
+        
+        return outputParameters;
     }
 
     /**

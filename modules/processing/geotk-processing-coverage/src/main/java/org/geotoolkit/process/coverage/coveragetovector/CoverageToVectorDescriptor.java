@@ -24,12 +24,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.coverage.CoverageProcessFactory;
+import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Description of a coverage to polygon process.
@@ -78,15 +79,15 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor{
 
 
     private CoverageToVectorDescriptor(){
-        super(NAME, CoverageProcessFactory.IDENTIFICATION,
+        super(NAME, CoverageProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Transform a coverage in features "
                 + "by agregating pixels as geometries when they are in the same range."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new CoverageToVectorProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new CoverageToVectorProcess(input);
     }
 
 }
