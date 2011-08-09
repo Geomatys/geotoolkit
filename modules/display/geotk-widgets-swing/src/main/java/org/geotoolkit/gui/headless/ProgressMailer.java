@@ -38,7 +38,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.gui.swing.event.ProgressController;
+import org.geotoolkit.process.ProgressController;
 
 
 /**
@@ -203,7 +203,7 @@ public class ProgressMailer extends ProgressController {
      * Sends an emails saying that the operation finished.
      */
     @Override
-    public synchronized void complete() {
+    public synchronized void completed() {
         send(Vocabulary.format(Vocabulary.Keys.COMPLETED), 100);
     }
 

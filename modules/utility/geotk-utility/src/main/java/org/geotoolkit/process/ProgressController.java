@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.event;
+package org.geotoolkit.process;
 
 import java.util.Locale;
 import net.jcip.annotations.ThreadSafe;
@@ -53,11 +53,6 @@ import org.geotoolkit.util.SimpleInternationalString;
  *     controller.complete();
  * }
  *
- * {@note This class is defined in the Swing package because it is used mostly in Swing applications.
- * However this location should be understood in a loose sense since some implementations exist also
- * in the "headless" package. This is a similar situation to the Swing tree models which can actually
- * be used as a general purpose tree structure.}
- *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnet (Refractions Research)
  * @version 3.19
@@ -66,7 +61,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @module
  */
 @ThreadSafe
-public abstract class ProgressController implements Localized, org.opengis.util.ProgressListener {
+public abstract class ProgressController implements Localized, ProcessListener, org.opengis.util.ProgressListener {
     /**
      * The language to use for formatting messages.
      */
@@ -168,6 +163,21 @@ public abstract class ProgressController implements Localized, org.opengis.util.
     public abstract void started();
 
     /**
+     * Notifies this controller that the operation begins and sets the states of this controller
+     * according the given event. The default implementation first invokes {@link #started()},
+     * then invokes <code>{@linkplain #progressing(ProcessEvent) progressing}(event)</code>.
+     *
+     * @param event The progress event, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    @Override
+    public void started(final ProcessEvent event) {
+        started();
+        progressing(event);
+    }
+
+    /**
      * Returns the current progress as a percent completed.
      *
      * @return Percent completed between 0 and 100 inclusive.
@@ -198,11 +208,92 @@ public abstract class ProgressController implements Localized, org.opengis.util.
     }
 
     /**
+     * Updates the {@linkplain #setTask(CharSequence) task} and {@linkplain #setProgress(float)
+     * progress} state, and {@linkplain #exceptionOccurred(Throwable) reports the exception} if
+     * any. More specifically:
+     * <p>
+     * <ul>
+     *   <li>The new task is set to the {@link ProcessEvent#getTask()} value unless the later
+     *       method returned {@code null}, in which case this {@code ProgressController} task
+     *       is left unchanged.</li>
+     *   <li>The new progress is set to the {@link ProcessEvent#getProgress()} value unless the
+     *       later method returned {@link Float#NaN}, in which case this {@code ProgressController}
+     *       progress state is left unchanged.</li>
+     *   <li>If {@link ProcessEvent#getException()} returns a non-null value, then that value is
+     *       given to {@link #exceptionOccurred(Throwable)}.</li>
+     * </ul>
+     *
+     * @param event The progress event, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    @Override
+    public void progressing(final ProcessEvent event) {
+        if (event != null) {
+            final InternationalString task = event.getTask();
+            if (task != null) {
+                setTask(task);
+            }
+            final float progress = event.getProgress();
+            if (!Float.isNaN(progress)) {
+                setProgress(progress);
+            }
+            final Exception ex = event.getException();
+            if (ex != null) {
+                exceptionOccurred(ex);
+            }
+        }
+    }
+
+    /**
      * Notifies this controller that the operation has finished. The progress indicator will
      * shows 100% or disappears, at implementor choice. If warning messages were pending,
      * they will be displayed now.
      */
-    public abstract void complete();
+    public abstract void completed();
+
+    /**
+     * @deprecated Renamed {@link #completed()} for consistency with the {@link ProcessListener}
+     * interface.
+     */
+    @Override
+    @Deprecated
+    public final void complete() {
+        completed();
+    }
+
+    /**
+     * Notifies this controller that the operation has finished and sets the states of this
+     * controller according the given event. The default implementation first invokes
+     * <code>{@linkplain #progressing(ProcessEvent) progressing}(event)</code>, then
+     * invokes {@link #completed()}.
+     *
+     * @param event The progress event, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    @Override
+    public void completed(final ProcessEvent event) {
+        progressing(event);
+        completed();
+    }
+
+    /**
+     * Notifies this controller that the operation has failed and sets the states of this
+     * controller according the given event. The default implementation just delegates to
+     * <code>{@linkplain #progressing(ProcessEvent) progressing}(event)</code>. Note that
+     * the above {@code progressing} method pass the {@linkplain ProcessEvent#getException()
+     * exception declared by the event} (if any) to the {@link #exceptionOccurred(Throwable)}
+     * method.
+     *
+     * @param event The progress event, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    @Override
+    public void failed(final ProcessEvent event) {
+        progressing(event);
+    }
 
     /**
      * Indicates that this job should be canceled.
@@ -238,11 +329,11 @@ public abstract class ProgressController implements Localized, org.opengis.util.
      *
      * @param source
      *          Name of the warning source, or {@code null} if none. This is typically the
-     *          filename in process of being parsed or the URL of the data being processed
+     *          name of the file being parsed, or the URL of the data being processed.
      * @param location
      *          Text to write on the left side of the warning message, or {@code null} if none.
      *          This is typically the line number where the error occurred in the {@code source}
-     *          file or the feature ID of the feature that produced the message
+     *          file or the feature ID of the feature that produced the message.
      * @param warning
      *          The warning message.
      */

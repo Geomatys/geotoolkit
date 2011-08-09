@@ -29,7 +29,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.gui.swing.event.ProgressController;
+import org.geotoolkit.process.ProgressController;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
@@ -302,7 +302,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
      * if it contains warning or exception stack traces.
      */
     @Override
-    public void complete() {
+    public void completed() {
         call(Caller.COMPLETE);
     }
 

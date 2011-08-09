@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing;
 
 import java.awt.HeadlessException;
-import org.geotoolkit.gui.swing.event.ProgressController;
+import org.geotoolkit.process.ProgressController;
 
 import org.junit.*;
 
@@ -63,7 +63,7 @@ public final class ProgressWindowTest {
                     }
                 }
             }
-            progress.complete();
+            progress.completed();
         } catch (HeadlessException e) {
             // do nothing
         }

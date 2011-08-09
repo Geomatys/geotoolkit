@@ -29,7 +29,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.gui.swing.event.ProgressController;
+import org.geotoolkit.process.ProgressController;
 
 
 /**
@@ -374,7 +374,7 @@ public class ProgressPrinter extends ProgressController {
      * shows 100% or disappears. If warning messages were pending, they will be printed now.
      */
     @Override
-    public synchronized void complete() {
+    public synchronized void completed() {
         if (!CR_supported) {
             completeBar(100);
         }

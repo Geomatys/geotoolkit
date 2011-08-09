@@ -53,11 +53,11 @@ public interface ProcessListener extends EventListener {
      *
      * @param event The progress event.
      */
-    void ended(ProcessEvent event);
+    void completed(ProcessEvent event);
 
     /**
      * Reports that a process has failed. {@link Process} implementations are required to call
-     * either this method or {@link #ended(ProcessEvent)} exactly once.
+     * either this method or {@link #completed(ProcessEvent)} exactly once.
      *
      * @param event The progress event.
      */
