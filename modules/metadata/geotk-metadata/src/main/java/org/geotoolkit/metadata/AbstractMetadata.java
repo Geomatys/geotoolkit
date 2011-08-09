@@ -27,6 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.gui.swing.tree.TreeTableNode;
 
 
 /**
@@ -37,7 +38,7 @@ import org.geotoolkit.util.logging.Logging;
  * {@link #equals(Object)} and {@link #hashCode()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -149,6 +150,22 @@ public abstract class AbstractMetadata implements LenientComparable {
             asMap = getStandard().asMap(this);
         }
         return asMap;
+    }
+
+    /**
+     * Returns a view of this metadata as a tree table. Note that while {@link TreeTableNode} is
+     * defined in a {@link org.geotoolkit.gui.swing} sub-package, it can be seen as a data structure
+     * independent of Swing. It will not force class loading of Swing framework.
+     * <p>
+     * In current implementation, the tree is not live (i.e. changes in metadata are not
+     * reflected in the tree). However it may be improved in a future Geotk implementation.
+     *
+     * @return A view of this metadata object as a tree table.
+     *
+     * @since 3.19
+     */
+    public synchronized TreeTableNode asTreeTable() {
+        return getStandard().asTreeTable(this);
     }
 
     /**

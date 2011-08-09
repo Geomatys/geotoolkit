@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
 
@@ -38,9 +39,11 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 
 import org.junit.*;
+import org.opengis.metadata.identification.TopicCategory;
 import static org.geotoolkit.test.Assert.*;
 
 
@@ -123,7 +126,7 @@ public final class PropertyTreeTest {
      * @throws ParseException Should not happen.
      */
     @Test
-    public void testTree() throws ParseException {
+    public void testCitationTree() throws ParseException {
         final DefaultCitation citation = createCitation();
         final ResponsibleParty author, duplicated;
         if (true) {
@@ -222,7 +225,7 @@ public final class PropertyTreeTest {
      * @since 3.18
      */
     @Test
-    public void testUntitled() {
+    public void testTreeWithUntitledElements() {
         final DefaultCitation   titled = new DefaultCitation("Some specification");
         final DefaultCitation    coded = new DefaultCitation();
         final DefaultCitation untitled = new DefaultCitation();
@@ -253,24 +256,52 @@ public final class PropertyTreeTest {
     }
 
     /**
-     * Tests a tree of metadata containing more than one keyword.
+     * Tests a tree of metadata containing custom topic categories.
+     * Note that adding enumeration values is normally not allowed,
+     * so a future version of this test may need to change the code type.
+     * <p>
+     * Tests also a tree of metadata containing more than one keyword.
      *
      * @since 3.19
      */
     @Test
-    public void testKeywords() {
+    public void testTreeWithCustomElements() {
         final DefaultKeywords keywords = new DefaultKeywords();
         keywords.setKeywords(Arrays.asList(
                 new SimpleInternationalString("Apple"),
                 new SimpleInternationalString("Orange"),
                 new SimpleInternationalString("Kiwi")));
 
-        TreeModel tree = keywords.asTree();
+        final DefaultDataIdentification identification = new DefaultDataIdentification();
+        identification.setDescriptiveKeywords(Collections.singleton(keywords));
+        identification.setTopicCategories(Arrays.asList(
+                TopicCategory.HEALTH,
+                TopicCategory.valueOf("OCEANS"), // Existing category
+                TopicCategory.valueOf("test"))); // Custom category
+
+        TreeModel tree = identification.asTree();
         assertMultilinesEquals(
-            "Keywords\n" +
-            "└───Keywords\n" +
-            "    ├───Apple\n" +
-            "    ├───Orange\n" +
-            "    └───Kiwi\n", tree.toString());
+            "Data Identification\n" +
+            "├───Topic Categories\n" +
+            "│   ├───health\n" +
+            "│   ├───oceans\n" +
+            "│   └───test\n" +
+            "└───Descriptive Keywords\n" +
+            "    └───Keywords\n" +
+            "        ├───Apple\n" +
+            "        ├───Orange\n" +
+            "        └───Kiwi\n", tree.toString());
+
+        assertMultilinesEquals(
+            "Data Identification\n" +
+            "├───Topic Categories\n" +
+            "│   ├───[1]………………………………… health\n" +
+            "│   ├───[2]………………………………… oceans\n" +
+            "│   └───[3]………………………………… test\n" +
+            "└───Descriptive Keywords\n" +
+            "    └───Keywords\n" +
+            "        ├───[1]……………………… Apple\n" +
+            "        ├───[2]……………………… Orange\n" +
+            "        └───[3]……………………… Kiwi\n", identification.toString());
     }
 }

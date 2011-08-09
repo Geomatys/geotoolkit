@@ -38,6 +38,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -71,7 +72,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * the tree of XML nodes to be associated with raster data.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -603,6 +604,27 @@ public final class MetadataStandard {
     }
 
     /**
+     * Returns a view of the specified metadata as a tree table. Note that while {@link TreeTableNode}
+     * is defined in a {@link org.geotoolkit.gui.swing} sub-package, it can be seen as a data structure
+     * independent of Swing. It will not force class loading of Swing framework.
+     * <p>
+     * In current implementation, the tree is not live (i.e. changes in metadata are not
+     * reflected in the tree). However it may be improved in a future Geotk implementation.
+     *
+     * @param  metadata The metadata object to formats as a tree table.
+     * @return A tree table representation of the specified metadata.
+     * @throws ClassCastException if the metadata object doesn't implement a metadata
+     *         interface of the expected package.
+     *
+     * @see AbstractMetadata#asTreeTable()
+     *
+     * @since 3.19
+     */
+    public TreeTableNode asTreeTable(final Object metadata) throws ClassCastException {
+        return treeBuilders.get().asTreeTable(metadata);
+    }
+
+    /**
      * Returns a view of the specified metadata as a tree. Note that while {@link TreeModel}
      * is defined in the {@link javax.swing.tree} package, it can be seen as a data structure
      * independent of Swing. It will not force class loading of Swing framework.
@@ -610,7 +632,7 @@ public final class MetadataStandard {
      * In current implementation, the tree is not live (i.e. changes in metadata are not
      * reflected in the tree). However it may be improved in a future Geotk implementation.
      *
-     * @param  metadata The metadata object to formats as a string.
+     * @param  metadata The metadata object to formats as a tree.
      * @return A tree representation of the specified metadata.
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
@@ -767,8 +789,7 @@ public final class MetadataStandard {
      * @see AbstractMetadata#toString
      */
     public String toString(final Object metadata) throws ClassCastException {
-        final PropertyTree builder = treeBuilders.get();
-        return Trees.toString(builder.asTreeTable(metadata));
+        return Trees.toString(asTreeTable(metadata));
     }
 
     /**
