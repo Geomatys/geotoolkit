@@ -35,7 +35,7 @@ import org.geotoolkit.util.Strings;
  * @module
  */
 @XmlType
-public final class SimpleReferenceIdentifier {
+public final class XMLReferenceIdentifier {
     /**
      * The XML value.
      */
@@ -51,7 +51,7 @@ public final class SimpleReferenceIdentifier {
     /**
      * Empty constructor for JAXB only.
      */
-    public SimpleReferenceIdentifier() {
+    public XMLReferenceIdentifier() {
     }
 
     /**
@@ -59,7 +59,7 @@ public final class SimpleReferenceIdentifier {
      *
      * @param identifier The identifier from which to get the values.
      */
-    SimpleReferenceIdentifier(final ReferenceIdentifier identifier) {
+    XMLReferenceIdentifier(final ReferenceIdentifier identifier) {
         code     = identifier.getCode();
         codeSpace = identifier.getCodeSpace();
         if (codeSpace == null) {

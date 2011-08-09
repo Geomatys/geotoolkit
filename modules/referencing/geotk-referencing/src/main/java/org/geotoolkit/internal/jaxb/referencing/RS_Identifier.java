@@ -26,7 +26,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 
 /**
- * JAXB adapter mapping the GeoAPI {@link ReferenceIdentifier} to an implemention class that can
+ * JAXB adapter mapping the GeoAPI {@link ReferenceIdentifier} to an implementation class that can
  * be marshalled. See the package documentation for more information about JAXB and interfaces.
  * <p>
  * The XML produced by this adapter use the GML syntax. The {@code ToString} inner class performs
@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @since 3.00
  * @module
  */
-public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, ReferenceIdentifier> {
+public final class RS_Identifier extends XmlAdapter<XMLReferenceIdentifier, ReferenceIdentifier> {
     /**
      * Substitutes the adapter value read from an XML stream by the object which will
      * contains the value. JAXB calls automatically this method at unmarshalling time.
@@ -51,7 +51,7 @@ public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, R
      * @return A metadata which represents the value.
      */
     @Override
-    public ReferenceIdentifier unmarshal(final SimpleReferenceIdentifier adapter) {
+    public ReferenceIdentifier unmarshal(final XMLReferenceIdentifier adapter) {
         if (adapter != null) {
             final Citation authority = Citations.fromName(adapter.codeSpace); // May be null.
             return new DefaultReferenceIdentifier(authority, Citations.getIdentifier(authority), adapter.code);
@@ -67,8 +67,8 @@ public final class RS_Identifier extends XmlAdapter<SimpleReferenceIdentifier, R
      * @return The adapter for the given metadata.
      */
     @Override
-    public SimpleReferenceIdentifier marshal(final ReferenceIdentifier value) {
-        return (value != null) ? new SimpleReferenceIdentifier(value) : null;
+    public XMLReferenceIdentifier marshal(final ReferenceIdentifier value) {
+        return (value != null) ? new XMLReferenceIdentifier(value) : null;
     }
 
     /**

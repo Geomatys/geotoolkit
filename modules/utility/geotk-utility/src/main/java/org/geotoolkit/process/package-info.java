@@ -33,8 +33,9 @@
  *       service} for execution in a background thread.</li>
  *   <li>{@link org.geotoolkit.process.Process} input and output parameters are stored in
  *       ISO 19111 {@link org.opengis.parameter.ParameterValueGroup} objects.</li>
- *   <li>{@link org.geotoolkit.process.ProcessResult} can be associated with an ISO 19115
- *       {@link org.opengis.metadata.lineage.ProcessStep} object.</li>
+ *   <li>The process outputs are encouraged to contain an ISO 19115
+ *       {@link org.opengis.metadata.lineage.ProcessStep} element assigned to the
+ *       {@link org.geotoolkit.process.ProcessDescriptor#PROCESS_STEP} parameter.</li>
  * </ul>
  * <p>
  * The following example creates a process for a task named {@code "MyProcess"} (the available

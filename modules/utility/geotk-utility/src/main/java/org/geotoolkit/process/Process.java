@@ -61,6 +61,16 @@ public interface Process extends Callable<ParameterValueGroup> {
      * Executes the process and returns the output in a new {@link ParameterValueGroup}. The
      * {@linkplain ParameterValueGroup#getDescriptor() descriptor} of those parameters is the
      * instance returned by {@link ProcessDescriptor#getOutputDescriptor()}.
+     * <p>
+     * While not mandatory, it is recommended that the returned parameter group contains a
+     * {@link ProcessStep} instance assigned to the {@link ProcessDescriptor#PROCESS_STEP}
+     * parameter.
+     *
+     * {@note Returning a parameter object may sound strange, since parameters are usually for
+     *        input values rather than output values. Note however that ISO 19115 do the same,
+     *        since the <code>ProcessStep</code> outputs is a collection of <code>Source</code>
+     *        objects. In both cases, the outputs may be used as inputs in the next step of a
+     *        process chain.}
      *
      * @return The computation results as an parameter value groups.
      * @throws ProcessException if the process failed.
@@ -69,7 +79,7 @@ public interface Process extends Callable<ParameterValueGroup> {
      * @see ProcessStep#getOutputs()
      */
     @Override
-    ProcessResult call() throws ProcessException;
+    ParameterValueGroup call() throws ProcessException;
 
     /**
      * Adds a listener to the list of objects to inform about the process progress.
