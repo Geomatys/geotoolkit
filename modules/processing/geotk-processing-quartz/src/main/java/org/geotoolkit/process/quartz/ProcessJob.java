@@ -18,11 +18,13 @@ package org.geotoolkit.process.quartz;
 
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessListener;
 
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -62,26 +64,32 @@ public class ProcessJob implements Job{
         final String factoryId = (String) objFactoryId;
         final String processId = (String) objProcessId;
         final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;        
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(factoryId, processId);
+        final ProcessDescriptor desc;
         
-        if(desc == null){
+        try{
+            desc = ProcessFinder.getProcessDescriptor(factoryId, processId);
+        }catch(NoSuchIdentifierException ex){
             throw new JobExecutionException("Process not found for id : " + objFactoryId+"."+objProcessId);
         }
         
+        
         final StoreExceptionMonitor monitor = new StoreExceptionMonitor();
-        final Process process = desc.createProcess();        
-        process.setInput(params);
+        final Process process = desc.createProcess(params);       
         process.addListener(monitor);
-        process.run();
         
         //set the result int he context, for listener that might want it.
-        final ParameterValueGroup result = process.getOutput();
+        final ParameterValueGroup result;
+        try {
+            result = process.call();
+        } catch (ProcessException ex) {
+            if(monitor.failed != null){
+                throw monitor.failed;
+            } else{
+                throw new JobExecutionException(ex);
+            }
+        }
         jec.setResult(result);
-        
-        //forward process error
-        if(monitor.failed != null){
-            throw monitor.failed;
-        }        
+           
     }
 
     private final class StoreExceptionMonitor implements ProcessListener{
@@ -97,12 +105,12 @@ public class ProcessJob implements Job{
         }
 
         @Override
-        public void ended(ProcessEvent event) {
+        public void completed(ProcessEvent event) {
         }
 
         @Override
         public void failed(ProcessEvent event) {
-            failed = new JobExecutionException(String.valueOf(event.getMessage()), event.getThrowable(),false);
+            failed = new JobExecutionException(String.valueOf(event.getTask()), event.getException(),false);
         }
         
     }
