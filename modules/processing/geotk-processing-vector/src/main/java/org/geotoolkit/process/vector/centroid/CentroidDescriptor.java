@@ -23,6 +23,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Description of centroid process.
@@ -64,7 +65,7 @@ public final class CentroidDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Centroid();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Centroid(input);
     }
 }

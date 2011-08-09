@@ -52,25 +52,25 @@ public class Merge extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Merge() {
-        super(MergeDescriptor.INSTANCE);
+    public Merge(final ParameterValueGroup input) {
+        super(MergeDescriptor.INSTANCE, input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, null, null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection[] inputFeaturesList = Parameters.value(MergeDescriptor.FEATURES_IN, inputParameters);
         
         final FeatureCollection firstFC = inputFeaturesList[0];
 
         final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
 
-        final ParameterValueGroup result = super.getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, 100, null, null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this, null,100));
+        return outputParameters;
     }
 
     /**

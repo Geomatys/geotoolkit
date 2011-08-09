@@ -27,6 +27,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Description of clip by geometry process.
@@ -78,7 +79,7 @@ public final class ClipGeometryDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new ClipGeometry();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new ClipGeometry(input);
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.union;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -60,7 +62,7 @@ public class UnionTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testIntersection() {
+    public void testIntersection() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -68,19 +70,15 @@ public class UnionTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "union");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("feature_union").setValue(featureUnionList);
         in.parameter("input_geometry_name").setValue("geom1");
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
       
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();

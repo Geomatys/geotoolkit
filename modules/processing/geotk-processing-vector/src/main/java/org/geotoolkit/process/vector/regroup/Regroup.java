@@ -55,25 +55,25 @@ public class Regroup extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Regroup() {
-        super(RegroupDescriptor.INSTANCE);
+    public Regroup(final ParameterValueGroup input) {
+        super(RegroupDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, null, null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(RegroupDescriptor.FEATURE_IN, inputParameters);
         final String inputAttributeName = Parameters.value(RegroupDescriptor.REGROUP_ATTRIBUTE, inputParameters);
         final String inputGeometryName = Parameters.value(RegroupDescriptor.GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
 
-        final ParameterValueGroup result = super.getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, 100, null, null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this, null,100));
+        return outputParameters;
     }
 
     /**

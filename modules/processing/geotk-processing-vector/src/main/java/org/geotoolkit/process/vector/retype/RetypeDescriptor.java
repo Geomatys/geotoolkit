@@ -26,6 +26,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameter description of Retype process.
@@ -77,7 +78,7 @@ public final class RetypeDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Retype();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Retype(input);
     }
 }

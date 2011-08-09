@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.regroup;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -64,22 +66,20 @@ public class RegroupTest extends AbstractProcessTest{
 
     //No attribut
     @Test
-    public void testRegroupDefault() {
+    public void testRegroupDefault() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("geometry_name").setValue("geom1");
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         /*for (Feature feature : featureListOut) {
             System.out.println(feature);
@@ -93,22 +93,20 @@ public class RegroupTest extends AbstractProcessTest{
     }
     
     @Test
-    public void testRegroupDefaultGeometry() {
+    public void testRegroupDefaultGeometry() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("regroup_attribute").setValue("height");
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList1();
@@ -119,23 +117,21 @@ public class RegroupTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testRegroupGeometrySelected() {
+    public void testRegroupGeometrySelected() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("regroup_attribute").setValue("type");
         in.parameter("geometry_name").setValue("geom2");
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList2();

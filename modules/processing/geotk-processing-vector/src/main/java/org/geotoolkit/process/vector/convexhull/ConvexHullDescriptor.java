@@ -23,13 +23,14 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.vector.VectorProcessFactory;
+import org.geotoolkit.process.vector.VectorProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description of ConvexHull process.
@@ -79,7 +80,7 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
      */
     protected ConvexHullDescriptor() {
 
-        super(NAME, VectorProcessFactory.IDENTIFICATION,
+        super(NAME, VectorProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return the convex hull based on FeatureCollection geometries"),
                 INPUT_DESC, OUTPUT_DESC);
     }
@@ -88,7 +89,7 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new ConvexHull();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new ConvexHull(input);
     }
 }

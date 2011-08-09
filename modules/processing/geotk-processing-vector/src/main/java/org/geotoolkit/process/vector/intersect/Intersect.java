@@ -37,23 +37,23 @@ public class Intersect extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Intersect() {
-        super(IntersectDescriptor.INSTANCE);
+    public Intersect(final ParameterValueGroup input) {
+        super(IntersectDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectDescriptor.FEATURE_IN, inputParameters);
         final Geometry interGeom = Parameters.value(IntersectDescriptor.GEOMETRY_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 }

@@ -50,6 +50,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.referencing.CRS;
@@ -412,7 +413,7 @@ public final class VectorProcessUtils extends Static {
      */
     public static FeatureCollection<Feature> intersectionFeatureToColl(final Feature inputFeature,
             final FeatureCollection<Feature> featureList, String geometryName)
-            throws FactoryException, TransformException {
+            throws FactoryException, TransformException, ProcessException {
 
         //if the wanted feature geometry is null, we use the default geometry
         if (geometryName == null) {
@@ -441,16 +442,14 @@ public final class VectorProcessUtils extends Static {
         }
 
         //lauch Intersect process to get all features which intersect the inputFeature geometry
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(VectorProcessFactory.NAME, IntersectDescriptor.NAME);
-        final org.geotoolkit.process.Process proc = desc.createProcess();
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(VectorProcessingRegistry.NAME, IntersectDescriptor.NAME);
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter(IntersectDescriptor.FEATURE_IN.getName().getCode()).setValue(featureList);
         in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(inputGeometry);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //get all Features which intersects the intput Feature geometry
-        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.getOutput().parameter(
+        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.call().parameter(
                 IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
 
         if (featuresOut.isEmpty()) {

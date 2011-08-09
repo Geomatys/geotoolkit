@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.intersection;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -61,7 +63,7 @@ public class IntersectionTest extends AbstractProcessTest{
 
 
     @Test
-    public void testIntersection() {
+    public void testIntersection() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -69,19 +71,15 @@ public class IntersectionTest extends AbstractProcessTest{
         final FeatureCollection<?> featureInterList = buildFeatureInterList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "intersection");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("feature_inter").setValue(featureInterList);
         //in.parameter("geometry_name").setValue("geom1");
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
 
         //Expected Features out

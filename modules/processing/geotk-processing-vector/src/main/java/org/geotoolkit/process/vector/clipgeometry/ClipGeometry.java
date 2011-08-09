@@ -42,24 +42,24 @@ public class ClipGeometry extends AbstractProcess {
     /**
      * Default constructor
      */
-    public ClipGeometry() {
-        super(ClipGeometryDescriptor.INSTANCE);
+    public ClipGeometry(final ParameterValueGroup input) {
+        super(ClipGeometryDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipGeometryDescriptor.FEATURE_IN, inputParameters);
         final Geometry inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 
     /**

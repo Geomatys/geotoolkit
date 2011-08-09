@@ -37,23 +37,23 @@ public class Reproject extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Reproject() {
-        super(ReprojectDescriptor.INSTANCE);
+    public Reproject(final ParameterValueGroup input) {
+        super(ReprojectDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ReprojectDescriptor.FEATURE_IN, inputParameters);
         final CoordinateReferenceSystem targetCRS = Parameters.value(ReprojectDescriptor.CRS_IN, inputParameters);
       
         final FeatureCollection resultFeatureList = GenericReprojectFeatureIterator.wrap(inputFeatureList, targetCRS);
     
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 }

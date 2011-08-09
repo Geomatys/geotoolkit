@@ -42,25 +42,25 @@ public class DifferenceGeometry extends AbstractProcess {
     /**
      * Default constructor
      */
-    public DifferenceGeometry() {
-        super(DifferenceGeometryDescriptor.INSTANCE);
+    public DifferenceGeometry(final ParameterValueGroup input) {
+        super(DifferenceGeometryDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceGeometryDescriptor.FEATURE_IN, inputParameters);
         final Geometry inputDifferenceGeometry = Parameters.value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = 
                 new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 
     /**

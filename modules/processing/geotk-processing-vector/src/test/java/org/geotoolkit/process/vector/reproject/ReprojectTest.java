@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.reproject;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -62,22 +64,20 @@ public class ReprojectTest extends AbstractProcessTest{
 
    
     @Test
-    public void testReprojection() throws  FactoryException {
+    public void testReprojection() throws  FactoryException, ProcessException, NoSuchIdentifierException {
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "reproject");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("crs_in").setValue(CRS.decode("EPSG:27582"));
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //FeatureCollection out
-        final FeatureCollection<Feature> resultFC = (FeatureCollection<Feature>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<Feature> resultFC = (FeatureCollection<Feature>) proc.call().parameter("feature_out").getValue();
        
         assertEquals(featureList.getID(), resultFC.getID());
         assertEquals(resultFC.size(), resultFC.size());

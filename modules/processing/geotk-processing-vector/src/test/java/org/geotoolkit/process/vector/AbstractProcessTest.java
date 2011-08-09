@@ -17,6 +17,7 @@
 
 package org.geotoolkit.process.vector;
 
+import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 
@@ -38,7 +39,7 @@ public abstract class AbstractProcessTest {
     }
 
     @Test
-    public void findProcessTest(){
+    public void findProcessTest() throws NoSuchIdentifierException{
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(factory, process);
         assertNotNull(desc);
     }

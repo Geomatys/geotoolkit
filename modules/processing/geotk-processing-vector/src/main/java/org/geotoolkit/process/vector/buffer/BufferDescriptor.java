@@ -27,6 +27,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description for Buffer process.
@@ -91,7 +92,7 @@ public final class BufferDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Buffer();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Buffer(input);
     }
 }

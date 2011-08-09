@@ -27,6 +27,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description for DouglasPeucker process.
@@ -101,7 +102,7 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new DouglasPeucker();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new DouglasPeucker(input);
     }
 }

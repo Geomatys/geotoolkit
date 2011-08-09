@@ -63,16 +63,16 @@ public class Union extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Union() {
-        super(UnionDescriptor.INSTANCE);
+    public Union(final ParameterValueGroup input) {
+        super(UnionDescriptor.INSTANCE, input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, null, null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(UnionDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> unionFeatureList = Parameters.value(UnionDescriptor.FEATURE_UNION, inputParameters);
         final String inputGeometryName = Parameters.value(UnionDescriptor.INPUT_GEOMETRY_NAME, inputParameters);
@@ -81,9 +81,9 @@ public class Union extends AbstractProcess {
         
         final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
 
-        final ParameterValueGroup result = super.getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, 100, null, null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this, null,100));
+        return outputParameters;
     }
 
     /**

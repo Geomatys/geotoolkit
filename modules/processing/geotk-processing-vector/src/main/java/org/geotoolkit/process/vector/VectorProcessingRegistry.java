@@ -22,8 +22,8 @@ import org.geotoolkit.process.vector.centroid.CentroidDescriptor;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.AbstractProcessFactory;
 
+import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.vector.affinetransform.AffineTransformDescriptor;
 import org.geotoolkit.process.vector.buffer.BufferDescriptor;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
@@ -56,7 +56,7 @@ import org.opengis.metadata.identification.Identification;
  * @author Quentin Boileau
  * @module pending
  */
-public class VectorProcessFactory extends AbstractProcessFactory {
+public class VectorProcessingRegistry extends AbstractProcessingRegistry {
 
     /**Factory name*/
     public static final String NAME = "vector";
@@ -73,7 +73,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
     /**
      * Default constructor 
      */
-    public VectorProcessFactory() {
+    public VectorProcessingRegistry() {
         super(  CentroidDescriptor.INSTANCE,            ClipGeometryDescriptor.INSTANCE,    ClipDescriptor.INSTANCE,
                 DouglasPeuckerDescriptor.INSTANCE,      BufferDescriptor.INSTANCE,          IntersectDescriptor.INSTANCE,
                 NearestDescriptor.INSTANCE,             SpatialJoinDescriptor.INSTANCE,     DifferenceDescriptor.INSTANCE,

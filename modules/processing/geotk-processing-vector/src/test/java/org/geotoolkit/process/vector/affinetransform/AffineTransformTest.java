@@ -32,6 +32,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
@@ -44,6 +45,7 @@ import org.opengis.util.FactoryException;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of AffineTransform process
@@ -61,7 +63,7 @@ public class AffineTransformTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testAffineTransform() {
+    public void testAffineTransform() throws ProcessException, NoSuchIdentifierException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -70,16 +72,14 @@ public class AffineTransformTest extends AbstractProcessTest{
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "affinetransform");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("transform_in").setValue(transform);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();

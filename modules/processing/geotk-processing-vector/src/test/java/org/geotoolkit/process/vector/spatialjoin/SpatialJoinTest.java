@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.spatialjoin;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -63,7 +65,7 @@ public class SpatialJoinTest extends AbstractProcessTest{
      * Test SpatialJoin process with Nearest method
      */
     @Test
-    public void testSpacialJoin() {
+    public void testSpacialJoin() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureList1();
@@ -71,19 +73,15 @@ public class SpatialJoinTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(sourceFeatures);
         in.parameter("feature_target").setValue(targetFeatures);
         in.parameter("intersect").setValue(false);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultNear();
@@ -97,7 +95,7 @@ public class SpatialJoinTest extends AbstractProcessTest{
      * Test SpatialJoin process with Intersection method
      */
     @Test
-    public void testSpacialJoinIntersection() {
+    public void testSpacialJoinIntersection() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureListInter1();
@@ -105,19 +103,15 @@ public class SpatialJoinTest extends AbstractProcessTest{
        
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(sourceFeatures);
         in.parameter("feature_target").setValue(targetFeatures);
         in.parameter("intersect").setValue(true);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
         
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter();
@@ -131,7 +125,7 @@ public class SpatialJoinTest extends AbstractProcessTest{
      * Test SpatialJoin process with Intersection method and no intersection
      */
     @Test
-    public void testSpacialJoinIntersection2() {
+    public void testSpacialJoinIntersection2() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureListInter1_2();
@@ -139,19 +133,15 @@ public class SpatialJoinTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(sourceFeatures);
         in.parameter("feature_target").setValue(targetFeatures);
         in.parameter("intersect").setValue(true);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
         
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter2();

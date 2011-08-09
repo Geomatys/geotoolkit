@@ -34,6 +34,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.storage.DataStoreException;
@@ -64,8 +65,8 @@ public class Nearest extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Nearest() {
-        super(NearestDescriptor.INSTANCE);
+    public Nearest(final ParameterValueGroup input) {
+        super(NearestDescriptor.INSTANCE,input);
     }
 
 
@@ -73,30 +74,36 @@ public class Nearest extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
+    public ParameterValueGroup call() throws ProcessException{
         try {
-            fireStartEvent(new ProcessEvent(this, 0, null, null));
+            fireStartEvent(new ProcessEvent(this));
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             final Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
 
             final FeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
-            final ParameterValueGroup result = getOutput();
-            result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            fireEndEvent(new ProcessEvent(this, 100, null, null));
+            outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+            fireEndEvent(new ProcessEvent(this, null,100));
+            return outputParameters;
 
         } catch (NoSuchAuthorityCodeException ex) {
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (FactoryException ex) {
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (DataStoreException ex) {
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (MismatchedDimensionException ex) {
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (TransformException ex) {
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
+            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(ex.getMessage(), this, ex);
         }
+        
     }
 
     /**

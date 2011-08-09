@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.convexhull;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -61,21 +63,19 @@ public class ConvexHullTest extends AbstractProcessTest{
 
 
     @Test
-    public void testConvexHull() {
+    public void testConvexHull() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "convexhull");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Geometry out
-        final Geometry resultGeom = (Geometry) proc.getOutput().parameter("geometry_out").getValue();
+        final Geometry resultGeom = (Geometry) proc.call().parameter("geometry_out").getValue();
 
         //Expected Features out
         final Geometry geomteryResult1 = buildGeometryResult1();
@@ -84,16 +84,14 @@ public class ConvexHullTest extends AbstractProcessTest{
 
         //select the second feature geometry
         ProcessDescriptor desc2 = ProcessFinder.getProcessDescriptor("vector", "convexhull");
-        org.geotoolkit.process.Process proc2 = desc.createProcess();
 
         ParameterValueGroup in2 = desc2.getInputDescriptor().createValue();
         in2.parameter("feature_in").setValue(featureList);
         in2.parameter("geometry_name").setValue("geom2");
-        proc2.setInput(in2);
-        proc2.run();
+        org.geotoolkit.process.Process proc2 = desc.createProcess(in2);
 
         //Geometry out
-        final Geometry resultGeom2 = (Geometry) proc2.getOutput().parameter("geometry_out").getValue();
+        final Geometry resultGeom2 = (Geometry) proc2.call().parameter("geometry_out").getValue();
 
         //Expected Features out
         final Geometry geomteryResult2 = buildGeometryResult2();

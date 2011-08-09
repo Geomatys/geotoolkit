@@ -21,6 +21,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -32,9 +34,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.vector.VectorDescriptor;
-import org.geotoolkit.process.vector.VectorProcessFactory;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.nearest.NearestDescriptor;
 
@@ -59,16 +60,16 @@ public class SpatialJoin extends AbstractProcess {
     /**
      * Default constructor
      */
-    public SpatialJoin() {
-        super(SpatialJoinDescriptor.INSTANCE);
+    public SpatialJoin(final ParameterValueGroup input) {
+        super(SpatialJoinDescriptor.INSTANCE, input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> sourceFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_TARGET, inputParameters);
         final boolean method = Parameters.value(SpatialJoinDescriptor.INTERSECT, inputParameters);
@@ -76,9 +77,9 @@ public class SpatialJoin extends AbstractProcess {
         final FeatureCollection resultFeatureList =
                 new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 
     /**
@@ -126,26 +127,28 @@ public class SpatialJoin extends AbstractProcess {
                 JTS.setCRS(targetGeometry, geomCRS);//add CRS to the used data geometry
                 //use intersect method
                 if (method) {
-                    desc = ProcessFinder.getProcessDescriptor(VectorProcessFactory.NAME, IntersectDescriptor.NAME);
-                    proc = desc.createProcess();
+                    desc = IntersectDescriptor.INSTANCE;
                     in = desc.getInputDescriptor().createValue();
                     in.parameter(IntersectDescriptor.FEATURE_IN.getName().getCode()).setValue(sourceFC);
                     in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(targetGeometry);
+                    proc = desc.createProcess(in);
 
                 } else {//use nearest method
-                    desc = ProcessFinder.getProcessDescriptor(VectorProcessFactory.NAME, NearestDescriptor.NAME);
-                    proc = desc.createProcess();
+                    desc = NearestDescriptor.INSTANCE;
                     in = desc.getInputDescriptor().createValue();
                     in.parameter(NearestDescriptor.FEATURE_IN.getName().getCode()).setValue(sourceFC);
                     in.parameter(NearestDescriptor.GEOMETRY_IN.getName().getCode()).setValue(targetGeometry);
+                    proc = desc.createProcess(in);
                 }
 
-                //init process and run it
-                proc.setInput(in);
-                proc.run();
-
-                final FeatureCollection<Feature> featureOut =
-                        (FeatureCollection<Feature>) proc.getOutput().parameter("feature_out").getValue();
+                //run it
+                final FeatureCollection<Feature> featureOut;
+                try {
+                    featureOut = (FeatureCollection<Feature>) proc.call().parameter("feature_out").getValue();
+                } catch (ProcessException ex) {
+                    Logger.getLogger(SpatialJoin.class.getName()).log(Level.WARNING, null, ex);
+                    return null;
+                }
                 
                 featureOutArray = new ArrayList<Feature>(featureOut);
 

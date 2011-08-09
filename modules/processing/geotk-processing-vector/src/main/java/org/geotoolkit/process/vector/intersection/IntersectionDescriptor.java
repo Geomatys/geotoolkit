@@ -27,6 +27,7 @@ import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description of Intersection process.
@@ -86,7 +87,7 @@ public final class IntersectionDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Intersection();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Intersection(input);
     }
 }

@@ -25,6 +25,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description of Regroup process.
@@ -84,7 +85,7 @@ public final class RegroupDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Regroup();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Regroup(input);
     }
 }

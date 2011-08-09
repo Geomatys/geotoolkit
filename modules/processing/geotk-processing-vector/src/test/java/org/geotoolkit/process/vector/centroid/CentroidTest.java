@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.centroid;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -58,23 +60,21 @@ public class CentroidTest extends AbstractProcessTest{
 
 
     @Test
-    public void testCentroid() {
+    public void testCentroid() throws ProcessException, NoSuchIdentifierException{
 
         // Features in
         final FeatureCollection<?> featureList = buildFeatureList();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "centroid");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
-        proc.setInput(in);
-        proc.run();
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
 

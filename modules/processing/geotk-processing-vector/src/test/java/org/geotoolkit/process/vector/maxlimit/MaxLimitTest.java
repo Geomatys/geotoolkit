@@ -17,6 +17,8 @@
 package org.geotoolkit.process.vector.maxlimit;
 
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -63,25 +65,21 @@ public class MaxLimitTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testLimit() {
+    public void testLimit() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "maxlimit");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("max_in").setValue( 5 );
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         assertEquals(5, featureListOut.size());
     }

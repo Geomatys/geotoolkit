@@ -20,6 +20,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
@@ -41,25 +42,25 @@ public class Intersection extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Intersection() {
-        super(IntersectionDescriptor.INSTANCE);
+    public Intersection(final ParameterValueGroup input) {
+        super(IntersectionDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, null, null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectionDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureIntersectionList = Parameters.value(IntersectionDescriptor.FEATURE_INTER, inputParameters);
         final String inputGeometryName = Parameters.value(IntersectionDescriptor.GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, 100, null, null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this, null, 100));
+        return outputParameters;
     }
 
     /**
@@ -71,7 +72,7 @@ public class Intersection extends AbstractProcess {
      */
     public static FeatureCollection intersetFeature(final Feature oldFeature, final FeatureType newType,
             final FeatureCollection<Feature> featureClippingList, final String geometryName)
-            throws FactoryException, MismatchedDimensionException, TransformException {
+            throws FactoryException, MismatchedDimensionException, TransformException, ProcessException {
         
         return VectorProcessUtils.intersectionFeatureToColl(oldFeature, featureClippingList, geometryName);
     }

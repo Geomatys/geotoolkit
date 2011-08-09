@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.nearest;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -59,7 +61,7 @@ public class NearestTest extends AbstractProcessTest{
      * Test nearest process
      */
     @Test
-    public void testNearest() throws FactoryException {
+    public void testNearest() throws FactoryException, ProcessException, NoSuchIdentifierException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -67,18 +69,14 @@ public class NearestTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "nearest");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("geometry_in").setValue(geom);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();

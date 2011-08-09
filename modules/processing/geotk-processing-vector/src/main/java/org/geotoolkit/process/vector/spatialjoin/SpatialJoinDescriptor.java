@@ -27,6 +27,7 @@ import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description for SpatialJoin process.
@@ -85,7 +86,7 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new SpatialJoin();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new SpatialJoin(input);
     }
 }

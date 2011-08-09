@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.merge;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -24,8 +26,6 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,7 +71,7 @@ public class MergeTest extends AbstractProcessTest{
      * 4 - FeatureCollection with none attribute like base
      */
     @Test
-    public void testMerge() {
+    public void testMerge() throws ProcessException, NoSuchIdentifierException {
 
         // Inputs
         final FeatureCollection<?> featureList1 = buildFeatureList1();
@@ -87,15 +87,13 @@ public class MergeTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "merge");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("features_in").setValue(FCList);
-        proc.setInput(in);
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());

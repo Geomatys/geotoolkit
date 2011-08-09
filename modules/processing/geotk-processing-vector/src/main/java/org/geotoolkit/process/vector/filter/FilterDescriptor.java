@@ -25,6 +25,7 @@ import org.opengis.filter.Filter;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameter description of Filter process.
@@ -76,7 +77,7 @@ public final class FilterDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new org.geotoolkit.process.vector.filter.Filter();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new org.geotoolkit.process.vector.filter.Filter(input);
     }
 }

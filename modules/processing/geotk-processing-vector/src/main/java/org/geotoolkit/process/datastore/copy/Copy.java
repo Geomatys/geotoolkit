@@ -34,11 +34,11 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -52,16 +52,16 @@ public class Copy extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Copy() {
-        super(CopyDescriptor.INSTANCE);
+    public Copy(final ParameterValueGroup input) {
+        super(CopyDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, new SimpleInternationalString("Starting copy."), null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this,"Starting copy.",0, null));
                 
         final Map sourceDSparams    = Parameters.value(CopyDescriptor.SOURCE_STORE_PARAMS,  inputParameters);
         final Map targetDSparams    = Parameters.value(CopyDescriptor.TARGET_STORE_PARAMS,  inputParameters);
@@ -77,8 +77,8 @@ public class Copy extends AbstractProcess {
                 throw new DataStoreException("No datastore for parameters :"+sourceDSparams);
             }
         }catch(DataStoreException ex){
-            fireFailEvent(new ProcessEvent(this, 0, null, ex));
-            return;
+            fireFailEvent(new ProcessEvent(this, null, 0, ex));
+            return outputParameters;
         }
         
         DataStoreException exp = null;
@@ -101,22 +101,22 @@ public class Copy extends AbstractProcess {
                         try{
                             targetDS = factory.createNewDataStore(targetDSparams);
                         }catch(DataStoreException ex){
-                            fireFailEvent(new ProcessEvent(this, 0, null, ex));
-                            return;
+                            fireFailEvent(new ProcessEvent(this, null,0, ex));
+                            return outputParameters;
                         }
                     }
                 }
 
                 if(targetDS == null){
-                    fireFailEvent(new ProcessEvent(this, 0, null, new DataStoreException(
+                    fireFailEvent(new ProcessEvent(this, null,0, new DataStoreException(
                             "Failed to found a factory to create datastore for parameters : "+targetDSparams)));
-                    return;
+                    return outputParameters;
                 }
             }
             
             //through error
-            fireFailEvent(new ProcessEvent(this, 0, null, exp));
-            return;
+            fireFailEvent(new ProcessEvent(this, null,0, exp));
+            return outputParameters;
         }
         
         final Set<Name> names;
@@ -125,8 +125,8 @@ public class Copy extends AbstractProcess {
             try {
                 names = sourceDS.getNames();
             } catch (DataStoreException ex) {
-                fireFailEvent(new ProcessEvent(this, 0, null, ex));
-                return;
+                fireFailEvent(new ProcessEvent(this, null,0, ex));
+                return outputParameters;
             }
         }else{
             //pick only the wanted names
@@ -137,8 +137,8 @@ public class Copy extends AbstractProcess {
                     final FeatureType type = sourceDS.getFeatureType(s);
                     names.add(type.getName());
                 } catch (DataStoreException ex) {
-                    fireFailEvent(new ProcessEvent(this, 0, null, ex));
-                    return;
+                    fireFailEvent(new ProcessEvent(this, null,0, ex));
+                    return outputParameters;
                 }
             }
         }
@@ -146,17 +146,18 @@ public class Copy extends AbstractProcess {
         final float size = names.size();
         int inc = 0;
         for(Name n : names){
-            fireProgressEvent(new ProcessEvent(this, (int)((inc*100f)/size), new SimpleInternationalString("Copying "+n+"."), null));
+            fireProgressEvent(new ProcessEvent(this, "Copying "+n+".",(int)((inc*100f)/size), null));
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
-                fireFailEvent(new ProcessEvent(this, 50, null, ex));
-                return;
+                fireFailEvent(new ProcessEvent(this, null,50, ex));
+                return outputParameters;
             }
             inc++;
         }
         
-        fireEndEvent(new ProcessEvent(this, 100, new SimpleInternationalString("Copy successful."), null));
+        fireEndEvent(new ProcessEvent(this, "Copy successful.",100, null));
+        return outputParameters;
     }
     
     private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{

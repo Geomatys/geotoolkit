@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.douglaspeucker;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -71,7 +73,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
      *
      */
     @Test
-    public void testDouglasPeucker() {
+    public void testDouglasPeucker() throws ProcessException, NoSuchIdentifierException{
 
          // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput1();
@@ -79,7 +81,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -87,13 +88,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(false);
         in.parameter("lenient_transform_in").setValue(false);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildFeatureCollectionResult();
 
@@ -141,7 +139,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
      * an empty FeatureCollection.
      */
     @Test
-    public void testDouglasPeuckerWithDelete() {
+    public void testDouglasPeuckerWithDelete() throws ProcessException, NoSuchIdentifierException{
 
          // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
@@ -149,7 +147,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -157,13 +154,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(true);
         in.parameter("lenient_transform_in").setValue(true);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         assertTrue(featureListOut.isEmpty());
        
@@ -177,7 +171,7 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
      * a feature with null geometry
      */
     @Test
-    public void testDouglasPeuckerWithoutDelete() {
+    public void testDouglasPeuckerWithoutDelete() throws ProcessException, NoSuchIdentifierException{
 
          // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
@@ -185,7 +179,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
@@ -193,13 +186,10 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(false);
         in.parameter("lenient_transform_in").setValue(true);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildFeatureCollectionResult2();
 

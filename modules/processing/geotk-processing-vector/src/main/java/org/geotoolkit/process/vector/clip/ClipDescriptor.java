@@ -27,6 +27,7 @@ import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Description of clip process.
@@ -78,7 +79,7 @@ public final class ClipDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Clip();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Clip(input);
     }
 }

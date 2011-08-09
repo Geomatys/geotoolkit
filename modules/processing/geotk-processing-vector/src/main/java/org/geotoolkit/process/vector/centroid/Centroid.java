@@ -41,23 +41,23 @@ public class Centroid extends AbstractProcess {
     /**
      * Default Constructor
      */
-    public Centroid() {
-        super(CentroidDescriptor.INSTANCE);
+    public Centroid(final ParameterValueGroup input) {
+        super(CentroidDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(CentroidDescriptor.FEATURE_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 
     /**

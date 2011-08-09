@@ -25,6 +25,7 @@ import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -38,23 +39,23 @@ public class StartOffset extends AbstractProcess {
     /**
      * Default constructor
      */
-    public StartOffset() {
-        super(StartOffsetDescriptor.INSTANCE);
+    public StartOffset(final ParameterValueGroup input) {
+        super(StartOffsetDescriptor.INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this,0,null,null));
+    public ParameterValueGroup call() {
+        fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(StartOffsetDescriptor.FEATURE_IN, inputParameters);
         final int offset = Parameters.value(StartOffsetDescriptor.OFFSET_IN, inputParameters);
         
         final FeatureCollection resultFeatureList = GenericStartIndexFeatureIterator.wrap(inputFeatureList, offset);
 
-        final ParameterValueGroup result = getOutput();
-        result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,100,null,null));
+        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        fireEndEvent(new ProcessEvent(this,null,100));
+        return outputParameters;
     }
 }

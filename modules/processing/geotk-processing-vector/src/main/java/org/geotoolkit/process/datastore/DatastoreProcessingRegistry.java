@@ -21,7 +21,7 @@ import java.util.Collections;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.datastore.copy.CopyDescriptor;
 
 import org.opengis.metadata.Identifier;
@@ -34,7 +34,7 @@ import org.opengis.metadata.identification.Identification;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DatastoreProcessFactory extends AbstractProcessFactory {
+public class DatastoreProcessingRegistry extends AbstractProcessingRegistry {
 
     /**Factory name*/
     public static final String NAME = "datastore";
@@ -51,7 +51,7 @@ public class DatastoreProcessFactory extends AbstractProcessFactory {
     /**
      * Default constructor 
      */
-    public DatastoreProcessFactory() {
+    public DatastoreProcessingRegistry() {
         super(CopyDescriptor.INSTANCE);
     }
 

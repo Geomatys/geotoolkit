@@ -27,6 +27,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description of Copy process.
@@ -111,7 +112,7 @@ public final class CopyDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Copy();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Copy(input);
     }
 }

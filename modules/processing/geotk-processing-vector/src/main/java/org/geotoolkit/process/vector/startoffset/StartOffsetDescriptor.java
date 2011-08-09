@@ -25,6 +25,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameter description of StartOffset process.
@@ -75,7 +76,7 @@ public final class StartOffsetDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new StartOffset();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new StartOffset(input);
     }
 }

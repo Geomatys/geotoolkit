@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.differencegeometry;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -59,25 +61,21 @@ public class DifferenceGeometryTest extends AbstractProcessTest{
 
 
     @Test
-    public void testDiffGeometry() {
+    public void testDiffGeometry() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         final Geometry geometryClip = buildGeometryClip();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "diffGeometry");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter(DifferenceGeometryDescriptor.FEATURE_IN.getName().getCode()).setValue(featureList);
         in.parameter(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN.getName().getCode()).setValue(geometryClip);
-
-        proc.setInput(in);
-
-        proc.run();
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
 
         //Expected Features out

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.vector.buffer;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import java.util.ArrayList;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -74,7 +76,7 @@ public class BufferTest extends AbstractProcessTest{
      * - Output FeatureCollection geometry contains input FeatureCollection geometry
      */
     @Test
-    public void testBuffer() {
+    public void testBuffer() throws ProcessException, NoSuchIdentifierException{
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput1();
@@ -82,20 +84,17 @@ public class BufferTest extends AbstractProcessTest{
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "buffer");
-        org.geotoolkit.process.Process proc = desc.createProcess();
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("distance_in").setValue(distance);
         in.parameter("unit_in").setValue(unit);
         in.parameter("lenient_transform_in").setValue(true);
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
 
-        proc.setInput(in);
-
-        proc.run();
 
         //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildFeatureCollectionResult();

@@ -27,6 +27,7 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description of difference clipping by geometry process.
@@ -78,7 +79,7 @@ public final class DifferenceGeometryDescriptor extends VectorDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new DifferenceGeometry();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new DifferenceGeometry(input);
     }
 }

@@ -16,20 +16,19 @@
  */
 package org.geotoolkit.process.vector.merge;
 
-import java.util.Collection;
-
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.vector.VectorProcessFactory;
+import org.geotoolkit.process.vector.VectorProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Parameters description for Merge process.
@@ -73,7 +72,7 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      */
     protected MergeDescriptor() {
 
-        super(NAME, VectorProcessFactory.IDENTIFICATION,
+        super(NAME, VectorProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Merge many FeatureCollection in one. The fist FeatureCollection found in "
                 + "the input Collection have his FeatureType preserved. The others will be adapted to this one."),
                 INPUT_DESC, OUTPUT_DESC);
@@ -83,7 +82,7 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      *  {@inheritDoc }
      */
     @Override
-    public Process createProcess() {
-        return new Merge();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Merge(input);
     }
 }

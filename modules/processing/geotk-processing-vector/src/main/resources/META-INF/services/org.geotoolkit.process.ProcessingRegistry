@@ -1,0 +1,2 @@
+org.geotoolkit.process.vector.VectorProcessingRegistry
+org.geotoolkit.process.datastore.DatastoreProcessingRegistry

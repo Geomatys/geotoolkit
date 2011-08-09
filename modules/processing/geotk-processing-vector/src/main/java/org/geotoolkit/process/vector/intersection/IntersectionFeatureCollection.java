@@ -23,6 +23,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
@@ -82,6 +83,8 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         } catch (MismatchedDimensionException ex) {
             throw new DataStoreRuntimeException(ex);
         } catch (TransformException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (ProcessException ex) {
             throw new DataStoreRuntimeException(ex);
         }
     }
