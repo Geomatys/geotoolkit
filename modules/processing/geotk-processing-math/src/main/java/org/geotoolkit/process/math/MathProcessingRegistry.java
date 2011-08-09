@@ -21,7 +21,7 @@ import java.util.Collections;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.math.absolute.AbsoluteDescriptor;
 import org.geotoolkit.process.math.acos.AcosDescriptor;
 import org.geotoolkit.process.math.asin.AsinDescriptor;
@@ -57,7 +57,7 @@ import org.opengis.metadata.identification.Identification;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MathProcessFactory extends AbstractProcessFactory{
+public class MathProcessingRegistry extends AbstractProcessingRegistry{
     
     /** factory name **/
     public static final String NAME = "math";
@@ -71,7 +71,7 @@ public class MathProcessFactory extends AbstractProcessFactory{
         IDENTIFICATION.setCitation(citation);
     }
 
-    public MathProcessFactory() {
+    public MathProcessingRegistry() {
         super(AddDescriptor.INSTANCE, SubstractDescriptor.INSTANCE, DivideDescriptor.INSTANCE, MultiplyDescriptor.INSTANCE,
               PowerDescriptor.INSTANCE, AbsoluteDescriptor.INSTANCE, AcosDescriptor.INSTANCE, AsinDescriptor.INSTANCE,
               AtanDescriptor.INSTANCE, Atan2Descriptor.INSTANCE, CosDescriptor.INSTANCE, SinDescriptor.INSTANCE,

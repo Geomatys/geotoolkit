@@ -19,7 +19,6 @@ package org.geotoolkit.process.math.divide;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.opengis.parameter.ParameterValueGroup;
-import org.geotoolkit.util.DefaultInternationalString;
 
 import static org.geotoolkit.process.math.divide.DivideDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
@@ -29,12 +28,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class DivideProcess extends AbstractProcess{
     
-    public DivideProcess(){
-        super(INSTANCE);
+    public DivideProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final double first = value(FIRST_NUMBER, inputParameters); 
         final double second = value(SECOND_NUMBER, inputParameters);    
@@ -43,11 +42,10 @@ public class DivideProcess extends AbstractProcess{
         try{
             result = first / second;
         }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
+            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
         }
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(result); 
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

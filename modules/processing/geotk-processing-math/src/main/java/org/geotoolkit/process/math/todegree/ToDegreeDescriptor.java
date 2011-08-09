@@ -21,12 +21,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.math.MathProcessFactory;
+import org.geotoolkit.process.math.MathProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -60,15 +61,15 @@ public class ToDegreeDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new ToDegreeDescriptor();
 
     private ToDegreeDescriptor() {
-        super(NAME, MathProcessFactory.IDENTIFICATION,
+        super(NAME, MathProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Converts an angle measured in radians to an approximately "
                 + "equivalent angle measured in degrees."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new ToDegreeProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new ToDegreeProcess(input);
     }
     
 }

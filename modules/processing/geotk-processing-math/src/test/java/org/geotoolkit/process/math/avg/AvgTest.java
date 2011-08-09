@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.process.math.avg;
 
-import org.geotoolkit.process.math.sum.*;
-import org.geotoolkit.process.math.min.*;
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.math.AbstractProcessTest;
@@ -41,7 +41,7 @@ public class AvgTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testSum() {
+    public void testSum() throws NoSuchIdentifierException, ProcessException {
 
         // Inputs first
         final Double[] set = {new Double(15.5), 
@@ -53,15 +53,13 @@ public class AvgTest extends AbstractProcessTest{
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "avg");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("set").setValue(set);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Double result = (Double) proc.getOutput().parameter("result").getValue();
+        final Double result = (Double) proc.call().parameter("result").getValue();
        
         assertEquals(3.7066, result.doubleValue(), 0.0001);
     }

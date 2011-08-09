@@ -27,12 +27,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class SumProcess extends AbstractProcess{
     
-    public SumProcess(){
-        super(INSTANCE);
+    public SumProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Double[] set = value(SET, inputParameters);  
         
@@ -41,9 +41,8 @@ public class SumProcess extends AbstractProcess{
             sum += set[i].doubleValue();
         }
        
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(sum);  
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(sum);  
+        return outputParameters;
     }
     
 }

@@ -28,12 +28,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class MinProcess extends AbstractProcess{
     
-    public MinProcess(){
-        super(INSTANCE);
+    public MinProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Double[] set = value(SET, inputParameters);   
         
@@ -42,9 +42,8 @@ public class MinProcess extends AbstractProcess{
             min = Math.min(min.doubleValue(), set[i].doubleValue());
         }
        
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(min);  
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(min);  
+        return outputParameters;
     }
     
 }

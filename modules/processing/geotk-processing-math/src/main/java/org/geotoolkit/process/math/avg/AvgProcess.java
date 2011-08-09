@@ -27,12 +27,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class AvgProcess extends AbstractProcess{
     
-    public AvgProcess(){
-        super(INSTANCE);
+    public AvgProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Double[] set = value(SET, inputParameters);
         
@@ -43,9 +43,8 @@ public class AvgProcess extends AbstractProcess{
         
         Double result = sum / set.length;
         
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(result);  
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);  
+        return outputParameters;
     }
     
 }

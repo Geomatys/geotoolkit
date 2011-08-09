@@ -21,12 +21,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.math.MathProcessFactory;
+import org.geotoolkit.process.math.MathProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -60,14 +61,14 @@ public class FloorDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new FloorDescriptor();
 
     private FloorDescriptor() {
-        super(NAME, MathProcessFactory.IDENTIFICATION,
+        super(NAME, MathProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the nearest lower or equals integer (in double) to the argument double."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new FloorProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new FloorProcess(input);
     }
     
 }

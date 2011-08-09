@@ -18,7 +18,6 @@ package org.geotoolkit.process.math.power;
 
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.math.power.PowerDescriptor.*;
@@ -29,12 +28,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class PowerProcess extends AbstractProcess{
     
-    public PowerProcess(){
-        super(INSTANCE);
+    public PowerProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final double first = value(FIRST_NUMBER, inputParameters); 
         final double second = value(SECOND_NUMBER, inputParameters);
@@ -43,12 +42,11 @@ public class PowerProcess extends AbstractProcess{
         try{
             result = Math.pow(first, second);
         }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
+            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
         }
         
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(result);  
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);  
+        return outputParameters;
     }
     
 }

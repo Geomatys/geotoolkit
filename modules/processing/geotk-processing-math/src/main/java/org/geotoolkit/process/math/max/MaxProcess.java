@@ -27,12 +27,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class MaxProcess extends AbstractProcess{
     
-    public MaxProcess(){
-        super(INSTANCE);
+    public MaxProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Double[] set = value(SET, inputParameters);  
         
@@ -41,9 +41,8 @@ public class MaxProcess extends AbstractProcess{
             max = Math.max(max.doubleValue(), set[i].doubleValue());
         }
        
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(max);  
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(max);  
+        return outputParameters;
     }
     
 }

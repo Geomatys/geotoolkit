@@ -21,12 +21,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.math.MathProcessFactory;
+import org.geotoolkit.process.math.MathProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -61,7 +62,7 @@ public class Atan2Descriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new Atan2Descriptor();
 
     private Atan2Descriptor() {
-        super(NAME, MathProcessFactory.IDENTIFICATION,
+        super(NAME, MathProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the angle theta from the conversion of rectangular coordinates "
                 + "(x, y) to polar coordinates (r, theta). This method computes the phase theta by computing an "
                 + "arc tangent of y/x in the range of -pi to pi.."),
@@ -69,8 +70,8 @@ public class Atan2Descriptor extends AbstractProcessDescriptor{
     }
 
     @Override
-    public Process createProcess() {
-        return new Atan2Process();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new Atan2Process(input);
     }
     
 }

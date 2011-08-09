@@ -30,20 +30,20 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class AddProcess extends AbstractProcess{
     
-    public AddProcess(){
-        super(INSTANCE);
+    public AddProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
                 
         final double first = value(FIRST_NUMBER, inputParameters);
         final double second = value(SECOND_NUMBER, inputParameters);
         
         final Double result = first + second;
-        final ParameterValueGroup output = getOutput();
         
-        getOrCreate(RESULT_NUMBER, output).setValue(result);        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
+        return outputParameters;
     }
     
 }

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.math.power;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.math.AbstractProcessTest;
@@ -39,7 +41,7 @@ public class PowerTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testPower() {
+    public void testPower() throws NoSuchIdentifierException, ProcessException{
 
         // Inputs first
         final double first = 2.6;
@@ -47,16 +49,14 @@ public class PowerTest extends AbstractProcessTest{
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "power");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);
         in.parameter("second").setValue(second);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Double result = (Double) proc.getOutput().parameter("result").getValue();
+        final Double result = (Double) proc.call().parameter("result").getValue();
 
        
         assertEquals(60.867, result.doubleValue(), 0.001);

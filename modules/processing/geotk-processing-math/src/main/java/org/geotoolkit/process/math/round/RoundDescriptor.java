@@ -21,12 +21,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.math.MathProcessFactory;
+import org.geotoolkit.process.math.MathProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -60,7 +61,7 @@ public class RoundDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new RoundDescriptor();
 
     private RoundDescriptor() {
-        super(NAME, MathProcessFactory.IDENTIFICATION,
+        super(NAME, MathProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns the closest long to the argument. The result is "
                 + "rounded to an integer by adding 1/2, taking the floor of the result, and casting the "
                 + "result to type long."),
@@ -68,8 +69,8 @@ public class RoundDescriptor extends AbstractProcessDescriptor{
     }
 
     @Override
-    public Process createProcess() {
-        return new RoundProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new RoundProcess(input);
     }
     
 }

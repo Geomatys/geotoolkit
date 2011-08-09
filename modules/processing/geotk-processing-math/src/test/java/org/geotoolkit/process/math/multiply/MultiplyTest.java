@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.math.multiply;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.math.AbstractProcessTest;
@@ -39,7 +41,7 @@ public class MultiplyTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testMultiply() {
+    public void testMultiply() throws NoSuchIdentifierException, ProcessException{
 
         // Inputs first
         final double first = 22.3;
@@ -47,16 +49,14 @@ public class MultiplyTest extends AbstractProcessTest{
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "multiply");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);
         in.parameter("second").setValue(second);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Double result = (Double) proc.getOutput().parameter("result").getValue();
+        final Double result = (Double) proc.call().parameter("result").getValue();
 
        
         assertEquals(new Double(234.15), result);

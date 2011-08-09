@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.math.sin;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.math.AbstractProcessTest;
@@ -39,22 +41,20 @@ public class SinTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testsin() {
+    public void testsin() throws NoSuchIdentifierException, ProcessException{
 
         // Inputs first
         final double first = 0.64;
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "sin");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Double result = (Double) proc.getOutput().parameter("result").getValue();
+        final Double result = (Double) proc.call().parameter("result").getValue();
 
        
         assertEquals(0.5971, result.doubleValue(), 0.0001);

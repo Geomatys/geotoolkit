@@ -18,7 +18,6 @@ package org.geotoolkit.process.math.log;
 
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.math.log.LogDescriptor.*;
@@ -29,12 +28,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class LogProcess extends AbstractProcess{
     
-    public LogProcess(){
-        super(INSTANCE);
+    public LogProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final double first = value(FIRST_NUMBER, inputParameters); 
         
@@ -42,11 +41,10 @@ public class LogProcess extends AbstractProcess{
         try{
             result = Math.log(first);
         }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, 0, new DefaultInternationalString(e.getMessage()), e));
+            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
         }
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(result);
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
+        return outputParameters;
     }
     
 }

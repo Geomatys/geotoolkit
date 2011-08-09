@@ -30,12 +30,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class MedianProcess extends AbstractProcess{
     
-    public MedianProcess(){
-        super(INSTANCE);
+    public MedianProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Double[] set = value(SET, inputParameters);   
         List<Double> list = Arrays.asList(set);
@@ -53,9 +53,8 @@ public class MedianProcess extends AbstractProcess{
             median = list.get(indexMedian);
         }
        
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_NUMBER, output).setValue(median);
-        
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(median);
+        return outputParameters;
     }
     
 }

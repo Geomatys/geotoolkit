@@ -17,6 +17,7 @@
 package org.geotoolkit.process.math.absolute;
 
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.math.AbstractProcessTest;
 
@@ -24,6 +25,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of absolute process
@@ -39,22 +41,20 @@ public class AbsoluteTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testAbsolute() {
+    public void testAbsolute() throws NoSuchIdentifierException, ProcessException {
 
         // Inputs first
         final double first = -2.6;
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("math", "absolute");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("first").setValue(first);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Double result = (Double) proc.getOutput().parameter("result").getValue();
+        final Double result = (Double) proc.call().parameter("result").getValue();
 
        
         assertEquals(new Double(2.6), result);
