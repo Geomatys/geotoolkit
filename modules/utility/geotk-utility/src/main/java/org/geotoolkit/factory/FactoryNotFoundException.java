@@ -19,7 +19,7 @@ package org.geotoolkit.factory;
 
 
 /**
- * Thrown when a factory can't be found in the registery.
+ * Thrown when a factory can't be found in the registry.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
