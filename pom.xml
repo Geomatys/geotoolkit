@@ -671,12 +671,12 @@
                     <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
                   </group>
                   <group>
-                    <title>Input/Output (except Raster)</title>
-                    <packages>org.geotoolkit.console*:org.geotoolkit.io*:org.geotoolkit.sql*:org.geotoolkit.xml*</packages>
+                    <title>Numerical calculation and processing</title>
+                    <packages>org.geotoolkit.index*:org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.process*</packages>
                   </group>
                   <group>
                     <title>Utilities</title>
-                    <packages>org.geotoolkit.factory*:org.geotoolkit.index*:org.geotoolkit.lang*:org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.util*</packages>
+                    <packages>org.geotoolkit.console*:org.geotoolkit.io*:org.geotoolkit.factory*:org.geotoolkit.lang*:org.geotoolkit.util*:org.geotoolkit.sql*:org.geotoolkit.xml*</packages>
                   </group>
                 </groups>
 

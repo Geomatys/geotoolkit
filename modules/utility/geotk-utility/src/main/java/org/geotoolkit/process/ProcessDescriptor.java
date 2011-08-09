@@ -44,8 +44,8 @@ import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
  *       an {@link ExecutorService}.</li>
  * </ul>
  * <p>
- * {@code ProcessDescriptor} instances are provided by {@link ProcessFactory}.
- * See the {@link org.geotoolkit.process package javadoc} for usage example.
+ * {@code ProcessDescriptor} instances are provided by {@link ProcessingRegistry}.
+ * See the {@linkplain org.geotoolkit.process package javadoc} for usage example.
  *
  * @author Johann Sorel (Geomatys)
  * @version 3.19
@@ -74,7 +74,7 @@ public interface ProcessDescriptor extends Processing {
     /**
      * Information to identify the processing package that run the process.
      * The identifier {@linkplain Identifier#getAuthority() authority} shall matches the
-     * {@linkplain ProcessFactory#getIdentification() factory identification} citation.
+     * {@linkplain ProcessingRegistry#getIdentification() registry identification} citation.
      *
      * @return Identifier of the processing package that run the process.
      */
