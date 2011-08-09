@@ -26,19 +26,19 @@ package org.geotoolkit.process;
 public class ProcessListenerAdapter implements ProcessListener{
 
     @Override
-    public void started(ProcessEvent event) {
+    public void started(final ProcessEvent event) {
     }
 
     @Override
-    public void progressing(ProcessEvent event) {
+    public void progressing(final ProcessEvent event) {
     }
 
     @Override
-    public void ended(ProcessEvent event) {
+    public void completed(final ProcessEvent event) {
     }
 
     @Override
-    public void failed(ProcessEvent event) {
+    public void failed(final ProcessEvent event) {
     }
     
 }

@@ -17,8 +17,10 @@
 
 package org.geotoolkit.process;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,13 +30,13 @@ import java.util.Set;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractProcessFactory implements ProcessFactory {
+public abstract class AbstractProcessingRegistry implements ProcessingRegistry {
 
     private final Map<String,ProcessDescriptor> descriptors = new HashMap<String,ProcessDescriptor>();
 
-    protected AbstractProcessFactory(final ProcessDescriptor ... descs){
+    protected AbstractProcessingRegistry(final ProcessDescriptor ... descs){
         for(final ProcessDescriptor desc : descs){
-            final String name = desc.getName().getCode();
+            final String name = desc.getIdentifier().getCode();
             descriptors.put(name, desc);
         }
     }
@@ -50,20 +52,15 @@ public abstract class AbstractProcessFactory implements ProcessFactory {
     }
 
     @Override
-    public final ProcessDescriptor[] getDescriptors() {
+    public final List<ProcessDescriptor> getDescriptors() {
         final Collection<ProcessDescriptor> values = descriptors.values();
-        return values.toArray(new ProcessDescriptor[values.size()]);
+        return new ArrayList<ProcessDescriptor>(values);
     }
 
     @Override
-    public final String[] getNames() {
+    public final List<String> getNames() {
         final Set<String> keys = descriptors.keySet();
-        return keys.toArray(new String[keys.size()]);
-    }
-
-    @Override
-    public final Process create(final String name) throws IllegalArgumentException {
-        return getDescriptor(name).createProcess();
+        return new ArrayList<String>(keys);
     }
 
 }

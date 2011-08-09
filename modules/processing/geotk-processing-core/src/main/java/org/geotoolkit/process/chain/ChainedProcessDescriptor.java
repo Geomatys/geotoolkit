@@ -26,6 +26,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.InternationalString;
 
 /**
@@ -60,12 +61,7 @@ public class ChainedProcessDescriptor extends AbstractProcessDescriptor{
         }
         
     }
-    
-    @Override
-    public Process createProcess() {
-        return new ChainedProcess(this,stack);
-    }
-    
+        
     private static ParameterDescriptorGroup getInputDescriptor(final List<Object> stack){
         if(stack.isEmpty()){
             throw new IllegalArgumentException("No elements in the stack");
@@ -90,6 +86,11 @@ public class ChainedProcessDescriptor extends AbstractProcessDescriptor{
         }else{
             throw new IllegalArgumentException("Last element of the stack must be a process descriptor.");
         }
+    }
+
+    @Override
+    public Process createProcess(final ParameterValueGroup input) {
+        return new ChainedProcess(this, input, stack);
     }
     
 }

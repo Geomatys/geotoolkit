@@ -17,10 +17,10 @@
 
 package org.geotoolkit.process;
 
-import javax.swing.event.EventListenerList;
-import org.geotoolkit.parameter.Parameters;
-import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.metadata.quality.ConformanceResult;
+import org.geotoolkit.parameter.Parameters;
+import javax.swing.event.EventListenerList;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 
@@ -37,10 +37,18 @@ public abstract class AbstractProcess implements Process{
     protected final ParameterValueGroup outputParameters;
     protected ParameterValueGroup inputParameters;
 
-    public AbstractProcess(final ProcessDescriptor desc){
+    public AbstractProcess(final ProcessDescriptor desc, final ParameterValueGroup input){
         ensureNonNull("descriptor", desc);
+        ensureNonNull("input", input);
         this.descriptor = desc;
         this.outputParameters = descriptor.getOutputDescriptor().createValue();
+        this.inputParameters = input;
+        
+        final ConformanceResult res = Parameters.isValid(inputParameters, inputParameters.getDescriptor());
+        if(!res.pass()){
+            throw new IllegalArgumentException("Input parameters are unvalid.");
+        }
+        
     }
 
     @Override
@@ -49,19 +57,10 @@ public abstract class AbstractProcess implements Process{
     }
 
     @Override
-    public void setInput(final ParameterValueGroup parameter) {
-        inputParameters = parameter;
-        final ConformanceResult res = Parameters.isValid(inputParameters, inputParameters.getDescriptor());
-        if(!res.pass()){
-            throw new IllegalArgumentException("Input parameters are unvalid.");
-        }
+    public ParameterValueGroup getInput() {
+        return inputParameters;
     }
-
-    @Override
-    public final ParameterValueGroup getOutput() {
-        return outputParameters;
-    }
-
+    
     @Override
     public void addListener(final ProcessListener listener) {
         listeners.add(ProcessListener.class, listener);
@@ -113,7 +112,7 @@ public abstract class AbstractProcess implements Process{
      */
     protected void fireEndEvent(final ProcessEvent event){
         for(ProcessListener listener : listeners.getListeners(ProcessListener.class)){
-            listener.ended(event);
+            listener.completed(event);
         }
     }
 

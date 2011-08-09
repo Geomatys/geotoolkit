@@ -20,6 +20,7 @@ package org.geotoolkit.process;
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 import org.opengis.metadata.Identifier;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Utility class to find Process factories and descriptors.
@@ -34,17 +35,17 @@ public final class ProcessFinder {
     /**
      * @return Iterator of all available ProcessFactory.
      */
-    public static Iterator<ProcessFactory> getProcessFactories(){
-        return ServiceRegistry.lookupProviders(ProcessFactory.class);
+    public static Iterator<ProcessingRegistry> getProcessFactories(){
+        return ServiceRegistry.lookupProviders(ProcessingRegistry.class);
     }
 
     /**
      * Return the factory for the given authority code.
      */
-    public static ProcessFactory getProcessFactory(final String authorityCode){
-        final Iterator<ProcessFactory> ite = getProcessFactories();
+    public static ProcessingRegistry getProcessFactory(final String authorityCode){
+        final Iterator<ProcessingRegistry> ite = getProcessFactories();
         while(ite.hasNext()){
-            final ProcessFactory candidate = ite.next();
+            final ProcessingRegistry candidate = ite.next();
             for(final Identifier id : candidate.getIdentification().getCitation().getIdentifiers()){
                 if(id.getCode().equalsIgnoreCase(authorityCode)){
                     return candidate;
@@ -63,30 +64,30 @@ public final class ProcessFinder {
      * @throws IllegalArgumentException if description could not be found
      */
     public static ProcessDescriptor getProcessDescriptor(String authority, 
-            final String processName) throws IllegalArgumentException{
+            final String processName) throws NoSuchIdentifierException{
         if(authority != null && authority.trim().isEmpty()){
             authority = null;
         }
 
         if(authority != null){
-            final ProcessFactory factory = getProcessFactory(authority);
+            final ProcessingRegistry factory = getProcessFactory(authority);
             if(factory != null){
                 return factory.getDescriptor(processName);
             }else{
-                throw new IllegalArgumentException("No authority for code : " +authority);
+                throw new NoSuchIdentifierException("No processing registry for given code.",authority);
             }
         }
 
         //try all factories
-        final Iterator<ProcessFactory> factories = getProcessFactories();
+        final Iterator<ProcessingRegistry> factories = getProcessFactories();
         while(factories.hasNext()){
-            final ProcessFactory factory = factories.next();
+            final ProcessingRegistry factory = factories.next();
             try{
                 return factory.getDescriptor(processName);
-            }catch(IllegalArgumentException ex){}
+            }catch(NoSuchIdentifierException ex){}
         }
 
-        throw new IllegalArgumentException("No process for code : " +processName);
+        throw new NoSuchIdentifierException("No process for given code.", processName);
     }
 
 }

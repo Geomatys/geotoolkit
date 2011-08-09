@@ -20,7 +20,6 @@ package org.geotoolkit.process;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
-import java.text.NumberFormat;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.List;
@@ -58,6 +57,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.metadata.Identifier;
+import org.opengis.util.NoSuchIdentifierException;
 
 
 /**
@@ -93,7 +93,7 @@ public final class ProcessConsole {
             printEvent(event, FOREGROUND_DEFAULT.sequence());
         }
         @Override
-        public void ended(final ProcessEvent event) {
+        public void completed(final ProcessEvent event) {
             printEvent(event, BOLD.sequence()+FOREGROUND_GREEN.sequence());
         }
         @Override
@@ -111,12 +111,12 @@ public final class ProcessConsole {
             sb.append(RESET.sequence());
             sb.append(color);
             
-            final InternationalString message = event.getMessage();
+            final InternationalString message = event.getTask();
             if(message != null){
                 sb.append(message.toString());
             }
             
-            final Throwable ex = event.getThrowable();
+            final Throwable ex = event.getException();
             if(ex != null && message == null){
                 sb.append(FOREGROUND_RED.sequence());
                 sb.append(ex.getMessage());
@@ -183,9 +183,10 @@ public final class ProcessConsole {
             processCode = firstArg;
         }
 
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(authorityCode, processCode);
-
-        if(desc == null){
+        final ProcessDescriptor desc;
+        try{
+            desc = ProcessFinder.getProcessDescriptor(authorityCode, processCode);
+        }catch(NoSuchIdentifierException ex){
             print(FOREGROUND_RED,"Could not find tool for name : ",firstArg,FOREGROUND_DEFAULT,"\n");
             return;
         }
@@ -202,18 +203,24 @@ public final class ProcessConsole {
             params = parseParameters(args, desc.getInputDescriptor());
         } catch (Exception ex) {
             print(FOREGROUND_RED,ex.getLocalizedMessage(),FOREGROUND_DEFAULT,"\n");
+            System.exit(1);
             return;
         }
         
         //execute process
-        final Process process = desc.createProcess();
+        final Process process = desc.createProcess(params);
         process.addListener(CONSOLE_ADAPTER);
-        process.setInput(params);
-        process.run();
+        final ParameterValueGroup result;
+        try {
+            result = process.call();
+        } catch (ProcessException ex) {
+            print(FOREGROUND_RED,ex.getLocalizedMessage(),FOREGROUND_DEFAULT,"\n");
+            System.exit(1);
+            return;
+        }
 
         //show result only if in non-silent mode and result have values
         if(!silent && !desc.getOutputDescriptor().descriptors().isEmpty()){
-            final ParameterValueGroup result = process.getOutput();
             System.out.println(result);
         }
 
@@ -229,13 +236,13 @@ public final class ProcessConsole {
      * Print a list of all tools available.
      */
     private static void printList(){
-        final Iterator<ProcessFactory> ite = ProcessFinder.getProcessFactories();
+        final Iterator<ProcessingRegistry> ite = ProcessFinder.getProcessFactories();
         while(ite.hasNext()){
-            final ProcessFactory factory = ite.next();
-            for(final Identifier id : factory.getIdentification().getCitation().getIdentifiers()){
+            final ProcessingRegistry registry = ite.next();
+            for(final Identifier id : registry.getIdentification().getCitation().getIdentifiers()){
                 print(BOLD,id.getCode()," ",RESET);
             }
-            print(StringUtilities.toStringTree(Arrays.asList(factory.getNames())));
+            print(StringUtilities.toStringTree(Arrays.asList(registry.getNames())));
             print("\n");
         }
     }
@@ -245,7 +252,7 @@ public final class ProcessConsole {
      */
     private static void printHelp(final ProcessDescriptor desc){
         
-        final InternationalString abs = desc.getAbstract();
+        final InternationalString abs = desc.getProcedureDescription();
         if(abs != null){
             print("\n",BOLD,"DESCRIPTION",RESET,"\n",abs,"\n");
         }

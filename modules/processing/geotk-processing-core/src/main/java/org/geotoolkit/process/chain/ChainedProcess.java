@@ -21,6 +21,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -40,36 +41,37 @@ public class ChainedProcess extends AbstractProcess{
      * @param stack : list starting with a Process and ending with process,
      * one process on two must be a ParameterMapper.
      */
-    public ChainedProcess(final ProcessDescriptor desc, final List<Object> stack){
-        super(desc);
+    public ChainedProcess(final ProcessDescriptor desc, final ParameterValueGroup input, final List<Object> stack){
+        super(desc,input);
         this.stack = stack;
     }
     
     @Override
-    public void run() {
-        fireStartEvent(new ProcessEvent(this, 0, null, null));
+    public ParameterValueGroup call() throws ProcessException {
+        fireStartEvent(new ProcessEvent(this,null,0));
         
         ParameterValueGroup intermediateResult = inputParameters;;
         
         for(int i=0,n=stack.size(); i<n; i+=2){
-            final Process p = ((ProcessDescriptor) stack.get(i)).createProcess();
+            final ProcessDescriptor desc = (ProcessDescriptor) stack.get(i);
             
             // first process, no parameter mapping
             //other ones must be transformed
             if(i!=0){
                 final ParameterMapper mapper = (ParameterMapper) stack.get(i-1);
-                intermediateResult = mapper.transform(intermediateResult, p.getDescriptor().getInputDescriptor());
+                intermediateResult = mapper.transform(intermediateResult, desc.getInputDescriptor());
             }
             
-            p.setInput(inputParameters);
-            p.run();
-            intermediateResult = p.getOutput();            
+            final Process p = desc.createProcess(intermediateResult);
+            intermediateResult = p.call();   
         }
         
-        final ParameterValueGroup result = getOutput();
+        final ParameterValueGroup result = outputParameters;
         result.values().addAll(intermediateResult.values());
         
-        fireEndEvent(new ProcessEvent(this, 100, null, null));
+        fireEndEvent(new ProcessEvent(this, null,100));
+        
+        return result;
     }
         
 }

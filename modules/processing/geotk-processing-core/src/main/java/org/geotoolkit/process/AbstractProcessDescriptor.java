@@ -17,6 +17,9 @@
 
 package org.geotoolkit.process;
 
+import org.opengis.metadata.lineage.Algorithm;
+import java.util.Collections;
+import java.util.Collection;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;
@@ -55,12 +58,12 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     }
 
     @Override
-    public final Identifier getName() {
+    public Identifier getIdentifier() {
         return id;
     }
-
+    
     @Override
-    public final InternationalString getAbstract() {
+    public InternationalString getProcedureDescription() {
         return abs;
     }
 
@@ -74,6 +77,27 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         return outputdesc;
     }
 
+    
+    @Override
+    public Collection<? extends Citation> getSoftwareReferences() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Collection<? extends Citation> getDocumentations() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public InternationalString getRunTimeParameters() {
+        return null;
+    }
+
+    @Override
+    public Collection<? extends Algorithm> getAlgorithms() {
+        return Collections.emptySet();
+    }
+    
     
     protected static class DerivateIdentifier implements Identifier{
 
