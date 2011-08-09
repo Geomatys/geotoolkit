@@ -17,18 +17,18 @@
 package org.geotoolkit.process.jts.contain;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.jts.JTSProcessFactory;
+import org.geotoolkit.process.jts.JTSProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -65,14 +65,14 @@ public class ContainDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new ContainDescriptor();
 
     private ContainDescriptor() {
-        super(NAME, JTSProcessFactory.IDENTIFICATION,
+        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return true if source geometry (geom1) contains the specified geometry(geom2)."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new ContainProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new ContainProcess(input);
     }
     
 }

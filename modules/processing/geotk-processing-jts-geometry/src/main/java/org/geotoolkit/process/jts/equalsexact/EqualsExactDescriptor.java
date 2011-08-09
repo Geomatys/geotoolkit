@@ -22,12 +22,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.jts.JTSProcessFactory;
+import org.geotoolkit.process.jts.JTSProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -66,14 +67,14 @@ public class EqualsExactDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new EqualsExactDescriptor();
 
     private EqualsExactDescriptor() {
-        super(NAME, JTSProcessFactory.IDENTIFICATION,
+        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return true if source geometry (geom1) is equals to the other geometry (geom2) ."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new EqualsExactProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new EqualsExactProcess(input);
     }
     
 }

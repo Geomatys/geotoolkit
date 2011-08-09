@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.centroid;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -43,7 +45,7 @@ public class CentroidTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testCentroid() {
+    public void testCentroid() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -62,15 +64,13 @@ public class CentroidTest extends AbstractProcessTest{
         
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "centroid");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Point result = (Point) proc.getOutput().parameter("result_geom").getValue();
+        final Point result = (Point) proc.call().parameter("result_geom").getValue();
        
         
         final Point expected = geom.getCentroid();

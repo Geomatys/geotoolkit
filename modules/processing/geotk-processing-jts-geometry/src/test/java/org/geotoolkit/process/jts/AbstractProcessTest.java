@@ -22,6 +22,7 @@ import org.geotoolkit.process.ProcessFinder;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.opengis.util.NoSuchIdentifierException;
 /**
  * Abstract JUnit test for math process
  * @author Quentin Boileau
@@ -38,7 +39,7 @@ public abstract class AbstractProcessTest {
     }
 
     @Test
-    public void findProcessTest(){
+    public void findProcessTest() throws NoSuchIdentifierException{
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(factory, process);
         assertNotNull(desc);
     }

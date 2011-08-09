@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.buffer;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,7 +44,7 @@ public class BufferTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testBuffer() {
+    public void testBuffer() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -55,18 +57,16 @@ public class BufferTest extends AbstractProcessTest{
         
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "buffer");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);
         in.parameter("distance").setValue(distance);
         in.parameter("segments").setValue(segments);
         in.parameter("endstyle").setValue(capStype);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Geometry result = (Geometry) proc.getOutput().parameter("result_geom").getValue();
+        final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
        
         
         final Geometry expected = geom.buffer(distance, segments, capStype);

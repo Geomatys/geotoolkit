@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.envelope;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,7 +44,7 @@ public class EnvelopeTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testEnvelope() {
+    public void testEnvelope() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -60,15 +62,13 @@ public class EnvelopeTest extends AbstractProcessTest{
       
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "envelope");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Geometry result = (Geometry) proc.getOutput().parameter("result_geom").getValue();
+        final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
        
         
         final Geometry expected = geom.getEnvelope();

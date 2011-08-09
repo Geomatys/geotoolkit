@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.isempty;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,7 +44,7 @@ public class IsEmptyTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testIsEmpty() {
+    public void testIsEmpty() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -60,15 +62,13 @@ public class IsEmptyTest extends AbstractProcessTest{
       
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "isEmpty");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom1);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Boolean result = (Boolean) proc.getOutput().parameter("result").getValue();
+        final Boolean result = (Boolean) proc.call().parameter("result").getValue();
        
         
         final Boolean expected = geom1.isEmpty();

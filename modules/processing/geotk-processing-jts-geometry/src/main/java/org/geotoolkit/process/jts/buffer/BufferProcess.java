@@ -30,12 +30,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class BufferProcess extends AbstractProcess{
     
-    public BufferProcess(){
-        super(INSTANCE);
+    public BufferProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom = value(GEOM, inputParameters);  
         final double distance = value(DISTANCE, inputParameters);
@@ -62,9 +62,8 @@ public class BufferProcess extends AbstractProcess{
             result = geom.buffer(distance);
         }
      
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_GEOM, output).setValue(result); 
-        
+        getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

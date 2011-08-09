@@ -22,12 +22,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.jts.JTSProcessFactory;
+import org.geotoolkit.process.jts.JTSProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -63,14 +64,14 @@ public class IsEmptyDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new IsEmptyDescriptor();
 
     private IsEmptyDescriptor() {
-        super(NAME, JTSProcessFactory.IDENTIFICATION,
+        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Returns true if this geometry source is an empty geometry."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new IsEmptyProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new IsEmptyProcess(input);
     }
     
 }

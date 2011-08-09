@@ -28,13 +28,12 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class EqualsExactProcess extends AbstractProcess{
     
-    public EqualsExactProcess(){
-        super(INSTANCE);
+    public EqualsExactProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
-        
+    public ParameterValueGroup call() {
         final Geometry geom1 = value(GEOM1, inputParameters); 
         final Geometry geom2 = value(GEOM2, inputParameters);
         
@@ -48,9 +47,8 @@ public class EqualsExactProcess extends AbstractProcess{
             result = (Boolean) geom1.equalsExact(geom2);
         }
         
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT, output).setValue(result); 
-        
+        getOrCreate(RESULT, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

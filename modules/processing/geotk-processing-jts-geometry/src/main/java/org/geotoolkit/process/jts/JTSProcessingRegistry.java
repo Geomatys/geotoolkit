@@ -20,7 +20,7 @@ import java.util.Collections;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.AbstractProcessingRegistry;
 import org.geotoolkit.process.jts.area.AreaDescriptor;
 import org.geotoolkit.process.jts.boundary.BoundaryDescriptor;
 import org.geotoolkit.process.jts.buffer.BufferDescriptor;
@@ -54,7 +54,7 @@ import org.opengis.metadata.identification.Identification;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class JTSProcessFactory extends AbstractProcessFactory{
+public class JTSProcessingRegistry extends AbstractProcessingRegistry{
     
     /** factory name **/
     public static final String NAME = "jts";
@@ -68,7 +68,7 @@ public class JTSProcessFactory extends AbstractProcessFactory{
         IDENTIFICATION.setCitation(citation);
     }
 
-    public JTSProcessFactory() {
+    public JTSProcessingRegistry() {
         super(BufferDescriptor.INSTANCE, AreaDescriptor.INSTANCE, BoundaryDescriptor.INSTANCE, CentroidDescriptor.INSTANCE,
                 ContainDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE, CoveredByDescriptor.INSTANCE, CoversDescriptor.INSTANCE,
                 CrossesDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE, EnvelopeDescriptor.INSTANCE, EqualsExactDescriptor.INSTANCE,

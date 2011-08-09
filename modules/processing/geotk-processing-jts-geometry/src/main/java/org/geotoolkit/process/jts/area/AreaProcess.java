@@ -28,22 +28,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class AreaProcess extends AbstractProcess{
     
-    public AreaProcess(){
-        super(INSTANCE);
+    public AreaProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom = value(GEOM, inputParameters);  
-       
-        
+               
         final Double result = geom.getArea();
-        
-       
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT, output).setValue(result); 
-        
+               
+        getOrCreate(RESULT, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

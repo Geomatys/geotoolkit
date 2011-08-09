@@ -28,20 +28,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class IsEmptyProcess extends AbstractProcess{
     
-    public IsEmptyProcess(){
-        super(INSTANCE);
+    public IsEmptyProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom1 = value(GEOM, inputParameters); 
         
         final Boolean result = (Boolean) geom1.isEmpty();
         
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT, output).setValue(result); 
-        
+        getOrCreate(RESULT, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

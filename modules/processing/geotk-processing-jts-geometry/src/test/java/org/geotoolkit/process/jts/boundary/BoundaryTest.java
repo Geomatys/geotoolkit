@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.boundary;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,7 +44,7 @@ public class BoundaryTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testBoundary() {
+    public void testBoundary() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -61,15 +63,12 @@ public class BoundaryTest extends AbstractProcessTest{
         
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "boundary");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom").setValue(geom);
-        proc.setInput(in);
-        proc.run();
-
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
         //result
-        final Geometry result = (Geometry) proc.getOutput().parameter("result_geom").getValue();
+        final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
        
         
         final Geometry expected = geom.getBoundary();

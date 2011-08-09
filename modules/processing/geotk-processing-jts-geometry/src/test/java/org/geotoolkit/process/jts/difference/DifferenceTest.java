@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.difference;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,7 +44,7 @@ public class DifferenceTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testDifference() {
+    public void testDifference() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -69,16 +71,14 @@ public class DifferenceTest extends AbstractProcessTest{
         final Geometry geom2 = fact.createPolygon(ring2, null) ;
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "difference");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom1);
         in.parameter("geom2").setValue(geom2);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Geometry result = (Geometry) proc.getOutput().parameter("result_geom").getValue();
+        final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
        
         
         final Geometry expected = geom1.difference(geom2);

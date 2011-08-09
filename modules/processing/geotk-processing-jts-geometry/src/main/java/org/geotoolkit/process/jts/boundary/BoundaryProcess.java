@@ -28,22 +28,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class BoundaryProcess extends AbstractProcess{
     
-    public BoundaryProcess(){
-        super(INSTANCE);
+    public BoundaryProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom = value(GEOM, inputParameters);  
-       
         
         final Geometry result = geom.getBoundary();
         
-       
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_GEOM, output).setValue(result); 
-        
+        getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

@@ -28,20 +28,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class LenghtProcess extends AbstractProcess{
     
-    public LenghtProcess(){
-        super(INSTANCE);
+    public LenghtProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom1 = value(GEOM, inputParameters); 
         
         final Double result = (Double) geom1.getLength();
         
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT, output).setValue(result); 
-        
+        getOrCreate(RESULT, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

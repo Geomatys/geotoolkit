@@ -29,22 +29,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class CentroidProcess extends AbstractProcess{
     
-    public CentroidProcess(){
-        super(INSTANCE);
+    public CentroidProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom = value(GEOM, inputParameters);  
        
-        
         final Point result = geom.getCentroid();
         
-       
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_GEOM, output).setValue(result); 
-        
+        getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

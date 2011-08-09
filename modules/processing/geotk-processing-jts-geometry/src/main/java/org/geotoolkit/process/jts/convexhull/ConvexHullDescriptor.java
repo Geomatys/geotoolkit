@@ -22,12 +22,13 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.jts.JTSProcessFactory;
+import org.geotoolkit.process.jts.JTSProcessingRegistry;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * @author Quentin Boileau (Geomatys)
@@ -63,14 +64,14 @@ public class ConvexHullDescriptor extends AbstractProcessDescriptor{
     public static final ProcessDescriptor INSTANCE = new ConvexHullDescriptor();
 
     private ConvexHullDescriptor() {
-        super(NAME, JTSProcessFactory.IDENTIFICATION,
+        super(NAME, JTSProcessingRegistry.IDENTIFICATION,
                 new SimpleInternationalString("Return the convex hull geometry of the specified geometry."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
-    public Process createProcess() {
-        return new ConvexHullProcess();
+    public Process createProcess(final ParameterValueGroup input) {
+        return new ConvexHullProcess(input);
     }
     
 }

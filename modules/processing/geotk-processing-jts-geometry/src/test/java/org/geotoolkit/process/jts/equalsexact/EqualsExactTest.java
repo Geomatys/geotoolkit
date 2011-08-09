@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.jts.equalsexact;
 
+import org.geotoolkit.process.ProcessException;
+import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -42,7 +44,7 @@ public class EqualsExactTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testEquals2d() {
+    public void testEquals2d() throws NoSuchIdentifierException, ProcessException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -62,17 +64,15 @@ public class EqualsExactTest extends AbstractProcessTest{
       
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "equals2d");
-        final org.geotoolkit.process.Process proc = desc.createProcess();
 
         final ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("geom1").setValue(geom);
         in.parameter("geom2").setValue(geom);
         in.parameter("tolerance").setValue(tolerance);
-        proc.setInput(in);
-        proc.run();
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //result
-        final Boolean result = (Boolean) proc.getOutput().parameter("result").getValue();
+        final Boolean result = (Boolean) proc.call().parameter("result").getValue();
        
         final Boolean expected = geom.equalsExact(geom2, tolerance);
         

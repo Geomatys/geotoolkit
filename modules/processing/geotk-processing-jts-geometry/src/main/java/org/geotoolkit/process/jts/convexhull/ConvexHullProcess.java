@@ -28,20 +28,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class ConvexHullProcess extends AbstractProcess{
     
-    public ConvexHullProcess(){
-        super(INSTANCE);
+    public ConvexHullProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom1 = value(GEOM, inputParameters); 
         
         final Geometry result =  geom1.convexHull();
         
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT_GEOM, output).setValue(result); 
-        
+        getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }

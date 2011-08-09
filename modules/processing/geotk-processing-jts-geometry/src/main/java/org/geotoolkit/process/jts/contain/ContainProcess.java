@@ -28,22 +28,20 @@ import static org.geotoolkit.parameter.Parameters.*;
  */
 public class ContainProcess extends AbstractProcess{
     
-    public ContainProcess(){
-        super(INSTANCE);
+    public ContainProcess(final ParameterValueGroup input){
+        super(INSTANCE,input);
     }
     
     @Override
-    public void run() {
+    public ParameterValueGroup call() {
         
         final Geometry geom1 = value(GEOM1, inputParameters);  
         final Geometry geom2 = value(GEOM2, inputParameters); 
         
         final Boolean result = (Boolean) geom1.contains(geom2);
         
-       
-        final ParameterValueGroup output =  getOutput();
-        getOrCreate(RESULT, output).setValue(result); 
-        
+        getOrCreate(RESULT, outputParameters).setValue(result); 
+        return outputParameters;
     }
     
 }
