@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.ReferencingCommons;
-import org.opengis.test.referencing.CalculationType;
+import org.opengis.test.CalculationType;
 
 import org.junit.*;
 import static org.junit.Assume.*;

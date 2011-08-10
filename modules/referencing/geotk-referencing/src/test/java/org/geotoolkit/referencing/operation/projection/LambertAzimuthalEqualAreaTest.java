@@ -273,8 +273,12 @@ public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testKnownPoint() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Azimuthal Equal Area");
         parameters.parameter("semi-major axis").setValue(6378137.0);

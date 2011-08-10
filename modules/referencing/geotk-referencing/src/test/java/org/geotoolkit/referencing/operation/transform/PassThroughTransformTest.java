@@ -26,7 +26,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.opengis.test.referencing.CalculationType;
+import org.opengis.test.ToleranceModifier;
+import org.opengis.test.CalculationType;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
@@ -251,7 +252,7 @@ public final class PassThroughTransformTest extends TransformTestBase {
          * test suite.
          */
         tolerance = 0; // Results should be strictly identical because we use the same inputs.
-        relativeTolerance = false;
+        toleranceModifier = null;
         isInverseTransformSupported = (subtDimension == subTransform.getTargetDimensions());
         final float[] sourceAsFloat = new float[sourceData.length];
         for (int i=0; i<sourceAsFloat.length; i++) {
@@ -265,7 +266,7 @@ public final class PassThroughTransformTest extends TransformTestBase {
          * computed using inputs stored as float values.
          */
         tolerance = 1E-4f;
-        relativeTolerance = true;
+        toleranceModifier = ToleranceModifier.RELATIVE;
         final float[] targetAsFloat = verifyConsistency(sourceAsFloat);
         assertEquals("Unexpected length of transformed array.", targetData.length, targetAsFloat.length);
         assertCoordinatesEqual("A transformed value is wrong.", fullDimension,

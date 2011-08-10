@@ -21,7 +21,7 @@ import org.junit.*;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.test.referencing.CalculationType;
+import org.opengis.test.CalculationType;
 
 import org.geotoolkit.referencing.operation.provider.NADCON;
 

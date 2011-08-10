@@ -19,10 +19,16 @@ package org.geotoolkit.test;
 
 import java.io.IOException;
 import java.util.Properties;
+
 import org.opengis.util.Factory;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.datum.DatumFactory;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.test.ToleranceModifier;
+import org.opengis.test.CalculationType;
 
 
 /**
@@ -35,7 +41,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
  *
  * @since 3.19
  */
-public final class ImplementationDetails implements org.opengis.test.ImplementationDetails {
+public final class ImplementationDetails implements org.opengis.test.ImplementationDetails, ToleranceModifier {
     /**
      * Returns {@code false} if the given factory is not a factory that we want to test,
      * and {@code true} in all other cases.
@@ -75,5 +81,38 @@ public final class ImplementationDetails implements org.opengis.test.Implementat
     @Override
     public Properties configuration(final Factory... factories) throws IOException {
         return null;
+    }
+
+    /**
+     * Relaxes the tolerance threshold for some Geotk transforms.
+     */
+    @Override
+    public ToleranceModifier needsRelaxedTolerance(final MathTransform transform) {
+        final String name = transform.getClass().getName();
+        if (name.startsWith("org.geotoolkit.")) {
+            final String classification;
+            try {
+                classification = ((IdentifiedObject) transform.getClass()
+                        .getMethod("getParameterDescriptors", (Class<?>[]) null)
+                        .invoke(transform, (Object[]) null)).getName().getCode();
+            } catch (Exception e) {
+                // Ignore.
+                return null;
+            }
+            if (classification.equals("Lambert_Azimuthal_Equal_Area")) {
+                return this;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Relax the tolerance value for the Lambert Azimuthal Equal Area projection.
+     */
+    @Override
+    public void adjust(final double[] tolerance, final DirectPosition coordinate, final CalculationType mode) {
+        if (mode == CalculationType.INVERSE_TRANSFORM) {
+            tolerance[1] *= 10; // From 0.01 metre to 0.1 metre (converted to degrees).
+        }
     }
 }

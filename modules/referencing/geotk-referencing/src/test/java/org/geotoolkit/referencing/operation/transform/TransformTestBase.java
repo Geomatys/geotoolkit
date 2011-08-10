@@ -43,7 +43,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.test.referencing.CalculationType;
+import org.opengis.test.CalculationType;
+import org.opengis.test.ToleranceModifier;
+import org.opengis.test.referencing.TransformTestCase;
 
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.factory.Hints;
@@ -69,7 +71,7 @@ import org.opengis.test.Validators;
  *
  * @since 2.0
  */
-public abstract class TransformTestBase extends org.opengis.test.referencing.TransformTestCase {
+public abstract class TransformTestBase extends TransformTestCase implements ToleranceModifier {
     /**
      * The number of ordinates to use for stressing the math transform. We use a number that
      * encompass at least 2 time the default buffer size in order to test the code that use
@@ -102,12 +104,6 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * than the {@linkplain #tolerance tolerance} level for horizontal ordinate values.
      */
     protected double zTolerance;
-
-    /**
-     * {@code true} if the tolerance threshold should be relative to the magnitude of
-     * the ordinate values to compare.
-     */
-    protected boolean relativeTolerance;
 
     /**
      * An optional message to pre-concatenate to the error message if one of the {@code assert}
@@ -156,6 +152,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
              FactoryFinder.getMathTransformFactory(hints),
              FactoryFinder.getCoordinateOperationFactory(hints));
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
+        toleranceModifier = this;
     }
 
     /**
@@ -230,20 +227,13 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * We override the method defined in GeoAPI in order to take in account some special cases.
      */
     @Override
-    protected final double tolerance(final DirectPosition coordinate, final int dimension, final CalculationType mode) {
-        double tol = super.tolerance(coordinate, dimension, mode);
+    public final void adjust(final double[] tolerance, final DirectPosition coordinate, final CalculationType mode) {
         if (mode != CalculationType.STRICT) {
-            if (dimension == forComparison(this.zDimension, mode)) {
-                tol = zTolerance;
-            }
-            if (relativeTolerance) {
-                final double e = coordinate.getOrdinate(dimension);
-                if (e != 0) {
-                    tol *= abs(e);
-                }
+            final int zDim = forComparison(this.zDimension, mode);
+            if (zDim >= 0 && zDim < tolerance.length) {
+                tolerance[zDim] = zTolerance;
             }
         }
-        return tol;
     }
 
     /**

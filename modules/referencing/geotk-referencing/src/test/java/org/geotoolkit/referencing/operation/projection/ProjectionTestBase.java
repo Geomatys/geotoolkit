@@ -25,7 +25,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.test.referencing.CalculationType;
+import org.opengis.test.CalculationType;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;

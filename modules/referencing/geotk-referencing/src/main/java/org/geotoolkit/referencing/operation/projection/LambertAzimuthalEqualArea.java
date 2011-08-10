@@ -37,6 +37,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
+
 /**
  * Lambert Azimuthal Equal Area projection (EPSG codes 9820, 9821). See the
  * <A HREF="http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html">Lambert Azimuthal
