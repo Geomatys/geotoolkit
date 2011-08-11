@@ -33,14 +33,14 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
-import org.opengis.test.ToleranceModifiers;
 import org.opengis.test.ToleranceModifier;
-import org.opengis.test.CalculationType;
 import org.opengis.test.TestSuite;
 
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
+import static org.opengis.test.CalculationType.*;
+import static org.opengis.test.ToleranceModifiers.*;
+import static org.geotoolkit.referencing.IdentifiedObjects.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 
 
@@ -108,9 +108,15 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
         if (transform instanceof AbstractMathTransform) {
             final IdentifiedObject id = ((AbstractMathTransform) transform).getParameterDescriptors();
             if (id != null) {
-                if (IdentifiedObjects.nameMatches(id, "Lambert_Azimuthal_Equal_Area")) {
-                    // Increase by 10 the tolerance factor in latitude for inverse projections.
-                    return ToleranceModifiers.scale(EnumSet.of(CalculationType.INVERSE_TRANSFORM), 1, 10);
+                if (nameMatches(id, "Lambert_Azimuthal_Equal_Area")) {
+                    // Increase to 10 cm the tolerance factor in latitude for inverse projections.
+                    return scale(EnumSet.of(INVERSE_TRANSFORM), 1, 10);
+                }
+                if (nameMatches(id, "Cassini_Soldner")) {
+                    // Increase to 10 cm the tolerance factor in latitude for direct projections,
+                    // and 50 cm the tolerance factor in latitude for inverse projections.
+                    return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  1,  10),
+                                   scale(EnumSet.of(INVERSE_TRANSFORM), 2, 200));
                 }
             }
         }

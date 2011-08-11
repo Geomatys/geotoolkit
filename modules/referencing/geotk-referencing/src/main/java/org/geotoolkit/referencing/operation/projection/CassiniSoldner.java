@@ -56,7 +56,7 @@ import static java.lang.Math.*;
  * @author Mauro Bartolomeoli
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.00
  * @module
@@ -123,16 +123,16 @@ public class CassiniSoldner extends CassiniOrMercator {
     {
         final double λ = rollLongitude(srcPts[srcOff]);
         final double φ = srcPts[srcOff + 1];
-        final double sinφ = sin(φ);
-        final double cosφ = cos(φ);
-        final double tanφ = sinφ / cosφ;
-        final double n  = 1 / sqrt(1 - excentricitySquared*sinφ*sinφ);
-        final double t  = tanφ * tanφ;
-        final double a1 = λ * cosφ;
-        final double c  = cosφ * cosφ * excentricitySquared / (1 - excentricitySquared);
-        final double a2 = a1 * a1;
-        dstPts[dstOff  ] = n*a1*(1 - a2*t*(C1 - (8 - t + 8*c)*a2*C2));
-        dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + n*tanφ*a2*(0.5 + (5 - t + 6*c)*a2*C3);
+        final double sinφ   = sin(φ);
+        final double cosφ   = cos(φ);
+        final double tanφ   = sinφ / cosφ;
+        final double tanφ2  = tanφ * tanφ;
+        final double λcosφ  = λ * cosφ;
+        final double λcosφ2 = λcosφ * λcosφ;
+        final double rn     = sqrt(1 - excentricitySquared * (sinφ*sinφ));
+        final double c      = (cosφ*cosφ) * excentricitySquared / (1 - excentricitySquared);
+        dstPts[dstOff  ] = λcosφ*(1 - λcosφ2*tanφ2*(C1 - (8 - tanφ2 + 8*c)*λcosφ2*C2)) / rn;
+        dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + tanφ*λcosφ2*(0.5 + (5 - tanφ2 + 6*c)*λcosφ2*C3) / rn;
     }
 
     /**
@@ -143,19 +143,19 @@ public class CassiniSoldner extends CassiniOrMercator {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double x = srcPts[srcOff];
-        final double y = srcPts[srcOff + 1];
-        final double ph1 = inv_mlfn(y);
-        final double tn  = tan(ph1);
-        final double t   = tn * tn;
-        double n = sin(ph1);
-        double r = 1 / (1 - excentricitySquared*n*n);
+        final double x  = srcPts[srcOff];
+        final double y  = srcPts[srcOff + 1];
+        final double φ1 = inv_mlfn(y);
+        final double tn = tan(φ1);
+        final double t  = tn * tn;
+        double n = sin(φ1);
+        double r = 1 / (1 - excentricitySquared * (n*n));
         n = sqrt(r);
         r *= (1 - excentricitySquared)*n;
         final double dd  = x / n;
         final double d2  = dd*dd;
-        dstPts[dstOff  ] = unrollLongitude(dd*(1 + t*d2*(-C4+(1 + 3*t)*d2*C5)) / cos(ph1));
-        dstPts[dstOff+1] = ph1 - (n*tn/r)*d2*(0.5-(1 + 3*t)*d2*C3);
+        dstPts[dstOff  ] = unrollLongitude(dd*(1 + t*d2*(-C4+(1 + 3*t)*d2*C5)) / cos(φ1));
+        dstPts[dstOff+1] = φ1 - (n*tn/r)*d2*(0.5-(1 + 3*t)*d2*C3);
     }
 
 
@@ -262,65 +262,88 @@ public class CassiniSoldner extends CassiniOrMercator {
                 return true;
             }
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.19
+         */
+        @Override
+        public Matrix derivative(Point2D point) throws ProjectionException {
+            final double λ = rollLongitude(point.getX());
+            final double φ = point.getY();
+            final double sinφ  = sin(φ);
+            final double sinλ  = sin(λ);
+            final double cosφ  = cos(φ);
+            final double cosλ  = cos(λ);
+            final double tanφ  = sinφ / cosφ;
+            final double mλφ   = hypot(cosλ, tanφ);
+            final double mλφp  = mλφ + cosλ;
+            final double dyd   = (mλφp*mλφp + tanφ*tanφ)*cosφ / 2;
+            final double dxd   = sqrt(1 - (cosφ*cosφ) * (sinλ*sinλ));
+            final Matrix derivative = new Matrix2(
+                     cosλ *                  (cosφ / dxd),    // dx/dλ
+                    -sinλ *                  (sinφ / dxd),    // dx/dφ
+                     sinλ * (1 + cosλ/mλφ) * (sinφ / dyd),    // dy/dλ
+                    (mλφp - tanφ*tanφ/mλφ) / (cosφ * dyd));   // dy/dφ
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
     }
 
-    /*
+    /**
      * Gets the derivative of this transform at a point.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.
      * @throws ProjectionException if the derivative can't be evaluated at the specified point.
      *
-     * @since 3.18
-     *
+     * @since 3.19
+     */
     @Override
     public Matrix derivative(final Point2D point) throws ProjectionException {
         final double λ = rollLongitude(point.getX());
         final double φ = point.getY();
         final double sinφ    = sin(φ);
         final double cosφ    = cos(φ);
+        final double tanφ    = sinφ / cosφ;
         final double sinφ2   = sinφ*sinφ;
         final double cosφ2   = cosφ*cosφ;
-        final double sincosφ = sinφ*cosφ*2; // Warning!! Remember the '2'.
-        final double re = excentricitySquared / (1 - excentricitySquared);
-        double fsinλφ2 = 1 - excentricitySquared*sinφ2;
-        final double feφ = excentricitySquared*cosφ2 / fsinλφ2;
-        fsinλφ2 = sqrt(fsinλφ2) / λ;
+        final double tanφ2   = tanφ*tanφ;
+        final double sincosφ = sinφ*cosφ;
+              double n       = 1 / (1 - excentricitySquared * sinφ2);
+        final double dndφ    = excentricitySquared * sincosφ * (n * (n = sqrt(n)));
+        final double dtdφ    = (2 / cosφ2) * tanφ;
+        final double λcosφ   = λ * cosφ;
+        final double c       = cosφ2 * excentricitySquared / (1 - excentricitySquared);
+        final double mdcdφ   = 2*tanφ * c;
+        final double λcosφ2  = λcosφ * λcosφ;
+        final double da2dλ   = 2*λ * cosφ2;
+        final double da2dφ   = -λ*λ * sincosφ * 2;
 
-        final double A     = cosφ / fsinλφ2;
-        final double dA_dφ = sinφ / fsinλφ2 * (feφ - 1);
-        final double dA_dλ = A/λ;
+        // X = n * a1 * (1 - a2 * t * (C1 - (8 - t + 8 * c) * a2 * C2));
 
-        final double λ2    = λ*λ;
-        final double B     = λ2*sinφ2;
-        final double C     = λ2*cosφ2;
-        final double W     = re*sinφ2;
-        final double dB_dλ = 2*λ*sinφ2;
-        final double dC_dλ = 2*λ*cosφ2;
-        final double dB_dφ = sincosφ*λ2; // == -dC_dφ
-        final double dW_dφ = sincosφ*re;
+        final double a    = -C2 * (8*(1 + c) - tanφ2);
+        final double A    = a * λcosφ2 + C1;
+        final double dAdλ = a * da2dλ;
+        final double dAdφ = a * da2dφ + C2 * ((dtdφ + 8 * mdcdφ) * λcosφ2);
+        final double B    = 1 - λcosφ2 * tanφ2 * A;
+        final double dBdφ = -((da2dφ * tanφ2 + dtdφ * λcosφ2) * A + dAdφ * λcosφ2 * tanφ2);
 
-        final double  T    = A*B;
-        final double dT_dλ = B*dA_dλ + A*dB_dλ;
-        final double dT_dφ = B*dA_dφ + A*dB_dφ;
+        // Y = mlfn(φ, sinφ, cosφ) + n * tanφ * a2 * (0.5 + (5 - t + 6 * c) * a2 * C3);
 
-        // Derivative of E = re * cosφ2 * C(λ,φ);
-        final double dE_dλ = re *    cosφ2 * dC_dλ;
-        final double dE_dφ = re * -2*cosφ2 * dB_dφ;
+        final double C    = 0.5 + (5 - tanφ2 + 6 * c) * λcosφ2 * C3;
+        final double dCdλ = (5 - tanφ2 + 6 * c) * da2dλ * C3;
+        final double dCdφ = C3 * ((5 - tanφ2 + 6 * c) * da2dφ - (dtdφ + 6 * mdcdφ) * λcosφ2);
 
-        final double dU_dλ = sincosφ / fsinλφ2;
-        final double U     = 0.5 * λ * dU_dλ;
-        final double dU_dφ = (λ / fsinλφ2) * (cosφ2 + sinφ2*(feφ - 1));
-
-        final double t1 = 5*C + 6*W - B;
-        final double t2 = 7*C * (cosφ2*re + 1); // == 7*(C+E)
-
-        return new Matrix2(
-                dA_dλ - C1*    dT_dλ + C2*(T*(8*(dE_dλ + dC_dλ) - dB_dλ) + t2*dT_dλ),
-                dA_dφ - C1*    dT_dφ + C2*(T*(8*(dE_dφ - dB_dφ) - dB_dφ) + t2*dT_dφ),
-            0.5*dU_dλ + C3*(t1*dU_dλ + U*(5*dC_dλ - dB_dλ)),
-            0.5*dU_dφ + C3*(t1*dU_dφ + U*6*(dW_dφ - dB_dφ)) + dmlfn_dφ(sinφ2, cosφ2)
-        );
+        return new Matrix2( n * (cosφ * B - tanφ2*(da2dλ * A + dAdλ * λcosφ2) * λcosφ),
+                            (dndφ*λcosφ - λ*sinφ*n)*B + dBdφ*n * λcosφ,
+                            n * tanφ * (da2dλ * C + dCdλ * λcosφ2),
+                            ((dndφ * tanφ + n / cosφ2) * λcosφ2 + da2dφ * n * tanφ) * C + dCdφ * n * tanφ * λcosφ2
+                            + dmlfn_dφ(sinφ2, cosφ2));
     }
-    */
 }

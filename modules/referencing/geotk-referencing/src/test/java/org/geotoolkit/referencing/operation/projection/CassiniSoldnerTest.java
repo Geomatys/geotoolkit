@@ -119,13 +119,12 @@ public final class CassiniSoldnerTest extends ProjectionTestBase {
      * @since 3.18
      */
     @Test
-    @Ignore // TODO: Not ready for geotk-3.18 release.
     public void testDerivative() throws TransformException {
-        tolerance = 1E-3;
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         derivativeDeltas = new double[] {delta, delta};
 
         // Tests spherical formulas
+        tolerance = 1E-9;
         transform = create(false);
         assertTrue(isSpherical());
         validate();
@@ -133,10 +132,11 @@ public final class CassiniSoldnerTest extends ProjectionTestBase {
         verifyDerivative(Math.toRadians(-4), Math.toRadians(40));
 
         // Tests ellipsoidal formulas
+        tolerance = 1E-8;
         transform = create(true);
         assertFalse(isSpherical());
         validate();
-        verifyDerivative(Math.toRadians(+3), Math.toRadians(-6));
-        verifyDerivative(Math.toRadians(-4), Math.toRadians(40));
+        verifyDerivative(Math.toRadians(+3), Math.toRadians(-10));
+        verifyDerivative(Math.toRadians(-4), Math.toRadians(+10));
     }
 }
