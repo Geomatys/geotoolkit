@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.maven.jar;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -35,7 +36,7 @@ import org.apache.maven.project.MavenProject;
  * many time.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.19
  *
  * @since 3.00
  *
@@ -79,6 +80,25 @@ public class PackerMojo extends AbstractMojo {
             throw new MojoExecutionException(e.toString());
         } catch (IOException e) {
             throw new MojoExecutionException("Error packing the JAR file.", e);
+        }
+        /*
+         * Packs javadoc.
+         */
+        final PackFiles pack = new PackFiles(new File(targetDirectory, Packer.PACK_DIRECTORY));
+        File directory = new File(targetDirectory, "site/apidocs");
+        if (directory.isDirectory()) try {
+            pack.pack(directory, "geotk-pending-" + PackerSpecificMojo.VERSION + "-javadoc.zip");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error packing the ZIP file for javadoc.", e);
+        }
+        /*
+         * Packs source code.
+         */
+        directory = parent.getBasedir();
+        if (directory.isDirectory()) try {
+            pack.pack(directory, "geotk-pending-" + PackerSpecificMojo.VERSION + "-sources.zip");
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error packing the ZIP file for source code.", e);
         }
     }
 }
