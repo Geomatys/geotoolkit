@@ -20,6 +20,8 @@ package org.geotoolkit.jdbc;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
 
@@ -79,6 +81,14 @@ public class WrappedDataSource implements DataSource{
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         return iface.isInstance(pool);
+    }
+
+    /**
+     * Do not declare as @Override . 
+     * this method is only in JDK 7, declaring the override will break JDK 6 build.
+     */
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return pool.getParentLogger();
     }
 
 }

@@ -18,6 +18,8 @@ package org.geotoolkit.jdbc;
 
 import java.sql.SQLException;
 
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 import org.apache.commons.dbcp.BasicDataSource;
 
 /**
@@ -46,4 +48,13 @@ public class DBCPDataSource extends AbstractManageableDataSource {
         return null;
         //return this.wrapped.unwrap(type);
     }
+
+    /**
+     * Do not declare as @Override . 
+     * this method is only in JDK 7, declaring the override will break JDK 6 build.
+     */
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return wrapped.getParentLogger();
+    }
+
 }
