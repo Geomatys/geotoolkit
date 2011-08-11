@@ -211,7 +211,7 @@ public final class IdentifiedObjects extends Static {
      * interfaces (for example {@link NamedIdentifier}). In such cases, the identifier view has
      * precedence.
      *
-     * @param  info The object to get the name from.
+     * @param  info The object to get the name from, or {@code null}.
      * @param  authority The authority for the name to return, or {@code null} for any authority.
      * @return The object name (either a {@linkplain ReferenceIdentifier#getCode code} or a
      *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
@@ -230,13 +230,16 @@ public final class IdentifiedObjects extends Static {
     /**
      * Returns an object name according the given authority.
      *
-     * @param  info The object to get the name from.
+     * @param  info The object to get the name from, or {@code null}.
      * @param  authority The authority for the name to return, or {@code null} for any authority.
      * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
      *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
      *         specified authority was found.
      */
     static String name(final IdentifiedObject info, final Citation authority) {
+        if (info == null) {
+            return null;
+        }
         Identifier identifier = info.getName();
         if (authority == null) {
             return identifier.getCode();
@@ -522,6 +525,7 @@ public final class IdentifiedObjects extends Static {
         if (object instanceof AbstractIdentifiedObject) {
             return ((AbstractIdentifiedObject) object).nameMatches(name);
         } else {
+            ensureNonNull("object", object);
             return nameMatches(object, object.getAlias(), name);
         }
     }
@@ -536,6 +540,8 @@ public final class IdentifiedObjects extends Static {
      * @return {@code true} if both objects have a common name.
      */
     public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
+        ensureNonNull("o1", o1);
+        ensureNonNull("o2", o2);
         return nameMatches(o1, o2.getName().getCode()) ||
                nameMatches(o2, o1.getName().getCode());
     }
