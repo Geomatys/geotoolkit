@@ -315,35 +315,22 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double cosφ2   = cosφ*cosφ;
         final double tanφ2   = tanφ*tanφ;
         final double sincosφ = sinφ*cosφ;
-              double n       = 1 / (1 - excentricitySquared * sinφ2);
-        final double dndφ    = excentricitySquared * sincosφ * (n * (n = sqrt(n)));
-        final double dtdφ    = (2 / cosφ2) * tanφ;
-        final double λcosφ   = λ * cosφ;
+        final double λ2sinφ2 = λ*λ * sinφ2;
+        final double λ2cosφ2 = λ*λ * cosφ2;
         final double c       = cosφ2 * excentricitySquared / (1 - excentricitySquared);
-        final double mdcdφ   = 2*tanφ * c;
-        final double λcosφ2  = λcosφ * λcosφ;
-        final double da2dλ   = 2*λ * cosφ2;
-        final double da2dφ   = -λ*λ * sincosφ * 2;
+              double n       = 1 / (1 - excentricitySquared * sinφ2);
+        final double dndφn   = excentricitySquared * sincosφ * n; // == (∂n/∂φ) / sqrt(n)
+        n = sqrt(n);
 
-        // X = n * a1 * (1 - a2 * t * (C1 - (8 - t + 8 * c) * a2 * C2));
-
-        final double a    = -C2 * (8*(1 + c) - tanφ2);
-        final double A    = a * λcosφ2 + C1;
-        final double dAdλ = a * da2dλ;
-        final double dAdφ = a * da2dφ + C2 * ((dtdφ + 8 * mdcdφ) * λcosφ2);
-        final double B    = 1 - λcosφ2 * tanφ2 * A;
-        final double dBdφ = -((da2dφ * tanφ2 + dtdφ * λcosφ2) * A + dAdφ * λcosφ2 * tanφ2);
-
-        // Y = mlfn(φ, sinφ, cosφ) + n * tanφ * a2 * (0.5 + (5 - t + 6 * c) * a2 * C3);
-
-        final double C    = 0.5 + (5 - tanφ2 + 6 * c) * λcosφ2 * C3;
-        final double dCdλ = (5 - tanφ2 + 6 * c) * da2dλ * C3;
-        final double dCdφ = C3 * ((5 - tanφ2 + 6 * c) * da2dφ - (dtdφ + 6 * mdcdφ) * λcosφ2);
-
-        return new Matrix2( n * (cosφ * B - tanφ2*(da2dλ * A + dAdλ * λcosφ2) * λcosφ),
-                            (dndφ*λcosφ - λ*sinφ*n)*B + dBdφ*n * λcosφ,
-                            n * tanφ * (da2dλ * C + dCdλ * λcosφ2),
-                            ((dndφ * tanφ + n / cosφ2) * λcosφ2 + da2dφ * n * tanφ) * C + dCdφ * n * tanφ * λcosφ2
-                            + dmlfn_dφ(sinφ2, cosφ2));
+        final double a = -C2 * (8*(c + 1) - tanφ2);
+        final double b =  C3 * (6* c + 5  - tanφ2);
+        final double A =  a * λ2cosφ2 + C1;
+        final double D = -2 * λ2cosφ2 * (A*sinφ - a*λ2sinφ2*(sinφ - C2*(8*c*sincosφ + tanφ)));
+        return new Matrix2(
+                -n*cosφ*(λ2sinφ2*(λ2cosφ2*a*5 + 3*C1) - 1),
+                 n*λ*((A*λ2sinφ2 - 1) * (sinφ - dndφn*cosφ) + D),
+                 n*λ*sincosφ*(4*b*λ2cosφ2 + 1),
+                 n*λ2cosφ2*((b*λ2cosφ2 + 0.5)*((dndφn*sincosφ + 1) - 2*sinφ2)/cosφ2 -
+                    (b + C3*(6*c + 1/cosφ2)) * 2*λ2sinφ2) + dmlfn_dφ(sinφ2, cosφ2));
     }
 }
