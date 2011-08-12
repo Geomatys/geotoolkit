@@ -43,7 +43,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Jan Jezek (HSRS)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.19
  *
  * @since 2.4
  * @module
@@ -87,7 +87,8 @@ public class Krovak extends MapProjection {
                 "CenterLat");                    // GeoTIFF
 
     /**
-     * The operation parameter descriptor for the {@code azimuth} parameter value.
+     * The operation parameter descriptor for the {@code azimuth} parameter value. This has
+     * been renamed "<cite>Co-latitude of cone axis</cite>" in latest EPSG database versions.
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 30.28813972222&deg;.
@@ -95,7 +96,7 @@ public class Krovak extends MapProjection {
     public static final ParameterDescriptor<Double> AZIMUTH =
             Identifiers.AZIMUTH.select(true, 30.28813972222222,
                 "azimuth",                  // OGC
-                "Azimuth of initial line",  // EPSG
+                "Co-latitude of cone axis", // EPSG
                 "AzimuthAngle");            // GeoTIFF
 
     /**

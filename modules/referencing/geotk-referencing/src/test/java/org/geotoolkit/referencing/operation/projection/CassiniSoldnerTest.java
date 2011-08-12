@@ -90,8 +90,12 @@ public final class CassiniSoldnerTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testKnownPoint() throws FactoryException, TransformException {
         final double feets = 0.3048;        // Conversion from feets to metres.
         final double links = 0.66 * feets;  // Conversion from links to metres

@@ -215,6 +215,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(OGC,      "azimuth"),
             new NamedIdentifier(ESRI,     "Azimuth"),
             new NamedIdentifier(EPSG,     "Azimuth of initial line"),
+            new NamedIdentifier(EPSG,     "Co-latitude of cone axis"), // Used in Krovak projection.
             new NamedIdentifier(GEOTIFF,  "AzimuthAngle")
         }, Double.NaN, -360, 360, NonSI.DEGREE_ANGLE, true);
 

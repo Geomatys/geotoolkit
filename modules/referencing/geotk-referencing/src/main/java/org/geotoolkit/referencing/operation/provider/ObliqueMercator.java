@@ -93,7 +93,9 @@ public class ObliqueMercator extends MapProjection {
      * parameter value. Valid values range is from -360 to -270, -90 to 90, and 270 to 360 degrees.
      * This parameter is mandatory and has no default value.
      */
-    public static final ParameterDescriptor<Double> AZIMUTH = Identifiers.AZIMUTH;
+    public static final ParameterDescriptor<Double> AZIMUTH =
+            Identifiers.AZIMUTH.select(
+                "Azimuth of initial line"); // EPSG
 
     /**
      * The operation parameter descriptor for the {@linkplain
