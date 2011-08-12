@@ -595,6 +595,60 @@ public final class SQLQueryBuilder {
     }
 
     /**
+     * Generates a 'ALTER TABLE . ADD COLUMN ' sql statement.
+     */
+    public String AlterTableAddColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx) throws SQLException{
+        final SQLDialect dialect = getDialect();
+        final String tableName = featureType.getName().getLocalPart();
+        final boolean nillable = desc.getMinOccurs() <= 0 || desc.isNillable();
+        final Class clazz = desc.getType().getBinding();
+        final Integer sqlType = dialect.getMapping(clazz);
+        final String sqlTypeName = getSQLTypeNames(new Class[]{clazz}, cx)[0];
+        
+        final StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        encodeTableName(tableName, sql);
+        sql.append(" ADD COLUMN ");
+        dialect.encodeColumnName(desc.getName().getLocalPart(), sql);
+        sql.append(' ');
+        
+        //encode type
+        if (sqlTypeName.toUpperCase().startsWith("VARCHAR")) {
+            //sql type name
+            //JD: some sql dialects require strings / varchars to have an
+            // associated size with them
+            Integer length = findVarcharColumnLength((AttributeDescriptor)desc);
+            if (length == null || length < 0) {
+                length = 255;
+            }
+            dialect.encodeColumnType(sqlTypeName + '(' + length + ')', sql);
+        } else {
+            dialect.encodeColumnType(sqlTypeName, sql);
+        }
+        
+        //nullable
+        if (!nillable) {
+            sql.append(" NOT NULL ");
+        }
+
+        return sql.toString();
+    }
+    
+    /**
+     * Generates a 'ALTER TABLE . DROP COLUMN ' sql statement.
+     */
+    public String AlterTableDropColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx){
+        final SQLDialect dialect = getDialect();
+        final String tableName = featureType.getName().getLocalPart();        
+        final StringBuilder sql = new StringBuilder();
+        sql.append("ALTER TABLE ");
+        encodeTableName(tableName, sql);
+        sql.append(" DROP COLUMN ");
+        dialect.encodeColumnName(desc.getName().getLocalPart(), sql);
+        return sql.toString();
+    }
+    
+    /**
      * Generates a 'DROP TABLE' sql statement.
      */
     public String dropSQL(final FeatureType featureType){

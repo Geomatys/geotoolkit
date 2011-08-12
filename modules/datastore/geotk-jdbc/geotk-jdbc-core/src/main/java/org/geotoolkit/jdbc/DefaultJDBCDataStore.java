@@ -987,8 +987,51 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported.");
+    public void updateSchema(final Name typeName, final FeatureType newft) throws DataStoreException {
+        final FeatureType oldft = getFeatureType(typeName);
+        
+        //we only handle adding or removing columns
+        final List<PropertyDescriptor> toRemove = new ArrayList<PropertyDescriptor>();
+        final List<PropertyDescriptor> toAdd = new ArrayList<PropertyDescriptor>();
+        
+        toRemove.addAll(oldft.getDescriptors());
+        toRemove.removeAll(newft.getDescriptors());
+        toAdd.addAll(newft.getDescriptors());
+        toAdd.removeAll(oldft.getDescriptors());
+        
+        Connection cx = null;
+        
+        try{            
+            cx = getDataSource().getConnection();
+            
+            for(PropertyDescriptor remove : toRemove){
+                final String sql = queryBuilder.AlterTableDropColumnSQL(oldft, remove, cx);                
+                final Statement st = cx.createStatement();
+                try {
+                    st.execute(sql);
+                } finally {
+                    closeSafe(st);
+                }                
+            }
+            
+            for(PropertyDescriptor add : toAdd){
+                final String sql = queryBuilder.AlterTableAddColumnSQL(oldft, add, cx);                
+                final Statement st = cx.createStatement();
+                try {
+                    st.execute(sql);
+                } finally {
+                    closeSafe(st);
+                }                
+            }
+            
+        } catch (final Exception e) {
+            throw new DataStoreException("Error occurred updating table", e);
+        } finally{
+            closeSafe(cx);
+        }
+        
+        // reset the type name cache, will be recreated when needed.
+        dbmodel.clearCache();
     }
 
     /**
