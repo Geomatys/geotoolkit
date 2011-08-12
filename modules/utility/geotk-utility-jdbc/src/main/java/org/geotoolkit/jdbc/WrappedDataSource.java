@@ -88,7 +88,7 @@ public class WrappedDataSource implements DataSource{
      * this method is only in JDK 7, declaring the override will break JDK 6 build.
      */
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return pool.getParentLogger();
+        throw new SQLFeatureNotSupportedException("Method getParentLogger will only be available when geotk will move on jdk 7.");
     }
 
 }
