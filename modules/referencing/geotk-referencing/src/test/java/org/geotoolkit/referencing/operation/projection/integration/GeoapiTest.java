@@ -18,11 +18,17 @@
 package org.geotoolkit.referencing.operation.projection.integration;
 
 import org.opengis.test.referencing.MathTransformTest;
+import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.referencing.operation.projection.ProjectionTestBase;
 
+import org.geotoolkit.util.XArrays;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -41,11 +47,39 @@ import org.junit.runners.JUnit4;
  * @since 3.19
  */
 @RunWith(JUnit4.class)
-public final class GeoapiTest extends MathTransformTest {
+public class GeoapiTest extends MathTransformTest {
+    /**
+     * Projections used by the GeoAPI test suites which are actually spherical rather
+     * than ellipsoidal.
+     */
+    private static final String[] SPHERICAL = {
+        "WGS 84 / Pseudo-Mercator",
+        "IGNF:MILLER"
+    };
+
     /**
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
         super(FactoryFinder.getMathTransformFactory(null));
+    }
+
+    /**
+     * Creates a new test suite using the given factory instance.
+     * This constructor is for {@link SphericalGeoapiTest} only.
+     */
+    GeoapiTest(final MathTransformFactory factory) {
+        super(factory);
+    }
+
+    /**
+     * Verifies that the formulas used by the {@code testFoo()} methods (inherited from GeoAPI)
+     * where the expected ones. If this {@code GeoapiTest} class, we expect ellipsoidal formulas.
+     * This test is geotk-specific.
+     */
+    @After
+    public void verifyFormulas() {
+        assertEquals(nameOfTargetCRS, XArrays.containsIgnoreCase(SPHERICAL, nameOfTargetCRS),
+                ProjectionTestBase.isSpherical(transform));
     }
 }

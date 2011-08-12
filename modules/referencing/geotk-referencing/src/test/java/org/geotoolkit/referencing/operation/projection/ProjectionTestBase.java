@@ -242,11 +242,22 @@ public abstract class ProjectionTestBase extends TransformTestBase {
     }
 
     /**
+     * Returns {@code true} if the given transform is one of the {@code Spherical}
+     * inner classes.
+     *
+     * @param  transform The transform to test.
+     * @return {@code true} if the transform is spherical.
+     */
+    public static boolean isSpherical(final MathTransform transform) {
+        return unitary(transform).isSpherical();
+    }
+
+    /**
      * Returns {@code true} if the current transform is one of the {@code Spherical}
      * inner classes.
      */
     final boolean isSpherical() {
-        return unitary(transform).isSpherical();
+        return isSpherical(transform);
     }
 
     /**
