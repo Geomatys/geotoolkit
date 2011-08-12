@@ -36,7 +36,9 @@ import org.opengis.test.ImplementationDetails;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.TestSuite;
 
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
@@ -76,9 +78,9 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
         setFactories(CSFactory.class,                           getCSFactory                          (        null));
         setFactories(CRSFactory.class,                          getCRSFactory                         (        null));
         setFactories(DatumFactory.class,                        getDatumFactory                       (        null));
-        setFactories(CoordinateOperationFactory.class,          getCoordinateOperationFactory         (        null));
+        setFactories(CoordinateOperationFactory.class,          CRS.getCoordinateOperationFactory     (       false));
         setFactories(CSAuthorityFactory.class,                  getCSAuthorityFactory                 ("EPSG", null));
-        setFactories(CRSAuthorityFactory.class,                 getCRSAuthorityFactory                ("EPSG", null));
+        setFactories(CRSAuthorityFactory.class,                 CRS.getAuthorityFactory               (       false));
         setFactories(DatumAuthorityFactory.class,               getDatumAuthorityFactory              ("EPSG", null));
         setFactories(CoordinateOperationAuthorityFactory.class, getCoordinateOperationAuthorityFactory("EPSG", null));
     }
@@ -105,20 +107,42 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
      */
     @Override
     public ToleranceModifier needsRelaxedTolerance(final MathTransform transform) {
-        if (transform instanceof AbstractMathTransform) {
+        return needsRelaxedTolerance(transform, true);
+    }
+
+    /**
+     * Implementation of the public {@link #needsRelaxedTolerance(MathTransform)} with a boolean
+     * argument indicating if the transform is alone, or part of a concatenated transforms chain.
+     * In the later case, we will increase the tolerance for the two ordinate values rather than
+     * only the latitude axis, because it is more difficult to know which axis is the latitude.
+     */
+    private static ToleranceModifier needsRelaxedTolerance(MathTransform transform, boolean isAlone) {
+        while (transform instanceof AbstractMathTransform) {
             final IdentifiedObject id = ((AbstractMathTransform) transform).getParameterDescriptors();
             if (id != null) {
                 if (nameMatches(id, "Lambert_Azimuthal_Equal_Area")) {
                     // Increase to 10 cm the tolerance factor in latitude for inverse projections.
-                    return scale(EnumSet.of(INVERSE_TRANSFORM), 1, 10);
+                    return scale(EnumSet.of(INVERSE_TRANSFORM), isAlone ? 1 : 10, 10);
                 }
                 if (nameMatches(id, "Cassini_Soldner")) {
                     // Increase to 10 cm the tolerance factor in latitude for direct projections,
                     // and to 2 metres the tolerance factor in latitude for inverse projections.
-                    return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  1,  10),
-                                   scale(EnumSet.of(INVERSE_TRANSFORM), 2, 200));
+                    final double tol = isAlone ? 10 : 200;
+                    return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  isAlone ? 1 : tol, tol),
+                                   scale(EnumSet.of(INVERSE_TRANSFORM), isAlone ? 2 : 200, 200));
                 }
             }
+            if (transform instanceof ConcatenatedTransform) {
+                final ConcatenatedTransform ct = (ConcatenatedTransform) transform;
+                final ToleranceModifier candidate = needsRelaxedTolerance(ct.transform1, false);
+                if (candidate != null) {
+                    return candidate;
+                }
+                transform = ct.transform2;
+                isAlone = false;
+                continue; // Check again the above transform.
+            }
+            break;
         }
         return null;
     }

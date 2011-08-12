@@ -17,13 +17,9 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.test.referencing.AuthorityFactoryTest;
 
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.factory.FactoryNotFoundException;
+import org.geotoolkit.referencing.CRS;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -31,12 +27,13 @@ import org.junit.runners.JUnit4;
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link ThreadedEpsgFactory} instance registered in {@link FactoryFinder}.
+ * the authority factory instance registered in {@link CRS}.
  * <p>
  * Note that there is another test, {@link org.geotoolkit.referencing.factory.GeoapiTest},
- * which is dedicated to the GeoAPI tests using authority factories.
+ * which is dedicated to the GeoAPI tests using object factories.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
  * @see org.geotoolkit.naming.GeoapiTest
@@ -53,18 +50,6 @@ public final class GeoapiTest extends AuthorityFactoryTest {
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(getFactory(), null, null);
-    }
-
-    /**
-     * Returns the authority factory to be used for the tests, or {@code null} if none.
-     */
-    private static CRSAuthorityFactory getFactory() {
-        try {
-            return AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG",
-                    new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class));
-        } catch (FactoryNotFoundException e) {
-            return null; // Have the effect of skipping the tests.
-        }
+        super(CRS.getAuthorityFactory(false), null, null);
     }
 }
