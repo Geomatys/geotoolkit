@@ -318,19 +318,17 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double λ2sinφ2 = λ*λ * sinφ2;
         final double λ2cosφ2 = λ*λ * cosφ2;
         final double c       = cosφ2 * excentricitySquared / (1 - excentricitySquared);
-              double n       = 1 / (1 - excentricitySquared * sinφ2);
-        final double dndφn   = excentricitySquared * sincosφ * n; // == (∂n/∂φ) / sqrt(n)
-        n = sqrt(n);
+              double rn      = 1 - excentricitySquared * sinφ2;
+        final double en2     = excentricitySquared / rn;
+        rn = sqrt(rn);
 
-        final double a = -C2 * (8*(c + 1) - tanφ2);
-        final double b =  C3 * (6* c + 5  - tanφ2);
-        final double A =  a * λ2cosφ2 + C1;
-        final double D = -2 * λ2cosφ2 * (A*sinφ - a*λ2sinφ2*(sinφ - C2*(8*c*sincosφ + tanφ)));
+        final double a = (-C2 * (8*(c + 1) - tanφ2)) * λ2cosφ2;
+        final double b = ( C3 * (6* c + 5  - tanφ2)) * λ2cosφ2 + 0.5;
+        final double D = ( C1 + a*(1 - tanφ2*(1 - C2*cosφ*(8*c + 1/cosφ2)))) * λ2cosφ2;
         return new Matrix2(
-                -n*cosφ*(λ2sinφ2*(λ2cosφ2*a*5 + 3*C1) - 1),
-                 n*λ*((A*λ2sinφ2 - 1) * (sinφ - dndφn*cosφ) + D),
-                 n*λ*sincosφ*(4*b*λ2cosφ2 + 1),
-                 n*λ2cosφ2*((b*λ2cosφ2 + 0.5)*((dndφn*sincosφ + 1) - 2*sinφ2)/cosφ2 -
-                    (b + C3*(6*c + 1/cosφ2)) * 2*λ2sinφ2) + dmlfn_dφ(sinφ2, cosφ2));
+                  (cosφ/rn) * (1 - λ2sinφ2*(5*a + 3*C1)),
+                (λ*sinφ/rn) * (1 - λ2sinφ2*(  a +   C1)) * (en2*cosφ2 - 2*D - 1),
+             (λ*sincosφ/rn) * (4*b - 1),
+               (λ2cosφ2/rn) * (b*(en2*sinφ2 - 2*tanφ2 + 1/cosφ2) - C3*λ2sinφ2*(24*c + 12)) + dmlfn_dφ(sinφ2, cosφ2));
     }
 }
