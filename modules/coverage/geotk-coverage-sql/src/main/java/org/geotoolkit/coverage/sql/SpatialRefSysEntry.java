@@ -45,7 +45,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -229,7 +228,7 @@ final class SpatialRefSysEntry {
                     copy.put(CoordinateReferenceSystem.NAME_KEY, name);
                     properties = copy;
                 }
-                final CRSFactory crsFactory = CRSUtilities.getCRSFactory(factory);
+                final CRSFactory crsFactory = database.getCRSFactory();
                 spatioTemporalCRS = crsFactory.createCompoundCRS(properties, elements);
                 if (temporalCRS == null) {
                     spatialCRS = spatioTemporalCRS;

@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
+import static org.junit.Assert.*;
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
 import static org.geotoolkit.referencing.IdentifiedObjects.*;
@@ -69,6 +70,14 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  */
 public final class GeoapiTest extends TestSuite implements ImplementationDetails {
     /**
+     * The configuration map, which lists the tests to disable.
+     */
+    private static final Properties CONFIGURATION = new Properties();
+    static {
+        CONFIGURATION.put("isUnofficialEpsgSupported", "false");
+    }
+
+    /**
      * Fix the authority factories to use for testing purpose. We do not rely on the
      * {@code META-INF/services/} discovery mechanism because the same implementation
      * is often used for many services.
@@ -95,11 +104,12 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
     }
 
     /**
-     * Unconditionally returns {@code null}, since we do not disable any test.
+     * Returns the configuration map, which lists the tests to disable.
      */
     @Override
     public Properties configuration(final Factory... factories) {
-        return null;
+        assertTrue(ALL_DISABLED.keySet().containsAll(CONFIGURATION.keySet()));
+        return CONFIGURATION;
     }
 
     /**

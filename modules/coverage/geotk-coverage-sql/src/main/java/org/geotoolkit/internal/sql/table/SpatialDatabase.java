@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 import javax.sql.DataSource;
+import java.awt.RenderingHints;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
@@ -31,6 +32,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransformFactory;
 
@@ -45,6 +47,8 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.wkt.DirectPostgisFactory;
 import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.factory.Factory;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -55,7 +59,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * of the horizontal, vertical and temporal extents.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.19
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -270,6 +274,34 @@ public class SpatialDatabase extends Database {
             }
         }
         throw new FactoryException(Errors.format(Errors.Keys.UNDEFINED_PROPERTY_$1, "SRID"));
+    }
+
+    /**
+     * Derives a {@link CRSFactory} from the {@link #getCRSAuthorityFactory() authority factory}.
+     * If the authority factory is already a {@code CRSFactory} instance, then it is returned.
+     * Otherwise the implementation hints are inspected. If no {@code CRSFactory} is found, then
+     * the default instance is fetched from the {@link AuthorityFactoryFinder}.
+     *
+     * @return The CRS factory.
+     * @throws FactoryException If the factory can not be created.
+     *
+     * @since 3.19
+     */
+    public final CRSFactory getCRSFactory() throws FactoryException {
+        final CRSAuthorityFactory factory = getCRSAuthorityFactory();
+        if (factory instanceof CRSFactory) {
+            return (CRSFactory) factory;
+        }
+        Hints hints = null;
+        if (factory instanceof Factory) {
+            final Map<RenderingHints.Key,?> impl = ((Factory) factory).getImplementationHints();
+            final Object candidate = impl.get(Hints.CRS_FACTORY);
+            if (candidate instanceof CRSFactory) {
+                return (CRSFactory) candidate;
+            }
+            hints = new Hints(impl);
+        }
+        return AuthorityFactoryFinder.getCRSFactory(hints);
     }
 
     /**

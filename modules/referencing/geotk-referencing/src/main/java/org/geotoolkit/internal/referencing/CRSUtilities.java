@@ -20,10 +20,10 @@ package org.geotoolkit.internal.referencing;
 import java.util.Map;
 import java.util.List;
 import java.util.Collections;
-import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
+import javax.measure.unit.NonSI;
+import javax.measure.quantity.Angle;
 
-import org.opengis.util.Factory;
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -36,8 +36,6 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
@@ -52,7 +50,7 @@ import org.geotoolkit.resources.Errors;
  * in any future release.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 2.0
  * @module
@@ -62,34 +60,6 @@ public final class CRSUtilities extends Static {
      * Do not allow creation of instances of this class.
      */
     private CRSUtilities() {
-    }
-
-    /**
-     * Derives a {@link CRSFactory} for the given factory. If the given factory is already
-     * a {@code CRSFactory} instance, then it is returned. Otherwise the implementation hints
-     * are inspected. If no {@code CRSFactory} is found, then the default instance is fetched
-     * from the {@link FactoryFinder}.
-     *
-     * @param  factory The factory from which to infer a {@link CRSFactory}.
-     * @return The CRS factory.
-     *
-     * @since 3.10
-     */
-    public static CRSFactory getCRSFactory(final Factory factory) {
-        if (factory instanceof CRSFactory) {
-            return (CRSFactory) factory;
-        }
-        Hints hints = null;
-        if (factory instanceof org.geotoolkit.factory.Factory) {
-            final Map<RenderingHints.Key,?> impl =
-                    ((org.geotoolkit.factory.Factory) factory).getImplementationHints();
-            final Object candidate = impl.get(Hints.CRS_FACTORY);
-            if (candidate instanceof CRSFactory) {
-                return (CRSFactory) candidate;
-            }
-            hints = new Hints(impl);
-        }
-        return FactoryFinder.getCRSFactory(hints);
     }
 
     /**
@@ -319,6 +289,35 @@ public final class CRSUtilities extends Static {
             }
         }
         return Collections.singletonMap(IdentifiedObject.NAME_KEY, name.toString());
+    }
+
+    /**
+     * Returns the longitude value relative to the Greenwich Meridian,
+     * expressed in the specified units.
+     *
+     * @param  pm   The prime meridian from which to get the Greenwich longitude.
+     * @param  unit The unit for the prime meridian to return.
+     * @return The prime meridian in the given units, or 0 if the given prime meridian was null.
+     *
+     * @since 3.19
+     */
+    public static double getGreenwichLongitude(final PrimeMeridian pm, final Unit<Angle> unit) {
+        if (pm == null) {
+            return 0;
+        }
+        return pm.getAngularUnit().getConverterTo(unit).convert(pm.getGreenwichLongitude());
+    }
+
+    /**
+     * Returns the longitude value relative to the Greenwich Meridian, expressed in decimal degrees.
+     *
+     * @param  pm The prime meridian from which to get the Greenwich longitude.
+     * @return The prime meridian in the given units, or 0 if the given prime meridian was null.
+     *
+     * @since 3.19
+     */
+    public static double getGreenwichLongitude(final PrimeMeridian pm) {
+        return getGreenwichLongitude(pm, NonSI.DEGREE_ANGLE);
     }
 
     /**

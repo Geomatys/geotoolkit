@@ -57,11 +57,11 @@ import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static java.util.Collections.singletonList;
-import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import static org.geotoolkit.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.CRS.equalsApproximatively;
 import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
+import static org.geotoolkit.internal.referencing.CRSUtilities.getGreenwichLongitude;
 
 
 /**
@@ -485,9 +485,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * @param standard The coordinate system that defines the standard. Usually
      *        {@link DefaultEllipsoidalCS#GEODETIC_2D} or {@link DefaultCartesianCS#PROJECTED}.
      */
-    private static boolean hasStandardAxis(final CoordinateSystem cs,
-                                           final CoordinateSystem standard)
-    {
+    private static boolean hasStandardAxis(final CoordinateSystem cs, final CoordinateSystem standard) {
         final int dimension = standard.getDimension();
         if (cs.getDimension() != dimension) {
             return false;
@@ -602,21 +600,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             }
         }
         return matrix;
-    }
-
-    /**
-     * Returns the longitude value relative to the Greenwich Meridian,
-     * expressed in the specified units.
-     */
-    private static double getGreenwichLongitude(final PrimeMeridian pm, final Unit<Angle> unit) {
-        return pm.getAngularUnit().getConverterTo(unit).convert(pm.getGreenwichLongitude());
-    }
-
-    /**
-     * Returns the longitude value relative to the Greenwich Meridian, expressed in decimal degrees.
-     */
-    private static double getGreenwichLongitude(final PrimeMeridian pm) {
-        return getGreenwichLongitude(pm, DEGREE_ANGLE);
     }
 
 

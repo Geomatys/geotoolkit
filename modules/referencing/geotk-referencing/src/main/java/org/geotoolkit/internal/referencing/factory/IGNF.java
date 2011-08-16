@@ -70,7 +70,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
     private static final Citation AUTHORITY;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
-        r.setOrganisationName(new SimpleInternationalString("Institut Géographic National"));
+        r.setOrganisationName(new SimpleInternationalString("Institut Géographique National"));
         r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
         final DefaultCitation c = new DefaultCitation(r);
         c.getIdentifiers().add(new DefaultIdentifier("IGNF"));
@@ -166,6 +166,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         param.parameter("semi-minor axis").setValue(6378137);
         final ReferenceIdentifier[] identifiers = {
             new NamedIdentifier(AUTHORITY, "MILLER"),
+            new DefaultReferenceIdentifier(Citations.EPSG, "EPSG", "310642901"), // Unofficial
             new DefaultReferenceIdentifier(Citations.EPSG, "EPSG", "54003") // Unofficial
         };
         properties.clear();

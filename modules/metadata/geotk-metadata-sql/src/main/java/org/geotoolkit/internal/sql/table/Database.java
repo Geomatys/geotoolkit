@@ -113,7 +113,8 @@ public class Database implements Localized {
     private volatile Locale locale;
 
     /**
-     * The hints to use for fetching factories. Shall be considered read-only.
+     * The hints to use for fetching factories, or {@code null} for the default hints.
+     * Shall be considered read-only.
      */
     final Hints hints;
 
