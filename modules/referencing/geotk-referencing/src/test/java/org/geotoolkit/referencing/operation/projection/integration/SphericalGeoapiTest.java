@@ -48,7 +48,8 @@ public final class SphericalGeoapiTest extends GeoapiTest {
      * Projections used by the GeoAPI test suites for which no spherical formulas are available.
      */
     private static final String[] NO_SPHERICAL = {
-        "CRS S-JTSK (Ferro) / Krovak"
+        "CRS S-JTSK (Ferro) / Krovak",
+        "Timbalai 1948 / RSO Borneo (m)"
     };
 
     /**

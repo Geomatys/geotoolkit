@@ -22,9 +22,11 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.util.Collection;
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -38,6 +40,7 @@ import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 
 import static java.lang.Math.*;
@@ -157,7 +160,8 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @see Mercator
  * @see TransverseMercator
@@ -542,26 +546,28 @@ public class ObliqueMercator extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = rollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
-        if (abs(abs(y) - PI/2) > ANGLE_TOLERANCE) {
-            double Q = E / pow(tsfn(y, sin(y)), B);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        double x;
+        double y = φ;
+        if (abs(abs(φ) - PI/2) > ANGLE_TOLERANCE) {
+            double Q = E / pow(tsfn(φ, sin(φ)), B);
             double t = 1 / Q;
             double S = 0.5 * (Q - t);
-            double V = sin(B * x);
+            double V = sin(B * λ);
             double U = (S * singamma0 - V * cosgamma0) / (0.5 * (Q + t));
             if (abs(abs(U) - 1) < EPSILON) {
                 throw new ProjectionException(Errors.Keys.INFINITE_VALUE_$1, "v");
             }
-            t = cos(B * x);
+            t = cos(B * λ);
             if (abs(t) < FINER_EPSILON) {
-                y = x * (B*B);
+                  y = λ * (B*B);
             } else {
-                y = atan2((S * cosgamma0 + V * singamma0), t);
+                  y = atan2((S * cosgamma0 + V * singamma0), t);
             }
-            x = 0.5 * log((1 - U) / (1 + U));
+              x = 0.5 * log((1 - U) / (1 + U));
         } else {
-            x = (y > 0 ? v_pole_n : v_pole_s);
+              x = (φ > 0 ? v_pole_n : v_pole_s);
             // y is unchanged.
         }
         dstPts[dstOff]     = x;
@@ -576,22 +582,73 @@ public class ObliqueMercator extends UnitaryProjection {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x  = srcPts[srcOff];
-        double y  = srcPts[srcOff + 1];
-        double Qp = exp(-x);
-        double t  = 1 / Qp;
-        double Sp = 0.5 * (Qp - t);
-        double Vp = sin(y);
-        double Up = (Vp * cosgamma0 + Sp * singamma0) / (0.5 * (Qp + t));
+        final double x  = srcPts[srcOff];
+        final double y  = srcPts[srcOff + 1];
+        final double Qp = exp(-x);
+        final double t  = 1 / Qp;
+        final double Sp = 0.5 * (Qp - t);
+        final double Vp = sin(y);
+        final double Up = (Vp * cosgamma0 + Sp * singamma0) / (0.5 * (Qp + t));
+        double λ, φ;
         if (abs(abs(Up) - 1) < EPSILON) {
-            x = 0.0;
-            y = copySign(PI/2, Up);
+            λ = 0.0;
+            φ = copySign(PI/2, Up);
         } else {
-            x = -atan2((Sp*cosgamma0 - Vp*singamma0), cos(y)) / B;
-            y = cphi2(pow(E / sqrt((1 + Up) / (1 - Up)), 1/B));
+            λ = -atan2((Sp*cosgamma0 - Vp*singamma0), cos(y)) / B;
+            φ = cphi2(pow(E / sqrt((1 + Up) / (1 - Up)), 1/B));
         }
-        dstPts[dstOff] = unrollLongitude(x);
-        dstPts[dstOff + 1] = y;
+        dstPts[dstOff] = unrollLongitude(λ);
+        dstPts[dstOff + 1] = φ;
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     */
+    @Override
+    public Matrix derivative(Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ = sin(φ);
+        final double m00, m01, m10, m11;
+        if (abs(abs(φ) - PI/2) > ANGLE_TOLERANCE) {
+            final double Q     =  E / pow(tsfn(φ, sinφ), B);
+            final double dQ_dφ = -B * Q * dtsfn_dφ(φ, sinφ, cos(φ));
+            final double S     = 0.5 * (Q - 1/Q);
+            final double Sp    = 0.5 * (Q + 1/Q);
+            final double dS_dφ = 0.5 * dQ_dφ * (1 + 1/(Q*Q));
+            final double V     = sin(B * λ);
+            final double dV_dλ = cos(B * λ);
+            final double U     = (S*singamma0 - V*cosgamma0) / Sp;
+            final double dU_dλ = (-cosgamma0 / Sp) * dV_dλ * B;
+            final double dU_dφ = dQ_dφ * (singamma0 + (singamma0 + U)/(Q*Q) - U) / (2*Sp);
+            if (abs(abs(U) - 1) < EPSILON) {
+                throw new ProjectionException(Errors.Keys.INFINITE_VALUE_$1, "v");
+            }
+            if (abs(dV_dλ) < FINER_EPSILON) {
+                m10 = B*B; // Y = λ * (B*B);
+                m11 = 0;
+            } else {
+                final double M = (S*cosgamma0 + V*singamma0);
+                final double L = hypot(dV_dλ, M);
+                final double P = L + dV_dλ;
+                final double D = (P*P + M*M);
+                m10 = 2 * B * (dV_dλ * (singamma0*P + (V - singamma0*M) * M/L) + V*M) / D; // Y = atan2(M, T)
+                m11 = 2 * cosgamma0 * dS_dφ * (P - M*M/L) / D;
+            }
+            final double R = U*U - 1;
+            m00 = dU_dλ / R; // X = 0.5 * log((1-U) / (1+U))
+            m01 = dU_dφ / R;
+        } else {
+            //X = (φ > 0 ? v_pole_n : v_pole_s);
+            m00 = m01 = m10 = 0;
+            m11 = 1;
+            // y is unchanged.
+        }
+        return new Matrix2(m00, m01, m10, m11);
     }
 
     /**

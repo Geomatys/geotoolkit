@@ -25,6 +25,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARAMETERS;
 
@@ -33,7 +34,8 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARA
  * Tests the {@link ObliqueMercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -93,8 +95,12 @@ public final class ObliqueMercatorTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testKnownPoint() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Oblique Mercator");
         parameters.parameter("semi-major axis").setValue(6377298.556);
@@ -124,5 +130,26 @@ public final class ObliqueMercatorTest extends ProjectionTestBase {
         final double[] expected = new double[] {679245.73, 596562.78};
         tolerance = 0.005;
         verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection and derivates a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testEllipsoidalDerivative() throws TransformException {
+        tolerance = 1E-9;
+        transform = create(0, 0, 0);
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians( 0), toRadians( 0));
+        verifyDerivative(toRadians(15), toRadians(30));
+        verifyDerivative(toRadians(15), toRadians(40));
+        verifyDerivative(toRadians(10), toRadians(60));
     }
 }
