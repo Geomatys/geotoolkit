@@ -21,14 +21,17 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -135,7 +138,8 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.18
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
  *
@@ -453,6 +457,71 @@ public class Stereographic extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final double λ = rollLongitude(point.getX());
+            final double φ = point.getY();
+            final double sinφ = sin(φ);
+            final double sinλ = sin(λ);
+            final double cosφ = cos(φ);
+            final double cosλ = cos(λ);
+            final double c0cφ = cosφ0*cosφ;
+            final double c0sφ = cosφ0*sinφ;
+            final double s0cφ = sinφ0*cosφ;
+            final double s0sφ = sinφ0*sinφ;
+            final double F = 1 + c0cφ*cosλ + s0sφ;      // (21-4)
+            final double dFdλ = (c0cφ*sinλ)        / F; // Actually (∂F/∂λ)/-F
+            final double dFdφ = (c0sφ*cosλ - s0cφ) / F; // Actually (∂F/∂φ)/-F
+            final double dcsφ =  c0sφ - s0cφ*cosλ;
+            final Matrix derivative = new Matrix2(
+                    cosφ*(dFdλ*sinλ + cosλ) / F,
+                    sinλ*(dFdφ*cosφ - sinφ) / F,
+                         (dFdλ*dcsφ + (s0cφ*sinλ)) / F,
+                         (dFdφ*dcsφ + (s0sφ*cosλ + c0cφ)) / F);
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ  = sin(φ);
+        final double sinλ  = sin(λ);
+        final double cosφ  = cos(φ);
+        final double cosλ  = cos(λ);
+        final double ssfn  = ssfn(φ, sinφ);
+        final double χ     = 2*atan(ssfn) - PI/2;
+        final double dχ_dφ = 2*dssfn_dφ(φ, sinφ, cosφ) * ssfn / (1 + (ssfn*ssfn));
+        final double sinχ  = sin(χ);
+        final double cosχ  = cos(χ);
+        final double cosχcosλ    =  cosχ*cosλ;
+        final double dcosχLon_dλ = -cosχ*sinλ;
+        final double dcosχLon_dφ = -cosλ*dχ_dφ*sinχ;
+        final double A = 1 + sinχ1*sinχ + cosχ1*cosχcosλ;
+        final double dA_dλ = cosχ1*dcosχLon_dλ;
+        final double dA_dφ = sinχ1*dχ_dφ*cosχ + cosχ1*dcosχLon_dφ;
+        return new Matrix2(
+                (cosχ*(cosλ*A - dA_dλ*sinλ)) / (A*A),
+                -sinλ*(dχ_dφ*sinχ*A + dA_dφ*cosχ) / (A*A),
+                (-sinχ1*dcosχLon_dλ*A-dA_dλ*(cosχ1 * sinχ - sinχ1 * cosχcosλ)) / (A*A),
+                ((cosχ1*dχ_dφ*cosχ-sinχ1*dcosχLon_dφ)*A-dA_dφ*(cosχ1 * sinχ - sinχ1 * cosχcosλ)) / (A*A));
     }
 
     /**
