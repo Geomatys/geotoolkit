@@ -21,7 +21,11 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
+
+import org.opengis.referencing.operation.Matrix;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
@@ -58,7 +62,8 @@ import static java.lang.Math.*;
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @see PolarStereographic
  * @see EquatorialStereographic
@@ -187,9 +192,69 @@ public class ObliqueStereographic extends Stereographic {
     }
 
     /**
-     * A simple function used by the transforms.
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
      */
-    private static double srat(double esinp, double exp) {
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinλ     = sin(λ);
+        final double cosλ     = cos(λ);
+        final double sinE     = sin(0.5*φ + PI/4);
+        final double cosE     = cos(0.5*φ + PI/4);
+        final double esinφ    = excentricity*sin(φ);
+        final double ecosφ    = excentricity*cos(φ);
+        final double srat     = srat(esinφ, ratexp);
+        final double T        = pow(sinE/cosE, C);
+        final double dT_dφ    = 0.5*C/(sinE*cosE);
+        final double sratKT   = K*T*srat;
+        final double sinU     = (sratKT*sratKT - 1) / (1 + sratKT*sratKT);
+        final double cosU     = 2*sratKT / (1 + sratKT*sratKT);
+        final double dU_dφ    = 2*sratKT*(dT_dφ + dsrat_dφ(esinφ, ecosφ, ratexp)) / (1 + sratKT*sratKT);
+
+        //X = cosU * sinx / k;
+        final double k = 1 + sinc0*sinU + cosc0*cosU*cosλ;
+        final double dk_dλ = -cosc0*cosU*sinλ;
+        final double dk_dφ = dU_dφ*(sinc0*cosU-cosc0*cosλ*sinU);
+
+        //Y = R / k;
+        final double R = (cosc0*sinU - sinc0*cosU*cosλ);
+        final double dR_dλ = sinc0*cosU*sinλ;
+        final double dR_dφ = dU_dφ*(cosc0*cosU+sinc0*cosλ*sinU);
+        return new Matrix2(
+                cosU*(cosλ/k-dk_dλ*sinλ/(k*k)),
+                sinλ*(-dU_dφ*sinU*k-dk_dφ*cosU)/(k*k),
+                (dR_dλ*k-dk_dλ*R)/(k*k),
+                (dR_dφ*k-dk_dφ*R)/(k*k));
+    }
+
+    /**
+     * A simple function used by the transforms.
+     *
+     * @param  sinφ the sine of latitude multiplicate by {@code excentricity}.
+     * @param  cosφ The cosine of latitude multiplicate by {@code excentricity}.
+     * @param  exp  The exponent, which is usually (but not always) {@link #ratexp}.
+     */
+    private static double srat(final double esinp, final double exp) {
         return pow((1.0 - esinp) / (1.0 + esinp), exp);
+    }
+
+    /**
+     * Computes the derivative of the {@link #srat(double, double)} method divided by {@code srat}.
+     * Callers must multiply the return value by {@code srat} in order to get the actual value.
+     *
+     * @param  sinφ the sine of latitude multiplied by {@code excentricity}.
+     * @param  cosφ The cosine of latitude multiplied by {@code excentricity}.
+     * @param  exp  The exponent, which is usually (but not always) {@link #ratexp}.
+     * @return The {@code srat} derivative at the latitude.
+     *
+     * @since 3.19
+     */
+    private static double dsrat_dφ(final double esinφ, final double ecosφ, double exp) {
+        return -2*exp*ecosφ / (1.0 - esinφ*esinφ);
     }
 }

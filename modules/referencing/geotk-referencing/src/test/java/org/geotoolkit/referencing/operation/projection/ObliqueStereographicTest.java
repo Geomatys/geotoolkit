@@ -31,7 +31,8 @@ import static org.junit.Assert.*;
  * Tests the {@link ObliqueStereographic} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -50,8 +51,12 @@ public final class ObliqueStereographicTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testKnownPoint() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Oblique Stereographic");
         parameters.parameter("semi-major axis").setValue(6377397.155);
@@ -67,5 +72,30 @@ public final class ObliqueStereographicTest extends ProjectionTestBase {
         final double[] expected = new double[] {196105.283, 557057.739};
         tolerance = 0.001;
         verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection and derivates a few points.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testDerivative() throws FactoryException, TransformException {
+        tolerance = 1E-4;
+        final double delta = Math.toRadians(1.0 / (60*1852)); // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+
+        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Oblique Stereographic");
+        parameters.parameter("semi-major axis").setValue(6377397.155);
+        parameters.parameter("semi-minor axis").setValue(6377397.155 * (1 - 1/299.15281));
+        transform = mtFactory.createParameterizedTransform(parameters);
+        assertFalse(isSpherical());
+        validate();
+        verifyDerivative(Math.toRadians( 5), Math.toRadians(  5));
+        verifyDerivative(Math.toRadians(-5), Math.toRadians( 15));
+        verifyDerivative(Math.toRadians(20), Math.toRadians(-30));
     }
 }
