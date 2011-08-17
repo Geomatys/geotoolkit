@@ -392,15 +392,14 @@ public class Stereographic extends UnitaryProjection {
                                  final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
-            final double cosφ = cos(y);
-            final double sinφ = sin(y);
-            final double cosλ = cos(x);
-            final double f = 1 + sinφ0*sinφ + cosφ0*cosφ*cosλ; // (21-4)
-            x = cosφ * sin(x) / f;                             // (21-2)
-            y = (cosφ0 * sinφ - sinφ0 * cosφ * cosλ) / f;      // (21-3)
-
+            final double λ = rollLongitude(srcPts[srcOff]);
+            final double φ = srcPts[srcOff + 1];
+            final double cosφ = cos(φ);
+            final double sinφ = sin(φ);
+            final double cosλ = cos(λ);
+            final double f = 1 + sinφ0*sinφ + cosφ0*cosφ*cosλ;          // (21-4)
+            final double x = cosφ * sin(λ) / f;                         // (21-2)
+            final double y = (cosφ0 * sinφ - sinφ0 * cosφ * cosλ) / f;  // (21-3)
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
@@ -427,25 +426,26 @@ public class Stereographic extends UnitaryProjection {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = srcPts[srcOff  ];
-            double y = srcPts[srcOff+1];
+            final double x = srcPts[srcOff  ];
+            final double y = srcPts[srcOff+1];
             final double ρ = hypot(x, y);
+            double λ, φ;
             if (abs(ρ) < EPSILON) {
-                y = φ0;
-                x = 0.0;
+                φ = φ0;
+                λ = 0.0;
             } else {
                 final double c    = 2 * atan(ρ);
                 final double cosc = cos(c);
                 final double sinc = sin(c);
                 final double ct   = ρ*cosφ0*cosc - y*sinφ0*sinc; // (20-15)
                 final double t    = x*sinc;                      // (20-15)
-                y = asin(cosc*sinφ0 + y*sinc*cosφ0/ρ);           // (20-14)
-                x = atan2(t, ct);
+                φ = asin(cosc*sinφ0 + y*sinc*cosφ0/ρ);           // (20-14)
+                λ = atan2(t, ct);
             }
-            x = unrollLongitude(x);
-            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff  ] = x;
-            dstPts[dstOff+1] = y;
+            λ = unrollLongitude(λ);
+            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, λ, φ);
+            dstPts[dstOff]   = λ;
+            dstPts[dstOff+1] = φ;
         }
 
         /**
@@ -505,26 +505,23 @@ public class Stereographic extends UnitaryProjection {
     public Matrix derivative(final Point2D point) throws ProjectionException {
         final double λ = rollLongitude(point.getX());
         final double φ = point.getY();
-        final double sinφ  = sin(φ);
-        final double sinλ  = sin(λ);
-        final double cosφ  = cos(φ);
-        final double cosλ  = cos(λ);
-        final double ssfn  = ssfn(φ, sinφ);
-        final double χ     = 2*atan(ssfn) - PI/2;
-        final double dχ_dφ = 2*dssfn_dφ(φ, sinφ, cosφ) * ssfn / (1 + (ssfn*ssfn));
-        final double sinχ  = sin(χ);
-        final double cosχ  = cos(χ);
-        final double cosχcosλ    =  cosχ*cosλ;
-        final double dcosχLon_dλ = -cosχ*sinλ;
-        final double dcosχLon_dφ = -cosλ*dχ_dφ*sinχ;
-        final double A = 1 + sinχ1*sinχ + cosχ1*cosχcosλ;
-        final double dA_dλ = cosχ1*dcosχLon_dλ;
-        final double dA_dφ = sinχ1*dχ_dφ*cosχ + cosχ1*dcosχLon_dφ;
+        final double sinφ = sin(φ);
+        final double sinλ = sin(λ);
+        final double cosφ = cos(φ);
+        final double cosλ = cos(λ);
+        final double ssfn = ssfn(φ, sinφ);
+        final double sd   = ssfn - 1/ssfn;
+        final double s2p  = 1 + ssfn*ssfn;
+        final double dχφ  = 2*dssfn_dφ(φ, sinφ, cosφ) * ssfn;
+        final double A    = s2p/ssfn + sd*sinχ1 + 2*cosλ*cosχ1;
+        final double dAλ  = -2*cosχ1*sinλ / A; // The "/A" is actually not part of the derivative.
+        final double dAφ  = (2*sinχ1 - sd*cosλ*cosχ1) / (s2p*A); // Same as above comment.
+        final double d    = (cosχ1*sd - 2*cosλ*sinχ1);
         return new Matrix2(
-                (cosχ*(cosλ*A - dA_dλ*sinλ)) / (A*A),
-                -sinλ*(dχ_dφ*sinχ*A + dA_dφ*cosχ) / (A*A),
-                (-sinχ1*dcosχLon_dλ*A-dA_dλ*(cosχ1 * sinχ - sinχ1 * cosχcosλ)) / (A*A),
-                ((cosχ1*dχ_dφ*cosχ-sinχ1*dcosχLon_dφ)*A-dA_dφ*(cosχ1 * sinχ - sinχ1 * cosχcosλ)) / (A*A));
+                2*(cosλ - sinλ*dAλ) / A,
+                -sinλ*dχφ * (sd/s2p + 2*dAφ) / A,
+                (2*sinλ*sinχ1 - dAλ*d) / A,
+                dχφ * ((2*cosχ1 + sinχ1*cosλ*sd)/s2p - dAφ*d) / A);
     }
 
     /**
