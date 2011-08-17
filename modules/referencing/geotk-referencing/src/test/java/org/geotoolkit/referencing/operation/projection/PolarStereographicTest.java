@@ -25,6 +25,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
 
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 
 
@@ -32,7 +33,8 @@ import static org.junit.Assert.*;
  * Tests the {@link PolarStereographic} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 3.00
  */
@@ -92,5 +94,61 @@ public final class PolarStereographicTest extends ProjectionTestBase {
         final double[] expected = new double[] {7255380.79, 7053389.56};
         tolerance = 0.005;
         verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection and derivates a few points. The tolerance threshold is set
+     * to a relatively high value (1E-2) because the tolerance matrix calculated by
+     * {@link #verifyDerivative(double[])} is high anyway.
+     *
+     * @throws FactoryException Should never happen.
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testSphericalDerivative() throws TransformException, FactoryException {
+        tolerance = 1E-2;
+
+        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Polar Stereographic (variant A)");
+        parameters.parameter("semi-minor axis").setValue(6378137.0);
+        parameters.parameter("semi-major axis").setValue(6378137.0);
+        transform = mtFactory.createParameterizedTransform(parameters);
+        assertTrue(isSpherical());
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians(-70), toRadians(90));
+        verifyDerivative(toRadians(-60), toRadians(85));
+        verifyDerivative(toRadians( 20), toRadians(80));
+    }
+
+    /**
+     * Creates a projection and derivates a few points. The tolerance threshold is set
+     * to a relatively high value (1E-2) because the tolerance matrix calculated by
+     * {@link #verifyDerivative(double[])} is high anyway.
+     *
+     * @throws FactoryException Should never happen.
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testEllipsoidalDerivative() throws TransformException, FactoryException {
+        tolerance = 2E-2;
+
+        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Polar Stereographic (variant A)");
+        parameters.parameter("semi-major axis").setValue(6378137.0);
+        parameters.parameter("semi-minor axis").setValue(6378137.0 * (1 - 1/298.2572236));
+        transform = mtFactory.createParameterizedTransform(parameters);
+        assertFalse(isSpherical());
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians(-70), toRadians(90));
+        verifyDerivative(toRadians(-60), toRadians(85));
+        verifyDerivative(toRadians( 20), toRadians(80));
     }
 }

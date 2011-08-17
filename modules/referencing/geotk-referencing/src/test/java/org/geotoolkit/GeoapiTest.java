@@ -137,9 +137,12 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
                 if (nameMatches(id, "Cassini_Soldner")) {
                     // Increase to 10 cm the tolerance factor in latitude for direct projections,
                     // and to 2 metres the tolerance factor in latitude for inverse projections.
-                    final double tol = isAlone ? 10 : 200;
-                    return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  isAlone ? 1 : tol, tol),
-                                   scale(EnumSet.of(INVERSE_TRANSFORM), isAlone ? 2 : 200, 200));
+                    if (isAlone) {
+                        return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  1,  10),
+                                       scale(EnumSet.of(INVERSE_TRANSFORM), 2, 200));
+                    } else {
+                        return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 200, 200);
+                    }
                 }
             }
             if (transform instanceof ConcatenatedTransform) {

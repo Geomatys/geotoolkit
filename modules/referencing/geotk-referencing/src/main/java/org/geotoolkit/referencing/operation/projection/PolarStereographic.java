@@ -21,14 +21,17 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*;
@@ -43,7 +46,8 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @see EquatorialStereographic
  * @see ObliqueStereographic
@@ -369,13 +373,63 @@ public class PolarStereographic extends Stereographic {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.19
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final double λ = rollLongitude(point.getX());
+            final double φ = point.getY();
+            final double sinφp = sin(φ) + 1;
+            final double sinλ  = sin(λ);
+            final double cosλ  = cos(λ);
+            final double F     = cos(φ) / sinφp; // == tan (pi/4 - phi/2)
+            final Matrix derivative = new Matrix2(
+                     cosλ * F,        // ∂x/∂λ
+                    -sinλ / sinφp,    // ∂x/∂φ
+                    -sinλ * F,        // ∂y/∂λ
+                    -cosλ / sinφp);   // ∂y/∂φ
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.19
+     */
+    @Override
+    public Matrix derivative(Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinφ  = sin(φ);
+        final double sinλ  = sin(λ);
+        final double cosλ  = cos(λ);
+        final double ρ     = tsfn(φ, sinφ);
+        final double dρ_dφ = dtsfn_dφ(φ, sinφ,cos(φ))*ρ;
+        return new Matrix2(
+                 cosλ*ρ,       // ∂x/∂λ
+                 sinλ*dρ_dφ,   // ∂x/∂φ
+                -sinλ*ρ,       // ∂y/∂λ
+                 cosλ*dρ_dφ);  // ∂y/∂φ
     }
 
 
 
-
     /**
-     * Overides {@link PolarStereographic} to use the a series for the {@link #inverseTransform
+     * Overrides {@link PolarStereographic} to use the a series for the {@link #inverseTransform
      * inverse transform} method. This is the equation specified by the EPSG. Allows for a
      * {@code "latitude_true_scale"} parameter to be used, but this parameter is not listed
      * by the EPSG and is not given as a parameter by the provider.
