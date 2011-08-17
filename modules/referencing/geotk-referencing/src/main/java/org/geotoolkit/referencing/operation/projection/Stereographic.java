@@ -425,8 +425,8 @@ public class Stereographic extends UnitaryProjection {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = unrollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             final double ρ = hypot(x, y);
             if (abs(ρ) < EPSILON) {
                 y = φ0;
@@ -440,8 +440,9 @@ public class Stereographic extends UnitaryProjection {
                 y = asin(cosc*sinφ0 + y*sinc*cosφ0/ρ);           // (20-14)
                 x = atan2(t, ct);
             }
+            x = unrollLongitude(x);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
+            dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
         }
 

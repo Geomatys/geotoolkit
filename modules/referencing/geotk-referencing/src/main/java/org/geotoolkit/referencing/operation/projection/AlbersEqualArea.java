@@ -282,8 +282,8 @@ public class AlbersEqualArea extends UnitaryProjection {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = srcPts[srcOff];
-        double y = srcPts[srcOff + 1];
+        double x = srcPts[srcOff  ];
+        double y = srcPts[srcOff+1];
         /*
          * Proj4 had a code like this:
          *
@@ -310,8 +310,8 @@ public class AlbersEqualArea extends UnitaryProjection {
                 y = phi1(y);
             }
         }
-        dstPts[dstOff] = unrollLongitude(x);
-        dstPts[dstOff + 1] = y;
+        dstPts[dstOff  ] = unrollLongitude(x);
+        dstPts[dstOff+1] = y;
     }
 
 
@@ -459,8 +459,8 @@ public class AlbersEqualArea extends UnitaryProjection {
             ρ = sqrt(ρ);
             final double dρ_dφ = -n*cosφ / ρ;
             final Matrix derivative = new Matrix2(
-                    cosλ * ρ, dρ_dφ * sinλ,    // dx/dλ, dx/dφ
-                   -sinλ * ρ, dρ_dφ * cosλ);   // dy/dλ, dy/dφ
+                    cosλ * ρ, dρ_dφ * sinλ,    // ∂x/∂λ, ∂x/∂φ
+                   -sinλ * ρ, dρ_dφ * cosλ);   // ∂y/∂λ, ∂y/∂φ
 
             assert Assertions.checkDerivative(derivative, super.derivative(point));
             return derivative;
@@ -496,8 +496,8 @@ public class AlbersEqualArea extends UnitaryProjection {
         double esinφ2 = excentricity * sinφ;
         esinφ2 *= esinφ2;
         final double dρ_dφ = -0.5 * n*dqsfn_dφ(sinφ, cos(φ)) / ρ;
-        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // dx/dλ, dx/dφ
-                          -sinλ * ρ, dρ_dφ * cosλ); // dy/dλ, dy/dφ
+        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // ∂x/∂λ, ∂x/∂φ
+                          -sinλ * ρ, dρ_dφ * cosλ); // ∂y/∂λ, ∂y/∂φ
     }
 
     /**

@@ -237,12 +237,12 @@ public class CassiniSoldner extends CassiniOrMercator {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            final double x = srcPts[srcOff];
-            final double y = srcPts[srcOff + 1];
+            final double x = srcPts[srcOff  ];
+            final double y = srcPts[srcOff+1];
             final double φ = asin(sin(y) * cos(x));
             final double λ = unrollLongitude(atan2(tan(x), cos(y)));
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = λ;
+            dstPts[dstOff  ] = λ;
             dstPts[dstOff+1] = φ;
         }
 
@@ -286,10 +286,10 @@ public class CassiniSoldner extends CassiniOrMercator {
             final double dyd   = (mλφp*mλφp + tanφ*tanφ)*cosφ / 2;
             final double dxd   = sqrt(1 - (cosφ*cosφ) * (sinλ*sinλ));
             final Matrix derivative = new Matrix2(
-                     cosλ *                  (cosφ / dxd),    // dx/dλ
-                    -sinλ *                  (sinφ / dxd),    // dx/dφ
-                     sinλ * (1 + cosλ/mλφ) * (sinφ / dyd),    // dy/dλ
-                    (mλφp - tanφ*tanφ/mλφ) / (cosφ * dyd));   // dy/dφ
+                     cosλ *                  (cosφ / dxd),    // ∂x/∂λ
+                    -sinλ *                  (sinφ / dxd),    // ∂x/∂φ
+                     sinλ * (1 + cosλ/mλφ) * (sinφ / dyd),    // ∂y/∂λ
+                    (mλφp - tanφ*tanφ/mλφ) / (cosφ * dyd));   // ∂y/∂φ
             assert Assertions.checkDerivative(derivative, super.derivative(point));
             return derivative;
         }

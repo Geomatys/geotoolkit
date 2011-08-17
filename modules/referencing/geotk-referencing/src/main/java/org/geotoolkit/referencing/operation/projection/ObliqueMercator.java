@@ -582,8 +582,8 @@ public class ObliqueMercator extends UnitaryProjection {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double x  = srcPts[srcOff];
-        final double y  = srcPts[srcOff + 1];
+        final double x  = srcPts[srcOff  ];
+        final double y  = srcPts[srcOff+1];
         final double Qp = exp(-x);
         final double t  = 1 / Qp;
         final double Sp = 0.5 * (Qp - t);
@@ -597,8 +597,8 @@ public class ObliqueMercator extends UnitaryProjection {
             λ = -atan2((Sp*cosgamma0 - Vp*singamma0), cos(y)) / B;
             φ = cphi2(pow(E / sqrt((1 + Up) / (1 - Up)), 1/B));
         }
-        dstPts[dstOff] = unrollLongitude(λ);
-        dstPts[dstOff + 1] = φ;
+        dstPts[dstOff  ] = unrollLongitude(λ);
+        dstPts[dstOff+1] = φ;
     }
 
     /**

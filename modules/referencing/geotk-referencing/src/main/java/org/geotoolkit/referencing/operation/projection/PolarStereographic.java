@@ -262,7 +262,7 @@ public class PolarStereographic extends Stereographic {
                 throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
             }
         }
-        dstPts[dstOff  ] = atan2(x, y);
+        dstPts[dstOff  ] = unrollLongitude(atan2(x, y));
         dstPts[dstOff+1] = φ;
     }
 
@@ -351,13 +351,13 @@ public class PolarStereographic extends Stereographic {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = unrollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             final double ρ = hypot(x, y);
-            x = atan2(x, y);
+            x = unrollLongitude(atan2(x, y));
             y = PI/2 - abs(2*atan(ρ)); // (20-14) with phi1=90° and cos(y) = sin(π/2 + y).
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
+            dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
         }
 
@@ -507,11 +507,11 @@ public class PolarStereographic extends Stereographic {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = unrollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff];
+            double y = srcPts[srcOff+1];
             final double t = hypot(x, y);
             final double χ = PI/2 - 2*atan(t);
-            x = atan2(x, y);
+            x = unrollLongitude(atan2(x, y));
 
             // See Snyde P. 19, "Computation of Series"
             final double sin2χ = sin(2 * χ);

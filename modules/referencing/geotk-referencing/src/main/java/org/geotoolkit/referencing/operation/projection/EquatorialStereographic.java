@@ -178,8 +178,8 @@ public class EquatorialStereographic extends Stereographic {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = unrollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             final double ρ = hypot(x, y);
             if (ρ < EPSILON) {
                 y = 0; // φ0
@@ -189,11 +189,12 @@ public class EquatorialStereographic extends Stereographic {
                 final double sinc = sin(c);
                 final double ct   = ρ*cos(c);
                 final double t    = x*sinc;
-                y = asin(y * sinc/ρ);  // (20-14)  with phi1=0
+                y = asin(y * sinc/ρ);  // (20-14)  with φ1=0
                 x = atan2(t, ct);
             }
+            x = unrollLongitude(x);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
+            dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
         }
 

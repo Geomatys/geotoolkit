@@ -297,7 +297,7 @@ public class Mercator extends UnitaryProjection {
     {
         final double y = srcPts[srcOff + 1];                // Must be before writing x.
         dstPts[dstOff] = unrollLongitude(srcPts[srcOff]);   // Must be before writing y.
-        dstPts[dstOff + 1] = cphi2(exp(-y));
+        dstPts[dstOff+1] = cphi2(exp(-y));
     }
 
 
@@ -461,7 +461,6 @@ public class Mercator extends UnitaryProjection {
             double x = unrollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
             y = PI/2 - 2.0*atan(exp(-y));
-
             assert pseudo || checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff] = x;
             dstPts[dstOff + 1] = y;

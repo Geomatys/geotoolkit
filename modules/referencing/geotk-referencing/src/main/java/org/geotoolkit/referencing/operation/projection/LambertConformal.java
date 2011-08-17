@@ -313,8 +313,8 @@ public class LambertConformal extends UnitaryProjection {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double x = srcPts[srcOff];
-        final double y = srcPts[srcOff + 1];
+        final double x = srcPts[srcOff  ];
+        final double y = srcPts[srcOff+1];
         /*
          * NOTE: If some equation terms seem missing (e.g. "y = ρ0 - y"), this is because
          * the linear operations applied before the first non-linear one moved to the inverse
@@ -334,8 +334,8 @@ public class LambertConformal extends UnitaryProjection {
          * we need to keep the current sign of ρ which is positive, otherwise we get NaN
          * when used in the pow(ρ, ...) expression below.
          */
-        dstPts[dstOff] = unrollLongitude(atan2(x, y));
-        dstPts[dstOff + 1] = cphi2(pow(ρ, 1.0/n));
+        dstPts[dstOff  ] = unrollLongitude(atan2(x, y));
+        dstPts[dstOff+1] = cphi2(pow(ρ, 1.0/n));
     }
 
 
@@ -412,10 +412,9 @@ public class LambertConformal extends UnitaryProjection {
             double x = rollLongitude(srcPts[srcOff]);
             y = ρ * cos(x);
             x = ρ * sin(x);
-
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]     = x;
-            dstPts[dstOff + 1] = y;
+            dstPts[dstOff  ] = x;
+            dstPts[dstOff+1] = y;
         }
 
         /**
@@ -439,15 +438,14 @@ public class LambertConformal extends UnitaryProjection {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = srcPts[srcOff];
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             final double ρ = hypot(x, y);
             x = unrollLongitude(atan2(x, y));
             y = 2.0 * atan(pow(1/ρ, 1.0/n)) - PI/2;
-
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff] = x;
-            dstPts[dstOff + 1] = y;
+            dstPts[dstOff  ] = x;
+            dstPts[dstOff+1] = y;
         }
 
         /**
@@ -489,10 +487,10 @@ public class LambertConformal extends UnitaryProjection {
                 dρ = ρ = NaN;
             }
             final Matrix derivative = new Matrix2(
-                    ρ  *  cosλ,    // dx/dλ
-                    dρ *  sinλ,    // dx/dφ
-                    ρ  * -sinλ,    // dy/dλ
-                    dρ *  cosλ);   // dy/dφ
+                    ρ  *  cosλ,    // ∂x/∂λ
+                    dρ *  sinλ,    // ∂x/∂φ
+                    ρ  * -sinλ,    // ∂y/∂λ
+                    dρ *  cosλ);   // ∂y/∂φ
             assert Assertions.checkDerivative(derivative, super.derivative(point));
             return derivative;
         }

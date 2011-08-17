@@ -151,9 +151,8 @@ public class Polyconic extends CassiniOrMercator {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = unrollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
-
+        double x = srcPts[srcOff  ];
+        double y = srcPts[srcOff+1];
         if (abs(y) <= EPSILON) {
             y = 0;
             /*
@@ -190,7 +189,7 @@ public class Polyconic extends CassiniOrMercator {
             final double c = sin(y);
             x = asin(x * tan(y) * sqrt(1 - excentricitySquared * (c*c))) / c;
         }
-        dstPts[dstOff  ] = x;
+        dstPts[dstOff  ] = unrollLongitude(x);
         dstPts[dstOff+1] = y;
     }
 
@@ -275,8 +274,8 @@ public class Polyconic extends CassiniOrMercator {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = unrollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             if (abs(y) <= EPSILON) {
                 y = 0;
             } else {
@@ -294,6 +293,7 @@ public class Polyconic extends CassiniOrMercator {
                 } while(abs(dphi) > ITERATION_TOLERANCE);
                 x = asin(x*tan(y)) / sin(y);
             }
+            x = unrollLongitude(x);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
@@ -333,10 +333,10 @@ public class Polyconic extends CassiniOrMercator {
             final double cosE  = cos(E);
             final double sinE  = sin(E);
             final Matrix derivative = new Matrix2(
-                    cosφ  * (cosE),                            // dx/dλ
-                    cot2φ * (cosE*E - sinE) - sinE,            // dx/dφ
-                    cosφ  * (sinE),                            // dy/dλ
-                    cot2φ * (sinE*E) + (cosE - 1)/sin2φ + 1);  // dy/dφ
+                    cosφ  * (cosE),                            // ∂x/∂λ
+                    cot2φ * (cosE*E - sinE) - sinE,            // ∂x/∂φ
+                    cosφ  * (sinE),                            // ∂y/∂λ
+                    cot2φ * (sinE*E) + (cosE - 1)/sin2φ + 1);  // ∂y/∂φ
             assert Assertions.checkDerivative(derivative, super.derivative(point));
             return derivative;
         }

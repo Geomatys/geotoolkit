@@ -330,8 +330,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = srcPts[srcOff];
-        double y = srcPts[srcOff + 1];
+        double x = srcPts[srcOff  ];
+        double y = srcPts[srcOff+1];
         final double ab;
         if (pole) {
             // See comments in the transform(...) method for an explanation about why we
@@ -374,8 +374,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         } else {
             t = asin(ab);
         }
-        dstPts[dstOff + 1] = t + APA0 * sin(t += t) + APA1 * sin(t += t) + APA2 * sin(t + t);
-        dstPts[dstOff] = unrollLongitude(atan2(x, y));
+        dstPts[dstOff+1] = t + APA0 * sin(t += t) + APA1 * sin(t += t) + APA2 * sin(t + t);
+        dstPts[dstOff  ] = unrollLongitude(atan2(x, y));
     }
 
 
@@ -502,8 +502,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = srcPts[srcOff];
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             double λ, φ;
             final double ρ = hypot(x, y);
             φ = 2.0 * asin(0.5 * ρ);
@@ -531,8 +531,8 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
             }
             λ = unrollLongitude(λ);
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, λ, φ);
-            dstPts[dstOff] = λ;
-            dstPts[dstOff + 1] = φ;
+            dstPts[dstOff  ] = λ;
+            dstPts[dstOff+1] = φ;
         }
 
         /**

@@ -330,8 +330,8 @@ public class TransverseMercator extends CassiniOrMercator {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = srcPts[srcOff];
-        double y = srcPts[srcOff + 1];
+        double x = srcPts[srcOff  ];
+        double y = srcPts[srcOff+1];
         final double φ = inv_mlfn(y);
         if (abs(φ) >= PI/2) {
             y = copySign(PI/2, y);
@@ -357,8 +357,8 @@ public class TransverseMercator extends CassiniOrMercator {
                 ds *  FC5 * (5 + t*(28 + 24* t + 8*n) + 6*n -
                 ds *  FC7 * (61 + t*(662 + t*(1320 + 720*t)))))) / cosφ;
         }
-        dstPts[dstOff] = unrollLongitude(x);
-        dstPts[dstOff + 1] = y;
+        dstPts[dstOff  ] = unrollLongitude(x);
+        dstPts[dstOff+1] = y;
     }
 
 
@@ -446,15 +446,15 @@ public class TransverseMercator extends CassiniOrMercator {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = srcPts[srcOff];
-            double y = srcPts[srcOff + 1];
+            double x = srcPts[srcOff  ];
+            double y = srcPts[srcOff+1];
             final double sinhX = sinh(x);
             final double cosD = cos(y);
             // 'copySign' corrects for the fact that we made everything positive using sqrt(...)
             y = copySign(asin(sqrt((1 - cosD*cosD) / (1 + sinhX*sinhX))), y);
             x = unrollLongitude(atan2(sinhX, cosD));
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
+            dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
         }
 
@@ -499,10 +499,10 @@ public class TransverseMercator extends CassiniOrMercator {
         double b = cosφ * sinλ;
         b = b*b - 1;
         return new Matrix2(
-                -(cosφ * cosλ) / b,         // dx/dλ
-                 (sinφ * sinλ) / b,         // dx/dφ
-                tanφ * sinλ / sct,          // dy/dλ
-                cosλ / (cosφ*cosφ * sct));  // dy/dφ
+                -(cosφ * cosλ) / b,         // ∂x/∂λ
+                 (sinφ * sinλ) / b,         // ∂x/∂φ
+                tanφ * sinλ / sct,          // ∂y/∂λ
+                cosλ / (cosφ*cosφ * sct));  // ∂y/∂φ
     }
 
     /**

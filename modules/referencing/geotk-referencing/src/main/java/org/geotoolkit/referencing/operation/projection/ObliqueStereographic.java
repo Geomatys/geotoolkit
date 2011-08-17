@@ -128,14 +128,14 @@ public class ObliqueStereographic extends Stereographic {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = rollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
-        y = 2 * atan(K * pow(tan(0.5*y + PI/4), C) * srat(excentricity * sin(y), ratexp)) - PI/2;
-        final double sinc = sin(y);
-        final double cosc = cos(y);
-        final double cosl = cos(x);
+        double λ = rollLongitude(srcPts[srcOff]);
+        double φ = srcPts[srcOff + 1];
+        φ = 2 * atan(K * pow(tan(0.5*φ + PI/4), C) * srat(excentricity * sin(φ), ratexp)) - PI/2;
+        final double sinc = sin(φ);
+        final double cosc = cos(φ);
+        final double cosl = cos(λ);
         final double k = 1 + sinc0*sinc + cosc0*cosc*cosl;
-        dstPts[dstOff] = cosc * sin(x) / k;
+        dstPts[dstOff] = cosc * sin(λ) / k;
         dstPts[dstOff+1] = (cosc0*sinc - sinc0*cosc*cosl) / k;
         /*
          * We can not compare easily with the calculation performed by the superclass
@@ -151,40 +151,41 @@ public class ObliqueStereographic extends Stereographic {
                                     final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
-        double x = unrollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
+        final double x = srcPts[srcOff  ];
+        final double y = srcPts[srcOff+1];
         final double ρ = hypot(x, y);
+        double λ, φ;
         if (abs(ρ) < EPSILON) {
-            x = 0.0;
-            y = phic0;
+            λ = 0.0;
+            φ = phic0;
         } else {
             final double ce   = 2 * atan(ρ);
             final double sinc = sin(ce);
             final double cosc = cos(ce);
-            x = atan2(x*sinc, ρ*cosc0*cosc - y*sinc0*sinc);
-            y = (cosc * sinc0) + (y * sinc * cosc0 / ρ);
-            if (abs(y) >= 1) {
-                y = copySign(PI/2, y);
+            λ = atan2(x*sinc, ρ*cosc0*cosc - y*sinc0*sinc);
+            φ = (cosc * sinc0) + (y * sinc * cosc0 / ρ);
+            if (abs(φ) >= 1) {
+                φ = copySign(PI/2, φ);
             } else {
-                y = asin(y);
+                φ = asin(φ);
             }
         }
         // Begin pj_inv_gauss(...) method inlined
-        double num = pow(tan(0.5*y + PI/4)/K, 1/C);
+        final double num = pow(tan(0.5*φ + PI/4)/K, 1/C);
         for (int i=MAXIMUM_ITERATIONS;;) {
-            double φ = 2 * atan(num * srat(excentricity*sin(y), -0.5*excentricity)) - PI/2;
-            if (abs(φ - y) < ITERATION_TOLERANCE) {
+            final double φi = 2 * atan(num * srat(excentricity*sin(φ), -0.5*excentricity)) - PI/2;
+            if (abs(φi - φ) < ITERATION_TOLERANCE) {
                 break;
             }
-            y = φ;
+            φ = φi;
             if (--i < 0) {
                 throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
             }
         }
         // End pj_inv_gauss(...) method inlined
 
-        dstPts[dstOff]   = x;
-        dstPts[dstOff+1] = y;
+        dstPts[dstOff  ] = unrollLongitude(λ);
+        dstPts[dstOff+1] = φ;
         /*
          * We can not compare easily with the calculation performed by the superclass
          * because the (de)normalize affine transforms are not set in the same way.
@@ -208,28 +209,24 @@ public class ObliqueStereographic extends Stereographic {
         final double cosE     = cos(0.5*φ + PI/4);
         final double esinφ    = excentricity*sin(φ);
         final double ecosφ    = excentricity*cos(φ);
-        final double srat     = srat(esinφ, ratexp);
         final double T        = pow(sinE/cosE, C);
         final double dT_dφ    = 0.5*C/(sinE*cosE);
-        final double sratKT   = K*T*srat;
-        final double sinU     = (sratKT*sratKT - 1) / (1 + sratKT*sratKT);
-        final double cosU     = 2*sratKT / (1 + sratKT*sratKT);
-        final double dU_dφ    = 2*sratKT*(dT_dφ + dsrat_dφ(esinφ, ecosφ, ratexp)) / (1 + sratKT*sratKT);
-
-        //X = cosU * sinx / k;
-        final double k = 1 + sinc0*sinU + cosc0*cosU*cosλ;
-        final double dk_dλ = -cosc0*cosU*sinλ;
-        final double dk_dφ = dU_dφ*(sinc0*cosU-cosc0*cosλ*sinU);
-
-        //Y = R / k;
-        final double R = (cosc0*sinU - sinc0*cosU*cosλ);
-        final double dR_dλ = sinc0*cosU*sinλ;
-        final double dR_dφ = dU_dφ*(cosc0*cosU+sinc0*cosλ*sinU);
+        final double sratKT   = K*T*srat(esinφ, ratexp);
+        final double si       = sratKT + 1/sratKT;
+        final double di       = sratKT - 1/sratKT;
+        final double di_sinc0 = di * sinc0;
+        final double di_cosc0 = di * cosc0;
+        final double dU_dφ    = 2*(dT_dφ + dsrat_dφ(esinφ, ecosφ, ratexp)) / si;
+        final double k        = di_sinc0 + 2*cosλ*cosc0 + si;
+        final double r        = di_cosc0 - 2*cosλ*sinc0;
+        final double dkφ      = 2*sinc0 - cosλ*di_cosc0;
+        final double drφ      = 2*cosc0 + cosλ*di_sinc0;
+        final double k2       = k*k;
         return new Matrix2(
-                cosU*(cosλ/k-dk_dλ*sinλ/(k*k)),
-                sinλ*(-dU_dφ*sinU*k-dk_dφ*cosU)/(k*k),
-                (dR_dλ*k-dk_dλ*R)/(k*k),
-                (dR_dφ*k-dk_dφ*R)/(k*k));
+                2*(cosλ*(si + di_sinc0) + 2*cosc0) / k2,
+                -dU_dφ*sinλ*(di*k + dkφ*2)         / k2,
+                2*sinλ*(sinc0*k + cosc0*r)         / k2,
+                dU_dφ*(drφ*k - dkφ*r)              / k2);
     }
 
     /**

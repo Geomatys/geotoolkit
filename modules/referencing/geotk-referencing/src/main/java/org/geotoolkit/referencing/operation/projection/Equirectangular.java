@@ -223,7 +223,7 @@ public class Equirectangular extends UnitaryProjection {
     {
         final double y = srcPts[srcOff + 1];                // Must be before writing x.
         dstPts[dstOff] = unrollLongitude(srcPts[srcOff]);   // Must be before writing y.
-        dstPts[dstOff + 1] = y;
+        dstPts[dstOff+1] = y;
     }
 
     /**
