@@ -64,7 +64,7 @@ public final class SphericalGeoapiTest extends GeoapiTest {
      */
     @Before
     public void relaxTolerance() {
-        tolerance = 20000;
+        tolerance = 26000;
     }
 
     /**

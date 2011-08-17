@@ -227,7 +227,8 @@ public class PolarStereographic extends Stereographic {
      * {@inheritDoc}
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void transform(final double[] srcPts, final int srcOff,
+                             final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -241,7 +242,8 @@ public class PolarStereographic extends Stereographic {
      * {@inheritDoc}
      */
     @Override
-    protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void inverseTransform(final double[] srcPts, final int srcOff,
+                                    final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         final double x = srcPts[srcOff  ];
@@ -411,7 +413,7 @@ public class PolarStereographic extends Stereographic {
      * @since 3.19
      */
     @Override
-    public Matrix derivative(Point2D point) throws ProjectionException {
+    public Matrix derivative(final Point2D point) throws ProjectionException {
         final double λ = rollLongitude(point.getX());
         final double φ = point.getY();
         final double sinφ  = sin(φ);

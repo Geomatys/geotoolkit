@@ -352,7 +352,7 @@ public class Polyconic extends CassiniOrMercator {
      * @since 3.19
      */
     @Override
-    public Matrix derivative(Point2D point) throws ProjectionException {
+    public Matrix derivative(final Point2D point) throws ProjectionException {
         final double λ     = rollLongitude(point.getX());
         final double φ     = point.getY();
         final double sinφ  = sin(φ);

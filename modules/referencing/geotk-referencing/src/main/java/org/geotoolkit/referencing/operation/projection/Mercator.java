@@ -226,7 +226,8 @@ public class Mercator extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void transform(final double[] srcPts, final int srcOff,
+                             final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         double x = srcPts[srcOff];
@@ -292,7 +293,8 @@ public class Mercator extends UnitaryProjection {
      * and stores the result in {@code dstPts} (angles in radians).
      */
     @Override
-    protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void inverseTransform(final double[] srcPts, final int srcOff,
+                                    final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         final double y = srcPts[srcOff + 1];                // Must be before writing x.

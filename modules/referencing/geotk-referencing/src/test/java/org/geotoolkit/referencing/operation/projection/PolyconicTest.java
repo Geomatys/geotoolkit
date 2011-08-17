@@ -70,8 +70,12 @@ public final class PolyconicTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testPolyconic() throws FactoryException, TransformException {
         tolerance = 0.5;
         testPolyconic(false);
@@ -84,8 +88,12 @@ public final class PolyconicTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testPolyconicSphere() throws FactoryException, TransformException {
         tolerance = 20000; // TODO: revisit why the tolerance is so high.
         testPolyconic(true);
@@ -167,11 +175,15 @@ public final class PolyconicTest extends ProjectionTestBase {
 
         final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         derivativeDeltas = new double[] {delta, delta};
-        verifyDerivative(Math.toRadians(5), Math.toRadians(3));
+        verifyDerivative(Math.toRadians(5), Math.toRadians( 3));
+        verifyDerivative(Math.toRadians(0), Math.toRadians(50));
+        verifyDerivative(Math.toRadians(3), Math.toRadians(47));
 
         transform = create(true, 0);
         assertFalse(isSpherical());
         validate();
-        verifyDerivative(Math.toRadians(5), Math.toRadians(3));
+        verifyDerivative(Math.toRadians(5), Math.toRadians( 3));
+        verifyDerivative(Math.toRadians(0), Math.toRadians(50));
+        verifyDerivative(Math.toRadians(3), Math.toRadians(47));
     }
 }

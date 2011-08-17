@@ -45,12 +45,12 @@ import static java.lang.Math.*;
  * <ul>
  *   <li>{@code libproj4} is available at
  *       <A HREF="http://members.bellatlantic.net/~vze2hc4d/proj4/">libproj4 Miscellanea</A>.<br>
- *        Relevent files are: {@code PJ_sterea.c}, {@code pj_gauss.c},
+ *        Relevant files are: {@code PJ_sterea.c}, {@code pj_gauss.c},
  *        {@code pj_fwd.c}, {@code pj_inv.c} and {@code lib_proj.h}</li>
  *   <li>Gerald Evenden. <A HREF="http://members.bellatlantic.net/~vze2hc4d/proj4/sterea.pdf">
  *       "Supplementary PROJ.4 Notes - Oblique Stereographic Alternative"</A>.</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7, Version 19.</li>
+ *       EPSG Guidance Note Number 7, Version 19.</li>
  *   <li>Krakiwsky, E.J., D.B. Thomson, and R.R. Steeves. 1977.<br>
  *       A Manual for Geodetic Coordinate Transformations in the Maritimes.<br>
  *       Geodesy and Geomatics Engineering, UNB. Technical Report No. 48.</li>
@@ -125,7 +125,8 @@ public class ObliqueStereographic extends Stereographic {
      * {@inheritDoc}
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void transform(final double[] srcPts, final int srcOff,
+                             final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         double λ = rollLongitude(srcPts[srcOff]);

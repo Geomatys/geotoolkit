@@ -68,7 +68,8 @@ public class EquatorialStereographic extends Stereographic {
      * {@inheritDoc}
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void transform(final double[] srcPts, final int srcOff,
+                             final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         double x = rollLongitude(srcPts[srcOff]);
@@ -221,7 +222,7 @@ public class EquatorialStereographic extends Stereographic {
          * @since 3.18
          */
         @Override
-        public Matrix derivative(Point2D point) throws ProjectionException {
+        public Matrix derivative(final Point2D point) throws ProjectionException {
             final double λ = rollLongitude(point.getX());
             final double φ = point.getY();
             final double sinφ = sin(φ);

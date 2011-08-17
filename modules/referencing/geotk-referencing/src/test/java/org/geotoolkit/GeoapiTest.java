@@ -39,6 +39,7 @@ import org.opengis.test.TestSuite;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.util.logging.Logging;
 
 import static org.junit.Assert.*;
 import static org.opengis.test.CalculationType.*;
@@ -83,6 +84,7 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
      * is often used for many services.
      */
     static {
+        Logging.GEOTOOLKIT.forceMonolineConsoleOutput(null);
         setFactories(NameFactory.class,                         getNameFactory                        (        null));
         setFactories(CSFactory.class,                           getCSFactory                          (        null));
         setFactories(CRSFactory.class,                          getCRSFactory                         (        null));

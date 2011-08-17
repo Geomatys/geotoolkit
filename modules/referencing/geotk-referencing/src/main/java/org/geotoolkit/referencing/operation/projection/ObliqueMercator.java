@@ -69,7 +69,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * The Oblique Mercator projection is a conformal, oblique, cylindrical projection with
  * the cylinder touching the ellipsoid (or sphere) along a great circle path (the central line).
  * The {@linkplain Mercator} and {@linkplain TransverseMercator Transverse Mercator} projections
- * can be thought of as special cases of the oblique mercator, where the central line is along the
+ * can be thought of as special cases of the oblique Mercator, where the central line is along the
  * equator or a meridian, respectively. The Oblique Mercator projection has been used in
  * Switzerland, Hungary, Madagascar, Malaysia, Borneo and the panhandle of Alaska.
  * <p>
@@ -82,7 +82,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * The rotation value is usually the same as the projection azimuth (the angle, east of north, of
  * the central line), but some cases allow a separate rotation parameter.
  * <p>
- * There are two forms of the oblique mercator, differing in the origin of their grid coordinates.
+ * There are two forms of the oblique Mercator, differing in the origin of their grid coordinates.
  * The <cite>Hotine Oblique Mercator</cite> (EPSG code 9812) has grid coordinates start at the
  * intersection of the central line and the equator of the aposphere. The <cite>Oblique Mercator</cite>
  * (EPSG code 9815) is the same, except the grid coordinates begin at the central point (where the
@@ -90,7 +90,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * {@code "Natural_Origin"} (for the {@code "Hotine_Oblique_Mercator"}) and {@code "Center"}
  * (for the {@code "Oblique_Mercator"}) to the projection names.
  * <p>
- * Two different methods are used to specify the central line for the oblique mercator:
+ * Two different methods are used to specify the central line for the oblique Mercator:
  * 1) a central point and an azimuth, east of north, describing the central line and
  * 2) two points on the central line. The EPSG does not use the two point method, while ESRI
  * separates the two cases by putting {@code "Azimuth"} and {@code "Two_Point"} in their projection
@@ -111,8 +111,8 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * though these cases would usually use a Mercator or Transverse Mercator projection instead.
  * Azimuth values &gt; 90 degrees cause errors in the equations.
  * <p>
- * The oblique mercator is also called the "<cite>Rectified Skew Orthomorphic</cite>" (RSO). It
- * appears that the only difference from the oblique mercator is that the RSO allows the rotation
+ * The oblique Mercator is also called the "<cite>Rectified Skew Orthomorphic</cite>" (RSO). It
+ * appears that the only difference from the oblique Mercator is that the RSO allows the rotation
  * from the (<var>U</var>,<var>V</var>) to (<var>X</var>,<var>Y</var>) coordinate system to be
  * different from the azimuth. This separate parameter is called {@code "rectified_grid_angle"}
  * (or {@code "XY_Plane_Rotation"} by ESRI) and is also included in the EPSG's parameters for the
@@ -131,12 +131,12 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  *       <td>grid coordinates begin at the central point,
  *           has {@code "rectified_grid_angle"} parameter.</td></tr>
  *   <tr><td>{@code Hotine_Oblique_Mercator}</td><td>EPSG:9812</td>
- *       <td>grid coordinates begin at the interseciton of the central line and aposphere equator,
+ *       <td>grid coordinates begin at the intersection of the central line and aposphere equator,
  *           has {@code "rectified_grid_angle"} parameter.</td></tr>
  *   <tr><td>{@code Hotine_Oblique_Mercator_Azimuth_Natural_Origin}</td><td>ESRI</td>
- *       <td>grid coordinates begin at the interseciton of the central line and aposphere equator.</li>
+ *       <td>grid coordinates begin at the intersection of the central line and aposphere equator.</li>
  *   <tr><td>{@code Rectified_Skew_Orthomorphic_Natural_Origin}</td><td>ESRI</td>
- *       <td>grid coordinates begin at the interseciton of the central line and aposphere equator,
+ *       <td>grid coordinates begin at the intersection of the central line and aposphere equator,
  *           has {@code "rectified_grid_angle"} parameter.</td></tr>
  *   <tr><td>{@code Hotine_Oblique_Mercator_Two_Point_Center}</td><td>ESRI</td>
  *       <td>grid coordinates begin at the central point.</td></tr>
@@ -147,12 +147,12 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * {@section References}
  * <ul>
  *   <li>Proj-4 available at <A HREF="http://www.remotesensing.org/proj">www.remotesensing.org/proj</A><br>
- *       Relevent files are: {@code PJ_omerc.c}, {@code pj_tsfn.c},
+ *       Relevant files are: {@code PJ_omerc.c}, {@code pj_tsfn.c},
  *       {@code pj_fwd.c}, {@code pj_inv.c} and {@code lib_proj.h}</li>
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
  *       U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7 part 2, Version 24.</li>
+ *       EPSG Guidance Note Number 7 part 2, Version 24.</li>
  *   <li>Gerald Evenden, 2004, <a href="http://members.verizon.net/~vze2hc4d/proj4/omerc.pdf">
  *       Documentation of revised Oblique Mercator</a></li>
  * </ul>
@@ -202,7 +202,7 @@ public class ObliqueMercator extends UnitaryProjection {
         /**
          * Latitude of the projection centre. This is similar to the {@link #latitudeOfOrigin
          * latitudeOfOrigin}, but the latitude of origin is the Earth equator on aposphere for
-         * the oblique mercator.
+         * the oblique Mercator.
          */
         public double latitudeOfCentre;
 
@@ -225,7 +225,7 @@ public class ObliqueMercator extends UnitaryProjection {
 
         /**
          * The latitude of the 1st point used to specify the central line, in degrees.
-         * This parameter applies to the "two points" case only and shell be set tp
+         * This parameter applies to the "two points" case only and shell be set to
          * {@linkplain Double#NaN NaN} for the "azimuth" case.
          */
         public double latitudeOf1stPoint;
@@ -543,7 +543,8 @@ public class ObliqueMercator extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void transform(final double[] srcPts, final int srcOff,
+                             final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -579,7 +580,8 @@ public class ObliqueMercator extends UnitaryProjection {
      * and stores the result in {@code dstPts} (angles in radians).
      */
     @Override
-    protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void inverseTransform(final double[] srcPts, final int srcOff,
+                                    final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
         final double x  = srcPts[srcOff  ];
