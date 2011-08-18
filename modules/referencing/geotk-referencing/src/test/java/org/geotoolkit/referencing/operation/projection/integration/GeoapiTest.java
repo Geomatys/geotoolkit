@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.projection.integration;
 
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.test.referencing.ParameterizedTransformTest;
@@ -28,7 +29,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static org.junit.Assert.*;
+import static org.opengis.test.Assert.*;
 import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase.isSpherical;
 
 
@@ -43,6 +44,7 @@ import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase
  * @see org.geotoolkit.naming.GeoapiTest
  * @see org.geotoolkit.referencing.factory.GeoapiTest
  * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
+ * @see org.geotoolkit.referencing.operation.transform.GeoapiTest
  * @see org.geotoolkit.referencing.operation.projection.integration.GeoapiTest
  * @see org.geotoolkit.GeoapiTest
  *
@@ -58,17 +60,30 @@ public final class GeoapiTest extends ParameterizedTransformTest {
     }
 
     /**
+     * Every tested math transform shall be instances of {@link MathTransform2D}.
+     */
+    @After
+    public void ensureMathTransform2D() {
+        assertInstanceOf("Unexpected implementation.", MathTransform2D.class, transform);
+    }
+
+    /**
      * Modifies the parameters in order to replace the ellipsoidal implementation by the
      * spherical implementation. This method is invoked before to test again the transform.
      *
      * @param newTolerance The new tolerance threshold, in kilometres.
      */
     private void makeSpherical(final double newTolerance) {
+        ensureMathTransform2D();
         assertFalse(isSpherical(transform));
         parameters.parameter("semi-minor axis").setValue(parameters.parameter("semi-major axis").doubleValue());
         tolerance = newTolerance * 1000;
+        transform = null; // Force re-creation.
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testMercator1SP() throws FactoryException, TransformException {
@@ -78,6 +93,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testMercator2SP() throws FactoryException, TransformException {
@@ -87,6 +105,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests and ensure that we used spherical formulas.
+     */
     @Test
     @Override
     public void testPseudoMercator() throws FactoryException, TransformException {
@@ -94,6 +115,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests and ensure that we used spherical formulas.
+     */
     @Test
     @Override
     public void testMiller() throws FactoryException, TransformException {
@@ -101,6 +125,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests and ensure that we used ellipsoidal formulas.
+     */
     @Test
     @Override
     public void testHotineObliqueMercator() throws FactoryException, TransformException {
@@ -109,6 +136,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         // No spherical formulas for this one.
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testTransverseMercator() throws FactoryException, TransformException {
@@ -119,6 +149,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testCassiniSoldner() throws FactoryException, TransformException {
@@ -128,6 +161,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testLambertConicConformal1SP() throws FactoryException, TransformException {
@@ -137,6 +173,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testLambertConicConformal2SP() throws FactoryException, TransformException {
@@ -146,6 +185,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testLambertConicConformalBelgium() throws FactoryException, TransformException {
@@ -155,6 +197,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
@@ -164,6 +209,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testPolarStereographicA() throws FactoryException, TransformException {
@@ -173,6 +221,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testPolarStereographicB() throws FactoryException, TransformException {
@@ -182,6 +233,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testObliqueStereographic() throws FactoryException, TransformException {
@@ -191,6 +245,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testPolyconic() throws FactoryException, TransformException {
@@ -201,6 +258,9 @@ public final class GeoapiTest extends ParameterizedTransformTest {
         assertTrue(isSpherical(transform));
     }
 
+    /**
+     * Runs the GeoAPI tests, then replace the ellipse by a sphere and runs the test again.
+     */
     @Test
     @Override
     public void testKrovak() throws FactoryException, TransformException {

@@ -65,7 +65,7 @@ public final class GeocentricAffineTransformTest extends TransformTestBase {
         param.parameter("dz").setValue(116.95);
 
         transform = mtFactory.createParameterizedTransform(param);
-        assertParameterEquals(GeocentricTranslation.PARAMETERS, param);
+        verifyParameters(GeocentricTranslation.PARAMETERS, param);
         validate();
 
         tolerance = 0.005;
@@ -97,7 +97,7 @@ public final class GeocentricAffineTransformTest extends TransformTestBase {
 
         tolerance = 1E-10;
         transform = mtFactory.createParameterizedTransform(param);
-        assertParameterEquals(PositionVector7Param.PARAMETERS, param);
+        verifyParameters(PositionVector7Param.PARAMETERS, param);
         validate();
 
         tolerance = 0.01;
@@ -129,7 +129,7 @@ public final class GeocentricAffineTransformTest extends TransformTestBase {
 
         tolerance = 1E-10;
         transform = mtFactory.createParameterizedTransform(param);
-        assertParameterEquals(CoordinateFrameRotation.PARAMETERS, param);
+        verifyParameters(CoordinateFrameRotation.PARAMETERS, param);
         validate();
 
         tolerance = 0.01;

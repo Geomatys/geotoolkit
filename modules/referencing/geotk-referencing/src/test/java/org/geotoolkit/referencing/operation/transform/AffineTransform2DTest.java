@@ -46,8 +46,11 @@ public final class AffineTransform2DTest extends TransformTestBase {
      * {@code checkDerivative} methods than a test of affine transforms...
      *
      * @throws TransformException Should never happen.
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testDerivative() throws TransformException {
         /*
          * Create any kind of transform having different coefficients for every values.

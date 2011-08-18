@@ -54,15 +54,18 @@ public final class ProjectiveTransformTest extends TransformTestBase {
      * Tests using a uniform scale transform.
      *
      * @throws TransformException should never happen.
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testUniformScale() throws TransformException {
         final AffineTransform reference = AffineTransform.getScaleInstance(5,5);
         final Matrix3 matrix = new Matrix3(reference);
         transform = new ProjectiveTransform2D(matrix);
         tolerance = 1E-10;
         validate();
-        assertParameterEquals(Affine.PARAMETERS, null);
+        verifyParameters(Affine.PARAMETERS, null);
         assertEquals(matrix, ((LinearTransform) transform).getMatrix());
 
         final double[] source = generateRandomCoordinates(CoordinateDomain.GEOGRAPHIC, 706838196);
@@ -76,15 +79,18 @@ public final class ProjectiveTransformTest extends TransformTestBase {
      * Tests using a non-uniform scale transform.
      *
      * @throws TransformException should never happen.
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testScale() throws TransformException {
         final AffineTransform reference = AffineTransform.getScaleInstance(3,4);
         final Matrix3 matrix = new Matrix3(reference);
         transform = new ProjectiveTransform2D(matrix);
         tolerance = 1E-10;
         validate();
-        assertParameterEquals(Affine.PARAMETERS, null);
+        verifyParameters(Affine.PARAMETERS, null);
         assertEquals(matrix, ((LinearTransform) transform).getMatrix());
 
         final double[] source = generateRandomCoordinates(CoordinateDomain.GEOGRAPHIC, 867119969);
@@ -98,15 +104,18 @@ public final class ProjectiveTransformTest extends TransformTestBase {
      * Tests using a translation.
      *
      * @throws TransformException should never happen.
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testTranslate() throws TransformException {
         final AffineTransform reference = AffineTransform.getTranslateInstance(1000,-2000);
         final Matrix3 matrix = new Matrix3(reference);
         transform = new ProjectiveTransform2D(matrix);
         tolerance = 1E-10;
         validate();
-        assertParameterEquals(Affine.PARAMETERS, null);
+        verifyParameters(Affine.PARAMETERS, null);
         assertEquals(matrix, ((LinearTransform) transform).getMatrix());
 
         final double[] source = generateRandomCoordinates(CoordinateDomain.PROJECTED, 542967228);
@@ -120,8 +129,11 @@ public final class ProjectiveTransformTest extends TransformTestBase {
      * Tests using a scaled, rotated and translated transform.
      *
      * @throws TransformException should never happen.
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testGeneral() throws TransformException {
         final AffineTransform reference = AffineTransform.getTranslateInstance(10,-20);
         reference.rotate(0.5);
@@ -131,7 +143,7 @@ public final class ProjectiveTransformTest extends TransformTestBase {
         transform = new ProjectiveTransform2D(matrix);
         tolerance = 1E-8;
         validate();
-        assertParameterEquals(Affine.PARAMETERS, null);
+        verifyParameters(Affine.PARAMETERS, null);
         assertEquals(matrix, ((LinearTransform) transform).getMatrix());
 
         final double[] source = generateRandomCoordinates(CoordinateDomain.PROJECTED, 542967228);
@@ -145,8 +157,11 @@ public final class ProjectiveTransformTest extends TransformTestBase {
      * Tests using a non-square matrix.
      *
      * @throws TransformException should never happen.
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testNonSquare() throws TransformException {
         transform = new ProjectiveTransform(MatrixFactory.create(3, 5, new double[] {
             2, 0, 0, 0, 8,
@@ -188,8 +203,11 @@ public final class ProjectiveTransformTest extends TransformTestBase {
      * @throws TransformException Should never happen.
      *
      * @since 3.15
+     *
+     * @deprecated Replaced by {@link GeoapiTest}.
      */
     @Test
+    @Deprecated
     public void testDerivative() throws TransformException {
         /*
          * Create any kind of transform having different coefficients for every values.

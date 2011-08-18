@@ -73,7 +73,7 @@ public final class CopyTransformTest extends TransformTestBase {
     public void testIdentity() throws TransformException {
         transform = new CopyTransform(3, 0, 1, 2);
         validate();
-        assertParameterEquals(Affine.PARAMETERS, null);
+        verifyParameters(Affine.PARAMETERS, null);
         assertTrue(((LinearTransform) transform).getMatrix().isIdentity());
         assertTrue(transform.isIdentity());
 

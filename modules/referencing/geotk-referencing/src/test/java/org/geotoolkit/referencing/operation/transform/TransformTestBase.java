@@ -23,7 +23,6 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
-import javax.measure.unit.Unit;
 
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.datum.DatumFactory;
@@ -38,10 +37,7 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.parameter.ParameterValue;
-import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.test.CalculationType;
 import org.opengis.test.ToleranceModifier;
@@ -51,7 +47,6 @@ import org.geotoolkit.test.Commons;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.Statistics;
-import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.FormattableObject;
 
@@ -394,48 +389,25 @@ public abstract class TransformTestBase extends TransformTestCase implements Tol
      *          tolerating a difference up to the {@linkplain #tolerance(double) tolerance}
      *          threshold.
      */
-    protected final void assertParameterEquals(final ParameterDescriptorGroup descriptor,
+    protected final void verifyParameters(final ParameterDescriptorGroup descriptor,
             final ParameterValueGroup values)
     {
         assertInstanceOf(complete("TransformTestCase.transform"), AbstractMathTransform.class, transform);
-        final Parameterized transform = (Parameterized) this.transform;
-        if (descriptor != null) {
-            assertSame(complete("ParameterDescriptor"), descriptor, transform.getParameterDescriptors());
-        }
-        if (values != null) {
-            assertSame(descriptor, values.getDescriptor());
-            assertParameterEquals(values, transform.getParameterValues());
-        }
+        verifyParameters(descriptor, values, (AbstractMathTransform) transform, tolerance);
     }
 
     /**
-     * Asserts that the given parameter values are equal to the expected ones within a
-     * positive delta. Only the elements in the given descriptor are compared, and the
-     * comparisons are done in the units declared in the descriptor.
-     *
-     * @param expected The expected parameter values.
-     * @param actual   The actual parameter values.
+     * Implementation of the above method, to be shared by {@link GeoapiTest}.
      */
-    private void assertParameterEquals(final ParameterValueGroup expected, final ParameterValueGroup actual) {
-        for (final GeneralParameterValue candidate : expected.values()) {
-            if (!(candidate instanceof ParameterValue<?>)) {
-                throw new UnsupportedOperationException("Not yet implemented.");
-            }
-            final ParameterValue<?> value = (ParameterValue<?>) candidate;
-            final ParameterDescriptor<?> descriptor = value.getDescriptor();
-            final String name = descriptor.getName().getCode();
-            final Unit<?> unit = descriptor.getUnit();
-            final ParameterValue<?> e = expected.parameter(name);
-            final ParameterValue<?> a = actual  .parameter(name);
-            if (unit != null) {
-                final double f = e.doubleValue(unit);
-                assertEquals(complete(name), f, a.doubleValue(unit), tolerance);
-            } else if (Numbers.isFloat(descriptor.getValueClass())) {
-                final double f = e.doubleValue();
-                assertEquals(complete(name), f, a.doubleValue(), tolerance);
-            } else {
-                assertEquals(complete(name), e.getValue(), a.getValue());
-            }
+    static void verifyParameters(final ParameterDescriptorGroup descriptor, final ParameterValueGroup values,
+            final Parameterized transform, final double tolerance)
+    {
+        if (descriptor != null) {
+            assertSame("ParameterDescriptor", descriptor, transform.getParameterDescriptors());
+        }
+        if (values != null) {
+            assertSame(descriptor, values.getDescriptor());
+            assertParameterEquals(values, transform.getParameterValues(), tolerance);
         }
     }
 

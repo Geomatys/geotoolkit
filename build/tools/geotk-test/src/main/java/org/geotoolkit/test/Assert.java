@@ -26,8 +26,15 @@ import javax.swing.tree.TreeNode;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
+import javax.measure.unit.Unit;
 import org.xml.sax.SAXException;
+
 import org.opengis.coverage.Coverage;
+import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.GeneralParameterValue;
+
 import org.geotoolkit.test.xml.DomComparator;
 
 import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
@@ -37,7 +44,7 @@ import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
  * Assertion methods used by the Geotk project in addition of the JUnit and GeoAPI assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.16 (derived from 3.00)
  */
@@ -204,6 +211,43 @@ public class Assert extends org.opengis.test.Assert {
         assertFalse("hasMoreElements()", ac.hasMoreElements());
         assertEquals("toString()", expected.toString(), actual.toString());
         return n;
+    }
+
+    /**
+     * Asserts that the given parameter values are equal to the expected ones within a
+     * positive delta. Only the elements in the given descriptor are compared, and the
+     * comparisons are done in the units declared in the descriptor.
+     *
+     * @param expected  The expected parameter values.
+     * @param actual    The actual parameter values.
+     * @param tolerance The tolerance threshold for comparison of numerical values.
+     *
+     * @since 3.19
+     */
+    public static void assertParameterEquals(final ParameterValueGroup expected,
+            final ParameterValueGroup actual, final double tolerance)
+    {
+        for (final GeneralParameterValue candidate : expected.values()) {
+            if (!(candidate instanceof ParameterValue<?>)) {
+                throw new UnsupportedOperationException("Not yet implemented.");
+            }
+            final ParameterValue<?> value = (ParameterValue<?>) candidate;
+            final ParameterDescriptor<?> descriptor = value.getDescriptor();
+            final String   name       = descriptor.getName().getCode();
+            final Unit<?>  unit       = descriptor.getUnit();
+            final Class<?> valueClass = descriptor.getValueClass();
+            final ParameterValue<?> e = expected.parameter(name);
+            final ParameterValue<?> a = actual  .parameter(name);
+            if (unit != null) {
+                final double f = e.doubleValue(unit);
+                assertEquals(name, f, a.doubleValue(unit), tolerance);
+            } else if (valueClass == Float.class || valueClass == Double.class) {
+                final double f = e.doubleValue();
+                assertEquals(name, f, a.doubleValue(), tolerance);
+            } else {
+                assertEquals(name, e.getValue(), a.getValue());
+            }
+        }
     }
 
     /**
