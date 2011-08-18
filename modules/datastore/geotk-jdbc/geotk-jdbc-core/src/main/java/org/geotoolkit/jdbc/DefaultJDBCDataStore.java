@@ -803,6 +803,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 closeSafe(st);
             }
         }
+        
+        fireFeaturesAdded(featureType.getName(), null);
     }
     
     /**
@@ -864,6 +866,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 closeSafe(st);
             }
         }
+        fireFeaturesAdded(featureType.getName(), null);
     }
 
     /**
@@ -901,6 +904,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 closeSafe(st);
             }
         }
+        fireFeaturesUpdated(featureType.getName(), null);
     }
 
     /**
@@ -925,6 +929,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         } finally {
             closeSafe(st);
         }
+        fireFeaturesDeleted(featureType.getName(), null);
     }
 
 
