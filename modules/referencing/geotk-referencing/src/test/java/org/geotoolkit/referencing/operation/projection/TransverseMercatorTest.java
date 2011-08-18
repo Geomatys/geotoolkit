@@ -34,6 +34,7 @@ import static org.geotoolkit.referencing.operation.projection.TransverseMercator
  * Tests the {@link TransverseMercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Rémi Maréchal (Geomatys)
  * @version 3.19
  *
  * @since 3.00
@@ -111,8 +112,12 @@ public final class TransverseMercatorTest extends ProjectionTestBase {
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
+     *
+     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
+     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
+    @Deprecated
     public void testKnownPoint() throws FactoryException, TransformException {
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Transverse Mercator");
         parameters.parameter("semi-major axis").setValue(6377563.396);
@@ -139,10 +144,31 @@ public final class TransverseMercatorTest extends ProjectionTestBase {
      * @since 3.16
      */
     @Test
-    public void testDerivative() throws TransformException {
+    public void testSphericalDerivative() throws TransformException {
         tolerance = 1E-9;
         transform = create(false);
         assertTrue(isSpherical());
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+        verifyDerivative(toRadians( 0), toRadians( 0));
+        verifyDerivative(toRadians(-3), toRadians(30));
+        verifyDerivative(toRadians(+6), toRadians(60));
+    }
+
+    /**
+     * Creates a projection and derivates a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testEllipsoidalDerivative() throws TransformException {
+        tolerance = 1E-7;
+        transform = create(true);
+        assertFalse(isSpherical());
         validate();
 
         final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.

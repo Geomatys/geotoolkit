@@ -17,23 +17,25 @@
  */
 package org.geotoolkit.referencing.operation.projection.integration;
 
-import org.opengis.test.referencing.MathTransformTest;
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.test.referencing.ParameterizedTransformTest;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.operation.projection.ProjectionTestBase;
 
-import org.geotoolkit.util.XArrays;
-import org.junit.After;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase.isSpherical;
 
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link MathTransformFactory} instance registered in {@link FactoryFinder}.
+ * the {@link MathTransformFactory} instance registered in {@link FactoryFinder}. This
+ * class modifies the tests in order to test both the ellipsoidal and spherical formulas.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
@@ -47,16 +49,7 @@ import static org.junit.Assert.*;
  * @since 3.19
  */
 @RunWith(JUnit4.class)
-public class GeoapiTest extends MathTransformTest {
-    /**
-     * Projections used by the GeoAPI test suites which are actually spherical rather
-     * than ellipsoidal.
-     */
-    private static final String[] SPHERICAL = {
-        "WGS 84 / Pseudo-Mercator",
-        "IGNF:MILLER"
-    };
-
+public final class GeoapiTest extends ParameterizedTransformTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */
@@ -65,21 +58,154 @@ public class GeoapiTest extends MathTransformTest {
     }
 
     /**
-     * Creates a new test suite using the given factory instance.
-     * This constructor is for {@link SphericalGeoapiTest} only.
+     * Modifies the parameters in order to replace the ellipsoidal implementation by the
+     * spherical implementation. This method is invoked before to test again the transform.
+     *
+     * @param newTolerance The new tolerance threshold, in kilometres.
      */
-    GeoapiTest(final MathTransformFactory factory) {
-        super(factory);
+    private void makeSpherical(final double newTolerance) {
+        assertFalse(isSpherical(transform));
+        parameters.parameter("semi-minor axis").setValue(parameters.parameter("semi-major axis").doubleValue());
+        tolerance = newTolerance * 1000;
     }
 
-    /**
-     * Verifies that the formulas used by the {@code testFoo()} methods (inherited from GeoAPI)
-     * where the expected ones. If this {@code GeoapiTest} class, we expect ellipsoidal formulas.
-     * This test is geotk-specific.
-     */
-    @After
-    public void verifyFormulas() {
-        assertEquals(nameOfTargetCRS, XArrays.containsIgnoreCase(SPHERICAL, nameOfTargetCRS),
-                ProjectionTestBase.isSpherical(transform));
+    @Test
+    @Override
+    public void testMercator1SP() throws FactoryException, TransformException {
+        super.testMercator1SP();
+        makeSpherical(3);
+        super.testMercator1SP();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testMercator2SP() throws FactoryException, TransformException {
+        super.testMercator2SP();
+        makeSpherical(20);
+        super.testMercator2SP();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testPseudoMercator() throws FactoryException, TransformException {
+        super.testPseudoMercator();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testMiller() throws FactoryException, TransformException {
+        super.testMiller();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testHotineObliqueMercator() throws FactoryException, TransformException {
+        super.testHotineObliqueMercator();
+        assertFalse(isSpherical(transform));
+        // No spherical formulas for this one.
+    }
+
+    @Test
+    @Override
+    public void testTransverseMercator() throws FactoryException, TransformException {
+        isDerivativeSupported = false; // TODO
+        super.testTransverseMercator();
+        makeSpherical(0.5);
+        super.testTransverseMercator();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testCassiniSoldner() throws FactoryException, TransformException {
+        super.testCassiniSoldner();
+        makeSpherical(0.05);
+        super.testCassiniSoldner();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testLambertConicConformal1SP() throws FactoryException, TransformException {
+        super.testLambertConicConformal1SP();
+        makeSpherical(0.05);
+        super.testLambertConicConformal1SP();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testLambertConicConformal2SP() throws FactoryException, TransformException {
+        super.testLambertConicConformal2SP();
+        makeSpherical(0.5);
+        super.testLambertConicConformal2SP();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testLambertConicConformalBelgium() throws FactoryException, TransformException {
+        super.testLambertConicConformalBelgium();
+        makeSpherical(20);
+        super.testLambertConicConformalBelgium();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testLambertAzimuthalEqualArea() throws FactoryException, TransformException {
+        super.testLambertAzimuthalEqualArea();
+        makeSpherical(1);
+        super.testLambertAzimuthalEqualArea();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testPolarStereographicA() throws FactoryException, TransformException {
+        super.testPolarStereographicA();
+        makeSpherical(10);
+        super.testPolarStereographicA();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testPolarStereographicB() throws FactoryException, TransformException {
+        super.testPolarStereographicB();
+        makeSpherical(10);
+        super.testPolarStereographicB();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testObliqueStereographic() throws FactoryException, TransformException {
+        super.testObliqueStereographic();
+        makeSpherical(0.1);
+        super.testObliqueStereographic();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testPolyconic() throws FactoryException, TransformException {
+        isDerivativeSupported = false; // TODO
+        super.testPolyconic();
+        makeSpherical(30);
+        super.testPolyconic();
+        assertTrue(isSpherical(transform));
+    }
+
+    @Test
+    @Override
+    public void testKrovak() throws FactoryException, TransformException {
+        super.testKrovak();
+        assertFalse(isSpherical(transform));
+        // No spherical formulas for this one.
     }
 }

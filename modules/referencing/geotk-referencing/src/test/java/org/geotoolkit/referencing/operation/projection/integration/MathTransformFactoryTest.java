@@ -323,8 +323,8 @@ public final class MathTransformFactoryTest extends ReferencingTestBase {
     private static void setObliqueMercatorParameter(ParameterValueGroup params) {
         params.parameter("semi_major")          .setValue(6377397.155);
         params.parameter("semi_minor")          .setValue(6356078.963);
-        params.parameter("longitude_of_center") .setValue(7.439583333333333);
-        params.parameter("latitude_of_center")  .setValue(46.952405555555565);
+        params.parameter("longitude_of_center") .setValue( 7.439583333333333);
+        params.parameter("latitude_of_center")  .setValue(46.952405555555555);
         params.parameter("azimuth")             .setValue(90.0);
         params.parameter("scale_factor")        .setValue(1.0);
         params.parameter("false_easting")       .setValue(600000.0);
