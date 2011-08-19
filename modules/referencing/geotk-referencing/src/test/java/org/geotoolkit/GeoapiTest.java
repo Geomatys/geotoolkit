@@ -144,7 +144,7 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
                         return maximum(scale(EnumSet.of(DIRECT_TRANSFORM),  1,  10),
                                        scale(EnumSet.of(INVERSE_TRANSFORM), 2, 200));
                     } else {
-                        return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 200, 200);
+                        return scale(EnumSet.of(DIRECT_TRANSFORM, INVERSE_TRANSFORM), 500, 500);
                     }
                 }
             }
