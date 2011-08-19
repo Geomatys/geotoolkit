@@ -250,7 +250,6 @@ public final class GeoapiTest extends ParameterizedTransformTest {
     @Test
     @Override
     public void testPolyconic() throws FactoryException, TransformException {
-        isDerivativeSupported = false; // TODO
         super.testPolyconic();
         makeSpherical(30);
         super.testPolyconic();

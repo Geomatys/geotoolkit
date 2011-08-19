@@ -58,7 +58,7 @@ import static java.lang.Math.*;
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
  *       U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7, Version 40.</li>
+ *       EPSG Guidance Note Number 7, Version 40.</li>
  * </ul>
  *
  * @author Simon Reynard (Geomatys)
@@ -120,27 +120,28 @@ public class Polyconic extends CassiniOrMercator {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = rollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
-        final double sinφ = sin(y);
-        final double cosφ = cos(y);
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double sinφ = sin(φ);
+        final double cosφ = cos(φ);
         final double msfn = msfn(sinφ, cosφ) / sinφ;
         /*
          * If y == 0, then we have (1/0) == infinity. Then we would have below
          * y = 0 + infinity * (1 - 1)  ==  infinity * zero  ==  indetermination.
          * Actually the indetermination resolve as being just leaving y unchanged
-         * (same for x).
+         * (same for x, except for longitude rolling).
          *
          * In Proj4 this was handled by a check for a threshold: if (abs(y) > 1E-10).
          * In Geotk, we try to avoid threshold as much as possible in order to have
          * more continuous function.
          */
-        if (!Double.isInfinite(msfn)) {
-            y = mlfn(y, sinφ, cosφ) + msfn * (1 - cos(x *= sinφ));
-            x = msfn * sin(x);
+        if (Double.isInfinite(msfn)) {
+            dstPts[dstOff] = λ;
+            return;
         }
-        dstPts[dstOff  ] = x;
-        dstPts[dstOff+1] = y;
+        final double λsinφ = λ*sinφ;
+        dstPts[dstOff+1] = msfn*(1 - cos(λsinφ)) + mlfn(φ, sinφ, cosφ);
+        dstPts[dstOff  ] = msfn * sin(λsinφ);
     }
 
     /**
@@ -151,46 +152,50 @@ public class Polyconic extends CassiniOrMercator {
     protected void inverseTransform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double x = srcPts[srcOff  ];
-        double y = srcPts[srcOff+1];
+        final double x = srcPts[srcOff  ];
+        final double y = srcPts[srcOff+1];
+        final double λ;
+        double φ;
         if (abs(y) <= EPSILON) {
-            y = 0;
+            φ = 0;
+            λ = x;
             /*
              * The general formulas below will not work for this case because of
              * indeterminations of the kind 0*infinity.
              */
         } else {
-            double dPhi;
-            final double r = y*y + x*x;
+            φ = y;
+            double dφ;
+            final double r  = y*y + x*x;
             final double y2 = 2*y;
             int i = MAXIMUM_ITERATIONS;
             do {
                 if (--i < 0) {
                     throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
                 }
-                final double cp = cos(y);
-                if (abs(cp) < ITERATION_TOLERANCE) {
+                final double cosφ = cos(φ);
+                if (abs(cosφ) < ITERATION_TOLERANCE) {
                     // Continuing would lead to c = infinity, and later to an
                     // indetermination (infinity / infinity).
                     break;
                 }
-                final double sp = sin(y);
-                final double s2ph = sp * cp;
-                double mlp = sqrt(1 - excentricitySquared * (sp*sp));
-                final double c = sp * mlp / cp;
-                final double ml = mlfn(y, sp, cp);
+                final double sinφ = sin(φ);
+                final double sinφcosφ = sinφ * cosφ;
+                double mlp = sqrt(1 - excentricitySquared * (sinφ*sinφ));
+                final double c   = mlp * sinφ/cosφ;
+                final double ml  = mlfn(φ, sinφ, cosφ);
                 final double mlb = ml*ml + r;
-                mlp  = (1 - excentricitySquared) / (mlp * mlp * mlp);
-                dPhi = (2*ml + c*mlb - y2*(c*ml + 1)) /
-                        (excentricitySquared * s2ph * (mlb - y2*ml)/c +
-                        (y2 - 2*ml) * (c*mlp - 1/s2ph) - 2*mlp);
-                y += dPhi;
-            } while (abs(dPhi) > ITERATION_TOLERANCE);
-            final double c = sin(y);
-            x = asin(x * tan(y) * sqrt(1 - excentricitySquared * (c*c))) / c;
+                mlp  = (1 - excentricitySquared) / (mlp*mlp*mlp);
+                dφ = (2*ml + c*mlb - y2*(c*ml + 1)) /
+                        (excentricitySquared * sinφcosφ * (mlb - y2*ml)/c +
+                        (y2 - 2*ml) * (c*mlp - 1/sinφcosφ) - 2*mlp);
+                φ += dφ;
+            } while (abs(dφ) > ITERATION_TOLERANCE);
+            final double c = sin(φ);
+            λ = asin(x*tan(φ) * sqrt(1 - excentricitySquared*(c*c))) / c;
         }
-        dstPts[dstOff  ] = unrollLongitude(x);
-        dstPts[dstOff+1] = y;
+        dstPts[dstOff  ] = unrollLongitude(λ);
+        dstPts[dstOff+1] = φ;
     }
 
 
@@ -242,12 +247,12 @@ public class Polyconic extends CassiniOrMercator {
                                  final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
-            final double E = x * sin(y);
-            final double cot = 1 / tan(y);
-            x = sin(E) * cot;
-            y = y - phi0 + cot * (1 - cos(E));
+            final double λ = rollLongitude(srcPts[srcOff]);
+            final double φ = srcPts[srcOff + 1];
+            final double E = λ * sin(φ);
+            final double cot = 1 / tan(φ);
+            final double x = sin(E) * cot;
+            final double y = φ - phi0 + cot * (1 - cos(E));
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
@@ -274,29 +279,31 @@ public class Polyconic extends CassiniOrMercator {
                                         final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = srcPts[srcOff  ];
-            double y = srcPts[srcOff+1];
+            final double x = unrollLongitude(srcPts[srcOff]);
+            final double y = srcPts[srcOff + 1];
+            double λ;
+            double φ;
             if (abs(y) <= EPSILON) {
-                y = 0;
+                λ = x;
+                φ = 0;
             } else {
-                final double y1 = y;
+                φ = y;
+                double dφ;
                 final double B = x*x + y*y;
                 int i = MAXIMUM_ITERATIONS;
-                double dphi;
                 do {
                     if (--i < 0) {
                         throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
                     }
-                    final double tp = tan(y);
-                    dphi = (y1 * (y*tp + 1) - y - 0.5*(y*y + B) * tp) / ((y - y1) / tp - 1);
-                    y -= dphi;
-                } while(abs(dphi) > ITERATION_TOLERANCE);
-                x = asin(x*tan(y)) / sin(y);
+                    final double tanφ = tan(φ);
+                    dφ = (y * (φ*tanφ + 1) - φ - 0.5*(φ*φ + B) * tanφ) / ((φ - y) / tanφ - 1);
+                    φ -= dφ;
+                } while(abs(dφ) > ITERATION_TOLERANCE);
+                λ = asin(x*tan(φ)) / sin(φ);
             }
-            x = unrollLongitude(x);
-            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff  ] = x;
-            dstPts[dstOff+1] = y;
+            assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, λ, φ);
+            dstPts[dstOff  ] = λ;
+            dstPts[dstOff+1] = φ;
         }
 
         /**
@@ -357,24 +364,21 @@ public class Polyconic extends CassiniOrMercator {
         final double φ     = point.getY();
         final double sinφ  = sin(φ);
         final double cosφ  = cos(φ);
-        final double msfn  = msfn(sinφ, cosφ) / sinφ;
-        final double dmsdφ = (dmsfn_dφ(sinφ, cosφ, msfn) - cosφ/sinφ) * msfn;
-        if (Double.isInfinite(msfn)) {
+        final double msfn  = msfn(sinφ, cosφ);
+        final double msfnd = msfn / sinφ;
+        if (Double.isInfinite(msfnd)) {
             // Returns an identity transform for consistency
             // with the case implemented in transform(...).
             return new Matrix2();
         }
+        final double dmsdφ = dmsfn_dφ(sinφ, cosφ, msfn) - cosφ/sinφ;
         final double X2    = λ*sinφ;
         final double sinX2 = sin(X2);
         final double cosX2 = cos(X2);
-        final double mssin = msfn * sinX2;
-        final double mscos = msfn * cosX2;
         final double dX2dφ = λ*cosφ;
         return new Matrix2(
-                sinφ  * mscos,
-                dmsdφ * sinX2 + dX2dφ * mscos,
-                sinφ  * mssin,
-                dmlfn_dφ(sinφ*sinφ, cosφ*cosφ) + dmsdφ * (1-cosX2) + dX2dφ * mssin);
+                msfn * cosX2,  msfnd * (dX2dφ*cosX2 + dmsdφ*(  sinX2)),
+                msfn * sinX2,  msfnd * (dX2dφ*sinX2 + dmsdφ*(1-cosX2)) + dmlfn_dφ(sinφ*sinφ, cosφ*cosφ));
     }
 
     /**

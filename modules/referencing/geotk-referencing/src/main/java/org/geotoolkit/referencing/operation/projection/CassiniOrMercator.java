@@ -153,10 +153,7 @@ abstract class CassiniOrMercator extends UnitaryProjection {
     final double mlfn(final double φ, double sinφ, double cosφ) {
         cosφ *= sinφ;
         sinφ *= sinφ;
-        return en0 * φ - cosφ *
-              (en1 + sinφ *
-              (en2 + sinφ *
-              (en3 + sinφ * en4)));
+        return en0*φ - cosφ*(en1 + sinφ*(en2 + sinφ*(en3 + sinφ*en4)));
     }
 
     /**
@@ -165,11 +162,11 @@ abstract class CassiniOrMercator extends UnitaryProjection {
      * @return The derivative at the specified latitude.
      */
     final double dmlfn_dφ(final double sinφ2, final double cosφ2) {
-        return en0 -
-               en1 * (  cosφ2 - sinφ2) - sinφ2 *
-              (en2 * (3*cosφ2 - sinφ2) - sinφ2 *
-              (en3 * (5*cosφ2 - sinφ2) - sinφ2 *
-              (en4 * (7*cosφ2 - sinφ2))));
+        return en0 +
+               en1 * (sinφ2 -   cosφ2) + sinφ2*(
+               en2 * (sinφ2 - 3*cosφ2) + sinφ2*(
+               en3 * (sinφ2 - 5*cosφ2) + sinφ2*
+               en4 * (    1 - 7*cosφ2)));
     }
 
     /**

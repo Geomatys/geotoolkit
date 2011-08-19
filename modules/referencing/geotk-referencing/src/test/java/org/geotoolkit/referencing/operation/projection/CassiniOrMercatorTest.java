@@ -23,7 +23,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 import org.opengis.referencing.operation.TransformException;
 
@@ -39,7 +39,7 @@ import org.opengis.referencing.operation.TransformException;
  * @since 3.18
  */
 @Depend(UnitaryProjectionTest.class)
-public final class CassiniOrMercatorTest extends ProjectionTestBase {
+public final strictfp class CassiniOrMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
@@ -95,7 +95,7 @@ public final class CassiniOrMercatorTest extends ProjectionTestBase {
     public void testDmlfn_dφ() throws TransformException {
         isInverseTransformSupported = false;
         derivativeDeltas = new double[] {2E-8};
-        tolerance = 1E-6;
+        tolerance = 1E-7;
         boolean ellipse = false;
         do {
             final CassiniOrMercator cassini = CassiniSoldnerTest.create(ellipse);
