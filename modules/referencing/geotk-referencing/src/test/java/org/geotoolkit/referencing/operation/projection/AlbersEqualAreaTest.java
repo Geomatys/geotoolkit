@@ -23,8 +23,9 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.*;
+import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.PARAMETERS;
 
 
 /**
@@ -38,8 +39,8 @@ import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.*;
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class AlbersEqualAreaTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers. Since the Albers Equal Area
      * projection is implemented with iterative methods, we can not ask more than the
@@ -177,19 +178,19 @@ public final class AlbersEqualAreaTest extends ProjectionTestBase {
     @Test
     public void testDerivative() throws TransformException {
         tolerance = 1E-8;
-        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final double delta = toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         derivativeDeltas = new double[] {delta, delta};
 
         // Test spherical
         transform = create(false, 10, 60);
         assertTrue(isSpherical());
         validate();
-        verifyDerivative(Math.toRadians(5), Math.toRadians(30));
+        verifyDerivative(toRadians(5), toRadians(30));
 
         // Test ellipsoidal
         transform = create(true, 10, 60);
         assertFalse(isSpherical());
         validate();
-        verifyDerivative(Math.toRadians(5), Math.toRadians(30));
+        verifyDerivative(toRadians(5), toRadians(30));
     }
 }

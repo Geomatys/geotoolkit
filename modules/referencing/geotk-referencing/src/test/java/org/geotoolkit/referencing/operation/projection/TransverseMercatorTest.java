@@ -39,8 +39,8 @@ import static org.geotoolkit.referencing.operation.projection.TransverseMercator
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class TransverseMercatorTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class TransverseMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
@@ -88,11 +88,11 @@ public final class TransverseMercatorTest extends ProjectionTestBase {
             for (int x=0; x<180; x++) {
                 double error = 0;
                 for (int y=-90; y<90; y+=5) {
-                    source[0] = Math.toRadians(x);
-                    source[1] = Math.toRadians(y);
+                    source[0] = toRadians(x);
+                    source[1] = toRadians(y);
                     sphere.transform(source, 0, expected, 0, 1);
                     projection.transform(source, 0, actual, 0, 1);
-                    final double e = Math.hypot(expected[0]-actual[0], expected[1]-actual[1]);
+                    final double e = hypot(expected[0]-actual[0], expected[1]-actual[1]);
                     if (e > error) {
                         error = e;
                     }
@@ -104,36 +104,6 @@ public final class TransverseMercatorTest extends ProjectionTestBase {
         }
         // Not doing anything useful with the errors array at this time.
         // The above test was mostly to ensure that no assertion failure occur.
-    }
-
-    /**
-     * Creates a projection using the provider and projects the
-     * point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testKnownPoint() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Transverse Mercator");
-        parameters.parameter("semi-major axis").setValue(6377563.396);
-        parameters.parameter("semi-minor axis").setValue(6377563.396 * (1 - 1/299.32496));
-        parameters.parameter("Latitude of natural origin").setValue(49.0);
-        parameters.parameter("Longitude of natural origin").setValue(-2.0);
-        parameters.parameter("Scale factor at natural origin").setValue(0.9996013);
-        parameters.parameter("False easting").setValue(400000.00);
-        parameters.parameter("False northing").setValue(-100000.00);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-
-        final double[] point    = new double[] {30.0/60, 50+30.0/60};
-        final double[] expected = new double[] {577274.99, 69740.50};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
     }
 
     /**
@@ -176,5 +146,16 @@ public final class TransverseMercatorTest extends ProjectionTestBase {
         verifyDerivative(toRadians( 0), toRadians( 0));
         verifyDerivative(toRadians(-3), toRadians(30));
         verifyDerivative(toRadians(+6), toRadians(60));
+    }
+
+    /**
+     * Runs the test defined in the GeoAPI-conformance module.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new GeoapiTest(mtFactory).testTransverseMercator();
     }
 }

@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 
 import org.geotoolkit.math.Plane;
 import org.geotoolkit.math.Statistics;
@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  *
  * @since 3.00
  */
-final class ErrorFitting {
+final strictfp class ErrorFitting {
     /**
      * Set to {@code true} for debugging the {@link #fit} method. This is usually not needed;
      * the {@code assertEquals} right after the loop should detect broken algorithm.

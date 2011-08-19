@@ -34,7 +34,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.*;
 
 
 /**
- * Equidistant Cylindrical projection (EPSG codes 9842, 9823). See the
+ * Equidistant Cylindrical projection (EPSG codes 1028, 1029, 9842, 9823). See the
  * <A HREF="http://mathworld.wolfram.com/CylindricalEquidistantProjection.html">Cylindrical
  * Equidistant projection on MathWorld</A> for an overview. See any of the following providers
  * for a list of programmatic parameters:

@@ -29,7 +29,7 @@ import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
 import static org.opengis.test.Assert.*;
-import static org.geotoolkit.referencing.operation.provider.EquidistantCylindrical.*;
+import static org.geotoolkit.referencing.operation.provider.EquidistantCylindrical.PARAMETERS;
 
 
 /**
@@ -40,8 +40,8 @@ import static org.geotoolkit.referencing.operation.provider.EquidistantCylindric
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class EquirectangularTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class EquirectangularTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */

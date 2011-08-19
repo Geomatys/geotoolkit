@@ -23,7 +23,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
 
@@ -37,43 +36,13 @@ import static org.geotoolkit.referencing.operation.provider.Krovak.PARAMETERS;
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class KrovakTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class KrovakTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
     public KrovakTest() {
         super(Krovak.class, null);
-    }
-
-    /**
-     * Creates a projection using the provider and projects the
-     * point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The main difference is that the tolerance threshold used here is lower.
-     */
-    @Test
-    @Deprecated
-    public void testKnownPoint() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Krovak Oblique Conic Conformal");
-        parameters.parameter("semi-major axis").setValue(6377397.155);
-        parameters.parameter("semi-minor axis").setValue(6377397.155 * (1 - 1/299.15281));
-        parameters.parameter("Latitude of projection centre").setValue(49.5);
-        parameters.parameter("Longitude of origin").setValue(24 + 50.0/60);
-        parameters.parameter("Latitude of pseudo standard parallel").setValue(78.5);
-        parameters.parameter("Scale factor on pseudo standard parallel").setValue(0.99990);
-        parameters.parameter("Co-latitude of cone axis").setValue(30 + (17 + 17.3031/60)/60);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-
-        final double[] point    = new double[] {16 + (50 + 59.1790/60)/60, 50 + (12 + 32.4416/60)/60};
-        final double[] expected = new double[] {-568990.997, -1050538.643};
-        tolerance = 0.0005;
-        verifyTransform(point, expected);
     }
 
     /**
@@ -101,5 +70,16 @@ public final class KrovakTest extends ProjectionTestBase {
         verifyDerivative(toRadians( 5), toRadians(  5));
         verifyDerivative(toRadians(-5), toRadians( 15));
         verifyDerivative(toRadians(20), toRadians(-30));
+    }
+
+    /**
+     * Runs the test defined in the GeoAPI-conformance module.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new GeoapiTest(mtFactory).testKrovak();
     }
 }

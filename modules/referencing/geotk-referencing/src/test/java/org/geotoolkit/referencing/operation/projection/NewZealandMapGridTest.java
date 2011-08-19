@@ -18,10 +18,11 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.TransformException;
-import static org.geotoolkit.referencing.operation.provider.NewZealandMapGrid.PARAMETERS;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.operation.provider.NewZealandMapGrid.PARAMETERS;
 
 
 /**
@@ -32,7 +33,8 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class NewZealandMapGridTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class NewZealandMapGridTest extends ProjectionTestBase {
     /**
      * Sets of geographic coordinates to project.
      */

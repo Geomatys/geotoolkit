@@ -38,70 +38,13 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class PolarStereographicTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class PolarStereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
     public PolarStereographicTest() {
         super(PolarStereographic.class, null);
-    }
-
-    /**
-     * Creates a projection using the provider and projects the
-     * point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testVariantA() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Polar Stereographic (variant A)");
-        parameters.parameter("semi-major axis").setValue(6378137.0);
-        parameters.parameter("semi-minor axis").setValue(6378137.0 * (1 - 1/298.2572236));
-        parameters.parameter("Latitude of natural origin").setValue(90);
-        parameters.parameter("Longitude of natural origin").setValue(0);
-        parameters.parameter("Scale factor at natural origin").setValue(0.994);
-        parameters.parameter("False easting").setValue(2000000.00);
-        parameters.parameter("False northing").setValue(2000000.00);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-        final double[] point    = new double[] {44, 73};
-        final double[] expected = new double[] {3320416.75, 632668.43};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
-    }
-
-    /**
-     * Creates a projection using the provider and projects the
-     * point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testVariantB() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Polar Stereographic (variant B)");
-        parameters.parameter("semi-major axis").setValue(6378137.0);
-        parameters.parameter("semi-minor axis").setValue(6378137.0 * (1 - 1/298.2572236));
-        parameters.parameter("Latitude of standard parallel").setValue(-71);
-        parameters.parameter("Longitude of origin").setValue(70);
-        parameters.parameter("False easting").setValue(6000000.00);
-        parameters.parameter("False northing").setValue(6000000.00);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-        final double[] point    = new double[] {120, -75};
-        final double[] expected = new double[] {7255380.79, 7053389.56};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
     }
 
     /**
@@ -158,5 +101,17 @@ public final class PolarStereographicTest extends ProjectionTestBase {
         verifyDerivative(toRadians(-70), toRadians(90));
         verifyDerivative(toRadians(-60), toRadians(85));
         verifyDerivative(toRadians( 20), toRadians(80));
+    }
+
+    /**
+     * Runs the tests defined in the GeoAPI-conformance module.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new GeoapiTest(mtFactory).testPolarStereographicA();
+        new GeoapiTest(mtFactory).testPolarStereographicB();
     }
 }

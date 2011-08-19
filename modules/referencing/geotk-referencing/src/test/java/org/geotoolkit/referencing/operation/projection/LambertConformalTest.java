@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.util.FactoryException;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
@@ -28,7 +27,7 @@ import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import static java.lang.StrictMath.*;
 import static java.lang.Double.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.*;
+import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.PARAMETERS;
 
 
 /**
@@ -43,8 +42,8 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class LambertConformalTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class LambertConformalTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */
@@ -241,123 +240,15 @@ public final class LambertConformalTest extends ProjectionTestBase {
     }
 
     /**
-     * Creates a projection using the {@link LambertConformal1SP} provider and
-     * projects the point given in the "example" section of EPSG documentation.
+     * Runs the tests defined in the GeoAPI-conformance module.
      *
      * @throws FactoryException   Should never happen.
      * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
      */
     @Test
-    @Deprecated
-    public void testLambertConformal1SP() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Conic Conformal (1SP)");
-        parameters.parameter("semi-major axis").setValue(6378206.400);
-        parameters.parameter("semi-minor axis").setValue(6378206.400 * (1 - 1/294.97870));
-        parameters.parameter("Latitude of natural origin").setValue(18.0);
-        parameters.parameter("Longitude of natural origin").setValue(-77.0);
-        parameters.parameter("Scale factor at natural origin").setValue(1.0);
-        parameters.parameter("False easting").setValue(250000.00);
-        parameters.parameter("False northing").setValue(150000.00);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-        final double[] point    = new double[] {-(76 + (56 + 37.26/60)/60), 17 + (55 + 55.80/60)/60};
-        final double[] expected = new double[] {255966.58, 142493.51};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
-        /*
-         * Tries again with a spherical model, which requires a high tolerance value
-         * (25 metres here). The purpose is to test the spherical formulas, which
-         * have their own implementation in the Spherical nested class.
-         */
-        spherical(parameters, 18);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        tolerance = 25;
-        assertTrue(isSpherical());
-        verifyTransform(point, expected);
-    }
-
-    /**
-     * Creates a projection using the {@link LambertConformal2SP} provider and
-     * projects the point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testLambertConformal2SP() throws FactoryException, TransformException {
-        final double feets = 3.2808333333333333333; // Conversion from metre to feets.
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Conic Conformal (2SP)");
-        parameters.parameter("semi-major axis").setValue(6378206.400);
-        parameters.parameter("semi-minor axis").setValue(6378206.400 * (1 - 1/294.97870));
-        parameters.parameter("Latitude of 1st standard parallel").setValue(28 + 23.0/60);
-        parameters.parameter("Latitude of 2nd standard parallel").setValue(30 + 17.0/60);
-        parameters.parameter("Latitude of false origin").setValue(27 + 50.0/60);
-        parameters.parameter("Longitude of false origin").setValue(-99.0);
-        parameters.parameter("Easting at false origin").setValue(2000000/feets);
-        parameters.parameter("Northing at false origin").setValue(0*feets);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-        final double[] point    = new double[] {-96.0, 28 + 30.0/60};
-        final double[] expected = new double[] {2963503.91/feets, 254759.80/feets};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
-        /*
-         * Tries again with a spherical model, which requires a high tolerance value
-         * (600 metres here). The purpose is to test the spherical formulas, which
-         * have their own implementation in the Spherical nested class.
-         */
-        parameters.parameter("semi-major axis").setValue(SPHERE_RADIUS);
-        parameters.parameter("semi-minor axis").setValue(SPHERE_RADIUS);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        tolerance = 600;
-        assertTrue(isSpherical());
-        verifyTransform(point, expected);
-    }
-
-    /**
-     * Creates a projection using the {@link LambertConformal2SP.Belgium} provider
-     * and projects the point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testBelgium() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Conic Conformal (2SP Belgium)");
-        parameters.parameter("semi-major axis").setValue(6378388);
-        parameters.parameter("semi-minor axis").setValue(6378388 * (1 - 1/297.0));
-        parameters.parameter("Latitude of 1st standard parallel").setValue(49 + 50.0/60);
-        parameters.parameter("Latitude of 2nd standard parallel").setValue(51 + 10.0/60);
-        parameters.parameter("Latitude of false origin").setValue(90.0);
-        parameters.parameter("Longitude of false origin").setValue(4 + (21 + 24.983/60)/60);
-        parameters.parameter("Easting at false origin").setValue(150000.01);
-        parameters.parameter("Northing at false origin").setValue(5400088.44);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-        final double[] point    = new double[] {5 + (48 + 26.533/60)/60, 50 + (40 + 46.461/60)/60};
-        final double[] expected = new double[] {251763.20, 153034.13};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
-        /*
-         * Tries again with a spherical model, which requires a high tolerance value
-         * (8 kilometres here). The purpose is to test the spherical formulas, which
-         * have their own implementation in the Spherical nested class.
-         */
-        spherical(parameters, 50);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        tolerance = 8000;
-        assertTrue(isSpherical());
-        verifyTransform(point, expected);
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new GeoapiTest(mtFactory).testLambertConicConformal1SP();
+        new GeoapiTest(mtFactory).testLambertConicConformal2SP();
+        new GeoapiTest(mtFactory).testLambertConicConformalBelgium();
     }
 }

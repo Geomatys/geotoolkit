@@ -18,9 +18,11 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.geotoolkit.referencing.operation.provider.Stereographic.*;
+import static java.lang.StrictMath.*;
+import static org.geotoolkit.referencing.operation.provider.Stereographic.PARAMETERS;
 
 
 /**
@@ -31,7 +33,8 @@ import static org.geotoolkit.referencing.operation.provider.Stereographic.*;
  *
  * @since 3.18
  */
-public final class EquatorialStereographicTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class EquatorialStereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
@@ -62,18 +65,18 @@ public final class EquatorialStereographicTest extends ProjectionTestBase {
     @Test
     public void testDerivative() throws TransformException {
         tolerance = 1E-7;
-        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final double delta = toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         derivativeDeltas = new double[] {delta, delta};
 
         // Test spherical formulas.
         transform = create(false);
         validate();
-        verifyDerivative(Math.toRadians(-4), Math.toRadians(3));
+        verifyDerivative(toRadians(-4), toRadians(3));
 
         // Test ellipsoidal formulas.
         transform = create(true);
         validate();
-        verifyDerivative(Math.toRadians(-4), Math.toRadians( 3));
-        verifyDerivative(Math.toRadians(20), Math.toRadians(15));
+        verifyDerivative(toRadians(-4), toRadians( 3));
+        verifyDerivative(toRadians(20), toRadians(15));
     }
 }

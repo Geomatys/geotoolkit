@@ -48,7 +48,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.00
  */
 @Depend(ConcatenatedTransformTest.class)
-public final class FormattingTest extends ProjectionTestBase {
+public final strictfp class FormattingTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

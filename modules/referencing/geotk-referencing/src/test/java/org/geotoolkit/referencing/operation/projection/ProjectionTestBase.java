@@ -49,7 +49,7 @@ import static org.opengis.test.Assert.*;
  * @since 3.00
  */
 @Depend({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
-public abstract class ProjectionTestBase extends TransformTestBase {
+public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     /**
      * The radius of the sphere used in sphere test cases.
      */
@@ -63,25 +63,6 @@ public abstract class ProjectionTestBase extends TransformTestBase {
      */
     protected ProjectionTestBase(final Class<? extends MathTransform> type, final Hints hints) {
         super(type, hints);
-    }
-
-    /**
-     * Replaces the semi-axis length in the given parameter values by spherical radius.
-     * A radius suitable to the given latitude of origin is computed using the formulas
-     * given for the Equidistant Cylindrical projection.
-     *
-     * @param parameters The parameters to modify in place.
-     * @param latitudeOfOrigin The latitude of origin in decimal degrees.
-     */
-    static void spherical(final ParameterValueGroup parameters, final double latitudeOfOrigin) {
-        final double a  = parameters.parameter("semi-major axis").doubleValue();
-        final double b  = parameters.parameter("semi-minor axis").doubleValue();
-        final double e2 = 1.0 - (b*b) / (a*a);
-        double r  = sin(toRadians(abs(latitudeOfOrigin)));
-        r = a * (sqrt(1 - e2) / (1 - (r*r)*e2));
-        parameters.parameter("semi-major axis").setValue(r);
-        parameters.parameter("semi-minor axis").setValue(r);
-
     }
 
     /**
@@ -181,7 +162,7 @@ public abstract class ProjectionTestBase extends TransformTestBase {
         final double phi = coordinate[1];
         if (!Double.isNaN(phi)) {
             final double lambda = coordinate[0];
-            assertEquals(antimeridian ? Math.copySign(Math.PI, lambda) : 0, lambda, tolerance);
+            assertEquals(antimeridian ? copySign(PI, lambda) : 0, lambda, tolerance);
         }
         return phi;
     }
@@ -258,36 +239,5 @@ public abstract class ProjectionTestBase extends TransformTestBase {
      */
     final boolean isSpherical() {
         return isSpherical(transform);
-    }
-
-    /**
-     * Computes {@link UnitaryProjection#tsfn} for the given latitude.
-     *
-     * @param  phi The latitude in radians.
-     * @return The negative of function 7-7 from Snyder.
-     */
-    final double tsfn(final double phi) {
-        return ((UnitaryProjection) transform).tsfn(phi, sin(phi));
-    }
-
-    /**
-     * Computes {@link UnitaryProjection#tsfn}.
-     *
-     * @param  ts The value returned by {@link #tsfn}.
-     * @return The latitude in radians.
-     * @throws ProjectionException if the iteration does not converge.
-     */
-    final double cphi2(final double ts) throws ProjectionException {
-        return ((UnitaryProjection) transform).cphi2(ts);
-    }
-
-    /**
-     * Computes {@link UnitaryProjection#sinphi}.
-     *
-     * @param sinphi Sinus of the latitude <var>q</var> is calculated for.
-     * @return <var>q</var> from Snyder equation (3-12).
-     */
-    final double qsfn(final double sinphi) {
-        return ((UnitaryProjection) transform).qsfn(sinphi);
     }
 }

@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.projection;
 
 import org.junit.*;
 import org.opengis.util.FactoryException;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
@@ -28,13 +27,13 @@ import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import static java.lang.Double.*;
 import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea.*;
+import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea.PARAMETERS;
 
 
 /**
  * Tests the {@link LambertAzimuthalEqualArea} class. We test using various values
  * of the latitude of origin, which is the only parameter impacting the internal
- * coefficients of that class (except for the excentricity).
+ * coefficients of that class (except for the eccentricity).
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
@@ -42,8 +41,8 @@ import static org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqua
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */
@@ -268,45 +267,6 @@ public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
     }
 
     /**
-     * Creates a projection using the provider and projects the
-     * point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testKnownPoint() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert Azimuthal Equal Area");
-        parameters.parameter("semi-major axis").setValue(6378137.0);
-        parameters.parameter("semi-minor axis").setValue(6378137.0 * (1 - 1/298.2572221));
-        parameters.parameter("Latitude of natural origin").setValue(52.0);
-        parameters.parameter("Longitude of natural origin").setValue(10.0);
-        parameters.parameter("False easting").setValue(4321000.00);
-        parameters.parameter("False northing").setValue(3210000.00);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-
-        final double[] point    = new double[] {5, 50};
-        final double[] expected = new double[] {3962799.45, 2999718.85};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
-        /*
-         * Tries again with a spherical model, which requires a high tolerance value
-         * (410 metres here). The purpose is to test the spherical formulas, which
-         * have their own implementation in the Spherical nested class.
-         */
-        spherical(parameters, 52);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        tolerance = 410;
-        assertTrue(isSpherical());
-        verifyTransform(point, expected);
-    }
-
-    /**
      * Creates a projection and tests the derivatives at a few points.
      *
      * @throws TransformException Should never happen.
@@ -316,7 +276,7 @@ public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
     @Test
     public void testDerivative() throws TransformException {
         tolerance = 1E-9;
-        final double delta = Math.toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final double delta = toRadians((1.0 / 60) / 1852); // Approximatively one metre.
         derivativeDeltas = new double[] {delta, delta};
 
         // Polar projection.
@@ -346,5 +306,16 @@ public final class LambertAzimuthalEqualAreaTest extends ProjectionTestBase {
         transform = create(false, 8);
         validate();
         verifyDerivative(toRadians(-6), toRadians(2));
+    }
+
+    /**
+     * Runs the test defined in the GeoAPI-conformance module.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new GeoapiTest(mtFactory).testLambertAzimuthalEqualArea();
     }
 }

@@ -21,7 +21,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform1D;
 
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static java.lang.Double.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.*;
@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
  * @since 3.00
  */
 @Depend(ProjectionParametersTest.class)
-public final class UnitaryProjectionTest extends ProjectionTestBase {
+public final strictfp class UnitaryProjectionTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */
@@ -56,6 +56,37 @@ public final class UnitaryProjectionTest extends ProjectionTestBase {
      */
     public UnitaryProjectionTest() {
         super(UnitaryProjection.class, null);
+    }
+
+    /**
+     * Computes {@link UnitaryProjection#tsfn} for the given latitude.
+     *
+     * @param  phi The latitude in radians.
+     * @return The negative of function 7-7 from Snyder.
+     */
+    private double tsfn(final double phi) {
+        return ((UnitaryProjection) transform).tsfn(phi, sin(phi));
+    }
+
+    /**
+     * Computes {@link UnitaryProjection#tsfn}.
+     *
+     * @param  ts The value returned by {@link #tsfn}.
+     * @return The latitude in radians.
+     * @throws ProjectionException if the iteration does not converge.
+     */
+    private double cphi2(final double ts) throws ProjectionException {
+        return ((UnitaryProjection) transform).cphi2(ts);
+    }
+
+    /**
+     * Computes {@link UnitaryProjection#sinphi}.
+     *
+     * @param sinphi Sinus of the latitude <var>q</var> is calculated for.
+     * @return <var>q</var> from Snyder equation (3-12).
+     */
+    private double qsfn(final double sinphi) {
+        return ((UnitaryProjection) transform).qsfn(sinphi);
     }
 
     /**

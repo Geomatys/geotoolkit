@@ -39,8 +39,8 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARA
  *
  * @since 3.00
  */
-@Depend(MercatorTest.class)
-public final class ObliqueMercatorTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class ObliqueMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
@@ -90,49 +90,6 @@ public final class ObliqueMercatorTest extends ProjectionTestBase {
     }
 
     /**
-     * Creates a projection using the provider and projects the
-     * point given in the "example" section of EPSG documentation.
-     *
-     * @throws FactoryException   Should never happen.
-     * @throws TransformException Should never happen.
-     *
-     * @deprecated This test is partially replaced by {@link org.opengis.test.referencing.MathTransformTest}.
-     * The GeoAPI test is not yet a complete replacement however, since it doesn't test the spherical formulas.
-     */
-    @Test
-    @Deprecated
-    public void testKnownPoint() throws FactoryException, TransformException {
-        final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Oblique Mercator");
-        parameters.parameter("semi-major axis").setValue(6377298.556);
-        parameters.parameter("semi-minor axis").setValue(6377298.556 * (1 - 1/300.8017));
-        parameters.parameter("Latitude of projection centre").setValue(4.0);
-        parameters.parameter("Longitude of projection centre").setValue(115.0);
-        parameters.parameter("Azimuth of initial line").setValue(53 + (18 + 56.9537/60)/60);
-        parameters.parameter("Angle from Rectified to Skew Grid").setValue(53 + (7 + 48.3685/60)/60);
-        parameters.parameter("Scale factor on initial line").setValue(0.99984);
-        parameters.parameter("Easting at projection centre").setValue(590476.87);
-        parameters.parameter("Northing at projection centre").setValue(442857.65);
-        transform = mtFactory.createParameterizedTransform(parameters);
-        assertFalse(isSpherical());
-        assertWktEquals(
-                "PARAM_MT[“Oblique_Mercator”,\n" +
-                "  PARAMETER[“semi_major”, 6377298.556],\n" +
-                "  PARAMETER[“semi_minor”, 6356097.550300896],\n" +
-                "  PARAMETER[“longitude_of_center”, 109.6855202029758],\n" +
-                "  PARAMETER[“latitude_of_center”, 4.0],\n" +
-                "  PARAMETER[“azimuth”, 53.31582047222222],\n" +
-                "  PARAMETER[“scale_factor”, 0.99984],\n" +
-                "  PARAMETER[“false_easting”, 590476.87],\n" +
-                "  PARAMETER[“false_northing”, 442857.65],\n" +
-                "  PARAMETER[“rectified_grid_angle”, 53.13010236111111]]");
-
-        final double[] point    = new double[] {115 + (48 + 19.8196/60)/60, 5 + (23 + 14.1129/60)/60};
-        final double[] expected = new double[] {679245.73, 596562.78};
-        tolerance = 0.005;
-        verifyTransform(point, expected);
-    }
-
-    /**
      * Creates a projection and derivates a few points.
      *
      * @throws TransformException Should never happen.
@@ -151,5 +108,16 @@ public final class ObliqueMercatorTest extends ProjectionTestBase {
         verifyDerivative(toRadians(15), toRadians(30));
         verifyDerivative(toRadians(15), toRadians(40));
         verifyDerivative(toRadians(10), toRadians(60));
+    }
+
+    /**
+     * Runs the test defined in the GeoAPI-conformance module.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new GeoapiTest(mtFactory).testHotineObliqueMercator();
     }
 }

@@ -21,6 +21,7 @@ import org.junit.*;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.test.Depend;
 
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
@@ -36,7 +37,8 @@ import static org.geotoolkit.referencing.operation.projection.Stereographic.Para
  *
  * @since 3.19
  */
-public final class StereographicTest extends ProjectionTestBase {
+@Depend(UnitaryProjectionTest.class)
+public final strictfp class StereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */
@@ -84,11 +86,11 @@ public final class StereographicTest extends ProjectionTestBase {
             for (int x=0; x<180; x++) {
                 double error = 0;
                 for (int y=-90; y<90; y+=5) {
-                    source[0] = Math.toRadians(x);
-                    source[1] = Math.toRadians(y);
+                    source[0] = toRadians(x);
+                    source[1] = toRadians(y);
                     sphere.transform(source, 0, expected, 0, 1);
                     projection.transform(source, 0, actual, 0, 1);
-                    final double e = Math.hypot(expected[0]-actual[0], expected[1]-actual[1]);
+                    final double e = hypot(expected[0]-actual[0], expected[1]-actual[1]);
                     if (e > error) {
                         error = e;
                     }
