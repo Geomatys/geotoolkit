@@ -142,7 +142,6 @@ public final class GeoapiTest extends ParameterizedTransformTest {
     @Test
     @Override
     public void testTransverseMercator() throws FactoryException, TransformException {
-        isDerivativeSupported = false; // TODO
         super.testTransverseMercator();
         makeSpherical(0.5);
         super.testTransverseMercator();

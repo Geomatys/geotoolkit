@@ -84,7 +84,8 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.16
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @see Mercator
  * @see ObliqueMercator
@@ -304,7 +305,7 @@ public class TransverseMercator extends CassiniOrMercator {
         final double φ = srcPts[srcOff + 1];
         final double sinφ = sin(φ);
         final double cosφ = cos(φ);
-        double t = (abs(cosφ) > ANGLE_TOLERANCE) ? sinφ / cosφ : 0;
+        double t = (abs(cosφ) > ANGLE_TOLERANCE) ? sinφ/cosφ : 0;
         t *= t;
         double al  = cosφ * λ;
         double als = al * al;
@@ -320,7 +321,7 @@ public class TransverseMercator extends CassiniOrMercator {
             FC2 * (1 +
             FC4 * als * (5 - t + n*(9 + 4*n) +
             FC6 * als * (61 + t * (t - 58) + n*(270 - 330*t) +
-            FC8 * als * (1385 + t * ( t*(543 - t) - 3111)))));
+            FC8 * als * (1385 + t * (t*(543 - t) - 3111)))));
     }
 
     /**
@@ -476,35 +477,101 @@ public class TransverseMercator extends CassiniOrMercator {
                 return true;
             }
         }
+
+        /**
+         * Gets the derivative of this transform at a point.
+         *
+         * @param  point The coordinate point where to evaluate the derivative.
+         * @return The derivative at the specified point as a 2&times;2 matrix.
+         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+         *
+         * @since 3.16
+         */
+        @Override
+        public Matrix derivative(final Point2D point) throws ProjectionException {
+            final double λ    = rollLongitude(point.getX());
+            final double φ    = point.getY();
+            final double sinλ = sin(λ);
+            final double cosλ = cos(λ);
+            final double sinφ = sin(φ);
+            final double cosφ = cos(φ);
+            final double tanφ = sinφ / cosφ;
+            final double sct  = cosλ*cosλ + tanφ*tanφ;
+            double b = cosφ * sinλ;
+            b = b*b - 1;
+
+            final Matrix derivative = new Matrix2(
+                    -(cosφ * cosλ) / b,         // ∂x/∂λ
+                     (sinφ * sinλ) / b,         // ∂x/∂φ
+                    tanφ * sinλ / sct,          // ∂y/∂λ
+                    cosλ / (cosφ*cosφ * sct));  // ∂y/∂φ
+
+            assert Assertions.checkDerivative(derivative, super.derivative(point));
+            return derivative;
+        }
     }
 
     /**
      * Gets the derivative of this transform at a point.
-     * The current implementation is derived from the spherical formulas.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.
      * @throws ProjectionException if the derivative can't be evaluated at the specified point.
      *
-     * @since 3.16
      */
     @Override
     public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ    = rollLongitude(point.getX());
-        final double φ    = point.getY();
-        final double sinλ = sin(λ);
-        final double cosλ = cos(λ);
-        final double sinφ = sin(φ);
-        final double cosφ = cos(φ);
-        final double tanφ = sinφ / cosφ;
-        final double sct  = cosλ*cosλ + tanφ*tanφ;
-        double b = cosφ * sinλ;
-        b = b*b - 1;
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double λ2    = λ*λ;
+        final double sinφ  = sin(φ);
+        final double sinφ2 = sinφ*sinφ;
+        final double cosφ  = cos(φ);
+        final double cosφ2 = cosφ*cosφ;
+        final double tanφ  = sinφ/cosφ;
+        final double t, dt_dφ;
+        if (abs(cosφ) > ANGLE_TOLERANCE) {
+            t = tanφ*tanφ;
+            dt_dφ = 2*tanφ*(1 + t);
+        } else {
+            dt_dφ = t = 0;
+        }
+        final double t58       = (14 - 58*t);
+        final double t11       = ( 9 - 11*t)*30;
+        final double λcosφ     = cosφ * λ;
+        final double λcosφ2    = λcosφ * λcosφ;
+        final double λcosφ2_dλ =  2 * λcosφ * cosφ;
+        final double λcosφ2_dφ = -2 * λcosφ * sinφ * λ;
+        final double sqess     = sqrt(1 - excentricitySquared*sinφ2);
+        final double λcosφ_dφ  = λ*sinφ * (excentricitySquared - 1) / (1 - excentricitySquared*sinφ2);
+        final double  n        = esp * cosφ2;
+        final double dn_dφ     = -2*n*tanφ;
+        final double  aX       = (( 179 -   t)*t -  479)*t +   61;
+        final double  aY       = (( 543 -   t)*t - 3111)*t + 1385;
+        final double daX_dφ    = (( 358 - 3*t)*t -  479)*dt_dφ;
+        final double daY_dφ    = ((1086 - 3*t)*t - 3099)*dt_dφ;
+        final double  bX       = 5 + (t - 18)*t + cosφ2*(esp*t58 + FC7*λ2*aX);
+        final double dbX_dλ    = FC7 * (λcosφ2_dλ *  aX);
+        final double dbX_dφ    = FC7 * (λcosφ2_dφ *  aX  + daX_dφ*λcosφ2) + (2*t + 58*n - 18)*dt_dφ + t58*dn_dφ;
+        final double dcX_dλ    = FC5 * (λcosφ2_dλ *  bX  + dbX_dλ*λcosφ2);
+        final double dcX_dφ    = FC5 * (λcosφ2_dφ *  bX  + dbX_dφ*λcosφ2) - dt_dφ + dn_dφ;
+        final double  cX       = FC5 * (λcosφ2    *  bX) - t + n + 1;
+        final double ddX_dλ    = FC3 * (λcosφ2_dλ *  cX  + dcX_dλ * λcosφ2);
+        final double ddX_dφ    = FC3 * (λcosφ2_dφ *  cX  + dcX_dφ * λcosφ2);
+        final double  dX       = FC3 * (λcosφ2    *  cX) + FC1;
+        final double  bY       = FC8 * (λcosφ2    *  aY) + (t - 58)*t + t11*n + 61;
+        final double dbY_dφ    = FC8 * (λcosφ2_dφ *  aY  + daY_dφ*λcosφ2) + 2*(t - 145*n - 29)*dt_dφ + t11*dn_dφ;
+        final double dcY_dλ    = FC6 *  λcosφ2_dλ * (bY  + FC8*aY * λcosφ2);
+        final double dcY_dφ    = FC6 * (λcosφ2_dφ *  bY  + dbY_dφ * λcosφ2) + (9 + 8*n)*dn_dφ - dt_dφ;
+        final double  dy       = FC6 * (λcosφ2    *  bY) + (9 + 4*n)*n - t + 5;
+        final double  dY       = FC4 * (λcosφ2    *  dy) + 1;
+        final double ddY_dλ    = FC4 * (λcosφ2_dλ *  dy + dcY_dλ*λcosφ2);
+        final double ddY_dφ    = FC4 * (λcosφ2_dφ *  dy + dcY_dφ*λcosφ2);
         return new Matrix2(
-                -(cosφ * cosλ) / b,         // ∂x/∂λ
-                 (sinφ * sinλ) / b,         // ∂x/∂φ
-                tanφ * sinλ / sct,          // ∂y/∂λ
-                cosλ / (cosφ*cosφ * sct));  // ∂y/∂φ
+                (    cosφ*dX + ddX_dλ*λcosφ) / sqess,
+                (λcosφ_dφ*dX + ddX_dφ*λcosφ) / sqess,
+                FC2*sinφ*λcosφ * (2*dY + ddY_dλ*λ) / sqess,
+                FC2*((λcosφ2 + λ*sinφ*λcosφ_dφ)*dY + λ2*sinφ*cosφ*ddY_dφ)/sqess + dmlfn_dφ(sinφ2, cosφ2));
     }
 
     /**
