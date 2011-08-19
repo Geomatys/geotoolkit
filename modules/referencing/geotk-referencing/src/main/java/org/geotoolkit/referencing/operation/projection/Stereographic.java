@@ -123,7 +123,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
  *       U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7, Version 19.</li>
+ *       EPSG Guidance Note Number 7, Version 19.</li>
  *   <li>Gerald Evenden. <A HREF="http://members.bellatlantic.net/~vze2hc4d/proj4/sterea.pdf">
  *       "Supplementary PROJ.4 Notes - Oblique Stereographic Alternative"</A></li>
  *   <li>Krakiwsky, E.J., D.B. Thomson, and R.R. Steeves. 1977.<br>

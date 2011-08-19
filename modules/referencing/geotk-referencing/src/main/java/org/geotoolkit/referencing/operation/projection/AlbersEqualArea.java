@@ -66,11 +66,11 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * {@section References}
  * <ul>
  *   <li>Proj-4.4.7 available at <A HREF="http://www.remotesensing.org/proj">www.remotesensing.org/proj</A><br>
- *       Relevent files are: {@code PJ_aea.c}, {@code pj_fwd.c} and {@code pj_inv.c}.</li>
+ *       Relevant files are: {@code PJ_aea.c}, {@code pj_fwd.c} and {@code pj_inv.c}.</li>
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
  *       U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7, Version 19.</li>
+ *       EPSG Guidance Note Number 7, Version 19.</li>
  * </ul>
  *
  * @author Gerald Evenden (USGS)

@@ -66,7 +66,7 @@ import static org.geotoolkit.util.Utilities.hash;
  *        Geodetic System 1984, Technical Report 8350.2.
  *        Available from <a href="http://earth-info.nga.mil/GandG/pubs.html">http://earth-info.nga.mil/GandG/pubs.html</a></li>
  *   <li> "Coordinate Conversions and Transformations including Formulas",
- *        EPSG Guidence Note Number 7, Version 19.</li>
+ *        EPSG Guidance Note Number 7, Version 19.</li>
  * </ul>
  *
  * @author Rueben Schulz (UBC)

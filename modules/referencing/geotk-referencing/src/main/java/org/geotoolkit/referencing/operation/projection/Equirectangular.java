@@ -55,7 +55,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.*;
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
  *       U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7 part 2, Version 24.</li>
+ *       EPSG Guidance Note Number 7 part 2, Version 24.</li>
  * </ul>
  *
  * @author John Grange
