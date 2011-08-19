@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.util.List;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.DataStoreException;
 
 
@@ -126,7 +127,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
         // carry on.
         else if (holes.size() == 1 && shells.isEmpty()) {
             //LOGGER.warning("only one hole in this polygon record");
-            return createMulti(JTSUtilities.reverseRing(holes.get(0)));
+            return createMulti(JTS.reverseRing(holes.get(0)));
         } else {
 
             // build an association between shells and holes

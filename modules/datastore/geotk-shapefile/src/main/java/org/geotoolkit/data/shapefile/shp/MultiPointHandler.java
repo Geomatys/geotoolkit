@@ -26,6 +26,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.nio.DoubleBuffer;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
@@ -183,7 +184,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
 
         if (shapeType == ShapeType.MULTIPOINTZ) {
             double[] zExtreame = {Double.NaN, Double.NaN};
-            JTSUtilities.zMinMax(new CoordinateArraySequence(mp.getCoordinates()), zExtreame);
+            JTS.zMinMax(new CoordinateArraySequence(mp.getCoordinates()), zExtreame);
 
             if (Double.isNaN(zExtreame[0])) {
                 buffer.putDouble(0.0);

@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.geometry.jts;
 
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import java.awt.Shape;
 import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.PathIterator;
@@ -30,6 +27,9 @@ import java.util.Map;
 
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -38,6 +38,8 @@ import org.geotoolkit.referencing.operation.projection.ProjectionException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.util.ArgumentChecks;
 
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -49,15 +51,16 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.util.ArgumentChecks;
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 
 /**
  * JTS Geometry utility methods, bringing GeotoolKit to JTS.
@@ -725,5 +728,211 @@ public final class JTS {
         }
         return crs;
     }
+    
+    
+    
+        /**
+     * Determine the min and max "z" values in an array of Coordinates.
+     * 
+     * @param cs The array to search.
+     * @param target
+     *            array with at least two elements where to hold the min and max
+     *            zvalues. target[0] will be filled with the minimum zvalue,
+     *            target[1] with the maximum. The array current values, if not
+     *            NaN, will be taken into acount in the computation.
+     */
+    public static void zMinMax(final CoordinateSequence cs, final double[] target) {
+        if (cs.getDimension() < 3) {
+            return;
+        }
+        double zmin;
+        double zmax;
+        boolean validZFound = false;
 
+        zmin = Double.NaN;
+        zmax = Double.NaN;
+
+        double z;
+        final int size = cs.size();
+        for (int t = size - 1; t >= 0; t--) {
+            z = cs.getOrdinate(t, 2);
+
+            if (!(Double.isNaN(z))) {
+                if (validZFound) {
+                    if (z < zmin) {
+                        zmin = z;
+                    }
+
+                    if (z > zmax) {
+                        zmax = z;
+                    }
+                } else {
+                    validZFound = true;
+                    zmin = z;
+                    zmax = z;
+                }
+            }
+        }
+
+        if(!Double.isNaN(zmin)){
+            target[0] = zmin;
+        }
+        if(!Double.isNaN(zmax)){
+            target[1] = zmax;
+        }
+    }
+
+    /**
+     * Does what it says, reverses the order of the Coordinates in the ring.
+     * 
+     * @param lr The ring to reverse.
+     * @return A new ring with the reversed Coordinates.
+     */
+    public static LinearRing reverseRing(final LinearRing lr) {
+        
+        final GeometryFactory gf = new GeometryFactory();
+        
+        final int numPoints = lr.getNumPoints()-1;
+        final Coordinate[] newCoords = new Coordinate[numPoints+1];
+
+        for (int t = numPoints; t >= 0; t--) {
+            newCoords[t] = lr.getCoordinateN(numPoints - t);
+        }
+
+        return gf.createLinearRing(newCoords);
+    }
+
+    
+   
+    /**
+     * Create a Polygon from the given Polygon. Will ensure that shells are
+     * clockwise and holes are counter-clockwise.
+     * 
+     * @param p The Polygon to make "nice".
+     * @return The "nice" Polygon.
+     */
+    public static <T extends Geometry>T ensureClockWise(final T g) {
+       
+        if(!(g instanceof MultiPolygon) || !(g instanceof Polygon)){
+            return g;
+        }
+        
+        final GeometryFactory gf = new GeometryFactory();
+              
+        int nbPolygon = 1;
+        
+        if(g instanceof MultiPolygon){
+            nbPolygon = g.getNumGeometries();
+        }
+        
+        final Polygon[] ps = new Polygon[nbPolygon];
+        
+        for( int i = 0; i < nbPolygon; i++ ){
+            
+            final Polygon p;
+            
+            if(nbPolygon > 1){
+                p = (Polygon) g.getGeometryN(i);
+            }else{
+                p = (Polygon) g;
+            }
+            
+            final LinearRing outer;
+            final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+            Coordinate[] coords;
+
+            coords = p.getExteriorRing().getCoordinates();
+
+            if (CGAlgorithms.isCCW(coords)) {
+                outer = reverseRing((LinearRing) p.getExteriorRing());
+            } else {
+                outer = (LinearRing) p.getExteriorRing();
+            }
+
+            for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
+                coords = p.getInteriorRingN(t).getCoordinates();
+
+                if (!(CGAlgorithms.isCCW(coords))) {
+                    holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
+                } else {
+                    holes[t] = (LinearRing) p.getInteriorRingN(t);
+                }
+            }
+            
+            ps[i] = gf.createPolygon(outer, holes); 
+        }
+        
+        if(nbPolygon > 1){
+             return (T) gf.createMultiPolygon(ps);
+        }else {
+            return (T) ps[0];
+        }
+    }
+    
+    
+    /**
+     * Create a Polygon from the given Polygon. Will ensure that shells are
+     * counter-clockwise and holes are clockwise.
+     * 
+     * @param p The Polygon to make "nice".
+     * @return The "nice" Polygon.
+     */
+     public static <T extends Geometry>T ensureCounterClockWise(final T g) {
+       
+        if(!(g instanceof MultiPolygon) || !(g instanceof Polygon)){
+            return g;
+        }
+        
+        final GeometryFactory gf = new GeometryFactory();
+              
+        int nbPolygon = 1;
+        
+        if(g instanceof MultiPolygon){
+            nbPolygon = g.getNumGeometries();
+        }
+        
+        final Polygon[] ps = new Polygon[nbPolygon];
+        
+        for( int i = 0; i < nbPolygon; i++ ){
+            
+            final Polygon p;
+            
+            if(nbPolygon > 1){
+                p = (Polygon) g.getGeometryN(i);
+            }else{
+                p = (Polygon) g;
+            }
+            
+            final LinearRing outer;
+            final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
+            Coordinate[] coords;
+
+            coords = p.getExteriorRing().getCoordinates();
+
+            if (CGAlgorithms.isCCW(coords)) {
+                outer = (LinearRing) p.getExteriorRing();
+            } else {
+                outer = reverseRing((LinearRing) p.getExteriorRing());
+            }
+
+            for (int t = 0, tt = p.getNumInteriorRing(); t < tt; t++) {
+                coords = p.getInteriorRingN(t).getCoordinates();
+
+                if (!(CGAlgorithms.isCCW(coords))) {
+                    holes[t] = (LinearRing) p.getInteriorRingN(t);
+                } else {
+                    holes[t] = reverseRing((LinearRing) p.getInteriorRingN(t));
+                }
+            }
+            
+            ps[i] = gf.createPolygon(outer, holes); 
+        }
+        
+        if(nbPolygon > 1){
+             return (T) gf.createMultiPolygon(ps);
+        }else {
+            return (T) ps[0];
+        }
+    }
+    
 }

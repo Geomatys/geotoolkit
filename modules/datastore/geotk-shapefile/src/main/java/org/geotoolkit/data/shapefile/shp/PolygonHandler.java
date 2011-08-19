@@ -31,6 +31,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.DataStoreException;
 
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
@@ -214,7 +215,7 @@ public class PolygonHandler extends AbstractShapeHandler {
         // carry on.
         else if (holes.size() == 1 && shells.isEmpty()) {
             //LOGGER.warning("only one hole in this polygon record");
-            return createMulti(JTSUtilities.reverseRing(holes.get(0)));
+            return createMulti(JTS.reverseRing(holes.get(0)));
         } else {
 
             // build an association between shells and holes
@@ -352,8 +353,8 @@ public class PolygonHandler extends AbstractShapeHandler {
         if (shellSize == 0) {
             for (int i=0; i<holeSize; i++) {
                 final LinearRing hole = holes.get(i);
-                polygons[i] = GEOMETRY_FACTORY.createPolygon(JTSUtilities
-                        .reverseRing(hole), new LinearRing[0]);
+                polygons[i] = GEOMETRY_FACTORY.createPolygon(JTS.reverseRing(hole), 
+                        new LinearRing[0]);
             }
         }
 
@@ -412,7 +413,7 @@ public class PolygonHandler extends AbstractShapeHandler {
             if (minShell == null) {
                 //LOGGER.warning("polygon found with a hole thats not inside a shell");
                 // now reverse this bad "hole" and turn it into a shell
-                shells.add(JTSUtilities.reverseRing(testRing));
+                shells.add(JTS.reverseRing(testRing));
                 holesForShells.add(new ArrayList());
             } else {
                 ((ArrayList) holesForShells.get(shells.indexOf(minShell)))
@@ -484,7 +485,7 @@ public class PolygonHandler extends AbstractShapeHandler {
         for (int ringN = 0; ringN < nrings; ringN++) {
             final CoordinateSequence coords = coordinates[ringN];
             
-            JTSUtilities.zMinMax(coords, zExtreame);
+            JTS.zMinMax(coords, zExtreame);
             
             final int seqSize = coords.size();
             for(int coordN = 0; coordN < seqSize; coordN++){

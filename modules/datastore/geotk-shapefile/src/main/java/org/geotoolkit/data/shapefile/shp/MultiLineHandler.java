@@ -25,6 +25,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import java.nio.DoubleBuffer;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
@@ -299,7 +300,7 @@ public class MultiLineHandler extends AbstractShapeHandler {
         for(int lineN = 0; lineN < lines.length; lineN++){
             final CoordinateSequence coords = lines[lineN];
             if (shapeType == ShapeType.ARCZ) {
-                JTSUtilities.zMinMax(coords, zExtreame);
+                JTS.zMinMax(coords, zExtreame);
             }
             final int ncoords = coords.size();
             
