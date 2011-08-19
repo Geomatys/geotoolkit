@@ -84,7 +84,7 @@ import static org.geotoolkit.referencing.operation.SamplePoints.MOLODENSKY_TOLER
  *
  * @since 2.1
  */
-public class CoordinateOperationFactoryTest extends TransformTestBase {
+public class COFactoryUsingMolodenskyTest extends TransformTestBase {
     /**
      * WKT of compound CRS to be tested.
      */
@@ -123,7 +123,7 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      *       used previously and still in the cache. We need to see if this problem can be
      *       avoid after we switch to JSR-330.
      */
-    public CoordinateOperationFactoryTest() {
+    public COFactoryUsingMolodenskyTest() {
         this(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Molodensky"));
     }
 
@@ -132,7 +132,7 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      *
      * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
-    protected CoordinateOperationFactoryTest(final Hints hints) {
+    protected COFactoryUsingMolodenskyTest(final Hints hints) {
         super(AbstractMathTransform.class, hints);
         this.testHints = hints;
     }
@@ -174,7 +174,7 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      *
      * @since 3.16
      */
-    protected SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
+    SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
         tolerance = SamplePoints.MOLODENSKY_TOLERANCE;
         return sample.tgt;
     }

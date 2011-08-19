@@ -22,20 +22,20 @@ import org.geotoolkit.factory.FactoryFinder;
 
 
 /**
- * Performs the same test than {@link CoordinateOperationFactoryTest}, but using the
- * {@code "AbridgedMolodensky"} method instead than {@code "Molodensky"}.
+ * Performs the same test than {@link COFactoryUsingMolodenskyTest}, but using the
+ * {@code "Geocentric"} method instead than {@code "Molodensky"}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
  *
  * @since 3.16
  */
-public final class AbridgedMolodenskyFactoryTest extends CoordinateOperationFactoryTest {
+public final class COFactoryUsingGeocentricTest extends COFactoryUsingMolodenskyTest {
     /**
      * Creates a new test suite.
      */
-    public AbridgedMolodenskyFactoryTest() {
-        super(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Abridged Molodensky"));
+    public COFactoryUsingGeocentricTest() {
+        super(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Geocentric"));
     }
 
     /**
@@ -43,19 +43,6 @@ public final class AbridgedMolodenskyFactoryTest extends CoordinateOperationFact
      */
     @Override
     protected String getDatumShiftMethod() {
-        return "Abridged Molodensky";
-    }
-
-    /**
-     * Relaxes the tolerance threshold provided by the super class.
-     */
-    @Override
-    protected SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
-        tolerance = SamplePoints.MOLODENSKY_TOLERANCE * 10;
-        zTolerance = Math.max(zTolerance, 2E-2);
-        if (zDimension == null) {
-            zDimension = new int[] {2};
-        }
-        return sample.tgt;
+        return "Geocentric";
     }
 }

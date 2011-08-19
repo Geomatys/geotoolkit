@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation.projection.integration;
+package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase
  * @see org.geotoolkit.referencing.factory.GeoapiTest
  * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
  * @see org.geotoolkit.referencing.operation.transform.GeoapiTest
- * @see org.geotoolkit.referencing.operation.projection.integration.GeoapiTest
+ * @see org.geotoolkit.referencing.operation.projection.GeoapiTest
  * @see org.geotoolkit.GeoapiTest
  *
  * @since 3.19

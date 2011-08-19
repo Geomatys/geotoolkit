@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation.projection.integration;
+package org.geotoolkit.referencing.operation;
 
 import java.io.LineNumberReader;
 import org.geotoolkit.test.Depend;
@@ -34,7 +34,6 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercatorTest;
 import org.geotoolkit.referencing.operation.projection.PolarStereographicTest;
 import org.geotoolkit.referencing.operation.projection.ObliqueStereographicTest;
 import org.geotoolkit.referencing.operation.transform.NadconTransformTest;
-import org.geotoolkit.referencing.operation.DefaultMathTransformFactoryTest;
 
 import org.junit.*;
 

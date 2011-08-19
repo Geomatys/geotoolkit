@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation.projection.integration;
+package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;

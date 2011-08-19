@@ -33,7 +33,7 @@ import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIG
 
 
 /**
- * Same tests than {@link CoordinateOperationFactoryTest}, but with the EPSG factory enabled.
+ * Same tests than {@link COFactoryUsingMolodenskyTest}, but with the EPSG factory enabled.
  * This class tests whatever {@link CoordinateOperationFactory} implementation is found on the
  * classpath, provided it is backed by an {@link AuthorityBackedFactory} instance.
  *
@@ -42,7 +42,7 @@ import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIG
  *
  * @since 3.16 (derived from 3.07)
  */
-public final class AuthorityBackedFactoryTest extends CoordinateOperationFactoryTest {
+public final class AuthorityBackedFactoryTest extends COFactoryUsingMolodenskyTest {
     /**
      * Creates a new test suite.
      */
@@ -75,7 +75,7 @@ public final class AuthorityBackedFactoryTest extends CoordinateOperationFactory
      * requested by this method.
      */
     @Override
-    protected SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
+    SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
         tolerance = withHeight ? SamplePoints.TOLERANCE : SamplePoints.NOHEIGHT_TOLERANCE;
         isInverseTransformSupported = false;
         return sample.epsg;

@@ -37,7 +37,7 @@ import org.geotoolkit.referencing.GeodeticCalculator;
  *
  * @since 3.16
  */
-public final class SamplePoints {
+final class SamplePoints {
     /**
      * Tolerance factor. If must be small enough to detect if the height has
      * been used, except when the source coordinates is known to have no height.

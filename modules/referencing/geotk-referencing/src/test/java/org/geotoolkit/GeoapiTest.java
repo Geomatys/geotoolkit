@@ -65,7 +65,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  * @see org.geotoolkit.referencing.factory.GeoapiTest
  * @see org.geotoolkit.referencing.factory.epsg.GeoapiTest
  * @see org.geotoolkit.referencing.operation.transform.GeoapiTest
- * @see org.geotoolkit.referencing.operation.projection.integration.GeoapiTest
+ * @see org.geotoolkit.referencing.operation.projection.GeoapiTest
  * @see org.geotoolkit.GeoapiTest
  *
  * @since 3.19
