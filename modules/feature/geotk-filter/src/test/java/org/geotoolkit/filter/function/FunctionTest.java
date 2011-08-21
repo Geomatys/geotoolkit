@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.spatial.BBOX;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 
@@ -37,7 +37,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  */
 public class FunctionTest {
 
-    
+
     public FunctionTest() {
 
     }
@@ -47,9 +47,9 @@ public class FunctionTest {
 
         Function f = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT, FF.property("."));
         assertTrue(f instanceof LengthFunction);
-        Commons.serialize(f); //test serialize
+        assertSerializable(f); //test serialize
 
     }
 
-    
+
 }

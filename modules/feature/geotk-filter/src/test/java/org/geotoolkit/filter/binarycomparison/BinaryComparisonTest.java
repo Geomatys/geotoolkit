@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
-import org.geotoolkit.test.Commons;
 import java.util.Date;
 import org.junit.Test;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -29,7 +28,7 @@ import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -65,7 +64,7 @@ public class BinaryComparisonTest {
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
         assertFalse(filter.evaluate(CANDIDATE_1));
-        
+
         rightliteral = FF.literal('t');
         falseliteral = FF.literal('z');
 
@@ -147,8 +146,8 @@ public class BinaryComparisonTest {
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equals(property, falseliteral);
         assertFalse(filter.evaluate(CANDIDATE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 
@@ -279,8 +278,8 @@ public class BinaryComparisonTest {
 //        assertFalse(filter.evaluate(FEATURE_1));
 //        filter = FF.greater(underLiteral,property);
 //        assertFalse(filter.evaluate(FEATURE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 
@@ -393,8 +392,8 @@ public class BinaryComparisonTest {
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.greaterOrEqual(underLiteral,property);
         assertFalse(filter.evaluate(CANDIDATE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 
@@ -507,8 +506,8 @@ public class BinaryComparisonTest {
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.less(underLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 
@@ -621,8 +620,8 @@ public class BinaryComparisonTest {
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.lessOrEqual(underLiteral,property);
         assertTrue(filter.evaluate(CANDIDATE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 
@@ -730,8 +729,8 @@ public class BinaryComparisonTest {
         assertFalse(filter.evaluate(CANDIDATE_1));
         filter = FF.notEqual(property, falseliteral);
         assertTrue(filter.evaluate(CANDIDATE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 
@@ -748,8 +747,8 @@ public class BinaryComparisonTest {
         assertTrue(filter.evaluate(CANDIDATE_1));
         filter = FF.equal(property, rightliteral, true);
         assertFalse(filter.evaluate(CANDIDATE_1));
-        
-        Commons.serialize(filter); //test serialize
+
+        assertSerializable(filter); //test serialize
 
     }
 

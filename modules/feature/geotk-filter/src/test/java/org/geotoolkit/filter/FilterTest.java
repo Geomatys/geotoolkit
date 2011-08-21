@@ -33,7 +33,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -43,7 +43,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  */
 public class FilterTest {
 
-    
+
     public FilterTest() {
     }
 
@@ -55,9 +55,9 @@ public class FilterTest {
         ids.add(FF.featureId("dummyid45"));
 
         Id id = FF.id(ids);
-        
+
         //test serialize
-        Commons.serialize(id);
+        assertSerializable(id);
 
         assertFalse(id.evaluate(CANDIDATE_1));
 
@@ -79,39 +79,39 @@ public class FilterTest {
         assertNotNull(FF.literal('x'));
         assertNotNull(FF.literal(122));
         assertNotNull(FF.literal(45.56d));
-        
-        Commons.serialize(FF.literal(true));
-        Commons.serialize(FF.literal("a text string"));
-        Commons.serialize(FF.literal('x'));
-        Commons.serialize(FF.literal(122));
-        Commons.serialize(FF.literal(45.56d));
+
+        assertSerializable(FF.literal(true));
+        assertSerializable(FF.literal("a text string"));
+        assertSerializable(FF.literal('x'));
+        assertSerializable(FF.literal(122));
+        assertSerializable(FF.literal(45.56d));
     }
 
     @Test
     public void testNot(){
         Filter filter = FF.equals(FF.property("testString"), FF.literal("test string data"));
         assertTrue(filter.evaluate(CANDIDATE_1));
-        
+
         //test serialize
-        Commons.serialize(filter);
+        assertSerializable(filter);
 
         Not not = FF.not(filter);
         assertFalse(not.evaluate(CANDIDATE_1));
-        
+
         //test serialize
-        Commons.serialize(not);
+        assertSerializable(not);
     }
 
     @Test
     public void testIsBetween(){
-        
+
         PropertyName property = FF.property("testInteger");
 
         int ibefore = 12;
         int iafter = 250;
         PropertyIsBetween between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
         assertTrue(between.evaluate(CANDIDATE_1));
-        Commons.serialize(between); //test serialize
+        assertSerializable(between); //test serialize
 
         ibefore = 112;
         iafter = 360;
@@ -131,7 +131,7 @@ public class FilterTest {
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
         assertFalse(between.evaluate(CANDIDATE_1));
-        Commons.serialize(between); //test serialize
+        assertSerializable(between); //test serialize
 
         //test against strings
         between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
@@ -152,17 +152,17 @@ public class FilterTest {
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
         assertTrue(between.evaluate(CANDIDATE_1));
-        Commons.serialize(between); //test serialize
+        assertSerializable(between); //test serialize
 
         //test timestamp against string
         property = FF.property("datetime2");
         between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
         assertTrue(between.evaluate(CANDIDATE_1));
-        Commons.serialize(between); //test serialize
+        assertSerializable(between); //test serialize
 
         between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
         assertFalse(between.evaluate(CANDIDATE_1));
-        
+
     }
 
     @Test
@@ -173,7 +173,7 @@ public class FilterTest {
 
         PropertyIsLike filter = FF.like(testAttribute, "test*", "*", ".", "!");
         assertTrue(filter.evaluate(CANDIDATE_1));
-        Commons.serialize(filter); //test serialize
+        assertSerializable(filter); //test serialize
 
         // Test for false positive.
         filter = FF.like(testAttribute, "cows*", "*", ".", "!");
@@ -197,14 +197,14 @@ public class FilterTest {
 
         filter = FF.isNull(FF.property("testString"));
         assertFalse(filter.evaluate(CANDIDATE_1));
-        Commons.serialize(filter); //test serialize
+        assertSerializable(filter); //test serialize
     }
 
     @Test
     public void testPropertyName(){
         Expression exp = FF.property("testString");
         assertEquals(exp.evaluate(CANDIDATE_1), "test string data");
-        Commons.serialize(exp); //test serialize
+        assertSerializable(exp); //test serialize
     }
 
 }

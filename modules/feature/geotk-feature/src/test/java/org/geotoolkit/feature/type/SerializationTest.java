@@ -25,8 +25,8 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.test.Commons;
 import org.geotoolkit.util.SimpleInternationalString;
+import static org.geotoolkit.test.Assert.*;
 
 import org.junit.Test;
 
@@ -41,7 +41,7 @@ import org.opengis.feature.type.Schema;
 
 /**
  * Test the different feature type and attribute classes serialization.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -52,57 +52,57 @@ public class SerializationTest {
 
     @Test
     public void testSerialize() {
-                
+
         //test attribut type
-        AttributeType attType = new DefaultAttributeType(DefaultName.valueOf("attType"), 
-                String.class, true, true, null, null, new SimpleInternationalString("i18n")); 
-        Commons.serialize(attType);
-                
+        AttributeType attType = new DefaultAttributeType(DefaultName.valueOf("attType"),
+                String.class, true, true, null, null, new SimpleInternationalString("i18n"));
+        assertSerializable(attType);
+
         //test association type
         AssociationType assoType = new DefaultAssociationType(
-                DefaultName.valueOf("asso"), attType, true, 
+                DefaultName.valueOf("asso"), attType, true,
                 null, null, new SimpleInternationalString("i18n"));
-        Commons.serialize(assoType);
-        
+        assertSerializable(assoType);
+
         //test association type
         AssociationDescriptor assoDesc = new DefaultAssociationDescriptor(
                 assoType, DefaultName.valueOf("assoDesc"), 0, 1, false);
-        Commons.serialize(assoDesc);
-        
+        assertSerializable(assoDesc);
+
         //test attribute descriptor
         AttributeDescriptor attDesc = new DefaultAttributeDescriptor(
                 attType, DefaultName.valueOf("attDesc"), 0, 1, true, null);
-        Commons.serialize(attDesc);
-        
+        assertSerializable(attDesc);
+
         //test geometry type
-        GeometryType geomtype = new DefaultGeometryType(DefaultName.valueOf("geomType"), 
-                Geometry.class, DefaultGeographicCRS.WGS84, true, true, null, 
+        GeometryType geomtype = new DefaultGeometryType(DefaultName.valueOf("geomType"),
+                Geometry.class, DefaultGeographicCRS.WGS84, true, true, null,
                 attType, new SimpleInternationalString("i18n"));
-        Commons.serialize(geomtype);
-        
+        assertSerializable(geomtype);
+
         //test property descriptor
-        GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomtype, 
-                DefaultName.valueOf("geomdesc"), 0, 1, true, null); 
-        Commons.serialize(geomDesc);
-        
+        GeometryDescriptor geomDesc = new DefaultGeometryDescriptor(geomtype,
+                DefaultName.valueOf("geomdesc"), 0, 1, true, null);
+        assertSerializable(geomDesc);
+
         //test complexe type
-        ComplexType comType = new DefaultComplexType(DefaultName.valueOf("comType"), 
+        ComplexType comType = new DefaultComplexType(DefaultName.valueOf("comType"),
                 (Collection)Collections.singleton(geomDesc), true, true, null, attType, null);
-        Commons.serialize(comType);
-        
+        assertSerializable(comType);
+
         //test schema
         Schema schema = new DefaultSchema("http://geotoolkit.org");
-        Commons.serialize(schema);
-        
+        assertSerializable(schema);
+
         //test profile
         DefaultProfile profile = new DefaultProfile(schema, Collections.singleton(DefaultName.valueOf("profile")));
-        Commons.serialize(profile);
-        
-        
-        Commons.serialize(BasicFeatureTypes.FEATURE);
-        Commons.serialize(BasicFeatureTypes.LINE);
-        Commons.serialize(BasicFeatureTypes.POINT);
-        Commons.serialize(BasicFeatureTypes.POLYGON);
-        
+        assertSerializable(profile);
+
+
+        assertSerializable(BasicFeatureTypes.FEATURE);
+        assertSerializable(BasicFeatureTypes.LINE);
+        assertSerializable(BasicFeatureTypes.POINT);
+        assertSerializable(BasicFeatureTypes.POLYGON);
+
     }
 }

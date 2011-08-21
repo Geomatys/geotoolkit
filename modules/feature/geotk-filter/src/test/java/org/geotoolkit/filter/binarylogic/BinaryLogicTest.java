@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.filter.binarylogic;
 
-import org.geotoolkit.test.Commons;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -26,7 +25,7 @@ import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Or;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -36,7 +35,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  */
 public class BinaryLogicTest {
 
-    
+
     public BinaryLogicTest() {
 
     }
@@ -60,13 +59,13 @@ public class BinaryLogicTest {
         filters.add(filter4);
         and = FF.and(filters);
         assertFalse( and.evaluate(CANDIDATE_1) );
-        
-        
+
+
         filters.clear();
         filters.add(filter1);
         filters.add(filter3);
-        and = FF.and(filters);        
-        Commons.serialize(and); //test serialize
+        and = FF.and(filters);
+        assertSerializable(and); //test serialize
 
     }
 
@@ -97,13 +96,13 @@ public class BinaryLogicTest {
         filters.add(filter5);
         or = FF.or(filters);
         assertFalse( or.evaluate(CANDIDATE_1) );
-        
-        
+
+
         filters.clear();
         filters.add(filter1);
         filters.add(filter3);
         or = FF.or(filters);
-        Commons.serialize(or); //test serialize
+        assertSerializable(or); //test serialize
 
     }
 

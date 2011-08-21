@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.test.Commons;
+import org.geotoolkit.test.Assert;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -92,9 +92,9 @@ public class FeatureFlatTest extends TestCase {
         assertTrue(
             "string retrieval and match",
             ((String) testFeature.getAttribute("testString")).equals("test string data"));
-        
+
         //test serialize
-        Commons.serialize(testFeature);
+        Assert.assertSerializable(testFeature);
 
     }
 
@@ -119,7 +119,7 @@ public class FeatureFlatTest extends TestCase {
         adb.setName("jimmy");
         adb.setType(atb.buildType());
         tb.add(adb.buildDescriptor());
-        
+
         SimpleFeatureType test = tb.buildSimpleFeatureType();
 
         try {
@@ -141,13 +141,13 @@ public class FeatureFlatTest extends TestCase {
         GeometryCollection gc = gf.createGeometryCollection(g);
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "bounds" );
-        
+
         tb.add("p1", Point.class, DefaultGeographicCRS.WGS84);
         tb.add("p2", Point.class, DefaultGeographicCRS.WGS84);
         tb.add("p3", Point.class, DefaultGeographicCRS.WGS84);
         tb.add("p4", Point.class, DefaultGeographicCRS.WGS84);
         SimpleFeatureType t = tb.buildSimpleFeatureType();
-        
+
         SimpleFeature f = SimpleFeatureBuilder.build(t, g, null);
         assertEquals(gc.getEnvelopeInternal().getMinX(), f.getBounds().getMinX());
         assertEquals(gc.getEnvelopeInternal().getMinY(), f.getBounds().getMinY());
@@ -163,9 +163,9 @@ public class FeatureFlatTest extends TestCase {
         assertEquals(gc.getEnvelopeInternal().getMinY(), f.getBounds().getMinY());
         assertEquals(gc.getEnvelopeInternal().getMaxX(), f.getBounds().getMaxX());
         assertEquals(gc.getEnvelopeInternal().getMaxY(), f.getBounds().getMaxY());
-        
+
         //test serialize
-        Commons.serialize(f);
+        Assert.assertSerializable(f);
     }
 
     public void testClone() {
@@ -232,12 +232,12 @@ public class FeatureFlatTest extends TestCase {
         assertTrue(f2.equals(f2));
         assertTrue(!f1.equals(f2));
         assertTrue(!f1.equals(null));
-        
+
         FeatureTypeBuilder tb = new FeatureTypeBuilder();
         tb.setName( "different" );
         tb.add( "name", String.class );
         SimpleFeatureType type = tb.buildSimpleFeatureType();
-        
+
         assertTrue(!f1.equals(SimpleFeatureBuilder.build(type, new Object[1], null)));
     }
 

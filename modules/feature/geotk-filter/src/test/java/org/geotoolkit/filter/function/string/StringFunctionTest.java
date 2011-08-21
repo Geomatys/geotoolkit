@@ -23,7 +23,7 @@ import org.junit.Test;
 
 import org.opengis.filter.expression.Function;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 
@@ -34,7 +34,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  */
 public class StringFunctionTest {
 
-    
+
     public StringFunctionTest() {
 
     }
@@ -59,7 +59,7 @@ public class StringFunctionTest {
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal("72"),FF.literal(3));
         assertEquals(f.evaluate(null, String.class), "72");
-        Commons.serialize(f); //test serialize
+        assertSerializable(f); //test serialize
 
     }
 
@@ -83,10 +83,10 @@ public class StringFunctionTest {
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal("72"),FF.literal(3));
         assertEquals(f.evaluate(null, String.class), "72");
-        Commons.serialize(f); //test serialize
+        assertSerializable(f); //test serialize
 
     }
 
 
-    
+
 }

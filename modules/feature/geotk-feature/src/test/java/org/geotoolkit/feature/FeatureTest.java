@@ -41,7 +41,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 /**
  * Testing feature compliance.
@@ -100,7 +100,7 @@ public class FeatureTest {
         assertTrue(GF.createPoint(new Coordinate(50, 60)).equalsExact((Geometry) feature.getDefaultGeometryProperty().getValue()));
 
         //test serialize
-        Commons.serialize(feature);
+        assertSerializable(feature);
 
         //test it doesn't have a descriptor
         assertNull(feature.getDescriptor());
@@ -136,7 +136,7 @@ public class FeatureTest {
         assertTrue(GF.createPoint(new Coordinate(50, 60)).equalsExact((Geometry) feature.getDefaultGeometryProperty().getValue()));
 
         //test serialize
-        Commons.serialize(feature);
+        assertSerializable(feature);
 
         //test it doesn't have a descriptor
         assertNull(feature.getDescriptor());

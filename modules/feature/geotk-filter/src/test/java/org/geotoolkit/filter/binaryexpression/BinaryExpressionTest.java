@@ -17,13 +17,12 @@
  */
 package org.geotoolkit.filter.binaryexpression;
 
-import org.geotoolkit.test.Commons;
 import org.junit.Test;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
 
 /**
@@ -33,7 +32,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
  */
 public class BinaryExpressionTest {
 
-    
+
     public BinaryExpressionTest() {
     }
 
@@ -71,8 +70,8 @@ public class BinaryExpressionTest {
         exp = FF.add(property,combineLiteral);
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
-        
-        Commons.serialize(exp); //test serialize
+
+        assertSerializable(exp); //test serialize
 
     }
 
@@ -110,8 +109,8 @@ public class BinaryExpressionTest {
         exp = FF.divide(property,combineLiteral);
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
-        
-        Commons.serialize(exp); //test serialize
+
+        assertSerializable(exp); //test serialize
 
     }
 
@@ -149,8 +148,8 @@ public class BinaryExpressionTest {
         exp = FF.multiply(property,combineLiteral);
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
-        
-        Commons.serialize(exp); //test serialize
+
+        assertSerializable(exp); //test serialize
 
     }
 
@@ -188,8 +187,8 @@ public class BinaryExpressionTest {
         exp = FF.subtract(property,combineLiteral);
         result = exp.evaluate(CANDIDATE_1, Double.class);
         assertEquals(result, correctResult, 0.0000001d);
-        
-        Commons.serialize(exp); //test serialize
+
+        assertSerializable(exp); //test serialize
 
     }
 

@@ -23,7 +23,7 @@ import javax.script.ScriptException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
-import org.geotoolkit.test.Commons;
+import static org.geotoolkit.test.Assert.*;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -83,7 +83,7 @@ public class JavaScriptTest {
                          "if(x<0) x = 10;" +
                          "x;");
         jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
-        Commons.serialize(jsFunction); //test serialize
+        assertSerializable(jsFunction); //test serialize
 
         List<Expression> exps = jsFunction.getParameters();
         PropertyName property1 = (PropertyName) exps.get(1);
@@ -95,7 +95,7 @@ public class JavaScriptTest {
         result = jsFunction.evaluate(FilterTestConstants.CANDIDATE_1,Number.class).doubleValue();
         assert(result == 10);
 
-        
+
     }
 
 
