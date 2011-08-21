@@ -22,8 +22,7 @@ import java.util.HashSet;
 import java.util.Collections;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -61,8 +60,8 @@ public final class DisjointSetTest {
         assertEquals(Collections.singleton("gamma"), t3);
         assertEquals(Collections.singleton("bêta"),  t1.getTrash());
 
-        assertNotSame(t1, serialize(t1));
-        assertNotSame(t2, serialize(t2));
-        assertNotSame(t3, serialize(t3));
+        assertNotSame(t1, assertSerializable(t1));
+        assertNotSame(t2, assertSerializable(t2));
+        assertNotSame(t3, assertSerializable(t3));
     }
 }

@@ -18,8 +18,7 @@
 package org.geotoolkit.math;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -119,6 +118,6 @@ public final class FractionTest {
     @Test
     public void testSerialization() {
         final Fraction local = new Fraction(5, 7);
-        assertNotSame(local, serialize(local));
+        assertNotSame(local, assertSerializable(local));
     }
 }

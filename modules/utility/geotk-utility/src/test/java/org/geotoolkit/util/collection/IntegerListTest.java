@@ -19,8 +19,7 @@ package org.geotoolkit.util.collection;
 
 import java.util.*;
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -75,7 +74,7 @@ public final class IntegerListTest {
         }
         assertEquals(copy, list);
         assertEquals(copy.hashCode(), list.hashCode());
-        assertNotSame(list, serialize(list));
+        assertNotSame(list, assertSerializable(list));
         /*
          * Tests cloning and removal of values.
          */

@@ -35,9 +35,8 @@ import static javax.measure.unit.NonSI.ATMOSPHERE;
 import static javax.measure.unit.NonSI.NAUTICAL_MILE;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.geotoolkit.measure.Units.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -78,10 +77,10 @@ public final class UnitsTest {
      */
     @Test
     public void testSerialization() {
-        assertEquals(DEGREE_ANGLE,         serialize(DEGREE_ANGLE));
-        assertEquals(SEXAGESIMAL_DMS,      serialize(SEXAGESIMAL_DMS));
-        assertEquals(DEGREE_MINUTE_SECOND, serialize(DEGREE_MINUTE_SECOND));
-        assertEquals(PPM,                  serialize(PPM));
+        assertEquals(DEGREE_ANGLE,         assertSerializable(DEGREE_ANGLE));
+        assertEquals(SEXAGESIMAL_DMS,      assertSerializable(SEXAGESIMAL_DMS));
+        assertEquals(DEGREE_MINUTE_SECOND, assertSerializable(DEGREE_MINUTE_SECOND));
+        assertEquals(PPM,                  assertSerializable(PPM));
     }
 
     /**

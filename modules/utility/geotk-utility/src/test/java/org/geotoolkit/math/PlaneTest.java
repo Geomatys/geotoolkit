@@ -21,8 +21,7 @@ import java.util.Random;
 import javax.vecmath.Point3d;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -78,6 +77,6 @@ public final class PlaneTest {
         local.c  =  3.7;
         local.cx =  9.3;
         local.cy = -1.8;
-        assertNotSame(local, serialize(local));
+        assertNotSame(local, assertSerializable(local));
     }
 }

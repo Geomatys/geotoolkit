@@ -18,8 +18,7 @@
 package org.geotoolkit.math;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -121,6 +120,6 @@ public final class ComplexTest {
     @Test
     public void testSerialization() {
         final Complex local = new Complex(5.6, 7.8);
-        assertNotSame(local, serialize(local));
+        assertNotSame(local, assertSerializable(local));
     }
 }

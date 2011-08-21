@@ -24,8 +24,7 @@ import java.util.Collection;
 import java.util.ListIterator;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -91,6 +90,6 @@ public final class KeySortedListTest {
         /*
          * Checks serialization.
          */
-        assertNotSame(list, serialize(list));
+        assertNotSame(list, assertSerializable(list));
     }
 }

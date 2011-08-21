@@ -18,8 +18,7 @@
 package org.geotoolkit.util;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -74,6 +73,6 @@ public final class VersionTest {
     @Test
     public void testSerialization() {
         final Version version = new Version("1.6.b2");
-        assertNotSame(version, serialize(version));
+        assertNotSame(version, assertSerializable(version));
     }
 }

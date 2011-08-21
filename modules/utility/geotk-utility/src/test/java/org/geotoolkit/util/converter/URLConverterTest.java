@@ -24,8 +24,7 @@ import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -47,7 +46,7 @@ public final class URLConverterTest {
     public void testString() throws NonconvertibleObjectException, MalformedURLException {
         final ObjectConverter<URL,String> c = URLConverter.String.INSTANCE;
         assertEquals("file:/home/user/index.txt", c.convert(new URL("file:/home/user/index.txt")));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -61,7 +60,7 @@ public final class URLConverterTest {
     public void testURI() throws NonconvertibleObjectException, MalformedURLException, URISyntaxException {
         final ObjectConverter<URL,URI> c = URLConverter.URI.INSTANCE;
         assertEquals(new URI("file:/home/user/index.txt"), c.convert(new URL("file:/home/user/index.txt")));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -74,6 +73,6 @@ public final class URLConverterTest {
     public void testFile() throws NonconvertibleObjectException, MalformedURLException {
         final ObjectConverter<URL,File> c = URLConverter.File.INSTANCE;
         assertEquals(new File("/home/user/index.txt"), c.convert(new URL("file:/home/user/index.txt")));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 }

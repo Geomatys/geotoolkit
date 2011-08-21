@@ -29,7 +29,6 @@ import org.geotoolkit.metadata.UnmodifiableMetadataException;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
-import static org.geotoolkit.test.Commons.*;
 
 
 /**
@@ -82,7 +81,7 @@ public final class CitationsTest {
         }
         assertFalse(constants.isEmpty());
         for (final Object constant : constants) {
-            assertSame("Deserialization shall give the singleton.", constant, serialize(constant));
+            assertSame("Deserialization shall give the singleton.", constant, assertSerializable(constant));
         }
     }
 

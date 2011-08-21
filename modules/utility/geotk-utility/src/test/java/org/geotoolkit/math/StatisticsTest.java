@@ -28,7 +28,6 @@ import static java.lang.Math.*;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static org.geotoolkit.test.Assert.*;
-import static org.geotoolkit.test.Commons.*;
 
 
 /**
@@ -237,7 +236,7 @@ public class StatisticsTest extends TestBase {
         assertEquals(12.472191289246473, statistics.standardDeviation(true), EPS);
         assertEquals(15.275252316519468, statistics.standardDeviation(false), EPS);
 
-        assertNotSame(statistics, serialize(statistics));
+        assertNotSame(statistics, assertSerializable(statistics));
 
         Statistics other = statistics.clone();
         other.add(60);

@@ -31,7 +31,6 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
-import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.ReferencingAssert.*;
 import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
 
@@ -133,9 +132,9 @@ public final class CoordinateSystemAxisTest extends ReferencingTestBase {
      */
     @Test
     public void testSerialization() {
-        serialize(X);
-        serialize(GEOCENTRIC_X);
-        serialize(GEODETIC_LONGITUDE);
+        assertSerializable(X);
+        assertSerializable(GEOCENTRIC_X);
+        assertSerializable(GEODETIC_LONGITUDE);
     }
 
     /**

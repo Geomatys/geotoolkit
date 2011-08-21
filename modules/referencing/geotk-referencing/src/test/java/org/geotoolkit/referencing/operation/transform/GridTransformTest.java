@@ -26,8 +26,7 @@ import org.junit.*;
 import org.opengis.referencing.operation.MathTransform;
 
 import static java.lang.Double.NaN;
-import static org.opengis.test.Assert.*;
-import static org.geotoolkit.test.Commons.serialize;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -73,7 +72,7 @@ public final class GridTransformTest extends TransformTestBase {
         transform = GridTransform.create(GridType.LOCALIZATION, buffer, new Dimension(width, height), null);
         assertInstanceOf("Expected a MathTransform2D.", GridTransform2D.class, transform);
         stress(CoordinateDomain.GEOGRAPHIC_RADIANS, 956296895);
-        final MathTransform deserialized = serialize(transform);
+        final MathTransform deserialized = assertSerializable(transform);
         final double[][] check = ((DataBufferDouble) ((GridTransform) deserialized).grid).getBankData();
         assertTrue(Arrays.equals(check[0], new double[] {1, 2, 3, 4, 5, 6}));
         assertTrue(Arrays.equals(check[1], new double[] {7, 8, 9, 10, 11, 12}));

@@ -134,49 +134,6 @@ public class Commons {
     }
 
     /**
-     * Serializes the given object, deserialize it and ensure that the deserialized object
-     * is equal to the original one.
-     * <p>
-     * If the serialization fails, then this method thrown a {@link AssertionError}
-     * as do the other JUnit assertion methods.
-     *
-     * @param  <T> The type of the object to serialize.
-     * @param  object The object to serialize.
-     * @return The deserialized object.
-     */
-    public static <T> T serialize(final T object) {
-        final Object deserialized;
-        try {
-            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            final ObjectOutputStream out = new ObjectOutputStream(buffer);
-            out.writeObject(object);
-            out.close();
-            /*
-             * Now reads the object we just serialized.
-             */
-            final byte[] data = buffer.toByteArray();
-            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
-            try {
-                deserialized = in.readObject();
-            } catch (ClassNotFoundException e) {
-                throw new AssertionError(e);
-            }
-            in.close();
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-        /*
-         * Compares with the original object and returns it.
-         */
-        @SuppressWarnings("unchecked")
-        final Class<? extends T> type = (Class<? extends T>) object.getClass();
-        assertEquals("Deserialized object not equal to the original one.", object, deserialized);
-        assertEquals("Deserialized object has a different hash code.",
-                object.hashCode(), deserialized.hashCode());
-        return type.cast(deserialized);
-    }
-
-    /**
      * Formats the given value using the given formatter, and parses the text back to its value.
      * If the parsed value is not equal to the original one, an {@link AssertionError} is thrown.
      *
@@ -258,5 +215,40 @@ public class Commons {
             out.print(')');
         }
         out.println(';');
+    }
+
+    /**
+     * Serializes the given object to the {@link target/surefire-reports/} directory.
+     * This method can be invoked after a test failure in order to allow the developer
+     * to examine the objects that caused the failure. In case of I/O error the problem
+     * is reported on the standard error stream but no exception is thrown in order to
+     * not mask the main problem, which was the test failure.
+     *
+     * @param  testClass The test class, which will determine the filename.
+     * @param  object The object to serialize, or {@code null} if none.
+     */
+    public static void serializeToSurefireDirectory(final Class<?> testClass, final Object object) {
+        if (object == null) {
+            return;
+        }
+        File file = new File("target");
+        if (!file.isDirectory() || !file.canWrite()) {
+            System.err.println("Directory not found or read only: " + file.getAbsolutePath());
+            return;
+        }
+        file = new File(file, "surefire-reports");
+        if (!file.exists() && !file.mkdir()) {
+            System.err.println("Failed to create the output directory: " + file.getAbsolutePath());
+            return;
+        }
+        file = new File(file, testClass.getName() + ".serialized");
+        try {
+            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+            out.writeObject(object);
+            out.close();
+        } catch (IOException e) {
+            System.err.println(e);
+            file.delete();
+        }
     }
 }

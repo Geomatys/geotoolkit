@@ -22,8 +22,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -132,6 +131,6 @@ public final class LineTest {
     @Test
     public void testSerialization() {
         final Line local = new Line(9.5, -3.7);
-        assertNotSame(local, serialize(local));
+        assertNotSame(local, assertSerializable(local));
     }
 }

@@ -21,8 +21,7 @@ import javax.measure.unit.SI;
 import javax.measure.converter.ConversionException;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 import org.geotoolkit.test.Depend;
 
 
@@ -79,7 +78,7 @@ public final class MeasurementRangeTest {
     public void testSerialization() {
         NumberRange<Float> r1 = MeasurementRange.create(1000f, 2000f, SI.METRE);
         NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, SI.KILOMETRE);
-        assertNotSame(r1, serialize(r1));
-        assertNotSame(r2, serialize(r2));
+        assertNotSame(r1, assertSerializable(r1));
+        assertNotSame(r2, assertSerializable(r2));
     }
 }

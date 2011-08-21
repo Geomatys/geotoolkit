@@ -27,9 +27,8 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.test.PlatformDependentTest;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -62,7 +61,7 @@ public final class FileConverterTest {
         final ObjectConverter<File,String> c = FileConverter.String.INSTANCE;
         assertEquals("/home/user/index.txt".replace('/', File.separatorChar),
                 c.convert(new File("/home/user/index.txt")));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -77,7 +76,7 @@ public final class FileConverterTest {
         assumeUnixRoot();
         final ObjectConverter<File,URI> c = FileConverter.URI.INSTANCE;
         assertEquals(new URI("file:/home/user/index.txt"), c.convert(new File("/home/user/index.txt")));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -92,6 +91,6 @@ public final class FileConverterTest {
         assumeUnixRoot();
         final ObjectConverter<File,URL> c = FileConverter.URL.INSTANCE;
         assertEquals(new URL("file:/home/user/index.txt"), c.convert(new File("/home/user/index.txt")));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 }

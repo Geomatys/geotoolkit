@@ -21,8 +21,7 @@ import java.awt.Color;
 import java.math.BigDecimal;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -46,7 +45,7 @@ public final class NumberConverterTest {
         final ObjectConverter<Number,Boolean> c = NumberConverter.Boolean.INSTANCE;
         assertEquals(Boolean.TRUE,  c.convert(Integer.valueOf(1)));
         assertEquals(Boolean.FALSE, c.convert(Integer.valueOf(0)));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -59,7 +58,7 @@ public final class NumberConverterTest {
         final ObjectConverter<Number,Double> c = NumberConverter.Double.INSTANCE;
         assertEquals(Double.valueOf(2.0), c.convert(Integer.valueOf(2)));
         assertEquals(Double.valueOf(0.5), c.convert(Float.valueOf(0.5f)));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -72,7 +71,7 @@ public final class NumberConverterTest {
         final ObjectConverter<Number,BigDecimal> c = NumberConverter.BigDecimal.INSTANCE;
         assertEquals(BigDecimal.valueOf(2),   c.convert(Integer.valueOf(2)));
         assertEquals(BigDecimal.valueOf(0.5), c.convert(Float.valueOf(0.5f)));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -88,7 +87,7 @@ public final class NumberConverterTest {
         assertEquals("no alpha",  new Color(0,0,255,255), c.convert(0x000000FF));
         assertEquals("255 alpha", new Color(0,0,255,255), c.convert(0xFF0000FF));
         assertEquals("1 alpha",   new Color(0,0,255,1),   c.convert(0x010000FF));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -103,6 +102,6 @@ public final class NumberConverterTest {
         final ObjectConverter<Number,Comparable<?>> c = NumberConverter.Comparable.INSTANCE;
         assertEquals(2,   c.convert(2  ));
         assertEquals(2.5, c.convert(2.5));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 }

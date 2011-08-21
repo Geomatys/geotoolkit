@@ -27,12 +27,11 @@ import java.util.Collection;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.xml.IdentifierMap;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.xml.IdentifierSpace.*;
 
 
@@ -222,16 +221,16 @@ public class IdentifierMapAdapterTest extends TestBase {
      */
     @Test
     public void testSerialization() {
-        assertSame(ID,   Commons.serialize(ID));
-        assertSame(UUID, Commons.serialize(UUID));
-        assertSame(HREF, Commons.serialize(HREF));
+        assertSame(ID,   assertSerializable(ID));
+        assertSame(UUID, assertSerializable(UUID));
+        assertSame(HREF, assertSerializable(HREF));
 
         final List<Identifier> identifiers = new ArrayList<Identifier>();
         final Map<Citation,String> map = create(identifiers);
         identifiers.add(new IdentifierMapEntry(ID,   "myID"));
         identifiers.add(new IdentifierMapEntry(UUID, "myUUID"));
 
-        final Map<Citation,String> copy = Commons.serialize(map);
+        final Map<Citation,String> copy = assertSerializable(map);
         assertNotSame(map, copy);
         assertEquals(2, copy.size());
     }

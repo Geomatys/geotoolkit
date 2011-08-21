@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.test;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.awt.image.RenderedImage;
@@ -320,5 +320,50 @@ public class Assert extends org.opengis.test.Assert {
     public static void assertRasterEquals(final Coverage expected, final Coverage actual) {
         assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
                              actual.getRenderableImage(0,1).createDefaultRendering());
+    }
+
+    /**
+     * Serializes the given object in memory, deserialize it and ensure that the deserialized
+     * object is equal to the original one. This method doesn't write anything to the disk.
+     * <p>
+     * If the serialization fails, then this method thrown a {@link AssertionError}
+     * as do the other JUnit assertion methods.
+     *
+     * @param  <T> The type of the object to serialize.
+     * @param  object The object to serialize.
+     * @return The deserialized object.
+     *
+     * @since 3.19 (derived from 3.00)
+     */
+    public static <T> T assertSerializable(final T object) {
+        final Object deserialized;
+        try {
+            final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            final ObjectOutputStream out = new ObjectOutputStream(buffer);
+            out.writeObject(object);
+            out.close();
+            /*
+             * Now reads the object we just serialized.
+             */
+            final byte[] data = buffer.toByteArray();
+            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
+            try {
+                deserialized = in.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new AssertionError(e);
+            }
+            in.close();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        /*
+         * Compares with the original object and returns it.
+         */
+        @SuppressWarnings("unchecked")
+        final Class<? extends T> type = (Class<? extends T>) object.getClass();
+        assertEquals("Deserialized object not equal to the original one.", object, deserialized);
+        assertEquals("Deserialized object has a different hash code.",
+                object.hashCode(), deserialized.hashCode());
+        return type.cast(deserialized);
     }
 }

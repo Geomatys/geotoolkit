@@ -23,10 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.media.jai.JAI;
 
-import org.geotoolkit.test.Commons;
 import org.junit.*;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -62,8 +61,8 @@ public final class HintsTest {
      */
     @Test
     public void testKeySerialization() {
-        assertSame(Hints.CS_FACTORY,    Commons.serialize(Hints.CS_FACTORY));
-        assertSame(Hints.DATUM_FACTORY, Commons.serialize(Hints.DATUM_FACTORY));
+        assertSame(Hints.CS_FACTORY,    assertSerializable(Hints.CS_FACTORY));
+        assertSame(Hints.DATUM_FACTORY, assertSerializable(Hints.DATUM_FACTORY));
     }
 
     /**

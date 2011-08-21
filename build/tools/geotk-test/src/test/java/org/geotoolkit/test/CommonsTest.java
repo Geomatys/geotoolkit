@@ -18,8 +18,7 @@
 package org.geotoolkit.test;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -37,6 +36,6 @@ public final class CommonsTest {
     @Test
     public void testSerialize() {
         final String local = "Le silence éternel de ces espaces infinis m'effraie";
-        assertNotSame(local, serialize(local));
+        assertNotSame(local, assertSerializable(local));
     }
 }

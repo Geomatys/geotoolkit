@@ -22,9 +22,8 @@ import java.util.Arrays;
 import org.opengis.util.GenericName;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.opengis.test.Validators.*;
-import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 
 
@@ -48,7 +47,7 @@ public class GenericNameTest {
         assertSame(EPSG, name.toString());
         assertSame(EPSG, name.toInternationalString().toString());
         assertSame(GlobalNameSpace.GLOBAL, name.scope());
-        assertNotSame(name, serialize(name));
+        assertNotSame(name, assertSerializable(name));
         validate(name); // GeoAPI tests.
     }
 
@@ -70,7 +69,7 @@ public class GenericNameTest {
         assertSame(ns, name.scope());
         assertSame(WGS84, name.toString());
         assertEquals(EPSG + ':' + WGS84, name.toFullyQualifiedName().toString());
-        assertNotSame(name, serialize(name));
+        assertNotSame(name, assertSerializable(name));
         validate(name); // GeoAPI tests.
     }
 
@@ -86,7 +85,7 @@ public class GenericNameTest {
         GenericName name = new DefaultScopedName(null, Arrays.asList(parsed));
         assertSame(name, name.toFullyQualifiedName());
         assertEquals("urn:ogc:def:crs:epsg:4326", name.toString());
-        assertNotSame(name, serialize(name));
+        assertNotSame(name, assertSerializable(name));
         validate(name); // GeoAPI tests.
         for (int i=parsed.length; --i>=0;) {
             name = name.tip();

@@ -22,7 +22,6 @@ import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
 
-import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 import static org.geotoolkit.referencing.ReferencingAssert.*;
 import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.*;
@@ -114,7 +113,7 @@ public final class CoordinateReferenceSystemTest extends ReferencingTestBase {
      */
     @Test
     public void testSerialization() {
-        serialize(WGS84);
-        serialize(WGS84_3D);
+        assertSerializable(WGS84);
+        assertSerializable(WGS84_3D);
     }
 }

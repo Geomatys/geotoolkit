@@ -28,8 +28,7 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.Performance;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -254,7 +253,7 @@ public final class RangeSetTest {
         ranges.add(12.0, 12.5);
         ranges.add(18.0, 18.5);
         ranges.add(19.0, 20.0);
-        assertNotSame(ranges, serialize(ranges));
+        assertNotSame(ranges, assertSerializable(ranges));
     }
 
     /**

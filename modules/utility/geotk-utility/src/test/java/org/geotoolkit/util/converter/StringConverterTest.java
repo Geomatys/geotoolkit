@@ -22,8 +22,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -49,7 +48,7 @@ public final class StringConverterTest {
         assertEquals(Boolean.TRUE,  c.convert("1"));
         assertEquals(Boolean.FALSE, c.convert("false"));
         assertEquals(Boolean.FALSE, c.convert("0"));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -62,7 +61,7 @@ public final class StringConverterTest {
     public void testColor() throws NonconvertibleObjectException {
         final ObjectConverter<String,Color> c = StringConverter.Color.INSTANCE;
         assertEquals(Color.RED, c.convert("#FF0000"));
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 
     /**
@@ -83,6 +82,6 @@ public final class StringConverterTest {
             // This is the expected exception.
             assertTrue(e.getCause() instanceof UnsupportedCharsetException);
         }
-        assertSame(c, serialize(c));
+        assertSame(c, assertSerializable(c));
     }
 }

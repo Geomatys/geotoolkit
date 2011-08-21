@@ -21,8 +21,7 @@ import java.util.Locale;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -103,7 +102,7 @@ public final class InternationalStringTest {
         /*
          * Tests serialization
          */
-        final Object object = serialize(toTest);
+        final Object object = assertSerializable(toTest);
         assertEquals("Serialization:", toTest.getClass(), object.getClass());
         assertEquals("Serialization:", toTest,            object           );
         assertEquals("Hash code:",     toTest.hashCode(), object.hashCode());

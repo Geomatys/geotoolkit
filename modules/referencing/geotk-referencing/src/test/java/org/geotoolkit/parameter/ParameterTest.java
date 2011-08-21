@@ -31,9 +31,8 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.opengis.test.Validators.*;
-import static org.geotoolkit.test.Commons.serialize;
 
 
 /**
@@ -92,7 +91,7 @@ public final class ParameterTest {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, serialize(parameter));
+        assertNotSame(parameter, assertSerializable(parameter));
     }
 
     /**
@@ -165,7 +164,7 @@ public final class ParameterTest {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, serialize(parameter));
+        assertNotSame(parameter, assertSerializable(parameter));
     }
 
     /**
@@ -240,7 +239,7 @@ public final class ParameterTest {
             // This is the expected exception.
             assertEquals("Test", exception.getParameterName());
         }
-        assertNotSame(parameter, serialize(parameter));
+        assertNotSame(parameter, assertSerializable(parameter));
     }
 
     /**

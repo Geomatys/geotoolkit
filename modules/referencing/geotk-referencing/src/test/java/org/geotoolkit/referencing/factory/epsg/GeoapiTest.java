@@ -17,9 +17,12 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.referencing.AuthorityFactoryTest;
 
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.test.Commons;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -52,5 +55,23 @@ public final class GeoapiTest extends AuthorityFactoryTest {
      */
     public GeoapiTest() {
         super(CRS.getAuthorityFactory(false), null, null);
+    }
+
+    /**
+     * Overrides the test using the <cite>Cassini-Soldner</cite> projection in order to serialize
+     * the CRS in case of test failure. We perform this special step for this particular projection
+     * because it appears to succeed on some machines and to fail on some others.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Override
+    public void testEPSG_2314() throws FactoryException, TransformException {
+        try {
+            super.testEPSG_2314();
+        } catch (AssertionError e) {
+            Commons.serializeToSurefireDirectory(GeoapiTest.class, object);
+            throw e;
+        }
     }
 }

@@ -35,7 +35,6 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
-import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.ReferencingAssert.*;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.*;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.*;
@@ -143,7 +142,7 @@ public final class DatumTest extends ReferencingTestBase {
      */
     @Test
     public void testSerialization() {
-        serialize(GREENWICH);
-        serialize(WGS84);
+        assertSerializable(GREENWICH);
+        assertSerializable(WGS84);
     }
 }

@@ -18,11 +18,10 @@
 package org.geotoolkit.util;
 
 import org.geotoolkit.util.converter.ClassesTest;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
-import org.geotoolkit.test.Depend;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -208,9 +207,9 @@ public final class RangeTest {
      */
     @Test
     public void testSerialization() {
-        assertNotSame(UNIT,     serialize(UNIT));
-        assertNotSame(EMPTY,    serialize(EMPTY));
-        assertNotSame(ZERO,     serialize(ZERO));
-        assertNotSame(POSITIVE, serialize(NEGATIVE));
+        assertNotSame(UNIT,     assertSerializable(UNIT));
+        assertNotSame(EMPTY,    assertSerializable(EMPTY));
+        assertNotSame(ZERO,     assertSerializable(ZERO));
+        assertNotSame(POSITIVE, assertSerializable(NEGATIVE));
     }
 }
