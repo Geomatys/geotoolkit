@@ -731,7 +731,7 @@ public final class JTS {
     
     
     
-        /**
+    /**
      * Determine the min and max "z" values in an array of Coordinates.
      * 
      * @param cs The array to search.
@@ -807,13 +807,13 @@ public final class JTS {
     /**
      * Create a Polygon from the given Polygon. Will ensure that shells are
      * clockwise and holes are counter-clockwise.
-     * 
+     * Handle only Polygon and MultiPolygon Geometry
      * @param p The Polygon to make "nice".
      * @return The "nice" Polygon.
      */
     public static <T extends Geometry>T ensureClockWise(final T g) {
        
-        if(!(g instanceof MultiPolygon) || !(g instanceof Polygon)){
+        if(!(g instanceof MultiPolygon) && !(g instanceof Polygon)){
             return g;
         }
         
@@ -873,13 +873,13 @@ public final class JTS {
     /**
      * Create a Polygon from the given Polygon. Will ensure that shells are
      * counter-clockwise and holes are clockwise.
-     * 
+     * Handle only Polygon and MultiPolygon Geometry
      * @param p The Polygon to make "nice".
      * @return The "nice" Polygon.
      */
      public static <T extends Geometry>T ensureCounterClockWise(final T g) {
        
-        if(!(g instanceof MultiPolygon) || !(g instanceof Polygon)){
+        if(!(g instanceof MultiPolygon) && !(g instanceof Polygon)){
             return g;
         }
         
@@ -890,7 +890,7 @@ public final class JTS {
         if(g instanceof MultiPolygon){
             nbPolygon = g.getNumGeometries();
         }
-        
+
         final Polygon[] ps = new Polygon[nbPolygon];
         
         for( int i = 0; i < nbPolygon; i++ ){
@@ -902,6 +902,7 @@ public final class JTS {
             }else{
                 p = (Polygon) g;
             }
+            
             
             final LinearRing outer;
             final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];

@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.geometry.jts;
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,5 +74,45 @@ public class JTSTest {
         Map values = (Map) userData3;
         assertEquals(crs, values.get(HintsPending.JTS_GEOMETRY_CRS));
 
+    }
+    
+    
+    @Test
+    public void testCCW(){
+
+        //empty user data test
+        final LinearRing ring = GF.createLinearRing(new Coordinate[]{
+            new Coordinate(50, 27),
+            new Coordinate(25, 15),
+            new Coordinate(10, 10),
+            new Coordinate(28, 30),
+            new Coordinate(50, 27)
+                });
+        
+        final Polygon poly = GF.createPolygon(ring, null);
+        final Geometry returnedGeom = JTS.ensureCounterClockWise(poly);
+        assertTrue(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
+        
+    }
+    
+    
+     @Test
+    public void testCW(){
+
+        //empty user data test
+        final LinearRing ring = GF.createLinearRing(new Coordinate[]{
+            new Coordinate(50, 27),
+            new Coordinate(28, 30),
+            new Coordinate(10, 10),
+            new Coordinate(25, 15),
+            new Coordinate(50, 27)
+                });
+        
+        final Polygon poly = GF.createPolygon(ring, null);
+        
+        final Geometry returnedGeom = JTS.ensureClockWise(poly);
+        
+        assertFalse(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
+        
     }
 }
