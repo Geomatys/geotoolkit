@@ -53,13 +53,26 @@ import org.geotoolkit.util.converter.Classes;
  * This class also provides facilities for string formatting using {@link MessageFormat}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.19
  *
  * @since 1.2
  * @module
  */
 @ThreadSafe
 public class IndexedResourceBundle extends ResourceBundle {
+    /**
+     * {@code true} if the {@link #getLogRecord(Level, int, Object)} should localize the log
+     * message immediately instead than deferring the localization to the log formatting.
+     * The default value is {@code false}. It should be set to {@code true} in a Glassfish
+     * environment, which doesn't seem use the resource bundles as expected.
+     * <p>
+     * Note that this field may be removed in any future version if we find a better way
+     * to get localized logging records to work.
+     *
+     * @since 3.19
+     */
+    public static volatile boolean immediateLocalization;
+
     /**
      * Maximum string length for text inserted into another text. This parameter is used by
      * {@link #summarize}. Resource strings are never cut to this length. However, text replacing
@@ -638,6 +651,9 @@ public class IndexedResourceBundle extends ResourceBundle {
     public LogRecord getLogRecord(final Level level, final int key,
                                   final Object arg0)
     {
+        if (immediateLocalization) {
+            return new LogRecord(level, getString(key, arg0));
+        }
         final LogRecord record = new LogRecord(level, String.valueOf(key));
         record.setResourceBundle(this);
         if (arg0 != null) {
@@ -659,7 +675,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                                   final Object arg0,
                                   final Object arg1)
     {
-        return getLogRecord(level, key, new Object[]{arg0, arg1});
+        return getLogRecord(level, key, new Object[] {arg0, arg1});
     }
 
     /**
@@ -677,7 +693,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                                   final Object arg1,
                                   final Object arg2)
     {
-        return getLogRecord(level, key, new Object[]{arg0, arg1, arg2});
+        return getLogRecord(level, key, new Object[] {arg0, arg1, arg2});
     }
 
     /**
@@ -697,7 +713,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                                   final Object arg2,
                                   final Object arg3)
     {
-        return getLogRecord(level, key, new Object[]{arg0, arg1, arg2, arg3});
+        return getLogRecord(level, key, new Object[] {arg0, arg1, arg2, arg3});
     }
 
     /**

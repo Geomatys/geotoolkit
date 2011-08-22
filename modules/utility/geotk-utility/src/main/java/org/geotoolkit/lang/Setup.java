@@ -28,11 +28,12 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.SetupService;
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
 
 /**
- * A central place where to perform initialisation and shutdown of all Geotk services.
+ * A central place where to perform initialization and shutdown of all Geotk services.
  * Users are not required to perform explicit initialization and shutdown for most services
  * (except a few cases like <cite>World File Image Readers</cite>), since services are automatically
  * discovered when needed (using {@link ServiceLoader}) and disposed on JVM termination (using
@@ -45,9 +46,9 @@ import org.geotoolkit.resources.Errors;
  * <cite>re-deploy</cite> phase. Explicit invocations of {@link #initialize(Properties)} and
  * {@link #shutdown()} methods can improve the system stability in such cases.
  * <p>
- * The amont of works performed by this class depends on the modules available in the classpath.
+ * The amount of works performed by this class depends on the modules available in the classpath.
  * The table below lists the work performed by current implementation. Users wanting more control
- * can perform those tasks themself instead than relying on the methods defined in this
+ * can perform those tasks themselves instead than relying on the methods defined in this
  * {@code Setup} class.
  * <p>
  * <table border="3" cellpadding="6">
@@ -137,7 +138,7 @@ public final class Setup extends Static {
     }
 
     /**
-     * Performs the initialisation of all Geotk services. This method is typically invoked only
+     * Performs the initialization of all Geotk services. This method is typically invoked only
      * once. If it is invoked more than once and {@link #shutdown()} has not been invoked, then
      * every calls after the first method call are ignored.
      * <p>
@@ -189,6 +190,7 @@ public final class Setup extends Static {
         state = 1;
         if ("server".equalsIgnoreCase(get(properties, "platform", "desktop"))) {
             Installation.allowSystemPreferences = false;
+            IndexedResourceBundle.immediateLocalization = true;
         } else {
             Logging.ALL.forceMonolineConsoleOutput(null);
         }
