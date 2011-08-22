@@ -77,7 +77,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * would not know what to do with the extra coordinate systems anyway.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.19
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -214,7 +214,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * Coordinate Reference System} implementation.
      *
      * @param file The originating dataset file, or {@code null} if none.
-     * @param cs The NetCDF coordinate system to define in metadata.
+     * @param cs The NetCDF coordinate system to define in metadata, or {@code null}.
      * @param crs Always {@code null}, unless an alternative CRS should be formatted
      *        in replacement of the CRS built from the given NetCDF coordinate system.
      * @throws IOException If an I/O operation was needed and failed.
@@ -222,32 +222,40 @@ final class NetcdfMetadata extends SpatialMetadata {
     private void setCoordinateSystem(final NetcdfDataset file, final CoordinateSystem cs,
             CoordinateReferenceSystem crs) throws IOException
     {
-        final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs, file, this);
-        final int dim = netcdfCRS.getDimension();
-        for (int i=0; i<dim; i++) {
-            final NetcdfAxis axis = netcdfCRS.getAxis(i);
-            final String units = axis.delegate().getUnitsString();
-            final int offset = units.lastIndexOf('_');
-            if (offset >= 0) {
-                final String direction = units.substring(offset + 1).trim();
-                final String opposite = AxisDirections.opposite(axis.getDirection()).name();
-                if (direction.equalsIgnoreCase(opposite)) {
-                    warning("setCoordinateSystem", Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_$2,
-                            new String[] {axis.getCode(), direction});
+        /*
+         * The following code is only a validity check. It may produce warnings,
+         * but does not write any metadata at this stage.
+         */
+        if (cs != null) {
+            final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs, file, this);
+            final int dim = netcdfCRS.getDimension();
+            for (int i=0; i<dim; i++) {
+                final NetcdfAxis axis = netcdfCRS.getAxis(i);
+                final String units = axis.delegate().getUnitsString();
+                final int offset = units.lastIndexOf('_');
+                if (offset >= 0) {
+                    final String direction = units.substring(offset + 1).trim();
+                    final String opposite = AxisDirections.opposite(axis.getDirection()).name();
+                    if (direction.equalsIgnoreCase(opposite)) {
+                        warning("setCoordinateSystem", Errors.Keys.INCONSISTENT_AXIS_ORIENTATION_$2,
+                                new String[] {axis.getCode(), direction});
+                    }
                 }
             }
+            /*
+             * The above was only a check. Now perform the metadata writing.
+             */
+            final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
+            if (regularCRS instanceof GridGeometry) {
+                new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS, null, null, 1);
+            }
+            if (crs == null) {
+                crs = regularCRS;
+            }
         }
-        /*
-         * The above was only a check. Now perform the metadata writing.
-         */
-        final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
-        if (crs == null) {
-            crs = regularCRS;
+        if (crs != null) {
+            new ReferencingBuilder(this).setCoordinateReferenceSystem(crs);
         }
-        if (regularCRS instanceof GridGeometry) {
-            new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS, null, null, 1);
-        }
-        new ReferencingBuilder(this).setCoordinateReferenceSystem(crs);
     }
 
     /**

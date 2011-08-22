@@ -18,7 +18,7 @@
 
 /**
  * Utility methods related to Image I/O and Remote Method Invocation (RMI).
- * <strong>Do not use</strong> since this package is not commited API and
+ * <strong>Do not use</strong> since this package is not committed API and
  * may change without notice in any future version.
  *
  * @author Martin Desruisseaux (Geomatys)

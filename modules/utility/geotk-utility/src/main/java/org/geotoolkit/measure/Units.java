@@ -42,7 +42,7 @@ import org.geotoolkit.util.Strings;
  * A set of units to use in addition of {@link SI} and {@link NonSI}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @since 2.1
  * @module
@@ -429,7 +429,7 @@ public final class Units extends Static {
             return Unit.ONE;
         } else if (uom.equalsIgnoreCase("level")) { // Sigma level
             return Unit.ONE;
-        } else if (uom.equalsIgnoreCase("degree_Celsius")) {
+        } else if (equalsIgnorePrefix(uom, "degree", "Celsius", "Celcius")) { // "Celcius" is a common mispelling.
             return SI.CELSIUS;
         } else {
             final Unit<?> unit;
@@ -455,6 +455,20 @@ public final class Units extends Static {
         final int length = expected.length();
         return uom.length() == length+1 && Character.toLowerCase(uom.charAt(length)) == 's' &&
                 uom.regionMatches(true, 0, expected, 0, length);
+    }
+
+    /**
+     * Returns {@code true} if the given {@code uom} is equals to the given expected string,
+     * ignoring the given prefix (if any). This method also replaces {@code '_'} characters
+     * by spaces, since the prefix is typically the first word of a sentence like
+     * {@code "degree Celsius"}.
+     */
+    private static boolean equalsIgnorePrefix(String uom, final String prefix, final String exp1, final String exp2) {
+        uom = uom.replace('_', ' ');
+        if (uom.regionMatches(true, 0, prefix, 0, prefix.length())) {
+            uom = uom.substring(prefix.length()).trim();
+        }
+        return uom.equalsIgnoreCase(exp1) || uom.equalsIgnoreCase(exp2);
     }
 
     /**

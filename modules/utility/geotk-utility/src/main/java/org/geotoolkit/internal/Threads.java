@@ -47,9 +47,28 @@ import org.geotoolkit.util.logging.Logging;
 @SuppressWarnings("serial")
 public final class Threads extends AtomicInteger implements ThreadFactory, RejectedExecutionHandler {
     /**
-     * The parent of every threads declared in this class.
+     * The parent of every threads declared in this class. This parent will be declared as close
+     * as possible to the root of all thread groups (i.e. not as an application thread subgroup).
      */
-    public static final ThreadGroup GEOTOOLKIT = new ThreadGroup("Geotoolkit.org");
+    public static final ThreadGroup GEOTOOLKIT;
+    static {
+        /*
+         * Tries to put the ThreadGroup at the root, if we are allowed to do so. The intend is to
+         * separate the Geotk thread groups from the user application thread groups. Without this
+         * code, the Geotk thread group would appear as an user application sub-group.
+         */
+        ThreadGroup parent = Thread.currentThread().getThreadGroup();
+        try {
+            ThreadGroup candidate;
+            while ((candidate = parent.getParent()) != null) {
+                parent = candidate;
+            }
+        } catch (SecurityException e) {
+            // If we are not allowed to get the parent, stop there.
+            // We went up in the tree as much as we were allowed to.
+        }
+        GEOTOOLKIT = new ThreadGroup(parent, "Geotoolkit.org");
+    }
 
     /**
      * The group of threads disposing resources, typically after a timeout.

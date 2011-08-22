@@ -114,7 +114,7 @@ public abstract class AbstractMetadata implements LenientComparable {
      * <ul>
      *   <li>this class do not contains any {@code set*(...)} method</li>
      *   <li>All {@code get*()} methods return a presumed immutable object.
-     *       The maining of "<cite>presumed immutable</cite>" may vary in
+     *       The meaning of "<cite>presumed immutable</cite>" may vary in
      *       different Geotk versions.</li>
      * </ul>
      * <p>

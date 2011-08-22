@@ -48,7 +48,7 @@ final class IndexedPalette extends Palette {
      * The maximal allowed value, corresponding to the maximum value for unsigned 16 bits integer.
      * DO NOT EDIT: this value <strong>MUST</strong> be {@code 0xFFFF}.
      */
-    private static final int MAX_UNSIGNED = 0xFFFF;
+    static final int MAX_UNSIGNED = 0xFFFF;
 
     /**
      * Index of the first valid element (inclusive) in the {@linkplain IndexColorModel
@@ -76,7 +76,7 @@ final class IndexedPalette extends Palette {
 
     /**
      * The size of the {@linkplain IndexColorModel index color model} to be created.
-     * This is the value to be returned by {@link IndexColorModel#getMapSize}. This
+     * This is the value to be returned by {@link IndexColorModel#getMapSize()}. This
      * value is always positive.
      */
     protected final int size;
@@ -93,7 +93,7 @@ final class IndexedPalette extends Palette {
      * @param upper   Index of the last valid element (exclusive) in the
      *                {@linkplain IndexColorModel index color model} to be created.
      * @param size    The size of the {@linkplain IndexColorModel index color model} to be created.
-     *                This is the value to be returned by {@link IndexColorModel#getMapSize}.
+     *                This is the value to be returned by {@link IndexColorModel#getMapSize()}.
      * @param numBands    The number of bands (usually 1).
      * @param visibleBand The band to use for color computations (usually 0).
      */

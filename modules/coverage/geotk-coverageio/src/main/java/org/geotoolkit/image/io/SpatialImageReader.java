@@ -889,15 +889,15 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             factory = PaletteFactory.getDefault();
         }
         factory.setWarningLocale(locale);
+        final double minimum = visibleRange.getMinimum();
+        final double maximum = visibleRange.getMaximum();
         final Palette palette;
         if (isFloat) {
             assert visibleConverter.getOffset() == 0 : visibleConverter;
-            palette = factory.getContinuousPalette(paletteName, (float) visibleRange.getMinimum(),
-                    (float) visibleRange.getMaximum(), dataType, numBands, visibleBand);
+            palette = factory.getContinuousPalette(paletteName, (float) minimum,
+                    (float) maximum, dataType, numBands, visibleBand);
         } else {
             final double offset  = visibleConverter.getOffset();
-            final double minimum = visibleRange.getMinimum();
-            final double maximum = visibleRange.getMaximum();
             long lower, upper;
             if (minimum == Double.NEGATIVE_INFINITY) {
                 lower = floor;
@@ -915,21 +915,22 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     upper++; // Must be exclusive
                 }
             }
-            final long size = Math.max(upper, Math.round(maximumFillValue) + 1);
+            long size = Math.max(upper, Math.round(maximumFillValue) + 1);
+            if (lower < 0) {
+                size -= lower;
+            }
             /*
              * The target lower, upper and size parameters are usually in the range of SHORT
-             * or USHORT data type. The Palette class will performs the necessary checks and
-             * throws an exception if those variables are out of range.  However, because we
-             * need to cast to int before passing the parameter values,  we restrict them to
-             * the 'int' range as a safety in order to avoid results that accidently fall in
-             * the SHORT or USHORT range.  Because Integer.MIN_VALUE or MAX_VALUE are out of
-             * range,  it doesn't matter if those values are inaccurate since we will get an
-             * exception anyway.
+             * or USHORT data type.  The Palette class will perform the necessary checks and
+             * throw an exception if those variables are out of range. However we may have
+             * values out of this range for TYPE_INT, in which case we will use the same slow
+             * color model than the one for floating point values.
              */
-            palette = factory.getPalette(paletteName,
-                    (int) Math.max(lower, Integer.MIN_VALUE),
-                    (int) Math.min(upper, Integer.MAX_VALUE),
-                    (int) Math.min(size,  Integer.MAX_VALUE), numBands, visibleBand);
+            if (lower >= Short.MIN_VALUE && (lower + size) <= (lower >= 0 ? IndexedPalette.MAX_UNSIGNED+1 : Short.MAX_VALUE+1)) {
+                palette = factory.getPalette(paletteName, (int) lower, (int) upper, (int) size, numBands, visibleBand);
+            } else {
+                palette = factory.getContinuousPalette(paletteName, lower, upper, dataType, numBands, visibleBand);
+            }
         }
         return palette.getImageTypeSpecifier();
     }

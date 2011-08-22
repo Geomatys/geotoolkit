@@ -876,7 +876,7 @@ public class PaletteFactory {
      * @param upper Index of the last valid element (exclusive) in the
      *              {@linkplain IndexColorModel index color model} to be created.
      * @param size  The size of the {@linkplain IndexColorModel index color model} to be created.
-     *              This is the value to be returned by {@link IndexColorModel#getMapSize}.
+     *              This is the value to be returned by {@link IndexColorModel#getMapSize()}.
      * @param numBands    The number of bands (usually 1).
      * @param visibleBand The band to use for color computations (usually 0).
      * @return The palette.
@@ -897,8 +897,9 @@ public class PaletteFactory {
      * @param name        The palette name.
      * @param minimum     The minimal sample value expected.
      * @param maximum     The maximal sample value expected.
-     * @param dataType    The data type as a {@link java.awt.image.DataBuffer#TYPE_FLOAT}
-     *                    or {@link java.awt.image.DataBuffer#TYPE_DOUBLE} constant.
+     * @param dataType    The data type as a {@link java.awt.image.DataBuffer#TYPE_INT},
+     *                    {@link java.awt.image.DataBuffer#TYPE_FLOAT} or
+     *                    {@link java.awt.image.DataBuffer#TYPE_DOUBLE} constant.
      * @param numBands    The number of bands (usually 1).
      * @param visibleBand The band to use for color computations (usually 0).
      * @return A palette suitable for floating point values.

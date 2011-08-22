@@ -21,9 +21,10 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Quantity;
 import javax.measure.converter.UnitConverter;
 import static javax.measure.unit.Unit.ONE;
+import static javax.measure.unit.SI.CELSIUS;
 import static javax.measure.unit.SI.METRE;
-import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.SI.KILOMETRE;
+import static javax.measure.unit.SI.RADIAN;
 import static javax.measure.unit.NonSI.CENTIRADIAN;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import static javax.measure.unit.NonSI.MINUTE_ANGLE;
@@ -43,7 +44,7 @@ import static org.geotoolkit.test.Assert.*;
  * Test conversions using the units declared in {@link Units}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.19
  *
  * @since 2.5
  */
@@ -236,5 +237,8 @@ public final class UnitsTest {
         assertSame(KILOMETRE,    Units.valueOf("kilometres"));
         assertSame(KILOMETRE,    Units.valueOf("kilomètres"));
         assertSame(KILOMETRE,    Units.valueOf("kilometers"));
+        assertSame(CELSIUS,      Units.valueOf("Celsius"));
+        assertSame(CELSIUS,      Units.valueOf("degree Celsius"));
+        assertSame(CELSIUS,      Units.valueOf("degree_Celcius"));
     }
 }

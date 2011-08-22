@@ -66,8 +66,10 @@ public final class GraphicsUtilities extends Static {
         } else {
             laf = UIManager.getSystemLookAndFeelClassName();
         }
-        if (laf.equals(UIManager.getCrossPlatformLookAndFeelClassName())) {
+        if (laf.equals(UIManager.getCrossPlatformLookAndFeelClassName()) || laf.contains(".gtk.")) {
             laf = getNimbusLAF(); // Replace Metal L&F by Nimbus L&F.
+            // Replaces also the GTK L&F, because it doesn't seem to produce
+            // a good result (especially when combined with Swingx).
         }
         if (laf != null) try {
             UIManager.setLookAndFeel(laf);

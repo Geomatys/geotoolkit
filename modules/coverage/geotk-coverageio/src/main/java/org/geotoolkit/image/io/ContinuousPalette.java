@@ -29,8 +29,8 @@ import org.geotoolkit.internal.image.ScaledColorSpace;
 
 
 /**
- * A factory for building {@linkplain ColorModel color model} suitable for
- * {@link DataBuffer#TYPE_FLOAT}.
+ * A factory for building {@linkplain ColorModel color model} suitable for data type that
+ * do not fit in an index color model.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.11
@@ -51,7 +51,8 @@ final class ContinuousPalette extends Palette {
     protected final float maximum;
 
     /**
-     * The data type, as a {@link DataBuffer#TYPE_FLOAT} or {@link DataBuffer#TYPE_DOUBLE} constant.
+     * The data type, as a {@link DataBuffer#TYPE_INT}, {@link DataBuffer#TYPE_FLOAT}
+     * or {@link DataBuffer#TYPE_DOUBLE} constant.
      */
     private final int dataType;
 
@@ -62,7 +63,7 @@ final class ContinuousPalette extends Palette {
      * @param name        The palette name.
      * @param minimum     The minimal sample value expected.
      * @param maximum     The maximal sample value expected.
-     * @param dataType    The data type as a {@link DataBuffer#TYPE_FLOAT}
+     * @param dataType    The data type as a {@link DataBuffer#TYPE_INT}, {@link DataBuffer#TYPE_FLOAT}
      *                    or {@link DataBuffer#TYPE_DOUBLE} constant.
      * @param numBands    The number of bands (usually 1).
      * @param visibleBand The band to use for color computations (usually 0).
