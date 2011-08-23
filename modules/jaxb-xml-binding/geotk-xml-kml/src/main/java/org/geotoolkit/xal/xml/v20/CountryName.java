@@ -18,6 +18,7 @@ package org.geotoolkit.xal.xml.v20;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -156,4 +157,24 @@ public class CountryName {
         return otherAttributes;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[AddressIdentifier]\n");
+        if (code != null) {
+            sb.append("code:").append(code).append('\n');
+        }
+        if (content != null) {
+            sb.append("content:").append(content).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (Entry entry : otherAttributes.entrySet()) {
+                sb.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+        }
+        return sb.toString();
+    }
 }

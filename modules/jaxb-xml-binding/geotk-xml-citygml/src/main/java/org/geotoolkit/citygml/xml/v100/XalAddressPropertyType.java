@@ -78,4 +78,12 @@ public class XalAddressPropertyType {
         this.addressDetails = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[XalAddressPropertyType]\n");
+        if (addressDetails != null) {
+            sb.append("addressDetails:").append(addressDetails).append('\n');
+        }
+        return sb.toString();
+    }
 }

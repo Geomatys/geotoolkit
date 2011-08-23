@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -653,6 +654,63 @@ public class AddressDetails {
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[AddressDetails]\n");
+        if (address != null) {
+            sb.append("address:").append(address).append('\n');
+        }
+        if (addressDetailsKey != null) {
+            sb.append("addressDetailsKey:").append(addressDetailsKey).append('\n');
+        }
+        if (addressLines != null) {
+            sb.append("addressLines:").append(addressLines).append('\n');
+        }
+        if (addressType != null) {
+            sb.append("addressType:").append(addressType).append('\n');
+        }
+        if (administrativeArea != null) {
+            sb.append("administrativeArea:").append(administrativeArea).append('\n');
+        }
+        if (any != null) {
+            sb.append("any:\n");
+            for (Object o : any) {
+                sb.append(o).append('\n');
+            }
+        }
+        if (code != null) {
+            sb.append("code:").append(code).append('\n');
+        }
+        if (country != null) {
+            sb.append("country:").append(country).append('\n');
+        }
+        if (currentStatus != null) {
+            sb.append("currentStatus:").append(currentStatus).append('\n');
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (Entry entry : otherAttributes.entrySet()) {
+                sb.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+        }
+        if (postalServiceElements != null) {
+            sb.append("postalServiceElements:").append(postalServiceElements).append('\n');
+        }
+        if (thoroughfare != null) {
+            sb.append("thoroughfare:").append(thoroughfare).append('\n');
+        }
+        if (usage != null) {
+            sb.append("usage:").append(usage).append('\n');
+        }
+        if (validFromDate != null) {
+            sb.append("validFromDate:").append(validFromDate).append('\n');
+        }
+        if (validToDate != null) {
+            sb.append("validToDate:").append(validToDate).append('\n');
+        }
+        return sb.toString();
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -778,6 +836,26 @@ public class AddressDetails {
             return otherAttributes;
         }
 
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[Address]\n");
+            if (code != null) {
+                sb.append("code:").append(code).append('\n');
+            }
+            if (content != null) {
+                sb.append("content:").append(content).append('\n');
+            }
+            if (type != null) {
+                sb.append("type:").append(type).append('\n');
+            }
+            if (otherAttributes != null) {
+                sb.append("otherAttributes:\n");
+                for (Entry entry : otherAttributes.entrySet()) {
+                    sb.append(entry.getKey()).append("=").append(entry.getValue());
+                }
+            }
+            return sb.toString();
+        }
     }
 
 
@@ -1053,6 +1131,50 @@ public class AddressDetails {
         }
 
 
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[Country]\n");
+            if (addressLine != null) {
+                sb.append("addressLine:\n");
+                for (AddressLine a : addressLine) {
+                    sb.append(a).append('\n');
+                }
+            }
+            if (administrativeArea != null) {
+                sb.append("administrativeArea:").append(administrativeArea).append('\n');
+            }
+            if (any != null) {
+                sb.append("any:\n");
+                for (Object o : any) {
+                    sb.append(o).append('\n');
+                }
+            }
+            if (countryName != null) {
+                sb.append("countryName:\n");
+                for (CountryName a : countryName) {
+                    sb.append(a).append('\n');
+                }
+            }
+            if (countryNameCode != null) {
+                sb.append("countryNameCode:\n");
+                for (CountryNameCode a : countryNameCode) {
+                    sb.append(a).append('\n');
+                }
+            }
+            if (otherAttributes != null) {
+                sb.append("otherAttributes:\n");
+                for (Entry entry : otherAttributes.entrySet()) {
+                    sb.append(entry.getKey()).append("=").append(entry.getValue());
+                }
+            }
+            if (locality != null) {
+                sb.append("locality:").append(locality).append('\n');
+            }
+            if (thoroughfare != null) {
+                sb.append("thoroughfare:").append(thoroughfare).append('\n');
+            }
+            return sb.toString();
+        }
         /**
          * <p>Java class for anonymous complex type.
          * 
@@ -1178,6 +1300,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+             @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[CountryNameCode]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (scheme != null) {
+                    sb.append("scheme:").append(scheme).append('\n');
+                }
+                return sb.toString();
+            }
         }
 
     }
@@ -1669,6 +1811,60 @@ public class AddressDetails {
             return otherAttributes;
         }
 
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[PostalServiceElements]\n");
+            if (addressIdentifier != null) {
+                sb.append("addressIdentifier:\n");
+                for (AddressIdentifier o : addressIdentifier) {
+                    sb.append(o).append('\n');
+                }
+            }
+            if (supplementaryPostalServiceData != null) {
+                sb.append("supplementaryPostalServiceData:\n");
+                for (SupplementaryPostalServiceData o : supplementaryPostalServiceData) {
+                    sb.append(o).append('\n');
+                }
+            }
+            
+            if (addressLatitude != null) {
+                sb.append("addressLatitude:").append(addressLatitude).append('\n');
+            }
+            if (addressLatitudeDirection != null) {
+                sb.append("addressLatitudeDirection:").append(addressLatitudeDirection).append('\n');
+            }
+            if (addressLongitude != null) {
+                sb.append("addressLongitude:").append(addressLongitude).append('\n');
+            }
+            if (barcode != null) {
+                sb.append("barcode:").append(barcode).append('\n');
+            }
+            if (any != null) {
+                sb.append("any:\n");
+                for (Object o : any) {
+                    sb.append(o).append('\n');
+                }
+            }
+            if (endorsementLineCode != null) {
+                sb.append("endorsementLineCode:").append(endorsementLineCode).append('\n');
+            }
+            if (keyLineCode != null) {
+                sb.append("keyLineCode:").append(keyLineCode).append('\n');
+            }
+            if (sortingCode != null) {
+                sb.append("sortingCode:").append(sortingCode).append('\n');
+            }
+            if (otherAttributes != null) {
+                sb.append("otherAttributes:\n");
+                for (Entry entry : otherAttributes.entrySet()) {
+                    sb.append(entry.getKey()).append("=").append(entry.getValue());
+                }
+            }
+            if (type != null) {
+                sb.append("type:").append(type).append('\n');
+            }
+            return sb.toString();
+        }
 
         /**
          * <p>Java class for anonymous complex type.
@@ -1823,6 +2019,29 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[AddressIdentifier]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (identifierType != null) {
+                    sb.append("identifierType:").append(identifierType).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -1951,6 +2170,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[AddressLatitude]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2081,6 +2320,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[AddressLatitudeDirection]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2209,6 +2468,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[AddressLongitude]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2337,6 +2616,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[AddressLongitudeDirection]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2465,6 +2764,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[Barcode]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2593,6 +2912,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[EndorsementLineCode]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2721,6 +3060,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[KeyLineCode]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2801,6 +3160,17 @@ public class AddressDetails {
                 this.code = value;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[SortingCode]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                return sb.toString();
+            }
         }
 
 
@@ -2929,6 +3299,26 @@ public class AddressDetails {
                 return otherAttributes;
             }
 
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder("[SupplementaryPostalServiceData]\n");
+                if (code != null) {
+                    sb.append("code:").append(code).append('\n');
+                }
+                if (content != null) {
+                    sb.append("content:").append(content).append('\n');
+                }
+                if (type != null) {
+                    sb.append("type:").append(type).append('\n');
+                }
+                if (otherAttributes != null) {
+                    sb.append("otherAttributes:\n");
+                    for (Entry entry : otherAttributes.entrySet()) {
+                        sb.append(entry.getKey()).append("=").append(entry.getValue());
+                    }
+                }
+                return sb.toString();
+            }
         }
 
     }

@@ -34,9 +34,9 @@ public class CityGMLMarshallerPool {
             instance = new MarshallerPool("org.geotoolkit.internal.jaxb.geometry:" +
                                           "org.geotoolkit.gml.xml.v311:" +
                                           "org.geotoolkit.citygml.xml.v100:" +
-                                         "org.geotoolkit.citygml.xml.v100.building:" + 
-                                         "org.geotoolkit.citygml.xml.v100.cityfurniture:" + 
-                                         "org.geotoolkit.citygml.xml.v100.transportation");
+                                          "org.geotoolkit.citygml.xml.v100.building:" + 
+                                          "org.geotoolkit.citygml.xml.v100.cityfurniture:" + 
+                                          "org.geotoolkit.citygml.xml.v100.transportation");
         } catch (JAXBException ex) {
             Logger.getLogger(CityGMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

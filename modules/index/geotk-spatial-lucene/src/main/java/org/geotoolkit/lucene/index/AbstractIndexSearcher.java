@@ -279,7 +279,7 @@ public class AbstractIndexSearcher extends IndexLucene {
             if (spatialQuery.getQuery().indexOf(":*") != -1 || spatialQuery.getQuery().indexOf(":?") != -1 || spatialQuery.getQuery().indexOf(":(*") != -1
              || spatialQuery.getQuery().indexOf(":(+*") != -1 || spatialQuery.getQuery().indexOf(":+*") != -1) {
                 parser.setAllowLeadingWildcard(true);
-                LOGGER.log(logLevel, "Allowing leading wildChar");
+                LOGGER.log(Level.FINER, "Allowing leading wildChar");
                 BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
             }
 
@@ -289,7 +289,7 @@ public class AbstractIndexSearcher extends IndexLucene {
                 parser.setLowercaseExpandedTerms(false);
             }
             final Query query   = parser.parse(spatialQuery.getQuery());
-            LOGGER.log(logLevel, "QueryType:{0}", query.getClass().getName());
+            LOGGER.log(Level.FINER, "QueryType:{0}", query.getClass().getName());
             final Filter filter = spatialQuery.getSpatialFilter();
             final int operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();

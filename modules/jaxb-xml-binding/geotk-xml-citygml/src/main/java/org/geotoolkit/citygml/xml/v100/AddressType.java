@@ -126,4 +126,21 @@ public class AddressType extends AbstractFeatureType {
         return this.genericApplicationPropertyOfAddress;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (xalAddress != null) {
+            sb.append("xalAddress:").append(xalAddress).append('\n');
+        }
+        if (multiPoint != null) {
+            sb.append("multiPoint: ").append(multiPoint).append('\n');
+        }
+        if (genericApplicationPropertyOfAddress != null && genericApplicationPropertyOfAddress.size() > 0) {
+            sb.append("genericApplicationPropertyOfAddress:\n");
+            for (Object o : genericApplicationPropertyOfAddress) {
+                sb.append(o).append("\n");
+            }
+        }
+        return sb.toString();
+    }
 }

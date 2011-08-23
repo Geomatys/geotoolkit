@@ -202,7 +202,7 @@ public class PolygonType extends AbstractSurfaceType {
         if (interior != null) {
             sb.append("interior:").append('\n');
             for (JAXBElement<AbstractRingPropertyType> inte : interior) {
-                sb.append(inte).append('\n');
+                sb.append(inte.getValue()).append('\n');
             }
         } else {
             sb.append("interior null").append('\n');

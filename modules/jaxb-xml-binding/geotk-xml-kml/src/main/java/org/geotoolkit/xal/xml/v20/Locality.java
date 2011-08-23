@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -497,6 +498,68 @@ public class Locality {
         return otherAttributes;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[Locality]\n");
+        if (addressLine != null) {
+            sb.append("addressLine:\n");
+            for (AddressLine a : addressLine) {
+                sb.append(a).append('\n');
+            }
+        }
+        if (any != null) {
+            sb.append("any:\n");
+            for (Object o : any) {
+                sb.append(o).append('\n');
+            }
+        }
+        if (dependentLocality != null) {
+            sb.append("dependentLocality:").append(dependentLocality).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (indicator != null) {
+            sb.append("indicator:").append(indicator).append('\n');
+        }
+        if (largeMailUser != null) {
+            sb.append("largeMailUser:").append(largeMailUser).append('\n');
+        }
+        if (localityName != null) {
+            sb.append("localityName:\n");
+            for (LocalityName o : localityName) {
+                sb.append(o).append('\n');
+            }
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (Entry entry : otherAttributes.entrySet()) {
+                sb.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+        }
+        if (postBox != null) {
+            sb.append("postBox:").append(postBox).append('\n');
+        }
+        if (postOffice != null) {
+            sb.append("postOffice:").append(postOffice).append('\n');
+        }
+        if (postalRoute != null) {
+            sb.append("postalRoute:").append(postalRoute).append('\n');
+        }
+        if (premise != null) {
+            sb.append("premise:").append(premise).append('\n');
+        }
+        if (thoroughfare != null) {
+            sb.append("thoroughfare:").append(thoroughfare).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (usageType != null) {
+            sb.append("usageType:").append(usageType).append('\n');
+        }
+        return sb.toString();
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -623,6 +686,25 @@ public class Locality {
             return otherAttributes;
         }
 
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[LocalityName]\n");
+            if (code != null) {
+                sb.append("code:").append(code).append('\n');
+            }
+            if (content != null) {
+                sb.append("content:").append(content).append('\n');
+            }
+            if (type != null) {
+                sb.append("type:").append(type).append('\n');
+            }
+            if (otherAttributes != null) {
+                sb.append("otherAttributes:\n");
+                for (Entry entry : otherAttributes.entrySet()) {
+                    sb.append(entry.getKey()).append("=").append(entry.getValue());
+                }
+            }
+            return sb.toString();
+        }
     }
-
 }

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureCollectionType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 
 
 /**
@@ -52,6 +53,7 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureCollectionType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CityModelType", propOrder = {
+    "cityObjectMember",
     "genericApplicationPropertyOfCityModel"
 })
 @XmlRootElement(name = "CityModel")
@@ -59,7 +61,9 @@ public class CityModelType extends AbstractFeatureCollectionType {
 
     @XmlElement(name = "_GenericApplicationPropertyOfCityModel")
     private List<Object> genericApplicationPropertyOfCityModel;
-
+    
+    private List<FeaturePropertyType> cityObjectMember;
+    
     /**
      * Gets the value of the genericApplicationPropertyOfCityModel property.
      */
@@ -69,5 +73,39 @@ public class CityModelType extends AbstractFeatureCollectionType {
         }
         return this.genericApplicationPropertyOfCityModel;
     }
+    
+    /**
+     * @return the cityObjectMember
+     */
+    public List<FeaturePropertyType> getCityObjectMember() {
+        if (cityObjectMember == null) {
+            cityObjectMember = new ArrayList<FeaturePropertyType>();
+        }
+        return cityObjectMember;
+    }
 
+    /**
+     * @param cityObjectMember the cityObjectMember to set
+     */
+    public void setCityObjectMember(List<FeaturePropertyType> cityObjectMember) {
+        this.cityObjectMember = cityObjectMember;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (cityObjectMember != null && cityObjectMember.size() > 0) {
+            s.append("cityObjectMember:").append('\n');
+            for (FeaturePropertyType fp : cityObjectMember) {
+                s.append(fp).append('\n');
+            }
+        }
+        if (genericApplicationPropertyOfCityModel != null && genericApplicationPropertyOfCityModel.size() > 0) {
+            s.append("genericApplicationPropertyOfCityModel:").append('\n');
+            for (Object fp : genericApplicationPropertyOfCityModel) {
+                s.append(fp).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

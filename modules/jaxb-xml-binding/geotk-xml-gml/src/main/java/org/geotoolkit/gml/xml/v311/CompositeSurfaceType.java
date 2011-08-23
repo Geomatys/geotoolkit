@@ -66,4 +66,15 @@ public class CompositeSurfaceType extends AbstractSurfaceType {
         return this.surfaceMember;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (surfaceMember != null && surfaceMember.size() > 0) {
+            sb.append("surfaceMember:\n");
+            for (SurfacePropertyType entry : surfaceMember) {
+                sb.append(entry).append("\n");
+            }
+        }
+        return sb.toString();
+    }
 }

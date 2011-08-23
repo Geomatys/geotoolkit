@@ -148,5 +148,18 @@ public abstract class AbstractBuildingType extends AbstractSiteType {
         }
         return this.rest;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (rest != null && rest.size() > 0) {
+            s.append("\nBuilding properties:").append('\n');
+            for (JAXBElement<?> fp : rest) {
+                s.append(fp.getName().getLocalPart()).append(":\n");
+                s.append(fp.getValue()).append('\n');
+            }
+        }
+        return s.toString();
+    }
 
 }
