@@ -28,8 +28,6 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
-import org.geotoolkit.util.Version;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -38,7 +36,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
-import static org.geotoolkit.referencing.ReferencingCommons.*;
+import static org.geotoolkit.referencing.Commons.*;
 
 
 /**

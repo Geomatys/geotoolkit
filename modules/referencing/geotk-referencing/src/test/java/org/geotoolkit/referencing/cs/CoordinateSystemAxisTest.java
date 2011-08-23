@@ -31,7 +31,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
-import static org.geotoolkit.referencing.ReferencingAssert.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
 
 

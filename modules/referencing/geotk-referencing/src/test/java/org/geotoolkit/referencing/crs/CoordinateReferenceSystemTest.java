@@ -23,7 +23,7 @@ import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
 
 import static org.geotoolkit.test.Commons.decodeQuotes;
-import static org.geotoolkit.referencing.ReferencingAssert.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.*;
 import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.*;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;

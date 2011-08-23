@@ -25,7 +25,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.referencing.ReferencingCommons;
+import org.geotoolkit.referencing.Commons;
 import org.opengis.test.CalculationType;
 
 import org.junit.*;
@@ -184,7 +184,7 @@ public class RGF93TransformTest extends TransformTestBase {
     @Test
     public void testTransform() throws FactoryException, TransformException {
         assumeAvailable();
-        assumeTrue(ReferencingCommons.isEpsgFactoryAvailable());
+        assumeTrue(Commons.isEpsgFactoryAvailable());
         /*
          * Get the transform, which will use the NTv2 grid since
          * we are transforming between two-dimensional CRS.

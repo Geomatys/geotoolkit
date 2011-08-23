@@ -51,7 +51,7 @@ public class Commons {
      *
      * @since 3.11
      */
-    public static final String EPSG_VERSION = "7.8";
+    public static final String EPSG_VERSION = "7.9";
 
     /**
      * The character to be substituted to {@code '"'} in {@link #printAsJavaCode}.

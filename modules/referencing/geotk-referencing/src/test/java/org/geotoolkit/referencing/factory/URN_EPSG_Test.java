@@ -30,7 +30,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
-import static org.geotoolkit.referencing.ReferencingCommons.*;
+import static org.geotoolkit.referencing.Commons.*;
 
 
 /**

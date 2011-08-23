@@ -22,7 +22,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.referencing.AuthorityFactoryTest;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.test.Commons;
+import org.geotoolkit.referencing.Commons;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -49,12 +49,13 @@ import org.junit.runners.JUnit4;
  * @since 3.01
  */
 @RunWith(JUnit4.class)
-public final class GeoapiTest extends AuthorityFactoryTest {
+public final strictfp class GeoapiTest extends AuthorityFactoryTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */
     public GeoapiTest() {
-        super(CRS.getAuthorityFactory(false), null, null);
+        super(Commons.isEpsgFactoryAvailable() ?
+                CRS.getAuthorityFactory(false) : null, null, null);
     }
 
     /**
@@ -69,6 +70,24 @@ public final class GeoapiTest extends AuthorityFactoryTest {
     public void testEPSG_2314() throws FactoryException, TransformException {
         try {
             super.testEPSG_2314();
+        } catch (AssertionError e) {
+            Commons.serializeToSurefireDirectory(GeoapiTest.class, object);
+            throw e;
+        }
+    }
+
+    /**
+     * Overrides the test using the <cite>Krovak</cite> projection in order to serialize
+     * the CRS in case of test failure. We perform this special step for this particular
+     * projection because it appears to succeed on some machines and to fail on some others.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Override
+    public void testEPSG_2065() throws FactoryException, TransformException {
+        try {
+            super.testEPSG_2065();
         } catch (AssertionError e) {
             Commons.serializeToSurefireDirectory(GeoapiTest.class, object);
             throw e;

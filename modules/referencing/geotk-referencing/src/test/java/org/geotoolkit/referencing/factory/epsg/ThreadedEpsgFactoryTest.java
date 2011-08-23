@@ -53,7 +53,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
-import static org.geotoolkit.referencing.ReferencingCommons.*;
+import static org.geotoolkit.referencing.Commons.*;
 
 
 /**

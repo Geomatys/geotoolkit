@@ -21,7 +21,6 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.test.Assert;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
@@ -29,16 +28,16 @@ import static org.geotoolkit.test.Commons.*;
 
 
 /**
- * Inherits JUnit assertions methods, and add Geotk-specific assertion methods. The methods
+ * Inherits JUnit assertions methods, and adds Geotk-specific assertion methods. The methods
  * defined in this class requires Geotk-specific API (otherwise they would be defined in the
  * {@code geotk-test} module).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
- * @since 3.16 (derived from 3.00)
+ * @since 3.19 (derived from 3.00)
  */
-public final class ReferencingAssert extends Assert {
+public final class Assert extends org.geotoolkit.test.Assert {
     /**
      * Small tolerance for comparisons of floating point values.
      */
@@ -47,7 +46,7 @@ public final class ReferencingAssert extends Assert {
     /**
      * Do not allow instantiation of this class.
      */
-    private ReferencingAssert() {
+    private Assert() {
     }
 
     /**

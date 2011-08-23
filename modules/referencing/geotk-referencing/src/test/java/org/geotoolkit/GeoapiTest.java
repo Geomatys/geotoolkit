@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.opengis.util.Factory;
 import org.opengis.util.NameFactory;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.cs.CSFactory;
@@ -30,6 +31,7 @@ import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
@@ -37,8 +39,10 @@ import org.opengis.test.ToleranceModifier;
 import org.opengis.test.TestSuite;
 
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.Commons;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.util.logging.Logging;
 
 import static org.junit.Assert.*;
@@ -86,23 +90,41 @@ public final class GeoapiTest extends TestSuite implements ImplementationDetails
      */
     static {
         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(null);
-        setFactories(NameFactory.class,                         getNameFactory                        (        null));
-        setFactories(CSFactory.class,                           getCSFactory                          (        null));
-        setFactories(CRSFactory.class,                          getCRSFactory                         (        null));
-        setFactories(DatumFactory.class,                        getDatumFactory                       (        null));
-        setFactories(CoordinateOperationFactory.class,          CRS.getCoordinateOperationFactory     (       false));
-        setFactories(CSAuthorityFactory.class,                  getCSAuthorityFactory                 ("EPSG", null));
-        setFactories(CRSAuthorityFactory.class,                 CRS.getAuthorityFactory               (       false));
-        setFactories(DatumAuthorityFactory.class,               getDatumAuthorityFactory              ("EPSG", null));
-        setFactories(CoordinateOperationAuthorityFactory.class, getCoordinateOperationAuthorityFactory("EPSG", null));
+        setFactories(NameFactory.class,                getNameFactory                   (null));
+        setFactories(CSFactory.class,                  getCSFactory                     (null));
+        setFactories(CRSFactory.class,                 getCRSFactory                    (null));
+        setFactories(DatumFactory.class,               getDatumFactory                  (null));
+        setFactories(MathTransformFactory.class,       getMathTransformFactory          (null));
+        setFactories(CoordinateOperationFactory.class, CRS.getCoordinateOperationFactory(false));
+        setFactories(CRSAuthorityFactory.class,        CRS.getAuthorityFactory          (false));
+        try {
+            setFactories(CSAuthorityFactory.class,                  getCSAuthorityFactory                 ("EPSG", null));
+            setFactories(DatumAuthorityFactory.class,               getDatumAuthorityFactory              ("EPSG", null));
+            setFactories(CoordinateOperationAuthorityFactory.class, getCoordinateOperationAuthorityFactory("EPSG", null));
+        } catch (FactoryNotFoundException e) {
+            Logging.getLogger(GeoapiTest.class).warning(e.getLocalizedMessage());
+            setFactories(CSAuthorityFactory.class);
+            setFactories(DatumAuthorityFactory.class);
+            setFactories(CoordinateOperationAuthorityFactory.class);
+        }
     }
 
     /**
-     * Returns unconditionally {@code true} since there is not factory to exclude, because we
-     * declared in the static initializer all the factories we want to test.
+     * Returns {@code false} if the given factory is the Geotk EPSG factory but this factory
+     * is declared unavailable. We also exclude every non-Geotk implementations as a safety.
+     * <p>
+     * Note that this method is not strictly necessary since the above static initialization
+     * should have defined the appropriate factories. Nevertheless we do those checks as a
+     * paranoiac safety.
      */
     @Override
     public <T extends Factory> boolean filter(final Class<T> category, final T factory) {
+        if (!(factory.getClass().getName().startsWith("org.geotoolkit."))) {
+            return false;
+        }
+        if (AuthorityFactory.class.isAssignableFrom(category)) {
+            return Commons.isEpsgFactoryAvailable();
+        }
         return true;
     }
 

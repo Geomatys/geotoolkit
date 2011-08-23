@@ -54,7 +54,7 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
-import static org.geotoolkit.referencing.ReferencingAssert.*;
+import static org.geotoolkit.referencing.Assert.*;
 
 
 /**

@@ -28,7 +28,6 @@ import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.test.Commons;
 
 import static org.junit.Assert.*;
 
@@ -38,15 +37,15 @@ import static org.junit.Assert.*;
  * Geotk-specific API (otherwise they would be defined in the {@code geotk-test} module).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
- * @since 3.16 (derived from 3.00)
+ * @since 3.19 (derived from 3.00)
  */
-public final class ReferencingCommons extends Commons {
+public final class Commons extends org.geotoolkit.test.Commons {
     /**
      * Do not allow instantiation of this class.
      */
-    private ReferencingCommons() {
+    private Commons() {
     }
 
     /**

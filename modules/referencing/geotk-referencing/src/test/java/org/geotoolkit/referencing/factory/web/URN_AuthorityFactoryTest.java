@@ -40,7 +40,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
-import static org.geotoolkit.referencing.ReferencingCommons.*;
+import static org.geotoolkit.referencing.Commons.*;
 
 
 /**

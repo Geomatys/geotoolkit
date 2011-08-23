@@ -41,7 +41,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
-import static org.geotoolkit.referencing.ReferencingCommons.*;
+import static org.geotoolkit.referencing.Commons.*;
 import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.forceAxisOrderHonoring;
 
 

@@ -62,7 +62,7 @@ import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.UNIX;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.GENERIC_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_3D;
-import static org.geotoolkit.referencing.ReferencingCommons.isEpsgFactoryAvailable;
+import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
 import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 
 import org.junit.*;

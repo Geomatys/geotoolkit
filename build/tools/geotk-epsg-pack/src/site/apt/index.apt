@@ -11,12 +11,12 @@ EPSG pack
 
   [[1]] Download the latest SQL scripts for MySQL from the {{{http://www.epsg.org}EPSG site}}.
 
-  [[2]] Unzip in the directory of your choice (replace "7.8" by the appropriate version number
+  [[2]] Unzip in the directory of your choice (replace "7.9" by the appropriate version number
         in the ZIP filename), and remember the path to that directory.
 
 ---------------------------------------------------------------------------------------------------------
-unzip EPSG_v7_6_MySQL.zip
-cd EPSG_v7_6_MySQL
+unzip EPSG_v7_9_MySQL.zip
+cd EPSG_v7_9_MySQL
 export EPSG_SCRIPTS=$PWD
 ---------------------------------------------------------------------------------------------------------
 
@@ -27,12 +27,12 @@ export GEOTK_HOME=<declare your root Geotk source code directory here>
 cd $GEOTK_HOME/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/
 ---------------------------------------------------------------------------------------------------------
 
-  [[4]] Overwrite <<<Tables.sql>>> and <<<FKeys.sql>>> with the new SQL scripts (replace "7.8" by the appropriate
+  [[4]] Overwrite <<<Tables.sql>>> and <<<FKeys.sql>>> with the new SQL scripts (replace "7.9" by the appropriate
         version number in the commands show below). Do not overwrite <<<Data.sql>>> and <<<Indexes.sql>>>.
 
 -----------------------------------------------------
-cp $EPSG_SCRIPTS/EPSG_v7_6.mdb_Tables_MySQL.sql Tables.sql
-cp $EPSG_SCRIPTS/EPSG_v7_6.mdb_FKeys_MySQL.sql  FKeys.sql
+cp $EPSG_SCRIPTS/EPSG_v7_9.mdb_Tables_MySQL.sql Tables.sql
+cp $EPSG_SCRIPTS/EPSG_v7_9.mdb_FKeys_MySQL.sql  FKeys.sql
 -----------------------------------------------------
 
   [[5]] Open the <<<Tables.sql>>> file for edition.
@@ -52,7 +52,7 @@ cp $EPSG_SCRIPTS/EPSG_v7_6.mdb_FKeys_MySQL.sql  FKeys.sql
         this result in unmodified <<<Tables.sql>>> and <<<FKeys.sql>>> files compared to the previous
         version.
 
-  [[7]] Run the following command-lines (replace "7.8" by the appropriate version number to the files
+  [[7]] Run the following command-lines (replace "7.9" by the appropriate version number to the files
         in the EPSG directory):
 
 ----------------------------------------------------------------------------------------------------------------------------------

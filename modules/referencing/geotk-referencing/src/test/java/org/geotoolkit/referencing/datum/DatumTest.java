@@ -35,7 +35,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
-import static org.geotoolkit.referencing.ReferencingAssert.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.*;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.*;
 import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.*;
