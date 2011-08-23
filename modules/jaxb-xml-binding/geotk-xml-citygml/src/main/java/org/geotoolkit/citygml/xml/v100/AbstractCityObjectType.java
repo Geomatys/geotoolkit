@@ -142,5 +142,34 @@ public abstract class AbstractCityObjectType extends AbstractFeatureType {
         }
         return this.genericApplicationPropertyOfCityObject;
     }
-
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (creationDate != null) {
+            s.append("creationDate:").append(creationDate).append('\n');
+        }
+        if (terminationDate != null) {
+            s.append("terminationDate:").append(terminationDate).append('\n');
+        }
+        if (externalReference != null && externalReference.size() > 0) {
+            s.append("externalReference:").append('\n');
+            for (ExternalReferenceType fp : externalReference) {
+                s.append(fp).append('\n');
+            }
+        }
+        if (generalizesTo != null && generalizesTo.size() > 0) {
+            s.append("genericApplicationPropertyOfCityModel:").append('\n');
+            for (GeneralizationRelationType fp : generalizesTo) {
+                s.append(fp).append('\n');
+            }
+        }
+        if (genericApplicationPropertyOfCityObject != null && genericApplicationPropertyOfCityObject.size() > 0) {
+            s.append("genericApplicationPropertyOfCityModel:").append('\n');
+            for (Object fp : genericApplicationPropertyOfCityObject) {
+                s.append(fp).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

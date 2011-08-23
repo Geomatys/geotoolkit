@@ -86,22 +86,22 @@ import org.geotoolkit.gml.xml.v311.MultiCurvePropertyType;
 public class CityFurnitureType extends AbstractCityObjectType {
 
     @XmlElement(name = "class")
-    protected String clazz;
-    protected List<String> function;
-    protected GeometryPropertyType lod1Geometry;
-    protected GeometryPropertyType lod2Geometry;
-    protected GeometryPropertyType lod3Geometry;
-    protected GeometryPropertyType lod4Geometry;
-    protected MultiCurvePropertyType lod1TerrainIntersection;
-    protected MultiCurvePropertyType lod2TerrainIntersection;
-    protected MultiCurvePropertyType lod3TerrainIntersection;
-    protected MultiCurvePropertyType lod4TerrainIntersection;
-    protected ImplicitRepresentationPropertyType lod1ImplicitRepresentation;
-    protected ImplicitRepresentationPropertyType lod2ImplicitRepresentation;
-    protected ImplicitRepresentationPropertyType lod3ImplicitRepresentation;
-    protected ImplicitRepresentationPropertyType lod4ImplicitRepresentation;
+    private String clazz;
+    private List<String> function;
+    private GeometryPropertyType lod1Geometry;
+    private GeometryPropertyType lod2Geometry;
+    private GeometryPropertyType lod3Geometry;
+    private GeometryPropertyType lod4Geometry;
+    private MultiCurvePropertyType lod1TerrainIntersection;
+    private MultiCurvePropertyType lod2TerrainIntersection;
+    private MultiCurvePropertyType lod3TerrainIntersection;
+    private MultiCurvePropertyType lod4TerrainIntersection;
+    private ImplicitRepresentationPropertyType lod1ImplicitRepresentation;
+    private ImplicitRepresentationPropertyType lod2ImplicitRepresentation;
+    private ImplicitRepresentationPropertyType lod3ImplicitRepresentation;
+    private ImplicitRepresentationPropertyType lod4ImplicitRepresentation;
     @XmlElement(name = "_GenericApplicationPropertyOfCityFurniture")
-    protected List<Object> genericApplicationPropertyOfCityFurniture;
+    private List<Object> genericApplicationPropertyOfCityFurniture;
 
     /**
      * Gets the value of the clazz property.
@@ -129,25 +129,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the function property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the function property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFunction().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getFunction() {
         if (function == null) {
@@ -446,24 +427,6 @@ public class CityFurnitureType extends AbstractCityObjectType {
 
     /**
      * Gets the value of the genericApplicationPropertyOfCityFurniture property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the genericApplicationPropertyOfCityFurniture property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGenericApplicationPropertyOfCityFurniture().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
-     * 
      * 
      */
     public List<Object> getGenericApplicationPropertyOfCityFurniture() {
