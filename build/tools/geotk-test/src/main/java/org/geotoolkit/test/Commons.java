@@ -251,4 +251,32 @@ public class Commons {
             file.delete();
         }
     }
+
+    /**
+     * Reads the first object found in the given file. If the given file can not be read,
+     * then this method throws an {@link AssertionError} - which will typically be reported
+     * as a JUnit test failure.
+     * <p>
+     * This method is typically used in order to inspect the object saved by
+     * {@link #serializeToSurefireDirectory(Class, Object)} after a test failure.
+     *
+     * @param  file The file from which to read an object.
+     * @return The first object read from the given file.
+     *
+     * @since 3.19
+     */
+    public static Object deserialize(final String file) {
+        try {
+            final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            try {
+                return in.readObject();
+            } finally {
+                in.close();
+            }
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        } catch (ClassNotFoundException e) {
+            throw new NoClassDefFoundError(e.getLocalizedMessage());
+        }
+    }
 }

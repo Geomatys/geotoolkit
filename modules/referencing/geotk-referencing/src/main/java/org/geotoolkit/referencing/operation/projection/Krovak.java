@@ -124,11 +124,6 @@ public class Krovak extends UnitaryProjection {
     private final double n, tanS2, alfa, hae, k1, ka, ro0;
 
     /**
-     * Useful constant - 45° in radians.
-     */
-    private static final double s45 = 0.785398163397448;
-
-    /**
      * Creates a Krovak projection from the given parameters. The descriptor argument is usually
      * {@link org.geotoolkit.referencing.operation.provider.Krovak#PARAMETERS}, but is not restricted
      * to. If a different descriptor is supplied, it is user's responsibility to ensure that it is
@@ -178,7 +173,7 @@ public class Krovak extends UnitaryProjection {
         sinAzim = sin(azimuth);
         cosAzim = cos(azimuth);
         n       = sin(pseudoStandardParallel);
-        tanS2   = tan(pseudoStandardParallel / 2 + s45);
+        tanS2   = tan(pseudoStandardParallel/2 + PI/4);
 
         final double sinLat, cosLat, cosL2, u0;
         sinLat = sin(latitudeOfOrigin);
@@ -191,7 +186,7 @@ public class Krovak extends UnitaryProjection {
         final double g, esl;
         esl = excentricity * sinLat;
         g   = pow((1 - esl) / (1 + esl), (alfa * excentricity) / 2);
-        k1  = pow(tan(latitudeOfOrigin/2 + s45), alfa) * g / tan(u0/2 + s45);
+        k1  = pow(tan(latitudeOfOrigin/2 + PI/4), alfa) * g / tan(u0/2 + PI/4);
         ka  = pow(1/k1, -1/alfa);
         ro0 = pow(tanS2, -n);
         final double radius = sqrt(1 - excentricitySquared) / (1 - (excentricitySquared * (sinLat*sinLat)));
@@ -216,19 +211,19 @@ public class Krovak extends UnitaryProjection {
                              final double[] dstPts, final int dstOff)
             throws ProjectionException
     {
-        final double deltav = srcPts[srcOff];
-        final double φ = srcPts[srcOff + 1];
-        final double esp = excentricity * sin(φ);
-        final double gfi = pow(((1 - esp) / (1 + esp)), hae);
-        final double u   = 2 * (atan(pow(tan(φ/2 + s45), alfa) / k1 * gfi) - s45);
-        final double cosU = cos(u);
-        final double s = asin((cosAzim * sin(u)) + (sinAzim * cosU * cos(deltav)));
-        final double eps = n * asin(cosU * sin(deltav) / cos(s));
-        final double ro = 1 / pow(tan(s/2 + s45), n);
+        final double Δv   = srcPts[srcOff];
+        final double φ    = srcPts[srcOff+1];
+        final double esp  = excentricity * sin(φ);
+        final double gfi  = pow(((1 - esp) / (1 + esp)), hae);
+        final double U    = 2 * (atan(pow(tan(φ/2 + PI/4), alfa) / k1 * gfi) - PI/4);
+        final double cosU = cos(U);
+        final double S    = asin(cosAzim*sin(U) + sinAzim*cosU*cos(Δv));
+        final double ε    = n * asin(cosU * sin(Δv) / cos(S));
+        final double ρ    = pow(tan(S/2 + PI/4), n);
 
         // x and y are reverted.
-        dstPts[dstOff  ] = ro * sin(eps);
-        dstPts[dstOff+1] = ro * cos(eps);
+        dstPts[dstOff  ] = sin(ε) / ρ;
+        dstPts[dstOff+1] = cos(ε) / ρ;
     }
 
     /**
@@ -243,28 +238,28 @@ public class Krovak extends UnitaryProjection {
         final double x = srcPts[srcOff];
         final double y = srcPts[srcOff + 1];
         // x -> southing, y -> westing
-        final double ro  = hypot(x, y);
-        final double d   = atan2(x, y) / n;
-        final double s   = 2 * (atan(pow(ro0/ro, 1/n) * tanS2) - s45);
-        final double cs  = cos(s);
-        final double u   = asin((cosAzim * sin(s)) - (sinAzim * cs * cos(d)));
-        final double kau = ka * pow(tan((u / 2) + s45), 1 / alfa);
-        final double deltav = asin((cs * sin(d)) / cos(u));
+        final double ρ    = hypot(x, y);
+        final double D    = atan2(x, y) / n;
+        final double S    = 2 * (atan(pow(ro0/ρ, 1/n) * tanS2) - PI/4);
+        final double cosS = cos(S);
+        final double U    = asin(cosAzim*sin(S) - sinAzim*cosS*cos(D));
+        final double kau  = ka * pow(tan(U/2 + PI/4), 1/alfa);
+        final double Δv   = asin(cosS * sin(D)/cos(U));
         double φ = 0;
 
         // iteration calculation
         for (int i=MAXIMUM_ITERATIONS;;) {
-            final double fi1 = φ;
-            final double esf = excentricity * sin(fi1);
-            φ = 2 * (atan(kau * pow((1 + esf) / (1 - esf), excentricity/2)) - s45);
-            if (abs(fi1 - φ) <= ITERATION_TOLERANCE) {
+            final double φ1 = φ;
+            final double esf = excentricity * sin(φ1);
+            φ = 2 * (atan(kau * pow((1 + esf) / (1 - esf), excentricity/2)) - PI/4);
+            if (abs(φ1 - φ) <= ITERATION_TOLERANCE) {
                 break;
             }
             if (--i < 0) {
                 throw new ProjectionException(Errors.Keys.NO_CONVERGENCE);
             }
         }
-        dstPts[dstOff  ] = deltav;
+        dstPts[dstOff  ] = Δv;
         dstPts[dstOff+1] = φ;
     }
 
@@ -284,11 +279,11 @@ public class Krovak extends UnitaryProjection {
         final double sinφ   = sin(φ);
         final double sinλ   = sin(λ);
         final double cosλ   = cos(λ);
-        final double tan1   = tan(φ/2 + s45);
+        final double tan1   = tan(φ/2 + PI/4);
         final double esinφ  = excentricity * sinφ;
         final double dgφ    = excentricitySquared*cos(φ) / (1 - esinφ*esinφ);
         final double V      = pow(tan1, alfa) * pow((1-esinφ) / (1+esinφ), hae) / k1;
-        final double U      = 2 * (atan(V) - s45);
+        final double U      = 2 * (atan(V) - PI/4);
         final double cosU   = cos(U);
         final double sinU   = sin(U);
         final double sinS   = cosAzim*sinU + sinAzim*cosU*cosλ;
@@ -303,7 +298,7 @@ public class Krovak extends UnitaryProjection {
         final double t      = n / (cosS*cosS*sqrt(1 - Ɛt*Ɛt));
         final double dƐ_dλ  = cosU * t * (dS_dλ*sinλ*sinS +       cosλ*cosS);
         final double dƐ_dφ  = sinλ * t * (dS_dφ*sinS*cosU - dU_dφ*sinU*cosS);
-        final double tan2   = tan(asin(sinS)/2 + s45);
+        final double tan2   = tan(asin(sinS)/2 + PI/4);
         final double ρ      = pow(tan2, n);
         final double m      = (-n/2) * (1/tan2 + tan2);
         return new Matrix2(

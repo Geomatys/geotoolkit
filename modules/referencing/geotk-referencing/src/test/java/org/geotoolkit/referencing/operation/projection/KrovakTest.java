@@ -63,7 +63,7 @@ public final strictfp class KrovakTest extends ProjectionTestBase {
         transform = Krovak.create(PARAMETERS, param);
         validate();
 
-        final double delta = toRadians((1.0 / 60) / 1852); // Approximatively one metre.
+        final double delta = toRadians((4.0 / 60) / 1852); // Approximatively 4 metres.
         derivativeDeltas = new double[] {delta, delta};
 
         verifyDerivative(toRadians( 0), toRadians( 0));
