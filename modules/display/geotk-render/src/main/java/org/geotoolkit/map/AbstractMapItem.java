@@ -231,6 +231,8 @@ public abstract class AbstractMapItem implements MapItem {
         if(desc != null){
             buf.append(desc);
         }
+        buf.append(" Visible = ");
+        buf.append(visible);
         final List<MapItem> items = items();
         if(!items.isEmpty()){
             buf.append( Trees.toString("", items) );
