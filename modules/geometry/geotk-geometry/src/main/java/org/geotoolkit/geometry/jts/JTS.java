@@ -819,10 +819,12 @@ public final class JTS {
         
         final GeometryFactory gf = new GeometryFactory();
               
+        boolean isMultiPolygon = false;
         int nbPolygon = 1;
         
         if(g instanceof MultiPolygon){
             nbPolygon = g.getNumGeometries();
+            isMultiPolygon = true;
         }
         
         final Polygon[] ps = new Polygon[nbPolygon];
@@ -831,7 +833,7 @@ public final class JTS {
             
             final Polygon p;
             
-            if(nbPolygon > 1){
+            if(isMultiPolygon){
                 p = (Polygon) g.getGeometryN(i);
             }else{
                 p = (Polygon) g;
@@ -862,7 +864,7 @@ public final class JTS {
             ps[i] = gf.createPolygon(outer, holes); 
         }
         
-        if(nbPolygon > 1){
+        if(isMultiPolygon){
              return (T) gf.createMultiPolygon(ps);
         }else {
             return (T) ps[0];
@@ -885,10 +887,12 @@ public final class JTS {
         
         final GeometryFactory gf = new GeometryFactory();
               
+        boolean isMultiPolygon = false;
         int nbPolygon = 1;
         
         if(g instanceof MultiPolygon){
             nbPolygon = g.getNumGeometries();
+            isMultiPolygon = true;
         }
 
         final Polygon[] ps = new Polygon[nbPolygon];
@@ -897,7 +901,7 @@ public final class JTS {
             
             final Polygon p;
             
-            if(nbPolygon > 1){
+            if(isMultiPolygon){
                 p = (Polygon) g.getGeometryN(i);
             }else{
                 p = (Polygon) g;
@@ -929,7 +933,7 @@ public final class JTS {
             ps[i] = gf.createPolygon(outer, holes); 
         }
         
-        if(nbPolygon > 1){
+        if(isMultiPolygon){
              return (T) gf.createMultiPolygon(ps);
         }else {
             return (T) ps[0];
