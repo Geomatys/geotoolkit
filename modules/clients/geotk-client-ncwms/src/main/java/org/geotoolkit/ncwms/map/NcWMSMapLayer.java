@@ -26,6 +26,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ncwms.NcGetFeatureInfoRequest;
 import org.geotoolkit.ncwms.NcGetLegendRequest;
 import org.geotoolkit.ncwms.NcGetMapRequest;
+import org.geotoolkit.ncwms.NcGetMetadataMinMaxRequest;
 import org.geotoolkit.ncwms.NcGetMetadataRequest;
 import org.geotoolkit.ncwms.NcGetTransectRequest;
 import org.geotoolkit.ncwms.NcGetVerticalProfileRequest;
@@ -299,13 +300,30 @@ public class NcWMSMapLayer extends WMSMapLayer {
     
     /**
      * Generates a GetMetadata?item=minmax URL.
+     * ex: http://behemoth.nerc-essc.ac.uk/ncWMS/wms?
+     * request=GetMetadata
+     * &item=minmax
+     * &bbox=9.125%2C53.17499923706055%2C30.291667938232%2C65.875
+     * &crs=EPSG%3A4326
+     * &width=50
+     * &height=50
+     * &layers=BALTIC_BEST_EST%2Fuvel
+     * &elevation=-4
+     * &time=2011-07-24T00%3A00%3A00.000Z
      * 
      * @return the request URL.
      * @throws MalformedURLException 
      */
-    public URL queryMetadataMinmax() throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
+    public URL queryMetadataMinmax(final String crsCode, final String bbox, final String width, final String height) throws MalformedURLException {
+        final NcGetMetadataMinMaxRequest request = ((NcWebMapServer) getServer()).createGetMetadataMinMax();
         prepareQueryMetadata(request, "minmax");
+        request.setTime(dimensions().get("TIME"));
+        request.setElevation(dimensions().get("ELEVATION"));  
+        request.setCrs(crsCode); 
+        request.setBbox(bbox); 
+        request.setWidth(width); 
+        request.setHeight(height);      
+        
         return request.getURL();
     }
     

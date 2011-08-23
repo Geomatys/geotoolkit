@@ -46,6 +46,8 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     private String end = null;
     
     private String time = null;
+    
+    private String elevation = null;
 
     /**
      * {@inheritDoc}
@@ -150,6 +152,21 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
         this.time = time;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getElevation() {
+        return elevation;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setElevation(final String elevation) {
+        this.elevation = elevation;
+    }
     
     /**
      * {@inheritDoc}
@@ -185,6 +202,14 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
             
             requestParameters.put("day", day);
             
+        } else if (item.equals("minmax")) {
+            
+            if (time != null)            
+                requestParameters.put("time", time);  
+            
+            if (elevation != null)            
+                requestParameters.put("elevation", elevation);   
+            
         } else if (!item.equals("menu") && !item.equals("minmax")) {
             throw new IllegalArgumentException("Invalid value for item parameter");             
         }       
@@ -197,7 +222,11 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
             if (layerName == null)
                 throw new IllegalArgumentException("Must provide a layerName parameter"); 
             
-            requestParameters.put("layerName", layerName);
+            if (item.equals("minmax"))
+                requestParameters.put("layers", layerName);
+            else
+                requestParameters.put("layerName", layerName);
+                
         }
     }
 }

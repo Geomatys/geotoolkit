@@ -91,5 +91,14 @@ public interface NcGetMetadataRequest extends Request {
      */
     void setTime(final String time);
     
+    /**
+     * Gets the Elevation.
+     */
+    public String getElevation();
+
+    /**
+     * Sets the Elevation.
+     */
+    public void setElevation(final String elevation);
 
 }

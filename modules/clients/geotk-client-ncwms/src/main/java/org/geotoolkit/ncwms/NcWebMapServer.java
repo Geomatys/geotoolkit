@@ -167,6 +167,15 @@ public class NcWebMapServer extends WebMapServer{
     }
     
     /**
+     * Returns the GetMetadata request object. 
+     */
+    public NcGetMetadataMinMaxRequest  createGetMetadataMinMax() {
+        final NcGetMetadataMinMaxRequest request = new NcGetMetadataMinMax(getURI().toString());
+        request.setItem("minmax");
+        return request;
+    }
+    
+    /**
      * Returns the GetTransect request object. 
      */
     public NcGetTransectRequest createGetTransect() {

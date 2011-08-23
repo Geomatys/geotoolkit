@@ -251,10 +251,14 @@ public class NcWMSMapLayerTest {
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
         
         // Test mandatory values
-        String query = layer.queryMetadataMinmax().toString();        
+        String query = layer.queryMetadataMinmax("epsg:4326","-2,-1,1,2","300","400").toString();        
         assertTrue(query.contains("request=GetMetadata"));   
         assertTrue(query.contains("item=minmax"));
-        assertTrue(query.contains("layerName=test"));
+        assertTrue(query.contains("layers=test"));
+        assertTrue(query.contains("crs=epsg:4326"));
+        assertTrue(query.contains("bbox=-2,-1,1,2"));
+        assertTrue(query.contains("width=300"));
+        assertTrue(query.contains("width=400"));
         
     }
     
