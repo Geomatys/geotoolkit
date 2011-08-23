@@ -258,7 +258,7 @@ public class NcWMSMapLayerTest {
         assertTrue(query.contains("crs=epsg:4326"));
         assertTrue(query.contains("bbox=-2,-1,1,2"));
         assertTrue(query.contains("width=300"));
-        assertTrue(query.contains("width=400"));
+        assertTrue(query.contains("height=400"));
         
     }
     

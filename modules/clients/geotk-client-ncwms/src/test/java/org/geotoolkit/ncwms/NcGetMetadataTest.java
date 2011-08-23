@@ -163,10 +163,15 @@ public class NcGetMetadataTest {
      */
     @Test
     public void testNcGetMetadataMinmax() {
-        final NcGetMetadata request = new NcGetMetadata("http://test.com");
+        final NcGetMetadataMinMax request = new NcGetMetadataMinMax("http://test.com");
         request.setItem("minmax");        
         request.setLayerName("test");
-        request.setTime("01-01-01T01:00:00Z");        
+        request.setTime("01-01-01T01:00:00Z");   
+        request.setElevation("5"); 
+        request.setCrs("epsg:4326"); 
+        request.setBbox("-2,-1,2,1"); 
+        request.setWidth("400");   
+        request.setHeight("300");         
         request.setDay("01-01-01T01:00:00Z");
         request.setStart("01-01-01T01:00:00Z");
         request.setEnd("01-01-01T01:00:00Z");
@@ -181,8 +186,13 @@ public class NcGetMetadataTest {
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("request=GetMetadata"));
         assertTrue(sUrl.contains("item=minmax"));
-        assertTrue(sUrl.contains("layerName=test"));
-        assertFalse(sUrl.contains("time=01-01-01T01:00:00Z"));
+        assertTrue(sUrl.contains("layers=test"));
+        assertTrue(sUrl.contains("time=01-01-01T01:00:00Z"));
+        assertTrue(sUrl.contains("elevation=5"));
+        assertTrue(sUrl.contains("crs=epsg:4326"));
+        assertTrue(sUrl.contains("bbox=-2,-1,2,1"));
+        assertTrue(sUrl.contains("width=400"));
+        assertTrue(sUrl.contains("height=300"));
         assertFalse(sUrl.contains("day=01-01-01T01:00:00Z"));
         assertFalse(sUrl.contains("start=01-01-01T01:00:00Z"));
         assertFalse(sUrl.contains("end=01-01-01T01:00:00Z"));
