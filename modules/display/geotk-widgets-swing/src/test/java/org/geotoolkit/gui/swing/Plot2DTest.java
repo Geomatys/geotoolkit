@@ -33,7 +33,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  * @since 2.0
  */
 @Depend(ZoomPaneTest.class)
-public final class Plot2DTest extends SwingTestBase<Plot2D> {
+public final strictfp class Plot2DTest extends SwingTestBase<Plot2D> {
     /**
      * Constructs the test case.
      */

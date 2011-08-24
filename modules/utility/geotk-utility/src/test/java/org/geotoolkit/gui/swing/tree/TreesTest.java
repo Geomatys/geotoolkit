@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.00
  */
 @Depend(TreeFormat.class)
-public final class TreesTest {
+public final strictfp class TreesTest {
     /**
      * Tests the formatting as a tree.
      */

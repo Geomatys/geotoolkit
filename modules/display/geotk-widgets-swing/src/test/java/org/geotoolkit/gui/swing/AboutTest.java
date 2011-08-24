@@ -34,7 +34,7 @@ import static org.junit.Assume.*;
  *
  * @since 2.0
  */
-public final class AboutTest extends SwingTestBase<About> {
+public final strictfp class AboutTest extends SwingTestBase<About> {
     /**
      * Ensures that the Geotk plugins are registered.
      */

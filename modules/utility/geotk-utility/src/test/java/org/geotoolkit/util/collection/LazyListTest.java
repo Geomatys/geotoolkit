@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class LazyListTest {
+public final strictfp class LazyListTest {
     /**
      * Tests with random integer values.
      */

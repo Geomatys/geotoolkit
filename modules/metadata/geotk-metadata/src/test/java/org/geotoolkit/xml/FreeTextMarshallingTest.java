@@ -39,7 +39,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class FreeTextMarshallingTest extends TestBase {
+public final strictfp class FreeTextMarshallingTest extends TestBase {
     /**
      * Returns the expected string.
      */

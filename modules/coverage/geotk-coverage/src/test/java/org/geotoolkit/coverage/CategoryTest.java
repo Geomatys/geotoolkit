@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class CategoryTest {
+public final strictfp class CategoryTest {
     /**
      * Random number generator for this test.
      */

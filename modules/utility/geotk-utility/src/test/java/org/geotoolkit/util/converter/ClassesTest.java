@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final class ClassesTest {
+public final strictfp class ClassesTest {
     /**
      * Tests {@link Classes#changeArrayDimension}.
      */

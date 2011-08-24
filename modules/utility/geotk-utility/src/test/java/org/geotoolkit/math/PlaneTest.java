@@ -22,6 +22,7 @@ import javax.vecmath.Point3d;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -32,7 +33,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.0
  */
-public final class PlaneTest {
+public final strictfp class PlaneTest {
     /**
      * Tolerance factor for comparisons.
      */
@@ -45,9 +46,9 @@ public final class PlaneTest {
     public void testFit() {
         final Random  rd = new Random(457821698762354L);
         final Plane plan = new Plane();
-        final Point3d P1 = new Point3d(100*rd.nextDouble()+25, 100*rd.nextDouble()+25, Math.rint(100*rd.nextDouble()+40));
-        final Point3d P2 = new Point3d(100*rd.nextDouble()+25, 100*rd.nextDouble()+25, Math.rint(100*rd.nextDouble()+40));
-        final Point3d P3 = new Point3d(100*rd.nextDouble()+25, 100*rd.nextDouble()+25, Math.rint(100*rd.nextDouble()+40));
+        final Point3d P1 = new Point3d(100*rd.nextDouble()+25, 100*rd.nextDouble()+25, rint(100*rd.nextDouble()+40));
+        final Point3d P2 = new Point3d(100*rd.nextDouble()+25, 100*rd.nextDouble()+25, rint(100*rd.nextDouble()+40));
+        final Point3d P3 = new Point3d(100*rd.nextDouble()+25, 100*rd.nextDouble()+25, rint(100*rd.nextDouble()+40));
         plan.setPlane(P1, P2, P3);
         assertEquals("P1", P1.z, plan.z(P1.x,P1.y), EPS);
         assertEquals("P2", P2.z, plan.z(P2.x,P2.y), EPS);

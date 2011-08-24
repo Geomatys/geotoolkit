@@ -75,7 +75,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * @since 2.4
  */
 @Depend(CRS_Test.class)
-public final class CRS_WithEpsgTest extends ReferencingTestBase {
+public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
     /**
      * Ensures that the EPSG database is available. If no EPSG database is installed,
      * then the tests will be skipped. We do not cause a test failure because the EPSG

@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  * @since 3.10 (derived from Seagis)
  */
 @Depend(SeriesTableTest.class)
-public final class LayerTableTest extends CatalogTestBase {
+public final strictfp class LayerTableTest extends CatalogTestBase {
     /**
      * The name of the simplest layer to be tested. This layer contains only PNG images in
      * WGS84, one image for each date. Consequently this is the simplest layer we can test.

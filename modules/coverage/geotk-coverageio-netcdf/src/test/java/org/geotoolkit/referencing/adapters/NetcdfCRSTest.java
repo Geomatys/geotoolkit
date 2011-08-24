@@ -64,7 +64,7 @@ import static java.lang.Double.NaN;
  * @since 3.08
  */
 @Depend(IrregularAxesConverterTest.class)
-public final class NetcdfCRSTest extends NetcdfTestBase {
+public final strictfp class NetcdfCRSTest extends NetcdfTestBase {
     /**
      * Small tolerance factor for floating point comparison.
      */

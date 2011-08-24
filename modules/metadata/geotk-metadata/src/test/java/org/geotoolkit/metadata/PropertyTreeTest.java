@@ -56,7 +56,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.00
  */
 @Depend(MetadataStandard.class)
-public final class PropertyTreeTest {
+public final strictfp class PropertyTreeTest {
     /**
      * Creates a tree from the given string representation. Each node must have at least one
      * {@code '─'} character (unicode 2500) in front of it. The number of spaces and drawing

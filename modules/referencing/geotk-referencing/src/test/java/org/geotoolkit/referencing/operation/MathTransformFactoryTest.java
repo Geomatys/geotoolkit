@@ -37,6 +37,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -52,7 +53,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class MathTransformFactoryTest extends ReferencingTestBase {
+public final strictfp class MathTransformFactoryTest extends ReferencingTestBase {
     /**
      * Tolerance for test when units are degrees.
      */
@@ -97,7 +98,7 @@ public final class MathTransformFactoryTest extends ReferencingTestBase {
         for (int i=0; i<dimension; i++) {
             assertEquals("Mismatch for ordinate "+i+" (zero-based):",
                     expected.getOrdinate(i), actual.getOrdinate(i),
-                    tolerance[Math.min(i, lastToleranceIndex)]);
+                    tolerance[min(i, lastToleranceIndex)]);
         }
     }
 

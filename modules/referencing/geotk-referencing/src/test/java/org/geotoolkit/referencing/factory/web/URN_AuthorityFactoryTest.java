@@ -52,7 +52,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * @since 2.4
  */
 @Depend({AllAuthoritiesFactoryTest.class, HTTP_AuthorityFactoryTest.class})
-public final class URN_AuthorityFactoryTest extends ReferencingTestBase {
+public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase {
     /**
      * Makes sure that a singleton instance is registered.
      */

@@ -50,7 +50,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.2
  */
-public final class AutoCRSFactoryTest extends ReferencingTestBase {
+public final strictfp class AutoCRSFactoryTest extends ReferencingTestBase {
     /**
      * The factory to test.
      */

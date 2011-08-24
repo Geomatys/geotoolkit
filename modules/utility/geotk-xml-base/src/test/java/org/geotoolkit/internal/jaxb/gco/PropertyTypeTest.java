@@ -31,11 +31,11 @@ import static org.junit.Assert.*;
  *
  * @since 3.18
  */
-public final class PropertyTypeTest {
+public final strictfp class PropertyTypeTest {
     /**
      * A dummy implementation of {@link PropertyType}.
      */
-    private static final class CI_Citation extends PropertyType<CI_Citation, Citation> {
+    private static final strictfp class CI_Citation extends PropertyType<CI_Citation, Citation> {
         /**
          * This method is not of interest for this test.
          */

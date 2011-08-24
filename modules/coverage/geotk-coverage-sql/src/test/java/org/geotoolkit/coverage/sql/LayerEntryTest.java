@@ -50,7 +50,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  * @since 3.10 (derived from Seagis)
  */
 @Depend(LayerTableTest.class)
-public final class LayerEntryTest extends CatalogTestBase {
+public final strictfp class LayerEntryTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

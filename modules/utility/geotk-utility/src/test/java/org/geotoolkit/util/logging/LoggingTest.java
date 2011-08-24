@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class LoggingTest {
+public final strictfp class LoggingTest {
     /**
      * Tests {@link Logging#getLogger(Class)}.
      */

@@ -31,6 +31,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
+import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
 
@@ -44,7 +45,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, DirectionAlongMeridianTest.class})
-public final class CoordinateSystemAxisTest extends ReferencingTestBase {
+public final strictfp class CoordinateSystemAxisTest extends ReferencingTestBase {
     /**
      * For floating point number comparisons.
      */
@@ -255,7 +256,7 @@ public final class CoordinateSystemAxisTest extends ReferencingTestBase {
             assertEquals(index, base + i, c.ordinal());
             assertEquals(index, base + i + (i<h ? h : -h), AxisDirections.opposite(c).ordinal());
             assertEquals(index, 0, getAngle(c, c), EPS);
-            assertEquals(index, 180, Math.abs(getAngle(c, AxisDirections.opposite(c))), EPS);
+            assertEquals(index, 180, abs(getAngle(c, AxisDirections.opposite(c))), EPS);
             assertEquals(index, angle, getAngle(c, AxisDirection.NORTH), EPS);
         }
     }

@@ -41,7 +41,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final class XMLBindingsTest {
+public final strictfp class XMLBindingsTest {
     /**
      * An XML file representing a reference system tree.
      */

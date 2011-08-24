@@ -42,11 +42,11 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.4
  */
-public final class URN_EPSG_Test extends ReferencingTestBase {
+public final strictfp class URN_EPSG_Test extends ReferencingTestBase {
     /**
      * A custom class for testing versioning.
      */
-    private static final class Versioned extends URN_AuthorityFactory {
+    private static final strictfp class Versioned extends URN_AuthorityFactory {
         Version lastVersion;
 
         @Override

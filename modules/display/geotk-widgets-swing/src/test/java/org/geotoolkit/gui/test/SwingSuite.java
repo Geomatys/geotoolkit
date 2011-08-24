@@ -37,7 +37,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 3.05
  */
-public final class SwingSuite extends SwingTestBase<About> {
+public final strictfp class SwingSuite extends SwingTestBase<About> {
     /**
      * Creates a new test suite.
      */

@@ -38,7 +38,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @since 2.5
  */
-public class NullImageWriter extends SpatialImageWriter {
+public strictfp class NullImageWriter extends SpatialImageWriter {
     /**
      * Constructs a {@code NullImageWriter}.
      *
@@ -71,7 +71,7 @@ public class NullImageWriter extends SpatialImageWriter {
      *
      * @since 2.5
      */
-    public static class Spi extends SpatialImageWriter.Spi {
+    public static strictfp class Spi extends SpatialImageWriter.Spi {
         /**
          * Constructs a default {@code NullImageWriter.Spi}. This constructor
          * provides the following defaults:

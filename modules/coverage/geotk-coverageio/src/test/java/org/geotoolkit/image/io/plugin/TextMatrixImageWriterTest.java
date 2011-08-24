@@ -42,7 +42,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.4
  */
-public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
+public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTestBase {
     /**
      * Creates a new test suite.
      */
@@ -53,7 +53,7 @@ public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
     /**
      * The provider for the format to be tested.
      */
-    static final class Spi extends TextMatrixImageWriter.Spi {
+    static final strictfp class Spi extends TextMatrixImageWriter.Spi {
         Spi() {
             locale  = Locale.CANADA;
             charset = Charset.forName("UTF-8");

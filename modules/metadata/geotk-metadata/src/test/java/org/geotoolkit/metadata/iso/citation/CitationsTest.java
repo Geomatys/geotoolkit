@@ -40,7 +40,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.2
  */
 @Depend(DefaultCitationTest.class)
-public final class CitationsTest {
+public final strictfp class CitationsTest {
     /**
      * Makes sure that {@link Citations} constants are immutable.
      */

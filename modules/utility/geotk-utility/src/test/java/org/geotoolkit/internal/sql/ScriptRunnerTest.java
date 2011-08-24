@@ -35,12 +35,12 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class ScriptRunnerTest {
+public final strictfp class ScriptRunnerTest {
     /**
      * The runner that doesn't read any file, but keep trace of what was intended to be
      * read and their order.
      */
-    private static final class Runner extends ScriptRunner {
+    private static final strictfp class Runner extends ScriptRunner {
         /**
          * The list of files that we pretended to read.
          * We use a set to ensure that no file are given twice.

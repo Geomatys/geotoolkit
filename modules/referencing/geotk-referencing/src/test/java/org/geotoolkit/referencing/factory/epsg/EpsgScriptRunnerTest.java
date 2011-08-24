@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class EpsgScriptRunnerTest {
+public final strictfp class EpsgScriptRunnerTest {
     /**
      * Tests the {@link EpsgScriptRunner#REPLACE_STATEMENT} pattern.
      */

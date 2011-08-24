@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public class TileTest {
+public final strictfp class TileTest {
     /**
      * Ensures that the tiles size is stored as unsigned short.
      *

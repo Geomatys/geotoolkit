@@ -33,7 +33,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18 (derived from 3.00)
  */
-public final class TreeFormatTest {
+public final strictfp class TreeFormatTest {
     /**
      * Tests the formatting as a tree, with control on the indentation.
      */

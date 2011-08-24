@@ -28,7 +28,7 @@ import org.geotoolkit.test.TestBase;
  *
  * @since 3.16
  */
-public abstract class ReferencingTestBase extends TestBase {
+public abstract strictfp class ReferencingTestBase extends TestBase {
     /**
      * Creates a new test suite.
      */

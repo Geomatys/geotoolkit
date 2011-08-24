@@ -40,7 +40,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.07
  */
-public final class AsciiGridWriterTest extends TextImageWriterTestBase {
+public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase {
     /**
      * Creates a new test suite.
      */

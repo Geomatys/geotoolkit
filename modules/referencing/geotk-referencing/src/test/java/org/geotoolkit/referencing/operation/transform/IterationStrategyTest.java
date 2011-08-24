@@ -24,6 +24,7 @@ import static org.geotoolkit.referencing.operation.transform.IterationStrategy.*
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -34,9 +35,9 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class IterationStrategyTest {
+public final strictfp class IterationStrategyTest {
     /**
-     * Maximum number of dimention tested. The referencing module should be able to handle high
+     * Maximum number of dimension tested. The referencing module should be able to handle high
      * numbers, but we stick to low one in order to avoid making the test to long to execute.
      */
     private static final int MAX_DIMENSION = 6;
@@ -87,8 +88,8 @@ public final class IterationStrategyTest {
                 final PseudoTransform tr = new PseudoTransform(sourceDimension, targetDimension);
                 for (int srcOff=0; srcOff<=MAX_OFFSET; srcOff++) {
                     for (int dstOff=0; dstOff<=MAX_OFFSET; dstOff++) {
-                        final int numPts = Math.min((length-srcOff) / sourceDimension,
-                                                    (length-dstOff) / targetDimension);
+                        final int numPts = min((length-srcOff) / sourceDimension,
+                                               (length-dstOff) / targetDimension);
                         final IterationStrategy strategy = IterationStrategy.suggest(
                                 srcOff, sourceDimension, dstOff, targetDimension, numPts);
                         statistics[strategy.ordinal()]++;

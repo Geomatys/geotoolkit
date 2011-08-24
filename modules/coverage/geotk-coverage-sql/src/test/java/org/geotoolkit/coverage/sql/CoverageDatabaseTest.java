@@ -45,7 +45,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  * @since 3.10
  */
 @Depend(GridCoverageLoaderTest.class)
-public final class CoverageDatabaseTest extends CatalogTestBase {
+public final strictfp class CoverageDatabaseTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class ImageryMarshallingTest extends TestBase {
+public final strictfp class ImageryMarshallingTest extends TestBase {
     /**
      * Tests the marshalling of an {@code "gmd:LI_Source"} element, which shall become
      * {@code "gmi:LE_Source"} when some ISO 19115-2 properties are defined.

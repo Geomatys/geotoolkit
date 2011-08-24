@@ -35,6 +35,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.util.collection.XCollections;
 
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -49,7 +50,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-final class ClientThread extends Thread {
+final strictfp class ClientThread extends Thread {
     /**
      * The tolerance (in decimal degrees) between the results of transformation
      * to geographic coordinates.
@@ -187,7 +188,7 @@ final class ClientThread extends Thread {
                 assertSame(coordUTM, transform.transform(coordUTM, coordUTM));
                 final double distSq = coordUTM.distanceSq(x, y);
                 if (!(distSq <= UTM_TOLERANCE)) { // Use '!' for catching NaN.
-                    fail("UTM tolerance error: " + Math.sqrt(distSq));
+                    fail("UTM tolerance error: " + sqrt(distSq));
                 }
             } catch (Throwable e) {
                 exception = e;

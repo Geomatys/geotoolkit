@@ -30,7 +30,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.3
  */
 @Depend(KernelEditorTest.class)
-public final class GradientKernelEditorTest extends SwingTestBase<GradientKernelEditor> {
+public final strictfp class GradientKernelEditorTest extends SwingTestBase<GradientKernelEditor> {
     /**
      * Constructs the test case.
      */

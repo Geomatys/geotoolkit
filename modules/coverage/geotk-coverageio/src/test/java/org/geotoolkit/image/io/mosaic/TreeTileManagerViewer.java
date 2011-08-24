@@ -47,7 +47,7 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * @since 3.00
  */
 @SuppressWarnings("serial")
-final class TreeTileManagerViewer extends JPanel implements TreeSelectionListener {
+final strictfp class TreeTileManagerViewer extends JPanel implements TreeSelectionListener {
     /**
      * The margin to put on left, right, top and bottom of the area where tile are drawn.
      */

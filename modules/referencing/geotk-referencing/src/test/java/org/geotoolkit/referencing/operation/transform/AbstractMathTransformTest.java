@@ -19,18 +19,17 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import java.util.Random;
-import static java.lang.Math.PI;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
 
+import org.geotoolkit.test.Depend;
 import org.opengis.referencing.operation.TransformException;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 import static org.geotoolkit.referencing.operation.transform.AbstractMathTransform.rollLongitude;
 import static org.geotoolkit.referencing.operation.transform.AbstractMathTransform.MAXIMUM_FAILURES;
 import static org.geotoolkit.referencing.operation.transform.AbstractMathTransform.MAXIMUM_BUFFER_SIZE;
-
-import org.junit.*;
-import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -43,7 +42,7 @@ import org.geotoolkit.test.Depend;
  * @since 3.00
  */
 @Depend(IterationStrategyTest.class)
-public final class AbstractMathTransformTest {
+public final strictfp class AbstractMathTransformTest {
     /**
      * Tests the transform methods expecting at least one argument of type {@code float[]}.
      * We will use the {@link AbstractMathTransform#transform(double[],int,double[],int,int)}
@@ -82,7 +81,7 @@ public final class AbstractMathTransformTest {
                 final PseudoTransform tr = new PseudoTransform(sd, td);
                 for (int so=0; so<=10; so++) {
                     for (int to=0; to<=10; to++) {
-                        final int n = Math.min((length-so)/sd, (length-to)/td);
+                        final int n = min((length-so)/sd, (length-to)/td);
                         final int sublength = n * td;
                         tr.transform(srcDbl, so, result, to, n);
                         for (int p=0; p<=3; p++) {
@@ -166,7 +165,7 @@ public final class AbstractMathTransformTest {
             final RandomFailureTransform tr = new RandomFailureTransform(denominator);
             final int sourceDimension = tr.getSourceDimensions();
             final int targetDimension = tr.getTargetDimensions();
-            final int numPts = length / Math.max(sourceDimension, targetDimension);
+            final int numPts = length / max(sourceDimension, targetDimension);
             for (int p=0; p<4; p++) {
                 tr.ordinal = 0;
                 try {

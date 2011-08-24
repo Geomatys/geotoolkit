@@ -19,6 +19,7 @@ package org.geotoolkit.math;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -29,7 +30,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final class ComplexTest {
+public final strictfp class ComplexTest {
     /**
      * Tolerance factor for comparisons.
      */
@@ -82,8 +83,8 @@ public final class ComplexTest {
     }
 
     /**
-     * Tests {@link Complex#pow} method using real values only,
-     * so we can compare with {@link Math#pow}.
+     * Tests {@link Complex#power(Complex, int)} method using real values only,
+     * so we can compare with {@link StrictMath#pow(double, double)}.
      */
     @Test
     public void testRealPowers() {
@@ -93,7 +94,7 @@ public final class ComplexTest {
             final Complex value = new Complex(base, 0);
             for (int n=0; n<=6; n++) {
                 final String label = String.valueOf(base) + '^' + n;
-                assertEquals(label, Math.pow(base, n), real(power(value, n, label), label), EPS);
+                assertEquals(label, pow(base, n), real(power(value, n, label), label), EPS);
             }
         }
     }

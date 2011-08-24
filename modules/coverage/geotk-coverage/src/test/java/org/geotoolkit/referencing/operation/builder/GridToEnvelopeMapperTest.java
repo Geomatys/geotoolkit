@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-public final class GridToEnvelopeMapperTest {
+public final strictfp class GridToEnvelopeMapperTest {
     /**
      * Tolerance factor for the comparison of floating point numbers.
      */

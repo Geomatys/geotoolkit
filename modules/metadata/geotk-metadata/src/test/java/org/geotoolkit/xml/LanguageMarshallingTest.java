@@ -42,7 +42,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-public final class LanguageMarshallingTest extends LocaleDependantTestBase {
+public final strictfp class LanguageMarshallingTest extends LocaleDependantTestBase {
     /**
      * Returns the XML of a data identification element. This method returns the following string,
      * where the {@code <gco:CharacterString>} block is replaced by the more complex

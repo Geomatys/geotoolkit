@@ -29,7 +29,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.4
  */
-public final class VersionTest {
+public final strictfp class VersionTest {
     /**
      * Tests a numeric-only version.
      */

@@ -74,7 +74,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  *
  * @since 3.19
  */
-public final class GeoapiTest extends TestSuite implements ImplementationDetails {
+public final strictfp class GeoapiTest extends TestSuite implements ImplementationDetails {
     /**
      * The configuration map, which lists the tests to disable.
      */

@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public class Commons {
+public strictfp class Commons {
     /**
      * The version of the EPSG database used. Please update this field if the version of
      * the embedded EPSG database provided in the {@code "geotk-epsg"} module is updated.

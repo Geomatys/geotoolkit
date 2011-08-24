@@ -33,7 +33,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.00
  */
-public final class ImageFileChooserTest extends SwingTestBase<ImageFileChooser> {
+public final strictfp class ImageFileChooserTest extends SwingTestBase<ImageFileChooser> {
     /**
      * Ensures that the Geotk plugins are registered.
      */

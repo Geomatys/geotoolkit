@@ -48,7 +48,7 @@ import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
  *
  * @since 3.16 (derived from 3.00)
  */
-public class Assert extends org.opengis.test.Assert {
+public strictfp class Assert extends org.opengis.test.Assert {
     /**
      * For subclass constructor only.
      */

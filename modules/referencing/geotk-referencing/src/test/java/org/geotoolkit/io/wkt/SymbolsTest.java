@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class SymbolsTest {
+public final strictfp class SymbolsTest {
     /**
      * Tests the {@link Symbols#containsAxis} method.
      */

@@ -47,7 +47,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @since 2.4
  */
-public final class OperationFactoryTest extends EpsgFactoryTestBase {
+public final strictfp class OperationFactoryTest extends EpsgFactoryTestBase {
     /**
      * The operation factory being tested.
      */

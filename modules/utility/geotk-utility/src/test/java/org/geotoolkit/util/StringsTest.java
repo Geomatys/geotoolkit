@@ -32,7 +32,7 @@ import static org.geotoolkit.util.Strings.*;
  *
  * @since 3.09 (derived from 3.00).
  */
-public final class StringsTest {
+public final strictfp class StringsTest {
     /**
      * Tests {@link Strings#spaces}.
      */

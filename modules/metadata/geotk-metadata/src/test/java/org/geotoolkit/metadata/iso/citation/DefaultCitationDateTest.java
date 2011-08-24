@@ -36,7 +36,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-public final class DefaultCitationDateTest {
+public final strictfp class DefaultCitationDateTest {
     /**
      * Tests the shallow copy (through a constructor).
      *

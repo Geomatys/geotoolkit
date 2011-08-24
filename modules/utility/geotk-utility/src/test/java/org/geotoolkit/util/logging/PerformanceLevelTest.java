@@ -32,7 +32,7 @@ import static org.geotoolkit.util.logging.PerformanceLevel.*;
  *
  * @since 3.16
  */
-public final class PerformanceLevelTest {
+public final strictfp class PerformanceLevelTest {
     /**
      * Ensures that the duration are conform to the documentation.
      */

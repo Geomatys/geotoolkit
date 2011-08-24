@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public class ColorMapTest {
+public final strictfp class ColorMapTest {
     /**
      * The grid sample dimension to be used for testing purpose.
      */

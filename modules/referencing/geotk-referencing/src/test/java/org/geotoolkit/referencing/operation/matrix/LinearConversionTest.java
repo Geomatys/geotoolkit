@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class LinearConversionTest {
+public final strictfp class LinearConversionTest {
     /**
      * Small tolerance value for floating point comparisons.
      */

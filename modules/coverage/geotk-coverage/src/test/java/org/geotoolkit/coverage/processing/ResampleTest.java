@@ -62,7 +62,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 2.1
  */
-public final class ResampleTest extends GridProcessingTestBase {
+public final strictfp class ResampleTest extends GridProcessingTestBase {
     /**
      * Creates a new test suite.
      */

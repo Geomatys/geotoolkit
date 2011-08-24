@@ -174,6 +174,7 @@
       org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:com
     </javadoc.exclude>
     <derby.version>10.7.1.1</derby.version> <!-- If updated, need to search occurrences in APT files. -->
+    <netcdf.version>4.2.26</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
   </properties>
@@ -271,12 +272,12 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-jdk14</artifactId>
-        <version>1.6.1</version>
+        <version>1.6.2</version>
         <scope>runtime</scope> <!-- Should never be needed at compile time. -->
       </dependency>
 
@@ -294,27 +295,27 @@
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>netcdf</artifactId>
-        <version>4.2.20</version>
+        <version>${netcdf.version}</version>
       </dependency>
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>unidataCommon</artifactId>
-        <version>4.2.20</version>
+        <version>${netcdf.version}</version>
       </dependency>
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>opendap</artifactId>
-        <version>2.2.2</version>
+        <version>${netcdf.version}</version>
       </dependency>
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>bufr</artifactId>
-        <version>3.0</version>
+        <version>${netcdf.version}</version>
       </dependency>
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>grib</artifactId>
-        <version>8.0.29</version>
+        <version>${netcdf.version}</version>
       </dependency>
 
       <!-- Database and Server -->

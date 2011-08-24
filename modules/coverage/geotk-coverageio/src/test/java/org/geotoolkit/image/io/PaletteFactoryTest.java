@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class PaletteFactoryTest {
+public final strictfp class PaletteFactoryTest {
     /**
      * Tests the argument check performed by constructor.
      */

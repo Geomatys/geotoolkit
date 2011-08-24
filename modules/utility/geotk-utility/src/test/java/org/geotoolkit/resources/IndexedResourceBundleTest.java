@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class IndexedResourceBundleTest {
+public final strictfp class IndexedResourceBundleTest {
     /**
      * Tests some error message.
      */

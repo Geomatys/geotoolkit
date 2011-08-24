@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.01
  */
-public final class MosaicReadWriteTest extends ImageTestBase {
+public final strictfp class MosaicReadWriteTest extends ImageTestBase {
     /**
      * The width and height (in pixels) of source tiles.
      */

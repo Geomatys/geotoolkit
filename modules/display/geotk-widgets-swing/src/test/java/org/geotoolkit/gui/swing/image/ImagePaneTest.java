@@ -34,7 +34,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  *
  * @since 3.07
  */
-public final class ImagePaneTest extends SwingTestBase<ImagePane> {
+public final strictfp class ImagePaneTest extends SwingTestBase<ImagePane> {
     /**
      * Constructs the test case.
      */

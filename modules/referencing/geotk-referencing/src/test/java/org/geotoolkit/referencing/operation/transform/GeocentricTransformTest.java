@@ -40,6 +40,7 @@ import org.junit.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -57,7 +58,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(AbstractMathTransformTest.class)
-public final class GeocentricTransformTest extends TransformTestBase {
+public final strictfp class GeocentricTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.
      */
@@ -199,7 +200,7 @@ public final class GeocentricTransformTest extends TransformTestBase {
         array0[6]=  0; array0[ 7]=0.0; array0[ 8]=0;
         array0[9]=180; array0[10]=0.0; array0[11]=0; // Antipodes; distance should be 2*6378.137 km
         cartesianDistance  [1] = ellipsoid.getSemiMajorAxis() * 2;
-        orthodromicDistance[1] = ellipsoid.getSemiMajorAxis() * Math.PI;
+        orthodromicDistance[1] = ellipsoid.getSemiMajorAxis() * PI;
 
         array0[12]=  0; array0[13]=-90; array0[14]=0;
         array0[15]=180; array0[16]=+90; array0[17]=0; // Antipodes; distance should be 2*6356.752 km
@@ -243,14 +244,14 @@ public final class GeocentricTransformTest extends TransformTestBase {
              * fit the maximal altitude).
              */
             try {
-                final double altitude = Math.max(array0[base+2], array0[base+5]);
+                final double altitude = max(array0[base+2], array0[base+5]);
                 final DefaultEllipsoid ellip = DefaultEllipsoid.createFlattenedSphere("Temporary",
                                                ellipsoid.getSemiMajorAxis()+altitude,
                                                ellipsoid.getInverseFlattening(),
                                                ellipsoid.getAxisUnit());
                 double orthodromic = ellip.orthodromicDistance(array0[base+0], array0[base+1],
                                                                array0[base+3], array0[base+4]);
-                orthodromic = Math.hypot(orthodromic, array0[base+2] - array0[base+5]);
+                orthodromic = hypot(orthodromic, array0[base+2] - array0[base+5]);
                 if (i < orthodromicDistance.length) {
                     assertEquals("Orthodromic distance", orthodromicDistance[i], orthodromic, 0.1);
                 }
@@ -278,7 +279,7 @@ public final class GeocentricTransformTest extends TransformTestBase {
          * Derivative of the direct transform.
          */
         tolerance = 1E-2;
-        derivativeDeltas = new double[] {Math.toRadians(1.0 / 60) / 1852}; // Approximatively one metre.
+        derivativeDeltas = new double[] {toRadians(1.0 / 60) / 1852}; // Approximatively one metre.
         verifyDerivative(point.getCoordinate());
         /*
          * Derivative of the inverse transform.

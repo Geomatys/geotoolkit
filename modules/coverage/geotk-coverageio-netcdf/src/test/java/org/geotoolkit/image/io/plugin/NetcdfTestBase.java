@@ -49,7 +49,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.10
  */
-public class NetcdfTestBase extends TestBase {
+public strictfp class NetcdfTestBase extends TestBase {
     /**
      * The file to be used for the tests.
      */

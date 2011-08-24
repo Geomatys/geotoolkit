@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public final class CodeListsTest {
+public final strictfp class CodeListsTest {
     /**
      * Tests {@link CodeLists#valueOf}.
      */

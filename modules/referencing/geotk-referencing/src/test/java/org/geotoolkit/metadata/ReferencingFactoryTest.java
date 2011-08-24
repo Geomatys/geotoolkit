@@ -46,7 +46,7 @@ import static org.geotoolkit.referencing.cs.DefaultVerticalCS.GRAVITY_RELATED_HE
  * @since 3.03
  */
 @Depend(FactoryMethodTest.class)
-public class ReferencingFactoryTest {
+public final strictfp class ReferencingFactoryTest {
     /**
      * The metadata factory.
      */

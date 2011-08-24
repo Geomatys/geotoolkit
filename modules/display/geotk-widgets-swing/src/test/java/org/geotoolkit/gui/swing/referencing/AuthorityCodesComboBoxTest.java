@@ -38,7 +38,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  *
  * @since 3.02
  */
-public final class AuthorityCodesComboBoxTest extends SwingTestBase<AuthorityCodesComboBox> implements PropertyChangeListener {
+public final strictfp class AuthorityCodesComboBoxTest extends SwingTestBase<AuthorityCodesComboBox> implements PropertyChangeListener {
     /**
      * Constructs the test case.
      */

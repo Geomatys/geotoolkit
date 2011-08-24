@@ -29,7 +29,7 @@ import java.util.Iterator;
  *
  * @since 3.00
  */
-final class StringIterator implements Iterator<String> {
+final strictfp class StringIterator implements Iterator<String> {
     /**
      * The multilines text to parse.
      */

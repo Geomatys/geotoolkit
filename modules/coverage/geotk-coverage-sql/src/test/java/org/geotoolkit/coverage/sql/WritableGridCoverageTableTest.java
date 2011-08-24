@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  * @since 3.12
  */
 @Depend(GridCoverageTableTest.class)
-public final class WritableGridCoverageTableTest extends CatalogTestBase {
+public final strictfp class WritableGridCoverageTableTest extends CatalogTestBase {
     /**
      * The file which contains geostrophic current data.
      */

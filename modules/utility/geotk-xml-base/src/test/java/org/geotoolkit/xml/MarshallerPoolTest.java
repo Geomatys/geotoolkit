@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class MarshallerPoolTest {
+public final strictfp class MarshallerPoolTest {
     /**
      * Tests a marshaller which is acquired, then released.
      * The marshaller should be reset to its initial state

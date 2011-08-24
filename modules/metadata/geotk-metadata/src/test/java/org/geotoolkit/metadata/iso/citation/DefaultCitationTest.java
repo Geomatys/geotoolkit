@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * @since 3.19
  */
 @Depend(DefaultCitationDateTest.class)
-public final class DefaultCitationTest {
+public final strictfp class DefaultCitationTest {
     /**
      * Tests the identifier map, which handles ISBN and ISSN codes in a special way.
      */

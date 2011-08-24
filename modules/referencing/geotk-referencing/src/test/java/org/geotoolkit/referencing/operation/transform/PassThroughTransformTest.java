@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-public final class PassThroughTransformTest extends TransformTestBase {
+public final strictfp class PassThroughTransformTest extends TransformTestBase {
     /**
      * The random number generator to be used in this test.
      */

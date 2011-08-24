@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class VectorPairTest {
+public final strictfp class VectorPairTest {
     /**
      * Tests the {@link VectorPair#omitColinearPoints} method.
      */

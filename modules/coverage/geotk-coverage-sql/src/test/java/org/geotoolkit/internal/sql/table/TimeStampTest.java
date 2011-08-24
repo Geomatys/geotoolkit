@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09 (derived from Seagis)
  */
-public final class TimeStampTest extends CatalogTestBase {
+public final strictfp class TimeStampTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

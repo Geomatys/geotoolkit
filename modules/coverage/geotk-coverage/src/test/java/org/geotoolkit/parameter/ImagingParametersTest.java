@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class ImagingParametersTest {
+public final strictfp class ImagingParametersTest {
     /**
      * Tests {@link ImagingParameters}.
      */

@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.getSingleton;
  *
  * @since 3.19
  */
-public final class IdentifierMapWithSpecialCasesTest extends IdentifierMapAdapterTest {
+public final strictfp class IdentifierMapWithSpecialCasesTest extends IdentifierMapAdapterTest {
     /**
      * The HREF string to replace by {@link XLink#toString()}.
      */

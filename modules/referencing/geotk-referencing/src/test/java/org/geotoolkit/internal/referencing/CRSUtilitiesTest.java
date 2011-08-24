@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final class CRSUtilitiesTest {
+public final strictfp class CRSUtilitiesTest {
     /**
      * Tests {@link CRSUtilities#dimensionColinearWith}.
      */

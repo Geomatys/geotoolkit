@@ -28,7 +28,7 @@ import java.io.*;
  *
  * @since 3.00
  */
-final class Main extends CommandLine {
+final strictfp class Main extends CommandLine {
     @Option
     String string;
 

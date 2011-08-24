@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class DirectionAlongMeridianTest extends ReferencingTestBase {
+public final strictfp class DirectionAlongMeridianTest extends ReferencingTestBase {
     /**
      * For floating point comparisons.
      */

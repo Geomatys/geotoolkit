@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  * @since 3.00
  */
 @Depend(ConverterRegistryTest.class)
-public class SystemConverterTest {
+public final strictfp class SystemConverterTest {
     /**
      * Tests the conversion of collections.
      *

@@ -31,6 +31,7 @@ import org.opengis.test.CalculationType;
 import org.junit.*;
 import static org.junit.Assume.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -42,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.12
  */
-public class RGF93TransformTest extends TransformTestBase {
+public final strictfp class RGF93TransformTest extends TransformTestBase {
     /**
      * The data file.
      */
@@ -226,8 +227,8 @@ public class RGF93TransformTest extends TransformTestBase {
             int pass = 0;
             double s1=0, s2=0;
             for (int i=0; i<circePts.length; i++) {
-                final double d1 = Math.abs(actualPts  [i] - circePts[i]);
-                final double d2 = Math.abs(expectedPts[i] - circePts[i]);
+                final double d1 = abs(actualPts  [i] - circePts[i]);
+                final double d2 = abs(expectedPts[i] - circePts[i]);
                 s1 += d1;
                 s2 += d2;
                 if (d1 <= d2) {
@@ -236,7 +237,7 @@ public class RGF93TransformTest extends TransformTestBase {
             }
             System.out.println("Mean error (Geotk): " + s1 / circePts.length);
             System.out.println("Mean error (IGN):   " + s2 / circePts.length);
-            System.out.println("No regression for " + Math.round(pass*100f / circePts.length) + "% of ordinates.");
+            System.out.println("No regression for " + round(pass*100f / circePts.length) + "% of ordinates.");
         }
     }
 }

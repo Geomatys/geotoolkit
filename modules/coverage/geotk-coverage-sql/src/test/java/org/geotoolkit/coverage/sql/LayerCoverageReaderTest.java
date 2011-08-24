@@ -44,7 +44,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.10 (derived from Seagis)
  */
 @Depend(CoverageDatabaseTest.class)
-public final class LayerCoverageReaderTest extends CatalogTestBase {
+public final strictfp class LayerCoverageReaderTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

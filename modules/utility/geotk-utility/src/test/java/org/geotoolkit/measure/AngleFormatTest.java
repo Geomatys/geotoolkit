@@ -32,7 +32,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 2.0
  */
-public final class AngleFormatTest {
+public final strictfp class AngleFormatTest {
     /**
      * Tests using {@link Locale#CANADA}.
      */

@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final class FormatsTest {
+public final strictfp class FormatsTest {
     /**
      * Tests {@link Formats#simplify(String[])}.
      */

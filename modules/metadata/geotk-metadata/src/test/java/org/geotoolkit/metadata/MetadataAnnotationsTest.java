@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public final class MetadataAnnotationsTest extends AnnotationsTestBase {
+public final strictfp class MetadataAnnotationsTest extends AnnotationsTestBase {
     /**
      * The list of Metadata code list or interfaces to test,
      * in alphabetical order.

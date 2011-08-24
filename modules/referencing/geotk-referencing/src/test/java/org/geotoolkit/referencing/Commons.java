@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.19 (derived from 3.00)
  */
-public final class Commons extends org.geotoolkit.test.Commons {
+public strictfp final class Commons extends org.geotoolkit.test.Commons {
     /**
      * Do not allow instantiation of this class.
      */

@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class CartesianTest extends ReferencingTestBase {
+public final strictfp class CartesianTest extends ReferencingTestBase {
     /**
      * Tests the creation of a Cartesian CS with legal and illegal axis.
      */

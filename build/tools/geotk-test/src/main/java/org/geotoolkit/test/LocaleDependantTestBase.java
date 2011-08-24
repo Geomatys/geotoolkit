@@ -34,7 +34,7 @@ import org.junit.*;
  *
  * @since 3.17
  */
-public abstract class LocaleDependantTestBase extends TestBase {
+public abstract strictfp class LocaleDependantTestBase extends TestBase {
     /**
      * The previous locale before the test is run.
      * This is usually the default locale.

@@ -51,7 +51,7 @@ import static org.junit.Assume.*;
  * @since 2.3
  */
 @SuppressWarnings("serial")
-public abstract class SwingTestBase<T extends JComponent> {
+public abstract strictfp class SwingTestBase<T extends JComponent> {
     /**
      * The name of a system property for setting whatever the widget should be show.
      * If the value returned by the following is {@code true}, then the widgets will

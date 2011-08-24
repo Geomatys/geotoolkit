@@ -36,6 +36,7 @@ import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameAdapter;
 
+import static java.lang.StrictMath.*;
 import static org.junit.Assert.*;
 
 
@@ -48,7 +49,7 @@ import static org.junit.Assert.*;
  * @since 3.05
  */
 @SuppressWarnings("serial")
-final class DesktopPane extends JDesktopPane {
+final strictfp class DesktopPane extends JDesktopPane {
     /**
      * The key for screenshot directory in the user preferences.
      */
@@ -252,10 +253,10 @@ final class DesktopPane extends JDesktopPane {
         frame.pack();
         final Dimension size = frame.getMinimumSize();
         if (size != null) {
-            frame.setSize(Math.max(frame.getWidth(),  size.width),
-                          Math.max(frame.getHeight(), size.height));
+            frame.setSize(max(frame.getWidth(),  size.width),
+                          max(frame.getHeight(), size.height));
         }
-        final int numCols = (int) Math.ceil(Math.sqrt(numTests));
+        final int numCols = (int) ceil(sqrt(numTests));
         final int numRows = (numTests + numCols - 1) / numCols;
         final int deltaX  = getWidth()  / numCols;
         final int deltaY  = getHeight() / numRows;

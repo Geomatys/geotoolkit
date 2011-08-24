@@ -53,7 +53,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.09 (derived from Seagis)
  */
-public abstract class CatalogTestBase extends ImageTestBase {
+public abstract strictfp class CatalogTestBase extends ImageTestBase {
     /**
      * The connection to the database.
      */

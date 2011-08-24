@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -31,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-public final class XAffineTransformTest {
+public final strictfp class XAffineTransformTest {
     /**
      * Tolerance value for comparisons.
      */
@@ -77,7 +78,7 @@ public final class XAffineTransformTest {
         assertEquals( f, getFlipFromType             (tr));
 
         // Tests rotation (< 45°)
-        double r = Math.toRadians(25);
+        double r = toRadians(25);
         tr.rotate(r);
         assertEquals( 1, XAffineTransform.getScaleX0 (tr), EPS);
         assertEquals( 1, XAffineTransform.getScaleY0 (tr), EPS);
@@ -87,8 +88,8 @@ public final class XAffineTransformTest {
         assertEquals( f, getFlipFromType             (tr));
 
         // Tests more rotation (> 45°)
-        r = Math.toRadians(65);
-        tr.rotate(Math.toRadians(40));
+        r = toRadians(65);
+        tr.rotate(toRadians(40));
         assertEquals( 1, XAffineTransform.getScaleX0 (tr), EPS);
         assertEquals( 1, XAffineTransform.getScaleY0 (tr), EPS);
         assertEquals( r, XAffineTransform.getRotation(tr), EPS);
@@ -115,7 +116,7 @@ public final class XAffineTransformTest {
         assertEquals( 1, getFlipFromType(tr)); // Always unflipped according Java 1.5.0_09...
 
         // Tests axis swapping
-        r = Math.toRadians(-90 * f);
+        r = toRadians(-90 * f);
         tr.setTransform(0, 1, f, 0, 0, 0);
         assertEquals( 1, XAffineTransform.getScaleX0 (tr), EPS);
         assertEquals( 1, XAffineTransform.getScaleY0 (tr), EPS);

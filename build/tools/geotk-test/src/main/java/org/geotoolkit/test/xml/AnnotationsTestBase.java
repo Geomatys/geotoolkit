@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.16 (derived from 3.05)
  */
-public abstract class AnnotationsTestBase extends TestBase {
+public abstract strictfp class AnnotationsTestBase extends TestBase {
     /**
      * The string used in JAXB annotations for default names or namespaces.
      */

@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
  * @since 3.19 (derived from 3.00)
  */
 @Depend(CRS_Test.class)
-public final class EnvelopesTest extends ReferencingTestBase {
+public final strictfp class EnvelopesTest extends ReferencingTestBase {
     /**
      * Tests the transformations of an envelope.
      *

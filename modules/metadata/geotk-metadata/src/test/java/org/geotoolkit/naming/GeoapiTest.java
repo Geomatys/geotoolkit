@@ -42,7 +42,7 @@ import org.opengis.test.util.NameTest;
  * @since 3.00
  */
 @RunWith(JUnit4.class)
-public class GeoapiTest extends NameTest {
+public final strictfp class GeoapiTest extends NameTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */

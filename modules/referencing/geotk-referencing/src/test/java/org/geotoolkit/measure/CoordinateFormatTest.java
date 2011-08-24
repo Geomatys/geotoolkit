@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-public final class CoordinateFormatTest {
+public final strictfp class CoordinateFormatTest {
     /**
      * Tests formatting of a 4-dimensional coordinate. The same format is configured in many
      * ways, and the same sequence of ordinate values is formatted in those different ways.

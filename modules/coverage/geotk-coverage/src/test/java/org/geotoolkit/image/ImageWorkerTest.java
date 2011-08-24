@@ -39,7 +39,7 @@ import static java.awt.image.DataBuffer.*;
  *
  * @since 3.00
  */
-public final class ImageWorkerTest extends SampleImageTestBase {
+public final strictfp class ImageWorkerTest extends SampleImageTestBase {
     /**
      * Creates a new test case.
      */

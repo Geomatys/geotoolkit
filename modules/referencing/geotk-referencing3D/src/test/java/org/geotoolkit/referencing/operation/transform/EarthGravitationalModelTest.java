@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.3
  */
-public final class EarthGravitationalModelTest extends TransformTestCase {
+public final strictfp class EarthGravitationalModelTest extends TransformTestCase {
     /**
      * Creates a new test case without factory.
      */

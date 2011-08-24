@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-public final class WeakValueHashMapTest {
+public final strictfp class WeakValueHashMapTest {
     /**
      * The size of the test sets to be created.
      */

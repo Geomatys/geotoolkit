@@ -31,7 +31,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 3.05
  */
-public class ImageFilePropertiesTest extends SwingTestBase<ImageFileProperties> {
+public final strictfp class ImageFilePropertiesTest extends SwingTestBase<ImageFileProperties> {
     /**
      * Constructs the test case.
      */

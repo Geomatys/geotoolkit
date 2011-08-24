@@ -30,7 +30,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 2.0
  */
-public final class DisjointListsTest extends SwingTestBase<DisjointLists> {
+public final strictfp class DisjointListsTest extends SwingTestBase<DisjointLists> {
     /**
      * Constructs the test case.
      */

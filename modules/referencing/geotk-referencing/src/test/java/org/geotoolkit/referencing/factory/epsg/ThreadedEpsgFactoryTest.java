@@ -65,7 +65,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 2.1
  */
-public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
+public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     /**
      * Small value for parameter value comparisons.
      */

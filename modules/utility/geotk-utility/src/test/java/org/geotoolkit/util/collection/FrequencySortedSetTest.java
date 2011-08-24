@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final class FrequencySortedSetTest {
+public final strictfp class FrequencySortedSetTest {
     /**
      * A simple case with only two elements, the first one being omitted.
      */

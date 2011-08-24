@@ -32,7 +32,7 @@ import static org.geotoolkit.metadata.KeyNamePolicy.*;
 /**
  * Tests {@link NameMap}.
  *
- * @todo Apprently, String literals in annotation are not interned. We should check if this
+ * @todo Apparently, String literals in annotation are not interned. We should check if this
  *       behavior changes in a future JDK version, and if so enable the commented-out test.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -41,7 +41,7 @@ import static org.geotoolkit.metadata.KeyNamePolicy.*;
  * @since 3.04
  */
 @Depend(MetadataStandard.class)
-public final class NameMapTest {
+public final strictfp class NameMapTest {
     /**
      * Tests the formatting of sentences.
      */

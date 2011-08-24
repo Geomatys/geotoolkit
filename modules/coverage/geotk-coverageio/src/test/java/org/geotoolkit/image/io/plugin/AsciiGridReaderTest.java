@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.07
  */
-public class AsciiGridReaderTest extends TextImageReaderTestBase {
+public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a new test suite.
      */

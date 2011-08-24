@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(SampleDimensionTest.class)
-public final class SampleTranscoderTest {
+public final strictfp class SampleTranscoderTest {
     /**
      * Small value for comparisons. Remind: transformed values are stored in a new image
      * using the {@code float} data type. So we can't expected as much precision than with

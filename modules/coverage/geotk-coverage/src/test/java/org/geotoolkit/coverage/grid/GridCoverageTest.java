@@ -31,7 +31,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.1
  */
-public final class GridCoverageTest extends GridCoverageTestBase {
+public final strictfp class GridCoverageTest extends GridCoverageTestBase {
     /**
      * Creates a new test suite.
      */

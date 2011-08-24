@@ -42,7 +42,7 @@ import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIG
  *
  * @since 3.16 (derived from 3.07)
  */
-public final class AuthorityBackedFactoryTest extends COFactoryUsingMolodenskyTest {
+public final strictfp class AuthorityBackedFactoryTest extends COFactoryUsingMolodenskyTest {
     /**
      * Creates a new test suite.
      */

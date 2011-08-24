@@ -18,8 +18,8 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Random;
-import static java.lang.Math.*;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -31,7 +31,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
  *
  * @since 3.00
  */
-public enum CoordinateDomain {
+public strictfp enum CoordinateDomain {
     /**
      * Geocentric input coordinates. The input dimension must be 3.
      */

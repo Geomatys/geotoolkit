@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public class NadconTransformTest extends TransformTestBase {
+public final strictfp class NadconTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

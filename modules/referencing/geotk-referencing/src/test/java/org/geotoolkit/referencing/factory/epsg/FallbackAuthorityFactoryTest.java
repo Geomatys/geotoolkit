@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  * @since 2.4
  */
 @Depend(PropertyEpsgFactoryTest.class)
-public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
+public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * The extra factory.
      */

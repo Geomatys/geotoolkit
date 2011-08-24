@@ -84,7 +84,7 @@ import static org.geotoolkit.referencing.operation.SamplePoints.MOLODENSKY_TOLER
  *
  * @since 2.1
  */
-public class COFactoryUsingMolodenskyTest extends TransformTestBase {
+public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
     /**
      * WKT of compound CRS to be tested.
      */

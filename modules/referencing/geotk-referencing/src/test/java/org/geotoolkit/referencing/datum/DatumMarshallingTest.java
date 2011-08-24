@@ -42,7 +42,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.06
  */
-public final class DatumMarshallingTest {
+public final strictfp class DatumMarshallingTest {
     /**
      * The pool to use for fetching marshallers and ummarshallers.
      */

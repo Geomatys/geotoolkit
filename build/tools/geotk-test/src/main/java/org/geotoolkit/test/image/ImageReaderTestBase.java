@@ -17,17 +17,11 @@
  */
 package org.geotoolkit.test.image;
 
-import java.io.File;
+import java.util.Random;
 import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.DataOutputStream;
-import java.io.BufferedOutputStream;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
-import java.util.Random;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 
@@ -37,22 +31,20 @@ import static org.junit.Assert.*;
 
 /**
  * The base class for {@link ImageReader} tests. This class provides the following tests.
- * Each test load the same image twice and compare the result:
+ * Each test loads the same image twice and compare the result:
  * <p>
  * <ul>
  *   <li>{@link #testRandomRegions()}</li>
  *   <li>{@link #testRandomSubsamplings()}</li>
  *   <li>{@link #testRandomRegionsAndSubsamplings()}</li>
  * </ul>
- * <p>
- * In addition a few convenience methods are provided.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @since 3.08 (derived from 3.06)
  */
-public abstract class ImageReaderTestBase extends ImageTestBase {
+public abstract strictfp class ImageReaderTestBase extends ImageTestBase {
     /**
      * Creates a new test suite for the given class.
      *
@@ -111,10 +103,12 @@ public abstract class ImageReaderTestBase extends ImageTestBase {
      * @throws IOException  If an error occurred while reading the images.
      */
     private void testRandom(final boolean regions, final boolean subsamplings) throws IOException {
-        final ImageReader reader   = createImageReader();
-        final Object      input    = reader.getInput();
-        final Raster      original = reader.read(0).getRaster();
-        final Random      random   = new Random();
+        final ImageReader   reader    = createImageReader();
+        final Object        input     = reader.getInput();
+        final BufferedImage fullImage = reader.read(0);
+        final Raster        original  = fullImage.getRaster();
+        final Random        random    = new Random();
+        this.image = fullImage;
         for (int i=0; i<100; i++) {
             if (reader.getMinIndex() != 0) {
                 reader.reset();
@@ -136,7 +130,9 @@ public abstract class ImageReaderTestBase extends ImageTestBase {
                 ySubsampling = random.nextInt(region.height) + 1;
                 param.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
             }
-            final Raster raster = reader.read(0, param).getRaster();
+            final BufferedImage image = reader.read(0, param);
+            this.image = image; // Allow subclasses to inspect the image in case of problem.
+            final Raster raster = image.getRaster();
             final int xmin = raster.getMinX();
             final int ymin = raster.getMinY();
             final int xmax = raster.getWidth()  + xmin;
@@ -159,6 +155,7 @@ public abstract class ImageReaderTestBase extends ImageTestBase {
                 }
             }
         }
+        this.image = fullImage;
         reader.dispose();
     }
 
@@ -168,67 +165,8 @@ public abstract class ImageReaderTestBase extends ImageTestBase {
      * @param  raster The raster for which to get the bounds.
      * @return The bounds of the given raster.
      */
-    public static Rectangle getBounds(final Raster raster) {
+    private static Rectangle getBounds(final Raster raster) {
         return new Rectangle(raster.getMinX(), raster.getMinY(), raster.getWidth(), raster.getHeight());
-    }
-
-    /**
-     * Saves the first band of the given raster in a binary float format in the given file.
-     * This is sometime useful for comparison purpose, and is used only as a helper tools
-     * for tuning the test suites.
-     *
-     * @param  raster The raster to write in binary format.
-     * @param  file The file to create.
-     * @throws IOException If an error occurred while writing the file.
-     */
-    public static void saveBinary(final Raster raster, final File file) throws IOException {
-        final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-        final int xmin = raster.getMinX();
-        final int ymin = raster.getMinY();
-        final int xmax = raster.getWidth()  + xmin;
-        final int ymax = raster.getHeight() + ymin;
-        for (int y=ymin; y<ymax; y++) {
-            for (int x=xmin; x<xmax; x++) {
-                out.writeFloat(raster.getSampleFloat(x, y, 0));
-            }
-        }
-        out.close();
-    }
-
-    /**
-     * Saves the first band of the given raster in a PNG format in the given file.
-     * This is sometime useful for visual check purpose, and is used only as a helper
-     * tools for tuning the test suites. The image is converted to grayscale before to
-     * be saved.
-     *
-     * @param  raster The raster to write in PNG format.
-     * @param  file The file to create.
-     * @throws IOException If an error occurred while writing the file.
-     */
-    public static void savePNG(final Raster raster, final File file) throws IOException {
-        float min = Float.POSITIVE_INFINITY;
-        float max = Float.NEGATIVE_INFINITY;
-        final int xmin   = raster.getMinX();
-        final int ymin   = raster.getMinY();
-        final int width  = raster.getWidth();
-        final int height = raster.getHeight();
-        for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
-                final float value = raster.getSampleFloat(x + xmin, y + ymin, 0);
-                if (value < min) min = value;
-                if (value > min) max = value;
-            }
-        }
-        final float scale = 255 / (max - min);
-        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-        final WritableRaster dest = image.getRaster();
-        for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
-                final double value = raster.getSampleDouble(x + xmin, y + ymin, 0);
-                dest.setSample(x, y, 0, Math.round((value - min) * scale));
-            }
-        }
-        assertTrue(ImageIO.write(image, "png", file));
     }
 
     /**

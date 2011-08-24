@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class VectorTest {
+public final strictfp class VectorTest {
     /**
      * Tests {@link SequenceVector}.
      */

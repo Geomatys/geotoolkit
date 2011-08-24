@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class SilhouetteMaskTest extends SampleImageTestBase {
+public final strictfp class SilhouetteMaskTest extends SampleImageTestBase {
     /**
      * Creates a new test case.
      */

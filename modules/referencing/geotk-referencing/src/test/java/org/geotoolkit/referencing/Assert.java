@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
+import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Commons.*;
 
 
@@ -37,7 +38,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.19 (derived from 3.00)
  */
-public final class Assert extends org.geotoolkit.test.Assert {
+public strictfp final class Assert extends org.geotoolkit.test.Assert {
     /**
      * Small tolerance for comparisons of floating point values.
      */
@@ -74,7 +75,7 @@ public final class Assert extends org.geotoolkit.test.Assert {
                 if (affine && j == numRows-1) {
                     expected = (i == numCols-1) ? 1 : 0;
                 } else if (i == j) {
-                    expected = values[Math.min(values.length-1, i)];
+                    expected = values[min(values.length-1, i)];
                 } else {
                     expected = 0;
                 }

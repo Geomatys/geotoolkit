@@ -31,7 +31,7 @@ import org.geotoolkit.test.Depend;
  * @since 3.06 (derived from 2.4)
  */
 @Depend(RangeTest.class)
-public final class NumberRangeTest {
+public final strictfp class NumberRangeTest {
     /**
      * Tests the bounds values of a range of integers.
      */

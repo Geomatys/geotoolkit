@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class DirectPositionTest {
+public final strictfp class DirectPositionTest {
     /**
      * Tests the {@link AbstractDirectPosition#toString(DirectPosition)} method.
      */

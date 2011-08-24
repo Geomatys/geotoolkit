@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class IOUtilitiesTest {
+public final strictfp class IOUtilitiesTest {
     /**
      * Tests the {@link IOUtilities#commonParent} method.
      */

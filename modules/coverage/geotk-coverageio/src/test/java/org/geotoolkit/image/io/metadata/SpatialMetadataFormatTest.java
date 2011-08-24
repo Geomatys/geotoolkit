@@ -66,7 +66,7 @@ import static javax.imageio.metadata.IIOMetadataFormat.*;
  *
  * @since 3.04
  */
-public final class SpatialMetadataFormatTest {
+public final strictfp class SpatialMetadataFormatTest {
     /**
      * Tests the elements in the stream metadata format instance.
      *

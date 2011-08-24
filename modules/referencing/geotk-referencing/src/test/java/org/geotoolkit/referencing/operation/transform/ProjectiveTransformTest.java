@@ -39,7 +39,7 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 @Depend(AbstractMathTransformTest.class)
-public final class ProjectiveTransformTest extends AffineTransformTest {
+public final strictfp class ProjectiveTransformTest extends AffineTransformTest {
     /**
      * Creates a new test suite.
      */

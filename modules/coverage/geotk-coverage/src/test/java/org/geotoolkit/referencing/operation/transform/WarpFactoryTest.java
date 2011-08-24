@@ -42,6 +42,7 @@ import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -53,7 +54,7 @@ import static org.junit.Assert.*;
  * @since 3.16
  */
 @Depend(WarpAdapterTest.class)
-public final class WarpFactoryTest extends ReferencingTestBase {
+public final strictfp class WarpFactoryTest extends ReferencingTestBase {
     /**
      * The tolerance threshold (in pixels) used by the {@link WarpFactory} being tested.
      */
@@ -153,8 +154,8 @@ public final class WarpFactoryTest extends ReferencingTestBase {
                 tstPt =   tested.warpPoint(x, y, tstPt);
                 assertEquals("Expected a two-dimensional point.", 2, expPt.length);
                 assertEquals("Expected a two-dimensional point.", 2, tstPt.length);
-                final double dx = Math.abs(expPt[0] - tstPt[0]);
-                final double dy = Math.abs(expPt[1] - tstPt[1]);
+                final double dx = abs(expPt[0] - tstPt[0]);
+                final double dy = abs(expPt[1] - tstPt[1]);
                 if (!(dx <= TOLERANCE && dy <= TOLERANCE)) {
                     fail("Error at (" + x + ',' + y + "): expected " +
                             Arrays.toString(expPt) + " but got " +

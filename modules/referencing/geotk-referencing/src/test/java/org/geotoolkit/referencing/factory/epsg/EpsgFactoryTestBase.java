@@ -40,7 +40,7 @@ import org.junit.*;
  *
  * @since 3.00
  */
-public abstract class EpsgFactoryTestBase extends ReferencingTestBase {
+public abstract strictfp class EpsgFactoryTestBase extends ReferencingTestBase {
     /**
      * {@code true} for a given type if we have been able to fetch its factory, {@code false}
      * if we failed, or {@code null} if we didn't tried yet. This is used in order to avoid

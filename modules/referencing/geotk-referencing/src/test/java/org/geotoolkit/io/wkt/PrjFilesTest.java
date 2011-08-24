@@ -34,7 +34,7 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
  *
  * @since 3.05
  */
-public final class PrjFilesTest {
+public final strictfp class PrjFilesTest {
     /**
      * The {@code WGS84} CRS as WKT on a single line.
      */

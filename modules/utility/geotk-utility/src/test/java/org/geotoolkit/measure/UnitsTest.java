@@ -48,7 +48,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.5
  */
-public final class UnitsTest {
+public final strictfp class UnitsTest {
     /**
      * Compares two values for equality.
      */

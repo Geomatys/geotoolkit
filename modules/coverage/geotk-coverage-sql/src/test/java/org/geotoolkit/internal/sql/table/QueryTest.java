@@ -37,7 +37,7 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  *
  * @since 3.09 (derived from Seagis)
  */
-public final class QueryTest extends CatalogTestBase {
+public final strictfp class QueryTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

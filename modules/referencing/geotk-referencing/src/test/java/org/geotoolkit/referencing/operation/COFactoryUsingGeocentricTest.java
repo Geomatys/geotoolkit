@@ -30,7 +30,7 @@ import org.geotoolkit.factory.FactoryFinder;
  *
  * @since 3.16
  */
-public final class COFactoryUsingGeocentricTest extends COFactoryUsingMolodenskyTest {
+public final strictfp class COFactoryUsingGeocentricTest extends COFactoryUsingMolodenskyTest {
     /**
      * Creates a new test suite.
      */

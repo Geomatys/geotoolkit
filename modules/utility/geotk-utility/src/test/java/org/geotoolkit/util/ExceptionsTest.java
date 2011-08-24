@@ -28,7 +28,7 @@ import org.junit.*;
  *
  * @since 3.18
  */
-public final class ExceptionsTest {
+public final strictfp class ExceptionsTest {
     /**
      * Tests the {@link Exceptions#show(Component, Throwable)} method. This operation is expected
      * to fails if the {@code geotk-widgets-swing} module is not available on the classpath (this

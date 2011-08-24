@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.06
  */
-public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
+public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBase {
     /**
      * The precision for comparison of sample values. The values in the test files provided
      * in this package have 3 significant digits, so the precision is set to the next digit.

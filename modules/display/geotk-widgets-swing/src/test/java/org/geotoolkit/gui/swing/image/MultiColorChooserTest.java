@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 3.01
  */
-public class MultiColorChooserTest extends SwingTestBase<MultiColorChooser> {
+public final strictfp class MultiColorChooserTest extends SwingTestBase<MultiColorChooser> {
     /**
      * Constructs the test case.
      */

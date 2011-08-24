@@ -35,7 +35,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  *
  * @since 3.15
  */
-final class PrivateTransform2D extends AbstractMathTransform implements MathTransform2D {
+final strictfp class PrivateTransform2D extends AbstractMathTransform implements MathTransform2D {
     /**
      * The wrapped transform.
      */

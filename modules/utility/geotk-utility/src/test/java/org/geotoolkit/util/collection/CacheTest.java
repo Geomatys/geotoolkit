@@ -33,6 +33,7 @@ import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class CacheTest extends TestBase {
+public final strictfp class CacheTest extends TestBase {
     /**
      * Tests with two values.
      */
@@ -226,7 +227,7 @@ public final class CacheTest extends TestBase {
             long time = System.nanoTime();
             for (int i=0; i<10; i++) {
                 final long t = System.nanoTime();
-                out.printf("Cache size: %4d (after %3d ms)%n", cache.size(), Math.round((t - time) / 1E+6));
+                out.printf("Cache size: %4d (after %3d ms)%n", cache.size(), round((t - time) / 1E+6));
                 time = t;
                 Thread.sleep(250);
                 if (i >= 2) {

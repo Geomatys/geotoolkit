@@ -49,7 +49,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, CoordinateSystemAxisTest.class, ComparableAxisWrapperTest.class})
-public final class CoordinateSystemTest extends ReferencingTestBase {
+public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.
      */

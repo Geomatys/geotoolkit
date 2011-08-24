@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 2.3
  */
-public final class CoordinateChooserTest extends SwingTestBase<CoordinateChooser> {
+public final strictfp class CoordinateChooserTest extends SwingTestBase<CoordinateChooser> {
     /**
      * Constructs the test case.
      */

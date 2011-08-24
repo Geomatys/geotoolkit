@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final class MeasureTest {
+public final strictfp class MeasureTest {
     /**
      * Tests the {@link Measure#setUOM(String)}.
      *

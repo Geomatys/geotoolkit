@@ -37,7 +37,7 @@ import static org.opengis.test.Validators.*;
  * @since 2.1
  */
 @SuppressWarnings("serial")
-public final class ParameterGroupTest {
+public final strictfp class ParameterGroupTest {
     /**
      * Tests parameter values group.
      *

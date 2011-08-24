@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.06
  */
 @Depend(SpatialMetadataFormatTest.class)
-public final class MetadataAccessorTest {
+public final strictfp class MetadataAccessorTest {
     /**
      * Tests the accessor with some properties defined under the {@code "ImageDescription"} node.
      */

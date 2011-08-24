@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09 (derived from 1.0)
  */
-public final class ObjectiveAnalysisTest {
+public final strictfp class ObjectiveAnalysisTest {
     /**
      * Tolerance factor for comparisons.
      */

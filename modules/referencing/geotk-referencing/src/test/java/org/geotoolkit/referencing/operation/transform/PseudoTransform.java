@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.TransformException;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -42,7 +43,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @since 3.00
  */
-class PseudoTransform extends AbstractMathTransform {
+strictfp class PseudoTransform extends AbstractMathTransform {
     /**
      * The source and target dimensions.
      */
@@ -95,7 +96,7 @@ class PseudoTransform extends AbstractMathTransform {
         System.arraycopy(srcPts, srcOff, buffer, 0, sourceDimension);
         for (int i=0; i<targetDimension; i++) {
             double v = buffer[i % sourceDimension];
-            v += (i+1)*1000 + Math.round(v * 1000);
+            v += (i+1)*1000 + round(v * 1000);
             dstPts[dstOff + i] = v;
         }
     }

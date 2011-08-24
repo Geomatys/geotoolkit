@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.16
  */
-public final class SeaWaterTest {
+public final strictfp class SeaWaterTest {
     /**
      * The values to tests in the following order:
      * <p>

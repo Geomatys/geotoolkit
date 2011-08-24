@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class URN_ParserTest {
+public final strictfp class URN_ParserTest {
     /**
      * Tests the main types.
      */

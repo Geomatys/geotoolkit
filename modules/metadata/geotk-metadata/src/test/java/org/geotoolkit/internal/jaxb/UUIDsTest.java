@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.13
  */
-public final class UUIDsTest {
+public final strictfp class UUIDsTest {
     /**
      * Tests the creation of a new UUID, and performs an object lookup for that UUID.
      */

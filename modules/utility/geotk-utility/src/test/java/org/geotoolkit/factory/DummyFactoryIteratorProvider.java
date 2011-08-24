@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-final class DummyFactoryIteratorProvider implements FactoryIteratorProvider {
+final strictfp class DummyFactoryIteratorProvider implements FactoryIteratorProvider {
     /**
      * {@code true} for iterating over the first half of examples, or {@code false}
      * for iterating over the second half.

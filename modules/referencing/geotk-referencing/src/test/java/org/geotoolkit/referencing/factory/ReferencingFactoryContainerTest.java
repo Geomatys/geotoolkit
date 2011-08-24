@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.16
  */
 @Depend(ReferencingObjectFactoryTest.class)
-public final class ReferencingFactoryContainerTest {
+public final strictfp class ReferencingFactoryContainerTest {
     /**
      * Tests {@link ReferencingFactoryContainer#toGeodetic3D}.
      *

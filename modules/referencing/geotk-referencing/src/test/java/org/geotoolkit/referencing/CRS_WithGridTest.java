@@ -41,7 +41,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * @since 3.00
  */
 @Depend(CRS_WithEpsgTest.class)
-public final class CRS_WithGridTest extends ReferencingTestBase {
+public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
     /**
      * Tests transformation NADCON grids.
      *

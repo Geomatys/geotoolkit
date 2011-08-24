@@ -33,7 +33,7 @@ import static org.geotoolkit.internal.sql.IdentifierGenerator.SEPARATOR;
  *
  * @since 3.03
  */
-public final class IdentifierGeneratorTest {
+public final strictfp class IdentifierGeneratorTest {
     /**
      * The name of the table to be created for testing purpose.
      */

@@ -65,7 +65,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.5
  */
 @Depend({MetadataStandardTest.class, CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
-public final class MetadataMarshallingTest extends LocaleDependantTestBase {
+public final strictfp class MetadataMarshallingTest extends LocaleDependantTestBase {
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
      * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.

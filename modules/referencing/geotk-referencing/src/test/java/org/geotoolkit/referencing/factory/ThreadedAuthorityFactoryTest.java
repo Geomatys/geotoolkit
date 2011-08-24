@@ -36,7 +36,7 @@ import static org.geotoolkit.referencing.factory.ThreadedAuthorityFactory.TIMEOU
  *
  * @since 3.00
  */
-public final class ThreadedAuthorityFactoryTest {
+public final strictfp class ThreadedAuthorityFactoryTest {
     /**
      * The timeout used for this test.
      */

@@ -53,7 +53,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 2.0
  */
 @Depend({ParserTest.class, DatumAliasesTest.class})
-public final class WKTFormatTest {
+public final strictfp class WKTFormatTest {
     /**
      * Test a hard coded version of a WKT. This is more convenient for debugging.
      *

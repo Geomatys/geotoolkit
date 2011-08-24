@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.06
  */
-public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
+public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a new test suite.
      */
@@ -54,7 +54,7 @@ public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
     /**
      * The provider for the format to be tested.
      */
-    public static final class Spi extends TextMatrixImageReader.Spi {
+    public static final strictfp class Spi extends TextMatrixImageReader.Spi {
         public Spi() {
             padValue = -9999;
             locale   = Locale.CANADA;

@@ -41,7 +41,7 @@ import org.geotoolkit.console.ReferencingConsole;
  *
  * @since 2.1
  */
-public final class ScriptRunner extends ReferencingConsole {
+public final strictfp class ScriptRunner extends ReferencingConsole {
     /**
      * Number of tests run and passed. Used for displaying statistics.
      */

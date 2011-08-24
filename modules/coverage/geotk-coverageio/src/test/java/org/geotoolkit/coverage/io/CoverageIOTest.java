@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.18
  */
 @Depend(MosaicReadWriteTest.class)
-public final class CoverageIOTest extends ImageTestBase {
+public final strictfp class CoverageIOTest extends ImageTestBase {
     /**
      * Creates a new test suite.
      */

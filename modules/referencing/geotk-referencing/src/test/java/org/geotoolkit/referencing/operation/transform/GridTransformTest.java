@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final class GridTransformTest extends TransformTestBase {
+public final strictfp class GridTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.
      */

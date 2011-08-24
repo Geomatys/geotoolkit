@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public final class XArraysTest {
+public final strictfp class XArraysTest {
     /**
      * Tests {@link XArrays#union}.
      */

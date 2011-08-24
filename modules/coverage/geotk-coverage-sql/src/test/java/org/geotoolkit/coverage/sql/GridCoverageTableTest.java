@@ -51,7 +51,7 @@ import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
  * @since 3.10 (derived from Seagis)
  */
 @Depend(LayerTableTest.class)
-public final class GridCoverageTableTest extends CatalogTestBase {
+public final strictfp class GridCoverageTableTest extends CatalogTestBase {
     /**
      * The name of the coverage to be tested.
      */

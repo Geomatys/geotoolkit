@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-public final class NilReasonTest {
+public final strictfp class NilReasonTest {
     /**
      * Tests the {@link NilReason#valueOf(String)} method on constants.
      *

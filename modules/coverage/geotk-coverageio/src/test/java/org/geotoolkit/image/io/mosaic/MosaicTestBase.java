@@ -33,6 +33,7 @@ import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public abstract class MosaicTestBase extends TestBase {
+public abstract strictfp class MosaicTestBase extends TestBase {
     /**
      * Source tile size for BlueMarble mosaic.
      */
@@ -151,7 +152,7 @@ public abstract class MosaicTestBase extends TestBase {
          * Now process to the creation of the target mosaic.
          */
         final Dimension[] subsamplings = new Dimension[
-                Math.max(X_SUBSAMPLING.length, Y_SUBSAMPLING.length)];
+                max(X_SUBSAMPLING.length, Y_SUBSAMPLING.length)];
         assertEquals(subsamplings.length, X_SUBSAMPLING.length);
         assertEquals(subsamplings.length, Y_SUBSAMPLING.length);
         for (int i=0; i<subsamplings.length; i++) {

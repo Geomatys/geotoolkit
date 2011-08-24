@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public class FilenameFormatterTest {
+public final strictfp class FilenameFormatterTest {
     /**
      * Tests the creation of a pattern.
      */

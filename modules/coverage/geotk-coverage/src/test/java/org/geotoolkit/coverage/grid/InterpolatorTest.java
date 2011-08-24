@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.1
  */
-public final class InterpolatorTest extends GridCoverageTestBase {
+public final strictfp class InterpolatorTest extends GridCoverageTestBase {
     /**
      * Creates a new test suite.
      */

@@ -66,7 +66,7 @@ import org.opengis.test.Validators;
  *
  * @since 2.0
  */
-public abstract class TransformTestBase extends TransformTestCase implements ToleranceModifier {
+public abstract strictfp class TransformTestBase extends TransformTestCase implements ToleranceModifier {
     /**
      * The number of ordinates to use for stressing the math transform. We use a number that
      * encompass at least 2 time the default buffer size in order to test the code that use

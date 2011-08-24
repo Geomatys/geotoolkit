@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final class XMathTest {
+public final strictfp class XMathTest {
     /**
      * Small number for floating point comparisons.
      */

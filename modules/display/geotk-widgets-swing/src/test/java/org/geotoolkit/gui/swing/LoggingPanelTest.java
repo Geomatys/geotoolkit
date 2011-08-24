@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.01
  */
-public final class LoggingPanelTest extends SwingTestBase<LoggingPanel> {
+public final strictfp class LoggingPanelTest extends SwingTestBase<LoggingPanel> {
     /**
      * The logger to use for the test.
      */

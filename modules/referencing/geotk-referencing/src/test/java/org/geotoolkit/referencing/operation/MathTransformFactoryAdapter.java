@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @since 3.19
  */
-public class MathTransformFactoryAdapter implements MathTransformFactory {
+public strictfp class MathTransformFactoryAdapter implements MathTransformFactory {
     /**
      * The message for all exception.
      */

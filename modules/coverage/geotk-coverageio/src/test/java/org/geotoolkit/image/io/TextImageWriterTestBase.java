@@ -57,7 +57,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.06 (derived from 2.4)
  */
-public abstract class TextImageWriterTestBase extends ImageWriterTestBase {
+public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestBase {
     /**
      * Creates a new test suite for the given class.
      *

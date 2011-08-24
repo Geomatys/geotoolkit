@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 3.00
  */
-public final class MosaicChooserTest extends SwingTestBase<MosaicChooser> {
+public final strictfp class MosaicChooserTest extends SwingTestBase<MosaicChooser> {
     /**
      * Constructs the test case.
      */

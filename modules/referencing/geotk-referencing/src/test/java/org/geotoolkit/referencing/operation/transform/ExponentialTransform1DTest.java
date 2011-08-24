@@ -22,6 +22,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.junit.*;
 
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -34,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.17
  */
-public final class ExponentialTransform1DTest extends TransformTestBase {
+public final strictfp class ExponentialTransform1DTest extends TransformTestBase {
     /**
      * Arbitrary coefficients used for this test.
      */
@@ -66,7 +67,7 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
         final double[] source = generateRandomCoordinates(CoordinateDomain.GAUSSIAN, SEED);
         final double[] target = new double[source.length];
         for (int i=0; i<source.length; i++) {
-            target[i] = SCALE * Math.pow(BASE, source[i]);
+            target[i] = SCALE * pow(BASE, source[i]);
         }
         tolerance = 1E-15;
         verifyTransform(source, target);
@@ -95,7 +96,7 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
         final double[] source = generateRandomCoordinates(CoordinateDomain.GAUSSIAN, SEED);
         final double[] target = new double[source.length];
         for (int i=0; i<source.length; i++) {
-            target[i] = SCALE * Math.pow(BASE, C0 + C1 * source[i]);
+            target[i] = SCALE * pow(BASE, C0 + C1 * source[i]);
         }
         tolerance = 1E-14;
         verifyTransform(source, target);
@@ -108,15 +109,15 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
 
         // Find back the original linear coefficients as documented in the ExpentionalTransform1D
         // class javadoc. Then check that the transform results are the expected ones.
-        final double lnBase =  Math.log(BASE);
-        final double offset = -Math.log(SCALE) / lnBase;
+        final double lnBase =  log(BASE);
+        final double offset = -log(SCALE) / lnBase;
         final MathTransform1D log = LogarithmicTransform1D.create(BASE, offset);
         transform = (LinearTransform1D) ConcatenatedTransform.create(transform, log);
         assertTrue("Expected mathematical identities.", transform instanceof LinearTransform1D);
         assertEquals(C1, ((LinearTransform1D) transform).scale,  1E-12);
         assertEquals(C0, ((LinearTransform1D) transform).offset, 1E-12);
         for (int i=0; i<source.length; i++) {
-            target[i] = Math.log(target[i]) / lnBase + offset;
+            target[i] = log(target[i]) / lnBase + offset;
         }
         tolerance = 1E-14;
         verifyTransform(source, target);
@@ -138,7 +139,7 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
         final double[] source = generateRandomCoordinates(CoordinateDomain.GAUSSIAN, SEED);
         final double[] target = new double[source.length];
         for (int i=0; i<source.length; i++) {
-            target[i] = C0 + C1 * (SCALE * Math.pow(BASE, source[i]));
+            target[i] = C0 + C1 * (SCALE * pow(BASE, source[i]));
         }
         tolerance = 1E-12;
         verifyTransform(source, target);
@@ -159,7 +160,7 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
     public void testLogarithmicConcatenation() throws TransformException {
         final double offset = -3;
         final double base   = 8;
-        final double lnBase = Math.log(base);
+        final double lnBase = log(base);
         transform = ConcatenatedTransform.create(
                 LogarithmicTransform1D.create(base, offset),
                 ExponentialTransform1D.create(BASE, SCALE));
@@ -169,8 +170,8 @@ public final class ExponentialTransform1DTest extends TransformTestBase {
         final double[] source = generateRandomCoordinates(CoordinateDomain.GAUSSIAN, SEED);
         final double[] target = new double[source.length];
         for (int i=0; i<source.length; i++) {
-            source[i] = Math.abs(source[i]) + 0.001;
-            target[i] = SCALE * Math.pow(BASE, Math.log(source[i]) / lnBase + offset);
+            source[i] = abs(source[i]) + 0.001;
+            target[i] = SCALE * pow(BASE, log(source[i]) / lnBase + offset);
         }
         tolerance = 1E-14;
         verifyTransform(source, target);

@@ -32,7 +32,7 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  *
  * @since 3.00
  */
-public final class DirectionsTest extends ReferencingTestBase {
+public final strictfp class DirectionsTest extends ReferencingTestBase {
     /**
      * Tests the standards directions.
      */

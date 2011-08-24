@@ -52,7 +52,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.07
  */
 @Depend(MetadataAccessorTest.class)
-public final class ReferencingBuilderTest extends LocaleDependantTestBase {
+public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBase {
     /**
      * Tests the formatting of the WGS84 CRS.
      */

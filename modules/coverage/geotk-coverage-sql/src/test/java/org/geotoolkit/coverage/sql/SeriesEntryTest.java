@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-public final class SeriesEntryTest {
+public final strictfp class SeriesEntryTest {
     /**
      * Returns a dummy series for the given root and path.
      */

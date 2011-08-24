@@ -52,7 +52,7 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
  *
  * @since 3.02
  */
-public enum SampleCoverage {
+public strictfp enum SampleCoverage {
     /**
      * Sea Surface Temperature.
      * This is a raster from Earth observations using a relatively straightforward

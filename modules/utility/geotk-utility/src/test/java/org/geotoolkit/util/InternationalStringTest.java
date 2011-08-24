@@ -33,7 +33,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.1
  */
 @Depend(UtilitiesTest.class)
-public final class InternationalStringTest {
+public final strictfp class InternationalStringTest {
     /**
      * Tests the {@link SimpleInternationalString} implementation.
      */

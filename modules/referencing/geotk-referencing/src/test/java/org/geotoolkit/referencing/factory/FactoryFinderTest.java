@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.03
  */
-public final class FactoryFinderTest {
+public final strictfp class FactoryFinderTest {
     /**
      * Tests the search of factory using default hints. We will search {@link DatumFactory}
      * for testing purpose because there is at least two implementations of it in Geotk and

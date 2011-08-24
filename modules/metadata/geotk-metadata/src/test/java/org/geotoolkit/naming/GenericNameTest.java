@@ -35,7 +35,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  *
  * @since 3.00
  */
-public class GenericNameTest {
+public final strictfp class GenericNameTest {
     /**
      * Tests the creation of a local name in the global namespace.
      * The fully qualified name is {@code "EPSG"}.

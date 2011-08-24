@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.16
  */
-public abstract class TestBase {
+public abstract strictfp class TestBase {
     /**
      * The separator characters used for reporting the verbose output.
      */

@@ -88,7 +88,7 @@ import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
  *
  * @since 3.04
  */
-public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
+public final strictfp class ReferencingMarsallingTest extends LocaleDependantTestBase {
     /**
      * The resource file which contains an XML representation of a
      * {@linkplain DefaultMetadata metadata} object, with a {@link VerticalCRS}.

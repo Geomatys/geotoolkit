@@ -34,7 +34,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.4
  */
 @Depend(NumberRangeTest.class)
-public final class MeasurementRangeTest {
+public final strictfp class MeasurementRangeTest {
     /**
      * Tests unit conversions.
      *

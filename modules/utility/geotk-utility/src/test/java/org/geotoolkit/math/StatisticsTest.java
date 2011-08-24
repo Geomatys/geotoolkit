@@ -24,7 +24,7 @@ import java.io.StringWriter;
 import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
-import static java.lang.Math.*;
+import static java.lang.StrictMath.*;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static org.geotoolkit.test.Assert.*;
@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public class StatisticsTest extends TestBase {
+public final strictfp class StatisticsTest extends TestBase {
     /**
      * For floating point comparisons.
      */
@@ -160,7 +160,7 @@ public class StatisticsTest extends TestBase {
             assertEquals(expected, r, tolerance);
 
             statistics.add(-offset); // Accuracy will be better than in previous test.
-            assertEquals(expected, statistics.mean(), Math.min(tolerance, 0.1));
+            assertEquals(expected, statistics.mean(), min(tolerance, 0.1));
         }
     }
 

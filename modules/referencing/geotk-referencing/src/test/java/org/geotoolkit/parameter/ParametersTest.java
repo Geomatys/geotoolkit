@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.05
  */
-public final class ParametersTest {
+public final strictfp class ParametersTest {
     /**
      * Tests the {@link Parameters#cast(ParameterDescriptor, Class)} methods.
      */

@@ -34,7 +34,7 @@ import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
  *
  * @since 3.17
  */
-public final class XmlUtilitiesTest extends LocaleDependantTestBase {
+public final strictfp class XmlUtilitiesTest extends LocaleDependantTestBase {
     /**
      * Tests the {@link XmlUtilities#parseDateTime(String)} method.
      */

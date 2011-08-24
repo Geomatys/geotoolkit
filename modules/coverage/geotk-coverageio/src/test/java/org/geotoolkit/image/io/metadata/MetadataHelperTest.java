@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09
  */
-public final class MetadataHelperTest implements Localized {
+public final strictfp class MetadataHelperTest implements Localized {
     /**
      * Small number for floating point comparisons.
      */

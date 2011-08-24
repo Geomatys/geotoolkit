@@ -34,6 +34,7 @@ import org.geotoolkit.util.MeasurementRange;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
 
@@ -46,7 +47,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
  *
  * @since 3.06
  */
-public final class RangeFormatTest {
+public final strictfp class RangeFormatTest {
     /**
      * The format being tested.
      */
@@ -277,7 +278,7 @@ public final class RangeFormatTest {
 
         final long HOUR = 60L * 60 * 1000;
         final long DAY  = 24L * HOUR;
-        final long YEAR = Math.round(365.25 * DAY);
+        final long YEAR = round(365.25 * DAY);
 
         DateRange range = new DateRange(new Date(15*DAY + 18*HOUR), new Date(20*YEAR + 15*DAY + 9*HOUR));
         String text =  format(range);

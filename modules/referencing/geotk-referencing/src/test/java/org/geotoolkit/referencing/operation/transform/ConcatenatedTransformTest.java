@@ -36,7 +36,7 @@ import static org.opengis.test.Assert.*;
  * @since 3.00
  */
 @Depend(ProjectiveTransformTest.class)
-public final class ConcatenatedTransformTest extends TransformTestBase {
+public final strictfp class ConcatenatedTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

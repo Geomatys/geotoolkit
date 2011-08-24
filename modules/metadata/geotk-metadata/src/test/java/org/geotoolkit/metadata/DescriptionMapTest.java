@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  * @since 3.05
  */
 @Depend(MetadataStandard.class)
-public final class DescriptionMapTest {
+public final strictfp class DescriptionMapTest {
     /**
      * Tests descriptions in the English locale.
      */

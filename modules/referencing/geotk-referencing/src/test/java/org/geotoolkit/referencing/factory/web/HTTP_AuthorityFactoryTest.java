@@ -54,7 +54,7 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.force
  * @since 2.4
  */
 @Depend(AllAuthoritiesFactoryTest.class)
-public final class HTTP_AuthorityFactoryTest extends ReferencingTestBase {
+public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBase {
     /**
      * Tests the {@link HTTP_AuthorityFactory#forceAxisOrderHonoring} method.
      */

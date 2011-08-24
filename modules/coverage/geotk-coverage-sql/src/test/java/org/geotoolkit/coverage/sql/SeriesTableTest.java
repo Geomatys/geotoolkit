@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @since 3.10 (derived from Seagis)
  */
 @Depend({FormatTableTest.class, SeriesEntryTest.class})
-public final class SeriesTableTest extends CatalogTestBase {
+public final strictfp class SeriesTableTest extends CatalogTestBase {
     /**
      * The identifier of the series to be tested.
      */

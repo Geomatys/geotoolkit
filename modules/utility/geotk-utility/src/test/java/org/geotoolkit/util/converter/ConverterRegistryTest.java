@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  */
 @Depend({TreesTest.class, StringConverterTest.class, NumberConverterTest.class, URIConverterTest.class,
         URLConverterTest.class, FileConverterTest.class, FallbackConverterTest.class})
-public final class ConverterRegistryTest {
+public final strictfp class ConverterRegistryTest {
     /**
      * The registry being tested.
      */

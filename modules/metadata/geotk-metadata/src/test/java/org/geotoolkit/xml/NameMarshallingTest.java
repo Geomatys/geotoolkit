@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final class NameMarshallingTest extends TestBase {
+public final strictfp class NameMarshallingTest extends TestBase {
     /**
      * Marshalls the given name.
      */

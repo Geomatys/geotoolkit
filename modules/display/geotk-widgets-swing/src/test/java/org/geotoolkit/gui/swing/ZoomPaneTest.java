@@ -34,7 +34,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 2.0
  */
-public final class ZoomPaneTest extends SwingTestBase<ZoomPane> {
+public final strictfp class ZoomPaneTest extends SwingTestBase<ZoomPane> {
     /**
      * Constructs the test case.
      */

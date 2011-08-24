@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 2.3
  */
-public final class KernelEditorTest extends SwingTestBase<KernelEditor> {
+public final strictfp class KernelEditorTest extends SwingTestBase<KernelEditor> {
     /**
      * Constructs the test case.
      */

@@ -51,7 +51,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.06
  */
 @Depend(MetadataAccessorTest.class)
-public final class MetadataProxyTest {
+public final strictfp class MetadataProxyTest {
     /**
      * Tests the proxy with some properties defined under the {@code "ImageDescription"} node
      * without children.

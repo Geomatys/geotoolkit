@@ -35,7 +35,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.1
  */
 @Depend(FactoryTest.class)
-public final class FactoryRegistryTest {
+public final strictfp class FactoryRegistryTest {
     /**
      * Ensures that class {@link Hints} is loaded before {@link DummyFactory}.
      * It is not needed for normal execution, but Maven seems to mess with class loaders.

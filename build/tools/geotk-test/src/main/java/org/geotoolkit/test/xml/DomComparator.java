@@ -43,6 +43,7 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
+import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Assert.*;
 
 
@@ -66,7 +67,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public class DomComparator {
+public strictfp class DomComparator {
     /**
      * The expected document.
      */
@@ -505,7 +506,7 @@ public class DomComparator {
         actual   = trim(actual);
         if ((expected != actual) && (expected == null || !expected.equals(actual))) {
             // Before to declare a test failure, compares again as numerical values if possible.
-            if (tolerance > 0 && Math.abs(doubleValue(expected) - doubleValue(actual)) <= tolerance) {
+            if (tolerance > 0 && abs(doubleValue(expected) - doubleValue(actual)) <= tolerance) {
                 return;
             }
             final StringBuilder buffer = new StringBuilder(1024).append("Expected ")

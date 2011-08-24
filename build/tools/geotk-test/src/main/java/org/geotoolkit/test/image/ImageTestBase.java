@@ -26,9 +26,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -41,8 +44,8 @@ import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingTestBase;
 
 import org.junit.After;
-import org.junit.BeforeClass;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -51,11 +54,11 @@ import static org.junit.Assert.*;
  * the {@link #view(String)} method will show the {@linkplain #image}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @since 3.16 (derived from 3.00)
  */
-public abstract class ImageTestBase extends TestBase {
+public abstract strictfp class ImageTestBase extends TestBase {
     /**
      * Small value for comparison of sample values. Since most grid coverage implementations in
      * Geotk 2 store geophysics values as {@code float} numbers, this {@code SAMPLE_TOLERANCE}
@@ -64,19 +67,11 @@ public abstract class ImageTestBase extends TestBase {
     public static final float SAMPLE_TOLERANCE = 1E-5f;
 
     /**
-     * {@code true} if {@link #setDefaultCodecPreferences()} has been invoked.
-     */
-    private static boolean initialized;
-
-    /**
      * Invokes {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}
      * in order to improve consistency between different execution of test suites.
-     * This method is invoked automatically by JUnit and doesn't need to be invoked explicitely.
      */
-    @BeforeClass
-    public static synchronized void setDefaultCodecPreferences() {
-        if (!initialized) try {
-            initialized = true; // Initialize only once even in case of failure.
+    static {
+        try {
             Class.forName("org.geotoolkit.image.jai.Registry")
                  .getMethod("setDefaultCodecPreferences", (Class<?>[]) null)
                  .invoke(null, (Object[]) null);
@@ -118,17 +113,6 @@ public abstract class ImageTestBase extends TestBase {
     }
 
     /**
-     * Returns a copy of the current image.
-     *
-     * @return A copy of the current image.
-     */
-    protected final synchronized BufferedImage copyCurrentImage() {
-        assertNotNull("No image currently defined.", image);
-        final ColorModel cm = image.getColorModel();
-        return new BufferedImage(cm, image.copyData(null), cm.isAlphaPremultiplied(), null);
-    }
-
-    /**
      * Asserts that the {@linkplain #image} checksum is equals to one of the specified values.
      *
      * @param name The name of the image being tested, or {@code null} if none.
@@ -144,6 +128,76 @@ public abstract class ImageTestBase extends TestBase {
             buffer.append(" for \"").append(name).append('"');
         }
         fail(buffer.append(": ").append(c).toString());
+    }
+
+    /**
+     * Returns a copy of the current image.
+     *
+     * @return A copy of the current image.
+     */
+    protected final synchronized BufferedImage copyCurrentImage() {
+        assertNotNull("No image currently defined.", image);
+        final ColorModel cm = image.getColorModel();
+        return new BufferedImage(cm, image.copyData(null), cm.isAlphaPremultiplied(), null);
+    }
+
+    /**
+     * Saves the current image as a PNG image in the given file. This is sometime useful for visual
+     * check purpose, and is used only as a helper tools for tuning the test suites. Floating-point
+     * images are converted to grayscale before to be saved.
+     *
+     * @param  filename The name (optionally with its path) of the file to create.
+     * @throws ImagingOpException If an error occurred while writing the file.
+     *
+     * @since 3.19
+     */
+    protected final synchronized void saveCurrentImage(final String filename) throws ImagingOpException {
+        final RenderedImage image = this.image;
+        assertNotNull("An image must be specified", image);
+        final File file = new File(filename);
+        try {
+            if (!ImageIO.write(image, "png", file)) {
+                savePNG(image.getData(), file);
+            }
+        } catch (IOException e) {
+            throw new ImagingOpException(e.toString());
+        }
+    }
+
+    /**
+     * Saves the first band of the given raster as a PNG image in the given file.
+     * This is sometime useful for visual check purpose, and is used only as a helper
+     * tools for tuning the test suites. The image is converted to grayscale before to
+     * be saved.
+     *
+     * @param  raster The raster to write in PNG format.
+     * @param  file The file to create.
+     * @throws IOException If an error occurred while writing the file.
+     */
+    private static void savePNG(final Raster raster, final File file) throws IOException {
+        float min = Float.POSITIVE_INFINITY;
+        float max = Float.NEGATIVE_INFINITY;
+        final int xmin   = raster.getMinX();
+        final int ymin   = raster.getMinY();
+        final int width  = raster.getWidth();
+        final int height = raster.getHeight();
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                final float value = raster.getSampleFloat(x + xmin, y + ymin, 0);
+                if (value < min) min = value;
+                if (value > min) max = value;
+            }
+        }
+        final float scale = 255 / (max - min);
+        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+        final WritableRaster dest = image.getRaster();
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                final double value = raster.getSampleDouble(x + xmin, y + ymin, 0);
+                dest.setSample(x, y, 0, round((value - min) * scale));
+            }
+        }
+        assertTrue("No suitable PNG writer found.", ImageIO.write(image, "png", file));
     }
 
     /**

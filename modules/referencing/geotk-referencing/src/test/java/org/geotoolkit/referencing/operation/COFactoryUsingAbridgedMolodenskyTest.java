@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -30,7 +31,7 @@ import org.geotoolkit.factory.FactoryFinder;
  *
  * @since 3.16
  */
-public final class COFactoryUsingAbridgedMolodenskyTest extends COFactoryUsingMolodenskyTest {
+public final strictfp class COFactoryUsingAbridgedMolodenskyTest extends COFactoryUsingMolodenskyTest {
     /**
      * Creates a new test suite.
      */
@@ -52,7 +53,7 @@ public final class COFactoryUsingAbridgedMolodenskyTest extends COFactoryUsingMo
     @Override
     SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
         tolerance = SamplePoints.MOLODENSKY_TOLERANCE * 10;
-        zTolerance = Math.max(zTolerance, 2E-2);
+        zTolerance = max(zTolerance, 2E-2);
         if (zDimension == null) {
             zDimension = new int[] {2};
         }

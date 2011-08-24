@@ -46,7 +46,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 2.2
  */
-public final class WebCRSFactoryTest {
+public final strictfp class WebCRSFactoryTest {
     /**
      * The factory to test.
      */
@@ -245,7 +245,7 @@ public final class WebCRSFactoryTest {
     /**
      * A buffered authority factory to be used by {@link WebCRSFactoryTest#testBufferedFind}.
      */
-    private static final class Buffered extends CachingAuthorityFactory implements CRSAuthorityFactory {
+    private static final strictfp class Buffered extends CachingAuthorityFactory implements CRSAuthorityFactory {
         public Buffered(final AbstractAuthorityFactory factory) {
             super(factory);
         }

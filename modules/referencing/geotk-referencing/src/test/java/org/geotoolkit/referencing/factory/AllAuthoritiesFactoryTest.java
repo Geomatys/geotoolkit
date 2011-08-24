@@ -54,7 +54,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * @since 2.4
  */
 @Depend({WebCRSFactoryTest.class, AutoCRSFactoryTest.class, AuthorityFactoryProxyTest.class})
-public final class AllAuthoritiesFactoryTest extends ReferencingTestBase {
+public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBase {
     /**
      * Tests the {@link AllAuthoritiesFactory#getAuthorityCodes} method.
      *

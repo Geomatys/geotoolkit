@@ -20,6 +20,7 @@ package org.geotoolkit.util.collection;
 import java.util.*;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -30,7 +31,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.5
  */
-public final class IntegerListTest {
+public final strictfp class IntegerListTest {
     /**
      * The random number generator used for this test suite.
      */
@@ -92,7 +93,7 @@ public final class IntegerListTest {
      */
     private int nextInt(final int maximalValue) {
         if (maximalValue == Integer.MAX_VALUE) {
-            return Math.abs(random.nextInt());
+            return abs(random.nextInt());
         } else {
             return random.nextInt(maximalValue + 1);
         }

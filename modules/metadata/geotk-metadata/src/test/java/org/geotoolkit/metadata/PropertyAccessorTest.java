@@ -49,7 +49,7 @@ import static org.geotoolkit.metadata.KeyNamePolicy.*;
  *
  * @since 2.4
  */
-public final class PropertyAccessorTest {
+public final strictfp class PropertyAccessorTest {
     /**
      * Creates a property accessor for the given citation.
      */

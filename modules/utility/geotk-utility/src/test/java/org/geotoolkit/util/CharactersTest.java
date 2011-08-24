@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class CharactersTest {
+public final strictfp class CharactersTest {
     /**
      * Tests {@link Characters#toSuperScript}.
      */

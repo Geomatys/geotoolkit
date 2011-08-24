@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
  * @todo Current implementation relies on {@link Metadata} dependencies. This is probably
  *       not enough; we should provide an explicit list of metadata interface.
  */
-public final class ISOTest extends TestBase {
+public final strictfp class ISOTest extends TestBase {
     /**
      * Root package for interfaces, with trailing dot.
      */

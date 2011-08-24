@@ -33,7 +33,7 @@ import static org.geotoolkit.display.shape.ShapeTest.*;
  * @since 3.00
  */
 @SuppressWarnings("serial")
-final class ShapeViewer extends JPanel {
+final strictfp class ShapeViewer extends JPanel {
     /**
      * Enumeration of the methods to test.
      */

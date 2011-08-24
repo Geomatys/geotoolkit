@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(CategoryTest.class)
-public final class CategoryListTest extends TestBase {
+public final strictfp class CategoryListTest extends TestBase {
     /**
      * Small value for comparisons.
      */

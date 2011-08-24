@@ -34,7 +34,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.4
  */
 @Depend(DirectPositionTest.class)
-public final class GeneralEnvelopeTest {
+public final strictfp class GeneralEnvelopeTest {
     /**
      * Tests the {@link GeneralEnvelope#setSubEnvelope(Envelope, int)} method.
      *

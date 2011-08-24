@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  * @since 2.4
  */
 @Depend(CoordinateSystemAxisTest.class)
-public final class ComparableAxisWrapperTest extends ReferencingTestBase {
+public final strictfp class ComparableAxisWrapperTest extends ReferencingTestBase {
     /**
      * Tests sorting of axis.
      */

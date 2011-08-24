@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(FactoryFinderTest.class)
-public final class DatumAliasesTest extends TestBase {
+public final strictfp class DatumAliasesTest extends TestBase {
     /**
      * Tests the registration. {@link DatumAliases} should be before
      * {@link ReferencingObjectFactory}. The dummy GeoTools factory

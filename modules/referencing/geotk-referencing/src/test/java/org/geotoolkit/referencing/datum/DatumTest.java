@@ -51,7 +51,7 @@ import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, TemporalDatumTest.class})
-public final class DatumTest extends ReferencingTestBase {
+public final strictfp class DatumTest extends ReferencingTestBase {
     /**
      * Validates constant definitions.
      */

@@ -37,6 +37,7 @@ import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -48,7 +49,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 2.1
  */
-public abstract class GridProcessingTestBase extends GridCoverageTestBase {
+public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBase {
     /**
      * Creates a new test suite for the given class.
      *
@@ -65,7 +66,7 @@ public abstract class GridProcessingTestBase extends GridCoverageTestBase {
      * @param  angle The rotation angle, in degrees.
      */
     protected final void rotate(final double angle) {
-        final AffineTransform atr = AffineTransform.getRotateInstance(Math.toRadians(angle));
+        final AffineTransform atr = AffineTransform.getRotateInstance(toRadians(angle));
         atr.concatenate(getAffineTransform(coverage));
         final MathTransform tr = ProjectiveTransform.create(atr);
         CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();

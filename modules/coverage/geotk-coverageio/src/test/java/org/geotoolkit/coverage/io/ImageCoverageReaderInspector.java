@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  *
  * @since 3.14
  */
-final class ImageCoverageReaderInspector extends ImageCoverageReader {
+final strictfp class ImageCoverageReaderInspector extends ImageCoverageReader {
     /**
      * The caller method.
      */

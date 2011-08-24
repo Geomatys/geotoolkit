@@ -66,7 +66,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * @since 3.00
  */
 @Depend(FactoryFinderTest.class)
-public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestBase {
+public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * {@code true} if metadata (especially identifiers) should be erased, or {@code false} if
      * they should be kept. The {@code true} value matches the pre GEOT-854 state, while the

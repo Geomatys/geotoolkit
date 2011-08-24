@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.08
  */
-public final class NetcdfImageReaderTest extends ImageReaderTestBase {
+public final strictfp class NetcdfImageReaderTest extends ImageReaderTestBase {
     /**
      * Creates a new test suite.
      */

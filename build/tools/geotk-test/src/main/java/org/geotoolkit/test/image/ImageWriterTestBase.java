@@ -29,7 +29,7 @@ import javax.imageio.ImageWriter;
  *
  * @since 3.16
  */
-public abstract class ImageWriterTestBase extends ImageTestBase {
+public abstract strictfp class ImageWriterTestBase extends ImageTestBase {
     /**
      * Creates a new test suite for the given class.
      *

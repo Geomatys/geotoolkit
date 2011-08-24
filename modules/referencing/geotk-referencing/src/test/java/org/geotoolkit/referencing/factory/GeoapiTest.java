@@ -46,7 +46,7 @@ import org.junit.runners.JUnit4;
  * @since 3.01
  */
 @RunWith(JUnit4.class)
-public final class GeoapiTest extends ObjectFactoryTest {
+public final strictfp class GeoapiTest extends ObjectFactoryTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */

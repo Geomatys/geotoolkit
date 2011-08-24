@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
  * @since 3.00
  */
 @Depend(MetadataStandard.class)
-public final class PropertyMapTest {
+public final strictfp class PropertyMapTest {
     /**
      * Tests {@link TestMap} on a well known metadata type.
      */

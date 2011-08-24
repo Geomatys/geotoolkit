@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class CodeListMarshallingTest extends LocaleDependantTestBase {
+public final strictfp class CodeListMarshallingTest extends LocaleDependantTestBase {
     /**
      * Returns a XML string to use for testing purpose.
      *

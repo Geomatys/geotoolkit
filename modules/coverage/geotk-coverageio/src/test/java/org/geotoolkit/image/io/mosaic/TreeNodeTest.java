@@ -44,7 +44,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.5
  */
 @Depend(Tile.class)
-public final class TreeNodeTest extends MosaicTestBase {
+public final strictfp class TreeNodeTest extends MosaicTestBase {
     /**
      * The root of an RTree for {@link #targetTiles}.
      */

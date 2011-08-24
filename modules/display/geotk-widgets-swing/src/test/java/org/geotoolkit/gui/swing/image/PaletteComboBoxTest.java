@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.13
  */
-public class PaletteComboBoxTest extends SwingTestBase<PaletteComboBox> {
+public strictfp class PaletteComboBoxTest extends SwingTestBase<PaletteComboBox> {
     /**
      * Constructs the test case.
      */

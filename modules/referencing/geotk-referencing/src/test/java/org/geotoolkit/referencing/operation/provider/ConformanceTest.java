@@ -49,7 +49,7 @@ import static org.geotoolkit.referencing.Commons.*;
  *
  * @since 3.03
  */
-public final class ConformanceTest extends ReferencingTestBase {
+public final strictfp class ConformanceTest extends ReferencingTestBase {
     /**
      * Tests the conformance of EPSG codes.
      *

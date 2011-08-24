@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.16
  */
-public final class MonolineFormatterTest extends LocaleDependantTestBase {
+public final strictfp class MonolineFormatterTest extends LocaleDependantTestBase {
     /**
      * The formatter to be tested.
      */

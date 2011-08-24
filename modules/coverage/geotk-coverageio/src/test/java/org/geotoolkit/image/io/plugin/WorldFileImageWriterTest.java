@@ -47,7 +47,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.07
  */
-public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
+public final strictfp class WorldFileImageWriterTest extends TextImageWriterTestBase {
     /**
      * The previous locale before the test is run.
      * This is usually the default locale.

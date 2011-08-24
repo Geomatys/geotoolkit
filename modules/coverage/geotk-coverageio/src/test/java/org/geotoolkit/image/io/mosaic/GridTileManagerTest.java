@@ -30,7 +30,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.5
  */
 @Depend(TileTest.class)
-public final class GridTileManagerTest extends TileManagerTest {
+public final strictfp class GridTileManagerTest extends TileManagerTest {
     /**
      * The tile manager factory to be given to the {@linkplain #builder builder}. This method
      * make sure that only {@link GridTileManager} instances are created. Then we inherit the

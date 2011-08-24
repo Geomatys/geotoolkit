@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.07
  */
-public final class ChannelImageInputStreamTest {
+public final strictfp class ChannelImageInputStreamTest {
     /**
      * The maximal size of the arrays to be used for the tests, in bytes.
      */

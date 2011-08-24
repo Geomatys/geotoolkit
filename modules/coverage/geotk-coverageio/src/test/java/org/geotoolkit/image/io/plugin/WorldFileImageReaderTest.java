@@ -45,7 +45,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.07
  */
 @Depend(TextMatrixImageReader.class)
-public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
+public final strictfp class WorldFileImageReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a new test suite.
      */

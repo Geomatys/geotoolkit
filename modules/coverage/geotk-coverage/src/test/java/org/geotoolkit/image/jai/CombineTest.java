@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class CombineTest extends SampleImageTestBase {
+public final strictfp class CombineTest extends SampleImageTestBase {
     /**
      * Creates a new test case.
      */

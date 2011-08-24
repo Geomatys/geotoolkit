@@ -43,7 +43,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.00
  */
-public enum SampleImage {
+public strictfp enum SampleImage {
     /**
      * A RGB image having a rotation. Checksum values are for:
      * <p>

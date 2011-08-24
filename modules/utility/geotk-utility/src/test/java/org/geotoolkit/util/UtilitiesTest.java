@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final class UtilitiesTest {
+public final strictfp class UtilitiesTest {
     /**
      * Tests {@link Utilities#equals}.
      */
@@ -153,7 +153,7 @@ public final class UtilitiesTest {
     /**
      * For {@link #testDeepEquals()} purpose only.
      */
-    private static final class DummyLenient implements LenientComparable {
+    private static final strictfp class DummyLenient implements LenientComparable {
         /** Label to be used in comparison. */
         private final String label;
 

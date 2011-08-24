@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * @since 3.18
  */
 @Depend(TileManagerTest.class)
-public final class TileManagerFactoryTest extends ImageTestBase {
+public final strictfp class TileManagerFactoryTest extends ImageTestBase {
     /**
      * Creates a new test suite.
      */

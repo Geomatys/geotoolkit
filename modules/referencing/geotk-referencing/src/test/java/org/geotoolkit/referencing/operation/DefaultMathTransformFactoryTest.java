@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public class DefaultMathTransformFactoryTest {
+final public strictfp class DefaultMathTransformFactoryTest {
     /**
      * The factory being tested.
      */

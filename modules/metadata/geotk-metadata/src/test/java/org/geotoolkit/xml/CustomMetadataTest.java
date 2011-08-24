@@ -57,7 +57,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.14
  */
-public final class CustomMetadataTest extends TestBase {
+public final strictfp class CustomMetadataTest extends TestBase {
     /**
      * Tests the marshalling of a metadata implemented by {@link java.lang.reflect.Proxy}.
      *

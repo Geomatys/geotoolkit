@@ -60,7 +60,7 @@ public interface DummyFactory extends InternalFactory {
  * An empty concrete subclass of {@link Factory}. Needed in order to instantiate
  * objects since {@link Factory} is abstract.
  */
-final class EmptyFactory extends Factory implements DummyFactory {
+final strictfp class EmptyFactory extends Factory implements DummyFactory {
 }
 
 
@@ -68,7 +68,7 @@ final class EmptyFactory extends Factory implements DummyFactory {
  * Dummy factory implementation #1.
  * This factory doesn't use any other factory.
  */
-final class Example1 extends Factory implements DummyFactory {
+final strictfp class Example1 extends Factory implements DummyFactory {
     public Example1() {
         hints.put(Hints.KEY_INTERPOLATION, Hints.VALUE_INTERPOLATION_BILINEAR);
     }
@@ -84,7 +84,7 @@ final class Example1 extends Factory implements DummyFactory {
  * Dummy factory implementation #2.
  * This factory uses factory #1.
  */
-final class Example2 extends Factory implements DummyFactory {
+final strictfp class Example2 extends Factory implements DummyFactory {
     public Example2() {
         hints.put(INTERNAL_FACTORY, new Example1());
     }
@@ -100,7 +100,7 @@ final class Example2 extends Factory implements DummyFactory {
  * Dummy factory implementation #3.
  * This factory uses factory #2, which uses itself factory #1.
  */
-final class Example3 extends Factory implements DummyFactory {
+final strictfp class Example3 extends Factory implements DummyFactory {
     public Example3() {
         hints.put(INTERNAL_FACTORY, new Example2());
     }
@@ -116,7 +116,7 @@ final class Example3 extends Factory implements DummyFactory {
  * Dummy factory implementation #4.
  * {@link FactoryRegistryTest} will not register this factory in same time than other ones.
  */
-final class Example4 extends Factory implements DummyFactory {
+final strictfp class Example4 extends Factory implements DummyFactory {
     public Example4() {
         hints.put(Hints.KEY_INTERPOLATION, Hints.VALUE_INTERPOLATION_BICUBIC);
     }
@@ -133,7 +133,7 @@ final class Example4 extends Factory implements DummyFactory {
  * {@link FactoryRegistryTest} will not register this factory in same time than other ones.
  * This factory is the only one to accept hints.
  */
-final class Example5 extends Factory implements DummyFactory {
+final strictfp class Example5 extends Factory implements DummyFactory {
     private Object value = Hints.VALUE_INTERPOLATION_BILINEAR;
 
     public Example5() {

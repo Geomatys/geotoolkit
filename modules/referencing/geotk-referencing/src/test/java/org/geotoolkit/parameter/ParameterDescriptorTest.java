@@ -33,7 +33,7 @@ import static javax.measure.unit.SI.*;
  *
  * @since 2.1
  */
-public final class ParameterDescriptorTest {
+public final strictfp class ParameterDescriptorTest {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
      * case of this test suite, we can afford to be strict since we will perform

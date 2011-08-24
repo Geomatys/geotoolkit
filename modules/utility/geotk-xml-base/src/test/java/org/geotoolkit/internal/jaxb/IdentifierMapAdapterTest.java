@@ -43,7 +43,7 @@ import static org.geotoolkit.xml.IdentifierSpace.*;
  *
  * @since 3.18
  */
-public class IdentifierMapAdapterTest extends TestBase {
+public strictfp class IdentifierMapAdapterTest extends TestBase {
     /**
      * Creates the {@link IdentifierMapAdapter} instance to test for the given identifiers.
      * Subclasses will override this method.

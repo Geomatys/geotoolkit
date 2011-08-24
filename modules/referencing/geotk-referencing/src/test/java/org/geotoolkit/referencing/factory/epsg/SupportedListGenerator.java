@@ -42,6 +42,8 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.test.ReportGenerator;
 
+import static java.lang.StrictMath.*;
+
 
 /**
  * Generated a list of supported CRS in the current directory. This class is not really a test,
@@ -55,7 +57,7 @@ import org.geotoolkit.test.ReportGenerator;
  *
  * @since 3.16
  */
-public final class SupportedListGenerator extends ReportGenerator {
+public final strictfp class SupportedListGenerator extends ReportGenerator {
     /**
      * The symbol to write in from of EPSG code of CRS having an axis order different
      * then the (longitude, latitude) one.
@@ -221,7 +223,7 @@ public final class SupportedListGenerator extends ReportGenerator {
                   "<p><b>Notation:</b></p>\n" +
                   "<ul>\n" +
                   "  <li>The " + YX_ORDER + " symbol in front of authority codes (");
-        out.write(String.valueOf(Math.round(100.0 * numYX / list.size())));
+        out.write(String.valueOf(round(100.0 * numYX / list.size())));
         out.write("% of them) identifies the CRS having an axis order different than " +
                   "(<var>easting</var>, <var>northing</var>).</li>\n" +
                   "</ul>");

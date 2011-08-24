@@ -42,7 +42,7 @@ import static org.opengis.test.Assert.*;
  * @since 2.5
  */
 @Depend(AbstractMathTransformTest.class)
-public final class MolodenskyTransformTest extends TransformTestBase {
+public final strictfp class MolodenskyTransformTest extends TransformTestBase {
     /**
      * Tolerance factor.
      */

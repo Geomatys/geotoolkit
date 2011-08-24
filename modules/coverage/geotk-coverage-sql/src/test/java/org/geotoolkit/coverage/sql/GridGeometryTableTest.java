@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10 (derived from Seagis)
  */
-public final class GridGeometryTableTest extends CatalogTestBase {
+public final strictfp class GridGeometryTableTest extends CatalogTestBase {
     /**
      * The identifier of the geometry to be tested.
      * We use the Coriolis (IFREMER) layer.

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final class ViewsManagerTest extends GridCoverageTestBase {
+public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
     /**
      * The random number generator to use in this test suite.
      */

@@ -41,7 +41,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.2
  */
 @Depend(RangeTest.class)
-public final class RangeSetTest {
+public final strictfp class RangeSetTest {
     /**
      * Tests {@link RangeSet#add} followed by {@link RangeSet#remove},
      * working on double values.

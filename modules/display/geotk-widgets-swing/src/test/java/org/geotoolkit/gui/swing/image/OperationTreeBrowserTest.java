@@ -39,7 +39,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 2.3
  */
-public final class OperationTreeBrowserTest extends SwingTestBase<OperationTreeBrowser> {
+public final strictfp class OperationTreeBrowserTest extends SwingTestBase<OperationTreeBrowser> {
     /**
      * The image width and height.
      */

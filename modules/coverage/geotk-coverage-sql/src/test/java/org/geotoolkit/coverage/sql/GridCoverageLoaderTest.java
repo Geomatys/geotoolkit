@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  * @since 3.10 (derived from Seagis)
  */
 @Depend(GridCoverageTableTest.class)
-public final class GridCoverageLoaderTest extends CatalogTestBase {
+public final strictfp class GridCoverageLoaderTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

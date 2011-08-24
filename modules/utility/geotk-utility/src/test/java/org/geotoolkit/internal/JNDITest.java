@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class JNDITest {
+public final strictfp class JNDITest {
     /**
      * Tests {@link JNDI#fixName} using simplest name or no context.
      * We avoid the tests that would require a real initial context.

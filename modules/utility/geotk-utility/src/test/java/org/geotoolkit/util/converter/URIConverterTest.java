@@ -35,7 +35,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.01
  */
-public final class URIConverterTest {
+public final strictfp class URIConverterTest {
     /**
      * Tests conversions to string values.
      *

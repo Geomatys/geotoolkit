@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.18
  */
-public final class XLinkTest {
+public final strictfp class XLinkTest {
     /**
      * Tests the automatic {@link #getType()} detection.
      *

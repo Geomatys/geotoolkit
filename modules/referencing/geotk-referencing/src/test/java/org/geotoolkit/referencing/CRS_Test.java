@@ -56,7 +56,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * @since 3.00
  */
 @Depend(CoordinateReferenceSystemTest.class)
-public final class CRS_Test extends ReferencingTestBase {
+public final strictfp class CRS_Test extends ReferencingTestBase {
     /**
      * Tests the {@link CRS#getSupportedAuthorities} method.
      */

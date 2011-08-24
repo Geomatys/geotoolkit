@@ -40,7 +40,7 @@ import java.util.Locale;
  *
  * @since 3.16
  */
-public abstract class ReportGenerator {
+public abstract strictfp class ReportGenerator {
     /**
      * The locale to use for formatting messages of every reports.
      */

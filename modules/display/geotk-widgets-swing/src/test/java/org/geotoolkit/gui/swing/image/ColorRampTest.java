@@ -34,7 +34,7 @@ import org.geotoolkit.display.axis.NumberGraduation;
  *
  * @since 2.0
  */
-public final class ColorRampTest extends SwingTestBase<ColorRamp> {
+public final strictfp class ColorRampTest extends SwingTestBase<ColorRamp> {
     /**
      * Constructs the test case.
      */

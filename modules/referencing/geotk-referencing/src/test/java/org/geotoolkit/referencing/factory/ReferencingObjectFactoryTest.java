@@ -67,7 +67,7 @@ import static org.geotoolkit.referencing.Assert.*;
  * @since 2.0
  */
 @Depend({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class, FactoryFinderTest.class})
-public final class ReferencingObjectFactoryTest extends ReferencingTestBase {
+public final strictfp class ReferencingObjectFactoryTest extends ReferencingTestBase {
     /**
      * Convenience method creating a map with only the "{@code name"} property.
      * This is the only mandatory property for object creation.

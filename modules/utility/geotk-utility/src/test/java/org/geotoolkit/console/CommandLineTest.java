@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class CommandLineTest {
+public final strictfp class CommandLineTest {
     /**
      * Tests with all arguments set.
      */

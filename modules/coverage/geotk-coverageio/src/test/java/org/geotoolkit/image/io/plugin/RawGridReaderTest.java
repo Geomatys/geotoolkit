@@ -32,7 +32,7 @@ import org.geotoolkit.test.TestData;
  *
  * @since 3.07
  */
-public final class RawGridReaderTest extends AsciiGridReaderTest {
+public final strictfp class RawGridReaderTest extends AsciiGridReaderTest {
     /**
      * Creates a reader.
      */

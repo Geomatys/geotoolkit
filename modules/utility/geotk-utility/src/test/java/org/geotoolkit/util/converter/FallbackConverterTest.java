@@ -31,7 +31,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.00
  */
 @Depend(StringConverterTest.class)
-public final class FallbackConverterTest {
+public final strictfp class FallbackConverterTest {
     /**
      * Tests a chain of fallback converters. The initial fallback will understand {@link Short}
      * and {@link Long} types. Later we will add other types like {@link Boolean} and {@link Float}.

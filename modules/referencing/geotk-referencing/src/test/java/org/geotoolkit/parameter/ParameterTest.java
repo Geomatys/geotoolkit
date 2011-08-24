@@ -33,6 +33,7 @@ import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.opengis.test.Validators.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -44,7 +45,7 @@ import static org.opengis.test.Validators.*;
  * @since 2.1
  */
 @Depend(ParameterDescriptorTest.class)
-public final class ParameterTest {
+public final strictfp class ParameterTest {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
      * case of this test suite, we can afford to be strict since we will perform
@@ -355,7 +356,7 @@ public final class ParameterTest {
             assertEquals ("Expected angular unit.",       DEGREE_ANGLE, p.getUnit());
             assertEquals ("Expected integer value", i,    p.intValue());
             assertEquals ("Expected integer value", i,    p.doubleValue(), STRICT);
-            assertEquals ("Expected unit conversion.", Math.toRadians(i), p.doubleValue(RADIAN), EPS);
+            assertEquals ("Expected unit conversion.", toRadians(i), p.doubleValue(RADIAN), EPS);
         }
     }
 }

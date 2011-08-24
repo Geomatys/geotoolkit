@@ -46,7 +46,7 @@ import static org.geotoolkit.referencing.factory.AuthorityFactoryProxy.*;
  * @since 2.4
  */
 @Depend({WebCRSFactoryTest.class, AutoCRSFactoryTest.class})
-public final class AuthorityFactoryProxyTest {
+public final strictfp class AuthorityFactoryProxyTest {
     /**
      * Ensures that the most specific interfaces appear first in the list of proxies.
      */

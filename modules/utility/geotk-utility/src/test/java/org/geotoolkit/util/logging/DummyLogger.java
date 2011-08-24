@@ -28,7 +28,7 @@ import java.util.logging.Level;
  *
  * @since 2.4
  */
-final class DummyLogger extends LoggerAdapter {
+final strictfp class DummyLogger extends LoggerAdapter {
     /**
      * The level of the last logging event.
      */

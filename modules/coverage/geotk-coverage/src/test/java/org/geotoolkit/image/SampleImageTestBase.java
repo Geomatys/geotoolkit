@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public abstract class SampleImageTestBase extends ImageTestBase {
+public abstract strictfp class SampleImageTestBase extends ImageTestBase {
     /**
      * Creates a new test suite for the given class.
      *

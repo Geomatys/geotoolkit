@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.03
  */
-public final class MetadataWriterTest {
+public final strictfp class MetadataWriterTest {
     /**
      * The data source providing connections to the database.
      */

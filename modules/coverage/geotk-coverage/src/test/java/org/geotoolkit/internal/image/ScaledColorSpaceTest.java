@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.grid.Viewer;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -41,7 +42,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class ScaledColorSpaceTest {
+public final strictfp class ScaledColorSpaceTest {
     /**
      * Random number generator for this test.
      */
@@ -80,7 +81,7 @@ public final class ScaledColorSpaceTest {
         final int height = data.getHeight();
         for (int x=width; --x>=0;) {
             for (int y=height; --y>=0;) {
-                double v = Math.hypot((double)x / width - 0.5, (double)y / height - 0.5);
+                double v = hypot((double)x / width - 0.5, (double)y / height - 0.5);
                 v = v*(maximum - minimum) + minimum;
                 data.setSample(x,y,0,v);
             }

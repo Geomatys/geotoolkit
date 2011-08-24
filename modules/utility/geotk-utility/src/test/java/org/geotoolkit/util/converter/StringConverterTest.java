@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.4
  */
-public final class StringConverterTest {
+public final strictfp class StringConverterTest {
     /**
      * Tests conversions to boolean values.
      * Adapted from GeoTools 2.5 {@code BooleanConverterFactoryTest}.

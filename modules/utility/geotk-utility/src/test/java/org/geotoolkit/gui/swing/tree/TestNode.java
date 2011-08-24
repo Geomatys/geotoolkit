@@ -29,7 +29,7 @@ import java.util.Arrays;
  * @since 3.19
  */
 @SuppressWarnings("serial")
-final class TestNode extends NamedTreeNode implements TreeTableNode {
+final strictfp class TestNode extends NamedTreeNode implements TreeTableNode {
     /**
      * The column values.
      */

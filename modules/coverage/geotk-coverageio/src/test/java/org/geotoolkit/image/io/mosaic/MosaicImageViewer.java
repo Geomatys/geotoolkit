@@ -36,13 +36,14 @@ import javax.imageio.ImageIO;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.GraphicsUtilities;
+import static java.lang.StrictMath.*;
 
 
 /**
  * Displays the image read by {@link MosaicImageReader}. This is used only for visual testing
  * of the {@link org.geotoolkit.image.io.mosaic} package. This is <strong>not</strong> intended
  * to be a building block of any application, since this class is keep simple on intend. For
- * example the image is reloaded everytime the component is paint, which is very inefficient
+ * example the image is reloaded every time the component is paint, which is very inefficient
  * but appropriate for the purpose of testing the image reader.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -51,7 +52,7 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * @since 3.00
  */
 @SuppressWarnings("serial")
-public final class MosaicImageViewer extends JPanel implements ChangeListener {
+public final strictfp class MosaicImageViewer extends JPanel implements ChangeListener {
     /**
      * Initial size for the canvas. Used only at construction time;
      * user can resize the window after it has been made visible.
@@ -138,7 +139,7 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
         displayToImage = new AffineTransform();
         centerX = bounds.x + bounds.width  / 2;
         centerY = bounds.y + bounds.height / 2;
-        xSubsampling = ySubsampling = Math.min(bounds.width/INITIAL_WIDTH, bounds.height/INITIAL_HEIGHT);
+        xSubsampling = ySubsampling = min(bounds.width/INITIAL_WIDTH, bounds.height/INITIAL_HEIGHT);
         addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(final MouseEvent event) {
                 final Point point = event.getPoint();
@@ -154,7 +155,7 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
     }
 
     /**
-     * Reads the image and paints it. The image is read again everytime the component
+     * Reads the image and paints it. The image is read again every time the component
      * needs to be repainted. This is inefficient, but the purpose of this class is
      * really to test {@link MosaicImageReader}...
      *
@@ -171,8 +172,8 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
         if (toShow == null) {
             view.width  = width  * xSubsampling;
             view.height = height * ySubsampling;
-            view.x = Math.max(bounds.x, centerX - view.width  / 2);
-            view.y = Math.max(bounds.y, centerY - view.height / 2);
+            view.x = max(bounds.x, centerX - view.width  / 2);
+            view.y = max(bounds.y, centerY - view.height / 2);
             final Rectangle region = view.intersection(bounds);
             if (view.width > region.width) {
                 view.x -= (view.width - region.width) / 2;

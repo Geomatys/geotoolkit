@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingTestBase;
  *
  * @since 3.05
  */
-public class IIOMetadataPanelTest extends SwingTestBase<IIOMetadataPanel> {
+public final strictfp class IIOMetadataPanelTest extends SwingTestBase<IIOMetadataPanel> {
     /**
      * Constructs the test case.
      */

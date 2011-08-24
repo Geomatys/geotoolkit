@@ -41,7 +41,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API.*;
  *
  * @since 3.08
  */
-public final class SpatialImageReadParamTest {
+public final strictfp class SpatialImageReadParamTest {
     /**
      * Tests the API enumeration.
      */
@@ -160,7 +160,7 @@ public final class SpatialImageReadParamTest {
      *
      * @since 3.15
      */
-    private static final class Reader extends SpatialImageReader implements MultidimensionalImageStore {
+    private static final strictfp class Reader extends SpatialImageReader implements MultidimensionalImageStore {
         private final DimensionSet dimensions;
 
         public Reader() {

@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.16
  */
-public final class SetupTest {
+public final strictfp class SetupTest {
     /**
      * Tests the deregistration using the internal API. We have to register
      * again after this test in order to allow other tests to run correctly.

@@ -39,6 +39,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -51,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class GeodeticCalculatorTest extends ReferencingTestBase {
+public final strictfp class GeodeticCalculatorTest extends ReferencingTestBase {
     /**
      * Small tolerance value for floating point comparisons.
      */
@@ -125,7 +126,7 @@ public final class GeodeticCalculatorTest extends ReferencingTestBase {
             168.75,  9939,  13258,
             180.00, 10000,  14142
         };
-        final double R = 20000 / Math.PI;
+        final double R = 20000 / PI;
         final DefaultEllipsoid   ellipsoid  = DefaultEllipsoid.createEllipsoid("Test",R,R, SI.KILOMETRE);
         final GeodeticCalculator calculator = new GeodeticCalculator(ellipsoid);
         calculator.setStartingGeographicPoint(0, 45);
@@ -215,7 +216,7 @@ public final class GeodeticCalculatorTest extends ReferencingTestBase {
              * GeodeticCalculator switch to DefaultEllipsoid algorithm, which is
              * what we want to ensure with this test.
              */
-            assertFalse(Math.abs(Math.abs(distance - last) - 13.914935) > 2E-6);
+            assertFalse(abs(abs(distance - last) - 13.914935) > 2E-6);
             last = distance;
         }
     }

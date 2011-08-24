@@ -46,7 +46,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-public final class ObjectReferenceMarshallingTest extends TestBase {
+public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
     /**
      * Tests a simple case.
      *

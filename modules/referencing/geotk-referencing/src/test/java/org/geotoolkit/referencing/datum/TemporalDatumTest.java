@@ -33,7 +33,7 @@ import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
  *
  * @since 2.2
  */
-public final class TemporalDatumTest extends ReferencingTestBase {
+public final strictfp class TemporalDatumTest extends ReferencingTestBase {
     /**
      * Verifies the epoch values compared to the julian epoch.
      *

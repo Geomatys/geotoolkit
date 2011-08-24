@@ -56,7 +56,7 @@ import org.junit.*;
     AlbersEqualAreaTest.class, OrthographicTest.class, ObliqueStereographicTest.class,
     PolarStereographicTest.class, PolyconicTest.class, KrovakTest.class, NadconTransformTest.class
 })
-public final class ScriptTest extends ReferencingTestBase {
+public final strictfp class ScriptTest extends ReferencingTestBase {
     /**
      * Runs the specified test script.
      *

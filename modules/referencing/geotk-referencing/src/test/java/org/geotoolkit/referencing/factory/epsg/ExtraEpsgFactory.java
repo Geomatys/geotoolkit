@@ -32,7 +32,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @since 2.4
  */
-final class ExtraEpsgFactory extends PropertyEpsgFactory {
+final strictfp class ExtraEpsgFactory extends PropertyEpsgFactory {
     /**
      * Creates a factory to be registered before {@link FactoryUsingWKT} in the fallback chain.
      */

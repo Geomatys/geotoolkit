@@ -36,7 +36,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-public final class NilReasonMarshallingTest extends TestBase {
+public final strictfp class NilReasonMarshallingTest extends TestBase {
     /**
      * Tests a simple case for a missing data.
      *

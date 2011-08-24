@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.10
  */
-public final class SupportFilesTest {
+public final strictfp class SupportFilesTest {
     /**
      * Tests a file for which no TFW file is defined. {@code SupportFiles} should propose as
      * a fallback the {@code "ttw"} extension, which is built from the "first letter + last

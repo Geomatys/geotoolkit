@@ -57,7 +57,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * @since 2.4
  */
 @Depend(PropertyAuthorityFactoryTest.class)
-public final class PropertyEpsgFactoryTest extends ReferencingTestBase {
+public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase {
     /**
      * The factory to test.
      */

@@ -51,7 +51,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  * @since 2.1
  */
 @SuppressWarnings("serial")
-public class Viewer extends JPanel {
+public strictfp class Viewer extends JPanel {
     /**
      * The image to display.
      */

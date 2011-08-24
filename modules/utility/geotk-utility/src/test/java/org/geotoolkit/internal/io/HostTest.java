@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.11
  */
-public final class HostTest {
+public final strictfp class HostTest {
     /**
      * Tests JDBC URL.
      */

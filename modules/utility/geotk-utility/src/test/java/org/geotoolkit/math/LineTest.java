@@ -33,7 +33,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.0
  */
-public final class LineTest {
+public final strictfp class LineTest {
     /**
      * Tolerance factor for comparisons.
      */

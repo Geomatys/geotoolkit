@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.05
  */
-public final class EpsgInstallerTest {
+public final strictfp class EpsgInstallerTest {
     /**
      * Tests the creation of an EPSG database on Derby.
      *

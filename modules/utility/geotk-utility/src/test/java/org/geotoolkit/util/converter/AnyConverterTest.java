@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @since 3.04
  */
 @Depend(SystemConverterTest.class)
-public final class AnyConverterTest {
+public final strictfp class AnyConverterTest {
     /**
      * Tests the {@link AnyConverter#convert} method.
      *

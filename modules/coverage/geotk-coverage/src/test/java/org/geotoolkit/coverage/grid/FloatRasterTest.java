@@ -41,7 +41,7 @@ import org.junit.*;
  *
  * @since 2.1
  */
-public final class FloatRasterTest extends GridCoverageTestBase {
+public final strictfp class FloatRasterTest extends GridCoverageTestBase {
     /**
      * Creates a new test suite.
      */

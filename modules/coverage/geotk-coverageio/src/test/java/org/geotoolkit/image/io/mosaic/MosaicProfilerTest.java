@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class MosaicProfilerTest extends MosaicTestBase {
+public final strictfp class MosaicProfilerTest extends MosaicTestBase {
     /**
      * Small value for floating point comparisons.
      */

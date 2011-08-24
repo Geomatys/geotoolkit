@@ -29,7 +29,7 @@ import org.geotoolkit.measure.AngleFormat;
  *
  * @since 2.0
  */
-public final class FormatChooserTest extends SwingTestBase<FormatChooser> {
+public final strictfp class FormatChooserTest extends SwingTestBase<FormatChooser> {
     /**
      * Constructs the test case.
      */

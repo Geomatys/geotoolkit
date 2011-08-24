@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.01
  */
-public class FloodFillTest extends SampleImageTestBase {
+public final strictfp class FloodFillTest extends SampleImageTestBase {
     /**
      * Creates a new test case.
      */

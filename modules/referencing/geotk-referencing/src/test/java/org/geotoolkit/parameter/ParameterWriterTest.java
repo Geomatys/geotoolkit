@@ -33,7 +33,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class ParameterWriterTest extends LocaleDependantTestBase {
+public final strictfp class ParameterWriterTest extends LocaleDependantTestBase {
     /**
      * Tests {@link DefaultParameterDescriptorGroup#toString()}.
      * This will test indirectly {@link ParameterWriter}.

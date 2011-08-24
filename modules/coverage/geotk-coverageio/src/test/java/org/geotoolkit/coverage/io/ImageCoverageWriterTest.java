@@ -55,7 +55,7 @@ import static org.junit.Assume.*;
  * @since 3.14
  */
 @Depend(ImageCoverageReaderTest.class)
-public final class ImageCoverageWriterTest extends ImageTestBase {
+public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     /**
      * Tolerance factor when comparing values from the {@code "matrix.txt"} file.
      * We set the tolerance to the first decimal digit after the significant digits.

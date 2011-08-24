@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.13
  */
-public final class SampleDimensionPanelTest extends SwingTestBase<SampleDimensionPanel> {
+public final strictfp class SampleDimensionPanelTest extends SwingTestBase<SampleDimensionPanel> {
     /**
      * Constructs the test case.
      */

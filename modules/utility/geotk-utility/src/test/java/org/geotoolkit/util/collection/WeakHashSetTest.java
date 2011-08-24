@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.0
  */
-public final class WeakHashSetTest {
+public final strictfp class WeakHashSetTest {
     /**
      * Tests the {@link WeakHashSet} using strong references.
      * The tested {@link WeakHashSet} should behave like a standard {@link Set} object.

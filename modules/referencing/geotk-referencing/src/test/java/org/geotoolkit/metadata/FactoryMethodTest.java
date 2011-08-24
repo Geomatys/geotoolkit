@@ -44,7 +44,7 @@ import static org.geotoolkit.referencing.cs.DefaultVerticalCS.GRAVITY_RELATED_HE
  *
  * @since 3.03
  */
-public final class FactoryMethodTest {
+public final strictfp class FactoryMethodTest {
     /**
      * Tests the obtention of a factory method.
      */

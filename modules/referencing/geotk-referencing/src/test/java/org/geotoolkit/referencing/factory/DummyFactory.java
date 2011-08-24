@@ -44,11 +44,11 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-final class DummyFactory extends AbstractAuthorityFactory {
+final strictfp class DummyFactory extends AbstractAuthorityFactory {
     /**
      * A threaded factory which creates new instances of {@link DummyFactory}.
      */
-    static final class Threaded extends ThreadedAuthorityFactory {
+    static final strictfp class Threaded extends ThreadedAuthorityFactory {
         /**
          * All dummy factories created by this threaded factory,
          * including any factories having been disposed.

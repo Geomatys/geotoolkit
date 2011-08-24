@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.5
  */
-public final class SpatialImageWriterTest {
+public final strictfp class SpatialImageWriterTest {
     /**
      * Tests the {@link RectIter}.
      *

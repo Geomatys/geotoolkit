@@ -41,7 +41,7 @@ import static org.opengis.test.Validators.*;
  *
  * @since 2.1
  */
-public final class MatrixParametersTest {
+public final strictfp class MatrixParametersTest {
     /**
      * Tests the storage of matrix parameters.
      */

@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class LoggingAdapterTest {
+public final strictfp class LoggingAdapterTest {
     /**
      * Tests the {@link LoggerAdapter#log(Level,String)} method.
      * This is of special interest because of the switch cases used in implementation.

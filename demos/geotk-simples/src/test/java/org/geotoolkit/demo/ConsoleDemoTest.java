@@ -37,7 +37,7 @@ import org.geotoolkit.demo.referencing.CoordinateConversion;
  *
  * @since 3.03
  */
-public class ConsoleDemoTest extends TestBase {
+public final strictfp class ConsoleDemoTest extends TestBase {
     /**
      * The output and error streams to use instead of the standard ones.
      * The {@link System#out} and {@link System#err} streams will be

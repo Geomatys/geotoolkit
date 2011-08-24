@@ -28,7 +28,7 @@ import java.util.Locale;
  *
  * @since 3.17
  */
-final class LocalizedTreeNode extends DefaultMutableTreeNode {
+final strictfp class LocalizedTreeNode extends DefaultMutableTreeNode {
     /**
      * For cross-version compatibility.
      */

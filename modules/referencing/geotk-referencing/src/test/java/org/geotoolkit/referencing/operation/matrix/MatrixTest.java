@@ -34,7 +34,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  *
  * @since 3.00
  */
-public final class MatrixTest {
+public final strictfp class MatrixTest {
     /**
      * The tolerance value for floating point comparisons.
      */

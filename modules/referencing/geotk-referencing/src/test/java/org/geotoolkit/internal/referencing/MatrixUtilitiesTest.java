@@ -36,7 +36,7 @@ import static java.lang.Double.NaN;
  *
  * @since 3.10
  */
-public final class MatrixUtilitiesTest {
+public final strictfp class MatrixUtilitiesTest {
     /**
      * Small tolerance factor for comparison of floating point numbers.
      */

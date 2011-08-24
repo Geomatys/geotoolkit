@@ -40,11 +40,11 @@ import static org.junit.Assert.*;
  *
  * @since 3.15
  */
-public final class IrregularAxesConverterTest {
+public final strictfp class IrregularAxesConverterTest {
     /**
      * A {@link DiscreteCoordinateSystemAxis} implementation used for this test.
      */
-    private static final class Axis implements DiscreteCoordinateSystemAxis {
+    private static final strictfp class Axis implements DiscreteCoordinateSystemAxis {
         /**
          * The ordinate values.
          */

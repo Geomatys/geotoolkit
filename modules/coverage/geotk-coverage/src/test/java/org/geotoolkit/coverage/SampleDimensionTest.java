@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(CategoryListTest.class)
-public final class SampleDimensionTest {
+public final strictfp class SampleDimensionTest {
     /**
      * The categories making the sample dimension to test.
      */

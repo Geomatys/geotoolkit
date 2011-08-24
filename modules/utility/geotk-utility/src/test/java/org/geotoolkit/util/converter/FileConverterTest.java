@@ -39,7 +39,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.01
  */
-public final class FileConverterTest {
+public final strictfp class FileConverterTest {
     /**
      * Assumes that the platform file system has a Unix-style root.
      * Windows platform has driver letters instead, like "C:\\",

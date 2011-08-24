@@ -44,7 +44,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.06
  */
-public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
+public final strictfp class TextRecordImageReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a new test suite.
      */

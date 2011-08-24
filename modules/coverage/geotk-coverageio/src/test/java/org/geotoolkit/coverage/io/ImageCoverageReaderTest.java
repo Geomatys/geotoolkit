@@ -60,7 +60,7 @@ import org.geotoolkit.xml.XML;
  * @since 3.09
  */
 @Depend({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
-public final class ImageCoverageReaderTest extends ImageTestBase {
+public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
     /**
      * Small number for comparison of floating point values.
      */

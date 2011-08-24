@@ -34,11 +34,11 @@ import org.geotoolkit.test.Depend;
  * @since 2.3
  */
 @Depend(HintsTest.class)
-public final class FactoryTest {
+public final strictfp class FactoryTest {
     /**
      * A key for testing purpose.
      */
-    private static class Key extends RenderingHints.Key {
+    private static strictfp class Key extends RenderingHints.Key {
         Key(final int n) {
             super(n);
         }

@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * @since 3.10
  */
 @Depend(EpsgInstallerTest.class)
-public final class AutomaticInstallationTest {
+public final strictfp class AutomaticInstallationTest {
     /**
      * Tests the {@link ThreadedEpsgFactory#getDefaultURL()} method.
      * Since the both the Derby and HSQL drivers are available on the

@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.06
  */
 @Depend(MetadataProxyTest.class)
-public final class SpatialMetadataTest {
+public final strictfp class SpatialMetadataTest {
     /**
      * The warning level to use in this test. We set them to FINE in order to avoid
      * polluting the console output during Maven build. In order to see the warnings,

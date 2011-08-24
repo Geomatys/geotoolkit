@@ -53,7 +53,7 @@ import static org.opengis.test.Assert.*;
  * @since 3.19
  */
 @RunWith(JUnit4.class)
-public final class GeoapiTest extends AffineTransformTest {
+public final strictfp class GeoapiTest extends AffineTransformTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */

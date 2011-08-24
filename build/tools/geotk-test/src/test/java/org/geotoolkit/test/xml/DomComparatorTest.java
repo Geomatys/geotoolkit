@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.17
  */
-public final class DomComparatorTest {
+public final strictfp class DomComparatorTest {
     /**
      * Tests the {@link DomComparator#ignoredAttributes} and {@link DomComparator#ignoredNodes}
      * sets.

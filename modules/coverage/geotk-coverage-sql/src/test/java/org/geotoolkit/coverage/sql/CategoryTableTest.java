@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.09 (derived from Seagis)
  */
-public final class CategoryTableTest extends CatalogTestBase {
+public final strictfp class CategoryTableTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

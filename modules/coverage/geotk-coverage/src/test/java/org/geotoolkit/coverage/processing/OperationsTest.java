@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class OperationsTest extends GridProcessingTestBase {
+public final strictfp class OperationsTest extends GridProcessingTestBase {
     /**
      * The grid coverage processor.
      */

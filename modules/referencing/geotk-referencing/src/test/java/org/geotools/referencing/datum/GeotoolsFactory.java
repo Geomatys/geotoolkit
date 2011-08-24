@@ -53,7 +53,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
  *
  * @since 3.02
  */
-public final class GeotoolsFactory implements DatumFactory {
+public final strictfp class GeotoolsFactory implements DatumFactory {
     /**
      * Returns the vendor, which is {@code "Geotools"} for this test. The lower-case
      * {@code "t"} is intentional since it was written that way in GeoTools 2.5.

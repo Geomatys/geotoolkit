@@ -48,7 +48,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.4
  */
 @Depend(PropertyAccessorTest.class)
-public final class MetadataStandardTest {
+public final strictfp class MetadataStandardTest {
     /**
      * Tests the conversion between interface types and implementation types.
      */

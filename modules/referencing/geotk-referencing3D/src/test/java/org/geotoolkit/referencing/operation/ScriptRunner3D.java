@@ -29,7 +29,7 @@ import org.geotoolkit.console.ReferencingConsole;
  *
  * @since 2.1
  */
-final class ScriptRunner3D extends ReferencingConsole {
+final strictfp class ScriptRunner3D extends ReferencingConsole {
     /**
      * The first error that occurred, or {@code null} if none.
      */

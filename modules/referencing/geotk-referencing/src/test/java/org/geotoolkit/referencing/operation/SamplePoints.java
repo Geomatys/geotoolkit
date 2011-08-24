@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation;
 
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.referencing.GeodeticCalculator;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -37,7 +38,7 @@ import org.geotoolkit.referencing.GeodeticCalculator;
  *
  * @since 3.16
  */
-final class SamplePoints {
+final strictfp class SamplePoints {
     /**
      * Tolerance factor. If must be small enough to detect if the height has
      * been used, except when the source coordinates is known to have no height.
@@ -75,7 +76,7 @@ final class SamplePoints {
     /**
      * The source (<var>latitude</var>, <var>longitude</var>, <var>height</var>) coordinates.
      */
-    public static final class Source {
+    public static final strictfp class Source {
         public final double φ, λ, h;
         Source(final double φ, final double λ, final double h) {
             this.φ  = φ;
@@ -88,7 +89,7 @@ final class SamplePoints {
      * The expected (<var>latitude</var>, <var>longitude</var>, <var>height</var>) coordinates.
      * The {@link #h0} field is the height that we get if the source height is replaced by zero.
      */
-    public static final class Target {
+    public static final strictfp class Target {
         public final double φ, λ, h, h0;
         Target(final double φ, final double λ, final double h, final double h0) {
             this.φ  = φ;
@@ -143,7 +144,7 @@ final class SamplePoints {
                 c.setStartingGeographicPoint   (sample.tgt .λ, sample.tgt .φ);
                 c.setDestinationGeographicPoint(sample.epsg.λ, sample.epsg.φ);
                 double distance = c.getOrthodromicDistance();
-                distance = Math.hypot(distance, sample.tgt.h - sample.epsg.h);
+                distance = hypot(distance, sample.tgt.h - sample.epsg.h);
                 stats.add(distance);
             }
             System.out.println(stats);

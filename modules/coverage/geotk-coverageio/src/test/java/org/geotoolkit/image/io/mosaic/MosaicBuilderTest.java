@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  * @since 2.5
  */
 @Depend(TileManagerTest.class)
-public final class MosaicBuilderTest extends MosaicTestBase {
+public final strictfp class MosaicBuilderTest extends MosaicTestBase {
     /**
      * Tests subsampling calculation.
      *

@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.07
  */
-public final class XImageIOTest extends ImageTestBase {
+public final strictfp class XImageIOTest extends ImageTestBase {
     /**
      * Creates a new test suite.
      */

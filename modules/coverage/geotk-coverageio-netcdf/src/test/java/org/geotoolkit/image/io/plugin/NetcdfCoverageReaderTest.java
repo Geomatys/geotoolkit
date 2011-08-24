@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @since 3.11
  */
-public final class NetcdfCoverageReaderTest extends NetcdfTestBase {
+public final strictfp class NetcdfCoverageReaderTest extends NetcdfTestBase {
     /**
      * Tests a {@link ImageCoverageReader#read} operation.
      *

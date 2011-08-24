@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class IdentifiedObjectTest extends ReferencingTestBase {
+public final strictfp class IdentifiedObjectTest extends ReferencingTestBase {
     /**
      * Tests {@link NamedIdentifier} attributes. Useful for making sure that the
      * hash code enumerated in the switch statement in the constructor have

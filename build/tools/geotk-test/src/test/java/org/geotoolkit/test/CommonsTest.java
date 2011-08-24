@@ -29,7 +29,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final class CommonsTest {
+public final strictfp class CommonsTest {
     /**
      * Tests the {@link Commons#serialize} method.
      */

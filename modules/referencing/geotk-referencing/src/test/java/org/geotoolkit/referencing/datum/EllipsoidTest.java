@@ -23,6 +23,7 @@ import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 import org.junit.*;
 import org.opengis.test.Validators;
 import static org.junit.Assert.*;
+import static java.lang.StrictMath.*;
 
 
 /**
@@ -33,7 +34,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public class EllipsoidTest {
+public final strictfp class EllipsoidTest {
     /**
      * Validates constant definitions.
      */
@@ -79,7 +80,7 @@ public class EllipsoidTest {
         assertEquals("International nautical mile", 1852.00, e.orthodromicDistance(0, 45-hm, 0, 45+hm), tolerance);
         for (double i=0.01; i<180; i+=1) {
             final double base = 180*random.nextDouble()-90;
-            assertEquals(i+"° rotation", e.getSemiMajorAxis() * Math.toRadians(i),
+            assertEquals(i+"° rotation", e.getSemiMajorAxis() * toRadians(i),
                                          e.orthodromicDistance(base, 0, base+i, 0), tolerance);
         }
         /*
@@ -87,18 +88,18 @@ public class EllipsoidTest {
          * a specialized class, which is not the usual Ellipsoid class.
          */
         final double radius = e.getSemiMajorAxis();
-        final double circumference = (radius*1.00000001) * (2*Math.PI);
+        final double circumference = (radius*1.00000001) * (2*PI);
         final DefaultEllipsoid s = createEllipsoid("Sphere", radius, radius, e.getAxisUnit());
         assertEquals("Spheroid class", Spheroid.class, s.getClass());
         tolerance = 0.001;
         for (double i=0; i<=180; i+=1) {
             final double base = 360*random.nextDouble()-180;
-            assertEquals(i+"° rotation", s.getSemiMajorAxis()*Math.toRadians(i),
+            assertEquals(i+"° rotation", s.getSemiMajorAxis() * toRadians(i),
                                          s.orthodromicDistance(base, 0, base+i, 0), tolerance);
         }
         for (double i=-90; i<=+90; i+=1) {
             final double meridian = 360*random.nextDouble()-180;
-            assertEquals(i+"° rotation", s.getSemiMajorAxis()*Math.toRadians(Math.abs(i)),
+            assertEquals(i+"° rotation", s.getSemiMajorAxis() * toRadians(abs(i)),
                                          s.orthodromicDistance(meridian, 0, meridian, i), tolerance);
         }
         for (int i=0; i<100; i++) {

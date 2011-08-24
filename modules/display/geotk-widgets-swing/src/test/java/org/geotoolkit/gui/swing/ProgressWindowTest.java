@@ -31,7 +31,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-public final class ProgressWindowTest {
+public final strictfp class ProgressWindowTest {
     /**
      * Set to {@code true} if windows should be visible.
      */

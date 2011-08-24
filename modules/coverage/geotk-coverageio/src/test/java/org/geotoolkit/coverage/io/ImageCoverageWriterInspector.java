@@ -47,7 +47,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.14
  */
-final class ImageCoverageWriterInspector extends ImageCoverageWriter {
+final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
     /**
      * Small number for comparison of floating point values.
      */

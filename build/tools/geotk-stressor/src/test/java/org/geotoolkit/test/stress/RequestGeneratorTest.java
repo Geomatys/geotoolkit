@@ -41,7 +41,7 @@ import org.junit.*;
  *
  * @since 3.15
  */
-public final class RequestGeneratorTest {
+public final strictfp class RequestGeneratorTest {
     /**
      * Tests the distribution of {@link RequestGenerator#getRandomGrid()}.
      */

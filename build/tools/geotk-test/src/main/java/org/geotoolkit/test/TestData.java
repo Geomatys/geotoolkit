@@ -62,11 +62,11 @@ import java.util.zip.ZipFile;
  * @author James McGill (Leeds)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.10
+ * @version 3.19
  *
  * @since 2.4
  */
-public class TestData implements Runnable {
+public final strictfp class TestData implements Runnable {
     /**
      * The test data directory.
      */
@@ -92,9 +92,9 @@ public class TestData implements Runnable {
     }
 
     /**
-     * For subclass constructors only.
+     * Do not allow instantiation of this class.
      */
-    protected TestData() {
+    private TestData() {
     }
 
     /**

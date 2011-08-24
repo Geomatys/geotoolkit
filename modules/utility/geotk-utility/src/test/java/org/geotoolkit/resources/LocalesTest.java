@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public class LocalesTest {
+public strictfp class LocalesTest {
     /**
      * Tests the {@link Locales#parse} method.
      */

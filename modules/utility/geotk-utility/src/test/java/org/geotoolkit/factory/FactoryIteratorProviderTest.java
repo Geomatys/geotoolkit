@@ -31,7 +31,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.4
  */
 @Depend(FactoryRegistryTest.class)
-public final class FactoryIteratorProviderTest {
+public final strictfp class FactoryIteratorProviderTest {
     /**
      * The registry to use for testing purpose.
      */

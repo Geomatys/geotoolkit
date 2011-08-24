@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @since 3.08
  */
 @Depend(ProjectiveTransformTest.class)
-public final class CopyTransformTest extends TransformTestBase {
+public final strictfp class CopyTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

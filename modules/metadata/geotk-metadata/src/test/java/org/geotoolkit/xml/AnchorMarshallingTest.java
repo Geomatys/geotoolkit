@@ -35,7 +35,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-public final class AnchorMarshallingTest extends LocaleDependantTestBase {
+public final strictfp class AnchorMarshallingTest extends LocaleDependantTestBase {
     /**
      * Tests the anchor in an identifier element. Note that the {@code xlink:href}
      * attribute is lost, because the Java type of the {@code gmd:code} attribute

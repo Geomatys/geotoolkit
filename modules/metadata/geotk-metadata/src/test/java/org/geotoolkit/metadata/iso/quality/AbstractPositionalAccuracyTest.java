@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.19 (derived from 2.2)
  */
 @Depend(CitationsTest.class)
-public final class AbstractPositionalAccuracyTest {
+public final strictfp class AbstractPositionalAccuracyTest {
     /**
      * Tests {@link AbstractPositionalAccuracy} constants.
      */

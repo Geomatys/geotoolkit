@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 2.4
  */
 @Depend(ClassesTest.class)
-public final class RangeTest {
+public final strictfp class RangeTest {
     /** [-1,1] */
     private final Range<Integer> UNIT = new Range<Integer>(Integer.class, -1, 1);
 
