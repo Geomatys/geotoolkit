@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.plugin;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadataNode;
@@ -56,11 +57,13 @@ import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Warnings;
+import org.geotoolkit.internal.image.io.GDAL;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -157,13 +160,13 @@ final class NetcdfMetadata extends SpatialMetadata {
     }
 
     /**
-     * Creates image metadata from the specified variable. Note that
+     * Creates image metadata from the specified variables. Note that
      * {@link CoordSysBuilderIF#buildCoordinateSystems(NetcdfDataset)}
      * should have been invoked (if needed) before this constructor.
      *
      * @param reader The reader for which to assign the metadata.
      * @param file The originating dataset file, or {@code null} if none.
-     * @param variable The variable for which to read metadata.
+     * @param variables The variables for which to read metadata.
      * @throws IOException If an I/O operation was needed and failed.
      */
     public NetcdfMetadata(final ImageReader reader, final NetcdfDataset file,
@@ -172,13 +175,63 @@ final class NetcdfMetadata extends SpatialMetadata {
         super(SpatialMetadataFormat.IMAGE, reader, null);
         nativeMetadataFormatName = NATIVE_FORMAT;
         for (final VariableIF variable : variables) {
+            CoordinateReferenceSystem crs = null;
+            AffineTransform gridToCRS = null;
+            if (file != null) {
+                /*
+                 * Before to rely on CF convention, check for GDAL convention. GDAL declares
+                 * the CRS in WKT format, together with the "grid to CRS" affine transform.
+                 * Note that even if we find a CRS from GDAL conventions, we will still try
+                 * to create CRS from CF convention in the next block below. This allows us
+                 * to emmit a warning in case of mismatch.
+                 */
+                Attribute attribute = variable.findAttributeIgnoreCase("grid_mapping");
+                if (attribute != null) {
+                    final String name = attribute.getStringValue();
+                    if (name != null) {
+                        final Variable mapping = file.findVariable(name);
+                        if (mapping != null) {
+                            crs = parseWKT(mapping, "spatial_ref");
+                            attribute = mapping.findAttributeIgnoreCase("GeoTransform");
+                            if (attribute != null) {
+                                final String value = attribute.getStringValue();
+                                if (value != null) {
+                                    final double[] coefficients = Strings.parseDoubles(value, ' ');
+                                    if (coefficients.length == 6) {
+                                        gridToCRS = GDAL.getGeoTransform(coefficients);
+                                    } else {
+                                        // TODO: log a warning
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            /*
+             * Before to rely on CF convention, check for ESRI convention. This is the same
+             * principle than the above check for GDAL convention, but simplier.
+             */
+            if (crs == null) {
+                crs = parseWKT(variable, "ESRI_pe_string");
+            }
+            /*
+             * Now check for CF-convention. If a CRS is found from CF convention, we will check
+             * for consistency but the CRS found above (if any) will have precedence. We prefer
+             * WKT definition rather than CF conventions because CF convention does not declare
+             * (at the time of writing) datum of axis order.
+             */
             if (variable instanceof Enhancements) {
                 final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
                 if (!isNullOrEmpty(systems)) {
-                    CoordinateReferenceSystem crs = parseWKT(variable, "ESRI_pe_string");
-                    setCoordinateSystem(file, systems.get(0), crs);
+                    setCoordinateSystem(file, systems.get(0), crs, gridToCRS);
+                    crs = null;
                     break; // Infers the CRS only from the first variable having such CRS.
                 }
+            }
+            if (crs != null) {
+                setCoordinateSystem(file, null, crs, gridToCRS);
+                break;
             }
         }
         addSampleDimension(variables);
@@ -213,14 +266,16 @@ final class NetcdfMetadata extends SpatialMetadata {
      * GeoAPI {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem
      * Coordinate Reference System} implementation.
      *
-     * @param file The originating dataset file, or {@code null} if none.
-     * @param cs The NetCDF coordinate system to define in metadata, or {@code null}.
-     * @param crs Always {@code null}, unless an alternative CRS should be formatted
-     *        in replacement of the CRS built from the given NetCDF coordinate system.
+     * @param  file The originating dataset file, or {@code null} if none.
+     * @param  cs The NetCDF coordinate system to define in metadata, or {@code null}.
+     * @param  crs Always {@code null}, unless an alternative CRS should be formatted
+     *         in replacement of the CRS built from the given NetCDF coordinate system.
+     * @param  gridToCRS The transform from pixel coordinates to CRS coordinates, or
+     *         {@code null} if unknown.
      * @throws IOException If an I/O operation was needed and failed.
      */
     private void setCoordinateSystem(final NetcdfDataset file, final CoordinateSystem cs,
-            CoordinateReferenceSystem crs) throws IOException
+            CoordinateReferenceSystem crs, AffineTransform gridToCRS) throws IOException
     {
         /*
          * The following code is only a validity check. It may produce warnings,
@@ -248,10 +303,14 @@ final class NetcdfMetadata extends SpatialMetadata {
             final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
             if (regularCRS instanceof GridGeometry) {
                 new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS, null, null, 1);
+                gridToCRS = null;
             }
             if (crs == null) {
                 crs = regularCRS;
             }
+        }
+        if (gridToCRS != null) {
+            new GridDomainAccessor(this).setGridToCRS(gridToCRS);
         }
         if (crs != null) {
             new ReferencingBuilder(this).setCoordinateReferenceSystem(crs);
@@ -356,7 +415,7 @@ final class NetcdfMetadata extends SpatialMetadata {
     }
 
     /**
-     * The metadata format for the encloding {@link NetcdfMetadata} instance.
+     * The metadata format for the enclosing {@link NetcdfMetadata} instance.
      */
     private final class Format extends SampleMetadataFormat {
         /**

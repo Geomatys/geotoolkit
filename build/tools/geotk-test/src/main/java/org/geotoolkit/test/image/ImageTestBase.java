@@ -17,15 +17,7 @@
  */
 package org.geotoolkit.test.image;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import java.awt.BorderLayout;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.EventQueue;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.awt.image.BufferedImage;
@@ -35,7 +27,7 @@ import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import java.util.concurrent.CountDownLatch;
+import javax.imageio.IIOException;
 
 import org.opengis.coverage.Coverage;
 
@@ -43,7 +35,8 @@ import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingTestBase;
 
-import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assume.*;
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
 
@@ -98,9 +91,9 @@ public abstract strictfp class ImageTestBase extends TestBase {
     protected boolean viewEnabled;
 
     /**
-     * A lock used for waiting that at least one frame has been closed.
+     * The image viewer, which can be created only if {@link #viewEnabled} is {@code true}.
      */
-    private transient CountDownLatch lock;
+    private static volatile Viewer viewer;
 
     /**
      * Creates a new test suite for the given class.
@@ -110,6 +103,40 @@ public abstract strictfp class ImageTestBase extends TestBase {
     protected ImageTestBase(final Class<?> testing) {
         assertTrue(testing.desiredAssertionStatus());
         viewEnabled = Boolean.getBoolean(SwingTestBase.SHOW_PROPERTY_KEY);
+    }
+
+    /**
+     * Returns the file of the given name in the {@code "Geotoolkit.org/Tests"} directory.
+     * This directory contains data too big for inclusion in the source code repository.
+     * The file is tested for existence using:
+     *
+     * {@code java
+     *     assumeTrue(file.canRead());
+     * }
+     *
+     * Consequently if the file can not be read (typically because the users did not installed
+     * those data on its local directory), then the tests after the call to this method are
+     * completely skipped.
+     *
+     * @param  filename The name of the file to get, or {@code null}.
+     * @return The name of directory of the given name in the {@code "Geotoolkit.org/Tests"}
+     *         directory (never {@code null}).
+     *
+     * @since 3.19
+     */
+    protected static File getLocallyInstalledFile(final String filename) {
+        File file;
+        try {
+            final Class<?> c = Class.forName("org.geotoolkit.internal.io.Installation");
+            file = (File) c.getMethod("directory", Boolean.TYPE).invoke(c.getField("TESTS").get(null), Boolean.TRUE);
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+        if (filename != null) {
+            file = new File(file, filename);
+        }
+        assumeTrue(file.canRead());
+        return file;
     }
 
     /**
@@ -152,15 +179,21 @@ public abstract strictfp class ImageTestBase extends TestBase {
      * @since 3.19
      */
     protected final synchronized void saveCurrentImage(final String filename) throws ImagingOpException {
-        final RenderedImage image = this.image;
-        assertNotNull("An image must be specified", image);
-        final File file = new File(filename);
         try {
-            if (!ImageIO.write(image, "png", file)) {
-                savePNG(image.getData(), file);
-            }
+            savePNG(image, new File(filename));
         } catch (IOException e) {
             throw new ImagingOpException(e.toString());
+        }
+    }
+
+    /**
+     * Implementation of {@link #saveCurrentImage(String)}, to be shared by the widget
+     * shown by {@link #showCurrentImage(String)}.
+     */
+    static void savePNG(final RenderedImage image, final File file) throws IOException {
+        assertNotNull("An image must be set.", image);
+        if (!ImageIO.write(image, "png", file)) {
+            savePNG(image.getData(), file);
         }
     }
 
@@ -197,83 +230,36 @@ public abstract strictfp class ImageTestBase extends TestBase {
                 dest.setSample(x, y, 0, round((value - min) * scale));
             }
         }
-        assertTrue("No suitable PNG writer found.", ImageIO.write(image, "png", file));
+        if (!ImageIO.write(image, "png", file)) {
+            throw new IIOException("No suitable PNG writer found.");
+        }
     }
 
     /**
-     * Display the {@linkplain #image} if {@link #viewEnabled} is set to {@code true},
-     * otherwise does nothing. This is mostly for debugging purpose.
+     * Displays the {@linkplain #image} if {@link #viewEnabled} is set to {@code true},
+     * otherwise does nothing. This method is mostly for debugging purpose.
      *
-     * @param method The name of the test method invoking {@code view}.
-     *        This is used only for the frame title.
+     * @param title The window title.
      */
     @SuppressWarnings("deprecation")
-    protected final synchronized void showCurrentImage(final String method) {
-        assertNotNull("An image must be set.", image);
+    protected final synchronized void showCurrentImage(final String title) {
         final RenderedImage image = this.image;
-        /*
-         * It was necessary to copy the image field in a local variable because the code below
-         * contains inner class, and we want those inner classes to work on the image that was
-         * active at the time this method was invoked.
-         */
+        assertNotNull("An image must be set.", image);
         if (viewEnabled) {
-            if (lock == null) {
-                lock = new CountDownLatch(1);
-            }
-            final CountDownLatch lock = this.lock;
-            String title = getClass().getSimpleName();
-            if (method != null) {
-                title = title + '.' + method;
-            }
-            final JFrame frame = new JFrame(title);
-            frame.addWindowListener(new WindowAdapter() {
-                @Override public void windowClosed(final WindowEvent event) {
-                    frame.removeWindowListener(this);
-                    lock.countDown();
-                    frame.dispose();
-                }
-            });
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            final JPanel panel = new JPanel(new BorderLayout());
-            panel.add(new javax.media.jai.widget.ScrollingImagePanel(image, 500, 500), BorderLayout.CENTER);
-            final JButton save = new JButton("Save as PNG");
-            save.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(final ActionEvent event) {
-                    final File file = new File(System.getProperty("user.home"), "ImageTest.png");
-                    final String title, message;
-                    final int type;
-                    if (file.exists()) {
-                        type    = JOptionPane.WARNING_MESSAGE;
-                        title   = "Confirm overwrite";
-                        message = "File " + file + " exists. Overwrite?";
-                    } else {
-                        type    = JOptionPane.QUESTION_MESSAGE;
-                        title   = "Confirm write";
-                        message = "Save in " + file + '?';
-                    }
-                    if (JOptionPane.showConfirmDialog(panel, message, title,
-                            JOptionPane.YES_NO_OPTION, type) == JOptionPane.OK_OPTION)
-                    {
-                        final boolean done;
-                        try {
-                            done = ImageIO.write(image, "png", file);
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(panel, e.toString(),
-                                    "Error", JOptionPane.WARNING_MESSAGE);
-                            return;
+            final String classname = getClass().getSimpleName();
+            try {
+                EventQueue.invokeAndWait(new Runnable() {
+                    @Override public void run() {
+                        Viewer v = viewer;
+                        if (v == null) {
+                            viewer = v = new Viewer(classname);
                         }
-                        if (!done) {
-                            JOptionPane.showMessageDialog(panel, "No appropriate writer found",
-                                    "Error", JOptionPane.WARNING_MESSAGE);
-                        }
+                        v.addImage(image, String.valueOf(title));
                     }
-                }
-            });
-            panel.add(save, BorderLayout.SOUTH);
-            frame.add(panel);
-            frame.setSize(image.getWidth() + 100, image.getHeight() + 150);
-            frame.setLocationByPlatform(true);
-            frame.setVisible(true);
+                });
+            } catch (Exception e) {
+                throw new AssertionError(e);
+            }
         }
     }
 
@@ -283,7 +269,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
      *
      * @param coverage The coverage to display.
      */
-    protected final void show(final Coverage coverage) {
+    protected final synchronized void show(final Coverage coverage) {
         if (!viewEnabled) {
             return;
         }
@@ -307,13 +293,11 @@ public abstract strictfp class ImageTestBase extends TestBase {
      * If a frame has been created by {@link #view}, wait for its disposal
      * before to move to the next test.
      */
-    @After
-    public final void waitForFrameDisposal() {
-        final CountDownLatch lock = this.lock;
-        if (lock != null) try{
-            lock.await();
-        } catch (InterruptedException e) {
-            // It is okay to continue. JUnit will close all windows.
+    @AfterClass
+    public static void waitForFrameDisposal() {
+        final Viewer v = viewer;
+        if (v != null) {
+            v.waitForFrameDisposal();
         }
     }
 }

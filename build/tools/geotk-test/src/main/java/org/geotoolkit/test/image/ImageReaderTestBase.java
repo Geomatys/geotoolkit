@@ -56,6 +56,7 @@ public abstract strictfp class ImageReaderTestBase extends ImageTestBase {
 
     /**
      * Creates the image reader initialized to the input to read.
+     * This method is invoked by each test method in this class.
      *
      * @return The reader to test.
      * @throws IOException If an error occurred while creating the reader.

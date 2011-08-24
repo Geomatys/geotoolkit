@@ -90,7 +90,7 @@ import org.geotoolkit.util.logging.Logging;
  * the dimensions would be declared as (<var>t</var>,<var>z</var>,<var>y</var>,<var>x</var>). This
  * <code>NetcdfImageReader</code> plugin reverse the order of dimensions read in the NetCDF file,
  * in order to get an ordering consistent with the ordering used by other plugins.}
- * 
+ *
  * The image is created from the (<var>x</var>,<var>y</var>) dimensions in the above example.
  * Additional dimensions (if any) are ignored by default: only the slice at index 0 is read,
  * which is <var>z</var><sub>0</sub> and <var>t</var><sub>0</sub> in the example above. See
@@ -674,7 +674,7 @@ public class NetcdfImageReader extends FileImageReader implements
                     final CoordinateAxis axis = axes.get(i);
                     switch (properties.length) {
                         default: properties[2] = NetcdfAxis.getDirection(axis);
-                        case 2:  properties[1] = axis.getName();
+                        case 2:  properties[1] = axis.getFullName();
                         case 1:  properties[0] = i;
                         case 0:  break;
                     }
@@ -1000,7 +1000,7 @@ public class NetcdfImageReader extends FileImageReader implements
         final List<Variable> variables = dataset.getVariables();
         if (variables != null) {
             for (final Variable variable : variables) {
-                if (variable!=null && name.equalsIgnoreCase(variable.getName())) {
+                if (variable!=null && name.equalsIgnoreCase(variable.getFullName())) {
                     return variable;
                 }
             }

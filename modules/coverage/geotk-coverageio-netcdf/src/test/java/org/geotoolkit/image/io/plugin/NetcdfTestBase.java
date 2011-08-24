@@ -18,8 +18,6 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 
 import javax.measure.unit.Unit;
 import static javax.measure.unit.SI.METRE;
@@ -30,12 +28,9 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.test.TestBase;
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.test.image.ImageTestBase;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 
 
 /**
@@ -49,7 +44,12 @@ import static org.junit.Assume.*;
  *
  * @since 3.10
  */
-public strictfp class NetcdfTestBase extends TestBase {
+public strictfp class NetcdfTestBase extends ImageTestBase {
+    /**
+     * The directory which contains the data used by the tests.
+     */
+    static final String DIRECTORY = "World/Coriolis/";
+
     /**
      * The file to be used for the tests.
      */
@@ -94,31 +94,16 @@ public strictfp class NetcdfTestBase extends TestBase {
      * Default constructor for subclasses.
      */
     protected NetcdfTestBase() {
+        super(NetcdfImageReader.class);
     }
 
     /**
      * Returns the test file, which is optional.
-     * <p>
-     * A convenient way to define the {@code coverage-netcdf.properties} file is to
-     * create a symbolic link to {@code coverage-sql.properties}, in order to leverage
-     * the test file created for the {@code geotk-coverage-sql} module.
      *
      * @return The test file (never null).
      */
     public static File getTestFile() {
-        File file = new File(Installation.TESTS.directory(true), "coverage-netcdf.properties");
-        assumeTrue(file.isFile()); // All tests will be skipped if the above resources is not found.
-        final Properties properties;
-        try {
-            properties = TestData.readProperties(file);
-        } catch (IOException e) {
-            throw new AssertionError(e); // Will cause a JUnit test failure.
-        }
-        final String directory = properties.getProperty("rootDirectory");
-        assertNotNull("Missing \"rootDirectory\" property.", directory);
-        file = new File(directory, "World/Coriolis/" + FILENAME);
-        assertTrue(FILENAME + " file not found.", file.isFile());
-        return file;
+        return getLocallyInstalledFile(DIRECTORY + FILENAME);
     }
 
     /**

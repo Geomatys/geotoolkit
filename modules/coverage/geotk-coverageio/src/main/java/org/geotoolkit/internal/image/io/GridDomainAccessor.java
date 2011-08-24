@@ -59,7 +59,7 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @since 3.06
  * @module
@@ -174,6 +174,23 @@ public final class GridDomainAccessor extends MetadataAccessor {
         final MetadataAccessor accessor = new MetadataAccessor(this, "Limits", null);
         accessor.setAttribute("low",  low);
         accessor.setAttribute("high", high);
+    }
+
+    /**
+     * Sets the origin and offset vectors from the given affine transform.
+     *
+     * @param gridToCRS The affine transform to use for setting the origin and offset vectors.
+     *
+     * @since 3.19
+     */
+    public void setGridToCRS(final AffineTransform gridToCRS) {
+        final double[] vector = new double[] {
+            gridToCRS.getTranslateX(),
+            gridToCRS.getTranslateY()
+        };
+        setOrigin(fixRoundingError(vector));
+        vector[0]=gridToCRS.getScaleX(); vector[1]=gridToCRS.getShearY(); addOffsetVector(fixRoundingError(vector));
+        vector[0]=gridToCRS.getShearX(); vector[1]=gridToCRS.getScaleY(); addOffsetVector(fixRoundingError(vector));
     }
 
     /**

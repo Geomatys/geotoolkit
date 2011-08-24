@@ -56,6 +56,10 @@ public enum Installation {
      * The directory where to put configuration files for the tests.
      * This is used only during Maven builds, for example in order to
      * fetch connection parameters to a database.
+     * <p>
+     * This field is read by {@link org.geotoolkit.test.image.ImageTestBase} using Java reflection.
+     * This needs to be keep in mind in case of refactoring, since refactoring tools may not detect
+     * this case.
      *
      * @since 3.10
      */

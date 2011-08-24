@@ -28,7 +28,7 @@ import static org.geotoolkit.util.Strings.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @since 3.09 (derived from 3.00).
  */
@@ -62,6 +62,17 @@ public final strictfp class StringsTest {
     public void testSplit() {
         assertArrayEquals(new String[] {"lundi", "mardi", "mercredi"},
                 Strings.split("lundi , mardi,mercredi ", ','));
+    }
+
+    /**
+     * Tests {@link Strings#parseFloats}.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testFloats() {
+        assertArrayEquals(new float[] {5, 1.5f, Float.NaN, -8},
+                Strings.parseFloats("5 , 1.5,, -8 ", ','), 0f);
     }
 
     /**

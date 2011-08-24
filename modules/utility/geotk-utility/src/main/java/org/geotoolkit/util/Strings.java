@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
  * explicitly documented as throwing a {@link NullPointerException}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see Arrays#toString(Object[])
  * @see XArrays#containsIgnoreCase(String[], String)
@@ -196,32 +196,165 @@ public final class Strings extends Static {
      *
      * @param  toSplit   The string to split, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
-     * @return The array of strings computed by splitting the given string around the given character.
-     *         This is an empty array if {@code toSplit} was null. Otherwise this array is guaranteed
-     *         to contain at least one element.
+     * @return The array of strings computed by splitting the given string around the given
+     *         character, or an empty array if {@code toSplit} was null.
      *
      * @see String#split(String)
      *
      * @since 3.18
      */
     public static String[] split(final String toSplit, final char separator) {
+        final boolean excludeEmpty = (separator <= ' '); // Use the same criterion than String.trim().
         String[] strings = new String[4];
         int count = 0;
         if (toSplit != null) {
             int last = 0;
             for (int i=toSplit.indexOf(separator); i>=0; i=toSplit.indexOf(separator, i)) {
-                if (count == strings.length) {
-                    strings = Arrays.copyOf(strings, count << 1);
+                // Note: parseDoubles(...) needs the call to trim().
+                final String item = toSplit.substring(last, i).trim();
+                if (!excludeEmpty || !item.isEmpty()) {
+                    if (count == strings.length) {
+                        strings = Arrays.copyOf(strings, count << 1);
+                    }
+                    strings[count++] = item;
                 }
-                strings[count++] = toSplit.substring(last, i).trim();
                 last = ++i;
             }
-            if (count == strings.length) {
-                strings = Arrays.copyOf(strings, count + 1);
+            final String item = toSplit.substring(last).trim();
+            if (!excludeEmpty || !item.isEmpty()) {
+                if (count == strings.length) {
+                    strings = Arrays.copyOf(strings, count + 1);
+                }
+                strings[count++] = item;
             }
-            strings[count++] = toSplit.substring(last).trim();
         }
         return XArrays.resize(strings, count);
+    }
+
+    /**
+     * {@linkplain #split(String, char) Splits} the given string around the given character,
+     * then {@linkplain Double#parseDouble(String) parses} each item as a {@code double}.
+     *
+     * @param  values The strings containing the values to parse.
+     * @param  separator The delimiting character (typically the coma).
+     * @return The array of numbers parsed from the given string.
+     * @throws NumberFormatException If at least one number can not be parsed.
+     *
+     * @since 3.19
+     */
+    public static double[] parseDoubles(final String values, final char separator) throws NumberFormatException {
+        final String[] tokens = split(values, separator);
+        final double[] parsed = new double[tokens.length];
+        for (int i=0; i<tokens.length; i++) {
+            final String token = tokens[i];
+            parsed[i] = token.isEmpty() ? Double.NaN : Double.parseDouble(token);
+        }
+        return parsed;
+    }
+
+    /**
+     * {@linkplain #split(String, char) Splits} the given string around the given character,
+     * then {@linkplain Float#parseFloat(String) parses} each item as a {@code float}.
+     *
+     * @param  values The strings containing the values to parse.
+     * @param  separator The delimiting character (typically the coma).
+     * @return The array of numbers parsed from the given string.
+     * @throws NumberFormatException If at least one number can not be parsed.
+     *
+     * @since 3.19
+     */
+    public static float[] parseFloats(final String values, final char separator) throws NumberFormatException {
+        final String[] tokens = split(values, separator);
+        final float[] parsed = new float[tokens.length];
+        for (int i=0; i<tokens.length; i++) {
+            final String token = tokens[i];
+            parsed[i] = token.isEmpty() ? Float.NaN : Float.parseFloat(token);
+        }
+        return parsed;
+    }
+
+    /**
+     * {@linkplain #split(String, char) Splits} the given string around the given character,
+     * then {@linkplain Long#parseLong(String) parses} each item as a {@code long}.
+     *
+     * @param  values The strings containing the values to parse.
+     * @param  separator The delimiting character (typically the coma).
+     * @param  radix the radix to be used for parsing. This is usually 10.
+     * @return The array of numbers parsed from the given string.
+     * @throws NumberFormatException If at least one number can not be parsed.
+     *
+     * @since 3.19
+     */
+    public static long[] parseLongs(final String values, final char separator, final int radix) throws NumberFormatException {
+        final String[] tokens = split(values, separator);
+        final long[] parsed = new long[tokens.length];
+        for (int i=0; i<tokens.length; i++) {
+            parsed[i] = Long.parseLong(tokens[i], radix);
+        }
+        return parsed;
+    }
+
+    /**
+     * {@linkplain #split(String, char) Splits} the given string around the given character,
+     * then {@linkplain Integer#parseInt(String) parses} each item as an {@code int}.
+     *
+     * @param  values The strings containing the values to parse.
+     * @param  separator The delimiting character (typically the coma).
+     * @param  radix the radix to be used for parsing. This is usually 10.
+     * @return The array of numbers parsed from the given string.
+     * @throws NumberFormatException If at least one number can not be parsed.
+     *
+     * @since 3.19
+     */
+    public static int[] parseInts(final String values, final char separator, final int radix) throws NumberFormatException {
+        final String[] tokens = split(values, separator);
+        final int[] parsed = new int[tokens.length];
+        for (int i=0; i<tokens.length; i++) {
+            parsed[i] = Integer.parseInt(tokens[i], radix);
+        }
+        return parsed;
+    }
+
+    /**
+     * {@linkplain #split(String, char) Splits} the given string around the given character,
+     * then {@linkplain Short#parseShort(String) parses} each item as a {@code short}.
+     *
+     * @param  values The strings containing the values to parse.
+     * @param  separator The delimiting character (typically the coma).
+     * @param  radix the radix to be used for parsing. This is usually 10.
+     * @return The array of numbers parsed from the given string.
+     * @throws NumberFormatException If at least one number can not be parsed.
+     *
+     * @since 3.19
+     */
+    public static short[] parseShorts(final String values, final char separator, final int radix) throws NumberFormatException {
+        final String[] tokens = split(values, separator);
+        final short[] parsed = new short[tokens.length];
+        for (int i=0; i<tokens.length; i++) {
+            parsed[i] = Short.parseShort(tokens[i], radix);
+        }
+        return parsed;
+    }
+
+    /**
+     * {@linkplain #split(String, char) Splits} the given string around the given character,
+     * then {@linkplain Byte#parseByte(String) parses} each item as a {@code byte}.
+     *
+     * @param  values The strings containing the values to parse.
+     * @param  separator The delimiting character (typically the coma).
+     * @param  radix the radix to be used for parsing. This is usually 10.
+     * @return The array of numbers parsed from the given string.
+     * @throws NumberFormatException If at least one number can not be parsed.
+     *
+     * @since 3.19
+     */
+    public static byte[] parseBytes(final String values, final char separator, final int radix) throws NumberFormatException {
+        final String[] tokens = split(values, separator);
+        final byte[] parsed = new byte[tokens.length];
+        for (int i=0; i<tokens.length; i++) {
+            parsed[i] = Byte.parseByte(tokens[i], radix);
+        }
+        return parsed;
     }
 
     /**
