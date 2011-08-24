@@ -34,6 +34,7 @@ public class CityGMLMarshallerPool {
             instance = new MarshallerPool("org.geotoolkit.internal.jaxb.geometry:" +
                                           "org.geotoolkit.gml.xml.v311:" +
                                           "org.geotoolkit.citygml.xml.v100:" +
+                                          "org.geotoolkit.citygml.xml.v100.appearance:" + 
                                           "org.geotoolkit.citygml.xml.v100.building:" + 
                                           "org.geotoolkit.citygml.xml.v100.cityfurniture:" + 
                                           "org.geotoolkit.citygml.xml.v100.landuse:" + 

@@ -94,7 +94,7 @@ public class FeaturePropertyType {
     /**
      * An empty constructor used by JAXB.
      */
-    FeaturePropertyType() {}
+    protected FeaturePropertyType() {}
 
     /**
      * Build a new feature.

@@ -263,7 +263,7 @@ public class LandUseType extends AbstractCityObjectType {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder(super.toString());
+        final StringBuilder s = new StringBuilder(super.toString());
         if (clazz != null) {
             s.append("class:").append(clazz).append('\n');
         }
