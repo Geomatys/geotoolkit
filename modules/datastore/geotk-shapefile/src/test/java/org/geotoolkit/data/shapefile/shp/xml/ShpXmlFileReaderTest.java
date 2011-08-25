@@ -20,7 +20,6 @@ import java.net.URL;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 
@@ -28,13 +27,14 @@ import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.shapefile.xml.IdInfo;
 import org.geotoolkit.data.shapefile.xml.Metadata;
 import org.geotoolkit.data.shapefile.xml.ShpXmlFileReader;
+import org.geotoolkit.test.TestData;
 
 public class ShpXmlFileReaderTest extends TestCase {
     ShpXmlFileReader reader;
 
     protected void setUp() throws Exception {
         super.setUp();
-        URL example = ShapeTestData.url(AbstractTestCaseSupport.class, "example.shp.xml");
+        URL example = TestData.url(AbstractTestCaseSupport.class, "example.shp.xml");
         ShpFiles shpFiles = new ShpFiles(example);
 
         reader = new ShpXmlFileReader(shpFiles);

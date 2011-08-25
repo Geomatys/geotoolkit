@@ -26,20 +26,18 @@ import java.nio.charset.Charset;
 import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.ShapeTestData;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
 /**
@@ -182,9 +180,9 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         copyShapefiles(f); // Work on File rather than URL from JAR.
         ShapefileDataStore s = null;
         if(charset == null) {
-            s = new ShapefileDataStore(ShapeTestData.url(AbstractTestCaseSupport.class, f));
+            s = new ShapefileDataStore(TestData.url(AbstractTestCaseSupport.class, f));
         } else {
-            s = new ShapefileDataStore(ShapeTestData.url(AbstractTestCaseSupport.class, f), false, charset);
+            s = new ShapefileDataStore(TestData.url(AbstractTestCaseSupport.class, f), false, charset);
         }
         Name typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);

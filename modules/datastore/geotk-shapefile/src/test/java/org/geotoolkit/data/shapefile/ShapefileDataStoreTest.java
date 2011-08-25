@@ -65,8 +65,8 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.test.TestData;
 
 /**
  * 
@@ -178,7 +178,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     public void testSpacesInPath() throws Exception {
-        URL u = ShapeTestData.url(AbstractTestCaseSupport.class, "folder with spaces/pointtest.shp");
+        URL u = TestData.url(AbstractTestCaseSupport.class, "folder with spaces/pointtest.shp");
         File f = new File(URLDecoder.decode(u.getFile(), "UTF-8"));
         assertTrue(f.exists());
         ShapefileDataStore s = new ShapefileDataStore(u);
@@ -500,7 +500,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                                                         // URL point into the
                                                         // JAR file.
         ShapefileDataStore store = (ShapefileDataStore) new ShapefileDataStoreFactory()
-                .createDataStore(ShapeTestData.url(AbstractTestCaseSupport.class, STREAM));
+                .createDataStore(TestData.url(AbstractTestCaseSupport.class, STREAM));
         int count = 0;
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = store.getFeatureReader(QueryBuilder.all(store.getNames().iterator().next()));
         try {

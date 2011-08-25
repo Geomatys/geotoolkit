@@ -36,6 +36,7 @@ import java.util.Collection;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
 /**
@@ -85,7 +86,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
 
     public void testWriteTwice() throws Exception {
         copyShapefiles("shapes/stream.shp");
-        IndexedShapefileDataStore s1 = new IndexedShapefileDataStore(ShapeTestData
+        IndexedShapefileDataStore s1 = new IndexedShapefileDataStore(TestData
                 .url(ShapeTestData.class, "shapes/stream.shp"));
         Name typeName = s1.getName();
         SimpleFeatureType type = s1.getFeatureType();

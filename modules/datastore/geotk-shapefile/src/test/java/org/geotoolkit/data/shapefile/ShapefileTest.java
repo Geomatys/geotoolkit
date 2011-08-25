@@ -38,6 +38,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collection;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
 
@@ -108,8 +109,8 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         copyShapefiles(STATEPOP);
         copyShapefiles(STATEPOP_IDX);
         final URL url1 = ShapeTestData.url(STATEPOP); // Backed by InputStream
-        final URL url2 = ShapeTestData.url(AbstractTestCaseSupport.class, STATEPOP); // Backed by File
-        final URL url3 = ShapeTestData.url(AbstractTestCaseSupport.class, STATEPOP_IDX);
+        final URL url2 = TestData.url(AbstractTestCaseSupport.class, STATEPOP); // Backed by File
+        final URL url3 = TestData.url(AbstractTestCaseSupport.class, STATEPOP_IDX);
         final ShapefileReader reader1 = new ShapefileReader(new ShpFiles(url1),
                 false, false, true);
         final ShapefileReader reader2 = new ShapefileReader(new ShpFiles(url2),
@@ -178,7 +179,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     }
 
     public void testDuplicateColumnNames() throws Exception {
-        File file = ShapeTestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
+        File file = TestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
         SimpleFeatureType schema = (SimpleFeatureType) dataStore.getFeatureType(dataStore.getNames().iterator().next());
 
@@ -203,7 +204,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
             }
             copyShapefiles(STATEPOP);
             reader.close();
-            c2 = ShapeTestData.url(AbstractTestCaseSupport.class, STATEPOP);
+            c2 = TestData.url(AbstractTestCaseSupport.class, STATEPOP);
             reader = new ShapefileReader(new ShpFiles(c2), false, false, true);
             for (int i = 0, ii = offsets.size(); i < ii; i++) {
                 reader.shapeAt(((Integer) offsets.get(i)).intValue());

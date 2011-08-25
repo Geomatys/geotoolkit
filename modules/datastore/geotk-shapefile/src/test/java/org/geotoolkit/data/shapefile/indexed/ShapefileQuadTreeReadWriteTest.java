@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
 /**
@@ -99,7 +100,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     public void testWriteTwice() throws Exception {
         copyShapefiles("shapes/stream.shp");
         ShapefileDataStoreFactory fac = new ShapefileDataStoreFactory();
-        DataStore s1 = createDataStore(fac, ShapeTestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
+        DataStore s1 = createDataStore(fac, TestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         Name typeName = s1.getNames().iterator().next();
         SimpleFeatureType type = (SimpleFeatureType) s1.getFeatureType(typeName);
         FeatureCollection<SimpleFeature> one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));

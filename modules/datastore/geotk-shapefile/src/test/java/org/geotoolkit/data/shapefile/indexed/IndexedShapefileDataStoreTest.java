@@ -76,6 +76,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
 /**
@@ -169,7 +170,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     public void testSpacesInPath() throws Exception {
-        URL u = ShapeTestData.url(AbstractTestCaseSupport.class, "folder with spaces/pointtest.shp");
+        URL u = TestData.url(AbstractTestCaseSupport.class, "folder with spaces/pointtest.shp");
         File f = new File(URLDecoder.decode(u.getFile(), "UTF-8"));
         assertTrue(f.exists());
 

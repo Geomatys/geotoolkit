@@ -18,7 +18,6 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
+import org.geotoolkit.test.TestData;
 
 /**
  * @module pending
@@ -96,7 +96,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
             final boolean createIndex) throws Exception {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         Map map = new HashMap();
-        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(AbstractTestCaseSupport.class,
+        map.put(ShapefileDataStoreFactory.URLP.getName().toString(), TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
         map.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(),
                 createIndex ? Boolean.TRUE : Boolean.FALSE);
@@ -176,7 +176,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      */
     public void testCreateDataStoreURL() throws DataStoreException,IOException {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
-        DataStore ds = factory.createDataStore(ShapeTestData.url(AbstractTestCaseSupport.class,
+        DataStore ds = factory.createDataStore(TestData.url(AbstractTestCaseSupport.class,
                 IndexedShapefileDataStoreTest.STATE_POP));
         testDataStore(IndexType.QIX, true, (IndexedShapefileDataStore) ds);
     }

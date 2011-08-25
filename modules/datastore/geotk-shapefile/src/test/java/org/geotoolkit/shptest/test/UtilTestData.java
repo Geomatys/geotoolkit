@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.shptest.test;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 
@@ -57,7 +56,7 @@ import java.util.logging.Logger;
  * @author Martin Desruisseaux
  *
  */
-public class UtilTestData extends org.geotoolkit.test.TestData {
+public class UtilTestData {
     /**
      * The {@linkplain System#getProperty(String) system property} key for more extensive test
      * suite. The value for this key is returned by the {@link #isExtensiveTest} method. Some
@@ -158,13 +157,4 @@ public class UtilTestData extends org.geotoolkit.test.TestData {
         return getBoolean(INTERACTIVE_TEST_KEY);
     }
 
-    /**
-     * Requests that the file or directory denoted by the specified
-     * pathname be deleted when the virtual machine terminates.
-     *
-     * @param file The file to delete on exit.
-     */
-    protected static void deleteOnExit(final File file) {
-        deleteOnExit(file, true);
-    }
 }
