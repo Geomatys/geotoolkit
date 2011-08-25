@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
+import org.opengis.test.SupportedOperation;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.TestSuite;
 
@@ -45,7 +46,6 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.util.logging.Logging;
 
-import static org.junit.Assert.*;
 import static org.opengis.test.CalculationType.*;
 import static org.opengis.test.ToleranceModifiers.*;
 import static org.geotoolkit.referencing.IdentifiedObjects.*;
@@ -80,7 +80,8 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
      */
     private static final Properties CONFIGURATION = new Properties();
     static {
-        CONFIGURATION.put("isUnofficialEpsgSupported", "false");
+        SupportedOperation.unsupported(CONFIGURATION,
+                SupportedOperation.UNOFFICIAL_EPSG_CODES);
     }
 
     /**
@@ -133,7 +134,6 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
      */
     @Override
     public Properties configuration(final Factory... factories) {
-        assertTrue(ALL_DISABLED.keySet().containsAll(CONFIGURATION.keySet()));
         return CONFIGURATION;
     }
 
