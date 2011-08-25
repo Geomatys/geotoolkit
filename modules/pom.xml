@@ -114,6 +114,7 @@
     <module>display</module>
     <module>jaxb-xml-binding</module>
     <module>clients</module>
+    <module>interop</module>
   </modules>
 
 
