@@ -186,7 +186,7 @@ public final strictfp class TestData implements Runnable {
         final String prefix = (split < 0) ? name  : name.substring(0,split);
         final String suffix = (split < 0) ? "tmp" : name.substring(split+1);
         final File tmp = File.createTempFile(prefix, '.' + suffix, testData);
-        deleteOnExit(tmp);
+        deleteOnExit(tmp, true);
         return tmp;
     }
 
@@ -412,16 +412,6 @@ public final strictfp class TestData implements Runnable {
     }
 
     /**
-     * Requests that the file or directory denoted by the specified
-     * pathname be deleted when the virtual machine terminates.
-     *
-     * @param file The file to delete on exit.
-     */
-    private static void deleteOnExit(final File file) {
-        deleteOnExit(file, true);
-    }
-
-    /**
      * Requests that the file or directory denoted by the specified pathname be deleted
      * when the virtual machine terminates. This method can optionally delete the file
      * only if it has been modified, thus giving a chance for test suites to copy their
@@ -429,12 +419,11 @@ public final strictfp class TestData implements Runnable {
      *
      * @param file The file to delete.
      * @param force If {@code true}, delete the file in all cases. If {@code false},
-     *        delete the file if and only if it has been modified. The default value
-     *        if {@code true}.
+     *        delete the file if and only if it has been modified.
      *
      * @since 2.4
      */
-    protected static void deleteOnExit(final File file, final boolean force) {
+    public static void deleteOnExit(final File file, final boolean force) {
         if (force) {
             file.deleteOnExit();
         }
