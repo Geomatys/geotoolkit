@@ -125,6 +125,12 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-sld</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
 
     <!-- Additional swing componants -->

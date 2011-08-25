@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import org.opengis.util.InternationalString;
+import org.opengis.style.Description;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
@@ -116,4 +118,30 @@ public abstract class StyleElementEditor<T> extends JPanel {
         return create();
     }
 
+    protected static String descriptionTitleText(final Description desc){
+        if(desc == null){
+            return "";
+        }else{
+            final InternationalString str = desc.getTitle();
+            if(str != null){
+                return str.toString();
+            }else{
+                return "";
+            }
+        }
+    }
+    
+    protected static String descriptionAbstractText(final Description desc){
+        if(desc == null){
+            return "";
+        }else{
+            final InternationalString str = desc.getAbstract();
+            if(str != null){
+                return str.toString();
+            }else{
+                return "";
+            }
+        }
+    }
+    
 }

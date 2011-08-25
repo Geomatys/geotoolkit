@@ -71,7 +71,9 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.jdesktop.swingx.JXTree;
 
+import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
+import org.opengis.util.InternationalString;
 
 /**
  *
@@ -279,15 +281,15 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
                 if (val instanceof MutableStyle) {
                     final MutableStyle style = (MutableStyle) val;
-                    lbl.setText(style.getDescription().getTitle().toString());
+                    lbl.setText(text(style.getDescription()));
                     lbl.setIcon(ICON_STYLE);
                 } else if (val instanceof MutableFeatureTypeStyle) {
                     final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) val;
-                    lbl.setText(fts.getDescription().getTitle().toString());
+                    lbl.setText(text(fts.getDescription()));
                     lbl.setIcon(ICON_FTS);
                 } else if (val instanceof MutableRule) {
                     final MutableRule r = (MutableRule) val;
-                    lbl.setText(r.getDescription().getTitle().toString());
+                    lbl.setText(text(r.getDescription()));
                     lbl.setIcon(ICON_RULE);
                 } else if (val instanceof Symbolizer) {
                     final Symbolizer symb = (Symbolizer) val;
@@ -299,6 +301,19 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                 }
             }
             return comp;
+        }
+        
+        private String text(Description desc){
+            if(desc == null){
+                return "";
+            }else{
+                final InternationalString str = desc.getTitle();
+                if(str != null){
+                    return str.toString();
+                }else{
+                    return "";
+                }
+            }
         }
     }
 

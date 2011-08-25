@@ -296,8 +296,8 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         this.rule = target;
         if (rule != null) {
             jtf_name.setText(rule.getName());
-            jtf_title.setText(rule.getDescription().getTitle().toString());
-            jtf_abstract.setText(rule.getDescription().getAbstract().toString());
+            jtf_title.setText(descriptionTitleText(rule.getDescription()));
+            jtf_abstract.setText(descriptionAbstractText(rule.getDescription()));
             jck_else.setSelected(rule.isElseFilter());
             
             jsp_maxscale.setValue(rule.getMaxScaleDenominator());
