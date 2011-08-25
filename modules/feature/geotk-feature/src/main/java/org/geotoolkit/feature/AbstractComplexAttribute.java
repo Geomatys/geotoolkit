@@ -113,7 +113,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
         //TODO find a faster way, hashmap ?
         for(Property prop : getProperties()){
-            if(prop.getName().equals(name)){
+            if(name.equals(prop.getName())){
                 return prop;
             }
         }
