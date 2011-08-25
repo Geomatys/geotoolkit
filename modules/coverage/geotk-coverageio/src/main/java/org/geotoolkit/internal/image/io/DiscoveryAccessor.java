@@ -76,7 +76,7 @@ public class DiscoveryAccessor {
     }
 
     /**
-     * Optionnaly replaces the given number by something nicer to display.
+     * Optionally replaces the given number by something nicer to display.
      * The default implementation returns the number unchanged. Subclasses
      * can override this method if they want to display a slightly different value.
      *

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.util.Map;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -43,7 +44,6 @@ import ucar.nc2.dataset.EnhanceScaleMissing;
 import ucar.nc2.dataset.Enhancements;
 import ucar.ma2.InvalidRangeException;
 
-import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -56,14 +56,10 @@ import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.internal.image.io.Warnings;
-import org.geotoolkit.internal.image.io.GDAL;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
 
@@ -169,14 +165,14 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @param variables The variables for which to read metadata.
      * @throws IOException If an I/O operation was needed and failed.
      */
-    public NetcdfMetadata(final ImageReader reader, final NetcdfDataset file,
+    public NetcdfMetadata(final NetcdfImageReader reader, final NetcdfDataset file,
             final VariableIF... variables) throws IOException
     {
         super(SpatialMetadataFormat.IMAGE, reader, null);
-        nativeMetadataFormatName = NATIVE_FORMAT;
+        nativeMetadataFormatName  = NATIVE_FORMAT;
+        GDALGridMapping  gdal     = null;
+        CoordinateSystem netcdfCS = null;
         for (final VariableIF variable : variables) {
-            CoordinateReferenceSystem crs = null;
-            AffineTransform gridToCRS = null;
             if (file != null) {
                 /*
                  * Before to rely on CF convention, check for GDAL convention. GDAL declares
@@ -185,35 +181,31 @@ final class NetcdfMetadata extends SpatialMetadata {
                  * to create CRS from CF convention in the next block below. This allows us
                  * to emmit a warning in case of mismatch.
                  */
-                Attribute attribute = variable.findAttributeIgnoreCase("grid_mapping");
-                if (attribute != null) {
-                    final String name = attribute.getStringValue();
-                    if (name != null) {
+                final String name = getStringValue(variable, "grid_mapping");
+                if (name != null) {
+                    final Map<String,GDALGridMapping> gridMapping = reader.getGridMapping();
+                    gdal = gridMapping.get(name);
+                    if (gdal == null) {
                         final Variable mapping = file.findVariable(name);
-                        if (mapping != null) {
-                            crs = parseWKT(mapping, "spatial_ref");
-                            attribute = mapping.findAttributeIgnoreCase("GeoTransform");
-                            if (attribute != null) {
-                                final String value = attribute.getStringValue();
-                                if (value != null) {
-                                    final double[] coefficients = Strings.parseDoubles(value, ' ');
-                                    if (coefficients.length == 6) {
-                                        gridToCRS = GDAL.getGeoTransform(coefficients);
-                                    } else {
-                                        // TODO: log a warning
-                                    }
-                                }
-                            }
+                        final String wkt = getStringValue(mapping, "spatial_ref");
+                        final String gtr = getStringValue(mapping, "GeoTransform");
+                        if (wkt != null || gtr != null) {
+                            gdal = new GDALGridMapping(this, wkt, gtr);
+                            gridMapping.put(name, gdal);
                         }
                     }
                 }
             }
             /*
              * Before to rely on CF convention, check for ESRI convention. This is the same
-             * principle than the above check for GDAL convention, but simplier.
+             * principle than the above check for GDAL convention, but simplier. If both ESRI
+             * and GDAL attributes are defined, then the GDAL attributes will have precedence.
              */
-            if (crs == null) {
-                crs = parseWKT(variable, "ESRI_pe_string");
+            if (gdal == null) {
+                final String wkt = getStringValue(variable, "ESRI_pe_string");
+                if (wkt != null) {
+                    gdal = new GDALGridMapping(this, wkt, null);
+                }
             }
             /*
              * Now check for CF-convention. If a CRS is found from CF convention, we will check
@@ -224,37 +216,33 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (variable instanceof Enhancements) {
                 final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
                 if (!isNullOrEmpty(systems)) {
-                    setCoordinateSystem(file, systems.get(0), crs, gridToCRS);
-                    crs = null;
+                    netcdfCS = systems.get(0);
                     break; // Infers the CRS only from the first variable having such CRS.
                 }
             }
-            if (crs != null) {
-                setCoordinateSystem(file, null, crs, gridToCRS);
+            if (gdal != null) {
                 break;
             }
         }
+        setCoordinateSystem(file, netcdfCS,
+                (gdal != null) ? gdal.crs : null,
+                (gdal != null) ? gdal.gridToCRS : null);
         addSampleDimension(variables);
         netcdf = variables;
     }
 
     /**
-     * Checks if the CRS is defined as a WKT string. This is not conform to CF
-     * convention, but ESRI does that.
+     * Returns the string value of the given variable, or {@code null} if none.
      *
-     * @param  variable The variable to look.
+     * @param  variable The variable to look, or {@code null} if none.
      * @param  attributeName The attribute to look for.
-     * @return The CRS if the attribute has been found and successfully parsed,
-     *         or {@code null} otherwise.
+     * @return The string value, or {@code null} if the variable or attribute was not found.
      */
-    private CoordinateReferenceSystem parseWKT(final VariableIF variable, final String attributeName) {
-        final Attribute attribute = variable.findAttributeIgnoreCase(attributeName);
-        if (attribute != null) {
-            final String wkt = attribute.getStringValue();
-            if (wkt != null) try {
-                return CRS.parseWKT(wkt);
-            } catch (FactoryException e) {
-                Warnings.log(this, Level.WARNING, NetcdfMetadata.class, "parseWKT", e);
+    private static String getStringValue(final VariableIF variable, final String attributeName) {
+        if (variable != null) {
+            final Attribute attribute = variable.findAttributeIgnoreCase(attributeName);
+            if (attribute != null) {
+                return attribute.getStringValue();
             }
         }
         return null;

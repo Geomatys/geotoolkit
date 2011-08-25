@@ -21,9 +21,16 @@ import java.net.URI;
 import java.util.List;
 import java.io.File;
 import java.io.IOException;
+import java.awt.geom.Point2D;
+
+import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.geometry.Envelope2D;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -97,13 +104,32 @@ public final strictfp class VariousNetcdfFormatTest extends ImageTestBase {
      * Tests reading a Landsat file converted to NetCDF by GDAL.
      *
      * @throws IOException if an error occurred while reading the file.
+     * @throws CoverageStoreException Should never happen.
      */
     @Test
-    public void testLandsat() throws IOException {
+    public void testLandsat() throws IOException, CoverageStoreException {
         final NetcdfImageReader reader = new NetcdfImageReader(null);
         reader.setInput(getLocallyInstalledFile("LANDSAT/dem20_r500_3112.nc"));
         final SpatialMetadata metadata = reader.getImageMetadata(0);
-        // System.out.println(metadata);
-        reader.dispose();
+        final String asTree = metadata.toString();
+        /*
+         * Tests only some metadata element (we don't test the full tree).
+         */
+        assertTrue(asTree, asTree.contains("origin=\"539144.0 -3825710.0\"")); // RectifiedGridDomain
+        assertTrue(asTree, asTree.contains("values=\"500.0 0.0\""));           // Offset vector 1
+        assertTrue(asTree, asTree.contains("values=\"0.0 -500.0\""));          // Offset vector 2
+        assertTrue(asTree, asTree.contains("name=\"GDA94 / Geoscience Australia Lambert\"")); // CRS
+        assertTrue(asTree, asTree.contains("fillSampleValues=\"-1.0E10\""));
+        /*
+         * Tests integration with CoverageReader, basically ensuring that it can
+         * create the grid geometry and that the envelope is raisonable.
+         */
+        final ImageCoverageReader cr = new ImageCoverageReader();
+        cr.setInput(reader);
+        final GridGeometry2D grid = cr.getGridGeometry(0);
+        final Envelope2D envelope = grid.getEnvelope2D();
+        assertTrue(envelope.contains(new Point2D.Double(998394.0, -4154710.0)));
+        assertTrue(grid.getCoordinateReferenceSystem2D() instanceof ProjectedCRS);
+        cr.dispose(); // Dispose also the NetcdfImageReader.
     }
 }

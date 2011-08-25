@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -73,6 +74,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
@@ -143,7 +145,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.16
+ * @version 3.19
  *
  * @see org.geotoolkit.referencing.adapters.NetcdfCRS
  *
@@ -231,6 +233,16 @@ public class NetcdfImageReader extends FileImageReader implements
      * for the current dataset.
      */
     private boolean metadataLoaded;
+
+    /**
+     * The CRS and <cite>grid to CRS</cite> transform provided by GDAL in the {@code spatial_ref_sys}
+     * and {@code GeoTransform} variable attributes. Those attributes are not conform to the CF
+     * conventions and don't seem to be recognized by the UCAR NetCDF library version 4.2.26.
+     *
+     * @see #getGridMapping()
+     */
+    @Workaround(library="NetCDF", version="4.2.26")
+    private transient Map<String,GDALGridMapping> gridMapping;
 
     /**
      * Constructs a new NetCDF reader.
@@ -715,6 +727,17 @@ public class NetcdfImageReader extends FileImageReader implements
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the map containing the CRS and <cite>grid to CRS</cite> transform provided by GDAL.
+     * This method is for use by {@link NetcdfMetadata} only.
+     */
+    final Map<String,GDALGridMapping> getGridMapping() {
+        if (gridMapping == null) {
+            gridMapping = new HashMap<String,GDALGridMapping>();
+        }
+        return gridMapping;
     }
 
     /**
@@ -1239,6 +1262,7 @@ public class NetcdfImageReader extends FileImageReader implements
     @Override
     protected void close() throws IOException {
         metadataLoaded = false;
+        gridMapping    = null;
         lastError      = null;
         variable       = null;
         variableName   = null;
