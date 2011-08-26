@@ -59,11 +59,11 @@ public final strictfp class KrovakTest extends ProjectionTestBase {
         param.parameter("semi_major").setValue(6377397.155);
         param.parameter("semi_minor").setValue(6377397.155 * (1 - 1/299.15281));
 
-        tolerance = 1E-2;
+        tolerance = 1E-3;
         transform = Krovak.create(PARAMETERS, param);
         validate();
 
-        final double delta = toRadians((4.0 / 60) / 1852); // Approximatively 4 metres.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
 
         verifyDerivative(toRadians( 0), toRadians( 0));

@@ -57,8 +57,8 @@ public final strictfp class ObliqueStereographicTest extends ProjectionTestBase 
      */
     @Test
     public void testDerivative() throws FactoryException, TransformException {
-        tolerance = 1E-4;
-        final double delta = toRadians(1.0 / (60*1852)); // Approximatively one metre.
+        tolerance = 1E-9;
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
 
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Oblique Stereographic");

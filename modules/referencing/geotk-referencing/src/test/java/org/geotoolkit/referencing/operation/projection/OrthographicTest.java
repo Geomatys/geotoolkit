@@ -81,7 +81,7 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
 
         // Test the derivative on the same MathTransform than above.
         tolerance = DERIVATIVE_TOLERANCE;
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians(5), toRadians(3));
     }
@@ -108,7 +108,7 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
 
             // Test the derivative on the same MathTransform than above.
             tolerance = DERIVATIVE_TOLERANCE;
-            final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+            final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
             derivativeDeltas = new double[] {delta, delta};
             verifyDerivative(toRadians(5), toRadians(85));
         } while ((south = !south) == true);
@@ -127,7 +127,7 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
         transform = create(10, 60);
         validate();
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians(5), toRadians(30));
     }

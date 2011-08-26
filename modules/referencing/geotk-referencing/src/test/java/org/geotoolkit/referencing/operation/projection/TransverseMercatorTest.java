@@ -120,7 +120,7 @@ public final strictfp class TransverseMercatorTest extends ProjectionTestBase {
         assertTrue(isSpherical());
         validate();
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians( 0), toRadians( 0));
         verifyDerivative(toRadians(-3), toRadians(30));
@@ -136,12 +136,12 @@ public final strictfp class TransverseMercatorTest extends ProjectionTestBase {
      */
     @Test
     public void testEllipsoidalDerivative() throws TransformException {
-        tolerance = 1E-7;
+        tolerance = 1E-9;
         transform = create(true);
         assertFalse(isSpherical());
         validate();
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians( 0), toRadians( 0));
         verifyDerivative(toRadians(-3), toRadians(30));

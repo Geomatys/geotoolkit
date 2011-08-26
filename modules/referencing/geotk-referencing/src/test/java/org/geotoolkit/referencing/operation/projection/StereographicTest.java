@@ -112,7 +112,7 @@ public final strictfp class StereographicTest extends ProjectionTestBase {
     @Test
     public void testSphericalDerivative() throws TransformException {
         tolerance = 1E-9;
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
 
         //test derivée sphérique
         transform = create(false);
@@ -131,7 +131,7 @@ public final strictfp class StereographicTest extends ProjectionTestBase {
     @Test
     public void testEllipsoidalDerivative() throws TransformException {
         tolerance = 1E-9;
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
 
         //test derivée ellipsoidalle
         transform = create(true);

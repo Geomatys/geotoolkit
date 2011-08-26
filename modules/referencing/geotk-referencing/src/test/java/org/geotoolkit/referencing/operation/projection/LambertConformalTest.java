@@ -200,7 +200,7 @@ public final strictfp class LambertConformalTest extends ProjectionTestBase {
         assertTrue(isSpherical());
         validate();
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians( 0), toRadians( 0));
         verifyDerivative(toRadians(15), toRadians(30));

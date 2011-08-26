@@ -59,7 +59,7 @@ public final strictfp class PolarStereographicTest extends ProjectionTestBase {
      */
     @Test
     public void testSphericalDerivative() throws TransformException, FactoryException {
-        tolerance = 1E-2;
+        tolerance = 1E-9;
 
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Polar Stereographic (variant A)");
         parameters.parameter("semi-minor axis").setValue(6378137.0);
@@ -68,7 +68,7 @@ public final strictfp class PolarStereographicTest extends ProjectionTestBase {
         assertTrue(isSpherical());
         validate();
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians(-70), toRadians(90));
         verifyDerivative(toRadians(-60), toRadians(85));
@@ -87,7 +87,7 @@ public final strictfp class PolarStereographicTest extends ProjectionTestBase {
      */
     @Test
     public void testEllipsoidalDerivative() throws TransformException, FactoryException {
-        tolerance = 2E-2;
+        tolerance = 1E-9;
 
         final ParameterValueGroup parameters = mtFactory.getDefaultParameters("Polar Stereographic (variant A)");
         parameters.parameter("semi-major axis").setValue(6378137.0);
@@ -96,7 +96,7 @@ public final strictfp class PolarStereographicTest extends ProjectionTestBase {
         assertFalse(isSpherical());
         validate();
 
-        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final double delta = toRadians(100.0 / 60) / 1852; // Approximatively 100 metres.
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians(-70), toRadians(90));
         verifyDerivative(toRadians(-60), toRadians(85));
