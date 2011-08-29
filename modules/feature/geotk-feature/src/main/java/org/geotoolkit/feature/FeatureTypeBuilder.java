@@ -368,22 +368,55 @@ public class FeatureTypeBuilder {
         return bindings.get(binding);
     }
 
-    public void add(final String name, final Class binding){
-        add(DefaultName.valueOf(name),binding);
+    /**
+     * 
+     * @param name
+     * @param binding
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final String name, final Class binding){
+        return add(DefaultName.valueOf(name),binding);
     }
 
-    public void add(final String name, final Class binding, final int min, final int max,
+    /**
+     * 
+     * @param name
+     * @param binding
+     * @param min
+     * @param max
+     * @param nillable
+     * @param userData
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final String name, final Class binding, final int min, final int max,
             final boolean nillable, final Map<Object,Object> userData) {
-        add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
+        return add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
+    }
+    /**
+     * 
+     * @param name
+     * @param binding
+     * @param crs
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final String name, final Class binding, final CoordinateReferenceSystem crs){
+        return add(DefaultName.valueOf(name),binding,crs);
     }
 
-    public void add(final String name, final Class binding, final CoordinateReferenceSystem crs){
-        add(DefaultName.valueOf(name),binding,crs);
-    }
-
-    public void add(final String name, final Class binding, final CoordinateReferenceSystem crs,
+    /**
+     * 
+     * @param name
+     * @param binding
+     * @param crs
+     * @param min
+     * @param max
+     * @param nillable
+     * @param userData
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final String name, final Class binding, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
-        add(DefaultName.valueOf(name),binding,crs,min,max,nillable,userData);
+        return add(DefaultName.valueOf(name),binding,crs,min,max,nillable,userData);
     }
 
     /**
@@ -399,14 +432,25 @@ public class FeatureTypeBuilder {
      * </p>
      * @param name The name of the attribute.
      * @param binding The class the attribute is bound to.
+     * @return the created AttributeDescriptor
      */
-    public void add(final Name name, final Class binding) {
-        add(name,binding,1,1,true,null);
+    public AttributeDescriptor add(final Name name, final Class binding) {
+        return add(name,binding,1,1,true,null);
     }
 
-    public void add(final Name name, final Class binding, final int min, final int max,
+    /**
+     * 
+     * @param name
+     * @param binding
+     * @param min
+     * @param max
+     * @param nillable
+     * @param userData
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final Name name, final Class binding, final int min, final int max,
             final boolean nillable, final Map<Object,Object> userData) {
-        add(name,binding,null,min,max,nillable,userData);
+        return add(name,binding,null,min,max,nillable,userData);
     }
 
     /**
@@ -418,9 +462,10 @@ public class FeatureTypeBuilder {
      * @param name The name of the attribute.
      * @param binding The class that the attribute is bound to.
      * @param srs The srs of of the geometry, can not be <code>null</code>.
+     * @return the created AttributeDescriptor
      */
-    public void add(final Name name, final Class binding, final String srs) {
-        add(name, binding, decode(srs));
+    public AttributeDescriptor add(final Name name, final Class binding, final String srs) {
+        return add(name, binding, decode(srs));
     }
 
     /**
@@ -432,9 +477,10 @@ public class FeatureTypeBuilder {
      * @param name The name of the attribute.
      * @param binding The class that the attribute is bound to.
      * @param srid The srid of of the geometry, may be <code>null</code>.
+     * @return the created AttributeDescriptor
      */
-    public void add(final Name name, final Class binding, final Integer srid) {
-        add(name, binding, decode("EPSG:" + srid));
+    public AttributeDescriptor add(final Name name, final Class binding, final Integer srid) {
+        return add(name, binding, decode("EPSG:" + srid));
     }
 
     /**
@@ -446,21 +492,39 @@ public class FeatureTypeBuilder {
      * @param name The name of the attribute.
      * @param binding The class that the attribute is bound to.
      * @param crs The crs of of the geometry, can not be <code>null</code>.
+     * @return the created AttributeDescriptor
      */
-    public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs) {
-        add(name,binding,crs,1,1,true,null);
+    public AttributeDescriptor add(final Name name, final Class binding, final CoordinateReferenceSystem crs) {
+        return add(name,binding,crs,1,1,true,null);
     }
 
-    public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
+    /**
+     * 
+     * @param name
+     * @param binding
+     * @param crs
+     * @param min
+     * @param max
+     * @param nillable
+     * @param userData
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
         final AttributeDescriptor desc = attributeDescBuilder.create(name, binding, crs, min, max, nillable, userData);
         add(desc);
+        return desc;
     }
 
-    public void add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
+    /**
+     * 
+     * @return the created AttributeDescriptor
+     */
+    public AttributeDescriptor add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         final AttributeDescriptor desc = attributeDescBuilder.create(at, name, crs, min, max, nillable, userData);
         add(desc);
+        return desc;
     }
 
     /**
