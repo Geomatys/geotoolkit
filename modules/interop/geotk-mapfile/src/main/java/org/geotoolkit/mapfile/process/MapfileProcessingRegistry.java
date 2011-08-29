@@ -47,7 +47,8 @@ public class MapfileProcessingRegistry extends AbstractProcessingRegistry{
     }
 
     public MapfileProcessingRegistry() {
-        super(MapfileToSLDDescriptor.INSTANCE);
+        super(MapfileToSLDDescriptor.INSTANCE,
+              MapfileFilterToOGCFilterDescriptor.INSTANCE);
     }
     
     @Override

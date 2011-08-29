@@ -35,6 +35,7 @@ import org.geotoolkit.util.Strings;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
@@ -105,7 +106,7 @@ public class MapfileReader {
             value = line.substring(spaceIndex);
         }
         
-        if(typeName.equals("INCLUDE")){
+        if(typeName.equalsIgnoreCase("INCLUDE")){
             //TODO open the related file and append all string to it
         }
                 
@@ -118,7 +119,7 @@ public class MapfileReader {
             //check if we are in a parent, in this case use the descriptor
             PropertyDescriptor desc = null;
             if(parentType != null){
-                desc = parentType.getDescriptor(typeName);
+                desc = getDescriptorIgnoreCase(parentType, typeName);
             }
             
             final ComplexAttribute f;
@@ -152,7 +153,7 @@ public class MapfileReader {
             }
             
             //it's a single property from parent type
-            final PropertyDescriptor desc = parentType.getDescriptor(typeName);
+            final PropertyDescriptor desc = getDescriptorIgnoreCase(parentType, typeName);
             if(desc != null){
                 result = FeatureUtilities.defaultProperty(desc);
                 result.setValue(convertType(value, desc));
@@ -238,6 +239,22 @@ public class MapfileReader {
         }
         
         return Converters.convert(value, clazz);
+    }
+    
+    private static PropertyDescriptor getDescriptorIgnoreCase(final ComplexType parent, final String name){
+        
+        PropertyDescriptor desc = parent.getDescriptor(name);
+        if(desc == null){
+            //search ignoring case
+            for(PropertyDescriptor d : parent.getDescriptors()){
+                if(d.getName().getLocalPart().equalsIgnoreCase(name)){
+                    desc = d;
+                    break;
+                }
+            }
+        }
+        
+        return desc;
     }
     
 }

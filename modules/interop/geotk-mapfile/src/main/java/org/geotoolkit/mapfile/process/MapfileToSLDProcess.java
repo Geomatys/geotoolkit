@@ -16,36 +16,20 @@
  */
 package org.geotoolkit.mapfile.process;
 
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.Graphic;
-import org.opengis.style.Mark;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.AnchorPoint;
-import org.opengis.style.TextSymbolizer;
-import org.opengis.style.Font;
-import org.opengis.style.Halo;
-import org.opengis.style.LabelPlacement;
-import org.opengis.filter.Filter;
 import java.awt.Color;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
-import org.opengis.filter.expression.Expression;
-import org.opengis.style.Description;
-import org.opengis.style.Displacement;
-import org.opengis.style.Fill;
-import org.opengis.style.PolygonSymbolizer;
-import org.opengis.style.Stroke;
 import java.util.List;
-import org.opengis.feature.type.PropertyDescriptor;
 import java.util.Collection;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import javax.xml.bind.JAXBException;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.mapfile.MapfileReader;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableNamedLayer;
@@ -59,14 +43,31 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.Graphic;
+import org.opengis.style.Mark;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.AnchorPoint;
+import org.opengis.style.TextSymbolizer;
+import org.opengis.style.Font;
+import org.opengis.style.Halo;
+import org.opengis.style.LabelPlacement;
+import org.opengis.style.Description;
+import org.opengis.style.Displacement;
+import org.opengis.style.Fill;
+import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.Stroke;
+import org.opengis.style.LineSymbolizer;
+import org.opengis.style.Symbolizer;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.Feature;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.PropertyName;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.mapfile.process.MapfileToSLDDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
@@ -74,7 +75,7 @@ import static org.geotoolkit.mapfile.MapfileTypes.*;
 import static org.geotoolkit.style.StyleConstants.*;
 
 /**
- * @author Quentin Boileau (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class MapfileToSLDProcess extends AbstractProcess{
@@ -94,7 +95,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
         final File mapfile  = value(IN_FILE, inputParameters);
         final File sldfile      = value(IN_OUTPUT, inputParameters);
-       
+        
         final MapfileReader reader = new MapfileReader();
         reader.setInput(mapfile);
         try {
@@ -120,7 +121,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return outputParameters;
     }
     
-    private static void convert(final MutableStyledLayerDescriptor sld, final Feature feature){
+    private void convert(final MutableStyledLayerDescriptor sld, final Feature feature) throws ProcessException{
         
         final Collection<Property> layers = feature.getProperties(MAP_LAYER.getName());
         
@@ -154,7 +155,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
     }
     
-    private static <T> T getValue(final ComplexAttribute cpx, final PropertyDescriptor desc, final Class<T> clazz){
+    private <T> T getValue(final ComplexAttribute cpx, final PropertyDescriptor desc, final Class<T> clazz){
         final Property prop = cpx.getProperty(desc.getName());
         if(prop != null){
             return (T)prop.getValue();
@@ -162,8 +163,8 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return null;
     }
     
-    private static MutableRule createRule(final ComplexAttribute mflayer, 
-            final Double minScale, final Double maxscale, final ComplexAttribute clazz){
+    private MutableRule createRule(final ComplexAttribute mflayer, 
+            final Double minScale, final Double maxscale, final ComplexAttribute clazz) throws ProcessException{
         
         //mapfile type is similar to se symbolizer type
         final String type = getValue(mflayer,LAYER_TYPE,String.class);
@@ -178,7 +179,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final String classExpression = getValue(clazz,CLASS_EXPRESSION,String.class);
         if(classItem != null && classExpression != null){
             // equivalant to OGC filter : PropertyEquals(name,value)
-            final Filter filter = FF.equals(classItem, FF.literal(classExpression));
+            final Filter filter = toFilter(classItem, classExpression);
             rule.setFilter(filter);
         }else{
             //filter
@@ -211,7 +212,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return rule;
     }
     
-    private static List<Symbolizer> createPolygonSymbolizer(final ComplexAttribute style){
+    private List<Symbolizer> createPolygonSymbolizer(final ComplexAttribute style){
         
         Expression expColor = getValue(style, STYLE_COLOR, Expression.class);
         Expression expOpacity = getValue(style, STYLE_WIDTH, Expression.class);
@@ -250,7 +251,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
     
-    private static List<Symbolizer> createLineSymbolizer(final ComplexAttribute style){
+    private List<Symbolizer> createLineSymbolizer(final ComplexAttribute style){
         
         Expression expColor = getValue(style, STYLE_COLOR, Expression.class);
         Expression expWidth = getValue(style, STYLE_WIDTH, Expression.class);
@@ -285,7 +286,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
     
-    private static List<Symbolizer> createTextSymbolizer(final PropertyName label, final ComplexAttribute lblStyle){
+    private List<Symbolizer> createTextSymbolizer(final PropertyName label, final ComplexAttribute lblStyle){
                 
         Expression expLabelColor = getValue(lblStyle, LABEL_COLOR, Expression.class);
         Expression expLabelSize  = getValue(lblStyle, LABEL_SIZE, Expression.class);
@@ -331,9 +332,9 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
     
-    private static List<Symbolizer> createPointSymbolizer(final ComplexAttribute style){
+    private List<Symbolizer> createPointSymbolizer(final ComplexAttribute style){
         
-        String symbol = getValue(style, STYLE_SYMBOL, String.class);
+        final String symbolName = getValue(style, STYLE_SYMBOL, String.class);
         Expression expSize = getValue(style, STYLE_SIZE, Expression.class);
         Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
         Expression expFillColor = getValue(style, STYLE_COLOR, Expression.class);
@@ -358,12 +359,39 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
         final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
         
-        if(true){
+        final ComplexAttribute symbol = getSymbol(symbolName);
+        if(symbol == null){
+            //no symbol found for this name
             return symbolizers;
         }
         
-        //TODO
+        final Stroke stroke = SF.stroke(expStrokeColor, expStrokeWidth);
+        final Fill fill = SF.fill(expFillColor);
         
+        final String symbolTypeName = getValue(symbol, SYMBOL_TYPE, String.class);
+        
+        final Mark mark;
+        if("ellipse".equals(symbolTypeName)){
+            mark = SF.mark(MARK_CIRCLE, fill, stroke);
+        }else if("hatch".equals(symbolTypeName)){
+            //TODO
+            mark = SF.mark(MARK_SQUARE, fill, stroke);
+        }else if("pixmap".equals(symbolTypeName)){
+            //TODO
+            mark = SF.mark(MARK_SQUARE, fill, stroke);
+        }else if("simple".equals(symbolTypeName)){
+            //TODO
+            mark = SF.mark(MARK_SQUARE, fill, stroke);
+        }else if("truetype".equals(symbolTypeName)){
+            //TODO
+            mark = SF.mark(MARK_SQUARE, fill, stroke);
+        }else if("vector".equals(symbolTypeName)){
+            //TODO
+            mark = SF.mark(MARK_SQUARE, fill, stroke);
+        }else{
+            //can not build symbol
+            return symbolizers;
+        }
         
         
         //general informations
@@ -373,18 +401,14 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final Unit unit = NonSI.PIXEL;
 
         //the visual element
-        final Expression size = FF.literal(12);
         final Expression opacity = LITERAL_ONE_FLOAT;
-        final Expression rotation = LITERAL_ONE_FLOAT;
+        final Expression rotation = LITERAL_ZERO_FLOAT;
         final AnchorPoint anchor = DEFAULT_ANCHOR_POINT;
         final Displacement disp = DEFAULT_DISPLACEMENT;
 
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        final Stroke stroke = SF.stroke(Color.BLACK, 2);
-        final Fill fill = SF.fill(Color.RED);
-        final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
         symbols.add(mark);
-        final Graphic graphic = SF.graphic(symbols, opacity, size, rotation, anchor, disp);
+        final Graphic graphic = SF.graphic(symbols, opacity, expSize, rotation, anchor, disp);
 
         final PointSymbolizer symbolizer = SF.pointSymbolizer(name,geometry,desc,unit, graphic);
         symbolizers.add(symbolizer);
@@ -392,15 +416,38 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
     
+    /**
+     * 
+     * @param name : symbol name
+     * @return the symbol which has the given name 
+     */
     private ComplexAttribute getSymbol(final String name){
+        
+        if(name == null){
+            return null;
+        }
         
         final Collection<Property> symbols = mapfileFeature.getProperties(MAP_SYMBOL.getName());
         
         for(final Property p : symbols){
             final ComplexAttribute ca = (ComplexAttribute) p;
+            if(name.equals(ca.getProperty(SYMBOL_NAME.getName()).getValue())){
+                return ca;
+            }
         }        
         
         return null;
     }
     
+    private static Filter toFilter(Expression ref, String text) throws ProcessException{
+        final ProcessDescriptor desc = MapfileFilterToOGCFilterDescriptor.INSTANCE;
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_TEXT, input).setValue(text);
+        getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_REFERENCE, input).setValue(ref);
+        
+        final org.geotoolkit.process.Process process = desc.createProcess(input);        
+        final ParameterValueGroup output = process.call();
+        final Filter result = value(MapfileFilterToOGCFilterDescriptor.OUT_FILTER, output);
+        return result;
+    }
 }

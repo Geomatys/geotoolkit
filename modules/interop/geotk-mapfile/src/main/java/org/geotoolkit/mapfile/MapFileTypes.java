@@ -683,6 +683,7 @@ public final class MapfileTypes {
         SYMBOL_POINTS           = ftb.add(new DefaultName(NAMESPACE, "POINTS"),           String.class,0,1,false,null);
         SYMBOL_STYLE            = ftb.add(new DefaultName(NAMESPACE, "STYLE"),            String.class,0,1,false,deprecated());
         SYMBOL_TRANSPARENT      = ftb.add(new DefaultName(NAMESPACE, "TRANSPARENT"),      Integer.class,0,1,false,null);
+        /** [ellipse|hatch|pixmap|simple|truetype|vector] */
         SYMBOL_TYPE             = ftb.add(new DefaultName(NAMESPACE, "TYPE"),             String.class,0,1,false,null);
         SYMBOL = ftb.buildFeatureType();
         
@@ -739,7 +740,7 @@ public final class MapfileTypes {
     
     public static FeatureType getType(final String name){
         for(FeatureType ft : ALL_TYPES){
-            if(ft.getName().getLocalPart().equals(name)){
+            if(ft.getName().getLocalPart().equalsIgnoreCase(name)){
                 return ft;
             }
         }
