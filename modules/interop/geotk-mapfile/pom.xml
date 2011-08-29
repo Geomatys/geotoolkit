@@ -63,5 +63,15 @@
             <artifactId>geotk-processing-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-style</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-sld</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

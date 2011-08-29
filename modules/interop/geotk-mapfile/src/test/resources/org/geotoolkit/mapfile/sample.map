@@ -1,0 +1,75 @@
+MAP
+FONTSET "fonts.lst"
+IMAGETYPE png
+MAXSIZE 4000
+SIZE 800 800
+EXTENT -100 100 -50 50
+UNITS meters
+IMAGECOLOR 150 180 200
+WEB
+   METADATA
+      "ows_enable_request" "*"
+   END
+   IMAGEPATH "/opt/mapserver/htdocs/tmp/"
+   IMAGEURL "/tmp"
+END
+DEBUG 1
+CONFIG "MS_ERRORFILE" "stderr"
+CONFIG "PROJ_LIB" "/opt/mapserver/mapserver-utils-imposm-branch"
+PROJECTION
+   "init=epsg:3857"
+END
+LAYER
+   GROUP "default"
+   STATUS ON
+   MAXSCALEDENOM 99999999999
+   MINSCALEDENOM 30000
+   TYPE LINE
+   NAME "borders0"
+   PROJECTION
+     "+init=epsg:4326"
+   END
+   DATA "data/boundaries.shp"
+   CLASS
+      STYLE
+         WIDTH 0.5
+         COLOR "#CDCBC6"
+      END
+   END
+END
+LAYER
+   STATUS ON
+   GROUP "default"
+   TYPE ANNOTATION
+   CONNECTIONTYPE postgis
+   CONNECTION "host=server dbname=osm user=me password=secret port=5432"
+   NAME "places0"
+   MINSCALEDENOM 332808204
+   MAXSCALEDENOM 99999999999
+   DATA "geometry from (select * from osm_places)"
+   LABELITEM 'name'
+   CLASSITEM 'type'
+    CLASS
+        EXPRESSION 'continents'
+        LABEL
+            FONT scb
+            TYPE TRUETYPE
+            ENCODING "utf-8"
+            SIZE 8
+            COLOR 100 100 100
+            OUTLINECOLOR -1 -1 -1
+            OUTLINEWIDTH 1
+            BUFFER 4
+            PARTIALS FALSE
+            POSITION cc
+        END
+    END
+END
+
+SYMBOL
+    name "citycircle"
+    type ellipse
+    points 1 1 end
+    filled true
+END
+END

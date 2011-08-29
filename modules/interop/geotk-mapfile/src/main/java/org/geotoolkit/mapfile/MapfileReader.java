@@ -18,22 +18,29 @@ package org.geotoolkit.mapfile;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.UUID;
 
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.Strings;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
-import static org.geotoolkit.mapfile.MapFileTypes.*;
+import static org.geotoolkit.mapfile.MapfileTypes.*;
 
 /**
  * Read the given mapfile and return a feature which type is MapFileTypes.MAP.
@@ -42,13 +49,19 @@ import static org.geotoolkit.mapfile.MapFileTypes.*;
  */
 public class MapfileReader {
     
-    private File file = null;
+    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    
+    private Object in = null;
     
     public MapfileReader() {
     }
     
-    public void setInput(final File obj){
-        this.file = obj;
+    /**
+     * @param in : source, can be a File, String, URL or URI
+     */
+    public void setInput(final Object in){
+        this.in = in;
     }
     
     /**
@@ -57,9 +70,11 @@ public class MapfileReader {
      * @throws IOException 
      */
     public Feature read() throws IOException{
+        InputStream stream = IOUtilities.open(in);
+        
         LineNumberReader reader = null;
         try{
-            reader = new LineNumberReader(new FileReader(file));
+            reader = new LineNumberReader(new InputStreamReader(stream));
             return (Feature) readElement(null,reader,null);
         }finally{
             if(reader != null){
@@ -154,10 +169,10 @@ public class MapfileReader {
      * - Color [r] [g] [b]
      * - Point [x] [y]
      */
-    private static Object convertType(String value, final PropertyDescriptor desc){
+    private static Object convertType(String value, final PropertyDescriptor desc) throws IOException{
         value = value.trim();
         if(value.startsWith("\"")){
-            value = value.substring(1, value.length()-2);
+            value = value.substring(1, value.length()-1);
         }
         
         final Class clazz = desc.getType().getBinding();
@@ -174,6 +189,31 @@ public class MapfileReader {
         }else if(Point2D.class.isAssignableFrom(clazz)){
             final String[] parts = value.split(" ");
             return new Point2D.Double(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
+        }else if(Expression.class.isAssignableFrom(clazz)){
+            
+            if(value.startsWith("[")){
+                // like : [ATTRIBUTE] => PropertyName
+                value = value.substring(1, value.length()-1);
+                return FF.property(value);
+            }
+            
+            if(value.startsWith("#")){
+                // like : #CD5F29 => Literal
+                return FF.literal(value);
+            }
+            
+            final int nbspace = Strings.count(value, " ");
+            
+            if(nbspace == 2){
+                // color 255 255 255 => Literal
+                final String[] colors = value.split(" ");
+                final Color c = new Color(Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
+                return SF.literal(c);
+            }
+            
+            //parse it as a number
+            final double d = Double.valueOf(value);
+            return FF.literal(d);
         }
         
         return Converters.convert(value, clazz);
