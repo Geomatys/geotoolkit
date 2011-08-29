@@ -27,8 +27,6 @@ import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Iterator;
-import java.util.LinkedList;
 import org.geotoolkit.test.TestData;
 
 
@@ -49,22 +47,8 @@ import org.geotoolkit.test.TestData;
  *
  * @tutorial http://www.geotoolkit.org/display/GEOT/5.8+Test+Data
  */
-public final class ShapeTestData implements Runnable {
-    
-    /**
-     * The files to delete at shutdown time. {@link File#deleteOnExit} alone doesn't seem
-     * sufficient since it will preserve any overwritten files.
-     */
-    private static final LinkedList<Deletable> toDelete = new LinkedList<Deletable>();
-
-    /**
-     * Registers the thread to be automatically executed at shutdown time.
-     * This thread will delete all temporary files registered in {@link #toDelete}.
-     */
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(new ShapeTestData(), "Test data cleaner"));
-    }
-    
+public final class ShapeTestData {
+        
     /**
      * Do not allow instantiation of this class.
      */
@@ -177,12 +161,12 @@ public final class ShapeTestData implements Runnable {
         final File file      = new File(directory, path.getName());
         if (!file.exists()) {
             if (directory.mkdirs()) {
-                deleteOnExit(directory, false);
+                TestData.deleteOnExit(directory, false);
             }
             final InputStream   in = openStream(name);
             final OutputStream out = new FileOutputStream(file);
             final byte[]    buffer = new byte[4096];
-            deleteOnExit(file, false);
+            TestData.deleteOnExit(file, false);
             int count;
             while ((count = in.read(buffer)) >= 0) {
                 out.write(buffer, 0, count);
@@ -192,140 +176,5 @@ public final class ShapeTestData implements Runnable {
         }
         return file;
     }
-    
-    
-    
-    
-    
-    
-    
-    /**
-     * Requests that the file or directory denoted by the specified
-     * pathname be deleted when the virtual machine terminates.
-     *
-     * @param file The file to delete on exit.
-     */
-    private static void deleteOnExit(final File file) {
-        deleteOnExit(file, true);
-    }
 
-    /**
-     * Requests that the file or directory denoted by the specified pathname be deleted
-     * when the virtual machine terminates. This method can optionally delete the file
-     * only if it has been modified, thus giving a chance for test suites to copy their
-     * resources only once.
-     *
-     * @param file The file to delete.
-     * @param force If {@code true}, delete the file in all cases. If {@code false},
-     *        delete the file if and only if it has been modified. The default value
-     *        if {@code true}.
-     *
-     * @since 2.4
-     */
-    protected static void deleteOnExit(final File file, final boolean force) {
-        if (force) {
-            file.deleteOnExit();
-        }
-        final Deletable entry = new Deletable(file, force);
-        synchronized (toDelete) {
-            if (file.isFile()) {
-                toDelete.addFirst(entry);
-            } else {
-                toDelete.addLast(entry);
-            }
-        }
-    }
-
-    /**
-     * A file that may be deleted on JVM shutdown.
-     */
-    private static final class Deletable {
-        /**
-         * The file to delete.
-         */
-        private final File file;
-
-        /**
-         * The initial timestamp. Used in order to determine if the file has been modified.
-         */
-        private final long timestamp;
-
-        /**
-         * Constructs an entry for a file to be deleted.
-         */
-        public Deletable(final File file, final boolean force) {
-            this.file = file;
-            timestamp = force ? Long.MIN_VALUE : file.lastModified();
-        }
-
-        /**
-         * Returns {@code true} if failure to delete this file can be ignored.
-         */
-        public boolean canIgnore() {
-            return timestamp != Long.MIN_VALUE && file.isDirectory();
-        }
-
-        /**
-         * Deletes this file, if modified. Returns {@code false} only
-         * if the file should be deleted but the operation failed.
-         */
-        public boolean delete() {
-            if (!file.exists() || file.lastModified() <= timestamp) {
-                return true;
-            }
-            return file.delete();
-        }
-
-        /**
-         * Returns the filepath.
-         */
-        @Override
-        public String toString() {
-            return String.valueOf(file);
-        }
-    }
-
-    /**
-     * Deletes all temporary files. This method is invoked automatically at shutdown time and
-     * should not be invoked directly. It is public only as an implementation side effect.
-     */
-    @Override
-    public void run() {
-        int iteration = 5; // Maximum number of iterations
-        synchronized (toDelete) {
-            while (!toDelete.isEmpty()) {
-                if (--iteration < 0) {
-                    break;
-                }
-                /*
-                 * Before to try to delete the files, invokes the finalizers in a hope to close
-                 * any input streams that the user didn't explicitly closed. Leaving streams open
-                 * seems to occurs way too often in our test suite...
-                 */
-                System.gc();
-                System.runFinalization();
-                for (final Iterator<Deletable> it=toDelete.iterator(); it.hasNext();) {
-                    final Deletable f = it.next();
-                    try {
-                        if (f.delete()) {
-                            it.remove();
-                            continue;
-                        }
-                    } catch (SecurityException e) {
-                        if (iteration == 0) {
-                            System.err.print(e.getClass().getCanonicalName());
-                            System.err.print(": ");
-                        }
-                    }
-                    // Can't use logging, since logger are not available anymore at shutdown time.
-                    if (iteration == 0 && !f.canIgnore()) {
-                        System.err.print("Can't delete ");
-                        System.err.println(f);
-                    }
-                }
-            }
-        }
-    }
-    
-    
 }
