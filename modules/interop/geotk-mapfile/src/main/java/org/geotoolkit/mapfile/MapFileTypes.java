@@ -32,6 +32,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  * Declares all mapfile types.
@@ -100,12 +101,14 @@ public final class MapfileTypes {
     
     public static final FeatureType LABEL;
     public static final AttributeDescriptor LABEL_ALIGN;
+    /** [double|auto|follow|attribute] */
     public static final AttributeDescriptor LABEL_ANGLE;
     public static final AttributeDescriptor LABEL_ANTIALIAS;
     public static final AttributeDescriptor LABEL_BACKGROUNDCOLOR;
     public static final AttributeDescriptor LABEL_BACKGROUNDSHADOWCOLOR;
     public static final AttributeDescriptor LABEL_BACKGROUNDSHADOWSIZE;
     public static final AttributeDescriptor LABEL_BUFFER;
+    /** [r] [g] [b] | [attribute] */
     public static final AttributeDescriptor LABEL_COLOR;
     public static final AttributeDescriptor LABEL_ENCODING;
     public static final AttributeDescriptor LABEL_FONT;
@@ -117,14 +120,18 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LABEL_MINFEATURESIZE;
     public static final AttributeDescriptor LABEL_MINSIZE;
     public static final AttributeDescriptor LABEL_OFFSET;
+    /** [r] [g] [b] | [attribute] */
     public static final AttributeDescriptor LABEL_OUTLINECOLOR;
+    /** [integer] */
     public static final AttributeDescriptor LABEL_OUTLINEWIDTH;
     public static final AttributeDescriptor LABEL_PARTIALS;
+    /** [ul|uc|ur|cl|cc|cr|ll|lc|lr|auto] */
     public static final AttributeDescriptor LABEL_POSITION;
     public static final AttributeDescriptor LABEL_PRIORITY;
     public static final AttributeDescriptor LABEL_REPEATDISTANCE;
     public static final AttributeDescriptor LABEL_SHADOWCOLOR;
     public static final AttributeDescriptor LABEL_SHADOWSIZE;
+    /** [double]|[tiny|small|medium|large|giant]|[attribute] */
     public static final AttributeDescriptor LABEL_SIZE;
     public static final AttributeDescriptor LABEL_STYLE;
     public static final AttributeDescriptor LABEL_TYPE;
@@ -133,6 +140,7 @@ public final class MapfileTypes {
     public static final FeatureType LAYER;
     public static final AttributeDescriptor LAYER_CLASS;
     public static final AttributeDescriptor LAYER_CLASSGROUP;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_CLASSITEM;
     public static final AttributeDescriptor LAYER_CLUSTER;
     public static final AttributeDescriptor LAYER_CONNECTION;
@@ -143,20 +151,24 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LAYER_EXTENT;
     public static final AttributeDescriptor LAYER_FEATURE;
     public static final AttributeDescriptor LAYER_FILTER;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_FILTERITEM;
     public static final AttributeDescriptor LAYER_FOOTER;
     public static final AttributeDescriptor LAYER_GRID;
     public static final AttributeDescriptor LAYER_GROUP;
     public static final AttributeDescriptor LAYER_HEADER;
     public static final AttributeDescriptor LAYER_JOIN;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_LABELANGLEITEM;
     public static final AttributeDescriptor LAYER_LABELCACHE;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_LABELITEM;
     public static final AttributeDescriptor LAYER_LABELMAXSCALEDENOM;
     public static final AttributeDescriptor LAYER_LABELMAXSCALE;
     public static final AttributeDescriptor LAYER_LABELMINSCALEDENOM;
     public static final AttributeDescriptor LAYER_LABELMINSCALE;
     public static final AttributeDescriptor LAYER_LABELREQUIRES;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_LABELSIZEITEM;
     public static final AttributeDescriptor LAYER_MAXFEATURES;
     public static final AttributeDescriptor LAYER_MAXGEOWIDTH;
@@ -168,6 +180,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LAYER_MINSCALE;
     public static final AttributeDescriptor LAYER_NAME;
     public static final AttributeDescriptor LAYER_OFFSITE;
+    /** [integer|alpha] */
     public static final AttributeDescriptor LAYER_OPACITY;
     public static final AttributeDescriptor LAYER_PLUGIN;
     public static final AttributeDescriptor LAYER_POSTLABELCACHE;
@@ -176,11 +189,13 @@ public final class MapfileTypes {
     public static final AttributeDescriptor LAYER_REQUIRES;
     public static final AttributeDescriptor LAYER_SIZEUNITS;
     public static final AttributeDescriptor LAYER_STATUS;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_STYLEITEM;
     public static final AttributeDescriptor LAYER_SYMBOLSCALEDENOM;
     public static final AttributeDescriptor LAYER_SYMBOLSCALE;
     public static final AttributeDescriptor LAYER_TEMPLATE;
     public static final AttributeDescriptor LAYER_TILEINDEX;
+    /** [attribute] */
     public static final AttributeDescriptor LAYER_TILEITEM;
     public static final AttributeDescriptor LAYER_TOLERANCE;
     public static final AttributeDescriptor LAYER_TOLERANCEUNITS;
@@ -298,7 +313,9 @@ public final class MapfileTypes {
     public static final AttributeDescriptor STYLE_OFFSET;
     /** [integer|attribute] */
     public static final AttributeDescriptor STYLE_OPACITY;
+    /** [r] [g] [b] | [attribute] */
     public static final AttributeDescriptor STYLE_OUTLINECOLOR;
+    public static final AttributeDescriptor STYLE_OUTLINEWIDTH;
     public static final AttributeDescriptor STYLE_PATTERN;
     /** [double|attribute] */
     public static final AttributeDescriptor STYLE_SIZE;
@@ -369,7 +386,8 @@ public final class MapfileTypes {
         STYLE_MINWIDTH          = ftb.add(new DefaultName(NAMESPACE, "MINWIDTH"),         Double.class,0,1,false,null);
         STYLE_OFFSET            = ftb.add(new DefaultName(NAMESPACE, "OFFSET"),           Point2D.class,0,1,false,null);
         STYLE_OPACITY           = ftb.add(new DefaultName(NAMESPACE, "OPACITY"),          Expression.class,0,1,false,null);
-        STYLE_OUTLINECOLOR      = ftb.add(new DefaultName(NAMESPACE, "OUTLINECOLOR"),     String.class,0,1,false,null);
+        STYLE_OUTLINECOLOR      = ftb.add(new DefaultName(NAMESPACE, "OUTLINECOLOR"),     Expression.class,0,1,false,null);
+        STYLE_OUTLINEWIDTH      = ftb.add(new DefaultName(NAMESPACE, "OUTLINEWIDTH"),     Double.class,0,1,false,null);
         STYLE_PATTERN           = ftb.add(new DefaultName(NAMESPACE, "PATTERN"),          String.class,0,1,false,null);
         STYLE_SIZE              = ftb.add(new DefaultName(NAMESPACE, "SIZE"),             Expression.class,0,1,false,null);
         STYLE_SIZEITEM          = ftb.add(new DefaultName(NAMESPACE, "SIZEITEM"),         String.class,0,1,false,deprecated());
@@ -387,7 +405,7 @@ public final class MapfileTypes {
         LABEL_BACKGROUNDSHADOWCOLOR = ftb.add(new DefaultName(NAMESPACE, "BACKGROUNDSHADOWCOLOR"),Color.class,0,1,false,deprecated());
         LABEL_BACKGROUNDSHADOWSIZE  = ftb.add(new DefaultName(NAMESPACE, "BACKGROUNDSHADOWSIZE"),Point2D.class,0,1,false,deprecated());
         LABEL_BUFFER                = ftb.add(new DefaultName(NAMESPACE, "BUFFER"),           Integer.class,0,1,false,null);
-        LABEL_COLOR                 = ftb.add(new DefaultName(NAMESPACE, "COLOR"),            Color.class,0,1,false,null);
+        LABEL_COLOR                 = ftb.add(new DefaultName(NAMESPACE, "COLOR"),            Expression.class,0,1,false,null);
         LABEL_ENCODING              = ftb.add(new DefaultName(NAMESPACE, "ENCODING"),         String.class,0,1,false,null);
         LABEL_FONT                  = ftb.add(new DefaultName(NAMESPACE, "FONT"),             String.class,0,1,false,null);
         LABEL_FORCE                 = ftb.add(new DefaultName(NAMESPACE, "FORCE"),            Boolean.class,0,1,false,null);
@@ -398,7 +416,7 @@ public final class MapfileTypes {
         LABEL_MINFEATURESIZE        = ftb.add(new DefaultName(NAMESPACE, "MINFEATURESIZE"),   String.class,0,1,false,null);
         LABEL_MINSIZE               = ftb.add(new DefaultName(NAMESPACE, "MINSIZE"),          Double.class,0,1,false,null);
         LABEL_OFFSET                = ftb.add(new DefaultName(NAMESPACE, "OFFSET"),           Point2D.class,0,1,false,null);
-        LABEL_OUTLINECOLOR          = ftb.add(new DefaultName(NAMESPACE, "OUTLINECOLOR"),     String.class,0,1,false,null);
+        LABEL_OUTLINECOLOR          = ftb.add(new DefaultName(NAMESPACE, "OUTLINECOLOR"),     Expression.class,0,1,false,null);
         LABEL_OUTLINEWIDTH          = ftb.add(new DefaultName(NAMESPACE, "OUTLINEWIDTH"),     Integer.class,0,1,false,null);
         LABEL_PARTIALS              = ftb.add(new DefaultName(NAMESPACE, "PARTIALS"),         Boolean.class,0,1,false,null);
         LABEL_POSITION              = ftb.add(new DefaultName(NAMESPACE, "POSITION"),         String.class,0,1,false,null);
@@ -406,7 +424,7 @@ public final class MapfileTypes {
         LABEL_REPEATDISTANCE        = ftb.add(new DefaultName(NAMESPACE, "REPEATDISTANCE"),   Integer.class,0,1,false,null);
         LABEL_SHADOWCOLOR           = ftb.add(new DefaultName(NAMESPACE, "SHADOWCOLOR"),      Color.class,0,1,false,null);
         LABEL_SHADOWSIZE            = ftb.add(new DefaultName(NAMESPACE, "SHADOWSIZE"),       String.class,0,1,false,null);
-        LABEL_SIZE                  = ftb.add(new DefaultName(NAMESPACE, "SIZE"),             String.class,0,1,false,null);
+        LABEL_SIZE                  = ftb.add(new DefaultName(NAMESPACE, "SIZE"),             Expression.class,0,1,false,null);
         LABEL_STYLE                 = ftb.add(STYLE,STYLE.getName(),null,0,1,false,null);
         LABEL_TYPE                  = ftb.add(new DefaultName(NAMESPACE, "TYPE"),             String.class,0,1,false,null);
         LABEL_WRAP                  = ftb.add(new DefaultName(NAMESPACE, "WRAP"),             String.class,0,1,false,null);
@@ -516,7 +534,7 @@ public final class MapfileTypes {
         ftb.setName(NAMESPACE,"LAYER");
         LAYER_CLASS                 = ftb.add(CLASS,CLASS.getName(),null,0,Integer.MAX_VALUE,false,null);
         LAYER_CLASSGROUP            = ftb.add(new DefaultName(NAMESPACE, "CLASSGROUP"),       String.class,0,1,false,null);
-        LAYER_CLASSITEM             = ftb.add(new DefaultName(NAMESPACE, "CLASSITEM"),        String.class,0,1,false,null);
+        LAYER_CLASSITEM             = ftb.add(new DefaultName(NAMESPACE, "CLASSITEM"),        PropertyName.class,0,1,false,null);
         LAYER_CLUSTER               = ftb.add(CLUSTER,CLUSTER.getName(),null,0,1,false,null);
         LAYER_CONNECTION            = ftb.add(new DefaultName(NAMESPACE, "CONNECTION"),       String.class,0,1,false,null);
         LAYER_CONNECTIONTYPE        = ftb.add(new DefaultName(NAMESPACE, "CONNECTIONTYPE"),   String.class,0,1,false,null);
@@ -526,21 +544,21 @@ public final class MapfileTypes {
         LAYER_EXTENT                = ftb.add(new DefaultName(NAMESPACE, "EXTENT"),           String.class,0,1,false,null);
         LAYER_FEATURE               = ftb.add(FEATURE,FEATURE.getName(),null,0,1,false,null);
         LAYER_FILTER                = ftb.add(new DefaultName(NAMESPACE, "FILTER"),           String.class,0,1,false,null);
-        LAYER_FILTERITEM            = ftb.add(new DefaultName(NAMESPACE, "FILTERITEM"),       String.class,0,1,false,null);
+        LAYER_FILTERITEM            = ftb.add(new DefaultName(NAMESPACE, "FILTERITEM"),       PropertyName.class,0,1,false,null);
         LAYER_FOOTER                = ftb.add(new DefaultName(NAMESPACE, "FOOTER"),           String.class,0,1,false,null);
         LAYER_GRID                  = ftb.add(GRID,GRID.getName(),null,0,1,false,null);
         LAYER_GROUP                 = ftb.add(new DefaultName(NAMESPACE, "GROUP"),            String.class,0,1,false,null);
         LAYER_HEADER                = ftb.add(new DefaultName(NAMESPACE, "HEADER"),           String.class,0,1,false,null);
         LAYER_JOIN                  = ftb.add(JOIN,JOIN.getName(),null,0,1,false,null);
-        LAYER_LABELANGLEITEM        = ftb.add(new DefaultName(NAMESPACE, "LABELANGLEITEM"),   String.class,0,1,false,null);
+        LAYER_LABELANGLEITEM        = ftb.add(new DefaultName(NAMESPACE, "LABELANGLEITEM"),   PropertyName.class,0,1,false,null);
         LAYER_LABELCACHE            = ftb.add(new DefaultName(NAMESPACE, "LABELCACHE"),       Boolean.class,0,1,false,null);
-        LAYER_LABELITEM             = ftb.add(new DefaultName(NAMESPACE, "LABELITEM"),        String.class,0,1,false,null);
+        LAYER_LABELITEM             = ftb.add(new DefaultName(NAMESPACE, "LABELITEM"),        PropertyName.class,0,1,false,null);
         LAYER_LABELMAXSCALEDENOM    = ftb.add(new DefaultName(NAMESPACE, "LABELMAXSCALEDENOM"),Double.class,0,1,false,null);
         LAYER_LABELMAXSCALE         = ftb.add(new DefaultName(NAMESPACE, "LABELMAXSCALE"),    Double.class,0,1,false,deprecated());
         LAYER_LABELMINSCALEDENOM    = ftb.add(new DefaultName(NAMESPACE, "LABELMINSCALEDENOM"),Double.class,0,1,false,null);
         LAYER_LABELMINSCALE         = ftb.add(new DefaultName(NAMESPACE, "LABELMINSCALE"),    Double.class,0,1,false,deprecated());
         LAYER_LABELREQUIRES         = ftb.add(new DefaultName(NAMESPACE, "LABELREQUIRES"),    String.class,0,1,false,null);
-        LAYER_LABELSIZEITEM         = ftb.add(new DefaultName(NAMESPACE, "LABELSIZEITEM"),    String.class,0,1,false,deprecated());
+        LAYER_LABELSIZEITEM         = ftb.add(new DefaultName(NAMESPACE, "LABELSIZEITEM"),    PropertyName.class,0,1,false,deprecated());
         LAYER_MAXFEATURES           = ftb.add(new DefaultName(NAMESPACE, "MAXFEATURES"),      Integer.class,0,1,false,null);
         LAYER_MAXGEOWIDTH           = ftb.add(new DefaultName(NAMESPACE, "MAXGEOWIDTH"),      Double.class,0,1,false,null);
         LAYER_MAXSCALEDENOM         = ftb.add(new DefaultName(NAMESPACE, "MAXSCALEDENOM"),    Double.class,0,1,false,null);
@@ -559,12 +577,12 @@ public final class MapfileTypes {
         LAYER_REQUIRES              = ftb.add(new DefaultName(NAMESPACE, "REQUIRES"),         String.class,0,1,false,null);
         LAYER_SIZEUNITS             = ftb.add(new DefaultName(NAMESPACE, "SIZEUNITS"),        String.class,0,1,false,null);
         LAYER_STATUS                = ftb.add(new DefaultName(NAMESPACE, "STATUS"),           String.class,0,1,false,null);
-        LAYER_STYLEITEM             = ftb.add(new DefaultName(NAMESPACE, "STYLEITEM"),        String.class,0,1,false,null);
+        LAYER_STYLEITEM             = ftb.add(new DefaultName(NAMESPACE, "STYLEITEM"),        PropertyName.class,0,1,false,null);
         LAYER_SYMBOLSCALEDENOM      = ftb.add(new DefaultName(NAMESPACE, "SYMBOLSCALEDENOM"), Double.class,0,1,false,null);
         LAYER_SYMBOLSCALE           = ftb.add(new DefaultName(NAMESPACE, "SYMBOLSCALE"),      Double.class,0,1,false,deprecated());
         LAYER_TEMPLATE              = ftb.add(new DefaultName(NAMESPACE, "TEMPLATE"),         String.class,0,1,false,null);
         LAYER_TILEINDEX             = ftb.add(new DefaultName(NAMESPACE, "TILEINDEX"),        String.class,0,1,false,null);
-        LAYER_TILEITEM              = ftb.add(new DefaultName(NAMESPACE, "TILEITEM"),         String.class,0,1,false,null);
+        LAYER_TILEITEM              = ftb.add(new DefaultName(NAMESPACE, "TILEITEM"),         PropertyName.class,0,1,false,null);
         LAYER_TOLERANCE             = ftb.add(new DefaultName(NAMESPACE, "TOLERANCE"),        Double.class,0,1,false,null);
         LAYER_TOLERANCEUNITS        = ftb.add(new DefaultName(NAMESPACE, "TOLERANCEUNITS"),   String.class,0,1,false,null);
         LAYER_TRANSPARENCY          = ftb.add(new DefaultName(NAMESPACE, "TRANSPARENCY"),     String.class,0,1,false,deprecated());

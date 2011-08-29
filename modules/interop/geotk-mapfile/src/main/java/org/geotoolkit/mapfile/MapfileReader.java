@@ -40,6 +40,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
+import org.opengis.filter.expression.PropertyName;
 import static org.geotoolkit.mapfile.MapfileTypes.*;
 
 /**
@@ -171,7 +172,7 @@ public class MapfileReader {
      */
     private static Object convertType(String value, final PropertyDescriptor desc) throws IOException{
         value = value.trim();
-        if(value.startsWith("\"")){
+        if(value.startsWith("\"") || value.startsWith("'")){
             value = value.substring(1, value.length()-1);
         }
         
@@ -189,6 +190,9 @@ public class MapfileReader {
         }else if(Point2D.class.isAssignableFrom(clazz)){
             final String[] parts = value.split(" ");
             return new Point2D.Double(Double.parseDouble(parts[0]), Double.parseDouble(parts[1]));
+        }else if(PropertyName.class.isAssignableFrom(clazz)){
+            //return it as a property name
+            return FF.property(value);
         }else if(Expression.class.isAssignableFrom(clazz)){
             
             if(value.startsWith("[")){
@@ -207,13 +211,30 @@ public class MapfileReader {
             if(nbspace == 2){
                 // color 255 255 255 => Literal
                 final String[] colors = value.split(" ");
-                final Color c = new Color(Integer.valueOf(colors[0]), Integer.valueOf(colors[1]), Integer.valueOf(colors[2]));
+                
+                final Integer r = Integer.valueOf(colors[0]);
+                final Integer g = Integer.valueOf(colors[1]);
+                final Integer b = Integer.valueOf(colors[2]);
+                
+                //possible -1 -1 -1 : we translate to white
+                final Color c;
+                if(r < 0 || g < 0 || b < 0){
+                    c = Color.WHITE;
+                }else{
+                    c = new Color(r,g,b);
+                }                
                 return SF.literal(c);
             }
             
             //parse it as a number
-            final double d = Double.valueOf(value);
-            return FF.literal(d);
+            try{
+                final double d = Double.valueOf(value);
+                return FF.literal(d);
+            }catch(final NumberFormatException ex){
+            }
+            
+            //return it as a string literal
+            return FF.literal(value);
         }
         
         return Converters.convert(value, clazz);

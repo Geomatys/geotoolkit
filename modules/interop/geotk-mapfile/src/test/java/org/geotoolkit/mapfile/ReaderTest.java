@@ -147,12 +147,12 @@ public class ReaderTest {
         layer = (ComplexAttribute) ite.next();
         assertEquals(MapfileTypes.LAYER,                layer.getType());
         assertEquals(12,                                layer.getProperties().size()); 
-        assertEquals("'type'",                          layer.getProperty("CLASSITEM").getValue());
+        assertEquals(FF.property("type"),               layer.getProperty("CLASSITEM").getValue());
         assertEquals("host=server dbname=osm user=me password=secret port=5432",layer.getProperty("CONNECTION").getValue());
         assertEquals("postgis",                         layer.getProperty("CONNECTIONTYPE").getValue());
         assertEquals("geometry from (select * from osm_places)",layer.getProperty("DATA").getValue());
         assertEquals("default",                         layer.getProperty("GROUP").getValue());
-        assertEquals("'name'",                          layer.getProperty("LABELITEM").getValue());
+        assertEquals(FF.property("name"),               layer.getProperty("LABELITEM").getValue());
         assertEquals(9.9999999999E10 ,                  layer.getProperty("MAXSCALEDENOM").getValue());
         assertEquals(3.32808204E8,                      layer.getProperty("MINSCALEDENOM").getValue());
         assertEquals("places0",                         layer.getProperty("NAME").getValue());
@@ -162,20 +162,20 @@ public class ReaderTest {
         clazz = (ComplexAttribute) layer.getProperty("CLASS");    
         assertEquals(MapfileTypes.CLASS,                clazz.getType());
         assertEquals(2,                                 clazz.getProperties().size()); 
-        assertEquals("'continents'",                    clazz.getProperty("EXPRESSION").getValue());
+        assertEquals("continents",                      clazz.getProperty("EXPRESSION").getValue());
         
         ComplexAttribute label = (ComplexAttribute) clazz.getProperty("LABEL");    
         assertEquals(MapfileTypes.LABEL,                label.getType());        
         assertEquals(10,                                label.getProperties().size()); 
         assertEquals(4,                                 label.getProperty("BUFFER").getValue());
-        assertEquals(new Color(100,100,100),            label.getProperty("COLOR").getValue());  
+        assertEquals(SF.literal(new Color(100,100,100)),label.getProperty("COLOR").getValue());  
         assertEquals("utf-8",                           label.getProperty("ENCODING").getValue());  
         assertEquals("scb",                             label.getProperty("FONT").getValue());  
-        assertEquals("-1 -1 -1",                        label.getProperty("OUTLINECOLOR").getValue());  
+        assertEquals(SF.literal(Color.WHITE),           label.getProperty("OUTLINECOLOR").getValue());  
         assertEquals(1,                                 label.getProperty("OUTLINEWIDTH").getValue());  
         assertEquals(false,                             label.getProperty("PARTIALS").getValue());  
         assertEquals("cc",                              label.getProperty("POSITION").getValue());  
-        assertEquals("8",                               label.getProperty("SIZE").getValue());
+        assertEquals(FF.literal(8),                     label.getProperty("SIZE").getValue());
         assertEquals("TRUETYPE",                        label.getProperty("TYPE").getValue());  
         
         

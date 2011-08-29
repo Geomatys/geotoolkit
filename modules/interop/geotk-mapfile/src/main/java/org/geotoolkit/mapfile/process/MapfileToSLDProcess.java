@@ -16,6 +16,16 @@
  */
 package org.geotoolkit.mapfile.process;
 
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.Graphic;
+import org.opengis.style.Mark;
+import org.opengis.style.GraphicalSymbol;
+import org.opengis.style.AnchorPoint;
+import org.opengis.style.TextSymbolizer;
+import org.opengis.style.Font;
+import org.opengis.style.Halo;
+import org.opengis.style.LabelPlacement;
+import org.opengis.filter.Filter;
 import java.awt.Color;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -53,6 +63,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Symbolizer;
@@ -72,6 +83,8 @@ public class MapfileToSLDProcess extends AbstractProcess{
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final FilterFactory FF = new DefaultFilterFactory2();
     
+    private Feature mapfileFeature = null;
+    
     public MapfileToSLDProcess(final ParameterValueGroup input){
         super(INSTANCE, input);
     }
@@ -85,11 +98,14 @@ public class MapfileToSLDProcess extends AbstractProcess{
         final MapfileReader reader = new MapfileReader();
         reader.setInput(mapfile);
         try {
-            final Feature feature = reader.read();            
+            mapfileFeature = reader.read();            
             final MutableStyledLayerDescriptor sld = SLDF.createSLD();
             
             //convert it
-            convert(sld, feature);
+            convert(sld, mapfileFeature);
+            
+            //avoid memory leak
+            mapfileFeature = null;
             
             //write the sld
             final XMLUtilities utils = new XMLUtilities();
@@ -124,20 +140,13 @@ public class MapfileToSLDProcess extends AbstractProcess{
             final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
             sldStyle.featureTypeStyles().add(fts);
             
-            final String type = getValue(mflayer,LAYER_TYPE,String.class);
             final Double minscale = getValue(mflayer,LAYER_MINSCALEDENOM,Double.class);
-            final Double maxscale = getValue(mflayer,LAYER_MAXSCALEDENOM,Double.class);
-            final String clazzitem = getValue(mflayer,LAYER_CLASSITEM,String.class);            
+            final Double maxscale = getValue(mflayer,LAYER_MAXSCALEDENOM,Double.class);       
             final Collection<Property> classes = mflayer.getProperties(LAYER_CLASS.getName());
-            
-            if(clazzitem == null){
-                //no style filter
-                
-            }
-            
+                        
             for(final Property pp : classes){
                 final ComplexAttribute clazz = (ComplexAttribute) pp;
-                final MutableRule rule = createRule(type, minscale, maxscale, clazz);
+                final MutableRule rule = createRule(mflayer, minscale, maxscale, clazz);
                 fts.rules().add(rule);
             }
                         
@@ -153,13 +162,31 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return null;
     }
     
-    private static MutableRule createRule(final String type, 
+    private static MutableRule createRule(final ComplexAttribute mflayer, 
             final Double minScale, final Double maxscale, final ComplexAttribute clazz){
+        
+        //mapfile type is similar to se symbolizer type
+        final String type = getValue(mflayer,LAYER_TYPE,String.class);
+            
         final MutableRule rule = SF.rule();
         rule.setMinScaleDenominator(minScale);
         rule.setMaxScaleDenominator(maxscale);
         
+        // Class can act as filter, the classItem is the propertyname on which the class
+        // Expression is evaluated
+        final PropertyName classItem = getValue(mflayer,LAYER_CLASSITEM,PropertyName.class);
+        final String classExpression = getValue(clazz,CLASS_EXPRESSION,String.class);
+        if(classItem != null && classExpression != null){
+            // equivalant to OGC filter : PropertyEquals(name,value)
+            final Filter filter = FF.equals(classItem, FF.literal(classExpression));
+            rule.setFilter(filter);
+        }else{
+            //filter
+            //not handle yet
+        }
+        
         final Collection<Property> styles = clazz.getProperties(CLASS_STYLE.getName());
+        final Collection<Property> labels = clazz.getProperties(CLASS_LABEL.getName());
         
         for(final Property pp : styles){
             final ComplexAttribute style = (ComplexAttribute) pp;
@@ -168,7 +195,17 @@ public class MapfileToSLDProcess extends AbstractProcess{
                 rule.symbolizers().addAll(createPolygonSymbolizer(style));
             }else if("LINE".equalsIgnoreCase(type)){
                 rule.symbolizers().addAll(createLineSymbolizer(style));
+            }else if("ANNOTATION".equalsIgnoreCase(type)){
+                rule.symbolizers().addAll(createPointSymbolizer(style));
             }
+        }
+        
+        for(final Property pp : labels){
+            final ComplexAttribute style = (ComplexAttribute) pp;
+            
+            //this property contain the label to place in the text symbolizer
+            final PropertyName labelProp = getValue(mflayer,LAYER_LABELITEM,PropertyName.class);
+            rule.symbolizers().addAll(createTextSymbolizer(labelProp,style));
         }
         
         return rule;
@@ -248,5 +285,122 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
     
+    private static List<Symbolizer> createTextSymbolizer(final PropertyName label, final ComplexAttribute lblStyle){
+                
+        Expression expLabelColor = getValue(lblStyle, LABEL_COLOR, Expression.class);
+        Expression expLabelSize  = getValue(lblStyle, LABEL_SIZE, Expression.class);
+        
+        Expression expHaloColor = getValue(lblStyle, LABEL_OUTLINECOLOR, Expression.class);
+        Integer valHaloWidth = getValue(lblStyle, LABEL_OUTLINEWIDTH, Integer.class);
+        
+        if(expLabelColor == null){
+            expLabelColor = SF.literal(Color.BLACK);
+        }
+        if(expLabelSize == null){
+            expLabelSize = DEFAULT_FONT_SIZE;
+        }
+        if(expHaloColor == null){
+            expHaloColor = SF.literal(Color.WHITE);
+        }        
+        if(valHaloWidth == null){
+            valHaloWidth = 0;
+        }
+        
+        
+        Expression expHaloWidth = FF.literal(valHaloWidth);
+                
+        final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
+        
+        //general informations
+        final String name = "";
+        final Description desc = DEFAULT_DESCRIPTION;
+        final String geometry = null; //use the default geometry of the feature
+        final Unit unit = NonSI.PIXEL;
+        final Font font = SF.font(
+                FF.literal("Arial"),
+                FONT_STYLE_NORMAL,
+                FONT_WEIGHT_NORMAL,
+                expLabelSize);
+        final LabelPlacement placement = SF.pointPlacement();
+        final Halo halo = SF.halo(SF.fill(expHaloColor), expHaloWidth);
+        final Fill fill = SF.fill(expLabelColor);
+
+        final TextSymbolizer symbol = SF.textSymbolizer(name, geometry, desc, unit, label, font, placement, halo, fill);
+        symbolizers.add(symbol);
+        
+        return symbolizers;
+    }
+    
+    private static List<Symbolizer> createPointSymbolizer(final ComplexAttribute style){
+        
+        String symbol = getValue(style, STYLE_SYMBOL, String.class);
+        Expression expSize = getValue(style, STYLE_SIZE, Expression.class);
+        Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
+        Expression expFillColor = getValue(style, STYLE_COLOR, Expression.class);
+        Expression expStrokeColor = getValue(style, STYLE_OUTLINECOLOR, Expression.class);
+        Expression expStrokeWidth = getValue(style, STYLE_WIDTH, Expression.class);
+        
+        if(expFillColor == null){
+            expFillColor = DEFAULT_FILL_COLOR;
+        }
+        if(expStrokeColor == null){
+            expStrokeColor = DEFAULT_STROKE_COLOR;
+        }
+        if(expStrokeWidth == null){
+            expStrokeWidth = FF.literal(0);
+        }
+        if(expOpacity == null){
+            expOpacity = DEFAULT_GRAPHIC_OPACITY;
+        }        
+        if(expSize == null){
+            expSize = DEFAULT_GRAPHIC_SIZE;
+        }
+        
+        final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
+        
+        if(true){
+            return symbolizers;
+        }
+        
+        //TODO
+        
+        
+        
+        //general informations
+        final String name = "";
+        final Description desc = DEFAULT_DESCRIPTION;
+        final String geometry = null; //use the default geometry of the feature
+        final Unit unit = NonSI.PIXEL;
+
+        //the visual element
+        final Expression size = FF.literal(12);
+        final Expression opacity = LITERAL_ONE_FLOAT;
+        final Expression rotation = LITERAL_ONE_FLOAT;
+        final AnchorPoint anchor = DEFAULT_ANCHOR_POINT;
+        final Displacement disp = DEFAULT_DISPLACEMENT;
+
+        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+        final Stroke stroke = SF.stroke(Color.BLACK, 2);
+        final Fill fill = SF.fill(Color.RED);
+        final Mark mark = SF.mark(MARK_CIRCLE, fill, stroke);
+        symbols.add(mark);
+        final Graphic graphic = SF.graphic(symbols, opacity, size, rotation, anchor, disp);
+
+        final PointSymbolizer symbolizer = SF.pointSymbolizer(name,geometry,desc,unit, graphic);
+        symbolizers.add(symbolizer);
+        
+        return symbolizers;
+    }
+    
+    private ComplexAttribute getSymbol(final String name){
+        
+        final Collection<Property> symbols = mapfileFeature.getProperties(MAP_SYMBOL.getName());
+        
+        for(final Property p : symbols){
+            final ComplexAttribute ca = (ComplexAttribute) p;
+        }        
+        
+        return null;
+    }
     
 }
