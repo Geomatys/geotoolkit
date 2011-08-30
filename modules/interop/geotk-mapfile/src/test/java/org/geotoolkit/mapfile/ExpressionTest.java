@@ -57,6 +57,22 @@ public class ExpressionTest {
     }
 
     @Test
+    public void testString() throws IOException, ProcessException {
+        
+        final Expression reference = FF.property("name");
+        
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        getOrCreate(IN_TEXT, input).setValue("husky");
+        getOrCreate(IN_REFERENCE, input).setValue(reference);
+        
+        final Process process = desc.createProcess(input);        
+        final ParameterValueGroup output = process.call();
+        final Object result = value(OUT_OGC, output);
+        
+        assertEquals(FF.equals(reference, FF.literal("husky")), result);        
+    }
+    
+    @Test
     public void testSingleQuoteString() throws IOException, ProcessException {
         
         final Expression reference = FF.property("name");

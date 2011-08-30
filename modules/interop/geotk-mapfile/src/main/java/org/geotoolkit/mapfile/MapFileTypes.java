@@ -64,6 +64,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor CLASS_STYLE;
     public static final AttributeDescriptor CLASS_SYMBOL;
     public static final AttributeDescriptor CLASS_TEMPLATE;
+    /** Expression */
     public static final AttributeDescriptor CLASS_TEXT;
     
     public static final FeatureType CLUSTER;
@@ -479,7 +480,7 @@ public final class MapfileTypes {
         CLASS_STYLE             = ftb.add(STYLE,STYLE.getName(),null,0,1,false,null);
         CLASS_SYMBOL            = ftb.add(new DefaultName(NAMESPACE, "SYMBOL"),           String.class,0,1,false,null);
         CLASS_TEMPLATE          = ftb.add(new DefaultName(NAMESPACE, "TEMPLATE"),         String.class,0,1,false,null);
-        CLASS_TEXT              = ftb.add(new DefaultName(NAMESPACE, "TEXT"),             String.class,0,1,false,null);
+        CLASS_TEXT              = ftb.add(new DefaultName(NAMESPACE, "TEXT"),             Expression.class,0,1,false,null);
         //should exist, yet the mapserver doesn't explain what it contain
         //ftb.add(new DefaultName(NAMESPACE, "VALIDATION"),       String.class,0,1,false,null);
         CLASS = ftb.buildFeatureType();

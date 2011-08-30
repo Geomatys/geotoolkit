@@ -94,7 +94,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
     public ParameterValueGroup call() throws ProcessException{
         
         final File mapfile  = value(IN_FILE, inputParameters);
-        final File sldfile      = value(IN_OUTPUT, inputParameters);
+        final File sldfile  = value(IN_OUTPUT, inputParameters);
         
         final MapfileReader reader = new MapfileReader();
         reader.setInput(mapfile);
@@ -205,7 +205,13 @@ public class MapfileToSLDProcess extends AbstractProcess{
             final ComplexAttribute style = (ComplexAttribute) pp;
             
             //this property contain the label to place in the text symbolizer
-            final PropertyName labelProp = getValue(mflayer,LAYER_LABELITEM,PropertyName.class);
+            Expression labelProp = getValue(mflayer,LAYER_LABELITEM,PropertyName.class);
+            Expression labelOverride = getValue(mflayer,CLASS_TEXT,Expression.class);
+            if(labelProp == null || labelOverride != null){
+                //Class Text take priority over label item
+                labelProp = labelOverride;
+            }
+            
             rule.symbolizers().addAll(createTextSymbolizer(labelProp,style));
         }
         
@@ -286,7 +292,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return symbolizers;
     }
     
-    private List<Symbolizer> createTextSymbolizer(final PropertyName label, final ComplexAttribute lblStyle){
+    private List<Symbolizer> createTextSymbolizer(final Expression label, final ComplexAttribute lblStyle){
                 
         Expression expLabelColor = getValue(lblStyle, LABEL_COLOR, Expression.class);
         Expression expLabelSize  = getValue(lblStyle, LABEL_SIZE, Expression.class);
@@ -439,7 +445,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         return null;
     }
     
-    private static Filter toFilter(Expression ref, String text) throws ProcessException{
+    private static Filter toFilter(final Expression ref, final String text) throws ProcessException{
         final ProcessDescriptor desc = MapfileFilterToOGCFilterDescriptor.INSTANCE;
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         getOrCreate(MapfileFilterToOGCFilterDescriptor.IN_TEXT, input).setValue(text);

@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.mapfile.process;
 
-import org.geotoolkit.mapfile.process.MapfileExpressionTokenizer.Token;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.geotoolkit.mapfile.process.MapfileExpressionTokenizer.Token;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -49,51 +48,16 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
     }
     
     @Override
-    public ParameterValueGroup call() throws ProcessException{
-        
-        String text  = value(IN_TEXT, inputParameters);
-        final Expression ref  = value(IN_REFERENCE, inputParameters);
-       
-        
+    public ParameterValueGroup call() throws ProcessException{        
+        final String text  = value(IN_TEXT, inputParameters);
+        final Expression ref  = value(IN_REFERENCE, inputParameters);       
         final List<Token> tokens = MapfileExpressionTokenizer.toTokens(text);        
-        System.out.println(Trees.toString("tokens", tokens));
-        
         final Object result = parse(ref, tokens);
         getOrCreate(OUT_OGC, outputParameters).setValue(result);
         return outputParameters;
-        
-//        text = text.trim();
-//        if(text.startsWith("\"") || text.startsWith("'")){
-//            text = text.substring(1, text.length()-1);
-//        }
-//        
-//        final Filter filter;
-//        if(text.startsWith("/")){
-//            //pattern match
-//            text = text.substring(1, text.length()-1);
-//            //TODO we handle only basic type for now
-//            
-//            final String[] parts = text.split("\\|");
-//            if(parts.length == 1){
-//                //Equal filter
-//                filter = FF.equals(ref, FF.literal(text));
-//            }else{
-//                //several equal filter
-//                final List<Filter> filters = new ArrayList<Filter>();
-//                for(String part : parts){
-//                    final Filter f = FF.equals(ref, FF.literal(part));
-//                    filters.add(f);
-//                }
-//                filter = FF.or(filters);
-//            }
-//        }else{
-//            filter = FF.equals(ref, FF.literal(text));
-//        }
-        
-        
     }
     
-    private static Object parse(final Expression ref,final List<Token> tokens){
+    private Object parse(final Expression ref,final List<Token> tokens) throws ProcessException{
         
         int index = 0;
         Object result = null;
@@ -124,12 +88,13 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 index++;
                 result = FF.or(filters);
 
-            }else if(token.value.startsWith("\"") || token.value.startsWith("\'")){
+            }else{
                 index++;
-                String text = token.value;
+                String text = token.value;                
                 if(text.startsWith("\"") || text.startsWith("'")){
                     text = text.substring(1, text.length()-1);
                 }
+                
                 final Expression literal = toExpression(text);
                 //a single value
                 if(ref != null){
