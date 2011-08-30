@@ -123,6 +123,23 @@ public class ExpressionTest {
         assertEquals(FF.property("ref"), result);        
     }
     
-    
+    @Test
+    public void testConcatenatePropertyExpression() throws IOException, ProcessException {
+                
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        getOrCreate(IN_TEXT, input).setValue("(\"hello [name] my name is [pc]\")");
+        
+        final Process process = desc.createProcess(input);        
+        final ParameterValueGroup output = process.call();
+        final Object result = value(OUT_OGC, output);
+        
+        
+        
+        Expression expected = FF.function("strConcat", FF.literal("hello "), FF.property("name"));
+        expected = FF.function("strConcat", expected, FF.literal(" my name is "));
+        expected = FF.function("strConcat", expected, FF.property("pc"));
+        
+        assertEquals(expected, result);        
+    }
 
 }
