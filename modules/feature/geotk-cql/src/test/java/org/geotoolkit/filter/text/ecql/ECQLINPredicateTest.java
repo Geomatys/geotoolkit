@@ -167,7 +167,7 @@ public class ECQLINPredicateTest {
             Assert.assertTrue(expr instanceof PropertyName);
             PropertyName actualName = (PropertyName) expr;
 
-            Assert.assertEquals(expectedName, actualName.toString());
+            Assert.assertEquals(expectedName, actualName.getPropertyName());
         }
     }
 

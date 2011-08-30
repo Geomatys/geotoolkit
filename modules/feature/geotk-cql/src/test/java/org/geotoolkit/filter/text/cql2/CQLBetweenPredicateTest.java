@@ -24,6 +24,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.filter.ExpUtils.*;
 
 /**
  * Unit test for between predicate
@@ -89,7 +90,7 @@ public class CQLBetweenPredicateTest {
         PropertyIsBetween filter = (PropertyIsBetween) resultFilter;
         Expression property = filter.getExpression();
 
-        Assert.assertEquals(propExpected, property.toString());
+        Assert.assertEquals(propExpected, stringValue(property));
     }
 
     /**

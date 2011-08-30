@@ -31,6 +31,7 @@ import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 
+import static org.geotoolkit.filter.ExpUtils.*;
 
 /**
  * Test for Temporal Predicate
@@ -180,7 +181,7 @@ public class CQLTemporalPredicateTest {
         PropertyIsLessThan lessFilter = (PropertyIsLessThan) resultFilter;
         Expression property = lessFilter.getExpression1();
 
-        Assert.assertEquals(propExpected, property.toString());
+        Assert.assertEquals(propExpected, stringValue(property));
     }
 
     /**

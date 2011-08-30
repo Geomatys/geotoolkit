@@ -29,6 +29,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
+import static org.geotoolkit.filter.ExpUtils.*;
 
 /**
  * Unit Test for Comparison Predicate
@@ -119,7 +120,7 @@ public class CQLComparisonPredicateTest {
       PropertyIsLessThan lessFilter = (PropertyIsLessThan) actual;
       Expression property = lessFilter.getExpression1();
 
-      Assert.assertEquals(propExpected, property.toString());
+      Assert.assertEquals(propExpected, stringValue(property));
 
     }
 

@@ -30,6 +30,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
 
 import com.vividsolutions.jts.geom.Point;
 
+import static org.geotoolkit.filter.ExpUtils.*;
 
 /**
  * Test RelGeo Operations
@@ -80,7 +81,7 @@ public class CQLRelGeoOpTest {
         DistanceBufferOperator filter = (DWithin) resultFilter;
         Expression property = filter.getExpression1();
 
-        Assert.assertEquals(propExpected, property.toString());
+        Assert.assertEquals(propExpected, stringValue(property));
 
     }
 
@@ -95,7 +96,7 @@ public class CQLRelGeoOpTest {
 
         Assert.assertEquals(beyondFilter.getDistance(), 10.0, 0.1);
         Assert.assertEquals(beyondFilter.getDistanceUnits(), "kilometers");
-        Assert.assertEquals(beyondFilter.getExpression1().toString(), "ATTR1");
+        Assert.assertEquals(stringValue(beyondFilter.getExpression1()), "ATTR1");
 
         Expression geomExpression = beyondFilter.getExpression2();
         Assert.assertTrue(geomExpression instanceof Literal);

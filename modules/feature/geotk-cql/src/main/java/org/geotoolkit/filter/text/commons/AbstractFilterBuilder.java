@@ -302,7 +302,7 @@ public abstract class AbstractFilterBuilder {
         final PropertyName property = resultStack.popPropertyName();
 
         final Expression[] args = new Expression[1];
-        args[0] = filterFactory.literal(property);
+        args[0] = filterFactory.literal(property.getPropertyName());
 
         final Function function = filterFactory.function(OtherFunctionFactory.PROPERTY_EXISTS, args);
         final Literal literalTrue = filterFactory.literal(Boolean.TRUE);
