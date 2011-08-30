@@ -45,6 +45,7 @@ import org.geotoolkit.xml.MarshallerPool;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Mark;
@@ -475,7 +476,7 @@ public class SEforSLD100Test extends TestCase{
         assertEquals(textSymbol.getHalo().getRadius().evaluate(null, Float.class), 5f);
         assertEquals(textSymbol.getHalo().getFill().getOpacity().evaluate(null, Float.class), 0.52f);
                 
-        assertEquals(textSymbol.getLabel().toString(), "aField");
+        assertEquals( ((PropertyName)textSymbol.getLabel()).getPropertyName(), "aField");
         
         assertEquals(textSymbol.getFont().getFamily().get(0).evaluate(null,String.class), "arial");
         assertEquals(textSymbol.getFont().getFamily().get(1).evaluate(null,String.class), "serif");
