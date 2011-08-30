@@ -92,7 +92,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      */
     @Override
     public String toString() {
-        return property;
+        return "{"+property+"}";
     }
 
     /**
