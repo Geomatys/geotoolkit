@@ -23,7 +23,6 @@ import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.SimpleInternationalString;
 
-import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -54,17 +53,17 @@ public class MapfileFilterToOGCFilterDescriptor extends AbstractProcessDescripto
     /**
      * OutputParameters
      */
-    public static final ParameterDescriptor<Filter> OUT_FILTER =
-            new DefaultParameterDescriptor("filter", "Result filter", Filter.class, null, false);
+    public static final ParameterDescriptor<Object> OUT_OGC =
+            new DefaultParameterDescriptor("expression", "Result OGC filter or expression", Object.class, null, false);
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup("OutputParameters",OUT_FILTER);
+            new DefaultParameterDescriptorGroup("OutputParameters",OUT_OGC);
 
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new MapfileFilterToOGCFilterDescriptor();
 
     private MapfileFilterToOGCFilterDescriptor() {
         super(NAME, MapfileProcessingRegistry.IDENTIFICATION,
-                new SimpleInternationalString("Transform a mapfile expression/filter to OGC Filter"),
+                new SimpleInternationalString("Transform a Mapfile Expression to OGC Filter/Expression"),
                 INPUT_DESC, OUTPUT_DESC);
     }
 

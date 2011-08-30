@@ -447,7 +447,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
         final org.geotoolkit.process.Process process = desc.createProcess(input);        
         final ParameterValueGroup output = process.call();
-        final Filter result = value(MapfileFilterToOGCFilterDescriptor.OUT_FILTER, output);
+        final Filter result = (Filter) value(MapfileFilterToOGCFilterDescriptor.OUT_OGC, output);
         return result;
     }
 }

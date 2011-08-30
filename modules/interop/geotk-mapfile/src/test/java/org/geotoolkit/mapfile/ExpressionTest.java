@@ -67,7 +67,7 @@ public class ExpressionTest {
         
         final Process process = desc.createProcess(input);        
         final ParameterValueGroup output = process.call();
-        final Filter result = value(OUT_FILTER, output);
+        final Object result = value(OUT_OGC, output);
         
         assertEquals(FF.equals(reference, FF.literal("husky")), result);        
     }
@@ -83,7 +83,7 @@ public class ExpressionTest {
         
         final Process process = desc.createProcess(input);        
         final ParameterValueGroup output = process.call();
-        final Filter result = value(OUT_FILTER, output);
+        final Object result = value(OUT_OGC, output);
         
         assertEquals(FF.equals(reference, FF.literal("husky")), result);        
     }
@@ -99,7 +99,7 @@ public class ExpressionTest {
         
         final Process process = desc.createProcess(input);        
         final ParameterValueGroup output = process.call();
-        final Filter result = value(OUT_FILTER, output);
+        final Object result = value(OUT_OGC, output);
         
         
         final Filter f1 = FF.equals(reference,FF.literal("joe"));
@@ -109,5 +109,20 @@ public class ExpressionTest {
         
         assertEquals(combine, result);        
     }
+    
+    @Test
+    public void testSinglePropertyExpression() throws IOException, ProcessException {
+                
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        getOrCreate(IN_TEXT, input).setValue("(\"[ref]\")");
+        
+        final Process process = desc.createProcess(input);        
+        final ParameterValueGroup output = process.call();
+        final Object result = value(OUT_OGC, output);
+        
+        assertEquals(FF.property("ref"), result);        
+    }
+    
+    
 
 }
