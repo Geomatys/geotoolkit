@@ -308,6 +308,17 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
         final ColorModel candidate = image.getColorModel();
 
+        //TODO : this should be used when the index color model can not handle signed values
+        //
+        //final SampleModel sm = image.getSampleModel();
+        //final int datatype = sm.getDataType();        
+        //if(datatype == DataBuffer.TYPE_SHORT){
+        //    final ColorModel model = new CompatibleColorModel(16, function);
+        //    final ImageLayout layout = new ImageLayout().setColorModel(model);
+        //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+        //}
+        
+        
         /*
          * Extracts the ARGB codes from the ColorModel and invokes the
          * transformColormap(...) method.

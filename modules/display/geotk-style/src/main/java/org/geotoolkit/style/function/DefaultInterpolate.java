@@ -159,77 +159,80 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         return evaluate(object, Object.class);
     }
 
-
-
     @Override
     public Object evaluate(final Object object, final Class c) {
-        if(object instanceof Feature){
-            
-            final Feature f = (Feature)object;
-            final Double value = lookup.evaluate(f,Double.class);
-
-            InterpolationPoint before = null;
-            InterpolationPoint after = null;
-            for(InterpolationPoint ip : points){
-                final double ipval = ip.getData();
-                if(ipval < value){
-                    before = ip;
-                }else if(ipval > value){
-                    after = ip;
-                    break;
-                }else{
-                    //exact match
-                    return ip.getValue().evaluate(object,c);
-                }
-            }
-
-            if(before == null){
-                //only have an over value
-                return after.getValue().evaluate(object,c);
-            }else if(after == null){
-                //only have an under value
-                return before.getValue().evaluate(object,c);
-            }else{
-                //must interpolate
-                final double d1 = before.getData();
-                final double d2 = after.getData();
-                final double pourcent = (value - d1)/ (d2 - d1);
-
-                final Object o1 = before.getValue().evaluate(object,c);
-                final Object o2 = after.getValue().evaluate(object,c);
-                if(o1 instanceof Color && o2 instanceof Color){
-                    //datas are not numbers, looks like we deal with colors
-                    final Color c1 = before.getValue().evaluate(object,Color.class);
-                    final Color c2 = after.getValue().evaluate(object,Color.class);
-                    final int argb1 = c1.getRGB();
-                    final int argb2 = c2.getRGB();
-
-                    final int lastAlpha     = (argb1>>>24) & 0xFF;
-                    final int lastRed       = (argb1>>>16) & 0xFF;
-                    final int lastGreen     = (argb1>>> 8) & 0xFF;
-                    final int lastBlue      = (argb1>>> 0) & 0xFF;
-                    final int alphaInterval = ((argb2>>>24) & 0xFF) - lastAlpha;
-                    final int redInterval   = ((argb2>>>16) & 0xFF) - lastRed;
-                    final int greenInterval = ((argb2>>> 8) & 0xFF) - lastGreen;
-                    final int blueInterval  = ((argb2>>> 0) & 0xFF) - lastBlue;
-
-                    //calculate interpolated color
-                    int a = lastAlpha + (int)(pourcent*alphaInterval);
-                    int r = lastRed   + (int)(pourcent*redInterval);
-                    int g = lastGreen + (int)(pourcent*greenInterval);
-                    int b = lastBlue  + (int)(pourcent*blueInterval);
-                    return Converters.convert( new Color(r, g, b, a) , c);
-                }else{
-                    final Double n1 = before.getValue().evaluate(object,Double.class);
-                    final Double n2 = after.getValue().evaluate(object,Double.class);
-                    return Converters.convert( (n1 + pourcent*(n2-n1)) , c);
-                }
                 
+        final Double value;        
+        if(object instanceof Feature){            
+            final Feature f = (Feature)object;
+            value = lookup.evaluate(f,Double.class);
+        }else if(object instanceof Double){
+            value = (Double) object;
+        }else if(object instanceof Number){
+            value = ((Number)object).doubleValue();
+        }else{
+            return fallback.evaluate(object,c);
+        }
+
+        InterpolationPoint before = null;
+        InterpolationPoint after = null;
+        for(InterpolationPoint ip : points){
+            final double ipval = ip.getData();
+            if(ipval < value){
+                before = ip;
+            }else if(ipval > value){
+                after = ip;
+                break;
+            }else{
+                //exact match
+                return ip.getValue().evaluate(object,c);
+            }
+        }
+
+        if(before == null){
+            //only have an over value
+            return after.getValue().evaluate(object,c);
+        }else if(after == null){
+            //only have an under value
+            return before.getValue().evaluate(object,c);
+        }else{
+            //must interpolate
+            final double d1 = before.getData();
+            final double d2 = after.getData();
+            final double pourcent = (value - d1)/ (d2 - d1);
+
+            final Object o1 = before.getValue().evaluate(object,c);
+            final Object o2 = after.getValue().evaluate(object,c);
+            if(o1 instanceof Color && o2 instanceof Color){
+                //datas are not numbers, looks like we deal with colors
+                final Color c1 = before.getValue().evaluate(object,Color.class);
+                final Color c2 = after.getValue().evaluate(object,Color.class);
+                final int argb1 = c1.getRGB();
+                final int argb2 = c2.getRGB();
+
+                final int lastAlpha     = (argb1>>>24) & 0xFF;
+                final int lastRed       = (argb1>>>16) & 0xFF;
+                final int lastGreen     = (argb1>>> 8) & 0xFF;
+                final int lastBlue      = (argb1>>> 0) & 0xFF;
+                final int alphaInterval = ((argb2>>>24) & 0xFF) - lastAlpha;
+                final int redInterval   = ((argb2>>>16) & 0xFF) - lastRed;
+                final int greenInterval = ((argb2>>> 8) & 0xFF) - lastGreen;
+                final int blueInterval  = ((argb2>>> 0) & 0xFF) - lastBlue;
+
+                //calculate interpolated color
+                int a = lastAlpha + (int)(pourcent*alphaInterval);
+                int r = lastRed   + (int)(pourcent*redInterval);
+                int g = lastGreen + (int)(pourcent*greenInterval);
+                int b = lastBlue  + (int)(pourcent*blueInterval);
+                return Converters.convert( new Color(r, g, b, a) , c);
+            }else{
+                final Double n1 = before.getValue().evaluate(object,Double.class);
+                final Double n2 = after.getValue().evaluate(object,Double.class);
+                return Converters.convert( (n1 + pourcent*(n2-n1)) , c);
             }
 
         }
-
-        return fallback.evaluate(object,c);
+        
     }
 
     @Override
