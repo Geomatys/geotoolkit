@@ -80,6 +80,7 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-coverageio-bil</module>
     <module>geotk-coverageio-dimap</module>
     <module>geotk-coverageio-geotiff</module>
   </modules>
