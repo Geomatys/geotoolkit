@@ -713,17 +713,16 @@
                 <aggregate>true</aggregate>
               </configuration>
             </plugin>
-            <!-- NullPointerException: see http://jira.codehaus.org/browse/MCOBERTURA-148
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>cobertura-maven-plugin</artifactId>
               <configuration>
-                <aggregate>true</aggregate>
+                <!-- Do not aggregate, as it cause NullPointerException
+                     http://jira.codehaus.org/browse/MCOBERTURA-148 -->
                 <encoding>${project.build.sourceEncoding}</encoding>
                 <quiet>true</quiet>
               </configuration>
             </plugin>
-            -->
           </reportPlugins>
         </configuration>
       </plugin>
