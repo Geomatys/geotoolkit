@@ -192,8 +192,8 @@ public final strictfp class GeoapiTest extends AffineTransformTest {
      */
     @Test
     @Override
-    public void testNonSquare() throws FactoryException, TransformException {
-        super.testNonSquare();
+    public void testDimensionReduction() throws FactoryException, TransformException {
+        super.testDimensionReduction();
         assertInstanceOf("Unexpected implementation.", ProjectiveTransform.class, transform);
     }
 }
