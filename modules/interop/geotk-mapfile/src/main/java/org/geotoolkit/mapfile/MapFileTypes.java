@@ -32,6 +32,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -304,7 +305,9 @@ public final class MapfileTypes {
     public static final AttributeDescriptor STYLE_COLOR;
     public static final AttributeDescriptor STYLE_GAP;
     public static final AttributeDescriptor STYLE_GEOMTRANSFORM;
+    /** [butt|round|square] */
     public static final AttributeDescriptor STYLE_LINECAP;
+    /** [round|miter|bevel] */
     public static final AttributeDescriptor STYLE_LINEJOIN;
     public static final AttributeDescriptor STYLE_LINEJOINMAXSIZE;
     public static final AttributeDescriptor STYLE_MAXSIZE;
@@ -317,6 +320,7 @@ public final class MapfileTypes {
     /** [r] [g] [b] | [attribute] */
     public static final AttributeDescriptor STYLE_OUTLINECOLOR;
     public static final AttributeDescriptor STYLE_OUTLINEWIDTH;
+    /** [double on] [double off] [double on] [double off] ... END */
     public static final AttributeDescriptor STYLE_PATTERN;
     /** [double|attribute] */
     public static final AttributeDescriptor STYLE_SIZE;
@@ -378,8 +382,8 @@ public final class MapfileTypes {
         STYLE_COLOR             = ftb.add(new DefaultName(NAMESPACE, "COLOR"),            Expression.class,0,1,false,null);
         STYLE_GAP               = ftb.add(new DefaultName(NAMESPACE, "GAP"),              Double.class,0,1,false,null);
         STYLE_GEOMTRANSFORM     = ftb.add(new DefaultName(NAMESPACE, "GEOMTRANSFORM"),    String.class,0,1,false,null);
-        STYLE_LINECAP           = ftb.add(new DefaultName(NAMESPACE, "LINECAP"),          String.class,0,1,false,null);
-        STYLE_LINEJOIN          = ftb.add(new DefaultName(NAMESPACE, "LINEJOIN"),         String.class,0,1,false,null);
+        STYLE_LINECAP           = ftb.add(new DefaultName(NAMESPACE, "LINECAP"),          Literal.class,0,1,false,null);
+        STYLE_LINEJOIN          = ftb.add(new DefaultName(NAMESPACE, "LINEJOIN"),         Literal.class,0,1,false,null);
         STYLE_LINEJOINMAXSIZE   = ftb.add(new DefaultName(NAMESPACE, "LINEJOINMAXSIZE"),  Integer.class,0,1,false,null);
         STYLE_MAXSIZE           = ftb.add(new DefaultName(NAMESPACE, "MAXSIZE"),          Double.class,0,1,false,null);
         STYLE_MAXWIDTH          = ftb.add(new DefaultName(NAMESPACE, "MAXWIDTH"),         Double.class,0,1,false,null);
@@ -389,7 +393,7 @@ public final class MapfileTypes {
         STYLE_OPACITY           = ftb.add(new DefaultName(NAMESPACE, "OPACITY"),          Expression.class,0,1,false,null);
         STYLE_OUTLINECOLOR      = ftb.add(new DefaultName(NAMESPACE, "OUTLINECOLOR"),     Expression.class,0,1,false,null);
         STYLE_OUTLINEWIDTH      = ftb.add(new DefaultName(NAMESPACE, "OUTLINEWIDTH"),     Double.class,0,1,false,null);
-        STYLE_PATTERN           = ftb.add(new DefaultName(NAMESPACE, "PATTERN"),          String.class,0,1,false,null);
+        STYLE_PATTERN           = ftb.add(new DefaultName(NAMESPACE, "PATTERN"),          float[].class,0,1,false,null);
         STYLE_SIZE              = ftb.add(new DefaultName(NAMESPACE, "SIZE"),             Expression.class,0,1,false,null);
         STYLE_SIZEITEM          = ftb.add(new DefaultName(NAMESPACE, "SIZEITEM"),         String.class,0,1,false,deprecated());
         STYLE_SYMBOL            = ftb.add(new DefaultName(NAMESPACE, "SYMBOL"),           String.class,0,1,false,null);

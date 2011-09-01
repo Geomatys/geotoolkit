@@ -272,7 +272,10 @@ public class MapfileToSLDProcess extends AbstractProcess{
         Expression expColor = getValue(style, STYLE_COLOR, Expression.class);
         Expression expWidth = getValue(style, STYLE_WIDTH, Expression.class);
         Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
-        
+        float[] dashes = getValue(style, STYLE_PATTERN, float[].class);
+        Literal explinecap = getValue(style, STYLE_LINECAP, Literal.class);
+        Literal explinejoin = getValue(style, STYLE_LINEJOIN, Literal.class);
+                
         if(expColor == null){
             expColor = DEFAULT_STROKE_COLOR;
         }        
@@ -291,19 +294,32 @@ public class MapfileToSLDProcess extends AbstractProcess{
         if(expWidth == null){
             expWidth = DEFAULT_STROKE_WIDTH;
         }
+        if(explinecap == null){
+            explinecap = DEFAULT_STROKE_CAP;
+        }
+        if(explinejoin == null){
+            explinejoin = DEFAULT_STROKE_JOIN;
+        }else{
+            //mapfile write 'miter' not 'mitre' like in sld/se
+            if("miter".equalsIgnoreCase(String.valueOf(explinejoin.getValue()))){
+                explinejoin = STROKE_JOIN_MITRE;
+            }
+        }
+        
                 
         final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
+        
         
         //general informations
         final String name = "";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
         final Unit unit = NonSI.PIXEL;
-        final Expression offset = LITERAL_ZERO_FLOAT;
+        final Expression offset = LITERAL_ONE_FLOAT;
 
-        //stroke element
-        final Stroke stroke = SF.stroke(expColor,expWidth,expOpacity);
-
+        //the visual element
+        final Expression dashOffset = LITERAL_ZERO_FLOAT;
+        final Stroke stroke = SF.stroke(expColor,expOpacity,expWidth,explinejoin,explinecap,dashes,dashOffset);
 
         final LineSymbolizer symbolizer = SF.lineSymbolizer(name,geometry,desc,unit,stroke,offset);
         symbolizers.add(symbolizer);

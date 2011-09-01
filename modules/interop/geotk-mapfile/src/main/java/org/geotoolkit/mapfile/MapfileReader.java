@@ -173,6 +173,11 @@ public class MapfileReader {
      */
     private static Object convertType(String value, final PropertyDescriptor desc) throws IOException{
         value = value.trim();
+        
+        if(value.endsWith("END")){
+            value = value.substring(0,value.length()-4);
+        }
+        
         if(value.startsWith("\"") || value.startsWith("'")){
             value = value.substring(1, value.length()-1);
         }
@@ -236,6 +241,13 @@ public class MapfileReader {
             
             //return it as a string literal
             return FF.literal(value);
+        }else if(clazz == float[].class){
+            final String[] parts = value.split(" ");
+            final float[] dashes = new float[parts.length];
+            for(int i=0;i<parts.length;i++){
+                dashes[i] = Float.valueOf(parts[i].trim());
+            }
+            return dashes;
         }
         
         return Converters.convert(value, clazz);
