@@ -30,6 +30,13 @@
     Demonstrations of the Geotoolkit.org library.
   </description>
 
+  <licenses>
+    <license>
+      <name>Public Domain</name>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
 
   <!-- ===========================================================
            Developers and Contributors
