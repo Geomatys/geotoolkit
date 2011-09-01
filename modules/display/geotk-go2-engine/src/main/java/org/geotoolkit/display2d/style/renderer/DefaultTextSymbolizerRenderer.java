@@ -92,7 +92,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
             //strat to extract label parameters---------------------------------
             final String label = symbol.getLabel(candidate).trim();
-            if(label.isEmpty()) return; //nothing to paint
+            if(label == null || label.isEmpty()) return; //nothing to paint
             final CachedHalo halo = symbol.getHalo();
             final CachedLabelPlacement placement = symbol.getPlacement();
 

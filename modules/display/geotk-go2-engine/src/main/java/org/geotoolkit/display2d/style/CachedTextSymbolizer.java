@@ -116,7 +116,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     }
     
     public String getLabel(final Object candidate){
-        return GO2Utilities.evaluate(styleElement.getLabel(),candidate,String.class, "Label");
+        return GO2Utilities.evaluate(styleElement.getLabel(),candidate,String.class, null);
     }
         
     public CachedHalo getHalo(){
