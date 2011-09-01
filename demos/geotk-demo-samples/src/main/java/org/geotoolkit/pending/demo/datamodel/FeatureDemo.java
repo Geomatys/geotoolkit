@@ -13,9 +13,11 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.ValidatingFeatureFactory;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -38,10 +40,12 @@ public class FeatureDemo {
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
 
         final SimpleFeatureType type = FeatureTypeBuilderDemo.createSimpleType();
-
+        final FeatureType cpxtype = FeatureTypeBuilderDemo.createComplexType();
+        
         System.out.println(usingFeatureFactory(type));
         System.out.println(usingSimpleFeatureBuilder(type));
         System.out.println(usingFeatureUtilities(type));
+        System.out.println(withComplexFeatureType(cpxtype));
 
     }
 
@@ -76,6 +80,24 @@ public class FeatureDemo {
         feature.getProperty("lastPosition").setValue(GF.createPoint(new Coordinate(-10, 23)));
         feature.getProperty("lastPositionDate").setValue(new Date());
         feature.getProperty("direction").setValue(56.498f);
+        return feature;
+    }
+    
+    
+    private static Feature withComplexFeatureType(FeatureType type){
+        final Feature feature = FeatureUtilities.defaultFeature(type, "id-0"); 
+        feature.getProperty("trackNumber").setValue(new Long(1));
+        
+        final ComplexAttribute fish = (ComplexAttribute)feature.getProperty("fish");
+        fish.getProperty("name").setValue("placide");
+        fish.getProperty("code").setValue("01");
+        
+        final ComplexAttribute track = (ComplexAttribute) FeatureUtilities.defaultProperty(
+                feature.getType().getDescriptor("trackpoints"));
+        track.getProperty("location").setValue(GF.createPoint(new Coordinate(-10, 23)));
+        track.getProperty("time").setValue(new Date());
+        
+        feature.getProperties().add(track);
         return feature;
     }
 
