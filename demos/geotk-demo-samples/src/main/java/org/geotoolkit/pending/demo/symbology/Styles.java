@@ -2,6 +2,11 @@
 package org.geotoolkit.pending.demo.symbology;
 
 
+import org.opengis.filter.expression.Literal;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
+import org.opengis.style.ContrastMethod;
+import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.coverage.io.CoverageIO;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -499,6 +504,37 @@ public class Styles {
                 channels,overlap,colormap,enhance,relief,outline);
         final MutableStyle style = SF.style(symbol);
         return style;
+    }
+    
+    public static MutableStyle colorInterpolationRaster(){
+        
+        final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+        values.add( SF.interpolationPoint(1003, SF.literal(new Color(46,154,88))));
+        values.add( SF.interpolationPoint(1800, SF.literal(new Color(251,255,128))));
+        values.add( SF.interpolationPoint(2800, SF.literal(new Color(224,108,31))));
+        values.add( SF.interpolationPoint(3500, SF.literal(new Color(200,55,55))));
+        values.add( SF.interpolationPoint(4397, SF.literal(new Color(215,244,244 ))));
+        final Expression lookup = DEFAULT_CATEGORIZE_LOOKUP;
+        final Literal fallback = DEFAULT_FALLBACK;
+        final Expression function = SF.interpolateFunction(
+                lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+
+        final ChannelSelection selection = DEFAULT_RASTER_CHANNEL_RGB;
+
+        final Expression opacity = LITERAL_ONE_FLOAT;
+        final OverlapBehavior overlap = OverlapBehavior.LATEST_ON_TOP;
+        final ColorMap colorMap = SF.colorMap(function);
+        final ContrastEnhancement enchance = SF.contrastEnhancement(LITERAL_ONE_FLOAT,ContrastMethod.NONE);
+        final ShadedRelief relief = SF.shadedRelief(LITERAL_ONE_FLOAT);
+        final Symbolizer outline = null;
+        final Unit uom = NonSI.PIXEL;
+        final String geom = DEFAULT_GEOM;
+        final String name = "raster symbol name";
+        final Description desc = DEFAULT_DESCRIPTION;
+
+        final RasterSymbolizer symbol = SF.rasterSymbolizer(
+                name,geom,desc,uom,opacity, selection, overlap, colorMap, enchance, relief, outline);
+        return SF.style(symbol);
     }
 
     //////////////////////////////////////////////////////////////////////
