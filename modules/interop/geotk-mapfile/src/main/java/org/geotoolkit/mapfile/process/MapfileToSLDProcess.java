@@ -67,6 +67,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.Feature;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
+import org.opengis.filter.expression.Literal;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.mapfile.process.MapfileToSLDDescriptor.*;
@@ -221,10 +222,19 @@ public class MapfileToSLDProcess extends AbstractProcess{
     private List<Symbolizer> createPolygonSymbolizer(final ComplexAttribute style){
         
         Expression expColor = getValue(style, STYLE_COLOR, Expression.class);
-        Expression expOpacity = getValue(style, STYLE_WIDTH, Expression.class);
+        Expression expOpacity = getValue(style, STYLE_OPACITY, Expression.class);
         
         if(expOpacity == null){
             expOpacity = DEFAULT_FILL_OPACITY;
+        }else{
+            //mapfile opacity is expressed in %, SE is in 0-1
+            if(expOpacity instanceof Literal){
+                Double d= expOpacity.evaluate(null, Double.class);
+                d /= 100d;
+                expOpacity = FF.literal(d);
+            }else{
+                expOpacity = FF.divide(expOpacity, FF.literal(100));
+            }
         }
         if(expColor == null){
             expColor = DEFAULT_FILL_COLOR;
@@ -268,6 +278,15 @@ public class MapfileToSLDProcess extends AbstractProcess{
         }        
         if(expOpacity == null){
             expOpacity = DEFAULT_STROKE_OPACITY;
+        }else{
+            //mapfile opacity is expressed in %, SE is in 0-1
+            if(expOpacity instanceof Literal){
+                Double d= expOpacity.evaluate(null, Double.class);
+                d /= 100d;
+                expOpacity = FF.literal(d);
+            }else{
+                expOpacity = FF.divide(expOpacity, FF.literal(100));
+            }
         }        
         if(expWidth == null){
             expWidth = DEFAULT_STROKE_WIDTH;
