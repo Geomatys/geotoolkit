@@ -48,6 +48,11 @@ Geotoolkit.org demos
 
   These are small standalone classes that could be compiled and run from the command line.
 
+  * Metadata demonstration
+
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/metadata/HelloWorld.java}HelloWorld}}>>>
+      shows how to create a simple metadata object and marshal it to ISO 19139 compliant XML.
+
   * Referencing demonstration
 
     * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
