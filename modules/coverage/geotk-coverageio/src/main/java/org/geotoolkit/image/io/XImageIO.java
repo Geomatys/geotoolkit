@@ -58,41 +58,40 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * are equivalent in purpose to the methods defined in {@code ImageIO} except that:
  * <p>
  * <ul>
- *   <li>The methods in this class return a single {@code ImageReader} or {@code ImageWriter}
- *       instead than an iterator, and throw an {@link IIOException} if no reader or writer
- *       is found.</li>
- *   <li>The methods in this class accept an optional input or output argument, in order to
- *       check if the reader or writer can use directly that argument before to create an
- *       input or output stream.</li>
- *   <li>The methods in this class automatically create an {@linkplain ImageInputStream image input}
- *       or {@linkplain ImageOutputStream output stream} if the reader or writer requires such
- *       stream.</li>
+ *   <li>Return a single {@code ImageReader} or {@code ImageWriter} instead than an iterator.</li>
+ *   <li>Throw an {@link IIOException} if no reader or writer is found.</li>
+ *   <li>Accept an optional input or output argument, in order to check if the reader or writer
+ *       can use directly that argument instead than creating an input or output stream.</li>
+ *   <li>Create automatically an {@linkplain ImageInputStream image input} or
+ *       {@linkplain ImageOutputStream output stream} if needed.</li>
  * </ul>
  * <p>
  * For example, the standard Java API provides the following method:
  *
  * <blockquote>
- * {@link ImageIO#getImageReadersBySuffix(String)} with <var>suffix</var> argument
+ * {@link ImageIO#getImageReadersBySuffix(String)} with {@code suffix} argument
  * </blockquote>
  *
  * while this class provides the following equivalent API:
  *
  * <blockquote>
- * {@link #getReaderBySuffix(String, Object, Boolean, Boolean)} with <var>suffix</var>,
- * <var>input</var>, <var>seekForwardOnly</var> and <var>ignoreMetadata</var> arguments.
+ * {@link #getReaderBySuffix(String, Object, Boolean, Boolean)} with {@code suffix},
+ * {@code input}, {@code seekForwardOnly} and {@code ignoreMetadata} arguments.
  * </blockquote>
  *
- * The raison why the methods in this class expect an optional input or output argument is that
- * the standard Image I/O Java library expects every {@linkplain ImageReader image readers} and
- * {@linkplain ImageWriter writers} to accept an {@linkplain ImageInputStream image input} or
- * {@linkplain ImageOutputStream output stream}, while some plugins used in the Geotk library
- * can not work with streams. For example plugins which depend on native libraries (e.g. the HDF
- * format) can typically accept only a filename as input, since the file will be open in C/C++
- * code. Some other plugins like {@link org.geotoolkit.image.io.plugin.WorldFileImageReader} require
- * the filename because they need to open many files, instead than reading a single stream.
- * Consequently if the user wants to read an image in a {@link java.io.File}, it is preferable to
- * check if an {@code ImageReader} accepts directly a {@code File} input before to open the file
- * in an {@code ImageInputStream}.
+ * {@note <b>Why <code>XImageIO</code> methods expect an optional input argument:</b>
+ * The standard <code>ImageIO</code> methods do not take input argument because the Java Image I/O
+ * framework expects every <code>ImageReader</code>s to accept an <code>ImageInputStream</code>.
+ * Actually, <code>ImageIO</code> creates image input streams unconditionally, without checking
+ * whatever it was necessary or not.
+ * <p>
+ * However, some plugins used by the Geotk library can not work with streams. Some plugins (e.g.
+ * the HDF format) open the file in native C/C++ code. Those libraries can not work with Java
+ * streams - they require a plain filename. Even in pure Java code, sometime a filename or URL
+ * is required. For example the Geotk <code>WorldFileImageReader</code> needs to open many files
+ * for the same image. Consequently if the user wants to read an image from a <code>File</code>,
+ * it is preferable to check if an <code>ImageReader</code> accepts directly such <code>File</code>
+ * input before to create an <code>ImageInputStream</code>.}
  *
  * {@section How the input/output is defined in the returned reader/writer}
  * The {@link ImageReader} and {@link ImageWriter} returned by the methods in this class will have
@@ -114,9 +113,9 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * boolean argument to {@code false}, but this behavior could have been overridden by the plugin.
  *
  * {@section Example}
- * The following example reads a TIFF image. Because we use an input of type {@link java.io.File}
- * instead than {@link ImageInputStream}, the {@link org.geotoolkit.image.io.plugin.WorldFileImageReader}
- * can be used. Consequently the metadata associated with the TIFF image can contain geolocalization
+ * The following example reads a TIFF image. Because we use an input of type {@link File}
+ * instead than {@link ImageInputStream}, the {@link WorldFileImageReader} can be used.
+ * Consequently the metadata associated with the TIFF image can contain geolocalization
  * information if a {@code ".tfw"} file was found together with the {@code ".tiff"} file.
  *
  * {@preformat java
@@ -133,7 +132,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.19
  *
  * @since 3.07
  * @module
@@ -152,13 +151,30 @@ public final class XImageIO extends Static {
     }
 
     /**
+     * Returns the names, suffixes of mime types of the given provider
+     * depending on the value of the {@code mode} argument.
+     *
+     * @param  spi  The provider from which to get the identifiers.
+     * @param  mode Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
+     * @return The requested identifiers.
+     */
+    static String[] getIdentifiers(final ImageReaderWriterSpi spi, final int mode) {
+        switch (mode) {
+            case NAME:   return spi.getFormatNames();
+            case SUFFIX: return spi.getFileSuffixes();
+            case MIME:   return spi.getMIMETypes();
+            default: throw new AssertionError(mode);
+        }
+    }
+
+    /**
      * Returns an iterator over all providers of the given category having the given name,
      * suffix or MIME type.
      *
      * @param <T>      The compile-time type of the {@code category} argument.
      * @param category Either {@link ImageReaderSpi} or {@link ImageWriterSpi}.
      * @param mode     Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
-     * @param suffix     The name, suffix or MIME type to look for, or {@code null}.
+     * @param suffix   The name, suffix or MIME type to look for, or {@code null}.
      * @return         An iterator over the requested providers.
      */
     private static <T extends ImageReaderWriterSpi> Iterator<T> getServiceProviders(
@@ -170,15 +186,7 @@ public final class XImageIO extends Static {
         }
         final IIORegistry.Filter filter = new IIORegistry.Filter() {
             @Override public boolean filter(final Object provider) {
-                final ImageReaderWriterSpi spi = (ImageReaderWriterSpi) provider;
-                final String[] names;
-                switch (mode) {
-                    case NAME:   names = spi.getFormatNames();  break;
-                    case SUFFIX: names = spi.getFileSuffixes(); break;
-                    case MIME:   names = spi.getMIMETypes();    break;
-                    default: throw new AssertionError(mode);
-                }
-                return XArrays.contains(names, name);
+                return XArrays.contains(getIdentifiers((ImageReaderWriterSpi) provider, mode), name);
             }
         };
         return registry.getServiceProviders(category, filter, true);
@@ -261,7 +269,7 @@ public final class XImageIO extends Static {
     private static ImageReader getReader(final int mode, final String name, final Object input,
             Boolean seekForwardOnly, Boolean ignoreMetadata) throws IOException
     {
-        List<ImageReaderSpi> tryAgain = null; // Will be created only if needed.
+        List<ImageReaderSpi> usingImageInputStream = null; // Will be created only if needed.
         Iterator<ImageReaderSpi> it = getServiceProviders(ImageReaderSpi.class, mode, name);
         boolean hasFound = false;
         while (it.hasNext()) {
@@ -272,8 +280,13 @@ public final class XImageIO extends Static {
                  * wrapper in order to avoid the cost of reading the TFW/PRJ files.  We will rather
                  * use directly the wrapped reader, which should be somewhere next in the iteration.
                  */
-                if (spi instanceof WorldFileImageReader.Spi) {
-                    continue;
+                if (spi instanceof ImageReaderAdapter.Spi) {
+                    final ImageReaderSpi main = ((ImageReaderAdapter.Spi) spi).main;
+                    if (Arrays.equals(getIdentifiers(spi, mode), getIdentifiers(main, mode))) {
+                        // Actually, don't skip the adapter if it declares a different format
+                        // name, or suffixes, etc., since it could be definition of a new format.
+                        continue;
+                    }
                 }
             }
             if (input == null || spi.canDecodeInput(input)) {
@@ -291,20 +304,20 @@ public final class XImageIO extends Static {
             // We accept only case 2 below (not case 1) because if the
             // given type was a legal type, it should have succeed above.
             if (codeAllowedType(spi.getInputTypes(), input.getClass(), ImageInputStream.class) == 2) {
-                if (tryAgain == null) {
-                    tryAgain = new ArrayList<ImageReaderSpi>(2);
+                if (usingImageInputStream == null) {
+                    usingImageInputStream = new ArrayList<ImageReaderSpi>(2);
                 }
-                tryAgain.add(spi);
+                usingImageInputStream.add(spi);
             }
         }
         /*
          * No Spi accept directly the given input. If at least one Spi accepts an
          * ImageInputStream, create the stream and check again.
          */
-        if (tryAgain != null) {
+        if (usingImageInputStream != null) {
             final ImageInputStream stream = createImageInputStream(input);
             if (stream != null) {
-                it = tryAgain.iterator();
+                it = usingImageInputStream.iterator();
                 while (it.hasNext()) {
                     final ImageReaderSpi spi = it.next();
                     if (spi.canDecodeInput(stream)) {
