@@ -193,6 +193,11 @@ public class MapfileToSLDProcess extends AbstractProcess{
         for(final Property pp : styles){
             final ComplexAttribute style = (ComplexAttribute) pp;
             
+            if(style.getProperties().isEmpty()){
+                //empty style element, mapfile hack to organize symbol order
+                continue;
+            }
+            
             if("POLYGON".equalsIgnoreCase(type)){
                 rule.symbolizers().addAll(createPolygonSymbolizer(style));
             }else if("LINE".equalsIgnoreCase(type)){
@@ -203,7 +208,12 @@ public class MapfileToSLDProcess extends AbstractProcess{
         }
         
         for(final Property pp : labels){
-            final ComplexAttribute style = (ComplexAttribute) pp;
+            final ComplexAttribute label = (ComplexAttribute) pp;
+            
+            if(label.getProperties().isEmpty()){
+                //empty style element, mapfile hack to organize symbol order
+                continue;
+            }
             
             //this property contain the label to place in the text symbolizer
             Expression labelProp = getValue(mflayer,LAYER_LABELITEM,PropertyName.class);
@@ -213,7 +223,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
                 labelProp = labelOverride;
             }
             
-            rule.symbolizers().addAll(createTextSymbolizer(labelProp,style));
+            rule.symbolizers().addAll(createTextSymbolizer(labelProp,label));
         }
         
         return rule;
@@ -334,6 +344,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
         Expression expHaloColor = getValue(lblStyle, LABEL_OUTLINECOLOR, Expression.class);
         Integer valHaloWidth = getValue(lblStyle, LABEL_OUTLINEWIDTH, Integer.class);
+        String valAngle = getValue(lblStyle, LABEL_ANGLE, String.class);
         
         if(expLabelColor == null){
             expLabelColor = SF.literal(Color.BLACK);
@@ -347,11 +358,41 @@ public class MapfileToSLDProcess extends AbstractProcess{
         if(valHaloWidth == null){
             valHaloWidth = 0;
         }
-        
-        
+                
         Expression expHaloWidth = FF.literal(valHaloWidth);
                 
         final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
+        
+        
+        LabelPlacement placement = SF.pointPlacement();
+        if(valAngle != null){
+            if("FOLLOW".equalsIgnoreCase(valAngle) || "AUTO".equalsIgnoreCase(valAngle)){
+                final Expression offset = FF.divide(expLabelSize, FF.literal(-2));
+                final Expression initial = FF.literal(20);
+                Expression gap = LITERAL_ZERO_FLOAT;
+                boolean repeated = false;
+                final boolean aligned = false;
+                final boolean generalize = false;
+                
+                Integer minDistance = getValue(lblStyle, LABEL_MINDISTANCE, Integer.class);
+                if(minDistance != null){
+                    repeated = true;
+                    gap = FF.literal(minDistance);
+                }
+                
+                placement = SF.linePlacement(offset,initial,gap,repeated,aligned,generalize);
+            }else{
+                Expression rotation = LITERAL_ZERO_FLOAT;
+                //try if it's a number
+                try{
+                    double d = Double.valueOf(valAngle);
+                    rotation = FF.literal(d);
+                }catch(Exception ex){
+                }
+                
+                placement = SF.pointPlacement(DEFAULT_ANCHOR_POINT, DEFAULT_DISPLACEMENT, rotation);
+            }
+        }
         
         //general informations
         final String name = "";
@@ -363,7 +404,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
                 FONT_STYLE_NORMAL,
                 FONT_WEIGHT_NORMAL,
                 expLabelSize);
-        final LabelPlacement placement = SF.pointPlacement();
+        
         final Halo halo = SF.halo(SF.fill(expHaloColor), expHaloWidth);
         final Fill fill = SF.fill(expLabelColor);
 
