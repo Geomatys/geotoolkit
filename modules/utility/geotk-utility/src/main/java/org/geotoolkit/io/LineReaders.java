@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.io.DataInput;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Closeable;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -32,7 +33,7 @@ import org.geotoolkit.util.Strings;
  * Provides implementations of {@link LineReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.19
  *
  * @since 3.02
  * @module
@@ -59,9 +60,13 @@ public final class LineReaders extends Static {
      * Wraps the given collection in a {@code LineReader}. Each element will be converted
      * to a line by a call to {@link Object#toString()}. Null elements are not allowed.
      * <p>
-     * If any {@link RuntimeException} is thrown during the iteration and this exception
-     * has an {@link IOException} as its cause, then the {@code IOException} is rethrown
-     * by the {@link LineReader#readLine()} method instead than the runtime exception.
+     * If the {@link Iterator} implements the {@link Closeable} interface, then the
+     * {@code LineReader.close()} method will delegate to {@code Iterator.close()}.
+     * <p>
+     * If any {@link RuntimeException} is thrown during the iteration and the
+     * {@linkplain RuntimeException#getCause() exception cause} is an instance of
+     * {@link IOException}, then the {@code IOException} is unwrapped and rethrown
+     * by the {@link LineReader#readLine()} method.
      *
      * @param collection The collection to wrap.
      * @return A line reader for each element in the given string.
@@ -80,12 +85,21 @@ public final class LineReaders extends Static {
                     throw e;
                 }
             }
+
+            @Override public void close() throws IOException {
+                if (it instanceof Closeable) {
+                    ((Closeable) it).close();
+                }
+            }
         };
     }
 
     /**
      * Wraps the given {@code DataInput} in a {@code LineReader}. If the given
      * input is already a {@code LineReader}, then it is returned unchanged.
+     * <p>
+     * If the {@link DataInput} implements the {@link Closeable} interface, then the
+     * {@code LineReader.close()} method will delegate to {@code DataInput.close()}.
      *
      * @param input The input to wrap.
      * @return The wrapped input.
@@ -97,6 +111,12 @@ public final class LineReaders extends Static {
         return new LineReader() {
             @Override public String readLine() throws IOException {
                 return input.readLine();
+            }
+
+            @Override public void close() throws IOException {
+                if (input instanceof Closeable) {
+                    ((Closeable) input).close();
+                }
             }
         };
     }
@@ -117,6 +137,10 @@ public final class LineReaders extends Static {
             return new LineReader() {
                 @Override public String readLine() throws IOException {
                     return input.readLine();
+                }
+
+                @Override public void close() throws IOException {
+                    input.close();
                 }
             };
         }

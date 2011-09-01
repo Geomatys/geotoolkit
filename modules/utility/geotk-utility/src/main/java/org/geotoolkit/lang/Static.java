@@ -24,13 +24,15 @@ package org.geotoolkit.lang;
  * mentioned. See the javadoc of individual classes for more details).
  *
  * <table>
- * <tr><th colspan="2" bgcolor="lightblue">Primitives</th></tr>
+ * <tr><th colspan="2" bgcolor="lightblue">Primitives and classes</th></tr>
  * <tr><td>{@link org.geotoolkit.util.Utilities}</td>
  *     <td>Convenience {@code equals} and {@code hashCode} methods.</td></tr>
  * <tr><td>{@link org.geotoolkit.util.Characters}</td>
  *     <td>Find subscript and superscript digit characters.</td></tr>
  * <tr><td>{@link org.geotoolkit.util.converter.Classes}</td>
  *     <td>Conversions between different kind of {@link java.lang.Number}.</td></tr>
+ * <tr><td>{@link org.geotoolkit.util.GeoAPI}</td>
+ *     <td>Mapping between ISO identifiers and GeoAPI types.</td></tr>
  * <tr><td colspan="2"><hr></td></tr>
  *
  * <tr><th colspan="2" bgcolor="lightblue">Mathematics and units of measurement</th></tr>

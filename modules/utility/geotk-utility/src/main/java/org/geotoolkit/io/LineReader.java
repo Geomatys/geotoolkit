@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.RandomAccessFile;
@@ -31,7 +32,7 @@ import java.io.RandomAccessFile;
  * {@link LineReaders}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.19
  *
  * @see java.io.DataInput#readLine()
  * @see BufferedReader#readLine()
@@ -39,7 +40,7 @@ import java.io.RandomAccessFile;
  * @since 3.02
  * @module
  */
-public interface LineReader {
+public interface LineReader extends Closeable {
     /**
      * Returns the next line, or {@code null} if there is no more line to read.
      * A line is considered to be terminated by any one of a line feed ({@code '\n'}),
