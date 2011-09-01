@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.SampleModel;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.Map;
@@ -99,7 +100,21 @@ public class BILImageReader extends WorldFileImageReader {
 
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            return true;
+            //check if file has extension .bil and .hdr file is present
+            
+            final String extension = IOUtilities.extension(source);
+            if(!"bil".equalsIgnoreCase(extension)){
+                return false;
+            }
+            
+            final Object hdrpath = IOUtilities.changeExtension(source, "hdr");
+            final Object hdrfile = IOUtilities.tryToFile(hdrpath);
+            if(hdrfile instanceof File){
+                final File f = (File) hdrfile;
+                return f.exists();
+            }
+            
+            return false;
         }
         
         public static void registerDefaults(IIORegistry registry) {
