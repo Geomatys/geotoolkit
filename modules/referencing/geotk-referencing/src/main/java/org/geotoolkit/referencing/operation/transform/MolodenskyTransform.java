@@ -94,12 +94,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     private static final double ISIN = 1.0000000000039174;
 
     /**
-     * The tolerance error for assertions, in decimal degrees. A value of 0.005° is more than
-     * 500 metres. This is quite high, but we don't want the assertion to be too intrusive.
-     */
-    private static final float TOLERANCE = 0.005f;
-
-    /**
      * A mask value for {@link #type}.
      * <ul>
      *   <li>If set, the target coordinates are three-dimensional.</li>
@@ -351,10 +345,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
             }
         } else if (!source3D && !target3D) {
             transform = new MolodenskyTransform2D(abridged, a, b, ta, tb, dx, dy, dz);
-            assert !transform.isIdentity();
         } else {
             transform = new MolodenskyTransform(abridged, a, b, source3D, ta, tb, target3D, dx, dy, dz);
-            assert !transform.isIdentity();
         }
         return transform;
     }
@@ -449,18 +441,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                              double[] dstPts, int dstOff)
     {
         transform(null, srcPts, srcOff, null, dstPts, dstOff, 1, srcPts == dstPts);
-        /*
-         * Assertions: computes the inverse transform in the 3D-case only
-         *             (otherwise the transform is too approximative).
-         *
-         * NOTE: The expression below executes 'maxError' *only* if assertions are enabled and the
-         * conditions before 'maxError' are meet. Do not factor the call to 'maxError' outside the
-         * 'assert' statement, otherwise it would be executed everytime and would hurt performance
-         * for normal operations (instead of slowing down during debugging only).
-         */
-        final float error;
-        assert (srcPts == dstPts) || // Following assertion can not be performed if the arrays are the same.
-               (error = maxError(null, srcPts, srcOff, null, dstPts, dstOff, 1)) <= TOLERANCE : error;
     }
 
     /**
@@ -471,9 +451,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                           double[] dstPts, int dstOff, int numPts)
     {
         transform(null, srcPts, srcOff, null, dstPts, dstOff, numPts, srcPts == dstPts);
-        final float error;
-        assert (srcPts == dstPts) || // Following assertion can not be performed if the arrays are the same.
-               (error = maxError(null, srcPts, srcOff, null, dstPts, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -484,9 +461,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                           final float[] dstPts, int dstOff, int numPts)
     {
         transform(srcPts, null, srcOff, dstPts, null, dstOff, numPts, srcPts == dstPts);
-        final float error;
-        assert (srcPts == dstPts) || // Following assertion can not be performed if the arrays are the same.
-               (error = maxError(srcPts, null, srcOff, dstPts, null, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -497,8 +471,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                           float [] dstPts, int dstOff, int numPts)
     {
         transform(null, srcPts, srcOff, dstPts, null, dstOff, numPts, false);
-        final float error;
-        assert (error = maxError(null, srcPts, srcOff, dstPts, null, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -509,8 +481,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                           double[] dstPts, int dstOff, int numPts)
     {
         transform(srcPts, null, srcOff, null, dstPts, dstOff, numPts, false);
-        final float error;
-        assert (error = maxError(srcPts, null, srcOff, null, dstPts, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -652,107 +622,64 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        final boolean abridged = (type & ABRIDGED_MASK) != 0;
-        final double λ = toRadians(point.getOrdinate(0)); // Longitude
-        final double φ = toRadians(point.getOrdinate(1)); // Latitude
-        final double h = point.getOrdinate(2); // Height above the ellipsoid (m)
+        final boolean abridged = (type & ABRIDGED_MASK)         != 0;
+        final boolean source3D = (type & SOURCE_DIMENSION_MASK) != 0;
+        final double λ = toRadians (point.getOrdinate(0));    // Longitude
+        final double φ = toRadians (point.getOrdinate(1));    // Latitude
+        final double h = source3D ? point.getOrdinate(2) : 0; // Height above the ellipsoid (m)
         final double cosλ    = cos(λ);
         final double sinλ    = sin(λ);
         final double cosφ    = cos(φ);
         final double sinφ    = sin(φ);
-        final double tanφ    = tan(φ);
-        final double cos2φ   = cos(2*φ);
+        final double tanφ    = sinφ / cosφ;
+        final double sincosφ = sinφ * cosφ;
+        final double sinφ2   = sinφ * sinφ;
         final double scλ     = dy*sinλ + dx*cosλ;
         final double csλ     = dy*cosλ - dx*sinλ;
-        final double e2sinφ2 = 1 - e2*(sinφ*sinφ);
+        final double e2sinφ2 = 1 - e2*sinφ2;
         final double Rn      = a / sqrt(e2sinφ2);
-        final double dRn     = e2*cosφ*sinφ / e2sinφ2;
-        final double Rm      = (1 - e2) / e2sinφ2; // to be multiplied by Rn
-        final double dRn3Rm  = dRn*3*Rm;
+        final double dRn     = e2*sincosφ / e2sinφ2;
+        final double Rm      = (1 - e2) / e2sinφ2; // Multiplication by Rn omitted.
+        final double dRn3Rm  = 3*Rm*dRn;
+
+        // The following are "almost" the derivatives to be returned.
+        // Some final operation commons to both kind of formulas will
+        // be applied in the call to Matrix3 constructor.
         final double dXdλ, dXdφ, dXdh,
                      dYdλ, dYdφ, dYdh,
-                     dZdλ, dZdφ, dZdh;
+                     dZdλ, dZdφ; // 1
+        dZdλ =  cosφ*csλ;
         if (abridged) {
-            final double I_Rm  = ISIN / (Rm * Rn);
-            final double I_Rnc = ISIN / (Rn*cosφ);
-            final double dcλ   = dx*sinλ - dy*cosλ;
-
-            // X = λ+ ISIN * (csλ / (Rn*cosφ));
-            dXdλ = 1 - scλ*I_Rnc;
-            dXdφ = dcλ * (dRn - tanφ) * I_Rnc;
-            dXdh = 0;
-
-            // Y = φ + ISIN * ((dz*cosφ - sinφ*scλ + adf*sin(2*φ)) / Rm);
-            dYdλ = sinφ * dcλ * I_Rm;
-            dYdφ = 1 + I_Rm*(scλ * (sinφ*dRn3Rm - cosφ) - dz * (sinφ + dRn3Rm*cosφ) + adf * (2*cos2φ - dRn3Rm*sin(2*φ)));
-            dYdh = 0;
-
-            // Z = h + dx*cosφ*cosλ + dy*cosφ*sinλ + dz*sinφ + adf*sin2φ - da;
-            dZdλ = toRadians( cosφ*csλ);
-            dZdφ = toRadians(-sinφ*scλ + cosφ*(dz + 2*adf*sinφ));
-            dZdh = 1;
+            final double IRnm = ISIN / (Rn*Rm);
+            final double IRnφ = ISIN / (Rn*cosφ);
+            dXdλ =  IRnφ *  scλ;
+            dXdφ =  IRnφ *  csλ*(tanφ - dRn);
+            dYdλ = -IRnm * (csλ*sinφ);
+            dYdφ =  IRnm * (scλ*(sinφ*dRn3Rm - cosφ) - dz*(cosφ*dRn3Rm + sinφ) + 2*adf*(1 - sincosφ*dRn3Rm - 2*sinφ2));
+            dZdφ =  cosφ * (dz + 2*adf*sinφ) - sinφ*scλ;
+            dXdh =  0;
+            dYdh =  0;
         } else {
-            final double hRn   = Rn + h;
-            final double Ixdcs = ISIN * csλ;
-            final double Rnhc  = hRn*cosφ;
-            final double Rmh   = (Rm + h/Rn);
-            final double d_Rmh = dRn3Rm/Rmh;
-            final double dae2  = da_a*e2;
-
-            // X = λ + ISIN * (csλ / (hRn*cosφ));
-            dXdλ = 1 - ISIN/Rnhc * scλ;
-            dXdφ = -Ixdcs * (dRn*Rn - hRn*tanφ) / (hRn*Rnhc);
-            dXdh = -Ixdcs / (hRn*hRn * cosφ);
-
-            // Y = φ + ISIN * ((dz*cosφ - sinφ*scλ + da_a*(Rn*e2*sinφ*cosφ) + df*(Rm*(a_b) + Rn*(b_a))*sinφ*cosφ) / (Rm + h));
-            dYdλ = -ISIN*sinφ*csλ / (Rmh*Rn);
-            dYdφ = 1 + ISIN * ((-dz*(sinφ + d_Rmh * cosφ) + (d_Rmh*sinφ - cosφ)*scλ) / (Rmh*Rn)
-                    + ((df*dRn*(a_b*3*Rm + b_a) + dae2 *(1 + dRn) - d_Rmh*df*(Rm*a_b + b_a))*sinφ*cosφ
-                    + cos2φ*(df*(Rm*a_b + b_a) + dae2)) / Rmh);
-            dYdh = -ISIN * (((dz*cosφ - sinφ*scλ)/Rn + (dae2 + df*(Rm*a_b + b_a))*sinφ*cosφ) / (Rmh*Rmh)/Rn);
-
-            // Z = h + dx*cosφ*cosλ + dy*cosφ*sinλ + dz*sinφ + df*(b_a)*Rn*sin2φ - daa/Rn;
-            dZdλ = toRadians(cosφ*csλ) ;
-            dZdφ = toRadians(-sinφ*(scλ - df*Rn*b_a*(dRn*sinφ+2*cosφ)) + dz*cosφ+ daa*dRn/Rn);
-            dZdh = 1;
+            final double h_Rn   = h + Rn;
+            final double h_Rm   = h + Rm*Rn;
+            final double IRnm   = ISIN / (h_Rm);
+            final double IRnφ   = ISIN / (h_Rn*cosφ);
+            final double dRmh   = dRn3Rm * Rn / h_Rm;
+            final double sar   = Rm*a_b + b_a;
+            final double e2rd   = e2 * da_a/df;
+            final double df_exp = df * (e2rd + sar)*Rn;
+            dXdλ =  IRnφ * scλ;
+            dXdφ =  IRnφ * csλ * (tanφ - dRn*Rn/h_Rn);
+            dYdλ = -IRnm * csλ *  sinφ;
+            dYdφ =  IRnm * (scλ*(dRmh*sinφ - cosφ) - dz*(dRmh*cosφ + sinφ) + df_exp*(1 - 2*sinφ2) +
+                            df*Rn*sincosφ*(dRn*(2*a_b + sar + e2rd) + e2rd - dRmh*sar));
+            dZdφ =  sinφ * (df*Rn*b_a*(dRn*sinφ + 2*cosφ) - scλ) + dz*cosφ + daa*dRn/Rn;
+            dXdh = -IRnφ * (csλ) / h_Rn;
+            dYdh =  IRnm * (scλ*sinφ - dz*cosφ - df_exp*sincosφ) / h_Rm;
         }
-        return new Matrix3(dXdλ, dXdφ, dXdh,
-                           dYdλ, dYdφ, dYdh,
-                           dZdλ, dZdφ, dZdh);
-    }
-
-    /**
-     * After a call to {@code transform}, applies the <em>inverse</em> transform on {@code dstPts}
-     * and compares the result with {@code srcPts}. The maximal difference is returned. This method
-     * is used for assertions only.
-     *
-     * @return The maximal error in decimal degrees, or 0 if it can not be computed.
-     */
-    private float maxError(final float[] srcPts1, final double[] srcPts2, int srcOff,
-                           final float[] dstPts1, final double[] dstPts2, int dstOff, int numPts)
-    {
-        float max = 0f;
-        if (getTargetDimensions() == 3) {
-            final MathTransform inverse = inverse();
-            // We will perform the test only for MolodenskyTransform and MolodenskyTransform2D.
-            if (inverse.getClass().getName().startsWith(MolodenskyTransform.class.getName())) {
-                final int sourceDim = getSourceDimensions();
-                final float[] tmp = new float[numPts * sourceDim];
-                ((MolodenskyTransform) inverse).transform(dstPts1, dstPts2, dstOff, tmp, null, 0, numPts, false);
-                for (int i=0; i<tmp.length; i++,srcOff++) {
-                    final float expected = (srcPts2 != null) ? (float) srcPts2[srcOff] : srcPts1[srcOff];
-                    float error = abs(tmp[i] - expected);
-                    switch (i % sourceDim) {
-                        case 0: error -= 360 * floor(error / 360); break; // Rool Longitude
-                        case 2: continue; // Ignore height because inacurate.
-                    }
-                    if (error > max) {
-                        max = error;
-                    }
-                }
-            }
-        }
-        return max;
+        return new Matrix3(1-dXdλ,            dXdφ,   dXdh,
+                             dYdλ,          1+dYdφ,   dYdh,
+                   toRadians(dZdλ), toRadians(dZdφ),     1);
     }
 
     /**
