@@ -48,6 +48,7 @@ import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
 import org.geotoolkit.wms.xml.WMSVersion;
 
@@ -489,12 +490,13 @@ public class WMSMapLayer extends AbstractMapLayer {
     }
 
     Envelope findEnvelope(){
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
-
-        if(layer != null){
-            return layer.getEnvelope();
-        }
-        return null;
+        final AbstractWMSCapabilities capa = server.getCapabilities();
+        if(capa == null) return null;
+        
+        final AbstractLayer layer = capa.getLayerFromName(layers[0]);
+        if(layer == null) return null;
+        
+        return layer.getEnvelope();
     }
 
     public List<? extends Style> findStyleCandidates(){
