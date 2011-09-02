@@ -43,8 +43,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  *        and "<cite>Flattening difference</cite>".}
  *
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.19
  *
  * @see MolodenskyTransform
  *
@@ -72,7 +72,9 @@ public class AbridgedMolodensky extends Molodensky {
         }, new ParameterDescriptor<?>[] {
             DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
             SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
-            TGT_SEMI_MAJOR, TGT_SEMI_MINOR
+            TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
+            AXIS_LENGTH_DIFFERENCE,
+            FLATTENING_DIFFERENCE
         });
 
     /**
@@ -80,9 +82,9 @@ public class AbridgedMolodensky extends Molodensky {
      */
     public AbridgedMolodensky() {
         // Following constructors register themselves in the "complements" array.
-        this(DEFAULT_DIMENSION, DEFAULT_DIMENSION, PARAMETERS, new AbridgedMolodensky[4]);
-        new AbridgedMolodensky(DEFAULT_DIMENSION, 3, PARAMETERS, complements);
-        new AbridgedMolodensky(3, DEFAULT_DIMENSION, PARAMETERS, complements);
+        this(2, 2, PARAMETERS, new AbridgedMolodensky[4]);
+        new AbridgedMolodensky(2, 3, PARAMETERS, complements);
+        new AbridgedMolodensky(3, 2, PARAMETERS, complements);
         new AbridgedMolodensky(3, 3, PARAMETERS, complements);
     }
 

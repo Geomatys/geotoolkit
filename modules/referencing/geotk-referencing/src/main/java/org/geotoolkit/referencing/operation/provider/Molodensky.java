@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Collection;
 import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.util.GenericName;
@@ -48,6 +49,7 @@ import static org.geotoolkit.parameter.Parameters.doubleValue;
 import static org.geotoolkit.parameter.Parameters.integerValue;
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDescriptor;
 
 
 /**
@@ -60,8 +62,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  *        and "<cite>Flattening difference</cite>".}
  *
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.19
  *
  * @see MolodenskyTransform
  *
@@ -76,21 +78,17 @@ public class Molodensky extends MathTransformProvider {
     private static final long serialVersionUID = 8126525068450868912L;
 
     /**
-     * The default value for source and target geographic dimensions, which is {@value}.
-     *
-     * {@note If this default value is modified, then the handling of the 3D cases must
-     *        be adjusted.}
-     */
-    static final int DEFAULT_DIMENSION = PositionVector7Param.DEFAULT_DIMENSION;
-
-    /**
      * The operation parameter descriptor for the number of geographic dimension (2 or 3).
      * This argument applies on both the source and the target dimension. The default value
      * is 2.
+     * <p>
+     * <strong>Note: the default value may change in future versions</strong>, because the
+     * EPSG database implicitly uses the Molodensky transform in 3-dimensional operations.
+     * Users are well advised to always specify explicitely the dimension.
      */
     public static final ParameterDescriptor<Integer> DIM = DefaultParameterDescriptor.create(
             singletonMap(NAME_KEY, new NamedIdentifier(Citations.OGC, "dim")),
-            DEFAULT_DIMENSION, 2, 3, false);
+            PositionVector7Param.DEFAULT_DIMENSION, 2, 3, false);
 
     /**
      * The operation parameter descriptor for the number of source geographic dimension (2 or 3).
@@ -144,20 +142,56 @@ public class Molodensky extends MathTransformProvider {
             Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
 
     /**
-     * The operation parameter descriptor for the "tgt_semi_major" parameter value.
+     * The operation parameter descriptor for the {@code "tgt_semi_major"} parameter value.
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
+     * <p>
+     * This parameter is mandatory, unless the {@link #AXIS_LENGTH_DIFFERENCE} parameter
+     * is defined in which case the later is used.
      */
     public static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createDescriptor(
             identifiers(PositionVector7Param.TGT_SEMI_MAJOR),
             Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
 
     /**
-     * The operation parameter descriptor for the "tgt_semi_minor" parameter value.
+     * The operation parameter descriptor for the {@code "tgt_semi_minor"} parameter value.
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
+     * <p>
+     * This parameter is mandatory, unless the {@link #FLATTENING_DIFFERENCE} parameter
+     * is defined in which case the later is used.
      */
     public static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createDescriptor(
             identifiers(PositionVector7Param.TGT_SEMI_MINOR),
             Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+
+    /**
+     * The operation parameter descriptor for the <cite>Semi-major axis length difference</cite>
+     * optional parameter value. This parameter is defined by the EPSG database and can be used
+     * in replacement of {@link #TGT_SEMI_MAJOR}.
+     * <p>
+     * Units are {@linkplain SI#METRE metres}.
+     *
+     * @since 3.19
+     */
+     public static final ParameterDescriptor<Double> AXIS_LENGTH_DIFFERENCE = createOptionalDescriptor(
+            new NamedIdentifier[] {
+                new NamedIdentifier(Citations.EPSG, "Semi-major axis length difference"),
+            },
+            Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE);
+
+    /**
+     * The operation parameter descriptor for the <cite>Flattening difference</cite> optional
+      * parameter value. This parameter is defined by the EPSG database and can be used in
+     * replacement {@link #TGT_SEMI_MINOR} parameter value is defined.
+     * <p>
+     * Valid values range from -1 to +1, {@linkplain Unit#ONE dimensionless}.
+     *
+     * @since 3.19
+     */
+     public static final ParameterDescriptor<Double> FLATTENING_DIFFERENCE = createOptionalDescriptor(
+            new NamedIdentifier[] {
+                new NamedIdentifier(Citations.EPSG, "Flattening difference"),
+            },
+            Double.NaN, -1.0, +1.0, Unit.ONE);
 
     /**
      * Helper method for parameter descriptor creation.
@@ -180,7 +214,9 @@ public class Molodensky extends MathTransformProvider {
             }, new ParameterDescriptor<?>[] {
                 DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
                 SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
-                TGT_SEMI_MAJOR, TGT_SEMI_MINOR
+                TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
+                AXIS_LENGTH_DIFFERENCE,
+                FLATTENING_DIFFERENCE
             });
 
     /**
@@ -207,9 +243,9 @@ public class Molodensky extends MathTransformProvider {
      */
     public Molodensky() {
         // Following constructors register themself in the "complements" array.
-        this(DEFAULT_DIMENSION, DEFAULT_DIMENSION, PARAMETERS, new Molodensky[4]);
-        new Molodensky(DEFAULT_DIMENSION, 3, PARAMETERS, complements);
-        new Molodensky(3, DEFAULT_DIMENSION, PARAMETERS, complements);
+        this(2, 2, PARAMETERS, new Molodensky[4]);
+        new Molodensky(2, 3, PARAMETERS, complements);
+        new Molodensky(3, 2, PARAMETERS, complements);
         new Molodensky(3, 3, PARAMETERS, complements);
     }
 
@@ -291,13 +327,20 @@ public class Molodensky extends MathTransformProvider {
         if (dimension != 0) {
             tgtDim = dimension;
         }
-        final double  a = doubleValue(SRC_SEMI_MAJOR, values);
-        final double  b = doubleValue(SRC_SEMI_MINOR, values);
-        final double ta = doubleValue(TGT_SEMI_MAJOR, values);
-        final double tb = doubleValue(TGT_SEMI_MINOR, values);
-        final double dx = doubleValue(DX,             values);
-        final double dy = doubleValue(DY,             values);
-        final double dz = doubleValue(DZ,             values);
+        final double a = doubleValue(SRC_SEMI_MAJOR, values);
+        final double b = doubleValue(SRC_SEMI_MINOR, values);
+        final double ta, tb;
+        double d = doubleValue(AXIS_LENGTH_DIFFERENCE, values);
+        ta = Double.isNaN(d) ? doubleValue(TGT_SEMI_MAJOR, values) : a + d;
+        d = doubleValue(FLATTENING_DIFFERENCE, values);
+        if (Double.isNaN(d)) {
+            tb = doubleValue(TGT_SEMI_MINOR, values);
+        } else {
+            tb = ta*(b/a - d);
+        }
+        final double dx = doubleValue(DX, values);
+        final double dy = doubleValue(DY, values);
+        final double dz = doubleValue(DZ, values);
         MathTransform transform = MolodenskyTransform.create(isAbridged(),
                 a, b, srcDim == 3, ta, tb, tgtDim == 3, dx, dy, dz);
         final Molodensky provider = complements[index(srcDim, tgtDim)];

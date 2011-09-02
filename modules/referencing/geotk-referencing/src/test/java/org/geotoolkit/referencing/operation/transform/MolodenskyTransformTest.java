@@ -23,12 +23,14 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.test.referencing.ParameterizedTransformTest;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.FactoryFinder;
 import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 
 import org.junit.*;
+import static java.lang.StrictMath.*;
 import static org.opengis.test.Assert.*;
 
 
@@ -37,7 +39,8 @@ import static org.opengis.test.Assert.*;
  *
  * @author Tara Athan
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 2.5
  */
@@ -247,5 +250,47 @@ public final strictfp class MolodenskyTransformTest extends TransformTestBase {
         assertInstanceOf("Expected Molodensky.", MolodenskyTransform.class, transform);
         assertEquals(3, transform.getSourceDimensions());
         assertEquals(3, transform.getTargetDimensions());
+    }
+
+    /**
+     * Creates a transform and derivates a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        final double  a = WGS84.getSemiMajorAxis();
+        final double  b = WGS84.getSemiMinorAxis();
+        final double ta = INTERNATIONAL_1924.getSemiMajorAxis();
+        final double tb = INTERNATIONAL_1924.getSemiMinorAxis();
+        final double dx =  84.87;
+        final double dy =  96.49;
+        final double dz = 116.95;
+        boolean abridged = false;
+        tolerance = 1E-6;
+        transform = MolodenskyTransform.create(abridged, a, b, true, ta, tb, true, dx, dy, dz);
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        derivativeDeltas = new double[] {delta, delta};
+
+        verifyDerivative( 0,  0,  0);
+        verifyDerivative(-3, 30,  7);
+        verifyDerivative(+6, 60, 20);
+    }
+
+    /**
+     * Runs the test defined in the GeoAPI-conformance module.
+     *
+     * @throws FactoryException   Should never happen.
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void runGeoapiTest() throws FactoryException, TransformException {
+        new ParameterizedTransformTest(mtFactory).testAbridgedMolodensky();
     }
 }

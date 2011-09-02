@@ -21,16 +21,19 @@ import java.util.Arrays;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
+import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
@@ -71,7 +74,8 @@ import static org.geotoolkit.util.Utilities.hash;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.19
  *
  * @since 1.2
  * @module
@@ -90,10 +94,10 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     private static final double ISIN = 1.0000000000039174;
 
     /**
-     * The tolerance error for assertions, in decimal degrees. A value of 0.002° is more than
-     * 200 metres. This is quite high, but we don't want the assertion to be too intrusive.
+     * The tolerance error for assertions, in decimal degrees. A value of 0.005° is more than
+     * 500 metres. This is quite high, but we don't want the assertion to be too intrusive.
      */
-    private static final float TOLERANCE = 0.002f;
+    private static final float TOLERANCE = 0.005f;
 
     /**
      * A mask value for {@link #type}.
@@ -179,7 +183,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     private final double daa, da_a;
 
     /**
-     * The square of excentricity of the ellipsoid: e² = (a²-b²)/a² where
+     * The square of eccentricity of the ellipsoid: e² = (a²-b²)/a² where
      * <var>a</var> is the semi-major axis length and
      * <var>b</var> is the semi-minor axis length.
      */
@@ -567,58 +571,59 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
             }
         }
         while (--numPts >= 0) {
-            double x,y,z;
+            double λ,φ,h;
             if (srcPts2 != null) {
-                x =              srcPts2[srcOff++];
-                y =              srcPts2[srcOff++];
-                z = (source3D) ? srcPts2[srcOff++] : 0.0;
+                λ =              srcPts2[srcOff++];
+                φ =              srcPts2[srcOff++];
+                h = (source3D) ? srcPts2[srcOff++] : 0.0;
             } else {
-                x =              srcPts1[srcOff++];
-                y =              srcPts1[srcOff++];
-                z = (source3D) ? srcPts1[srcOff++] : 0.0;
+                λ =              srcPts1[srcOff++];
+                φ =              srcPts1[srcOff++];
+                h = (source3D) ? srcPts1[srcOff++] : 0.0;
             }
-            x = toRadians(x);
-            y = toRadians(y);
-            final double sinX = sin(x);
-            final double cosX = cos(x);
-            final double sinY = sin(y);
-            final double cosY = cos(y);
-            final double sin2Y = sinY * sinY;
-            final double Rn = a / sqrt(1 - e2*sin2Y);
-            final double Rm = Rn * (1 - e2) / (1 - e2*sin2Y);
+            λ = toRadians(λ);
+            φ = toRadians(φ);
+            final double sinλ  = sin(λ);
+            final double cosλ  = cos(λ);
+            final double sinφ  = sin(φ);
+            final double cosφ  = cos(φ);
+            final double sin2φ = sinφ * sinφ;
+            final double csλ   = dy*cosλ - dx*sinλ;
+            final double Rn    = a / sqrt(1 - e2*sin2φ);
+            final double Rm    = Rn * (1 - e2) / (1 - e2*sin2φ);
+            final double csφ   = dz*cosφ - sinφ*(dy*sinλ + dx*cosλ);
             if (abridged) {
-                y += ISIN * ((dz*cosY - sinY*(dy*sinX + dx*cosX) + adf*sin(2*y)) / Rm);
-                x += ISIN * ((dy*cosX - dx*sinX) / (Rn*cosY));
+                φ += ISIN * ((csφ + adf*sin(2*φ)) / Rm);
+                λ += ISIN * (csλ / (Rn*cosφ));
             } else {
-                y += ISIN * ((dz*cosY - sinY*(dy*sinX + dx*cosX) + da_a*(Rn*e2*sinY*cosY) +
-                              df*(Rm*(a_b) + Rn*(b_a))*sinY*cosY) / (Rm + z));
-                x += ISIN * ((dy*cosX - dx*sinX) / ((Rn + z)*cosY));
+                φ += ISIN * ((csφ + da_a*(Rn*e2*sinφ*cosφ) + df*(Rm*(a_b) + Rn*(b_a))*sinφ*cosφ) / (Rm + h));
+                λ += ISIN * (csλ / ((Rn + h)*cosφ));
             }
             // stay within latitude +-90 deg. and longitude +-180 deg.
-            if (abs(y) >= PI/2) {
-                x = 0;
-                y = copySign(90, y);
+            if (abs(φ) >= PI/2) {
+                λ = 0;
+                φ = copySign(90, φ);
             } else {
-                x = rollLongitude(toDegrees(x), 180);
-                y = toDegrees(y);
+                λ = rollLongitude(toDegrees(λ), 180);
+                φ = toDegrees(φ);
             }
             if (dstPts2 != null) {
-                dstPts2[dstOff++] = x;
-                dstPts2[dstOff++] = y;
+                dstPts2[dstOff++] = λ;
+                dstPts2[dstOff++] = φ;
             } else {
-                dstPts1[dstOff++] = (float) x;
-                dstPts1[dstOff++] = (float) y;
+                dstPts1[dstOff++] = (float) λ;
+                dstPts1[dstOff++] = (float) φ;
             }
             if (target3D) {
                 if (abridged) {
-                    z += dx*cosY*cosX + dy*cosY*sinX + dz*sinY + adf*sin2Y - da;
+                    h += dx*cosφ*cosλ + dy*cosφ*sinλ + dz*sinφ + adf*sin2φ - da;
                 } else {
-                    z += dx*cosY*cosX + dy*cosY*sinX + dz*sinY + df*(b_a)*Rn*sin2Y - daa/Rn;
+                    h += dx*cosφ*cosλ + dy*cosφ*sinλ + dz*sinφ + df*(b_a)*Rn*sin2φ - daa/Rn;
                 }
                 if (dstPts2 != null) {
-                    dstPts2[dstOff++] = z;
+                    dstPts2[dstOff++] = h;
                 } else {
-                    dstPts1[dstOff++] = (float) z;
+                    dstPts1[dstOff++] = (float) h;
                 }
             }
             srcOff -= srcDecrement;
@@ -640,6 +645,80 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
             }
             System.arraycopy(source, 0, dstFinal, offFinal, length);
         }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     */
+    @Override
+    public Matrix derivative(final DirectPosition point) {
+        final boolean abridged = (type & ABRIDGED_MASK) != 0;
+        final double λ = toRadians(point.getOrdinate(0)); // Longitude
+        final double φ = toRadians(point.getOrdinate(1)); // Latitude
+        final double h = point.getOrdinate(2); // Height above the ellipsoid (m)
+        final double cosλ    = cos(λ);
+        final double sinλ    = sin(λ);
+        final double cosφ    = cos(φ);
+        final double sinφ    = sin(φ);
+        final double tanφ    = tan(φ);
+        final double cos2φ   = cos(2*φ);
+        final double scλ     = dy*sinλ + dx*cosλ;
+        final double csλ     = dy*cosλ - dx*sinλ;
+        final double e2sinφ2 = 1 - e2*(sinφ*sinφ);
+        final double Rn      = a / sqrt(e2sinφ2);
+        final double dRn     = e2*cosφ*sinφ / e2sinφ2;
+        final double Rm      = (1 - e2) / e2sinφ2; // to be multiplied by Rn
+        final double dRn3Rm  = dRn*3*Rm;
+        final double dXdλ, dXdφ, dXdh,
+                     dYdλ, dYdφ, dYdh,
+                     dZdλ, dZdφ, dZdh;
+        if (abridged) {
+            final double I_Rm  = ISIN / (Rm * Rn);
+            final double I_Rnc = ISIN / (Rn*cosφ);
+            final double dcλ   = dx*sinλ - dy*cosλ;
+
+            // X = λ+ ISIN * (csλ / (Rn*cosφ));
+            dXdλ = 1 - scλ*I_Rnc;
+            dXdφ = dcλ * (dRn - tanφ) * I_Rnc;
+            dXdh = 0;
+
+            // Y = φ + ISIN * ((dz*cosφ - sinφ*scλ + adf*sin(2*φ)) / Rm);
+            dYdλ = sinφ * dcλ * I_Rm;
+            dYdφ = 1 + I_Rm*(scλ * (sinφ*dRn3Rm - cosφ) - dz * (sinφ + dRn3Rm*cosφ) + adf * (2*cos2φ - dRn3Rm*sin(2*φ)));
+            dYdh = 0;
+
+            // Z = h + dx*cosφ*cosλ + dy*cosφ*sinλ + dz*sinφ + adf*sin2φ - da;
+            dZdλ = toRadians( cosφ*csλ);
+            dZdφ = toRadians(-sinφ*scλ + cosφ*(dz + 2*adf*sinφ));
+            dZdh = 1;
+        } else {
+            final double hRn   = Rn + h;
+            final double Ixdcs = ISIN * csλ;
+            final double Rnhc  = hRn*cosφ;
+            final double Rmh   = (Rm + h/Rn);
+            final double d_Rmh = dRn3Rm/Rmh;
+            final double dae2  = da_a*e2;
+
+            // X = λ + ISIN * (csλ / (hRn*cosφ));
+            dXdλ = 1 - ISIN/Rnhc * scλ;
+            dXdφ = -Ixdcs * (dRn*Rn - hRn*tanφ) / (hRn*Rnhc);
+            dXdh = -Ixdcs / (hRn*hRn * cosφ);
+
+            // Y = φ + ISIN * ((dz*cosφ - sinφ*scλ + da_a*(Rn*e2*sinφ*cosφ) + df*(Rm*(a_b) + Rn*(b_a))*sinφ*cosφ) / (Rm + h));
+            dYdλ = -ISIN*sinφ*csλ / (Rmh*Rn);
+            dYdφ = 1 + ISIN * ((-dz*(sinφ + d_Rmh * cosφ) + (d_Rmh*sinφ - cosφ)*scλ) / (Rmh*Rn)
+                    + ((df*dRn*(a_b*3*Rm + b_a) + dae2 *(1 + dRn) - d_Rmh*df*(Rm*a_b + b_a))*sinφ*cosφ
+                    + cos2φ*(df*(Rm*a_b + b_a) + dae2)) / Rmh);
+            dYdh = -ISIN * (((dz*cosφ - sinφ*scλ)/Rn + (dae2 + df*(Rm*a_b + b_a))*sinφ*cosφ) / (Rmh*Rmh)/Rn);
+
+            // Z = h + dx*cosφ*cosλ + dy*cosφ*sinλ + dz*sinφ + df*(b_a)*Rn*sin2φ - daa/Rn;
+            dZdλ = toRadians(cosφ*csλ) ;
+            dZdφ = toRadians(-sinφ*(scλ - df*Rn*b_a*(dRn*sinφ+2*cosφ)) + dz*cosφ+ daa*dRn/Rn);
+            dZdh = 1;
+        }
+        return new Matrix3(dXdλ, dXdφ, dXdh,
+                           dYdλ, dYdφ, dYdh,
+                           dZdλ, dZdφ, dZdh);
     }
 
     /**

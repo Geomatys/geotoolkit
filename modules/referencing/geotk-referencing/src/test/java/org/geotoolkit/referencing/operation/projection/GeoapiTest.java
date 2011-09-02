@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
@@ -68,11 +69,16 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
     }
 
     /**
-     * Every tested math transform shall be instances of {@link MathTransform2D}.
+     * Every map projections shall be instances of {@link MathTransform2D}.
+     * Note that some tests inherited from the parent class are not about
+     * map projections.
      */
     @After
     public void ensureMathTransform2D() {
-        assertInstanceOf("Unexpected implementation.", MathTransform2D.class, transform);
+        final MathTransform tr = transform;
+        if (tr != null && tr.getSourceDimensions() == 2 && tr.getTargetDimensions() == 2) {
+            assertInstanceOf("Unexpected implementation.", MathTransform2D.class, tr);
+        }
     }
 
     /**
