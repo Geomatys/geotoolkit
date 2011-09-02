@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.mapfile;
 
+import org.junit.Ignore;
 import org.opengis.filter.Filter;
 import java.io.IOException;
 
@@ -158,4 +159,42 @@ public class ExpressionTest {
         assertEquals(expected, result);        
     }
 
+    @Test
+    public void testEqualExpression() throws IOException, ProcessException {
+        
+        
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        getOrCreate(IN_TEXT, input).setValue("([tunnel]=0)");
+        
+        final Process process = desc.createProcess(input);        
+        final ParameterValueGroup output = process.call();
+        final Object result = value(OUT_OGC, output);
+        
+        
+        final Filter expected = FF.equals(FF.property("tunnel"), FF.literal(0));
+        
+        assertEquals(expected, result);        
+    }
+    
+    @Test
+    public void testAndOrExpression() throws IOException, ProcessException {
+        
+        
+        final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+        getOrCreate(IN_TEXT, input).setValue("((\"[type]\"=\"tertiary\" or \"[type]\"=\"tertiary_link\") and \"[tunnel]\"=\"1\")");
+        
+        final Process process = desc.createProcess(input);        
+        final ParameterValueGroup output = process.call();
+        final Object result = value(OUT_OGC, output);
+        
+        
+        final Filter f1 = FF.equals(FF.property("type"),FF.literal("tertiary"));
+        final Filter f2 = FF.equals(FF.property("type"),FF.literal("tertiary_link"));
+        final Filter f3 = FF.equals(FF.property("tunnel"),FF.literal(1));
+        final Filter or = FF.or(f1, f2);
+        final Filter and = FF.and(or, f3);
+        
+        assertEquals(and, result);        
+    }
+    
 }

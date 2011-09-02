@@ -170,7 +170,8 @@ public final class MapfileExpressionTokenizer {
                 || ch == '/'
                 || ch == '|'
                 || ch == '['
-                || ch == ']');
+                || ch == ']'
+                || ch == '=');
     }
     
     

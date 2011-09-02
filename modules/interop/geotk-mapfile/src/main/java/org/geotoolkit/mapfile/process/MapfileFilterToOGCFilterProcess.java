@@ -71,7 +71,21 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 final int blockEnd = getBlockEnd(tokens, index);
                 final List<Token> content = tokens.subList(index, blockEnd);
                 index = blockEnd+1;
-                result = parse(ref, content);
+                result = parse(null, content);
+
+            }else if("[".equals(token.value)){
+                //a property name
+                index++;
+                final String propName = tokens.get(index).value;
+                index++;
+                //check it's a ']'
+                final String v = tokens.get(index).value;
+                if(!"]".equals(v)){
+                    throw new ProcessException("Was expecting a ']' but was : "+v, this, null);
+                }
+                
+                index++;
+                result = FF.property(propName);
 
             }else if("/".equals(token.value)){
                 //a list of values
@@ -88,6 +102,57 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 index++;
                 result = FF.or(filters);
 
+            }else if("=".equals(token.value)){
+                //and equality test
+                //left side
+                final Expression left = (Expression) result;
+                
+                //right side
+                index++;
+                final Expression right;
+                final Token next = tokens.get(index);
+                if("(".equals(next.value)){
+                    //a sub expression
+                    index++;
+                    final int blockEnd = getBlockEnd(tokens, index);
+                    final List<Token> content = tokens.subList(index, blockEnd);
+                    index = blockEnd+1;
+                    right = (Expression) parse(null, content);
+                }else{
+                    //a literal value
+                    final List<Token> content = tokens.subList(index, index+1);
+                    right = (Expression) parse(null,content);
+                    index++;
+                }
+                
+                result = FF.equals(left, right);
+                
+            }else if("and".equalsIgnoreCase(token.value)){
+                //and operand
+                //left side
+                final Filter left = (Filter) result;
+                
+                //right side
+                index++;
+                final List<Token> content = tokens.subList(index, tokens.size());
+                final Filter right = (Filter) parse(null,content);
+                
+                index = tokens.size();
+                result = FF.and(left, right);
+                
+            }else if("or".equalsIgnoreCase(token.value)){
+                //or operand
+                //left side
+                final Filter left = (Filter) result;
+                
+                //right side
+                index++;
+                final List<Token> content = tokens.subList(index, tokens.size());
+                final Filter right = (Filter) parse(null,content);
+                
+                index = tokens.size();
+                result = FF.or(left,right);
+                
             }else{
                 index++;
                 String text = token.value;                
