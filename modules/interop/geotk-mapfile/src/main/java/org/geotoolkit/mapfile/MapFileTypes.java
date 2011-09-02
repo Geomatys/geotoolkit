@@ -319,6 +319,7 @@ public final class MapfileTypes {
     public static final AttributeDescriptor STYLE_OPACITY;
     /** [r] [g] [b] | [attribute] */
     public static final AttributeDescriptor STYLE_OUTLINECOLOR;
+    /** no info, I guess it's an expression */
     public static final AttributeDescriptor STYLE_OUTLINEWIDTH;
     /** [double on] [double off] [double on] [double off] ... END */
     public static final AttributeDescriptor STYLE_PATTERN;
@@ -392,7 +393,7 @@ public final class MapfileTypes {
         STYLE_OFFSET            = ftb.add(new DefaultName(NAMESPACE, "OFFSET"),           Point2D.class,0,1,false,null);
         STYLE_OPACITY           = ftb.add(new DefaultName(NAMESPACE, "OPACITY"),          Expression.class,0,1,false,null);
         STYLE_OUTLINECOLOR      = ftb.add(new DefaultName(NAMESPACE, "OUTLINECOLOR"),     Expression.class,0,1,false,null);
-        STYLE_OUTLINEWIDTH      = ftb.add(new DefaultName(NAMESPACE, "OUTLINEWIDTH"),     Double.class,0,1,false,null);
+        STYLE_OUTLINEWIDTH      = ftb.add(new DefaultName(NAMESPACE, "OUTLINEWIDTH"),     Expression.class,0,1,false,null);
         STYLE_PATTERN           = ftb.add(new DefaultName(NAMESPACE, "PATTERN"),          float[].class,0,1,false,null);
         STYLE_SIZE              = ftb.add(new DefaultName(NAMESPACE, "SIZE"),             Expression.class,0,1,false,null);
         STYLE_SIZEITEM          = ftb.add(new DefaultName(NAMESPACE, "SIZEITEM"),         String.class,0,1,false,deprecated());

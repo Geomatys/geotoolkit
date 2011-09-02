@@ -285,6 +285,9 @@ public class MapfileToSLDProcess extends AbstractProcess{
         float[] dashes = getValue(style, STYLE_PATTERN, float[].class);
         Literal explinecap = getValue(style, STYLE_LINECAP, Literal.class);
         Literal explinejoin = getValue(style, STYLE_LINEJOIN, Literal.class);
+        
+        Expression expOutlineColor = getValue(style, STYLE_OUTLINECOLOR, Expression.class);
+        Expression expOutlineWidth = getValue(style, STYLE_OUTLINEWIDTH, Expression.class);
                 
         if(expColor == null){
             expColor = DEFAULT_STROKE_COLOR;
@@ -305,7 +308,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
             expWidth = DEFAULT_STROKE_WIDTH;
         }
         if(explinecap == null){
-            explinecap = DEFAULT_STROKE_CAP;
+            explinecap = STROKE_CAP_ROUND;
         }
         if(explinejoin == null){
             explinejoin = DEFAULT_STROKE_JOIN;
@@ -319,13 +322,22 @@ public class MapfileToSLDProcess extends AbstractProcess{
                 
         final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
         
+        //build the outline first
+        //Mapfile outline , is similar to another line symbolizer placed under the main one
+        if(expOutlineColor != null && expOutlineWidth != null){
+            final Expression width = FF.add(expWidth, FF.multiply(expOutlineWidth,FF.literal(2)));
+            final Stroke stroke = SF.stroke(expOutlineColor,expOpacity,width,explinejoin,explinecap,null,LITERAL_ZERO_FLOAT);
+            final LineSymbolizer outline = SF.lineSymbolizer(
+                    "",(String)null,DEFAULT_DESCRIPTION,NonSI.PIXEL,stroke,LITERAL_ZERO_FLOAT);
+            symbolizers.add(outline);
+        }
         
         //general informations
         final String name = "";
         final Description desc = DEFAULT_DESCRIPTION;
         final String geometry = null; //use the default geometry of the feature
         final Unit unit = NonSI.PIXEL;
-        final Expression offset = LITERAL_ONE_FLOAT;
+        final Expression offset = LITERAL_ZERO_FLOAT;
 
         //the visual element
         final Expression dashOffset = LITERAL_ZERO_FLOAT;
