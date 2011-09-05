@@ -17,99 +17,64 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import java.net.URI;
-import java.util.List;
 import java.io.File;
 import java.io.IOException;
 import java.awt.geom.Point2D;
 
 import org.opengis.referencing.crs.ProjectedCRS;
 
-import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests {@link NetcdfImageReader} with various formats.
+ * Tests reading a Landsat file converted to NetCDF by GDAL.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
  *
  * @since 3.19 (derived from 3.16)
  */
-public final strictfp class VariousNetcdfFormatTest extends ImageTestBase {
+public final strictfp class GDALFormatTest extends NetcdfTestBase {
     /**
-     * Creates a new test suite.
-     */
-    public VariousNetcdfFormatTest() {
-        super(NetcdfImageReader.class);
-    }
-
-    /**
-     * Returns the filename of the given aggregated URI. We omit the parent
-     * directory because they are platform-dependent.
-     */
-    private static String[] filenames(final List<URI> aggregated) {
-        assertNotNull("Expected aggregated NetCDF files.", aggregated);
-        final String[] filenames = new String[aggregated.size()];
-        for (int i=0; i<filenames.length; i++) {
-            filenames[i] = new File(aggregated.get(i).getPath()).getName();
-        }
-        return filenames;
-    }
-
-    /**
-     * Tests reading a NcML file.
+     * Returns the file to test, which is mandatory since provided in the
+     * {@code test-data} directory.
      *
-     * @throws IOException if an error occurred while reading the file.
+     * @return The test file (never null).
+     * @throws IOException If the file can not be obtained.
      */
-    @Test
-    public void testNcML() throws IOException {
-        final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(getLocallyInstalledFile(NetcdfTestBase.DIRECTORY + "Aggregation.ncml"));
-        assertEquals("Unexpected number of variables.",  4, reader.getNumImages(true));
-        assertEquals("Expected only 1 band by default.", 1, reader.getNumBands(0));
-        assertArrayEquals("Expected the names of the variables found in the NcML file.",
-                new String[] { // Note that "pct_variance" variables are renamed in the NcML file.
-                    "temperature", "temperature_pct_variance",
-                    "salinity",    "salinity_pct_variance"},
-                reader.getImageNames().toArray());
-        /*
-         * Test the paths to the file components for the "temperature" variable.
-         */
-        assertArrayEquals(new String[] {
-                "OA_RTQCGL01_20070606_FLD_TEMP.nc",
-                "OA_RTQCGL01_20070613_FLD_TEMP.nc",
-                "OA_RTQCGL01_20070620_FLD_TEMP.nc"
-            }, filenames(reader.getAggregatedFiles(0)));
-        /*
-         * Test the paths to the file components for the "salinity_pct_variance" variable.
-         */
-        assertArrayEquals(new String[] {
-                "OA_RTQCGL01_20070606_FLD_PSAL.nc",
-                "OA_RTQCGL01_20070613_FLD_PSAL.nc",
-                "OA_RTQCGL01_20070620_FLD_PSAL.nc"
-            }, filenames(reader.getAggregatedFiles(3)));
-        reader.dispose();
+    public static File getTestFile() throws IOException {
+        return TestData.file(GDALFormatTest.class, "melb3112.nc");
     }
 
     /**
-     * Tests reading a Landsat file converted to NetCDF by GDAL.
+     * Creates a reader and initializes its input to the test file defined in
+     * {@link #getTestFile()}. This method is invoked by each tests inherited
+     * from the parent class, and by the tests defined in this class.
+     */
+    @Override
+    protected NetcdfImageReader createImageReader() throws IOException {
+        final NetcdfImageReader reader = new NetcdfImageReader(null);
+        reader.setInput(getTestFile());
+        return reader;
+    }
+
+    /**
+     * Tests the grid geometry (envelope, offset vectors and origin).
      *
      * @throws IOException if an error occurred while reading the file.
      * @throws CoverageStoreException Should never happen.
      */
     @Test
-    public void testLandsat() throws IOException, CoverageStoreException {
-        final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(getLocallyInstalledFile("LANDSAT/melb3112.nc"));
+    public void testGridGeometry() throws IOException, CoverageStoreException {
+        final NetcdfImageReader reader = createImageReader();
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         final String asTree = metadata.toString();
         /*

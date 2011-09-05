@@ -41,7 +41,6 @@ import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.util.Range;
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.image.io.plugin.NetcdfTestBase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
@@ -53,18 +52,21 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static java.lang.Double.NaN;
+import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.GRID_SIZE;
+import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.getTestFile;
+import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAxes;
 
 
 /**
- * Tests the {@link NetcdfCRS} class.
+ * Tests the {@link NetcdfCRS} class using the same test file than {@link CoriolisFormatTest}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @since 3.08
  */
 @Depend(IrregularAxesConverterTest.class)
-public final strictfp class NetcdfCRSTest extends NetcdfTestBase {
+public final strictfp class NetcdfCRSTest {
     /**
      * Small tolerance factor for floating point comparison.
      */
