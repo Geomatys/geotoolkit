@@ -114,10 +114,12 @@ public class JMap2DFrame extends javax.swing.JFrame {
         }
 
         try{
-            guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
             Envelope env = context.getAreaOfInterest();
-            if(env == null){
+            if(env != null){
+                guiMap.getCanvas().setObjectiveCRS(env.getCoordinateReferenceSystem());
+            }else{
                 env = context.getBounds();
+                guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
             }
             if(env != null){
                 guiMap.getCanvas().getController().setVisibleArea(env);
