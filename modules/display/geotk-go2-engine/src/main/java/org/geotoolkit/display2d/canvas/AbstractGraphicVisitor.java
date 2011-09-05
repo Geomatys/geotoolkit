@@ -20,8 +20,10 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.geom.Rectangle2D;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
 
@@ -44,6 +46,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 
+import org.opengis.coverage.CannotEvaluateException;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -163,7 +166,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         try {
             coverage = (GridCoverage2D) reader.read(0,param);
         } catch (CoverageStoreException ex) {
-            ex.printStackTrace();
+            context.getMonitor().exceptionOccured(ex, Level.INFO);
             return null;
         }
 
@@ -178,7 +181,14 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         dp.setOrdinate(1, bounds2D.getCenterY());
 
         float[] values = null;
-        values = coverage.evaluate(dp, values);
+        
+        try{
+            values = coverage.evaluate(dp, values);
+        }catch(CannotEvaluateException ex){
+            context.getMonitor().exceptionOccured(ex, Level.INFO);
+            values = new float[coverage.getSampleDimensions().length];
+            Arrays.fill(values, Float.NaN);
+        }
 
         final List<Entry<GridSampleDimension,Object>> results = new ArrayList<Entry<GridSampleDimension, Object>>();
         for (int i=0; i<values.length; i++){
