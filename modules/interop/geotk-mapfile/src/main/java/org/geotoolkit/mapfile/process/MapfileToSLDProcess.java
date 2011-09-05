@@ -185,6 +185,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         }else{
             //filter
             //not handle yet
+            rule.setElseFilter(true);
         }
         
         final Collection<Property> styles = clazz.getProperties(CLASS_STYLE.getName());
