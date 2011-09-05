@@ -157,7 +157,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
      * @return xpath with any XML prefixes removed
      */
     private static String stripPrefix(String xpath) {
-        while(xpath.startsWith("/")){
+        while(xpath.charAt(0) == '/'){
             xpath = xpath.substring(1);
         }
         return xpath;
