@@ -204,8 +204,12 @@ public final class MatrixUtilities extends Static {
         final int lastCol = matrix.getNumCol() - 1;
         for (int j=0; j<numRows; j++) {
             final double scale = matrix.getElement(j, dimension);
-            matrix.setElement(j, dimension, -scale);
-            matrix.setElement(j, lastCol, matrix.getElement(j, lastCol) + scale*span);
+            if (scale != 0) {
+                // The formula below still work with scale=0, but we don't want
+                // to change the scale sign from positive zero to negative zero.
+                matrix.setElement(j, dimension, -scale);
+                matrix.setElement(j, lastCol, matrix.getElement(j, lastCol) + scale*span);
+            }
         }
     }
 

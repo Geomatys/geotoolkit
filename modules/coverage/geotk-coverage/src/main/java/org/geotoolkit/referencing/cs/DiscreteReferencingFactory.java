@@ -503,10 +503,16 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * Returns the <cite>grid to CRS</cite> affine transform for the given grid geometry.
      * <p>
      * <ol>
-     *   <li>First, this method invokes {@link GridGeometry#getGridToCRS()} (or the specialized
-     *       variant {@link GeneralGridGeometry#getGridToCRS(PixelInCell)} if possible). If the
-     *       returned transform is linear, then {@linkplain LinearTransform#getMatrix() its matrix}
-     *       is returned.</li>
+     *   <li>First, this method invokes one of the following {@code getGridToCRS()} methods:
+     *     <ul>
+     *       <li>{@link GeneralGridGeometry#getGridToCRS(PixelInCell)} if the given grid geometry
+     *           is a compatible instance and the {@code pixelInCell} argument is non-null;</li>
+     *       <li>{@link GridGeometry#getGridToCRS()} otherwise. This later method shall implicitly
+     *           use {@link PixelInCell.CELL_CENTER} as per OGC 01-004 specification, but departure
+     *           is possible if the user overridden the method.</li>
+     *     </ul></li>
+     *   <li>If the transform returned in the above step is linear, then
+     *       {@linkplain LinearTransform#getMatrix() its matrix} is returned.</li>
      *   <li>Otherwise if the given geometry is also a CRS with discrete axes (for example
      *       {@link org.geotoolkit.referencing.adapters.NetcdfCRS}), then this method performs
      *       the same calculation than {@link #getAffineTransform(CoordinateReferenceSystem)}.</li>

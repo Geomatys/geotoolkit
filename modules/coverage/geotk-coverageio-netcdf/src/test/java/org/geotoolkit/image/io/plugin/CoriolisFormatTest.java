@@ -133,7 +133,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
     private static final String EXPECTED_METADATA =
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“-1.9959489E7 1.3899365E7 5.0 20975.0”\n" +
+            "│   ├───origin=“-1.9959489E7 1.3843768E7 5.0 20975.0”\n" +
             "│   ├───Limits\n" +
             "│   │   ├───low=“0 0 0 0”\n" +
             "│   │   └───high=“719 498 58 0”\n" +
@@ -185,7 +185,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
      * is performed in order to protect the test suite from slight variations in
      * floating point computations.
      */
-    private static final String[] SIMPLIFIED = {"-1.9959489", "1.3899365", "55597.46"};
+    private static final String[] SIMPLIFIED = {"-1.9959489", "1.3843768", "55597.46"};
 
     /**
      * Returns the {@value #FILENAME} test file, which is optional.
@@ -459,7 +459,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
          */
         Envelope envelope = coverage.getEnvelope();
         assertEquals(-19987288, envelope.getMinimum(0), 1);
-        assertEquals(-13815969, envelope.getMinimum(1), 1);
+        assertEquals(-13871567, envelope.getMinimum(1), 1);
         envelope = Envelopes.transform(envelope, DefaultGeographicCRS.SPHERE);
         /*
          * Note: Coriolis data have a 0.25° offset in longitude. This is a known
@@ -467,7 +467,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
          */
         assertEquals(-179.750, envelope.getMinimum(0), 1E-10);
         assertEquals( 180.250, envelope.getMaximum(0), 1E-10);
-        assertEquals( -76.954, envelope.getMinimum(1), 1E-3);
-        assertEquals(  77.178, envelope.getMaximum(1), 1E-3);
+        assertEquals( -77.067, envelope.getMinimum(1), 1E-3);
+        assertEquals(  77.067, envelope.getMaximum(1), 1E-3);
     }
 }

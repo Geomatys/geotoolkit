@@ -91,9 +91,12 @@ public final class GridDomainAccessor extends MetadataAccessor {
      * The <cite>grid to CRS</cite> transform needs to be linear in order to get
      * the offset vectors formatted.
      * <p>
-     * The value of the {@code pixelInCell} argument, if non-null, is given in the call to
-     * {@link DiscreteReferencingFactory#getAffineTransform(GridGeometry, PixelInCell)}.
-     * This has an impact of the value of the {@code origin} attribute.
+     * The value of the {@code pixelInCell} argument has an impact on the value of the
+     * {@code origin} attribute. If null, the {@link PixelInCell.CELL_CENTER} value is
+     * normally assumed, but the behavior could be different if the user overridden the
+     * {@link GridGeometry#getGridToCRS()} method. See
+     * {@link DiscreteReferencingFactory#getAffineTransform(GridGeometry, PixelInCell)}
+     * for more information.
      *
      * @param geometry      The grid geometry.
      * @param pixelInCell   The value to assign to the {@code "pointInPixel"} attribute, or {@code null}.
@@ -144,7 +147,11 @@ public final class GridDomainAccessor extends MetadataAccessor {
                 if (gridEnvelope == null) {
                     return; // Can't write a correct origin without this information.
                 }
-                MatrixUtilities.reverseAxis(matrix, axisToReverse, gridEnvelope.getSpan(axisToReverse));
+                int span = gridEnvelope.getSpan(axisToReverse);
+                if (pixelInCell == null || pixelInCell.equals(PixelInCell.CELL_CENTER)) {
+                    span--;
+                }
+                MatrixUtilities.reverseAxis(matrix, axisToReverse, span);
             }
             final int gridDimension = matrix.getNumCol() - 1;
             final int crsDimension  = matrix.getNumRow() - 1;

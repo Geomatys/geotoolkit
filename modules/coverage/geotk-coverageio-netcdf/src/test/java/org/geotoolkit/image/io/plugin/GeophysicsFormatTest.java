@@ -82,7 +82,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“6.0 81.2 55.0 73.0”\n" +
+            "│   ├───origin=“6.0 81.0 55.0 73.0”\n" +
             "│   ├───Limits\n" +
             "│   │   ├───low=“0 0 0 0”\n" +
             "│   │   └───high=“128 65 0 107”\n" +
