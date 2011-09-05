@@ -140,6 +140,27 @@ public final class InternalUtilities extends Static {
     }
 
     /**
+     * Converts a {@code float} value to {@code double} value while preserving the string
+     * representation in base 10. The result may be different from the value that we would
+     * get from a normal conversion - which preserve the value in base 2, but it may be
+     * closer to the user intend.
+     * <p>
+     * <b>Example:</b> {@code 99.99f} converted to {@code double} by the normal cast operation
+     * produces {@code 99.98999786376953}, while the user's intend was probably {@code 99.99}.
+     * <p>
+     * The current algorithm is inefficient, but we define this method so we have a single
+     * place where to improve it if needed.
+     *
+     * @param  value The value to convert.
+     * @return The converted value.
+     *
+     * @since 3.19
+     */
+    public static double convert10(final float value) {
+        return Double.parseDouble(Float.toString(value));
+    }
+
+    /**
      * Returns a copy of the given array as a non-empty immutable set.
      * If the given array is empty, then this method returns {@code null}.
      * <p>

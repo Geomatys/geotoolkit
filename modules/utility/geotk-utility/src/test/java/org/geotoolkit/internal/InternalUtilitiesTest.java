@@ -44,6 +44,16 @@ public final strictfp class InternalUtilitiesTest {
     }
 
     /**
+     * Tests the {@link InternalUtilities#convert10} method.
+     */
+    @Test
+    public void testConvert10() {
+        assertFalse (99.99f == 99.99);
+        assertEquals("99.98999786376953", Double.toString(99.99f));
+        assertEquals("99.99", Double.toString(InternalUtilities.convert10(99.99f)));
+    }
+
+    /**
      * Tests the {@link InternalUtilities#parseColor(String)} method.
      *
      * @since 3.19

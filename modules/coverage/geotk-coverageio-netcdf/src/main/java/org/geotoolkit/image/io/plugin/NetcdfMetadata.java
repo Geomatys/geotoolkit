@@ -333,7 +333,9 @@ final class NetcdfMetadata extends SpatialMetadata {
             }
             accessor.setValidSampleValue(m.minimum, m.maximum);
             accessor.setFillSampleValues(m.fillValues);
-            accessor.setTransfertFunction(m.scale, m.offset, TransferFunctionType.LINEAR);
+            if (!m.isGeophysics()) {
+                accessor.setTransfertFunction(m.scale, m.offset, TransferFunctionType.LINEAR);
+            }
             hasValueRange |= !(Double.isInfinite(m.minimum) && Double.isInfinite(m.maximum));
         }
     }
@@ -375,7 +377,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * instead than attributes of the variable of interest.
      *
      * @param file The NetCDF file which contains the variables.
-     * @param name The name of the variable which contaisn the minimum or maximum values.
+     * @param name The name of the variable which contains the minimum or maximum values.
      * @param n    The expected number of values.
      * @return An array of length <var>n</var> containing the values, or {@code null} if none.
      * @throws IOException If an error occurred while reading the variable.

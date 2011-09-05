@@ -546,7 +546,7 @@ public final class NewGridCoverageReference {
                  */
                 final GridSampleDimension[] bands = sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]);
                 for (int i=0; i<bands.length; i++) {
-                    final GridSampleDimension band = bands[i];
+                    final GridSampleDimension band = bands[i].geophysics(false);
                     final List<Category> categories = band.getCategories();
                     if (categories == null) {
                         continue;

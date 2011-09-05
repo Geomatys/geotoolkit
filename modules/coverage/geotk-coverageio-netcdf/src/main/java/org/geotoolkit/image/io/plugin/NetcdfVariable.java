@@ -30,6 +30,7 @@ import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dataset.EnhanceScaleMissing;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.internal.InternalUtilities;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
@@ -50,7 +51,7 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.19
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -106,7 +107,7 @@ final class NetcdfVariable {
     /**
      * The fill and missing values in <strong>packed</strong> units, or {@code null} if none.
      * Note that this is different from what UCAR does (they convert to geophysics values).
-     * We keep packed values in order to avoir rounding error. This array contains both the
+     * We keep packed values in order to avoid rounding error. This array contains both the
      * fill value and the missing values, without duplicated values.
      */
     public final double[] fillValues;
@@ -280,7 +281,7 @@ scan:   for (int i=0; i<missingCount; i++) {
 
     /**
      * Returns {@code true} if at least one {@linkplain #fillValues fill value} is included
-     * in the range of value values. In such case, we will consider the range of values as
+     * in the range of valid values. In such case, we will consider the range of values as
      * invalid (the NetCDF library seems to set the range to maximal floating point values
      * when the range is actually not specified).
      *
@@ -312,7 +313,17 @@ scan:   for (int i=0; i<missingCount; i++) {
             widestType = widest(attribute.getDataType(), widestType);
             final Number value = attribute.getNumericValue();
             if (value != null) {
-                return value.doubleValue();
+                if (value instanceof Float) {
+                    float val = value.floatValue();
+                         if (val == +Float.MAX_VALUE) val = Float.POSITIVE_INFINITY;
+                    else if (val == -Float.MAX_VALUE) val = Float.NEGATIVE_INFINITY;
+                    return InternalUtilities.convert10(val);
+                } else {
+                    double val = value.doubleValue();
+                         if (val == +Double.MAX_VALUE) val = Double.POSITIVE_INFINITY;
+                    else if (val == -Double.MAX_VALUE) val = Double.NEGATIVE_INFINITY;
+                    return val;
+                }
             }
         }
         return Double.NaN;
@@ -361,5 +372,18 @@ scan:   for (int i=0; i<missingCount; i++) {
             case DOUBLE:  return DataBuffer.TYPE_DOUBLE;
         }
         return DataBuffer.TYPE_UNDEFINED;
+    }
+
+    /**
+     * Returns {@code true} if we think that the NetCDF variable contains geophysics data.
+     * Geophysics data are of type {@code float} or {@code double}, have an identity transfer
+     * function ({@link #scale}=1 and {@link #offset}=0) and missing values represented by NaN
+     * (maybe after a replacement performed by the image reader - so we can not test here this
+     * last condition).
+     *
+     * @since 3.19
+     */
+    public boolean isGeophysics() {
+        return (imageType == DataBuffer.TYPE_FLOAT || imageType == DataBuffer.TYPE_DOUBLE) && offset == 0 && scale == 1;
     }
 }

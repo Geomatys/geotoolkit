@@ -142,14 +142,4 @@ public final class TransferFunction {
         }
         return null;
     }
-
-    /**
-     * Checks if a parameter value is equals to the expected value.
-     * If it is not, formats an error message.
-     */
-    private void checkParameter(final String parameter, final double value, final double expected) {
-        if (value != expected && warning == null) {
-            warning = Errors.getResources(locale).getString(Errors.Keys.BAD_PARAMETER_$2, parameter, value);
-        }
-    }
 }

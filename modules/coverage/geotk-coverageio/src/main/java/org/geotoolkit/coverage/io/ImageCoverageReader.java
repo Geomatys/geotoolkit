@@ -613,8 +613,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             upper[Y_DIMENSION] = height;
             final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
             gridGeometry = new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
-            Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry =
-                    setCached(gridGeometry, gridGeometries, index);
+            Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
             gridGeometry = entry.getValue();
         }

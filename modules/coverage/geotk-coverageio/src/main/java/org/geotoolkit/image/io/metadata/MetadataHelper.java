@@ -67,7 +67,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.19
  *
  * @since 3.07
  * @module
@@ -640,6 +640,7 @@ public class MetadataHelper implements Localized {
          * values (if any) and a single quantitative category for the range of sample
          * values.
          */
+        boolean allGeophysics = true;
         InternationalString untitled = null; // To be created only if needed.
         final List<Category> categories = new ArrayList<Category>();
         final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
@@ -662,7 +663,10 @@ public class MetadataHelper implements Localized {
                     hasSampleDimensions = true;
                 }
                 /*
-                 * Create a qualitative category for each fill value.
+                 * Create a qualitative category for each fill value (usually only one).
+                 * Those categories need to be created before the quantitative category,
+                 * because we will need this information in order to detect invalid range
+                 * of geophysics values.
                  */
                 final double[] fillValues = sd.getFillSampleValues();
                 if (fillValues != null) {
@@ -687,7 +691,8 @@ public class MetadataHelper implements Localized {
                 if (range != null) {
                     final Double scale  = sd.getScaleFactor();
                     final Double offset = sd.getOffset();
-                    if (scale != null || offset != null || !overlap(categories, range)) {
+                    final boolean isGeophysics = (scale == null && offset == null);
+                    if (!isGeophysics || !overlap(categories, range)) {
                         final TransferFunctionType type = sd.getTransferFunctionType();
                         final MathTransformFactory mtFactory = getMathTransformFactory();
                         MathTransform tr;
@@ -717,6 +722,7 @@ public class MetadataHelper implements Localized {
                         }
                         categories.add(new Category(dimensionName, null, range, (MathTransform1D) tr));
                     }
+                    allGeophysics &= isGeophysics;
                 }
                 /*
                  * Create the GridSampleDimension instance.
@@ -742,7 +748,17 @@ public class MetadataHelper implements Localized {
                 categories.clear();
             }
         }
-        return hasSampleDimensions ? UnmodifiableArrayList.wrap(bands) : null;
+        /*
+         * At this point, we have all the sample dimensions. If the samples seem to be
+         * already geophysics values, declare the bands as such.
+         */
+        if (hasSampleDimensions) {
+            for (int i=0; i<bands.length; i++) {
+                bands[i] = bands[i].geophysics(allGeophysics);
+            }
+            return UnmodifiableArrayList.wrap(bands);
+        }
+        return null;
     }
 
     /**
