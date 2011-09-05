@@ -56,6 +56,6 @@ public interface InterpolationPoint {
      * @return double
      */
     @XmlElement("Data")
-    double getData();
+    Number getData();
 
 }

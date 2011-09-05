@@ -992,7 +992,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public InterpolationPoint interpolationPoint(final double data, final Expression value){
+    public InterpolationPoint interpolationPoint(final Number data, final Expression value){
         return new DefaultInterpolationPoint(data, value);
     }
 }

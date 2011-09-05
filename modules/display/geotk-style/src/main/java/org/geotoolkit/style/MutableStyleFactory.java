@@ -283,6 +283,6 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     public Interpolate interpolateFunction(Expression lookup, List<InterpolationPoint> values,
             Method method, Mode mode, Literal fallback);
     
-    public InterpolationPoint interpolationPoint(double data,Expression value);
+    public InterpolationPoint interpolationPoint(Number data,Expression value);
         
 }

@@ -28,9 +28,9 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 public class DefaultInterpolationPoint implements InterpolationPoint{
 
     private final Expression value;
-    private final double data;
+    private final Number data;
     
-    public DefaultInterpolationPoint(final double data, final Expression value){
+    public DefaultInterpolationPoint(final Number data, final Expression value){
         ensureNonNull("value", value);
         this.value = value;
         this.data = data;
@@ -42,7 +42,7 @@ public class DefaultInterpolationPoint implements InterpolationPoint{
     }
 
     @Override
-    public double getData() {
+    public Number getData() {
         return data;
     }
 

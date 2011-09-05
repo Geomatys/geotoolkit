@@ -118,8 +118,19 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
         Arrays.sort(points, new Comparator<InterpolationPoint>(){
             @Override
             public int compare(InterpolationPoint t1, InterpolationPoint t2) {
-                double diff = t1.getData() - t2.getData();
-
+                final Number v1 = t1.getData();
+                final Number v2 = t2.getData();
+                if(v1 instanceof Float && Float.isNaN(v1.floatValue())){
+                    return -1;
+                }else if(v1 instanceof Double && Double.isNaN(v1.doubleValue())){
+                    return -1;
+                }else if(v2 instanceof Float && Float.isNaN(v2.floatValue())){
+                    return +1;
+                }else if(v2 instanceof Double && Double.isNaN(v2.doubleValue())){
+                    return +1;
+                }
+                
+                final double diff = v1.doubleValue() - v2.doubleValue();
                 if(diff < 0){
                     return -1;
                 }else if(diff > 0){
@@ -162,25 +173,63 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     @Override
     public Object evaluate(final Object object, final Class c) {
                 
-        final Double value;        
+        final Number value;        
         if(object instanceof Feature){            
             final Feature f = (Feature)object;
-            value = lookup.evaluate(f,Double.class);
-        }else if(object instanceof Double){
-            value = (Double) object;
+            value = lookup.evaluate(f,Number.class);
         }else if(object instanceof Number){
-            value = ((Number)object).doubleValue();
+            value = (Number)object;
         }else{
             return fallback.evaluate(object,c);
         }
-
+        
+        final double dval = value.doubleValue();
+        
         InterpolationPoint before = null;
         InterpolationPoint after = null;
         for(InterpolationPoint ip : points){
-            final double ipval = ip.getData();
-            if(ipval < value){
+            final Number ipnum = ip.getData();            
+            final double ipval;
+            
+            if(ipnum instanceof Double && Double.isNaN(ipnum.doubleValue())){                
+                if(!(value instanceof Double)){
+                    continue;
+                }
+                
+                ipval = ipnum.doubleValue();
+                
+                if(Double.isNaN(ipval)){
+                    if(Double.doubleToRawLongBits(ipval) == Double.doubleToRawLongBits(dval)){
+                        before = ip;
+                        break;
+                    }else{
+                        continue;
+                    }
+                }
+            }else if(ipnum instanceof Float && Float.isNaN(ipnum.floatValue())){
+                if(!(value instanceof Float)){
+                    continue;
+                }
+                
+                ipval = ipnum.doubleValue();
+                final float ipfloat = ipnum.floatValue();
+                
+                if(Float.isNaN(ipfloat)){
+                    if(Float.floatToRawIntBits(ipfloat) == Float.floatToRawIntBits(value.floatValue())){
+                        before = ip;
+                        break;
+                    }else{
+                        continue;
+                    }
+                }
+            }else{
+                ipval = ipnum.doubleValue();
+            }
+            
+            
+            if(ipval < dval){
                 before = ip;
-            }else if(ipval > value){
+            }else if(ipval > dval){
                 after = ip;
                 break;
             }else{
@@ -189,7 +238,12 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             }
         }
 
-        if(before == null){
+        if(before == null && after == null){
+            //no value associated, surely an NaN value
+            //return a translucent color
+            return Converters.convert( new Color(0,0,0,0) , c);
+            
+        }else if(before == null){
             //only have an over value
             return after.getValue().evaluate(object,c);
         }else if(after == null){
@@ -197,9 +251,9 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
             return before.getValue().evaluate(object,c);
         }else{
             //must interpolate
-            final double d1 = before.getData();
-            final double d2 = after.getData();
-            final double pourcent = (value - d1)/ (d2 - d1);
+            final double d1 = before.getData().doubleValue();
+            final double d2 = after.getData().doubleValue();
+            final double pourcent = (dval - d1)/ (d2 - d1);
 
             final Object o1 = before.getValue().evaluate(object,c);
             final Object o2 = after.getValue().evaluate(object,c);

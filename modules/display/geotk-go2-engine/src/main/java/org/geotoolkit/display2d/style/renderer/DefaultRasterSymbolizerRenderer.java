@@ -51,6 +51,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.raster.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -324,26 +325,41 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
          * transformColormap(...) method.
          */
         final int[] ARGB;
+        final ColorModel model;
         if(candidate instanceof IndexColorModel){
             final IndexColorModel colors = (IndexColorModel) candidate;
             final int mapSize = colors.getMapSize();
             ARGB = new int[mapSize];
             colors.getRGBs(ARGB);
+            
+            transformColormap(ARGB, function);
+            model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
 
         }else if(candidate instanceof ComponentColorModel){
             final ComponentColorModel colors = (ComponentColorModel) candidate;
             final int nbbit = colors.getPixelSize();
-            final int mapSize = 1 << nbbit;
-            ARGB = new int[mapSize];
+            
+            if(nbbit >= 32){
+                //we can't handle a index color model when values exceed int max value
+                model = new CompatibleColorModel(nbbit, function);
+                
+            }else{
+                final int mapSize = 1 << nbbit;
+                ARGB = new int[mapSize];
 
-            for(int j=0; j<mapSize;j++){
-                int v = j*255/mapSize;
-                int a = 255 << 24;
-                int r = v << 16;
-                int g = v <<  8;
-                int b = v <<  0;
-                ARGB[j] = a|r|g|b;
+                for(int j=0; j<mapSize;j++){
+                    int v = j*255/mapSize;
+                    int a = 255 << 24;
+                    int r = v << 16;
+                    int g = v <<  8;
+                    int b = v <<  0;
+                    ARGB[j] = a|r|g|b;
+                }
+
+                transformColormap(ARGB, function);
+                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
             }
+            
         }else{
             // Current implementation supports only sources that use of index color model
             // and component color model
@@ -351,14 +367,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     Classes.getClass(candidate), IndexColorModel.class));
         }
 
-        transformColormap(ARGB, function);
-
         /*
          * Gives the color model to the image layout and creates a new image using the Null
          * operation, which merely propagates its first source along the operation chain
          * unmodified (except for the ColorModel given in the layout in this case).
          */
-        final ColorModel model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
         final ImageLayout layout = new ImageLayout().setColorModel(model);
         return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
     }
@@ -377,7 +390,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final int[] SE_ARGB = new int[points.size()];
             for(int i=0,n=points.size();i<n;i++){
                 final InterpolationPoint point = points.get(i);
-                SE_VALUES[i] = point.getData();
+                SE_VALUES[i] = point.getData().doubleValue();
                 SE_ARGB[i] = point.getValue().evaluate(null, Color.class).getRGB();
             }
 
