@@ -314,12 +314,14 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             return;
         }
 
-        final Boolean parallal = (Boolean)context.getCanvas().getRenderingHint(GO2Hints.KEY_PARALLAL_BUFFER);
-        if(parallal != null && parallal){
+        //Always use Parallale buffer, otherwise collection with no valid ids will fail
+        //to render properly.
+        //final Boolean parallal = (Boolean)context.getCanvas().getRenderingHint(GO2Hints.KEY_PARALLAL_BUFFER);
+        //if(parallal != null && parallal){
             renderBySymbolParallal(candidates, context, rules, params);
-        }else{
-            renderBySymbolStream(candidates, context, rules, params);
-        }
+        //}else{
+        //    renderBySymbolStream(candidates, context, rules, params);
+        //}
     }
 
     /**
