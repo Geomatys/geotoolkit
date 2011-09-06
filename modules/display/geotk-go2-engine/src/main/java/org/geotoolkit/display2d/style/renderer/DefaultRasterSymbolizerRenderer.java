@@ -123,11 +123,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
             if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
 
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, renderingContext.getObjectiveCRS2D());
                 
-                if(dataCoverage != null){
-                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
-                }
             }
         } catch (CoverageProcessingException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
@@ -209,8 +206,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
                 final RenderingHints hints) throws PortrayalException {
 
-        coverage = coverage.view(ViewType.RENDERED);
-        RenderedImage image = coverage.getRenderedImage();
+        RenderedImage image = null;
 
         //band select ----------------------------------------------------------
         final int nbDim = coverage.getNumSampleDimensions();
@@ -221,12 +217,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final SelectedChannelType channel = selections.getGrayChannel();
             final SelectedChannelType[] channels = selections.getRGBChannels();
             final int[] indices;
-
+            
             if(channel != null){
                 indices = new int[]{
                     Integer.valueOf(channel.getChannelName())
                 };
             }else{
+                image = coverage.getRenderedImage();
+                
                 if (image.getColorModel().hasAlpha()) {
                     indices = new int[]{
                         Integer.valueOf(channels[0].getChannelName()),
@@ -244,12 +242,20 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                         };
                 }
             }
+            
+            if(image == null){
+                image = coverage.getRenderedImage();
+            }
             image = selectBand(image, indices);
         }
 
         //Recolor coverage -----------------------------------------------------
         final ColorMap recolor = styleElement.getColorMap();
         if(recolor != null && recolor.getFunction() != null){
+            if(image == null){
+                image = coverage.getRenderedImage();
+            }
+            
             final Function fct = recolor.getFunction();
             image = recolor(image,fct);
         }
@@ -258,6 +264,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //handle by the J2DGraphicUtilities
 
         //contrast enhancement -------------------------------------------------
+        if(image == null){
+            image = coverage.getRenderedImage();
+        }
+        
         final ContrastEnhancement ce = styleElement.getContrastEnhancement();
         if(ce != null && image.getColorModel() instanceof ComponentColorModel){
 
