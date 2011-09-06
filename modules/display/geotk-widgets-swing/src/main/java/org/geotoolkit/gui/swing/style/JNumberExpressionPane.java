@@ -76,7 +76,7 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
             }
         });
 
-        guiNumber.setModel(new SpinnerNumberModel());
+        guiNumber.setModel(new SpinnerNumberModel(Double.valueOf(0.0d), null, null, Double.valueOf(1.0d)));
         guiNumber.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
                 guiNumberStateChanged(evt);
@@ -95,7 +95,7 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+            .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
