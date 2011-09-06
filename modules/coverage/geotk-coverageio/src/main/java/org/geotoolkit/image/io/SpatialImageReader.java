@@ -51,7 +51,6 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDomain;
-import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.SampleConversionType.*;
@@ -731,9 +730,9 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                 }
                 /*
                  * Before to get the range, get the fill values with maximal precision.
-                 * Later, we may cast the fill values from 'double' to 'float' in order
-                 * to match the sample values in the raster, so the array elements may
-                 * be modified in-place.
+                 * Some values may need to be casted from 'double' to 'float' in order
+                 * to match the sample values in the raster. This cast to various types
+                 * will be performed internally by the SampleConverter implementations.
                  */
                 final SampleDomain band = bands.get(bandIndex);
                 final double[] fillValues = band.getFillSampleValues();
@@ -786,8 +785,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     // If the sample values are float values, we need to replace 99.99 fill value
                     // (for example) by 99.99f, which is 99.98999786376953 in double precision,
                     // otherwise the SampleConverter may not find them (denpending which method
-                    // is invoked).
-                    ImageUtilities.cast(dataType, fillValues);
+                    // is invoked). This cast is done by the PadValueMask constructor.
                     converter = replaceFillValues ?
                             SampleConverter.createPadValuesMask(fillValues) : SampleConverter.IDENTITY;
                 } else {

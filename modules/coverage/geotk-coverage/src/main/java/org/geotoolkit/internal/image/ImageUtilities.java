@@ -49,9 +49,9 @@ import static java.awt.image.DataBuffer.*;
  *
  * It may change in incompatible way in any future version.
  *
- * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Martin Desruisseaux (IRD)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.19
+ * @version 3.00
  *
  * @since 1.2
  * @module
@@ -531,35 +531,6 @@ public final class ImageUtilities extends Static {
             case TYPE_FLOAT:  return Float  .MAX_VALUE;
             case TYPE_DOUBLE: return Double .MAX_VALUE;
             default: throw new IllegalArgumentException(String.valueOf(dataType));
-        }
-    }
-
-    /**
-     * Casts the all elements in the given array to the given data type. This method can be used
-     * in order to ensure that "fill values" are comparable to the sample values in a particular
-     * raster to read. For example if the "fill values" is 99.99 as a {@code double} while the
-     * sample values are stored as {@code float} values, the missing values will not be found
-     * unless the fill value is converted to 99.99f, which is 99.98999786376953 in {@code double}
-     * value.
-     *
-     * @param dataType The target data type.
-     * @param values   The values to cast, or {@code null} if none.
-     *
-     * @since 3.19
-     */
-    public static void cast(final int dataType, final double[] values) {
-        if (values != null) {
-            for (int i=0; i<values.length; i++) {
-                double value = values[i];
-                switch (dataType) {
-                    case TYPE_BYTE:   value = (byte)  Math.round(value);  break;
-                    case TYPE_USHORT: value = Math.round(value) & 0xFFFF; break;
-                    case TYPE_SHORT:  value = (short) Math.round(value);  break;
-                    case TYPE_INT:    value = (int)   Math.round(value);  break;
-                    case TYPE_FLOAT:  value = (float) value;              break;
-                }
-                values[i] = value;
-            }
         }
     }
 

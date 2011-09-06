@@ -43,7 +43,7 @@ import org.geotoolkit.util.converter.Classes;
  * <p>
  * There is no scaling because this class is not for <cite>samples to geophysics values</cite>
  * conversions (except the replacement of pad values by {@link Double#NaN NaN}). This class is
- * about the minimal changes needed in order to comply to the contraints of a target
+ * about the minimal changes needed in order to comply to the constraints of a target
  * {@linkplain java.awt.image.ColorModel color model}, for example in order to workaround
  * the fact that {@link java.awt.image.IndexColorModel} does not accept negative numbers.
  * <p>
