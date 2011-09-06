@@ -279,7 +279,12 @@ public strictfp class Assert extends org.opengis.test.Assert {
     }
 
     /**
-     * Compares two rasters for equality.
+     * Compares two rasters for equality. The sample values are compared with {@code float}
+     * precision, because this is the format used by the majority of geophysics raster data.
+     * <p>
+     * This method does not test if {@linkplain #assertBoundEquals bounds are equal} (actually,
+     * it ensures that the image are of the same size but doesn't check if the origin is the
+     * same). It is user responsibility to invoke the above method if desired.
      *
      * @param expected The image containing the expected pixel values.
      * @param actual   The image containing the actual pixel values.
@@ -320,6 +325,32 @@ public strictfp class Assert extends org.opengis.test.Assert {
     public static void assertRasterEquals(final Coverage expected, final Coverage actual) {
         assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
                              actual.getRenderableImage(0,1).createDefaultRendering());
+    }
+
+    /**
+     * Ensures that all sample values in every bands are either inside the given range,
+     * or {@link Double#NaN}.
+     *
+     * @param minimum The lower bound of the range, inclusive.
+     * @param maximum The upper bound of the range, inclusive.
+     * @param image   The image to test.
+     *
+     * @since 3.19
+     */
+    public static void assertSampleValuesInRange(final double minimum, final double maximum,
+            final RenderedImage image)
+    {
+        final RectIter it = RectIterFactory.create(image, null);
+        if (!it.finishedLines()) do {
+            if (!it.finishedPixels()) do {
+                if (!it.finishedBands()) do {
+                    final double value = it.getSampleDouble();
+                    assertBetween("Sample value", minimum, maximum, value);
+                } while (!it.nextBandDone());
+                it.startBands();
+            } while (!it.nextPixelDone());
+            it.startPixels();
+        } while (!it.nextLineDone());
     }
 
     /**

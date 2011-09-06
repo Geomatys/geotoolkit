@@ -49,9 +49,9 @@ import static java.awt.image.DataBuffer.*;
  *
  * It may change in incompatible way in any future version.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.19
  *
  * @since 1.2
  * @module
@@ -205,7 +205,7 @@ public final class ImageUtilities extends Static {
     }
 
     /**
-     * Suggests a tile size for the specified image size. On input, {@code size} is the image's
+     * Suggests a tile size for the specified image size. On input, {@code size} is the image
      * size. On output, it is the tile size. This method write the result directly in the supplied
      * object and returns {@code size} for convenience.
      * <p>
@@ -227,7 +227,7 @@ public final class ImageUtilities extends Static {
      * following happen:
      * <p>
      * <ul>
-     *   <li>A suitable tile size is found. More specifically, a size is found which is a dividor
+     *   <li>A suitable tile size is found. More specifically, a size is found which is a divisor
      *       of the specified image size, and is the closest one of the default tile size. The
      *       {@link Dimension} field ({@code width} or {@code height}) is set to this value.</li>
      *
@@ -496,7 +496,7 @@ public final class ImageUtilities extends Static {
      * @param  dataType The data type to suggest a minimum value for.
      * @return The minimum value for the given data type.
      */
-    public static double minimum(int dataType) {
+    public static double minimum(final int dataType) {
         switch (dataType) {
             case TYPE_BYTE:   // Fall through
             case TYPE_USHORT: return  0;
@@ -522,7 +522,7 @@ public final class ImageUtilities extends Static {
      * @param  dataType The data type to suggest a maximum value for.
      * @return The maximum value for the given data type.
      */
-    public static double maximum(int dataType) {
+    public static double maximum(final int dataType) {
         switch (dataType) {
             case TYPE_BYTE:   return 0xFF;
             case TYPE_USHORT: return 0xFFFF;
@@ -531,6 +531,35 @@ public final class ImageUtilities extends Static {
             case TYPE_FLOAT:  return Float  .MAX_VALUE;
             case TYPE_DOUBLE: return Double .MAX_VALUE;
             default: throw new IllegalArgumentException(String.valueOf(dataType));
+        }
+    }
+
+    /**
+     * Casts the all elements in the given array to the given data type. This method can be used
+     * in order to ensure that "fill values" are comparable to the sample values in a particular
+     * raster to read. For example if the "fill values" is 99.99 as a {@code double} while the
+     * sample values are stored as {@code float} values, the missing values will not be found
+     * unless the fill value is converted to 99.99f, which is 99.98999786376953 in {@code double}
+     * value.
+     *
+     * @param dataType The target data type.
+     * @param values   The values to cast, or {@code null} if none.
+     *
+     * @since 3.19
+     */
+    public static void cast(final int dataType, final double[] values) {
+        if (values != null) {
+            for (int i=0; i<values.length; i++) {
+                double value = values[i];
+                switch (dataType) {
+                    case TYPE_BYTE:   value = (byte)  Math.round(value);  break;
+                    case TYPE_USHORT: value = Math.round(value) & 0xFFFF; break;
+                    case TYPE_SHORT:  value = (short) Math.round(value);  break;
+                    case TYPE_INT:    value = (int)   Math.round(value);  break;
+                    case TYPE_FLOAT:  value = (float) value;              break;
+                }
+                values[i] = value;
+            }
         }
     }
 

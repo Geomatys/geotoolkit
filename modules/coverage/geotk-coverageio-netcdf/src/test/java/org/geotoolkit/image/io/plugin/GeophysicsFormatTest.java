@@ -180,5 +180,12 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
         range = category.getRange();
         assertEquals(-99.99, range.getMinimum(), 0.001);
         assertEquals(-99.99, range.getMaximum(), 0.001);
+        //
+        // The raster should contains only values in the [-2 .. 30] range.
+        // If some -99.99 values have not been properly converted to NaN,
+        // then this test will fail.
+        //
+        image = coverage.getRenderedImage();
+        assertSampleValuesInRange(-2, 30, image);
     }
 }
