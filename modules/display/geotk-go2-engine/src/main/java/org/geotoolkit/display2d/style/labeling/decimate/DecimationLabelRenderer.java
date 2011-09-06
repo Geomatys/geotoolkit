@@ -184,6 +184,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
 
                 if(label instanceof PointLabelDescriptor){
                     final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                    if(pc == null) return true;
                     pc.setPriority(1);
                     if(bounds.contains(pc.getBounds())){
                         candidates.add(pc);

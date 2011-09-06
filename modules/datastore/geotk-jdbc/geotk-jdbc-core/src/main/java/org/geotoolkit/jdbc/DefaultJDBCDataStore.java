@@ -63,6 +63,7 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -366,6 +367,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         // rebuild a new query with the same params, but just the pre-filter
         final QueryBuilder builder = new QueryBuilder(query);
         builder.setFilter(preFilter);
+        if(query.getResolution() != null){
+            builder.setHints(new Hints(RESAMPLING, query.getResolution()));
+        }
         final Query preQuery = builder.buildQuery();
 
         // Build the feature type returned by this query. Also build an eventual extra feature type
@@ -451,11 +455,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
 
         //if we need to resample
-        final double[] resampling = query.getResolution();
-        if(resampling != null){
-            reader = GenericTransformFeatureIterator.wrap(reader, 
-                    new GeometryScaleTransformer(resampling[0], resampling[1]),query.getHints());
-        }        
+//        final double[] resampling = query.getResolution();
+//        if(resampling != null){
+//            reader = GenericTransformFeatureIterator.wrap(reader, 
+//                    new GeometryScaleTransformer(resampling[0], resampling[1]),query.getHints());
+//        }        
         
         //if we need to reproject data
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();

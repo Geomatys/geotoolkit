@@ -43,6 +43,8 @@ import java.util.logging.Level;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.postgis.ewkb.JtsBinaryParser;
 import org.geotoolkit.data.postgis.wkb.WKBAttributeIO;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
@@ -205,17 +207,40 @@ public class PostGISDialect extends AbstractSQLDialect {
 
     @Override
     public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid,
-                                     final StringBuilder sql){
+                                     final StringBuilder sql,final Hints hints){
+        
+        double res = 0;
+        if(hints != null){
+            double[] ress = (double[]) hints.get(JDBCDataStore.RESAMPLING);
+            if(ress != null){
+                res = Math.min(ress[0], ress[1]);
+            }
+        }
+        
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
         sql.append("encode(");
-        if (dimensions > 2) {
-            sql.append("ST_AsEWKB(");
-            encodeColumnName(gatt.getLocalName(), sql);
-        } else {
-            sql.append("ST_AsBinary(");
-            encodeColumnName(gatt.getLocalName(), sql);
+        
+        if(res > 0){
+            if (dimensions > 2) {
+                sql.append("ST_AsEWKB(ST_simplify(");
+                encodeColumnName(gatt.getLocalName(), sql);
+                sql.append(",").append(res).append(")");
+            } else {
+                sql.append("ST_AsBinary(ST_simplify(");
+                encodeColumnName(gatt.getLocalName(), sql);
+                sql.append(",").append(res).append(")");
+            }
+        }else{
+            if (dimensions > 2) {
+                sql.append("ST_AsEWKB(");
+                encodeColumnName(gatt.getLocalName(), sql);
+            } else {
+                sql.append("ST_AsBinary(");
+                encodeColumnName(gatt.getLocalName(), sql);
+            }
         }
+        
         sql.append("),'base64')");
     }
 

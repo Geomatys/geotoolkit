@@ -69,6 +69,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         final int textLower = metric.getDescent();
         final int textWidth = metric.stringWidth(label.getText());
         final Rectangle2D rect = shape.getBounds2D();
+        if(rect == null) return null;
 
         float refX = (float) rect.getCenterX();
         float refY = (float) rect.getCenterY();

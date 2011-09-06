@@ -35,6 +35,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 
 
@@ -446,7 +447,7 @@ public interface SQLDialect {
      * wrapping function, subclasses must override.
      * </p>
      */
-    void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql);
+    void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql,final Hints hints);
 
     /**
      * Decodes a geometry value from the result of a query.

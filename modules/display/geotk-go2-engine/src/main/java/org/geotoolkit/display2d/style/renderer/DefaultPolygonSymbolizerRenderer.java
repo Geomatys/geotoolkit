@@ -134,6 +134,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
         final float margin = symbol.getMargin(candidate, coeff) /2f;
         final Rectangle2D bounds = shape.getBounds2D();
+        if(bounds == null)return;
         final int x = (int) (bounds.getMinX() - margin);
         final int y = (int) (bounds.getMinY() - margin);
 

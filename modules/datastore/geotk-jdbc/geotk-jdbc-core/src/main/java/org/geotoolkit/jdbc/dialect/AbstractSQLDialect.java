@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.jdbc.dialect;
 
+import org.geotoolkit.factory.Hints;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
@@ -433,7 +434,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql) {
+    public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql,final Hints hints) {
         encodeColumnName(gatt.getLocalName(), sql);
     }
 
