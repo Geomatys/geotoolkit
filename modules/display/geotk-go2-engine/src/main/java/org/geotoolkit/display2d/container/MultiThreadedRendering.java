@@ -19,18 +19,17 @@ package org.geotoolkit.display2d.container;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.MapItem;
 
 
 /**
@@ -43,17 +42,17 @@ import org.geotoolkit.map.MapLayer;
  */
 public class MultiThreadedRendering{
 
-    private final ReferencedCanvas2D canvas;
-    private final MapContext context;
-    private final Map<MapLayer, GraphicJ2D> layerGraphics;
+    private static final ExecutorService executor = Executors.newFixedThreadPool(20);
+    
+    private final MapItem context;
+    private final Map<MapItem, GraphicJ2D> layerGraphics;
     private final RenderingContext2D renderingContext;
     private final SortedMap<Integer, BufferedImage> buffers = new TreeMap<Integer, BufferedImage>();
 
 
-    public MultiThreadedRendering(final ReferencedCanvas2D canvas, final MapContext context,
-            final Map<MapLayer, GraphicJ2D> layerGraphics,
+    public MultiThreadedRendering(final MapItem context,
+            final Map<MapItem, GraphicJ2D> layerGraphics,
             final RenderingContext2D renderingContext){
-        this.canvas = canvas;
         this.context = context;
         this.layerGraphics = layerGraphics;
         this.renderingContext = renderingContext;
@@ -162,27 +161,41 @@ public class MultiThreadedRendering{
     }
 
     public void render(){
-        final List<MapLayer> layers = context.layers();
+        final List<MapItem> layers = context.items();
 
-        for (final MapLayer layer : layers) {
+        final int size = layers.size();
+        if(size == 0){
+            return;
+        }else if(size == 1){
+            //bypass threading
+            final MapItem child = layers.get(0);            
+            if (!child.isVisible()) {
+                return;
+            }            
+            final GraphicJ2D gra = layerGraphics.get(child);
+            gra.paint(renderingContext);
+            return;
+        }
+        
+        for (final MapItem child : layers) {
 
             //we ignore invisible layers
-            if (!layer.isVisible()) {
+            if (!child.isVisible()) {
                 continue;
             }
 
-            final int zOrder = layers.indexOf(layer);
+            final int zOrder = layers.indexOf(child);
 
             synchronized(buffers){
                 buffers.put(zOrder, null);
             }
 
-            new Thread() {
+            final Runnable call = new Runnable() {
                 @Override
                 public void run() {
                     final BufferedImage img = buildBuffer();
                     final RenderingContext2D tc = renderingContext.create(img.createGraphics());
-                    final GraphicJ2D gra = layerGraphics.get(layer);
+                    final GraphicJ2D gra = layerGraphics.get(child);
 
                     gra.paint(tc);
 
@@ -193,7 +206,9 @@ public class MultiThreadedRendering{
                     //we wake the dispatch thread that may be waiting for it
                     wake();
                 }
-            }.start();
+            };
+            
+            executor.execute(call);
         }
         
 

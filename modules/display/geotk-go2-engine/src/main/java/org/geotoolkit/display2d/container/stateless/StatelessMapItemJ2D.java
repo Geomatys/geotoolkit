@@ -34,8 +34,10 @@ import javax.media.jai.TileRecycler;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -143,14 +145,21 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
 
         //we abort painting if the item is not visible.
         if (!item.isVisible()) return;
-
-        for(final MapItem child : item.items()){
-            if(renderingContext.getMonitor().stopRequested()) break;
-            final GraphicJ2D gra = itemGraphics.get(child);
-            if(gra != null){
-                gra.paint(renderingContext);
-            }else{
-                getLogger().log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
+        
+        final Boolean mt = (Boolean) renderingContext.getRenderingHints().get(GO2Hints.KEY_MULTI_THREAD);
+        
+        if(Boolean.TRUE.equals(mt)){
+            final MultiThreadedRendering rendering = new MultiThreadedRendering(this.item, this.itemGraphics, renderingContext);
+            rendering.render();
+        }else{
+            for(final MapItem child : item.items()){
+                if(renderingContext.getMonitor().stopRequested()) break;
+                final GraphicJ2D gra = itemGraphics.get(child);
+                if(gra != null){
+                    gra.paint(renderingContext);
+                }else{
+                    getLogger().log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", child.getName());
+                }
             }
         }
     }
