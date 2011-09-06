@@ -199,7 +199,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 ipval = ipnum.doubleValue();
                 
                 if(Double.isNaN(ipval)){
-                    if(Double.doubleToRawLongBits(ipval) == Double.doubleToRawLongBits(dval)){
+                    //if we want exact NaN match use doubleToRawLongBits
+                    if(Double.doubleToLongBits(ipval) == Double.doubleToLongBits(dval)){
                         before = ip;
                         break;
                     }else{
@@ -215,7 +216,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 final float ipfloat = ipnum.floatValue();
                 
                 if(Float.isNaN(ipfloat)){
-                    if(Float.floatToRawIntBits(ipfloat) == Float.floatToRawIntBits(value.floatValue())){
+                    //if we want exact NaN match use floatToRawLongBits
+                    if(Float.floatToIntBits(ipfloat) == Float.floatToIntBits(value.floatValue())){
                         before = ip;
                         break;
                     }else{
