@@ -1539,7 +1539,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         points.clear();
         for(final InterpolationPoint ip : interpolate.getInterpolationPoints()){
             final InterpolationPointType point = se_factory.createInterpolationPointType();
-            point.setData(ip.getData());
+            point.setData(ip.getData().doubleValue());
             point.setValue(visitExpression(ip.getValue()));
             points.add(point);
         }
