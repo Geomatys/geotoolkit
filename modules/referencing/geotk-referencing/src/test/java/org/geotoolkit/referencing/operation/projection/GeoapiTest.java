@@ -175,7 +175,7 @@ public final strictfp class GeoapiTest extends ParameterizedTransformTest {
     @Override
     public void testCassiniSoldner() throws FactoryException, TransformException {
         super.testCassiniSoldner();
-        makeSpherical(10.45, 0.05);
+        makeSpherical(10.45, 0.1);
         super.testCassiniSoldner();
         assertTrue(isSpherical(transform));
     }
