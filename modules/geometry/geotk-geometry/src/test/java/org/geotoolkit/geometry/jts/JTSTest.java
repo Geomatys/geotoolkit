@@ -115,4 +115,41 @@ public class JTSTest {
         assertFalse(CGAlgorithms.isCCW(returnedGeom.getCoordinates()));
         
     }
+     
+     @Test
+    public void testCCW3D(){
+
+        //empty user data test
+        final LinearRing ring = GF.createLinearRing(new Coordinate[]{
+            new Coordinate(10, 0, 0),
+            new Coordinate(10, 0, 10),
+            new Coordinate(0, 10, 10),
+            new Coordinate(0, 10, 0),
+            new Coordinate(10, 0, 0)
+                });
+        
+        final Polygon poly = GF.createPolygon(ring, null);
+        final Geometry returnedGeom = JTS.ensureCounterClockWise3D(poly);
+        assertTrue(JTS.isCCW3D(returnedGeom.getCoordinates()));
+        
+    }
+    
+    
+     @Test
+    public void testCW3D(){
+
+        //empty user data test
+        final LinearRing ring = GF.createLinearRing(new Coordinate[]{
+            new Coordinate(10, 0, 0),
+            new Coordinate(0, 10, 0),
+            new Coordinate(0, 10, 10),
+            new Coordinate(10, 0, 10),
+            new Coordinate(10, 0, 0)
+                });
+        
+        final Polygon poly = GF.createPolygon(ring, null);
+        final Geometry returnedGeom = JTS.ensureClockWise3D(poly);
+        assertFalse(JTS.isCCW3D(returnedGeom.getCoordinates()));
+        
+    }
 }
