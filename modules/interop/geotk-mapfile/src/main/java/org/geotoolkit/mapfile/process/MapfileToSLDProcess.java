@@ -194,7 +194,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         // Expression is evaluated
         final PropertyName classItem = getValue(mflayer,LAYER_CLASSITEM,PropertyName.class);
         final String classExpression = getValue(clazz,CLASS_EXPRESSION,String.class);
-        if(classItem != null && classExpression != null){
+        if(classExpression != null){
             // equivalant to OGC filter : PropertyEquals(name,value)
             final Filter filter = toFilter(classItem, classExpression);
             rule.setFilter(filter);

@@ -28,7 +28,7 @@ import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
-import net.iharder.Base64;
+//import net.iharder.Base64;
 
 
 /**
@@ -90,7 +90,7 @@ public final class WKBAttributeIO {
             // ie. its a null column -> return a null geometry!
             return null;
         }
-        return wkb2Geometry(Base64.decode(bytes));
+        return wkb2Geometry(bytes);
     }
 
     public Object read(final ResultSet rs, final int columnIndex) throws IOException {
@@ -105,7 +105,7 @@ public final class WKBAttributeIO {
             // ie. its a null column -> return a null geometry!
             return null;
         }
-        return wkb2Geometry(Base64.decode(bytes));
+        return wkb2Geometry(bytes);
     }
 
     public void write(final PreparedStatement ps, final int position, final Object value)

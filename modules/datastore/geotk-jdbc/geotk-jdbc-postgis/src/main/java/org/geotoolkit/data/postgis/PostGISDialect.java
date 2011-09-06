@@ -219,7 +219,6 @@ public class PostGISDialect extends AbstractSQLDialect {
         
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
-        sql.append("encode(");
         
         if(res > 0){
             if (dimensions > 2) {
@@ -231,6 +230,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 encodeColumnName(gatt.getLocalName(), sql);
                 sql.append(",").append(res).append(")");
             }
+            sql.append(") ");
         }else{
             if (dimensions > 2) {
                 sql.append("ST_AsEWKB(");
@@ -239,9 +239,9 @@ public class PostGISDialect extends AbstractSQLDialect {
                 sql.append("ST_AsBinary(");
                 encodeColumnName(gatt.getLocalName(), sql);
             }
+            sql.append(") ");
         }
         
-        sql.append("),'base64')");
     }
 
     @Override
