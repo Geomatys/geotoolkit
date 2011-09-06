@@ -169,10 +169,26 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
         //mapfile type is similar to se symbolizer type
         final String type = getValue(mflayer,LAYER_TYPE,String.class);
-            
         final MutableRule rule = SF.rule();
-        rule.setMinScaleDenominator(minScale);
-        rule.setMaxScaleDenominator(maxscale);
+        
+        final StringBuilder name = new StringBuilder("[");
+        if(minScale != null){
+            rule.setMinScaleDenominator(minScale);
+            name.append(minScale);
+        }else{
+            name.append(0);
+        }
+        name.append(" ↔ ");
+        
+        if(maxscale != null){
+            rule.setMaxScaleDenominator(maxscale);
+            name.append(maxscale);
+        }else{
+            name.append(Double.POSITIVE_INFINITY);
+        }
+        name.append("]");
+        
+        rule.setDescription(SF.description(name.toString(), name.toString()));
         
         // Class can act as filter, the classItem is the propertyname on which the class
         // Expression is evaluated
@@ -289,10 +305,7 @@ public class MapfileToSLDProcess extends AbstractProcess{
         
         Expression expOutlineColor = getValue(style, STYLE_OUTLINECOLOR, Expression.class);
         Expression expOutlineWidth = getValue(style, STYLE_OUTLINEWIDTH, Expression.class);
-                
-        if(expColor == null){
-            expColor = DEFAULT_STROKE_COLOR;
-        }        
+               
         if(expOpacity == null){
             expOpacity = DEFAULT_STROKE_OPACITY;
         }else{
@@ -323,8 +336,9 @@ public class MapfileToSLDProcess extends AbstractProcess{
                 
         final List<Symbolizer> symbolizers = new ArrayList<Symbolizer>();
         
-        //build the outline first
-        //Mapfile outline , is similar to another line symbolizer placed under the main one
+        //Check if it's an outline
+        //Mapfile outline , is similar to line symbolizer placed under the main one
+        //this produce a line border effect
         if(expOutlineColor != null && expOutlineWidth != null){
             final Expression width = FF.add(expWidth, FF.multiply(expOutlineWidth,FF.literal(2)));
             final Stroke stroke = SF.stroke(expOutlineColor,expOpacity,width,explinejoin,explinecap,null,LITERAL_ZERO_FLOAT);
@@ -333,20 +347,22 @@ public class MapfileToSLDProcess extends AbstractProcess{
             symbolizers.add(outline);
         }
         
-        //general informations
-        final String name = "";
-        final Description desc = DEFAULT_DESCRIPTION;
-        final String geometry = null; //use the default geometry of the feature
-        final Unit unit = NonSI.PIXEL;
-        final Expression offset = LITERAL_ZERO_FLOAT;
+         if(expColor != null){
+            //general informations
+            final String name = "";
+            final Description desc = DEFAULT_DESCRIPTION;
+            final String geometry = null; //use the default geometry of the feature
+            final Unit unit = NonSI.PIXEL;
+            final Expression offset = LITERAL_ZERO_FLOAT;
 
-        //the visual element
-        final Expression dashOffset = LITERAL_ZERO_FLOAT;
-        final Stroke stroke = SF.stroke(expColor,expOpacity,expWidth,explinejoin,explinecap,dashes,dashOffset);
+            //the visual element
+            final Expression dashOffset = LITERAL_ZERO_FLOAT;
+            final Stroke stroke = SF.stroke(expColor,expOpacity,expWidth,explinejoin,explinecap,dashes,dashOffset);
 
-        final LineSymbolizer symbolizer = SF.lineSymbolizer(name,geometry,desc,unit,stroke,offset);
-        symbolizers.add(symbolizer);
-        
+            final LineSymbolizer symbolizer = SF.lineSymbolizer(name,geometry,desc,unit,stroke,offset);
+            symbolizers.add(symbolizer);
+        }
+         
         return symbolizers;
     }
     
