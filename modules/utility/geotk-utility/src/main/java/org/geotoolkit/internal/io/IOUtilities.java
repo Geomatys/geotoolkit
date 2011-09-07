@@ -47,6 +47,17 @@ import org.geotoolkit.io.ContentFormatException;
  */
 public final class IOUtilities extends Static {
     /**
+     * The writer to the console (if possible) or standard output stream otherwise.
+     * This is created when first needed.
+     */
+    private static Writer stdout;
+
+    /**
+     * A printer wrapping {@link #stdout}, created when first needed.
+     */
+    private static PrintWriter printer;
+
+    /**
      * Do not allow instantiation of this class.
      */
     private IOUtilities() {
@@ -63,13 +74,16 @@ public final class IOUtilities extends Static {
      *
      * @since 3.17
      */
-    public static Writer standardWriter() {
-        final Console console = System.console();
-        if (console != null) {
-            return console.writer();
-        } else {
-            return new OutputStreamWriter(System.out);
+    public static synchronized Writer standardWriter() {
+        if (stdout == null) {
+            final Console console = System.console();
+            if (console != null) {
+                stdout = printer = console.writer();
+            } else {
+                stdout = new OutputStreamWriter(System.out);
+            }
         }
+        return stdout;
     }
 
     /**
@@ -85,13 +99,14 @@ public final class IOUtilities extends Static {
      *
      * @since 3.17
      */
-    public static PrintWriter standardPrintWriter() {
-        final Console console = System.console();
-        if (console != null) {
-            return console.writer();
-        } else {
-            return new PrintWriter(System.out);
+    public static synchronized PrintWriter standardPrintWriter() {
+        if (printer == null) {
+            final Writer writer = standardWriter();
+            if (printer == null) {
+                printer = new PrintWriter(writer, true);
+            }
         }
+        return printer;
     }
 
     /**

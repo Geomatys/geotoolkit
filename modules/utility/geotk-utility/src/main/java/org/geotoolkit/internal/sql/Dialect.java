@@ -43,7 +43,7 @@ public enum Dialect {
     ANSI(null, null),
 
     /**
-     * The database uses Derby syntax. This is ANSI, with some contraints that PostgreSQL
+     * The database uses Derby syntax. This is ANSI, with some constraints that PostgreSQL
      * doesn't have (for example column with {@code UNIQUE} constraint must explicitly be
      * specified as {@code NOT NULL}).
      */
@@ -103,7 +103,7 @@ public enum Dialect {
     private final String baseDriverName;
 
     /**
-     * The base JDBC URL, or {@code null} if uknown.
+     * The base JDBC URL, or {@code null} if unknown.
      */
     private final String baseURL;
 

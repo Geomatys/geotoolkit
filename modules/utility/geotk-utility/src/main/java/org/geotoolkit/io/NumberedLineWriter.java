@@ -17,21 +17,20 @@
  */
 package org.geotoolkit.io;
 
-import java.io.Console;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
  * A writer that put line number in front of every line.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00
  *
  * @since 2.1
@@ -54,14 +53,7 @@ public class NumberedLineWriter extends IndentedLineWriter {
      */
     public static synchronized PrintWriter getStandardOutput() {
         if (stdout == null) {
-            final Console console = System.console();
-            final Writer writer;
-            if (console != null) {
-                writer = console.writer();
-            } else {
-                writer = new OutputStreamWriter(System.out);
-            }
-            stdout = new PrintWriter(new Uncloseable(writer), true);
+            stdout = new PrintWriter(IOUtilities.standardWriter(), true);
         }
         return stdout;
     }
