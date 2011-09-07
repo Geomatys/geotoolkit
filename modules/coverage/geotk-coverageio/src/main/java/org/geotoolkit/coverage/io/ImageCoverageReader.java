@@ -79,6 +79,7 @@ import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 

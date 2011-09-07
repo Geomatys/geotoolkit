@@ -22,14 +22,19 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.operation.Matrix;
+
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -187,5 +192,19 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
         //
         image = coverage.getRenderedImage();
         assertSampleValuesInRange(-2, 30, image);
+        //
+        // Check the grid geometry.
+        //
+        final GridGeometry2D gridGeometry = coverage.getGridGeometry();
+        final GridEnvelope gridRange = gridGeometry.getGridRange();
+        assertEquals("GridEnvelope.getDimension()", 4, gridRange.getDimension());
+        assertArrayEquals("GridEnvelope.getLow()",  new int[4], gridRange.getLow().getCoordinateValues());
+        assertArrayEquals("GridEnvelope.getHigh()", new int[] {128, 65, 0, 0}, // TODO: last value should be 107.
+                gridRange.getHigh().getCoordinateValues());
+        final Matrix gridToCRS = ((LinearTransform) gridGeometry.getGridToCRS()).getMatrix();
+        assertEquals("Scale X",      0.5, gridToCRS.getElement(0, 0), 0.0);
+        assertEquals("Scale Y",     -0.2, gridToCRS.getElement(1, 1), 0.0);
+        assertEquals("Translate X",  6.0, gridToCRS.getElement(0, 4), 0.0);
+        assertEquals("Translate Y", 81.0, gridToCRS.getElement(1, 4), 0.0);
     }
 }

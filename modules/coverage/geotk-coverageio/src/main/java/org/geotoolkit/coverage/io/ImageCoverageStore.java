@@ -41,9 +41,8 @@ import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.referencing.IdentifiedObjects;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
-import static org.geotoolkit.coverage.io.GridCoverageStore.X_DIMENSION;
-import static org.geotoolkit.coverage.io.GridCoverageStore.Y_DIMENSION;
 import static org.geotoolkit.coverage.io.GridCoverageStore.fixRoundingError;
 
 

@@ -63,6 +63,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
@@ -290,7 +291,8 @@ final class NetcdfMetadata extends SpatialMetadata {
              */
             final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
             if (regularCRS instanceof GridGeometry) {
-                new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS, null, null, 1);
+                final GridDomainAccessor accessor = new GridDomainAccessor(this);
+                accessor.setGridGeometry((GridGeometry) regularCRS, null, null, Y_DIMENSION);
                 gridToCRS = null;
             }
             if (crs == null) {

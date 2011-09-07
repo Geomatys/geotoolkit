@@ -33,6 +33,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+
 
 /**
  * Base class of {@link GridCoverage} writers. Writing is a two steps process:

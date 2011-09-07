@@ -54,8 +54,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.coverage.io.GridCoverageReader.X_DIMENSION;
-import static org.geotoolkit.coverage.io.GridCoverageReader.Y_DIMENSION;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
 
 /**
@@ -78,7 +77,7 @@ import static org.geotoolkit.coverage.io.GridCoverageReader.Y_DIMENSION;
  * by the wrapped <code>GridCoverageReader</code>.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.19
  *
  * @since 3.14
  * @module
@@ -223,6 +222,24 @@ public class ImageReaderAdapter extends SpatialImageReader {
     public int getDimension(final int imageIndex) throws IOException {
         try {
             return reader.getGridGeometry(imageIndex).getDimension();
+        } catch (CoverageStoreException e) {
+            throw convert(e);
+        }
+    }
+
+    /**
+     * Returns the grid envelope of the image at the given index. The default
+     * implementation returns the grid range of the geometry returned by
+     * {@link GridCoverageReader#getGridGeometry(int)}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
+     *
+     * @since 3.19
+     */
+    @Override
+    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
+        try {
+            return reader.getGridGeometry(imageIndex).getGridRange();
         } catch (CoverageStoreException e) {
             throw convert(e);
         }

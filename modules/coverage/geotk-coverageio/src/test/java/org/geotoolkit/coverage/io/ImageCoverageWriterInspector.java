@@ -36,6 +36,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
 
 /**
@@ -152,9 +153,9 @@ final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
                 final double expected;
                 if (i == j) {
                     switch (j) {
-                        case GridCoverageStore.X_DIMENSION: expected = scaleX; break;
-                        case GridCoverageStore.Y_DIMENSION: expected = scaleY; break;
-                        default: expected = 1; break;
+                        case X_DIMENSION: expected = scaleX; break;
+                        case Y_DIMENSION: expected = scaleY; break;
+                        default:          expected =      1; break;
                     }
                 } else {
                     expected = 0;
@@ -178,9 +179,9 @@ final strictfp class ImageCoverageWriterInspector extends ImageCoverageWriter {
                 final double expected;
                 if (i == tc) {
                     switch (j) {
-                        case GridCoverageStore.X_DIMENSION: expected = tx; break;
-                        case GridCoverageStore.Y_DIMENSION: expected = ty; break;
-                        default: expected = 1; break;
+                        case X_DIMENSION: expected = tx; break;
+                        case Y_DIMENSION: expected = ty; break;
+                        default:          expected =  1; break;
                     }
                 } else {
                     expected = (i == j) ? 1 : 0;

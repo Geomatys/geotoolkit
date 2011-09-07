@@ -78,7 +78,7 @@ import org.geotoolkit.resources.Errors;
  *   <li>{@linkplain #isComment(String) Comment lines} and empty lines are ignored.</li>
  *   <li>The {@code '='} and {@code ':'} characters can be used as a separator between
  *       the keys and the values.</li>
- *   <li>The {@code CELLSIZE} attribute can be substitued by the {@code DX} and {@code DY}
+ *   <li>The {@code CELLSIZE} attribute can be substituted by the {@code DX} and {@code DY}
  *       attributes. {@code DX}/{@code DY} are not standard, but can be produced by the GDAL
  *       library. See <a href="http://www.gdal.org/frmt_various.html#AAIGrid">GDAL notes</a>
  *       for more information.</li>
@@ -343,7 +343,7 @@ public class AsciiGridReader extends TextImageReader {
 
     /**
      * Reads the header from the {@linkplain #getChannel() channel}. The given buffer is used for
-     * transfering data. The file encoding is assumed ASCII. The {@linkplain #isComment(String)
+     * transferring data. The file encoding is assumed ASCII. The {@linkplain #isComment(String)
      * comment lines} are skipped. The separator between keys and values is assumed any of space,
      * {@code ':'} or {@code '='} character. The scan stop at the first line which seems to
      * contains a number.

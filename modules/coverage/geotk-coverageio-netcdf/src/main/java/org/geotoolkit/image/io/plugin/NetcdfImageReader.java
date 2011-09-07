@@ -60,6 +60,8 @@ import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.NetcdfFile;
 
+import org.opengis.coverage.grid.GridEnvelope;
+
 import org.geotoolkit.image.io.Protocol;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.FileImageReader;
@@ -71,6 +73,7 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.resources.Errors;
@@ -166,20 +169,6 @@ public class NetcdfImageReader extends FileImageReader implements
         modes.add(NetcdfDataset.Enhance.ConvertEnums);
         ENHANCEMENTS = Collections.unmodifiableSet(modes);
     }
-
-    /**
-     * The dimension <strong>relative to the rank</strong> in {@link #variable} to use as image
-     * width. The actual dimension is {@code variable.getRank() - X_DIMENSION}. It is hard-coded
-     * because the loop in the {@code read} method expects this order.
-     */
-    private static final int X_DIMENSION = 1;
-
-    /**
-     * The dimension <strong>relative to the rank</strong> in {@link #variable} to use as image
-     * height. The actual dimension is {@code variable.getRank() - Y_DIMENSION}. It is hard-coded
-     * because the loop in the {@code read} method expects this order.
-     */
-    private static final int Y_DIMENSION = 2;
 
     /**
      * The API to use for selecting dimensions above the two standard (column, row) dimensions.
@@ -574,7 +563,7 @@ public class NetcdfImageReader extends FileImageReader implements
     @Override
     public int getWidth(final int imageIndex) throws IOException {
         prepareVariable(imageIndex);
-        return variable.getDimension(variable.getRank() - X_DIMENSION).getLength();
+        return variable.getDimension(variable.getRank() - (X_DIMENSION + 1)).getLength();
     }
 
     /**
@@ -587,7 +576,26 @@ public class NetcdfImageReader extends FileImageReader implements
     @Override
     public int getHeight(final int imageIndex) throws IOException {
         prepareVariable(imageIndex);
-        return variable.getDimension(variable.getRank() - Y_DIMENSION).getLength();
+        return variable.getDimension(variable.getRank() - (Y_DIMENSION + 1)).getLength();
+    }
+
+    /**
+     * Returns the grid envelope in the image identified by the given index.
+     *
+     * @see Variable#getDimension(int)
+     *
+     * @since 3.19
+     */
+    @Override
+    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
+        prepareVariable(imageIndex);
+        final int rank = variable.getRank();
+        final int[] lower = new int[rank];
+        final int[] upper = new int[rank];
+        for (int i=0; i<rank;) {
+            upper[i] = variable.getDimension(rank - ++i).getLength();
+        }
+        return new GeneralGridEnvelope(lower, upper, false);
     }
 
     /**
@@ -650,14 +658,14 @@ public class NetcdfImageReader extends FileImageReader implements
              * process, we also ensure that the index is not one of the reserved ones.
              */
             if (n >= 0) {
-                switch (++n) {
+                switch (n) {
                     case X_DIMENSION:
                     case Y_DIMENSION: {
                         throw new IllegalImageDimensionException(errors().getString(Errors.Keys.BAD_PARAMETER_$2,
-                                "DimensionSlice(" + api.name() + ')', n-1));
+                                "DimensionSlice(" + api.name() + ')', n));
                     }
                 }
-                return rank - n;
+                return rank - (n+1);
             }
         }
         return -1;
@@ -1082,8 +1090,8 @@ public class NetcdfImageReader extends FileImageReader implements
         /*
          * Gets the destination image of appropriate size.
          */
-        final int width  = variable.getDimension(rank - X_DIMENSION).getLength();
-        final int height = variable.getDimension(rank - Y_DIMENSION).getLength();
+        final int width  = variable.getDimension(rank - (X_DIMENSION + 1)).getLength();
+        final int height = variable.getDimension(rank - (Y_DIMENSION + 1)).getLength();
         final SampleConverter[] converters = new SampleConverter[numDstBands];
         final BufferedImage  image  = getDestination(imageIndex, param, width, height, converters);
         final WritableRaster raster = image.getRaster();
@@ -1101,13 +1109,13 @@ public class NetcdfImageReader extends FileImageReader implements
         for (int i=0; i<ranges.length; i++) {
             final int first, length, stride;
             switch (rank - i) {
-                case X_DIMENSION: {
+                case X_DIMENSION + 1: {
                     first  = srcRegion.x;
                     length = srcRegion.width;
                     stride = strideX;
                     break;
                 }
-                case Y_DIMENSION: {
+                case Y_DIMENSION + 1: {
                     first  = srcRegion.y;
                     length = srcRegion.height;
                     stride = strideY;
@@ -1176,8 +1184,8 @@ public class NetcdfImageReader extends FileImageReader implements
                 converter = SampleConverter.IDENTITY;
             }
             final IndexIterator it = array.getIndexIterator();
-            for (int y=ymax; --y>=ymin;) {
-                for (int x=xmin; x<xmax; x++) {
+            for (int y=ymax; --y>=ymin;) {          // Y_POSITION
+                for (int x=xmin; x<xmax; x++) {     // X_POSITION
                     switch (type) {
                         case DataBuffer.TYPE_DOUBLE: {
                             raster.setSample(x, y, dstBand, converter.convert(it.getDoubleNext()));

@@ -68,6 +68,8 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+
 
 /**
  * A {@link GridCoverageWriter} implementation which use an {@link ImageWriter} for writing

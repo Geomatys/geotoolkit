@@ -64,7 +64,7 @@ final class NetcdfAxesIterator implements Iterator<Map.Entry<?,Integer>> {
     private int index;
 
     /**
-     * Creates a new itertor for the given collection of coordinate systems.
+     * Creates a new iterator for the given collection of coordinate systems.
      *
      * @param sys The collection coordinate systems.
      */
@@ -95,7 +95,7 @@ final class NetcdfAxesIterator implements Iterator<Map.Entry<?,Integer>> {
         final int dimension = index / 2;
         switch (index % 2) {
             default: throw new AssertionError(index);
-            case 0: property = axis.getName(); break;
+            case 0: property = axis.getShortName(); break;
             case 1: property = NetcdfAxis.getDirection(axis);
                     axis = axes.hasPrevious() ? axes.previous() : null;
                     break; // If we add new cases, the above line must stay last.

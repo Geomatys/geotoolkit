@@ -92,6 +92,6 @@ final class GDALGridMapping {
             throw new MismatchedSizeException(Errors.getResources(caller.getLocale())
                     .getString(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
         }
-        return new AffineTransform(c[1], c[4], c[2], c[5], c[0], c[3]);
+        return new AffineTransform(c[1], c[4], c[2], c[5], c[0], c[3]); // X_DIMENSION, Y_DIMENSION
     }
 }

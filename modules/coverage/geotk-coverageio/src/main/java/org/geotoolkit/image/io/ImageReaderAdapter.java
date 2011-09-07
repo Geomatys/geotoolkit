@@ -40,6 +40,8 @@ import javax.imageio.event.IIOReadUpdateListener;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
 
+import org.opengis.coverage.grid.GridEnvelope;
+
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.lang.Decorator;
@@ -89,7 +91,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * fill the metadata information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see ImageWriterAdapter
  *
@@ -307,15 +309,38 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      */
     @Override
     public int getDimension(final int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
         final int n;
         if (main instanceof SpatialImageReader) {
+            checkImageIndex(imageIndex);
             n = ((SpatialImageReader) main).getDimension(imageIndex);
         } else {
-            n = 2;
+            n = super.getDimension(imageIndex);
         }
         sync();
         return n;
+    }
+
+    /**
+     * Returns the grid range of the image at the given index. The default implementation
+     * delegates to the {@linkplain #main} reader if it is an instance of {@link SpatialImageReader},
+     * or to the super-class otherwise.
+     * <p>
+     * Note that the {@linkplain #main} reader is indirectly initialized by an implicit call to
+     * {@link #getNumImages(boolean)}.
+     *
+     * @since 3.19
+     */
+    @Override
+    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
+        final GridEnvelope range;
+        if (main instanceof SpatialImageReader) {
+            checkImageIndex(imageIndex);
+            range = ((SpatialImageReader) main).getGridEnvelope(imageIndex);
+        } else {
+            range = super.getGridEnvelope(imageIndex);
+        }
+        sync();
+        return range;
     }
 
     /**

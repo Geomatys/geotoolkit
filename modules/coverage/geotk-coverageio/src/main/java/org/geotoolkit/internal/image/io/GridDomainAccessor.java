@@ -40,6 +40,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
@@ -192,12 +193,12 @@ public final class GridDomainAccessor extends MetadataAccessor {
      */
     public void setGridToCRS(final AffineTransform gridToCRS) {
         final double[] vector = new double[] {
-            gridToCRS.getTranslateX(),
-            gridToCRS.getTranslateY()
+            gridToCRS.getTranslateX(), // X_DIMENSION
+            gridToCRS.getTranslateY()  // Y_DIMENSION
         };
         setOrigin(fixRoundingError(vector));
-        vector[0]=gridToCRS.getScaleX(); vector[1]=gridToCRS.getShearY(); addOffsetVector(fixRoundingError(vector));
-        vector[0]=gridToCRS.getShearX(); vector[1]=gridToCRS.getScaleY(); addOffsetVector(fixRoundingError(vector));
+        vector[X_DIMENSION]=gridToCRS.getScaleX(); vector[Y_DIMENSION]=gridToCRS.getShearY(); addOffsetVector(fixRoundingError(vector));
+        vector[X_DIMENSION]=gridToCRS.getShearX(); vector[Y_DIMENSION]=gridToCRS.getScaleY(); addOffsetVector(fixRoundingError(vector));
     }
 
     /**
@@ -255,17 +256,24 @@ public final class GridDomainAccessor extends MetadataAccessor {
     public void setAll(final AffineTransform gridToCRS, final Rectangle bounds,
             final CellGeometry cellGeometry, final PixelOrientation pointInPixel)
     {
-        setOrigin(gridToCRS.getTranslateX(), gridToCRS.getTranslateY());
-        addOffsetVector(gridToCRS.getScaleX(), gridToCRS.getShearY());
-        addOffsetVector(gridToCRS.getShearX(), gridToCRS.getScaleY());
-        setLimits(new int[] {bounds.x, bounds.y}, new int[] {bounds.x + bounds.width-1, bounds.y + bounds.height-1});
-        final double[] centerPoint = new double[] {bounds.getCenterX(), bounds.getCenterY()};
+        setGridToCRS(gridToCRS);
+        setLimits(new int[] {
+                      bounds.x,  // X_POSITION
+                      bounds.y}, // Y_POSITION
+                  new int[] {
+                      bounds.x + bounds.width  - 1,   // X_POSITION
+                      bounds.y + bounds.height - 1}); // Y_POSITION
+        final double[] centerPoint = new double[] {
+                bounds.getCenterX(),  // X_POSITION
+                bounds.getCenterY()}; // Y_POSITION
         gridToCRS.transform(centerPoint, 0, centerPoint, 0, 1);
         /*
          * Get an estimation of the envelope size (the diagonal length actually),
          * in order to estimate a threshold value for trapping zeros.
          */
-        Point2D span = new Point2D.Double(bounds.getWidth(), bounds.getHeight());
+        Point2D span = new Point2D.Double(
+                bounds.getWidth(),    // X_POSITION
+                bounds.getHeight());  // Y_POSITION
         span = gridToCRS.deltaTransform(span, span);
         final double tolerance = Math.hypot(span.getX(), span.getY()) * EPS;
         for (int i=0; i<centerPoint.length; i++) {
@@ -412,9 +420,9 @@ public final class GridDomainAccessor extends MetadataAccessor {
             final double yBound, final int width, final int height, final boolean pixelCenter,
             final CellGeometry cellGeometry)
     {
-        final double[] origin = new double[] {xOrigin, yOrigin};
-        final double[] bounds = new double[] {xBound,  yBound};
-        final int[]    high   = new int[]    {width-1, height-1};
+        final double[] origin = new double[] {xOrigin, yOrigin};   // X_POSITION, Y_POSITION
+        final double[] bounds = new double[] {xBound,  yBound};    // X_POSITION, Y_POSITION
+        final int[]    high   = new int[]    {width-1, height-1};  // X_POSITION, Y_POSITION
         setRectifiedGridDomain(origin, bounds, null, high, null, pixelCenter);
         setSpatialRepresentation(origin, bounds, cellGeometry,
                 pixelCenter ? PixelOrientation.CENTER : PixelOrientation.UPPER_LEFT);

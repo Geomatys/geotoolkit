@@ -67,6 +67,8 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.Envelopes;
 
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+
 
 /**
  * Base class of {@link GridCoverageReader} and {@link GridCoverageWriter}. This base class
@@ -87,29 +89,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * @since 3.15
      */
     static final Logger LOGGER = Logging.getLogger(GridCoverageStore.class);
-
-    /**
-     * The dimension of <var>x</var> ordinates, which is {@value}. This is used for example with
-     * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
-     * associated the {@link java.awt.image.RenderedImage#getWidth() image width}.
-     * <p>
-     * <b>WARNING:</b> If this value is modified, then every calls to CRSUtilities.getCRS2D(...)
-     * in this class and subclasses will need to be replaced by something more sophisticated.
-     *
-     * @since 3.14
-     */
-    static final int X_DIMENSION = 0;
-
-    /**
-     * The dimension of <var>y</var> ordinates, which is {@value}. This is used for example with
-     * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
-     * associated the {@link java.awt.image.RenderedImage#getHeight() image height}.
-     * <p>
-     * <b>WARNING:</b> See the warning in {@link #X_DIMENSION}.
-     *
-     * @since 3.14
-     */
-    static final int Y_DIMENSION = 1;
 
     /**
      * Minimal image width and height, in pixels. If the user requests a smaller image,
@@ -633,7 +612,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          */
         final Envelope2D validEnvelope;
         if (envelope == null || resolution == null) {
-            CoordinateReferenceSystem crs = CRSUtilities.getCRS2D(requestCRS);
+            CoordinateReferenceSystem crs = CRSUtilities.getCRS2D(requestCRS); // X_DIMENSION, Y_DIMENSION
             if (crs == null) {
                 crs = dataCRS; // 'dataCRS' is already 2D.
             } else if (dataCRS != null && !CRS.equalsIgnoreMetadata(dataCRS, crs)) {

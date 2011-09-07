@@ -99,11 +99,48 @@ import javax.imageio.ImageWriter;
  *
  * @see DimensionSlice
  * @see SpatialImageReader#getDimension(int)
+ * @see SpatialImageReader#getGridEnvelope(int)
  *
  * @since 3.15
  * @module
  */
 public interface MultidimensionalImageStore {
+    /**
+     * The standard dimension index of pixel columns (<var>x</var> ordinates) in images,
+     * which is {@value}. This is for example the standard dimension index of
+     * {@linkplain java.awt.image.RenderedImage#getWidth() image width} in
+     * {@linkplain org.opengis.coverage.grid.GridEnvelope grid envelopes}.
+     * <p>
+     * In theory, the {@code MultidimensionalImageStore} API allows some flexibility about
+     * which dimension is the "image width". However in practice, the {@value} dimension is
+     * often hard-coded, sometime as an index (in which case this {@code X_DIMENSION} field
+     * shall be used), or sometime in the way loops are structured (in which case a
+     * {@code // X_DIMENSION} comment shall be put). The purpose of this constant is to
+     * allow traceability of code making such hard-coded assumption, in case more flexibility
+     * is needed in the future.
+     *
+     * @since 3.19
+     */
+    int X_DIMENSION = 0;
+
+    /**
+     * The standard dimension index of pixel rows (<var>y</var> ordinates) in images,
+     * which is {@value}. This is for example the standard dimension index of
+     * {@linkplain java.awt.image.RenderedImage#getHeight() image height} in
+     * {@linkplain org.opengis.coverage.grid.GridEnvelope grid envelopes}.
+     * <p>
+     * In theory, the {@code MultidimensionalImageStore} API allows some flexibility about
+     * which dimension is the "image height". However in practice, the {@value} dimension is
+     * often hard-coded, sometime as an index (in which case this {@code Y_DIMENSION} field
+     * shall be used), or sometime in the way loops are structured (in which case a
+     * {@code // Y_DIMENSION} comment shall be put). The purpose of this constant is to
+     * allow traceability of code making such hard-coded assumption, in case more flexibility
+     * is needed in the future.
+     *
+     * @since 3.19
+     */
+    int Y_DIMENSION = 1;
+
     /**
      * Returns the dimension assigned to the given API. This method never return {@code null}.
      * However the returned dimension can be used only if the {@code addDimensionId(...)} method

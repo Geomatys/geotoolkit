@@ -39,6 +39,8 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.metadata.IIOMetadataFormat;
 
+import org.opengis.coverage.grid.GridEnvelope;
+
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NumberRange;
@@ -46,6 +48,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
@@ -54,6 +57,7 @@ import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.SampleConversionType.*;
+import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
@@ -120,7 +124,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * example of code using some of the services provided by this class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.19
  *
  * @see SpatialImageWriter
  *
@@ -254,6 +258,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     /**
      * Returns the number of dimension of the image at the given index.
      * The default implementation returns 2.
+     * {@link MultidimensionalImageStore} implementations provide a different value.
      *
      * @param  imageIndex The image index.
      * @return The number of dimension for the image at the given index.
@@ -265,7 +270,35 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      */
     public int getDimension(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
-        return 2;
+        return 2; // max(X_DIMENSION, Y_DIMENSION) + 1
+    }
+
+    /**
+     * Returns the grid envelope of the image at the given index. The default implementation
+     * creates a grid envelope from the information provided by {@link #getDimension(int)},
+     * {@link #getWidth(int)} and {@link #getHeight(int)} methods.
+     * {@link MultidimensionalImageStore} implementations provide a different value.
+     *
+     * @param  imageIndex The image index.
+     * @return The grid envelope for the image at the given index.
+     * @throws IOException if an error occurs reading the information from the input source.
+     *
+     * @see MultidimensionalImageStore
+     *
+     * @since 3.19
+     */
+    @SuppressWarnings("fallthrough")
+    public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
+        final int dimension = getDimension(imageIndex);
+        final int[] lower = new int[dimension];
+        final int[] upper = new int[dimension];
+        switch (dimension) {
+            default:             Arrays.fill(upper, 1); // Fall through in all cases.
+            case Y_DIMENSION+1:  upper[Y_DIMENSION] = getHeight(imageIndex);
+            case X_DIMENSION+1:  upper[X_DIMENSION] = getWidth (imageIndex);
+            case 0:              break;
+        }
+        return new GeneralGridEnvelope(lower, upper, false);
     }
 
     /**
