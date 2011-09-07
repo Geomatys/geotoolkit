@@ -174,7 +174,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @param other The other grid geometry to copy.
      *
-     * @see #wrap(GridGeometry)
+     * @see #castOrCopy(GridGeometry)
      *
      * @since 2.5
      */
@@ -507,16 +507,29 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * unchanged. Otherwise a new {@code GridGeometry2D} instance is created using the
      * {@linkplain #GridGeometry2D(GridGeometry) copy constructor}.
      *
-     * @param  other The grid geometry to wrap.
+     * @param  other The grid geometry to cast or copy.
      * @return The wrapped geometry, or {@code null} if {@code other} was null.
      *
-     * @since 2.5
+     * @since 3.19
      */
-    public static GridGeometry2D wrap(final GridGeometry other) {
+    public static GridGeometry2D castOrCopy(final GridGeometry other) {
         if (other == null || other instanceof GridGeometry2D) {
             return (GridGeometry2D) other;
         }
         return new GridGeometry2D(other);
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy(GridGeometry)}.
+     *
+     * @param  other The grid geometry to cast or copy.
+     * @return The wrapped geometry, or {@code null} if {@code other} was null.
+     *
+     * @since 2.5
+     */
+    @Deprecated
+    public static GridGeometry2D wrap(final GridGeometry other) {
+        return castOrCopy(other);
     }
 
     /**

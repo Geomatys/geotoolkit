@@ -84,7 +84,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.16
+ * @version 3.19
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -479,6 +479,24 @@ scanNumber: while (++i < length) {
                 throw new IllegalArgumentException(message);
             }
         }
+    }
+
+    /**
+     * Returns the given envelope as a {@code GeneralEnvelope} instance. If the given envelope
+     * is already an instance of {@code GeneralEnvelope}, then it is returned unchanged.
+     * Otherwise the coordinate values and the CRS of the given envelope are
+     * {@linkplain #GeneralEnvelope(Envelope) copied} in a new {@code GeneralEnvelope}.
+     *
+     * @param  envelope The envelope to cast, or {@code null}.
+     * @return The values of the given envelope as a {@code GeneralEnvelope} instance.
+     *
+     * @since 3.19
+     */
+    public static GeneralEnvelope castOrCopy(final Envelope envelope) {
+        if (envelope == null || envelope instanceof GeneralEnvelope) {
+            return (GeneralEnvelope) envelope;
+        }
+        return new GeneralEnvelope(envelope);
     }
 
     /**

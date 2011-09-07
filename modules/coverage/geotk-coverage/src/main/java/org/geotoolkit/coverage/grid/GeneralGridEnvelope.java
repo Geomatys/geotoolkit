@@ -439,7 +439,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     }
 
     /**
-     * Returns a string représentation of this grid envelope. The returned string is
+     * Returns a string representation of this grid envelope. The returned string is
      * implementation dependent. It is usually provided for debugging purposes.
      */
     @Override
@@ -448,7 +448,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     }
 
     /**
-     * Returns a string représentation of the specified grid envelope.
+     * Returns a string representation of the specified grid envelope.
      */
     static String toString(final GridEnvelope envelope) {
         final int dimension = envelope.getDimension();

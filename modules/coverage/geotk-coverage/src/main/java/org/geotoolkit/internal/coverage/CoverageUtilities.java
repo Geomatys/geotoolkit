@@ -87,7 +87,7 @@ public final class CoverageUtilities extends Static {
         }
         if (coverage instanceof GridCoverage) {
             final GridGeometry2D geometry =
-                    GridGeometry2D.wrap(((GridCoverage) coverage).getGridGeometry());
+                    GridGeometry2D.castOrCopy(((GridCoverage) coverage).getGridGeometry());
             if (geometry.isDefined(GridGeometry2D.CRS)) {
                 return geometry.getCoordinateReferenceSystem2D();
             } else try {
@@ -116,7 +116,7 @@ public final class CoverageUtilities extends Static {
         }
         if (coverage instanceof GridCoverage) {
             final GridGeometry2D geometry =
-                    GridGeometry2D.wrap(((GridCoverage) coverage).getGridGeometry());
+                    GridGeometry2D.castOrCopy(((GridCoverage) coverage).getGridGeometry());
             if (geometry.isDefined(GridGeometry2D.ENVELOPE)) {
                 return geometry.getEnvelope2D();
             } else {

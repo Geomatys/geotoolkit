@@ -708,13 +708,13 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * Wraps the specified OpenGIS's sample dimension into a Geotk
+     * Returns the content of the given OpenGIS's sample dimension as a Geotk
      * implementation of {@code GridSampleDimension}.
      *
      * @param sd The sample dimension to wrap into a Geotk implementation.
      * @return The given sample dimension as a {@code GridSampleDimension} instance.
      */
-    public static GridSampleDimension wrap(final SampleDimension sd) {
+    public static GridSampleDimension castOrCopy(final SampleDimension sd) {
         if (sd instanceof GridSampleDimension) {
             return (GridSampleDimension) sd;
         }
@@ -742,6 +742,14 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                 sd.getScale(),
                 sd.getOffset(),
                 sd.getUnits());
+    }
+
+    /**
+     * @deprecated Renamed {@link #castOrCopy(SampleDimension)}.
+     */
+    @Deprecated
+    public static GridSampleDimension wrap(final SampleDimension sd) {
+        return castOrCopy(sd);
     }
 
     /**

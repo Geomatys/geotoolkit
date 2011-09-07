@@ -443,7 +443,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
          * need the ImageWriter, which need the RenderedImage, which need the GridGeometry.
          */
         abortRequested = false;
-        GridGeometry2D gridGeometry = GridGeometry2D.wrap(coverage.getGridGeometry());
+        GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
         RenderedImage image = coverage.getRenderableImage(gridGeometry.gridDimensionX,
                 gridGeometry.gridDimensionY).createDefaultRendering();
         while (image instanceof RenderedImageAdapter) {

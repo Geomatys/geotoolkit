@@ -554,7 +554,7 @@ control:    for (int p=0; p<=1; p++) {
         final RenderedImage           image = getRenderableImage(time).createDefaultRendering();
         final GridSampleDimension[]   bands = new GridSampleDimension[getNumSampleDimensions()];
         for (int i=0; i<getNumSampleDimensions(); i++){
-            bands[i] = GridSampleDimension.wrap(getSampleDimension(i));
+            bands[i] = GridSampleDimension.castOrCopy(getSampleDimension(i));
         }
         final MathTransform gridToCRS;
         gridToCRS = ProjectiveTransform.create((AffineTransform) image.getProperty("gridToCRS"));

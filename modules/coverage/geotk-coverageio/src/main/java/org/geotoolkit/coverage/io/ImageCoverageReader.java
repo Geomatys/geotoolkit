@@ -546,9 +546,10 @@ public class ImageCoverageReader extends GridCoverageReader {
      * The default implementation performs the following:
      * <p>
      * <ul>
-     *   <li>The {@link org.opengis.coverage.grid.GridEnvelope} is determined from the image
-     *       {@linkplain ImageReader#getWidth(int) width} and
-     *       {@linkplain ImageReader#getHeight(int) height}.</li>
+     *   <li>The {@link GridEnvelope} is determined from the
+     *       {@linkplain SpatialImageReader#getGridEnvelope(int) spatial image reader}
+     *       if possible, or from the image {@linkplain ImageReader#getWidth(int) width}
+     *       and {@linkplain ImageReader#getHeight(int) height} otherwise.</li>
      *   <li>The {@link CoordinateReferenceSystem} and the "<cite>grid to CRS</cite>" conversion
      *       are determined from the {@link SpatialMetadata} if any.</li>
      * </ul>
@@ -611,7 +612,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             Arrays.fill(upper, 1);
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
-            final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
+            final GridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
             gridGeometry = new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
             Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();

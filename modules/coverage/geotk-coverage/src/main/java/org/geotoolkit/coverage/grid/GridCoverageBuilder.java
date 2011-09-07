@@ -154,14 +154,6 @@ public class GridCoverageBuilder {
     }
 
     /**
-     * Wraps an arbitrary envelope to an object that can be stored in {@link #envelope}.
-     */
-    private static GeneralEnvelope wrap(final Envelope envelope) {
-        return (envelope==null || envelope instanceof GeneralEnvelope) ?
-            (GeneralEnvelope) envelope : new GeneralEnvelope(envelope);
-    }
-
-    /**
      * Returns the current coordinate reference system. If no CRS has been
      * {@linkplain #setCoordinateReferenceSystem explicitly defined}, then
      * the default CRS is {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
@@ -186,14 +178,14 @@ public class GridCoverageBuilder {
     {
         if (envelope == null) {
             if (crs != null) {
-                envelope = wrap(Envelopes.getDomainOfValidity(crs));
+                envelope = GeneralEnvelope.castOrCopy(Envelopes.getDomainOfValidity(crs));
                 if (envelope == null) {
                     envelope = new GeneralEnvelope(crs);
                     envelope.setToNull();
                 }
             }
         } else try {
-            envelope = wrap(Envelopes.transform(envelope, crs));
+            envelope = GeneralEnvelope.castOrCopy(Envelopes.transform(envelope, crs));
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), exception);

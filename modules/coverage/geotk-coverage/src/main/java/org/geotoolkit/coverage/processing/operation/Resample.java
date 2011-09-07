@@ -242,7 +242,7 @@ public class Resample extends Operation2D {
         if (targetCRS == null) {
             targetCRS = source.getCoordinateReferenceSystem();
         }
-        final GridGeometry2D targetGG = GridGeometry2D.wrap(
+        final GridGeometry2D targetGG = GridGeometry2D.castOrCopy(
                 (GridGeometry) parameters.parameter("GridGeometry").getValue());
         final GridCoverage2D target;
         try {
@@ -292,7 +292,7 @@ public class Resample extends Operation2D {
             if (reducedCRS == sourceCRS) {
                 gridToCRS = gridGeometry.getGridToCRS();
             } else {
-                gridToCRS = GridGeometry2D.wrap(gridGeometry).getGridToCRS2D();
+                gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
             }
             gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, target, null);
         } else {
@@ -317,7 +317,7 @@ public class Resample extends Operation2D {
                     gridToCRS = gridGeometry.getGridToCRS();
                 } else {
                     reduced   = CoverageUtilities.getEnvelope2D(source);
-                    gridToCRS = GridGeometry2D.wrap(gridGeometry).getGridToCRS2D();
+                    gridToCRS = GridGeometry2D.castOrCopy(gridGeometry).getGridToCRS2D();
                 }
                 transformed.intersect(reduced);
                 gridGeometry = new GridGeometry2D(PixelInCell.CELL_CENTER, gridToCRS, transformed, null);
