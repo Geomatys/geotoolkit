@@ -23,6 +23,7 @@ import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -44,7 +45,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
  *        (provided in <code>ImageCoverageReader</code>) which is out of scope of Image I/O.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.19
  *
  * @since 3.11
  * @module
@@ -63,6 +64,9 @@ final class SampleDimensionPalette extends Palette {
         {
             final GridSampleDimension[] bands = BANDS.get();
             final GridSampleDimension band = bands[Math.min(visibleBand, bands.length-1)];
+            if (XCollections.isNullOrEmpty(band.getCategories())) {
+                return super.getPalette(name, lower, upper, size, numBands, visibleBand);
+            }
             Palette palette = new SampleDimensionPalette(this, name, band, numBands, visibleBand);
             palette = palettes.unique(palette);
             return palette;
@@ -93,11 +97,14 @@ final class SampleDimensionPalette extends Palette {
     }
 
     /**
-     * Creates a new image type specifier.
+     * Creates a new image type specifier with a color model inferred from the sample
+     * dimension given to the constructor.
      */
     @Override
     protected ImageTypeSpecifier createImageTypeSpecifier() throws IOException {
         final ColorModel cm = band.getColorModel(visibleBand, numBands);
+        // 'cm' should not be null because the above factory checked
+        // that the GridSampleDimension has at least one category.
         return new ImageTypeSpecifier(cm, cm.createCompatibleSampleModel(1, 1));
     }
 

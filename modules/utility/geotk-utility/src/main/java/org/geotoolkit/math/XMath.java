@@ -463,6 +463,9 @@ public final class XMath extends Static {
      * bit fields ranging from {@code 0x7f800001} through {@code 0x7fffffff} or {@code 0xff800001}
      * through {@code 0xffffffff}. The standard {@link Float#NaN} has bit fields {@code 0x7fc00000}.
      * See {@link Float#intBitsToFloat} for more details on NaN bit values.
+     * <p>
+     * <b>Tip:</b> if the caller needs to ensure that the index is never out of bounds, he can
+     * set the parameter value to {@code index % 0x200000}.
      *
      * @param  index The index, from -2097152 to 2097151 inclusive.
      * @return One of the legal {@link Float#NaN NaN} values as a float.
@@ -472,14 +475,12 @@ public final class XMath extends Static {
      */
     public static float toNaN(int index) throws IndexOutOfBoundsException {
         index += 0x200000;
-        if (index>=0 && index<=0x3FFFFF) {
-            final float value = Float.intBitsToFloat(0x7FC00000 + index);
-            assert Float.isNaN(value) : value;
-            return value;
+        if (index<0 || index>0x3FFFFF) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
         }
-        else {
-            throw new IndexOutOfBoundsException(Integer.toHexString(index));
-        }
+        final float value = Float.intBitsToFloat(0x7FC00000 + index);
+        assert Float.isNaN(value) : value;
+        return value;
     }
 
     /**

@@ -109,7 +109,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * to geophysics ranges. If {@code true}, then the {@link #getSampleToGeophysics()}
      * method should returns an identity transform. Note that the opposite do not always hold:
      * an identity transform doesn't means that all categories are geophysics. For example,
-     * some qualitative categories may map to some values differents than {@code NaN}.
+     * some qualitative categories may map to some values different than {@code NaN}.
      * <p>
      * Assertions:
      *  <ul>
@@ -155,7 +155,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     private final MathTransform1D sampleToGeophysics;
 
     /**
-     * Decription for this sample dimension. Typically used as a way to perform a band select by
+     * Description for this sample dimension. Typically used as a way to perform a band select by
      * using human comprehensible descriptions instead of just numbers. Web Coverage Service (WCS)
      * can use this feature in order to perform band subsetting as directed from a user request.
      */
@@ -708,7 +708,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * Wraps the specified OpenGIS's sample dimension into a Geotk's
+     * Wraps the specified OpenGIS's sample dimension into a Geotk
      * implementation of {@code GridSampleDimension}.
      *
      * @param sd The sample dimension to wrap into a Geotk implementation.
@@ -1050,7 +1050,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *   <li>Otherwise, if {@code value} maps a quantitative category, then the value is
      *       transformed into a geophysics value as with the {@link #getSampleToGeophysics()
      *       sampleToGeophysics} transform, the result is formatted as a number and the unit
-     *       symbol is appened.</li>
+     *       symbol is appended.</li>
      * </ul>
      *
      * @param  value  The sample value (can be one of {@code NaN} values).
@@ -1183,7 +1183,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * {@code NaN} values.
      * <p>
      * The <code>sampleToGeophysics.{@linkplain MathTransform1D#inverse() inverse()}</code>
-     * transform is capable to differenciate {@code NaN} values to get back the original
+     * transform is capable to differentiate {@code NaN} values to get back the original
      * sample value.
      *
      * @return The <cite>transfer function</cite> from sample to geophysics values, or {@code null}
@@ -1321,7 +1321,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * Returns a color model for this sample dimension. The default implementation create a color
+     * Returns a color model for this sample dimension. The default implementation creates a color
      * model with 1 band using each category's colors as returned by {@link Category#getColors}.
      * The returned color model will typically use {@link DataBuffer#TYPE_FLOAT} if this sample
      * dimension is {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS geophysics}, or
@@ -1330,7 +1330,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * Note that {@link org.geotoolkit.coverage.grid.GridCoverage2D#getSampleDimension} returns
      * special implementations of {@code GridSampleDimension}. In this particular case,
      * the color model created by this {@code getColorModel()} method will have the same number of
-     * bands than the grid coverage's {@link java.awt.image.RenderedImage}.
+     * bands than the grid coverage {@link java.awt.image.RenderedImage}.
      *
      * @return The requested color model, suitable for {@link java.awt.image.RenderedImage} objects
      *         with values in the <code>{@link #getRange}</code> range. May be {@code null} if this
@@ -1503,12 +1503,12 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *       with {@link org.geotoolkit.coverage.grid.GridCoverage2D}, which make extensive
      *       use of JAI. Peoples just working with {@link org.geotoolkit.coverage.Coverage} are
      *       stuck with the overhead. Note that we register the image operation here because
-     *       the only operation's argument is of type {@code GridSampleDimension[]}.
+     *       the only operation argument is of type {@code GridSampleDimension[]}.
      *       Consequently, the image operation may be invoked at any time after class
      *       loading of {@link GridSampleDimension}.
      *       <p>
      *       Additional note: moving the initialization into the
-     *       {@code META-INF/registryFile.jai} file may not be the best idea neithter,
+     *       {@code META-INF/registryFile.jai} file may not be the best idea neither,
      *       since peoples using JAI without the GCS module may be stuck with the overhead
      *       of loading GC classes.
      */

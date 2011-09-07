@@ -41,7 +41,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 /**
  * A category delimited by a range of sample values. A category may be either <em>qualitative</em>
- * or <em>quantitative</em>. For exemple, a classified image may have a qualitative category
+ * or <em>quantitative</em>. For example, a classified image may have a qualitative category
  * defining sample value {@code 0} as water. An other qualitative category may defines sample
  * value {@code 1} as forest, <i>etc.</i> An other image may define elevation data as sample
  * values in the range {@code [0..100]}. The later is a <em>quantitative</em> category, because
@@ -186,14 +186,14 @@ public class Category implements Serializable {
     final Category inverse;
 
     /**
-     * Codes ARGB des couleurs de la catégorie. Les couleurs par
-     * défaut seront un gradient allant du noir au blanc opaque.
+     * ARGB codes for this category colors. Default value is black and white
+     * without transparency.
      */
     private final int[] ARGB;
 
     /**
-     * Codes ARGB par défaut. On utilise un exemplaire unique
-     * pour toutes les création d'objets {@link Category}.
+     * The default value for {@code #ARGB}, to be shared by all {@link Category}
+     * objects having default colors.
      */
     private static final int[] DEFAULT = {0xFF000000, 0xFFFFFFFF};
 
@@ -507,7 +507,7 @@ public class Category implements Serializable {
      * @throws TransformException if a transformation failed.
      *
      * @todo The algorithm for finding minimum and maximum values is very simple for
-     *       now and will not work if the transformation has local extremas. We would
+     *       now and will not work if the transformation has local extrema. We would
      *       need some more sophisticated algorithm for the most general cases. Such
      *       a general algorithm would be useful in {@link GeophysicsCategory#getRange}
      *       as well.
@@ -519,7 +519,7 @@ public class Category implements Serializable {
         this.name    = inverse.name;
         this.ARGB    = inverse.ARGB;
         if (!isQuantitative) {
-            minimum = maximum = XMath.toNaN((int) Math.round((inverse.minimum + inverse.maximum)/2));
+            minimum = maximum = XMath.toNaN(((int) Math.round((inverse.minimum + inverse.maximum)/2)) % 0x200000);
             transform = LinearTransform1D.create(0, inverse.minimum); // geophysics to sample
             return;
         }
@@ -910,16 +910,16 @@ public class Category implements Serializable {
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
-        buffer.append("(\"").append(name).append("\":[");
+        buffer.append("(“").append(name).append("”:[");
         if (Double.isNaN(minimum) && Double.isNaN(maximum)) {
             buffer.append("NaN(").append(Math.round(inverse.minimum))
-                  .append("...") .append(Math.round(inverse.maximum)).append(')');
+                  .append('…') .append(Math.round(inverse.maximum)).append(')');
         } else {
             if (Numbers.isInteger(getRange().getElementClass())) {
-                buffer.append(Math.round(minimum)).append("...")
+                buffer.append(Math.round(minimum)).append('…')
                       .append(Math.round(maximum)); // Inclusive
             } else {
-                buffer.append(minimum).append(" ... ")
+                buffer.append(minimum).append(" … ")
                       .append(maximum); // Inclusive
             }
         }
