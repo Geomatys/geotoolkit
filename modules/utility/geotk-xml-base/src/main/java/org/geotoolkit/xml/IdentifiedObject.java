@@ -64,6 +64,7 @@ import org.opengis.metadata.citation.Citation;
  *
  * @see IdentifierSpace
  * @see org.geotoolkit.metadata.iso.MetadataEntity
+ * @see ObjectLinker#newIdentifiedObject(Class, Identifier[])
  *
  * @since 3.18
  * @module

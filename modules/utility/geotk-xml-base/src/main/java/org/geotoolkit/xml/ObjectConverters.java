@@ -95,8 +95,8 @@ public class ObjectConverters {
      * @param  <T> The compile-time type of the {@code sourceType} argument.
      * @param  value The value that can't be converted.
      * @param  sourceType The base type of the value to convert. This is determined by the argument
-     *         type of the method that catched the exception. For example the source type is always
-     *         {@code URI.class} if the exception has been catched by the {@link #toURL(URI)} method.
+     *         type of the method that caught the exception. For example the source type is always
+     *         {@code URI.class} if the exception has been caught by the {@link #toURL(URI)} method.
      * @param  targetType The expected type of the converted object.
      * @param  exception The exception that occurred during the attempt to convert.
      * @return {@code true} if the (un)marshalling process should continue despite this error,

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.gco;
 
+import java.util.UUID;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,9 +32,7 @@ import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
-import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.SpecializedIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -119,12 +118,17 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
         this.metadata = metadata;
         if (metadata instanceof IdentifiedObject) {
             final IdentifierMap map = ((IdentifiedObject) metadata).getIdentifierMap();
-            final String id   = map.get(IdentifierSpace.ID);
-            final String uuid = map.get(IdentifierSpace.UUID);
-            final XLink  link = map.getSpecialized(IdentifierSpace.XLINK);
-            if (id != null || uuid != null || link != null) {
-                reference = new ObjectReference(id, uuid, link);
-                return;
+            XLink  link = map.getSpecialized(IdentifierSpace.XLINK);
+            UUID   uuid = map.getSpecialized(IdentifierSpace.UUID);
+            String anyUUID = (uuid != null) ? uuid.toString() : map.get(IdentifierSpace.UUID);
+            if (anyUUID != null || link != null) {
+                if (uuid == null) {
+                    uuid = ObjectReference.toUUID(anyUUID); // May still null.
+                }
+                if (uuid == null || MarshalContext.linker().canUseReference(getBoundType(), metadata, uuid)) {
+                    reference = new ObjectReference(uuid, anyUUID, link);
+                    return;
+                }
             }
         }
         if (metadata instanceof NilObject) {
@@ -214,7 +218,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
             return true;
         }
         final Object ref = reference;
-        return (ref instanceof ObjectReference) && ((ObjectReference) ref).uuid != null;
+        return (ref instanceof ObjectReference) && ((ObjectReference) ref).anyUUID != null;
     }
 
     /**
@@ -226,10 +230,10 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @category gco:ObjectReference
      * @since 3.18 (derived from 3.13)
      */
-    @XmlAttribute(name = "uuidref")
+    @XmlAttribute(name = "uuidref", namespace = Namespaces.GCO)
     public final String getUUIDREF() {
         final ObjectReference ref = reference(false);
-        return (ref != null) ? ref.uuid : null;
+        return (ref != null) ? ref.anyUUID : null;
     }
 
     /**
@@ -240,7 +244,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setUUIDREF(final String uuid) {
-        reference(true).uuid = uuid;
+        reference(true).anyUUID = uuid;
     }
 
     /**
@@ -494,11 +498,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @Override
     public final BoundType unmarshal(final ValueType value) throws URISyntaxException {
-        if (value == null) {
-            return null;
-        }
-        value.resolve();
-        return value.metadata;
+        return (value != null) ? value.resolve() : null;
     }
 
     /**
@@ -508,36 +508,21 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @throws URISyntaxException If a URI can not be parsed.
      * @throws IllegalArgumentException If the UUID can not be parsed.
      */
-    final void resolve() throws URISyntaxException, IllegalArgumentException {
+    final BoundType resolve() throws URISyntaxException, IllegalArgumentException {
         final ObjectReference ref = reference(false);
         if (ref != null) {
-            final SpecializedIdentifier<?>[] identifiers = ref.getIdentifiers();
-            if (identifiers != null) {
-                if (metadata == null) {
-                    metadata = MarshalContext.linker().resolve(getBoundType(), identifiers);
-                } else if (metadata instanceof IdentifiedObject) {
-                    final IdentifierMap map = ((IdentifiedObject) metadata).getIdentifierMap();
-                    for (final SpecializedIdentifier<?> id : identifiers) {
-                        id.putInto(map);
-                    }
-                }
-            }
+            metadata = ref.resolve(getBoundType(), metadata);
         }
         if (metadata == null) {
-            final String uuidref = getUUIDREF();
-            if (uuidref != null) {
-                metadata = getBoundType().cast(UUIDs.DEFAULT.lookup(uuidref)); // May still null.
-            }
-            if (metadata == null) {
-                final String value = getNilReason();
-                if (value != null) {
-                    final NilReason nilReason = MarshalContext.converters().toNilReason(value);
-                    if (nilReason != null) {
-                        metadata = MarshalContext.linker().resolve(getBoundType(), nilReason);
-                    }
+            final String value = getNilReason();
+            if (value != null) {
+                final NilReason nilReason = MarshalContext.converters().toNilReason(value);
+                if (nilReason != null) {
+                    metadata = MarshalContext.linker().resolve(getBoundType(), nilReason);
                 }
             }
         }
+        return metadata;
     }
 
     /**

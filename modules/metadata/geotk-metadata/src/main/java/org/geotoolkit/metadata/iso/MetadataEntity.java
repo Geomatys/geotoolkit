@@ -19,19 +19,27 @@ package org.geotoolkit.metadata.iso;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.UUID;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 
 import org.geotoolkit.xml.XLink;
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.IdentifierMap;
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
+import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;
+import org.geotoolkit.internal.jaxb.gco.StringConverter;
 
 
 /**
@@ -106,6 +114,58 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      */
     protected MetadataEntity(final Object source) throws ClassCastException {
         super(source);
+    }
+
+    /**
+     * Returns an identifier unique for the XML document, or {@code null} if none.
+     * This method is invoked automatically by JAXB and should never be invoked explicitely.
+     *
+     * @since 3.19
+     */
+    @XmlID
+    @XmlAttribute(namespace = Namespaces.GCO)
+    @XmlJavaTypeAdapter(StringConverter.class)
+    private String getID() {
+        return getIdentifierMap().getSpecialized(IdentifierSpace.ID);
+    }
+
+    /**
+     * Sets an identifier unique for the XML document. This method is invoked
+     * automatically by JAXB and should never be invoked explicitely.
+     *
+     * @since 3.19
+     */
+    private void setID(final String id) {
+        getIdentifierMap().putSpecialized(IdentifierSpace.ID, id);
+    }
+
+    /**
+     * Returns an unique identifier, or {@code null} if none. This method is
+     * invoked automatically by JAXB and should never be invoked explicitely.
+     *
+     * @since 3.19
+     */
+    @XmlAttribute(namespace = Namespaces.GCO)
+    @XmlJavaTypeAdapter(StringConverter.class)
+    private String getUUID() {
+        final UUID uuid = getIdentifierMap().getSpecialized(IdentifierSpace.UUID);
+        return (uuid != null) ? uuid.toString() : null;
+    }
+
+    /**
+     * Sets an unique identifier. This method is invoked automatically by JAXB
+     * and should never be invoked explicitely.
+     *
+     * @throws IllegalArgumentException If the UUID is already assigned to an other object.
+     *
+     * @since 3.19
+     */
+    private void setUUID(final String id) {
+        final UUID uuid = MarshalContext.converters().toUUID(id);
+        if (uuid != null) {
+            getIdentifierMap().putSpecialized(IdentifierSpace.UUID, uuid);
+            ObjectIdentification.UUIDs.setUUID(this, uuid);
+        }
     }
 
     /**

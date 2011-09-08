@@ -100,14 +100,14 @@ public final strictfp class DefaultCitationTest {
         int foundID=0, foundOGC=0, foundEPSG=0, foundISBN=0, foundISSN=0;
         for (String line : Strings.getLinesFromMultilines(xml)) {
             line = line.trim();
-            if (line.contains("MyID"))   {foundID++;}
+            if (line.contains("MyID"))   {assertTrue  ("Expected root.",  previous.startsWith("<?xml")); foundID++;}
             if (line.contains("MyOGC"))  {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundOGC++;}
             if (line.contains("MyEPSG")) {assertEquals("Wrong parent element.", "<gmd:code>", previous); foundEPSG++;}
             if (line.contains("MyISBN")) {assertEquals("Wrong parent element.", "<gmd:ISBN>", previous); foundISBN++;}
             if (line.contains("MyISSN")) {assertEquals("Wrong parent element.", "<gmd:ISSN>", previous); foundISSN++;}
             previous = line;
         }
-        assertEquals("MyID",   0, foundID);
+        assertEquals("MyID",   1, foundID);
         assertEquals("MyOGC",  1, foundOGC);
         assertEquals("MyEPSG", 1, foundEPSG);
         assertEquals("MyISBN", 1, foundISBN);

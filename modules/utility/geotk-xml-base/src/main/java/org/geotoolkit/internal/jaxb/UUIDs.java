@@ -29,8 +29,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-
 
 /**
  * Maps {@link UUID} to arbitrary objects. The objects are typically instances of ISO 19115
@@ -55,7 +53,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @param <T> The type of UUID objects, typically {@link String} or {@link UUID}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
  *
@@ -65,10 +63,14 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 @ThreadSafe
 public abstract class UUIDs<T> {
     /**
-     * The system-wide default map of UUIDs. The {@link #createUUID()} method will generate
-     * random strings using <code>{@linkplain UUID#randomUUID()}.toString()</code>.
+     * An implementation of {@link UUIDs} using {@link UUID}.
      */
-    public static final UUIDs<String> DEFAULT = new AsString();
+    public static final class Standard extends UUIDs<UUID> {
+        /** Generates a random UUID. */
+        @Override protected UUID createUUID() {
+            return UUID.randomUUID();
+        }
+    }
 
     /**
      * An implementation of {@link UUIDs} using strings.
@@ -106,7 +108,7 @@ public abstract class UUIDs<T> {
      * @param  uuid The UUID for which to look for an object (can be {@code null}).
      * @return The object associated to the given UUID, or {@code null} if none.
      */
-    public Object lookup(final T uuid) {
+    public final Object lookup(final T uuid) {
         final Reference<?> ref;
         synchronized (this) {
             ref = uuidToObject.get(uuid);
@@ -120,7 +122,7 @@ public abstract class UUIDs<T> {
      * @param  object The object for which to get the UUID (can be {@code null}).
      * @return The UUID of the given object, or {@code null} if none.
      */
-    public T getUUID(final Object object) {
+    public final T getUUID(final Object object) {
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
             return objectToUUID.get(check);
@@ -130,32 +132,43 @@ public abstract class UUIDs<T> {
     /**
      * Sets the UUID for the given object. A UUID can be associated only once for any new
      * object, and the same UUID can not be associated to 2 different objects.
+     * <p>
+     * if an object is already mapped to the given UUID, then the mapping is <strong>not</strong>
+     * modified and the currently mapped object is returned. The returned object doesn't need to
+     * be equals to the object given in argument to this method.
      *
      * @param  object The object for which to set the UUID.
      * @param  uuid The UUID to associate to the object.
-     * @throws IllegalArgumentException If the object is already associated to a UUID,
-     *         or if the UUID is already associated to an other object.
+     * @return If an object is already mapped to the given UUID, that object. Otherwise {@code null}.
+     * @throws IllegalArgumentException If the object is already associated to an other UUID value.
      */
-    public void setUUID(final Object object, final T uuid) throws IllegalArgumentException {
-        ensureNonNull("object", object);
-        ensureNonNull("uuid", uuid);
+    public final Object setUUID(final Object object, final T uuid) throws IllegalArgumentException {
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
-            if (objectToUUID.containsKey(check)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_$1, object));
-            }
-            final WeakRef ref = new WeakRef(object);
-            final WeakRef oldRef = uuidToObject.put(uuid, ref);
-            if (oldRef != null) {
-                uuidToObject.put(uuid, oldRef);
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_ALREADY_DEFINED_$1, uuid));
-            }
-            if (objectToUUID.put(ref, uuid) != null) {
-                throw new AssertionError(ref); // Should never happen.
+            final T oldUUID = objectToUUID.get(check);
+            if (oldUUID != null) {
+                if (!oldUUID.equals(uuid)) {
+                    throw new IllegalArgumentException(Errors.format(
+                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, object));
+                }
+            } else {
+                final WeakRef ref = new WeakRef(object);
+                final WeakRef oldRef = uuidToObject.put(uuid, ref);
+                if (oldRef != null) {
+                    final Object old = oldRef.get();
+                    if (old != null) {
+                        // An object was already assigned to the UUID.
+                        // Restore the previous object and return it.
+                        uuidToObject.put(uuid, oldRef);
+                        return old;
+                    }
+                }
+                if (objectToUUID.put(ref, uuid) != null) {
+                    throw new AssertionError(ref); // Should never happen.
+                }
             }
         }
+        return null;
     }
 
     /**
@@ -166,7 +179,7 @@ public abstract class UUIDs<T> {
      *
      * @since 3.18
      */
-    public T removeUUID(final Object object) {
+    public final T removeUUID(final Object object) {
         final T uuid;
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
@@ -185,8 +198,7 @@ public abstract class UUIDs<T> {
      * @param  object The object for which to get the UUID.
      * @return The UUID of the given object.
      */
-    public T getOrCreateUUID(final Object object) {
-        ensureNonNull("object", object);
+    public final T getOrCreateUUID(final Object object) {
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
             T uuid = objectToUUID.get(check);

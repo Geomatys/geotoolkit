@@ -38,7 +38,7 @@ public final strictfp class UUIDsTest {
      */
     @Test
     public void testGetOrCreateUUID() {
-        final UUIDs<String> map = UUIDs.DEFAULT;
+        final UUIDs<String> map = new UUIDs.AsString();
         final Date object = new Date();
         assertNull("The object should have no initial UUID.", map.getUUID(object));
 
@@ -52,8 +52,9 @@ public final strictfp class UUIDsTest {
         assertSame("Should find the UUID.", uuid, map.getUUID(object));
         assertSame("Should be able to get the object from the UUID.", object, map.lookup(uuid));
 
+        map.setUUID(object, uuid); // Same UUID, should be a no-op.
         try {
-            map.setUUID(object, uuid);
+            map.setUUID(object, "dummy");
             fail("It should not be allowed to reassing an UUID.");
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
@@ -67,7 +68,7 @@ public final strictfp class UUIDsTest {
      */
     @Test
     public void testSetUUID() {
-        final UUIDs<String> map = UUIDs.DEFAULT;
+        final UUIDs<String> map = new UUIDs.AsString();
         final Date object = new Date();
         assertNull("The object should have no initial UUID.", map.getUUID(object));
 
@@ -81,8 +82,9 @@ public final strictfp class UUIDsTest {
         assertSame("Should find the UUID.", uuid, map.getUUID(object));
         assertSame("Should be able to get the object from the UUID.", object, map.lookup(uuid));
 
+        map.setUUID(object, uuid); // Same UUID, should be a no-op.
         try {
-            map.setUUID(object, uuid);
+            map.setUUID(object, "toto");
             fail("It should not be allowed to reassing an UUID.");
         } catch (IllegalArgumentException e) {
             // This is the expected exception.

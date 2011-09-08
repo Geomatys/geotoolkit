@@ -49,9 +49,37 @@
  * specifications; they are used only for consistency with current practice in
  * {@link org.geotoolkit.internal.jaxb.metadata} and similar packages.
  *
+ * {@section Object identification and reference}
+ * <ul>
+ *   <li><p><code>org.geotoolkit.<b>metadata.iso</b></code> public packages:
+ *   <ul>
+ *     <li>Implement the ISO 19139 {@code Foo_Type}, where <var>Foo</var> is the ISO name of a class.</li>
+ *     <li>Contains the {@code gco:ObjectIdentification} group of attributes ({@code id}, {@code uuid}).</li>
+ *     <li>May be subclasses of {@link org.geotoolkit.internal.jaxb.gco.ObjectIdentification} (but this is not always possible).</li>
+ *   </ul></p></li>
+ *   <li><p><code>org.geotoolkit.<b>internal.jaxb</b></code> private packages:
+ *   <ul>
+ *     <li>Implement the ISO 19139 {@code Foo_PropertyType} as subclasses of the {@link org.geotoolkit.internal.jaxb.gco.PropertyType} class.</li>
+ *     <li>Contains the {@code gco:ObjectReference} group of attributes ({@code xlink}, {@code uuidref}).</li>
+ *     <li>Attributes are declared in the {@link org.geotoolkit.internal.jaxb.gco.ObjectReference} Java class.</li>
+ *    </ul></p></li>
+ * </ul>
+ * <p>
+ * Those two kinds of types are marshalled as below:
+ *
+ * {@preformat xml
+ *   <MD_MetaData>
+ *     <property uuidref="…">
+ *       <Foo_Type uuid="…">
+ *         ...
+ *       </Foo_Type>
+ *     </property>
+ *   </MD_MetaData>
+ * }
+ *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.19
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *

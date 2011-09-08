@@ -17,9 +17,10 @@
  */
 package org.geotoolkit.xml;
 
-import java.lang.reflect.Proxy;
+import java.util.UUID;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.lang.reflect.Proxy;
 import javax.xml.bind.JAXBException;
 
 import org.opengis.metadata.citation.Series;
@@ -27,20 +28,21 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultSeries;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.util.LenientComparable;
+import org.geotoolkit.internal.jaxb.gco.ObjectIdentification;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshalling of object having {@code xlink} attributes.
+ * Tests the XML marshalling of object having {@code xlink} or {@code uuid} attributes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.19
  *
  * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-165">GEOTK-165</a>
  *
@@ -48,13 +50,13 @@ import static org.geotoolkit.test.Assert.*;
  */
 public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
     /**
-     * Tests a simple case.
+     * Tests a simple case using {@code xlink} attribute.
      *
      * @throws JAXBException Should never happen.
      */
     @Test
-    public void testSimple() throws JAXBException {
-        final String expected =
+    public void testSimpleXLink() throws JAXBException {
+        checkXLink(false,
             "<gmd:CI_Citation xmlns:gmd=\""   + Namespaces.GMD + '"' +
                             " xmlns:gco=\""   + Namespaces.GCO + '"' +
                             " xmlns:xlink=\"" + Namespaces.XLINK + "\">\n" +
@@ -68,20 +70,31 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
             "      </gmd:name>\n" +
             "    </gmd:CI_Series>\n" +
             "  </gmd:series>\n" +
-            "</gmd:CI_Citation>";
+            "</gmd:CI_Citation>");
+    }
 
-        final Citation citation = (Citation) XML.unmarshal(expected);
+    /**
+     * Unmarshall the given XML, checks its property, marshall it and compare DOM.
+     */
+    private static void checkXLink(final boolean isProxy, final String xml) throws JAXBException {
+        final Citation citation = (Citation) XML.unmarshal(xml);
+        assertEquals("title",  "A title", citation.getTitle().toString());
+
         final Series series = citation.getSeries();
-        assertFalse("Unexpected proxy", Proxy.isProxyClass(series.getClass()));
         assertInstanceOf("Expected IdentifiedObject", IdentifiedObject.class, series);
+        assertEquals("isProxy", isProxy, Proxy.isProxyClass(series.getClass()));
+        if (isProxy) {
+            assertNull("series", series.getName());
+            assertEquals("Series[{xlink=XLink[type=\"simple\", href=\"org:dummy\"]}]", series.toString());
+        } else {
+            assertEquals("series", "A series", series.getName().toString());
+        }
         final IdentifierMap map = ((IdentifiedObject) series).getIdentifierMap();
-
-        assertEquals("title",  "A title",   citation.getTitle().toString());
-        assertEquals("series", "A series",  series.getName().toString());
         assertEquals("href",   "org:dummy", map.get(IdentifierSpace.HREF));
+        assertNull  ("uuid",                map.get(IdentifierSpace.UUID));
 
         final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*");
+        assertDomEquals(xml, actual, "xmlns:*");
         assertEquals(citation, XML.unmarshal(actual));
     }
 
@@ -93,8 +106,8 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
      * @throws JAXBException Should never happen.
      */
     @Test
-    public void testEmptyCreation() throws JAXBException {
-        final String expected =
+    public void testEmptyXLink() throws JAXBException {
+        checkXLink(true,
             "<gmd:CI_Citation xmlns:gmd=\"" + Namespaces.GMD + '"' +
                             " xmlns:gco=\"" + Namespaces.GCO + '"' +
                             " xmlns:xlink=\"" + Namespaces.XLINK + "\">\n" +
@@ -102,24 +115,7 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
             "    <gco:CharacterString>A title</gco:CharacterString>\n" +
             "  </gmd:title>\n" +
             "  <gmd:series xlink:href=\"org:dummy\"/>\n" +
-            "</gmd:CI_Citation>";
-
-        final Citation citation = (Citation) XML.unmarshal(expected);
-        final Series series = citation.getSeries();
-        assertTrue("Expected proxy", Proxy.isProxyClass(series.getClass()));
-        assertInstanceOf("Expected IdentifiedObject", IdentifiedObject.class, series);
-        final IdentifierMap map = ((IdentifiedObject) series).getIdentifierMap();
-
-        assertEquals("title", "A title",  citation.getTitle().toString());
-        assertEquals("href", "org:dummy", map.get(IdentifierSpace.HREF));
-        assertEquals("Series[{xlink=XLink[type=\"simple\", href=\"org:dummy\"]}]", series.toString());
-        assertNull("All attributes are expected to be null.", series.getName());
-        /*
-         * Tests marshalling.
-         */
-        final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*");
-        assertEquals(citation, XML.unmarshal(actual));
+            "</gmd:CI_Citation>");
     }
 
     /**
@@ -134,14 +130,20 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
         link.setType(XLink.Type.SIMPLE);
         link.setHRef(new URI("org:dummy"));
         final DefaultSeries series = new DefaultSeries();
-        if (false) {
-            // Used only for manual test of XML marshalling.
-            series.setName(new SimpleInternationalString("A name"));
-        }
         assertNull(series.getIdentifierMap().putSpecialized(IdentifierSpace.XLINK, link));
         final DefaultCitation citation = new DefaultCitation();
         citation.setTitle(new SimpleInternationalString("A title"));
         citation.setSeries(series);
+        /*
+         * The citation should be:
+         *
+         * <gmd:series xlink:href="org:dummy">
+         *   <gmd:CI_Series/>
+         * </gmd:series>
+         *
+         * Removes the <gmd:CI_Series/> and unmarshall. We should now have a
+         * proxy for an empty Series rather than a DefaultSeries instance.
+         */
         String xml = XML.marshal(citation);
         assertEquals(xml.length() - "<gmd:CI_Series/>".length(),
                  (xml = xml.replace("<gmd:CI_Series/>", "")).length());
@@ -169,5 +171,66 @@ public final strictfp class ObjectReferenceMarshallingTest extends TestBase {
         series.setName(null);
         assertTrue(proxy.equals(series,  ComparisonMode.BY_CONTRACT));
         assertTrue(series.equals(proxy,  ComparisonMode.BY_CONTRACT));
+    }
+
+    /**
+     * Tests a case having a {@code uuid} attribute.
+     *
+     * @throws JAXBException Should never happen.
+     *
+     * @since 3.19
+     */
+    @Test
+    public void testUUID() throws JAXBException {
+        final String uuid = "f8f5fcb1-d57b-4013-b3a4-4eaa40df6dcf";
+        String xml =
+            "<gmd:CI_Citation xmlns:gmd=\""   + Namespaces.GMD + '"' +
+                            " xmlns:gco=\""   + Namespaces.GCO + '"' +
+                            " xmlns:xlink=\"" + Namespaces.XLINK + "\">\n" +
+            "  <gmd:title>\n" +
+            "    <gco:CharacterString>A title</gco:CharacterString>\n" +
+            "  </gmd:title>\n" +
+            "  <gmd:series>\n" +
+            "    <gmd:CI_Series gco:uuid=\"" + uuid + "\">\n" +
+            "      <gmd:name>\n" +
+            "        <gco:CharacterString>A series</gco:CharacterString>\n" +
+            "      </gmd:name>\n" +
+            "    </gmd:CI_Series>\n" +
+            "  </gmd:series>\n" +
+            "</gmd:CI_Citation>";
+
+        final Citation citation = (Citation) XML.unmarshal(xml);
+        final Series series = citation.getSeries();
+        assertFalse("Unexpected proxy", Proxy.isProxyClass(series.getClass()));
+        assertInstanceOf("Expected IdentifiedObject", IdentifiedObject.class, series);
+        final IdentifierMap map = ((IdentifiedObject) series).getIdentifierMap();
+
+        assertEquals("title",  "A title",   citation.getTitle().toString());
+        assertEquals("series", "A series",  series.getName().toString());
+        assertNull  ("href",                map.get(IdentifierSpace.HREF));
+        assertEquals(uuid,   String.valueOf(map.get(IdentifierSpace.UUID)));
+        assertSame("As a consequence of the XML unmarshalling, the series should "
+                + "now be registered in our global object-UUID mapping.",
+                series, ObjectIdentification.UUIDs.lookup(UUID.fromString(uuid)));
+
+        final String actual = XML.marshal(citation);
+        assertDomEquals(xml, actual, "xmlns:*");
+        assertEquals(citation, XML.unmarshal(actual));
+        /*
+         * Tests again using a reference to the above series.
+         */
+        xml =
+            "<gmd:CI_Citation xmlns:gmd=\""   + Namespaces.GMD + '"' +
+                            " xmlns:gco=\""   + Namespaces.GCO + '"' +
+                            " xmlns:xlink=\"" + Namespaces.XLINK + "\">\n" +
+            "  <gmd:title>\n" +
+            "    <gco:CharacterString>A title</gco:CharacterString>\n" +
+            "  </gmd:title>\n" +
+            "  <gmd:series gco:uuidref=\"" + uuid + "\"/>\n" +
+            "</gmd:CI_Citation>";
+
+        final Citation fromUUID = (Citation) XML.unmarshal(xml);
+        assertSame("The series should have been found in our global object-UUID map.", series, fromUUID.getSeries());
+        assertEquals(citation, fromUUID);
     }
 }

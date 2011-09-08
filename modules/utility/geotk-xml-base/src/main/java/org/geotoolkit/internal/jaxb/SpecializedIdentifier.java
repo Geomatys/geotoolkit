@@ -142,6 +142,15 @@ public final class SpecializedIdentifier<T> implements Identifier {
     }
 
     /**
+     * Returns the value object.
+     *
+     * @return The value, or {@code null} if none.
+     */
+    public T getValue() {
+        return value;
+    }
+
+    /**
      * Returns the authority specified at construction time.
      */
     @Override
