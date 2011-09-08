@@ -27,6 +27,8 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
@@ -173,7 +175,8 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         dataStore.setFilterFactory(FactoryFinder.getFilterFactory(null));
         dataStore.setGeometryFactory(new GeometryFactory());
         dataStore.setFeatureTypeFactory(new DefaultFeatureTypeFactory());
-        dataStore.setFeatureFactory(FactoryFinder.getFeatureFactory(null));
+        dataStore.setFeatureFactory(FactoryFinder.getFeatureFactory(
+                new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class)));
 
         return dataStore;
     }
