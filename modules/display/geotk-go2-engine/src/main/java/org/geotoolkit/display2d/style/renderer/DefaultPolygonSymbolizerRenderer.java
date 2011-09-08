@@ -54,8 +54,11 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPolygonSymbolizer>{
 
+    private final boolean mosaic;
+    
     public DefaultPolygonSymbolizerRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
+        mosaic = symbol.isMosaic();
     }
 
     /**
@@ -132,12 +135,20 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             g2d.translate(dispStep.getX(), dispStep.getY());
         }
 
-        final float margin = symbol.getMargin(candidate, coeff) /2f;
-        final Rectangle2D bounds = shape.getBounds2D();
-        if(bounds == null)return;
-        final int x = (int) (bounds.getMinX() - margin);
-        final int y = (int) (bounds.getMinY() - margin);
-
+        final int x;
+        final int y;
+        if(mosaic){
+            //we need the upperleft point to properly paint the polygon
+            final float margin = symbol.getMargin(candidate, coeff) /2f;
+            final Rectangle2D bounds = shape.getBounds2D();
+            if(bounds == null)return;
+            x = (int) (bounds.getMinX() - margin);
+            y = (int) (bounds.getMinY() - margin);
+        }else{
+            x=0;
+            y=0;
+        }
+        
         if(symbol.isFillVisible(candidate)){
             g2d.setComposite( symbol.getJ2DFillComposite(candidate) );
             g2d.setPaint( symbol.getJ2DFillPaint(candidate, x, y,coeff, hints) );

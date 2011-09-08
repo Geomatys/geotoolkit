@@ -215,6 +215,15 @@ public class CachedFill extends Cache<Fill>{
 
     /**
      * 
+     * @return true if the paint is a texture, in this case X/Y value must be correct
+     * when calling getJ2DPaint method.
+     */
+    public boolean isMosaic(){
+        return cachedPaint != null && cachedGraphic != null;
+    }
+    
+    /**
+     * 
      * @return Java2D paint for this feature
      */
     public Paint getJ2DPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){

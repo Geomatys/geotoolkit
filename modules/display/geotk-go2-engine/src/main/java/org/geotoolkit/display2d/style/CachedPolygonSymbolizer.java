@@ -38,6 +38,7 @@ import org.opengis.style.Stroke;
 public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>{
     
     //cached values
+    private float[] cachedDisps = null;
     private float cachedDispX = Float.NaN;
     private float cachedDispY = Float.NaN;
     private float cachedOffset = Float.NaN;
@@ -118,11 +119,16 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
             }else{
                 GO2Utilities.getRequieredAttributsName(dispY,requieredAttributs);
             }
+             
+            if(!Float.isNaN(cachedDispX) && !Float.isNaN(cachedDispY)){
+                cachedDisps = new float[]{cachedDispX,cachedDispY};
+            }
             
         }else{
             //we can a disp X and Y of 0
             cachedDispX = 0f;
             cachedDispY = 0f;
+            cachedDisps = new float[]{0,0};
         }
         
     }
@@ -131,6 +137,12 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         return cacheStroke;
     }
 
+    public boolean isMosaic(){
+        return  (cacheFill != null && cacheFill.isMosaic()) 
+                ||
+                (cacheStroke instanceof CachedStrokeSimple && ((CachedStrokeSimple)cacheStroke).isMosaicPaint() );
+    }
+    
     public boolean isStrokeVisible(final Object candidate){
         return cacheStroke != null && cacheStroke.isVisible(candidate);
     }
@@ -167,6 +179,10 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      */
     public float[] getDisplacement(final Object candidate){
         evaluate();
+        
+        if(cachedDisps != null){
+            return cachedDisps;
+        }
         
         final float[] disps = new float[2];
                 
