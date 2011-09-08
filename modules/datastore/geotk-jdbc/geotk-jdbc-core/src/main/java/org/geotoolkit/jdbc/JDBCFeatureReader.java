@@ -58,6 +58,8 @@ import org.opengis.filter.identity.Identifier;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
+import org.opengis.feature.type.PropertyDescriptor;
 
 
 /**
@@ -84,6 +86,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
      * schema of features
      */
     protected final SimpleFeatureType featureType;
+    protected final PropertyDescriptor[] properties;
+    
     /**
      * geometry factory used to create geometry objects
      */
@@ -95,7 +99,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     /**
      * feature builder
      */
-    protected final SimpleFeatureBuilder builder;
+    protected final DefaultSimpleFeature builder;
     /**
      * The primary key
      */
@@ -104,6 +108,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
      * statement,result set that is being worked from.
      */
     protected final Statement st;
+    protected final Connection stcx;
     protected final ResultSet rs;
     protected Connection cx;
     /**
@@ -139,6 +144,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             this.st.setFetchSize(store.getFetchSize());
             this.rs = this.st.executeQuery(sql);
         }
+        this.stcx = this.st.getConnection();
         
         // init the tracer if we need to debug a connection leak
         assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
@@ -172,22 +178,29 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         if (ff == null) {
             ff = dataStore.getFeatureFactory();
         }
-        this.builder = new SimpleFeatureBuilder(featureType, ff);
-        this.builder.setValidating(false);
-
+                
+        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType, ff);
+        sfb.setValidating(false);        
+        this.builder = (DefaultSimpleFeature) sfb.buildFeature("-1");
+        
         // find the primary key
         this.pkey = pkey;
+        
+        this.properties = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
+        
     }
 
-    public JDBCFeatureReader(final JDBCFeatureReader other) {
+    public JDBCFeatureReader(final JDBCFeatureReader other) throws SQLException {
         this.featureType = other.featureType;
         this.dataStore = other.dataStore;
         this.hints = other.hints;
         this.geometryFactory = other.geometryFactory;
         this.builder = other.builder;
         this.st = other.st;
+        this.stcx = this.st.getConnection();
         this.rs = other.rs;
         this.pkey = other.pkey;
+        this.properties = other.properties;
     }
 
     @Override
@@ -228,14 +241,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             ensureOpen();
             ensureNext();
 
-            //grab the connection
-            final Connection cx;
-            try {
-                cx = st.getConnection();
-            }catch (SQLException e) {
-                throw new DataStoreRuntimeException(e);
-            }
-
             // figure out the fid
             final String fid;
             try {
@@ -246,9 +251,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             }
 
             // round up attributes
-            final int attributeCount = featureType.getAttributeCount();
-            for(int i = 0; i < attributeCount; i++) {
-                final AttributeDescriptor type = featureType.getDescriptor(i);
+            for(int i = 0; i < properties.length; i++) {
+                final PropertyDescriptor type = properties[i];
 
                 try {
                     Object value = null;
@@ -260,7 +264,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                         //read the geometry
                         try {
                             value = dataStore.getDialect().decodeGeometryValue(
-                                    gatt, rs, i + 1, geometryFactory, cx);
+                                    gatt, rs, i + 1, geometryFactory, stcx);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -295,14 +299,15 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                         }
                     }
 
-                    builder.add(value);
+                    builder.setAttribute(i, value);
                 } catch (SQLException e) {
                     throw new DataStoreRuntimeException(e);
                 }
             }
 
             // create the feature
-            return builder.buildFeature(fid);
+            builder.setId(fid);
+            return builder;
 
         } finally {
             // reset the next flag. We do this in a finally block to make sure we

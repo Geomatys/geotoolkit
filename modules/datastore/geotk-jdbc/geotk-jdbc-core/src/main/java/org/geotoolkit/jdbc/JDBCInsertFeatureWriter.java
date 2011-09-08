@@ -63,7 +63,7 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
         toAdd = (batchInsert) ? new ArrayList<SimpleFeature>() : null;
     }
 
-    public JDBCInsertFeatureWriter(final JDBCUpdateFeatureWriter other) {
+    public JDBCInsertFeatureWriter(final JDBCUpdateFeatureWriter other) throws SQLException {
         super(other);
         last = other.last;
         batchInsert = false;

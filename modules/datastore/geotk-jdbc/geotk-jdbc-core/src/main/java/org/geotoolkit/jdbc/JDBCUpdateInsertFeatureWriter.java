@@ -21,6 +21,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
@@ -55,8 +57,12 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
         //check parent
         boolean hasNext = super.hasNext();
         if ( !hasNext ) {
-            //update phase is up, switch to insert mode
-            inserter = new JDBCInsertFeatureWriter( this );
+            try {
+                //update phase is up, switch to insert mode
+                inserter = new JDBCInsertFeatureWriter( this );
+            } catch (SQLException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
             return inserter.hasNext();
         }
     
