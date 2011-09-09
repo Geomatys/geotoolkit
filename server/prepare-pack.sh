@@ -13,27 +13,19 @@
 zip -d commons-beanutils-1.8.3.jar org/apache/commons/collections/*
 
 #
-# Remove entries that duplicate batik-ext-1.7.jar and JDK 6.
+# Remove entries that duplicate the classes provided in another JAR file.
 #
-zip -d xml-apis-1.3.04.jar org/w3c/dom/events/*
-zip -d jaxp-api-1.4.2.jar org/w3c/dom/events/*
+zip -d xml-apis-1.3.04.jar \
+  javax/xml/* \
+  org/xml/sax/* \
+  org/w3c/dom/*
 
-#
-# Remove entries that duplicate xalan-2.6.0.jar
-#
-zip -d xml-apis-1.3.04.jar org/w3c/dom/*
-zip -d jaxp-api-1.4.2.jar org/w3c/dom/xpath/*
+zip -d jaxp-api-1.4.2.jar \
+  org/w3c/dom/events/* \
+  org/w3c/dom/xpath/* \
+  org/w3c/dom/html/*
 
-#
-# Remove entries that duplicate xercesImpl-2.7.1.jar
-#
-zip -d jaxp-api-1.4.2.jar org/w3c/dom/html/*
-
-#
-# Remove entries that duplicate jaxp-api.jar
-#
-zip -d xml-apis-1.3.04.jar javax/xml/*
-zip -d xml-apis-1.3.04.jar org/xml/sax/*
+zip -d jaxen-limited-1.1.2.jar org/w3c/dom/UserDataHandler.class
 
 #
 # Remove entries that duplicate netcdf-2.2.20.jar.
@@ -48,7 +40,7 @@ zip -d geotk-go2-3.x-SNAPSHOT.jar META-INF/registryFile.jai
 #
 # Remove duplicate entries
 #
-find . -name "*.jar" -exec zip -d '{}' NOTICE LICENSE README license/* META-INF/*.txt META-INF/maven/* \;
+find . -name "*.jar" -exec zip -q -d '{}' NOTICE LICENSE README license/* META-INF/*.txt META-INF/maven/* \;
 
 #
 # The command below needs to be executed from the root directory.
