@@ -18,6 +18,7 @@
 
 package org.geotoolkit.data.memory;
 
+import org.opengis.feature.simple.SimpleFeature;
 import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureCollection;
@@ -216,14 +217,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         private GenericReuseReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS)
                                             throws FactoryException, SchemaException{
             super(reader, targetCRS);
-
-            final FeatureType ft = reader.getFeatureType();
-            if(ft instanceof SimpleFeatureType){
-                feature = new DefaultSimpleFeature((SimpleFeatureType)schema, null, properties, false);
-            }else{
-                feature = new DefaultFeature(properties, schema, null);
-            }
-
+            feature = new DefaultFeature(properties, schema, null);
         }
 
         @Override
@@ -289,6 +283,100 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
     }
+    
+    /**
+     * Wrap a FeatureReader with a reprojection and reuse the simple feature each time.
+     *
+     * @param <T> extends FeatureType
+     * @param <F> extends Feature
+     * @param <R> extends FeatureReader<T,F>
+     */
+    private static final class GenericSimpleReuseReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+            extends GenericReprojectFeatureIterator<F,R>{
+
+        private final Object[] values;
+        private final DefaultSimpleFeature feature;
+        private final boolean[] geomIndexes;
+
+        private GenericSimpleReuseReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS)
+                                            throws FactoryException, SchemaException{
+            super(reader, targetCRS);
+
+            final SimpleFeatureType ft = (SimpleFeatureType) reader.getFeatureType();
+            values = new Object[ft.getAttributeCount()];            
+            geomIndexes = new boolean[values.length];
+            feature = new DefaultSimpleFeature((SimpleFeatureType)schema, null, values, false);
+
+            for(int i=0;i<values.length;i++){
+               geomIndexes[i] = ft.getDescriptor(i) instanceof GeometryDescriptor;
+            }            
+        }
+
+        @Override
+        public F next() throws DataStoreRuntimeException {
+            final SimpleFeature next = (SimpleFeature) iterator.next();
+            feature.setId(next.getID());
+
+            for(int i=0;i<values.length;i++){
+                if(geomIndexes[i]){
+                    Object value = next.getAttribute(i);
+                    if(value != null){
+                        //create a new property with the projected type
+
+                        if(transformer != null){
+                            //the transform applies to all feature
+                            try {
+                                values[i] = transformer.transform((Geometry) value);
+                            } catch (TransformException e) {
+                                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                            }
+                        }else{
+                            //each feature has a different CRS.
+                            final CoordinateReferenceSystem original;
+                            if(value instanceof Geometry){
+                                try {
+                                    original = JTS.findCoordinateReferenceSystem((Geometry)value);
+                                } catch (NoSuchAuthorityCodeException ex) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                } catch (FactoryException ex) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                }
+                            }else if(value instanceof org.opengis.geometry.Geometry){
+                                original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
+                            }else{
+                                original = null;
+                            }
+
+                            if(original != null){
+                                try {
+                                    final CoordinateSequenceMathTransformer trs =
+                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                    final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
+                                    Geometry geom = transformer.transform((Geometry) value);
+                                    geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
+                                    values[i] = geom;
+                                } catch (Exception e) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                }
+                            }else{
+                                Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                                        Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
+                            }
+                        }
+
+                    }                    
+                    
+                }else{
+                    values[i] = next.getAttribute(i);
+                }
+            }
+            
+            return (F)feature;
+        }
+
+    }
+    
+    
 
     private static final class GenericReprojectFeatureCollection extends WrapFeatureCollection{
 
@@ -353,7 +441,12 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 return new GenericReprojectFeatureReader(reader, crs);
             }else{
                 //reuse same feature
-                return new GenericReuseReprojectFeatureReader(reader, crs);
+                final FeatureType ft = reader.getFeatureType();
+                if(ft instanceof SimpleFeatureType){
+                    return new GenericSimpleReuseReprojectFeatureReader(reader, crs);
+                }else{
+                    return new GenericReuseReprojectFeatureReader(reader, crs);
+                }
             }
 
         } else {

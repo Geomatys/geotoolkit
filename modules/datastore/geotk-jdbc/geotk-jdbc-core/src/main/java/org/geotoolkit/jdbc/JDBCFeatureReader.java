@@ -59,6 +59,9 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
+import org.geotoolkit.util.converter.ConverterRegistry;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.converter.ObjectConverter;
 import org.opengis.feature.type.PropertyDescriptor;
 
 
@@ -99,7 +102,10 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     /**
      * feature builder
      */
-    protected final DefaultSimpleFeature builder;
+    protected final String fidBase;
+    protected final DefaultSimpleFeature feature;
+    private final Object[] values;
+    
     /**
      * The primary key
      */
@@ -171,17 +177,10 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             gf = dataStore.getGeometryFactory();
         }
         this.geometryFactory = gf;
-
-        // create a feature builder using the factory hinted or the one coming
-        // from the datastore
-        FeatureFactory ff = (FeatureFactory) this.hints.get(HintsPending.FEATURE_FACTORY);
-        if (ff == null) {
-            ff = dataStore.getFeatureFactory();
-        }
                 
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(featureType, ff);
-        sfb.setValidating(false);        
-        this.builder = (DefaultSimpleFeature) sfb.buildFeature("-1");
+        this.fidBase = featureType.getTypeName() + ".";
+        this.values = new Object[featureType.getAttributeCount()];
+        this.feature = new DefaultSimpleFeature(featureType, null, values, false);        
         
         // find the primary key
         this.pkey = pkey;
@@ -195,7 +194,9 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         this.dataStore = other.dataStore;
         this.hints = other.hints;
         this.geometryFactory = other.geometryFactory;
-        this.builder = other.builder;
+        this.fidBase = other.fidBase;
+        this.feature = other.feature;
+        this.values = other.values;
         this.st = other.st;
         this.stcx = this.st.getConnection();
         this.rs = other.rs;
@@ -245,7 +246,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             final String fid;
             try {
                 // wrap the fid in the type name
-                fid = featureType.getTypeName() + "." + PrimaryKey.encodeFID(pkey,rs);
+                fid = fidBase + PrimaryKey.encodeFID(pkey,rs);
             } catch (SQLException e) {
                 throw new DataStoreRuntimeException("Could not determine fid from primary key", e);
             }
@@ -288,26 +289,19 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                     // conversion will be needed)
                     if (value != null) {
                         final Class binding = type.getType().getBinding();
-                        final Object converted = Converters.convert(value, binding);
-                        if (converted != null && converted != value) {
-                            value = converted;
-                            if (dataStore.getLogger().isLoggable(Level.FINER)) {
-                                String msg = value + " is not of type " + binding.getName()
-                                    + ", attempting conversion";
-                                dataStore.getLogger().finer(msg);
-                            }
+                        if (!binding.isInstance(value) ) {
+                            value = convert(value, binding);
                         }
                     }
-
-                    builder.setAttribute(i, value);
+                    values[i] = value;
                 } catch (SQLException e) {
                     throw new DataStoreRuntimeException(e);
                 }
             }
 
             // create the feature
-            builder.setId(fid);
-            return builder;
+            feature.setId(fid);
+            return feature;
 
         } finally {
             // reset the next flag. We do this in a finally block to make sure we
@@ -317,6 +311,15 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
     }
 
+    private static <S,T> T convert(final S candidate,final Class<T> target) {
+        try {
+            final ObjectConverter<S,T> converter = (ObjectConverter<S,T>) ConverterRegistry.system().converter(candidate.getClass(), target);
+            return converter.convert(candidate);
+        } catch (NonconvertibleObjectException ex) {
+            return null;
+        }
+    }
+    
     @Override
     public void close() throws DataStoreRuntimeException {
         if( dataStore != null ) {
