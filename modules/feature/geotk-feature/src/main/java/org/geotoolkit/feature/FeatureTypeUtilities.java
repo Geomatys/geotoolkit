@@ -324,6 +324,18 @@ public final class FeatureTypeUtilities {
         return result;
     }
 
+    public static FeatureType createSubType(final FeatureType featureType,
+            final String[] properties) throws SchemaException{
+        if (properties == null) {
+            return featureType;
+        }        
+        final Name[] props = new Name[properties.length];
+        for(int i=0; i<properties.length; i++){
+            props[i] = DefaultName.valueOf(properties[i]);
+        }
+        return createSubType(featureType, props);
+    }
+    
     /**
      * DOCUMENT ME!
      *
