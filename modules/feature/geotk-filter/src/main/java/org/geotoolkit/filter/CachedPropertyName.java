@@ -17,9 +17,12 @@
 
 package org.geotoolkit.filter;
 
+import org.opengis.feature.simple.SimpleFeature;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
 
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
@@ -35,9 +38,33 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
 
     private final PropertyAccessor accessor;
 
-    CachedPropertyName(final String property, final Class clazz) {
+    CachedPropertyName(final String property, final Class clazz, final ComplexType expectedType) {
         ensureNonNull("property name", property);
         this.property = property;
+        
+        //try to create a faster accessor
+        if(expectedType != null){
+            if(expectedType instanceof SimpleFeatureType){
+                final SimpleFeatureType sft = (SimpleFeatureType) expectedType;
+                final int index = sft.indexOf(property);
+                this.accessor = new PropertyAccessor() {
+                    @Override
+                    public boolean canHandle(Class object, String xpath, Class target) {
+                        return true;
+                    }
+                    @Override
+                    public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+                        return ((SimpleFeature)object).getAttribute(index);
+                    }
+                    @Override
+                    public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+                        ((SimpleFeature)object).setAttribute(index,value);
+                    }
+                };
+                return;
+            }
+        }
+        
         this.accessor = Accessors.getAccessor(clazz,property,null);
     }
 
