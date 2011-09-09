@@ -119,7 +119,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
                      
         final Name coverageName = item.getCoverageName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
-                renderingContext.getSEScale(), coverageName);
+                renderingContext.getSEScale(), coverageName,null);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -176,7 +176,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
 
         final Name coverageName = item.getCoverageName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
-                renderingContext.getSEScale(), coverageName);
+                renderingContext.getSEScale(), coverageName,null);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.

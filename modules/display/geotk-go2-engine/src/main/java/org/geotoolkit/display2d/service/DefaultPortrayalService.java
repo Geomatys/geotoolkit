@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.display2d.service;
 
+import javax.imageio.ImageTypeSpecifier;
 import java.awt.image.IndexColorModel;
 import java.awt.image.ColorModel;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.awt.Color;
@@ -37,7 +36,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DirectColorModel;
 import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.List;
@@ -70,6 +68,7 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
@@ -85,6 +84,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -734,41 +734,59 @@ public class DefaultPortrayalService implements PortrayalService{
         final String mime = outputDef.getMime();
         image = rectifyImageColorModel(image, mime);
 
-        final ImageWriter writer = XImageIO.getWriterByMIMEType(mime, outputDef.getOutput(), image);
-        final ImageWriteParam param = writer.getDefaultWriteParam();
-
-        final Float compression = outputDef.getCompression();
-        if(compression != null && param.canWriteCompressed()){
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionQuality(compression);
+        final ImageWriter writer;
+        if(outputDef.getSpi() != null){
+            writer = outputDef.getSpi().createWriterInstance();
+        }else{
+            writer = XImageIO.getWriterByMIMEType(mime, outputDef.getOutput(), image);
         }
-
-        final Boolean progress = outputDef.getProgressive();
-        if(progress != null && param.canWriteProgressive()){
-            if(progress){
-                param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-            }else{
-                param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
-            }
-        }
-
-        Object output = outputDef.getOutput();
-        final ImageWriterSpi spi = writer.getOriginatingProvider();
-
+        
         ImageOutputStream stream = null;
-        if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
-            stream = ImageIO.createImageOutputStream(output);
-            output = stream;
-        }
-        writer.setOutput(output);
         try{
-            writer.write(null,new IIOImage(image, null, null),param);
-        }catch(IIOException ex){
-            throw new IOException(ex.getLocalizedMessage()+toImageInformation(image), ex);
-        }
-        writer.dispose();
-        if (stream != null) {
-            stream.close();
+            final ImageWriteParam param = writer.getDefaultWriteParam();
+
+            final Boolean progress = outputDef.getProgressive();
+            if(progress != null && param.canWriteProgressive()){
+                if(progress){
+                    param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+                }else{
+                    param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+                }
+            }
+
+            final String type = outputDef.getCompressionType();
+            final Float compression = outputDef.getCompression();
+            if(type != null || compression != null){
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                if(type != null){
+                    param.setCompressionType(type);
+                }
+                if(compression != null){
+                    param.setCompressionQuality(compression);
+                }
+            }
+            
+            //TODO is this useless ?
+            param.setDestinationType(new ImageTypeSpecifier(image.getColorModel(), image.getSampleModel()));
+
+            Object output = outputDef.getOutput();
+            final ImageWriterSpi spi = writer.getOriginatingProvider();
+            
+            if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
+                stream = ImageIO.createImageOutputStream(output);
+                output = stream;
+            }
+            writer.setOutput(output);
+            try{
+                writer.write(null,new IIOImage(image, null, null),param);
+            }catch(IIOException ex){
+                throw new IOException(ex.getLocalizedMessage()+toImageInformation(image), ex);
+            }
+        }finally{
+            writer.dispose();
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 

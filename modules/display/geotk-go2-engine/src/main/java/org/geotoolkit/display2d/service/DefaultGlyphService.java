@@ -94,7 +94,7 @@ public class DefaultGlyphService {
                 final SymbolizerRendererService renderer = GO2Utilities.findRenderer(symbol.getClass());
 
                 if(renderer != null){
-                    final CachedSymbolizer cache = GO2Utilities.getCached(symbol);
+                    final CachedSymbolizer cache = GO2Utilities.getCached(symbol,null);
                     final Rectangle2D preferred = renderer.glyphPreferredSize(cache,layer);
                     if(preferred!= null){
                         if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
@@ -160,7 +160,7 @@ public class DefaultGlyphService {
         final SymbolizerRendererService renderer = GO2Utilities.findRenderer(symbol.getClass());
 
         if(renderer != null){
-            CachedSymbolizer cache = GO2Utilities.getCached(symbol);
+            CachedSymbolizer cache = GO2Utilities.getCached(symbol,null);
             renderer.glyph(target, rectangle, cache,layer);
         }
     }
@@ -199,7 +199,7 @@ public class DefaultGlyphService {
         final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
 
         if(renderer != null){
-            final CachedSymbolizer cache = GO2Utilities.getCached(style);
+            final CachedSymbolizer cache = GO2Utilities.getCached(style,null);
             final Rectangle2D preferred = renderer.glyphPreferredSize(cache,layer);
             if(preferred!= null){
                 if(dim == null){

@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.storage.DataStoreException;
@@ -33,6 +34,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
@@ -137,12 +139,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
-    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
+    protected void paintVectorLayer(final CachedRule[] rules, final Collection<?> candidates, final RenderingContext2D context) {
         updateCache(context);
 
         final CanvasMonitor monitor = context.getMonitor();
         try {
-            currentQuery = prepareQuery(context, item, rules);
+            final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+            currentQuery = prepareQuery(context, item, attributs);
         } catch (PortrayalException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
@@ -197,7 +200,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         final Query query;
         try {
-            query = prepareQuery(context, layer, rules);
+            final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+            query = prepareQuery(context, layer, attributs);
         } catch (PortrayalException ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import java.util.logging.Logger;
+import org.opengis.style.Rule;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,10 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.geotoolkit.data.StorageContentEvent;
 import org.geotoolkit.data.StorageManagementEvent;
-
 import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -66,6 +69,7 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
@@ -133,22 +137,40 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             return;
         }
 
-        final FeatureType sft = item.getCollection().getFeatureType();
-        final CachedRule[] rules = prepareStyleRules(renderingContext, item, sft);
-
+        //first extract the valid rules at this scale
+        final Collection<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
+        
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
-        if (rules.length == 0) {
+        if(validRules.isEmpty()){
             return;
         }
+        
+        //extract the used names
+        final Set<String> names = propertiesNames(validRules);
+        
+        final FeatureCollection<Feature> candidates;
+        try {
+            //optimize
+            candidates = (FeatureCollection<Feature>)optimizeCollection(renderingContext, names);
+        } catch (Exception ex) {
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+        
+        //get the expected result type
+        final FeatureType expected = candidates.getFeatureType();
+        
+        //calculate optimized rules and included filter + expressions
+        final CachedRule[] rules = toCachedRules(validRules, expected);
 
-        paintVectorLayer(rules, renderingContext);
+        paintVectorLayer(rules, candidates, renderingContext);
     }
 
     @Override
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
-            final CachedRule[] rules) throws Exception {
-        currentQuery = prepareQuery(context, item, rules);
+            final Set<String> requieredAtts) throws Exception {
+        currentQuery = prepareQuery(context, item, requieredAtts);
         final Query query = currentQuery;
         return ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
     }
@@ -198,7 +220,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         final Name featureTypeName = item.getCollection().getFeatureType().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
-                c2d.getSEScale(), featureTypeName);
+                c2d.getSEScale(), featureTypeName,null);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just return null.
@@ -220,7 +242,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         final Query query;
         try {
-            query = prepareQuery(renderingContext, layer, rules);
+            final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+            query = prepareQuery(renderingContext, layer, attributs);
         } catch (PortrayalException ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
@@ -304,7 +327,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final CachedRule[] rules) throws PortrayalException{
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final Set<String> styleRequieredAtts) throws PortrayalException{
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
@@ -446,7 +469,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
 
-        final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+        final Set<String> attributs = styleRequieredAtts;
         final Set<String> copy = new HashSet<String>(attributs);
         if(geomAttName != null){
             copy.add(geomAttName);
@@ -487,8 +510,15 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             }
         }
 
+        final FeatureType expected;
+        try {
+            expected = FeatureTypeUtilities.createSubType(schema, atts);
+        } catch (SchemaException ex) {
+            throw new PortrayalException(ex);
+        }
+        
         //optimize the filter---------------------------------------------------
-        filter = FilterUtilities.prepare(filter,Feature.class);
+        filter = FilterUtilities.prepare(filter,Feature.class,expected);
 
         final Hints queryHints = new Hints();
         final QueryBuilder qb = new QueryBuilder();

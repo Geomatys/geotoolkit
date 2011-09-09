@@ -17,6 +17,7 @@
 
 package org.geotoolkit.display2d.service;
 
+import javax.imageio.spi.ImageWriterSpi;
 import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
@@ -28,6 +29,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 public class OutputDef {
 
+    private ImageWriterSpi spi;
     private Object output;
     private String mime;
     private Float compression = null;
@@ -94,6 +96,14 @@ public class OutputDef {
 
     public Boolean getProgressive() {
         return progressive;
+    }
+
+    public ImageWriterSpi getSpi() {
+        return spi;
+    }
+
+    public void setSpi(ImageWriterSpi spi) {
+        this.spi = spi;
     }
 
     @Override

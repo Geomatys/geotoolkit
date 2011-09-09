@@ -190,33 +190,6 @@ public class CachedStrokeSimple extends CachedStroke{
             GO2Utilities.getRequieredAttributsName(expOffset,requieredAttributs);
         }
 
-
-        // line cap ---------------------------------------------
-        if(GO2Utilities.isStatic(expLineCap)){
-            final String cap = GO2Utilities.evaluate(expLineCap, null, String.class, STROKE_CAP_BUTT_STRING);
-            if (STROKE_CAP_BUTT_STRING.equalsIgnoreCase(cap))        candidateCap = BasicStroke.CAP_BUTT;
-            else if (STROKE_CAP_SQUARE_STRING.equalsIgnoreCase(cap)) candidateCap = BasicStroke.CAP_SQUARE;
-            else if (STROKE_CAP_ROUND_STRING.equalsIgnoreCase(cap))  candidateCap = BasicStroke.CAP_ROUND;
-            else                                                     candidateCap = BasicStroke.CAP_BUTT;
-        }else{
-            strokeStatic = false;
-            GO2Utilities.getRequieredAttributsName(expLineCap,requieredAttributs);
-        }
-
-
-        // line join --------------------------------------------
-        if(GO2Utilities.isStatic(expLineJoin)){
-            final String join = GO2Utilities.evaluate(expLineJoin, null, String.class, STROKE_JOIN_BEVEL_STRING);
-            if (STROKE_JOIN_BEVEL_STRING.equalsIgnoreCase(join))       candidateJoin = BasicStroke.JOIN_BEVEL;
-            else if (STROKE_JOIN_MITRE_STRING.equalsIgnoreCase(join))  candidateJoin = BasicStroke.JOIN_MITER;
-            else if (STROKE_JOIN_ROUND_STRING.equalsIgnoreCase(join)) candidateJoin = BasicStroke.JOIN_ROUND;
-            else                                                      candidateJoin = BasicStroke.JOIN_BEVEL;
-        }else{
-            strokeStatic = false;
-            GO2Utilities.getRequieredAttributsName(expLineJoin,requieredAttributs);
-        }
-
-
         // line width ------------------------------------------
         if(GO2Utilities.isStatic(expWidth)){
             candidateWidth = GO2Utilities.evaluate(expWidth, null, Float.class, 1f);
@@ -235,6 +208,35 @@ public class CachedStrokeSimple extends CachedStroke{
             if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
             strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expWidth,requieredAttributs);
+        }
+        
+        // line cap and join---------------------------------------------
+        if(cachedWidth <= 2.5f){
+            //line cap and join are invisible under this size
+            candidateCap = BasicStroke.CAP_SQUARE;
+            candidateJoin = BasicStroke.JOIN_MITER;
+        }else{ 
+            if(GO2Utilities.isStatic(expLineCap)){            
+                final String cap = GO2Utilities.evaluate(expLineCap, null, String.class, STROKE_CAP_BUTT_STRING);
+                if (STROKE_CAP_BUTT_STRING.equalsIgnoreCase(cap))        candidateCap = BasicStroke.CAP_BUTT;
+                else if (STROKE_CAP_SQUARE_STRING.equalsIgnoreCase(cap)) candidateCap = BasicStroke.CAP_SQUARE;
+                else if (STROKE_CAP_ROUND_STRING.equalsIgnoreCase(cap))  candidateCap = BasicStroke.CAP_ROUND;
+                else                                                     candidateCap = BasicStroke.CAP_BUTT;
+            }else{
+                strokeStatic = false;
+                GO2Utilities.getRequieredAttributsName(expLineCap,requieredAttributs);
+            }
+            
+            if(GO2Utilities.isStatic(expLineJoin)){
+                final String join = GO2Utilities.evaluate(expLineJoin, null, String.class, STROKE_JOIN_BEVEL_STRING);
+                if (STROKE_JOIN_BEVEL_STRING.equalsIgnoreCase(join))       candidateJoin = BasicStroke.JOIN_BEVEL;
+                else if (STROKE_JOIN_MITRE_STRING.equalsIgnoreCase(join))  candidateJoin = BasicStroke.JOIN_MITER;
+                else if (STROKE_JOIN_ROUND_STRING.equalsIgnoreCase(join)) candidateJoin = BasicStroke.JOIN_ROUND;
+                else                                                      candidateJoin = BasicStroke.JOIN_BEVEL;
+            }else{
+                strokeStatic = false;
+                GO2Utilities.getRequieredAttributsName(expLineJoin,requieredAttributs);
+            }
         }
 
         // we cache each possible expression ------------------------------

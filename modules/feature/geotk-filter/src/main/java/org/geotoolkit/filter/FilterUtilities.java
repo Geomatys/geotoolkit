@@ -19,6 +19,7 @@ package org.geotoolkit.filter;
 
 import org.geotoolkit.filter.visitor.PrepareFilterVisitor;
 import org.geotoolkit.lang.Static;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 
@@ -40,9 +41,9 @@ public final class FilterUtilities extends Static {
      * @param objectClazz : target class against which to optimize
      * @return optimized filter
      */
-    public static Filter prepare(final Filter filter, final Class objectClazz){
+    public static Filter prepare(final Filter filter, final Class objectClazz,final ComplexType expectedType){
         if(filter == null) return null;
-        final PrepareFilterVisitor visitor = new PrepareFilterVisitor(objectClazz);
+        final PrepareFilterVisitor visitor = new PrepareFilterVisitor(objectClazz,expectedType);
         return (Filter) filter.accept(visitor, null);
     }
 
@@ -56,8 +57,8 @@ public final class FilterUtilities extends Static {
      *      will be used.
      * @return prepared property name expression.
      */
-    public static PropertyName prepare(final PropertyName exp, final Class objectClazz){
-        return new CachedPropertyName(exp.getPropertyName(), objectClazz);
+    public static PropertyName prepare(final PropertyName exp, final Class objectClazz, final ComplexType expectedType){
+        return new CachedPropertyName(exp.getPropertyName(), objectClazz,expectedType);
     }
 
 }

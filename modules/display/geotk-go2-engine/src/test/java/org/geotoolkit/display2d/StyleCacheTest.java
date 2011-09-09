@@ -193,7 +193,7 @@ public class StyleCacheTest {
 
         //test that we have a static cache
         PointSymbolizer point = SF.pointSymbolizer();
-        CachedPointSymbolizer cached = (CachedPointSymbolizer) GO2Utilities.getCached(point);
+        CachedPointSymbolizer cached = (CachedPointSymbolizer) GO2Utilities.getCached(point,null);
 
         assertTrue(cached.isStatic());
         assertEquals(VisibilityState.VISIBLE, cached.isStaticVisible());
@@ -221,7 +221,7 @@ public class StyleCacheTest {
                         DEFAULT_ANCHOR_POINT,
                         DEFAULT_DISPLACEMENT)
                     ,null);
-        cached = (CachedPointSymbolizer) GO2Utilities.getCached(point);
+        cached = (CachedPointSymbolizer) GO2Utilities.getCached(point,null);
 
         assertFalse(cached.isStatic());
         assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );
@@ -242,7 +242,7 @@ public class StyleCacheTest {
                         DEFAULT_ANCHOR_POINT,
                         DEFAULT_DISPLACEMENT)
                     ,null);
-        cached = (CachedPointSymbolizer) GO2Utilities.getCached(point);
+        cached = (CachedPointSymbolizer) GO2Utilities.getCached(point,null);
 
         assertFalse(cached.isStatic());
         assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );

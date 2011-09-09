@@ -110,20 +110,18 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
             final Number n1 = (Number) value1;
             final Number n2 = (Number) value2;
 
-            if(Numbers.isInteger(n1.getClass()) && Numbers.isInteger(n2.getClass())){
-                final long l1 = n1.longValue();
-                final long l2 = n2.longValue();
-                return l1 == l2;
-            }else {
+            if( (n1 instanceof Float) || (n1 instanceof Double) 
+             || (n2 instanceof Float) || (n2 instanceof Double)){
                 final double d1 = n1.doubleValue();
                 final double d2 = n2.doubleValue();
-
+                if (Double.doubleToLongBits(d1) == Double.doubleToLongBits(d2)) {
+                    return true;
+                }
                 if (Math.abs(d1 - d2) < EPS * Math.max(Math.abs(d1), Math.abs(d2))) {
                     return true;
                 }
-                if (Double.isNaN(d1) && Double.isNaN(d2)) {
-                    return true;
-                }
+            } else {
+                return n1.longValue() == n2.longValue();
             }
         }
 

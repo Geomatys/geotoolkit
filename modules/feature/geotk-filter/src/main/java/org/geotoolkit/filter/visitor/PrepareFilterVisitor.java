@@ -18,6 +18,7 @@
 package org.geotoolkit.filter.visitor;
 
 import org.geotoolkit.filter.FilterUtilities;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.expression.PropertyName;
 
 /**
@@ -27,16 +28,18 @@ import org.opengis.filter.expression.PropertyName;
  * @author Johann Sorel (Geomatys)
  */
 public class PrepareFilterVisitor extends SimplifyingFilterVisitor{
-
+    
     private final Class clazz;
+    private final ComplexType expectedType;
 
-    public PrepareFilterVisitor(final Class clazz){
+    public PrepareFilterVisitor(final Class clazz,final ComplexType expectedType){
         this.clazz = clazz;
+        this.expectedType = expectedType;
     }
 
     @Override
     public Object visit(final PropertyName expression, final Object extraData) {
-        return FilterUtilities.prepare(expression, clazz);
+        return FilterUtilities.prepare(expression, clazz, expectedType);
     }
 
 }

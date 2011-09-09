@@ -153,7 +153,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
 
         if(symbols != null){
             for(final Symbolizer sy : symbols){
-                cached.add(GO2Utilities.getCached(sy));
+                cached.add(GO2Utilities.getCached(sy,null));
             }
         }
 

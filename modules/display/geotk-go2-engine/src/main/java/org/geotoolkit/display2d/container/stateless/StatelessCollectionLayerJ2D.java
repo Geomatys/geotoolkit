@@ -61,6 +61,7 @@ import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.identity.FeatureId;
@@ -113,9 +114,91 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             return;
         }
 
-        paintVectorLayer(rules, renderingContext);
+        final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+        
+        final Collection<?> candidates;
+        try {
+            candidates = optimizeCollection(renderingContext, attributs);
+        } catch (Exception ex) {
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
+            //can not continue this layer with this error
+            return;
+        }
+        
+        paintVectorLayer(rules, candidates,renderingContext);
     }
 
+    /**
+     * @return the valid rules at this scale, selection rules will be mixed in.
+     */
+    protected static List<Rule> getValidRules(final RenderingContext2D renderingContext,
+            final CollectionMapLayer item, final FeatureType type){
+
+        final List<Rule> normalRules = GO2Utilities.getValidRules(
+                   item.getStyle(), renderingContext.getSEScale(), type);
+
+        final Filter selectionFilter = item.getSelectionFilter();
+        if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
+            //merge the style and filter with the selection
+            final List<Rule> selectionRules;
+
+            final List<Rule> mixedRules = new ArrayList<Rule>();
+            final MutableStyle selectionStyle = item.getSelectionStyle();
+            if(selectionStyle == null){
+                selectionRules = GO2Utilities.getValidRules(
+                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getSEScale(), type);
+            }else{
+                selectionRules = GO2Utilities.getValidRules(
+                        selectionStyle, renderingContext.getSEScale(), type);
+            }
+
+            //update the rules filters
+            for(final Rule rule : selectionRules){
+                final List<? extends Symbolizer> symbols = rule.symbolizers();
+                final MutableRule mixedRule = STYLE_FACTORY.rule(symbols.toArray(new Symbolizer[symbols.size()]));
+                Filter f = rule.getFilter();
+                if(f == null){
+                    f = selectionFilter;
+                }else{
+                    f = FILTER_FACTORY.and(f,selectionFilter);
+                }
+                mixedRule.setFilter(f);
+                mixedRules.add(mixedRule);
+            }
+
+            final Filter notSelectionFilter = FILTER_FACTORY.not(selectionFilter);
+
+            for(final Rule rule : normalRules){
+                final MutableRule mixedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
+                Filter f = rule.getFilter();
+                if(f == null){
+                    f = notSelectionFilter;
+                }else{
+                    f = FILTER_FACTORY.and(f,notSelectionFilter);
+                }
+                mixedRule.setFilter(f);
+                mixedRules.add(mixedRule);
+            }
+            
+            return mixedRules;
+
+        }
+        
+        return normalRules;
+    }
+    
+    protected static CachedRule[] toCachedRules(Collection<? extends Rule> rules, final ComplexType expected){
+        final CachedRule[] cached = new CachedRule[rules.size()];
+        
+        int i=0;
+        for(Rule r : rules){
+            cached[i] = getCached(r, expected);
+            i++;
+        }
+        
+        return cached;
+    } 
+    
     protected CachedRule[] prepareStyleRules(final RenderingContext2D renderingContext,
             final CollectionMapLayer layer, final FeatureType type){
         final CachedRule[] rules;
@@ -150,7 +233,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                     f = FILTER_FACTORY.and(f,selectionFilter);
                 }
                 mixedRule.setFilter(f);
-                mixedRules.add(GO2Utilities.getCached(mixedRule));
+                mixedRules.add(GO2Utilities.getCached(mixedRule,type));
             }
 
             final Filter notSelectionFilter = FILTER_FACTORY.not(selectionFilter);
@@ -164,7 +247,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                     f = FILTER_FACTORY.and(f,notSelectionFilter);
                 }
                 mixedRule.setFilter(f);
-                mixedRules.add(GO2Utilities.getCached(mixedRule));
+                mixedRules.add(GO2Utilities.getCached(mixedRule,type));
             }
 
             rules = mixedRules.toArray(new CachedRule[mixedRules.size()]);
@@ -183,11 +266,11 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     }
 
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
-            final CachedRule[] rules) throws Exception {
+            final Set<String> requieredAtts) throws Exception {
         return item.getCollection();
     }
 
-    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
+    protected void paintVectorLayer(final CachedRule[] rules, final Collection<?> candidates, final RenderingContext2D context) {
         
         final CanvasMonitor monitor = context.getMonitor();
 
@@ -197,15 +280,6 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         //prepare the rendering parameters
         final StatefullContextParams params = getStatefullParameters(context);
         if(monitor.stopRequested()) return;
-
-        final Collection<?> candidates;
-        try {
-            candidates = optimizeCollection(context, rules);
-        } catch (Exception ex) {
-            context.getMonitor().exceptionOccured(ex, Level.WARNING);
-            //can not continue this layer with this error
-            return;
-        }
 
         final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
         if(SymbolOrder == null || SymbolOrder == false){
@@ -597,7 +671,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
 
     private void paintObject(final Object object, final Symbolizer symbolizer, 
             final RenderingContext2D context) throws PortrayalException{
-        final CachedSymbolizer cached = GO2Utilities.getCached(symbolizer);
+        final CachedSymbolizer cached = GO2Utilities.getCached(symbolizer,null);
         final SymbolizerRenderer renderer = cached.getRenderer().createRenderer(cached, context);
         final ProjectedObject projected = new DefaultProjectedObject(params, object);
         renderer.portray(projected);

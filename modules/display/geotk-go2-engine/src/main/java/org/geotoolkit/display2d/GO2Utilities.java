@@ -110,12 +110,14 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.style.visitor.PrepareStyleVisitor;
 import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
@@ -147,6 +149,7 @@ import org.opengis.style.Rule;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
+import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
 
@@ -1254,7 +1257,7 @@ public final class GO2Utilities {
                         //append all the symbolizers
                         final Collection<? extends Symbolizer> syms = rule.symbolizers();
                         for (Symbolizer sym : syms) {
-                            symbols.add(getCached(sym));
+                            symbols.add(getCached(sym,ftype));
                         }
                     } else {
                         elseRules.add(rule);
@@ -1268,7 +1271,7 @@ public final class GO2Utilities {
                     //append all the symbolizers
                     final Collection<? extends Symbolizer> syms = rule.symbolizers();
                     for (final Symbolizer sym : syms) {
-                        symbols.add(getCached(sym));
+                        symbols.add(getCached(sym,ftype));
                     }
                 }
             }
@@ -1277,6 +1280,15 @@ public final class GO2Utilities {
         return symbols;
     }
 
+    public static Set<String> propertiesNames(final Collection<? extends Rule> rules){
+        org.geotoolkit.style.visitor.ListingPropertyVisitor visitor = new org.geotoolkit.style.visitor.ListingPropertyVisitor();
+        final Set<String> names = new HashSet<String>();
+        for(Rule r : rules){
+            visitor.visit(r, names);
+        }
+        return names;
+    }
+    
     public static Set<String> propertiesCachedNames(final Collection<CachedRule> rules){
         final Set<String> atts = new HashSet<String>();
         for(final CachedRule r : rules){
@@ -1440,7 +1452,7 @@ public final class GO2Utilities {
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
                 if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
-                    validRules.add(getCached(rule));
+                    validRules.add(getCached(rule,type));
                 }
             }
         }
@@ -1448,7 +1460,7 @@ public final class GO2Utilities {
         return validRules.toArray(new CachedRule[validRules.size()]);
     }
 
-    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final Name type) {
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final Name type, final ComplexType expected) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -1469,7 +1481,7 @@ public final class GO2Utilities {
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
                 if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
-                    validRules.add(getCached(rule));
+                    validRules.add(getCached(rule,expected));
                 }
             }
         }
@@ -1521,30 +1533,46 @@ public final class GO2Utilities {
     // SYMBOLIZER CACHES ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static CachedRule getCached(final Rule rule){
-        return new CachedRule(rule);
+    public static CachedRule getCached(final Rule rule,final ComplexType expected){
+        return new CachedRule(rule,expected);
     }
 
-    public static CachedSymbolizer getCached(final Symbolizer symbol){
-
-        CachedSymbolizer value = CACHE.peek(symbol);
-        if (value == null) {
-            Cache.Handler<CachedSymbolizer> handler = CACHE.lock(symbol);
-            try {
-                value = handler.peek();
-                if (value == null) {
-                    final SymbolizerRendererService renderer = findRenderer(symbol.getClass());
-                    if(renderer != null){
-                        value = renderer.createCachedSymbolizer(symbol);
-                    } else {
-                        throw new IllegalStateException("No renderer for the style "+ symbol);
-                    }
-                }
-            } finally {
-                handler.putAndUnlock(value);
-            }
+    public static CachedSymbolizer getCached(Symbolizer symbol,final ComplexType expected){
+        CachedSymbolizer value;
+        
+        if(expected != null){
+            //optimize the symbolizer before caching it
+            final StyleVisitor sv = new PrepareStyleVisitor(Feature.class, expected);
+            symbol = (Symbolizer)symbol.accept(sv, null);
+        }
+        
+        final SymbolizerRendererService renderer = findRenderer(symbol.getClass());
+        if(renderer != null){
+            value = renderer.createCachedSymbolizer(symbol);
+        } else {
+            throw new IllegalStateException("No renderer for the style "+ symbol);
         }
         return value;
+        
+        
+//        CachedSymbolizer value = CACHE.peek(symbol);
+//        if (value == null) {
+//            Cache.Handler<CachedSymbolizer> handler = CACHE.lock(symbol);
+//            try {
+//                value = handler.peek();
+//                if (value == null) {
+//                    final SymbolizerRendererService renderer = findRenderer(symbol.getClass());
+//                    if(renderer != null){
+//                        value = renderer.createCachedSymbolizer(symbol,expected);
+//                    } else {
+//                        throw new IllegalStateException("No renderer for the style "+ symbol);
+//                    }
+//                }
+//            } finally {
+//                handler.putAndUnlock(value);
+//            }
+//        }
+//        return value;
     }
 
     public static void clearCache(){

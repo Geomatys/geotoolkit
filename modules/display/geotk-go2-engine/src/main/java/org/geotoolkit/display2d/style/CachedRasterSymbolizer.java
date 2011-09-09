@@ -51,9 +51,9 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
         Symbolizer outline = styleElement.getImageOutline();
         if(outline != null){
             if(outline instanceof LineSymbolizer){
-                cachedoutLine = GO2Utilities.getCached((LineSymbolizer)outline);
+                cachedoutLine = GO2Utilities.getCached((LineSymbolizer)outline,null);
             }else if(outline instanceof PolygonSymbolizer){
-                cachedoutLine = GO2Utilities.getCached((PolygonSymbolizer)outline);
+                cachedoutLine = GO2Utilities.getCached((PolygonSymbolizer)outline,null);
             }else{
                 cachedoutLine = null;
             }

@@ -25,6 +25,7 @@ import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.Filter;
 import org.opengis.style.Rule;
 import org.opengis.style.Symbolizer;
@@ -41,14 +42,14 @@ public class CachedRule extends Cache<Rule>{
     private final CachedSymbolizer[] symbols;
     private final Filter preparedFilter;
 
-    public CachedRule(final Rule source){
+    public CachedRule(final Rule source,final ComplexType expected){
         super(source);
 
         final List<? extends Symbolizer> ruleSymbols = source.symbolizers();
         final CachedSymbolizer[] array = new CachedSymbolizer[ruleSymbols.size()];
         int i=0;
         for(Symbolizer symbol : ruleSymbols){
-            final CachedSymbolizer cs = GO2Utilities.getCached(symbol);
+            final CachedSymbolizer cs = GO2Utilities.getCached(symbol,expected);
             if(cs != null){
                 array[i] = cs;
                 i++;
@@ -63,7 +64,7 @@ public class CachedRule extends Cache<Rule>{
             this.symbols = Arrays.copyOf(array, i);
         }
 
-        this.preparedFilter = FilterUtilities.prepare(source.getFilter(),Feature.class);
+        this.preparedFilter = FilterUtilities.prepare(source.getFilter(),Feature.class,expected);
     }
 
     /**

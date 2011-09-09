@@ -31,6 +31,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  */
 public class CachedFont extends Cache<Font>{
 
+    private java.awt.Font cache = null;
     private String fontFamily = null;
     private int fontSize = Integer.MIN_VALUE;
     private int fontStyle = Integer.MIN_VALUE;
@@ -41,6 +42,10 @@ public class CachedFont extends Cache<Font>{
     
     public java.awt.Font getJ2dFont(final Object candidate, final float coeff) {
 
+        if(cache != null && coeff == 1){
+            return cache;
+        }
+        
         final Font font = styleElement;
         
         final int j2dSize;
@@ -158,6 +163,11 @@ public class CachedFont extends Cache<Font>{
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){
             requieredAttributs = EMPTY_ATTRIBUTS;
+        }
+        
+        //cache the font if possible
+        if(fontSize != Integer.MIN_VALUE && fontStyle != Integer.MIN_VALUE && fontFamily != null){
+            cache = new java.awt.Font(fontFamily, fontStyle, (int)fontSize);
         }
         
         isNotEvaluated = false;
