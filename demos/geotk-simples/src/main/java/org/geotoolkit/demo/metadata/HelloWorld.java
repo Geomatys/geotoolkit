@@ -46,7 +46,7 @@ public class HelloWorld {
      * Runs the demo from the command line.
      *
      * @param args Command-line arguments (ignored).
-     * @throws JAXBException If an error occurred while marshaling the metadata to XML.
+     * @throws JAXBException If an error occurred while marshalling the metadata to XML.
      */
     public static void main(String[] args) throws JAXBException {
         final Citation citation = createHelloWorld();

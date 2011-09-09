@@ -199,7 +199,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             }
             /*
              * Before to rely on CF convention, check for ESRI convention. This is the same
-             * principle than the above check for GDAL convention, but simplier. If both ESRI
+             * principle than the above check for GDAL convention, but simpler. If both ESRI
              * and GDAL attributes are defined, then the GDAL attributes will have precedence.
              */
             if (gdal == null) {
