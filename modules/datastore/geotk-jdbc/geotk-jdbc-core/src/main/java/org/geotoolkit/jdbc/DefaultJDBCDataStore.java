@@ -430,7 +430,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             } else {
                 //build up a statement for the content
                 final String sql = queryBuilder.selectSQL(querySchema, preQuery);
-                getLogger().fine(sql);
+                //getLogger().fine(sql);
 
                 reader = new JDBCFeatureReader( sql, cx, this, query.getTypeName(), querySchema, pkey, query.getHints() );
             }

@@ -16,6 +16,15 @@
  */
 package org.geotoolkit.jdbc.dialect;
 
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsGreaterThan;
+import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.opengis.filter.PropertyIsLessThan;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.PropertyIsEqualTo;
 import org.geotoolkit.factory.Hints;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -128,7 +137,16 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         final DefaultOperator[] ops = new DefaultOperator[]{
             new DefaultOperator("and"),
             new DefaultOperator("or"),
-            new DefaultOperator("not")
+            new DefaultOperator("not"),
+            new DefaultOperator(PropertyIsEqualTo.NAME),
+            new DefaultOperator(PropertyIsNotEqualTo.NAME),
+            new DefaultOperator(PropertyIsGreaterThan.NAME),
+            new DefaultOperator(PropertyIsGreaterThanOrEqualTo.NAME),
+            new DefaultOperator(PropertyIsLessThan.NAME),
+            new DefaultOperator(PropertyIsLessThanOrEqualTo.NAME),
+            new DefaultOperator(PropertyIsLike.NAME),
+            new DefaultOperator(PropertyIsNull.NAME),
+            new DefaultOperator(PropertyIsBetween.NAME),
         };
         final DefaultComparisonOperators compOps = new DefaultComparisonOperators(ops);
         final String obj = "obj";

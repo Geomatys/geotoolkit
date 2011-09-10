@@ -21,6 +21,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
 
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -41,31 +42,40 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
     CachedPropertyName(final String property, final Class clazz, final ComplexType expectedType) {
         ensureNonNull("property name", property);
         this.property = property;
+                
+        final PropertyAccessor fallacc = Accessors.getAccessor(clazz,property,null);
         
         //try to create a faster accessor
-        if(expectedType != null){
-            if(expectedType instanceof SimpleFeatureType){
-                final SimpleFeatureType sft = (SimpleFeatureType) expectedType;
-                final int index = sft.indexOf(property);
-                this.accessor = new PropertyAccessor() {
-                    @Override
-                    public boolean canHandle(Class object, String xpath, Class target) {
-                        return true;
-                    }
-                    @Override
-                    public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+        if(Property.class.isAssignableFrom(clazz) && expectedType instanceof SimpleFeatureType ){
+            final SimpleFeatureType sft = (SimpleFeatureType) expectedType;
+            final int index = sft.indexOf(property);
+            this.accessor = new PropertyAccessor() {
+                @Override
+                public boolean canHandle(Class object, String xpath, Class target) {
+                    return true;
+                }
+                @Override
+                public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+                    if(object instanceof SimpleFeature){
                         return ((SimpleFeature)object).getAttribute(index);
+                    }else{
+                        return fallacc.get(object, xpath, target);
                     }
-                    @Override
-                    public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+                }
+                @Override
+                public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+                    if(object instanceof SimpleFeature){
                         ((SimpleFeature)object).setAttribute(index,value);
+                    }else{
+                        fallacc.set(object,xpath,value,target);
                     }
-                };
-                return;
-            }
+                    
+                }
+            };
+        }else{
+            this.accessor = fallacc;
         }
         
-        this.accessor = Accessors.getAccessor(clazz,property,null);
     }
 
     /**

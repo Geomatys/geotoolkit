@@ -322,9 +322,19 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         final DefaultOperator[] ops = new DefaultOperator[]{
             new DefaultOperator("and"),
             new DefaultOperator("or"),
-            new DefaultOperator("not")
+            new DefaultOperator("not"),
+            new DefaultOperator(PropertyIsEqualTo.NAME),
+            new DefaultOperator(PropertyIsNotEqualTo.NAME),
+            new DefaultOperator(PropertyIsGreaterThan.NAME),
+            new DefaultOperator(PropertyIsGreaterThanOrEqualTo.NAME),
+            new DefaultOperator(PropertyIsLessThan.NAME),
+            new DefaultOperator(PropertyIsLessThanOrEqualTo.NAME),
+            new DefaultOperator(PropertyIsLike.NAME),
+            new DefaultOperator(PropertyIsNull.NAME),
+            new DefaultOperator(PropertyIsBetween.NAME),
         };
         final DefaultComparisonOperators compOps = new DefaultComparisonOperators(ops);
+        
         final DefaultFunctionName[] functionNames = new DefaultFunctionName[] {
             new DefaultFunctionName("equals", Collections.singletonList("obj"), 0),
             new DefaultFunctionName("greaterThan", Collections.singletonList("obj"), 0),
