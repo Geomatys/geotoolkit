@@ -392,7 +392,8 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         //to render properly.
         //final Boolean parallal = (Boolean)context.getCanvas().getRenderingHint(GO2Hints.KEY_PARALLAL_BUFFER);
         //if(parallal != null && parallal){
-            renderBySymbolParallal(candidates, context, rules, params);
+//            renderBySymbolParallal(candidates, context, rules, params);
+            renderBySymbolIndexInRule(candidates,context,rules,params);
         //}else{
         //    renderBySymbolStream(candidates, context, rules, params);
         //}
@@ -491,6 +492,122 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         }
     }
 
+    /**
+     * Render by symbol index order in a single pass, this results in creating a buffered image
+     * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
+     */
+    private void renderBySymbolIndexInRule(final Collection<?> candidates,
+            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
+            throws PortrayalException {
+
+        final CanvasMonitor monitor = context.getMonitor();
+
+        final int elseRuleIndex = StatefullCachedRule.sortByElseRule(rules);
+
+
+        //store the ids of the features painted during the first round -----------------------------
+        final BufferedImage originalBuffer = (BufferedImage) context.getCanvas().getSnapShot();
+        final ColorModel cm = ColorModel.getRGBdefault();
+        final SampleModel sm = cm.createCompatibleSampleModel(originalBuffer.getWidth(), originalBuffer.getHeight());
+        final RenderingContext2D originalContext = context;
+
+        final List<BufferedImage> images = new ArrayList<BufferedImage>();
+        final List<RenderingContext2D> ctxs = new ArrayList<RenderingContext2D>();
+        images.add(originalBuffer);
+        ctxs.add(context);        
+        final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
+
+        for(int i=0;i<rules.length;i++){
+            final CachedRule cr = rules[i];
+            final CachedSymbolizer[] css = cr.symbolizers();
+            
+            //do not count text symbolizers at the end
+            int len = css.length;
+            for(int k=css.length-1;k>=0;k--){
+                if(css[k].getSource() instanceof TextSymbolizer){
+                    len--;
+                }else{
+                    break;
+                }
+            }
+            
+            if(len > images.size()){
+                for(int k=images.size();k<len;k++){
+                    final BufferedImage layer = createBufferedImage(cm, sm);
+                    images.add(k, layer);
+                    ctxs.add(k, context.create( ((Graphics2D)layer.getGraphics()) ));
+                }
+            }
+            
+            renderers[i] = new SymbolizerRenderer[css.length];
+            for(int k=0;k<css.length;k++){
+                if(css[k].getSource() instanceof TextSymbolizer){
+                    //use the original context
+                    renderers[i][k] = css[k].getRenderer().createRenderer(css[k],context);
+                }else{
+                    renderers[i][k] = css[k].getRenderer().createRenderer(css[k],ctxs.get(k));
+                }            
+            }
+        }
+        
+        
+        
+        final RenderingIterator statefullIterator = getIterator(candidates, context, params);
+        try{
+            while(statefullIterator.hasNext()){
+                if(monitor.stopRequested()) return;
+                final ProjectedObject projectedCandidate = statefullIterator.next();
+                                
+                boolean painted = false;
+                for(int i=0; i<elseRuleIndex; i++){
+                    final CachedRule rule = rules[i];                    
+                    final Filter ruleFilter = rule.getFilter();
+                    //test if the rule is valid for this feature
+                    if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
+                        painted = true;
+                        final CachedSymbolizer[] css = rule.symbolizers();
+                        for(int k=0; k<css.length; k++){
+                            renderers[i][k].portray(projectedCandidate);
+                        }
+                    }
+                }
+                
+                //paint with else rules
+                if(!painted){
+                    for(int i=elseRuleIndex; i<rules.length; i++){
+                        final CachedRule rule = rules[i];                    
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
+                            final CachedSymbolizer[] css = rule.symbolizers();
+                            for(int k=0; k<css.length; k++){
+                                renderers[i][k].portray(projectedCandidate);
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }finally{
+            try {
+                statefullIterator.close();
+            } catch (IOException ex) {
+                getLogger().log(Level.WARNING, null, ex);
+            }
+        }
+        
+        //merge images --------------------------
+        originalContext.switchToDisplayCRS();
+        final Graphics2D g = originalContext.getGraphics();
+        g.setComposite(ALPHA_COMPOSITE_1F);
+        for(int i=1;i<images.size();i++){
+            final Image img = images.get(i);
+            g.drawImage(img, 0, 0, null);
+            recycleBufferedImage((BufferedImage)img);
+        }
+    }
+    
+    
     /**
      * Render by symbol order in a single pass, this results in creating a buffered image
      * for each symbol, which may be expensive in memory but efficient in performance.
