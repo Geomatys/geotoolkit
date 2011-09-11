@@ -100,14 +100,4 @@ public class AbstractCompleteness extends AbstractElement implements Completenes
         return (object == null) || (object instanceof AbstractCompleteness)
                 ? (AbstractCompleteness) object : new AbstractCompleteness(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractCompleteness wrap(final Completeness object) {
-        return castOrCopy(object);
-    }
 }

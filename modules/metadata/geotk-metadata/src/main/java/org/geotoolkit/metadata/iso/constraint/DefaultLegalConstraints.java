@@ -112,16 +112,6 @@ public class DefaultLegalConstraints extends DefaultConstraints implements Legal
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultLegalConstraints wrap(final LegalConstraints object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the access constraints applied to assure the protection of privacy or intellectual property,
      * and any special restrictions or limitations on obtaining the resource.
      */

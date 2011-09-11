@@ -239,16 +239,6 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultCitation wrap(final Citation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the name by which the cited resource is known.
      */
     @Override

@@ -101,16 +101,6 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultNominalResolution wrap(final NominalResolution object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the distance between consistent parts of (centre, left side, right side)
      * adjacent pixels in the scan plane.
      */

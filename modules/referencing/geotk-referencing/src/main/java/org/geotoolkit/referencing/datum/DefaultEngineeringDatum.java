@@ -122,16 +122,6 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultEngineeringDatum wrap(final EngineeringDatum object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Compare this datum with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.

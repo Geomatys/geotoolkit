@@ -126,16 +126,6 @@ public class AbstractGeographicExtent extends MetadataEntity implements Geograph
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractGeographicExtent wrap(final GeographicExtent object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Indication of whether the bounding polygon encompasses an area covered by the data
      * (<cite>inclusion</cite>) or an area where data is not present (<cite>exclusion</cite>).
      *

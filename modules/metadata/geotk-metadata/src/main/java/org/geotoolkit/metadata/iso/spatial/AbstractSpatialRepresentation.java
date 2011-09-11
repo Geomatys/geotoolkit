@@ -103,14 +103,4 @@ public class AbstractSpatialRepresentation extends MetadataEntity implements Spa
         return (object == null) || (object instanceof AbstractSpatialRepresentation)
                 ? (AbstractSpatialRepresentation) object : new AbstractSpatialRepresentation(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractSpatialRepresentation wrap(final SpatialRepresentation object) {
-        return castOrCopy(object);
-    }
 }

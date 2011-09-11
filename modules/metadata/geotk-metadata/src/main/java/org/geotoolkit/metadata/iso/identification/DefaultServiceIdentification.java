@@ -83,14 +83,4 @@ public class DefaultServiceIdentification extends AbstractIdentification impleme
         return (object == null) || (object instanceof DefaultServiceIdentification)
                 ? (DefaultServiceIdentification) object : new DefaultServiceIdentification(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultServiceIdentification wrap(final ServiceIdentification object) {
-        return castOrCopy(object);
-    }
 }

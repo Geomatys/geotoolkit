@@ -118,16 +118,6 @@ public class DefaultBrowseGraphic extends MetadataEntity implements BrowseGraphi
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultBrowseGraphic wrap(final BrowseGraphic object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the name of the file that contains a graphic that provides an illustration of the dataset.
      */
     @Override

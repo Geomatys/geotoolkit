@@ -102,16 +102,6 @@ public class DefaultTelephone extends MetadataEntity implements Telephone {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultTelephone wrap(final Telephone object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the telephone numbers by which individuals can speak to the responsible
      * organization or individual.
      *

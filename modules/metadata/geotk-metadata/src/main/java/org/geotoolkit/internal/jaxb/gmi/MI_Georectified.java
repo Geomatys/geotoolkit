@@ -75,9 +75,4 @@ public class MI_Georectified extends DefaultGeorectified {
         }
         return DefaultGeorectified.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultGeorectified wrap(final Georectified original) {
-        return castOrCopy(original);
-    }
 }

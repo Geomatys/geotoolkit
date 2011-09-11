@@ -149,16 +149,6 @@ public class DefaultApplicationSchemaInformation extends MetadataEntity
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultApplicationSchemaInformation wrap(final ApplicationSchemaInformation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Name of the application schema used.
      */
     @Override

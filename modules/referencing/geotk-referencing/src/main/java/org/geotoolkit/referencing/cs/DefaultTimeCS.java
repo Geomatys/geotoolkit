@@ -178,16 +178,6 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultTimeCS wrap(final TimeCS object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns {@code true} if the specified axis direction is allowed for this coordinate
      * system. The default implementation accepts only temporal directions (i.e.
      * {@link AxisDirection#FUTURE FUTURE} and {@link AxisDirection#PAST PAST}).

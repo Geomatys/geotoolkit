@@ -130,16 +130,6 @@ public class DefaultIdentifier extends MetadataEntity implements Identifier {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultIdentifier wrap(final Identifier object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Alphanumeric value identifying an instance in the namespace.
      *
      * @return The code.

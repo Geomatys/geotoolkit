@@ -140,16 +140,6 @@ public class DefaultFormat extends MetadataEntity implements Format {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultFormat wrap(final Format object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the name of the data transfer format(s).
      */
     @Override

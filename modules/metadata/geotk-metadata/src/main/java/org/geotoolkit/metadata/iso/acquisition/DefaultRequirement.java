@@ -145,16 +145,6 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultRequirement wrap(final Requirement object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the identification of reference or guidance material for the requirement.
      * {@code null} if unspecified.
      */

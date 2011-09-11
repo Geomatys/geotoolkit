@@ -122,16 +122,6 @@ public class DefaultDataQuality extends MetadataEntity implements DataQuality {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultDataQuality wrap(final DataQuality object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the specific data to which the data quality information applies.
      */
     @Override

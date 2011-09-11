@@ -124,16 +124,6 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultStandardOrderProcess wrap(final StandardOrderProcess object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns fees and terms for retrieving the resource.
      * Include monetary units (as specified in ISO 4217).
      */

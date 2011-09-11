@@ -75,9 +75,4 @@ public class MI_CoverageDescription extends DefaultCoverageDescription {
         }
         return DefaultCoverageDescription.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultCoverageDescription wrap(final CoverageDescription original) {
-        return castOrCopy(original);
-    }
 }

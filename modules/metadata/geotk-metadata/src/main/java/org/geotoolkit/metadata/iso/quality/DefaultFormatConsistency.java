@@ -82,14 +82,4 @@ public class DefaultFormatConsistency extends AbstractLogicalConsistency impleme
         return (object == null) || (object instanceof DefaultFormatConsistency)
                 ? (DefaultFormatConsistency) object : new DefaultFormatConsistency(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultFormatConsistency wrap(final FormatConsistency object) {
-        return castOrCopy(object);
-    }
 }

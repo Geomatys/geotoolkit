@@ -122,16 +122,6 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultFeatureCatalogueDescription wrap(final FeatureCatalogueDescription object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns whether or not the cited feature catalogue complies with ISO 19110.
      */
     @Override

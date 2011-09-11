@@ -104,16 +104,6 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultDataFile wrap(final DataFile object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the list of feature types concerned by the transfer data file. Depending on
      * the transfer choices, a data file may contain data related to one or many feature types.
      * This attribute may be omitted when the dataset is composed of a single file and/or the

@@ -232,16 +232,6 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultTemporalCRS wrap(final TemporalCRS object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Initialize the fields required for {@link #toDate} and {@link #toValue} operations.
      */
     private void initializeConverter() {

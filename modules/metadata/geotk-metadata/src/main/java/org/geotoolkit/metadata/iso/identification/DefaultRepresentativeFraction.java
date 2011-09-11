@@ -103,16 +103,6 @@ public class DefaultRepresentativeFraction extends Number implements Representat
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultRepresentativeFraction wrap(final RepresentativeFraction object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Creates a representative fraction from a scale as a {@code double} value.
      * The {@linkplain #getDenominator denominator} will be set to {@code 1/scale}.
      *

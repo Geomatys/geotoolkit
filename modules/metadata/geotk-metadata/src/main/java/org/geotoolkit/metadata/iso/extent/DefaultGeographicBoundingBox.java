@@ -258,16 +258,6 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultGeographicBoundingBox wrap(final GeographicBoundingBox object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the western-most coordinate of the limit of the
      * dataset extent. The value is expressed in longitude in
      * decimal degrees (positive east).

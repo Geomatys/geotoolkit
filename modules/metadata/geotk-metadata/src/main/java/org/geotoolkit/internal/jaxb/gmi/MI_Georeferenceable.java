@@ -75,9 +75,4 @@ public class MI_Georeferenceable  extends DefaultGeoreferenceable {
         }
         return DefaultGeoreferenceable.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultGeoreferenceable wrap(final Georeferenceable original) {
-        return castOrCopy(original);
-    }
 }

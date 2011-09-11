@@ -103,14 +103,4 @@ public class AbstractContentInformation extends MetadataEntity implements Conten
         return (object == null) || (object instanceof AbstractContentInformation)
                 ? (AbstractContentInformation) object : new AbstractContentInformation(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractContentInformation wrap(final ContentInformation object) {
-        return castOrCopy(object);
-    }
 }

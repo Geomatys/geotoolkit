@@ -78,9 +78,4 @@ public class MI_Band extends DefaultBand {
         }
         return DefaultBand.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultBand wrap(final Band original) {
-        return castOrCopy(original);
-    }
 }

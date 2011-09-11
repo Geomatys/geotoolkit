@@ -142,16 +142,6 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultObjective wrap(final Objective object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the code used to identify the objective.
      */
     @Override

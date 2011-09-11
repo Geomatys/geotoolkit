@@ -75,9 +75,4 @@ public class MI_Metadata extends DefaultMetadata {
         }
         return DefaultMetadata.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultMetadata wrap(final Metadata original) {
-        return castOrCopy(original);
-    }
 }

@@ -94,14 +94,4 @@ public class DefaultAbsoluteExternalPositionalAccuracy extends AbstractPositiona
         return (object == null) || (object instanceof DefaultAbsoluteExternalPositionalAccuracy)
                 ? (DefaultAbsoluteExternalPositionalAccuracy) object : new DefaultAbsoluteExternalPositionalAccuracy(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultAbsoluteExternalPositionalAccuracy wrap(final AbsoluteExternalPositionalAccuracy object) {
-        return castOrCopy(object);
-    }
 }

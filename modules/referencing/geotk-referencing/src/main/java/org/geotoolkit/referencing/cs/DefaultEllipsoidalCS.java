@@ -216,16 +216,6 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultEllipsoidalCS wrap(final EllipsoidalCS object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns {@code true} if the specified axis direction is allowed for this coordinate
      * system. The default implementation accepts only the following directions:
      * {@link AxisDirection#NORTH NORTH}, {@link AxisDirection#SOUTH SOUTH},

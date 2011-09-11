@@ -102,16 +102,6 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultAlgorithm wrap(final Algorithm object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the information identifying the algorithm and version or date.
      */
     @Override

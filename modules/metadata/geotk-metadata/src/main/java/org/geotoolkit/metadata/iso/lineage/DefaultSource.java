@@ -157,16 +157,6 @@ public class DefaultSource extends MetadataEntity implements Source {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultSource wrap(final Source object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns a detailed description of the level of the source data.
      */
     @Override

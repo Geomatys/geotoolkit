@@ -118,16 +118,6 @@ public class DefaultLineage extends MetadataEntity implements Lineage {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultLineage wrap(final Lineage object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the general explanation of the data producer's knowledge about the lineage
      * of a dataset. Should be provided only if {@linkplain DefaultScope#getLevel scope level}
      * is {@linkplain ScopeCode#DATASET dataset} or {@linkplain ScopeCode#SERIES series}.

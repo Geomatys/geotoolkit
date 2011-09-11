@@ -158,16 +158,6 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultTemporalExtent wrap(final TemporalExtent object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * The start date and time for the content of the dataset.
      *
      * @return The start time, or {@code null} if none.

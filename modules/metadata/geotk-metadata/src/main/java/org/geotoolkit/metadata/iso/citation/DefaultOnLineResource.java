@@ -304,16 +304,6 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultOnlineResource wrap(final OnlineResource object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the name of an application profile that can be used with the online resource.
      * Returns {@code null} if none.
      */

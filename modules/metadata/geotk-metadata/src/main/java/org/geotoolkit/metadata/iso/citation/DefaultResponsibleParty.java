@@ -371,16 +371,6 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultResponsibleParty wrap(final ResponsibleParty object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the name of the responsible person- surname, given name, title separated by a delimiter.
      * Only one of {@code individualName}, {@link #getOrganisationName organisationName}
      * and {@link #getPositionName positionName} should be provided.

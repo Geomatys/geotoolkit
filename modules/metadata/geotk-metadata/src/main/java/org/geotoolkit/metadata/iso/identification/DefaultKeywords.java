@@ -121,16 +121,6 @@ public class DefaultKeywords extends MetadataEntity implements Keywords {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultKeywords wrap(final Keywords object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns commonly used word(s) or formalised word(s) or phrase(s) used to describe the subject.
      */
     @Override

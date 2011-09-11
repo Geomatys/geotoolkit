@@ -158,16 +158,6 @@ public class DefaultOperation extends MetadataEntity implements Operation {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultOperation wrap(final Operation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the description of the mission on which the platform observations are made and the
      * objectives of that mission. {@code null} if unspecified.
      */

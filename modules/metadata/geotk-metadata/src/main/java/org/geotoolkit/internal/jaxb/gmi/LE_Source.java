@@ -73,9 +73,4 @@ public class LE_Source extends DefaultSource {
         }
         return DefaultSource.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultSource wrap(final Source original) {
-        return castOrCopy(original);
-    }
 }

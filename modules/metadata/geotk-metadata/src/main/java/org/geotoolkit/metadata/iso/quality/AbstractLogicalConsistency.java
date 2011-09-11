@@ -111,14 +111,4 @@ public class AbstractLogicalConsistency extends AbstractElement implements Logic
         return (object == null) || (object instanceof AbstractLogicalConsistency)
                 ? (AbstractLogicalConsistency) object : new AbstractLogicalConsistency(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractLogicalConsistency wrap(final LogicalConsistency object) {
-        return castOrCopy(object);
-    }
 }

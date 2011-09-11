@@ -107,14 +107,4 @@ public class AbstractThematicAccuracy extends AbstractElement implements Themati
         return (object == null) || (object instanceof AbstractThematicAccuracy)
                 ? (AbstractThematicAccuracy) object : new AbstractThematicAccuracy(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractThematicAccuracy wrap(final ThematicAccuracy object) {
-        return castOrCopy(object);
-    }
 }

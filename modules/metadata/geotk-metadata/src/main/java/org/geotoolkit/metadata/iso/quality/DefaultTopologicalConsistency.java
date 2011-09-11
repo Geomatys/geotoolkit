@@ -84,14 +84,4 @@ public class DefaultTopologicalConsistency extends AbstractLogicalConsistency
         return (object == null) || (object instanceof DefaultTopologicalConsistency)
                 ? (DefaultTopologicalConsistency) object : new DefaultTopologicalConsistency(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultTopologicalConsistency wrap(final TopologicalConsistency object) {
-        return castOrCopy(object);
-    }
 }

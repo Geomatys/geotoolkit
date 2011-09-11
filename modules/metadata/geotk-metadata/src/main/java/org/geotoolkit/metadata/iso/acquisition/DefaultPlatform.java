@@ -117,16 +117,6 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultPlatform wrap(final Platform object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the source where information about the platform is described. {@code null}
      * if unspecified.
      */

@@ -106,16 +106,6 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultProcessStepReport wrap(final ProcessStepReport object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the name of the processing report.
      */
     @Override

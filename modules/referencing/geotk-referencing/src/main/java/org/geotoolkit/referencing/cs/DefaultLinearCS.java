@@ -121,16 +121,6 @@ public class DefaultLinearCS extends AbstractCS implements LinearCS {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultLinearCS wrap(final LinearCS object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Computes the distance between two points.
      *
      * @param  coord1 Coordinates of the first point.

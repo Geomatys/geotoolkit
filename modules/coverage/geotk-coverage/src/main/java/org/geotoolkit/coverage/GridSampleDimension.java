@@ -745,14 +745,6 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy(SampleDimension)}.
-     */
-    @Deprecated
-    public static GridSampleDimension wrap(final SampleDimension sd) {
-        return castOrCopy(sd);
-    }
-
-    /**
      * Returns a code value indicating grid value data type.
      * This will also indicate the number of bits for the data type.
      *

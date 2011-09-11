@@ -105,14 +105,4 @@ public class AbstractTemporalAccuracy extends AbstractElement implements Tempora
         return (object == null) || (object instanceof AbstractTemporalAccuracy)
                 ? (AbstractTemporalAccuracy) object : new AbstractTemporalAccuracy(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractTemporalAccuracy wrap(final TemporalAccuracy object) {
-        return castOrCopy(object);
-    }
 }

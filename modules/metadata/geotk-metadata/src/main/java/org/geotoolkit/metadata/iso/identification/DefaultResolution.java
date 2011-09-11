@@ -109,16 +109,6 @@ public class DefaultResolution extends MetadataEntity implements Resolution {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultResolution wrap(final Resolution object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Level of detail expressed as the scale of a comparable hardcopy map or chart.
      * Only one of {@linkplain #getEquivalentScale equivalent scale} and
      * {@linkplain #getDistance ground sample distance} may be provided.

@@ -83,14 +83,4 @@ public class DefaultConceptualConsistency extends AbstractLogicalConsistency
         return (object == null) || (object instanceof DefaultConceptualConsistency)
                 ? (DefaultConceptualConsistency) object : new DefaultConceptualConsistency(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultConceptualConsistency wrap(final ConceptualConsistency object) {
-        return castOrCopy(object);
-    }
 }

@@ -124,16 +124,6 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultScopeDescription wrap(final ScopeDescription object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the attributes to which the information applies.
      */
     @Override

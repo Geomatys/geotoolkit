@@ -172,16 +172,6 @@ public class DefaultImageDescription extends DefaultCoverageDescription implemen
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultImageDescription wrap(final ImageDescription object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the illumination elevation measured in degrees clockwise from the target plane at
      * intersection of the optical line of sight with the Earth's surface. For images from a
      * scanning device, refer to the centre pixel of the image.

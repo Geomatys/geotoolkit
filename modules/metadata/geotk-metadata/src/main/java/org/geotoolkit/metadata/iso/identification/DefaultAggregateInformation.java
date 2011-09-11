@@ -110,16 +110,6 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultAggregateInformation wrap(final AggregateInformation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Citation information about the aggregate dataset.
      *
      * @return Citation information about the aggregate dataset, or {@code null}.

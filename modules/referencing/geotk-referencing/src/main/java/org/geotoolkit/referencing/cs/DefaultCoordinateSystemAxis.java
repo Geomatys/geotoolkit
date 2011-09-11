@@ -893,16 +893,6 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultCoordinateSystemAxis wrap(final CoordinateSystemAxis object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns one of the predefined axis for the given name and direction, or {@code null} if
      * none. This method searches only in predefined constants like {@link #GEODETIC_LATITUDE},
      * not in any custom axis instantiated by a public constructor. The name of those constants

@@ -112,16 +112,6 @@ public class DefaultGeometricObjects extends MetadataEntity implements Geometric
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultGeometricObjects wrap(final GeometricObjects object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the total number of the point or vector object type occurring in the dataset.
      */
     @Override

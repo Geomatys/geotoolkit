@@ -83,14 +83,4 @@ public class DefaultNonQuantitativeAttributeAccuracy extends AbstractThematicAcc
         return (object == null) || (object instanceof DefaultNonQuantitativeAttributeAccuracy)
                 ? (DefaultNonQuantitativeAttributeAccuracy) object : new DefaultNonQuantitativeAttributeAccuracy(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultNonQuantitativeAttributeAccuracy wrap(final NonQuantitativeAttributeAccuracy object) {
-        return castOrCopy(object);
-    }
 }

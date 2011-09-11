@@ -83,14 +83,4 @@ public class DefaultAccuracyOfATimeMeasurement extends AbstractTemporalAccuracy
         return (object == null) || (object instanceof DefaultAccuracyOfATimeMeasurement)
                 ? (DefaultAccuracyOfATimeMeasurement) object : new DefaultAccuracyOfATimeMeasurement(object);
     }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultAccuracyOfATimeMeasurement wrap(final AccuracyOfATimeMeasurement object) {
-        return castOrCopy(object);
-    }
 }

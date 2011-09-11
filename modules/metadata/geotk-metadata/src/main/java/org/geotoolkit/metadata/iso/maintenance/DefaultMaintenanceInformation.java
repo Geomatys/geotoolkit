@@ -155,16 +155,6 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultMaintenanceInformation wrap(final MaintenanceInformation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the frequency with which changes and additions are made to the resource
      * after the initial resource is completed.
      */

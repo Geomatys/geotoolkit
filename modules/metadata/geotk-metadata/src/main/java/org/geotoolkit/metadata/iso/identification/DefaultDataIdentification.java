@@ -164,16 +164,6 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultDataIdentification wrap(final DataIdentification object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the method used to spatially represent geographic information.
      */
     @Override

@@ -126,16 +126,6 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultProcessing wrap(final Processing object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the information to identify the processing package that produced the data.
      */
     @Override

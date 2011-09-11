@@ -290,16 +290,6 @@ public class DefaultContact extends MetadataEntity implements Contact {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultContact wrap(final Contact object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the physical and email address at which the organization or individual may be contacted.
      * Returns {@code null} if none.
      */

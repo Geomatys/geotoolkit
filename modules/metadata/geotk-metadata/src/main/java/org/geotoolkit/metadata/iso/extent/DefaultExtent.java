@@ -167,16 +167,6 @@ public class DefaultExtent extends MetadataEntity implements Extent {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultExtent wrap(final Extent object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the spatial and temporal extent for the referring object.
      */
     @Override

@@ -111,16 +111,6 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultRequestedDate wrap(final RequestedDate object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the preferred date and time of collection.
      */
     @Override

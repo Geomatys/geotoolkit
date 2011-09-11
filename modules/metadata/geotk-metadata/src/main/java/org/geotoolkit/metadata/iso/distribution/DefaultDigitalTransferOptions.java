@@ -121,16 +121,6 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultDigitalTransferOptions wrap(final DigitalTransferOptions object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns tiles, layers, geographic areas, etc., in which data is available.
      */
     @Override

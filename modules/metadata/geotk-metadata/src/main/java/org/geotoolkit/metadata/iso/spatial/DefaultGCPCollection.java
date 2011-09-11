@@ -113,16 +113,6 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultGCPCollection wrap(final GCPCollection object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the identifier of the GCP collection.
      */
     @Override

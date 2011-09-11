@@ -75,9 +75,4 @@ public class MI_ImageDescription extends DefaultImageDescription {
         }
         return DefaultImageDescription.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultImageDescription wrap(final ImageDescription original) {
-        return castOrCopy(original);
-    }
 }

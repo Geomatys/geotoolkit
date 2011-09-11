@@ -179,16 +179,6 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultVerticalDatum wrap(final VerticalDatum object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * The type of this vertical datum. Default is geoidal.
      *
      * @return The type of this vertical datum.

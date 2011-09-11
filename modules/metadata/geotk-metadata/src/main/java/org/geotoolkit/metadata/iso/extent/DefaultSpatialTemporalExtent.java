@@ -110,16 +110,6 @@ public class DefaultSpatialTemporalExtent extends DefaultTemporalExtent implemen
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultSpatialTemporalExtent wrap(final SpatialTemporalExtent object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the spatial extent component of composite spatial and temporal extent.
      *
      * @return The list of geographic extents (never {@code null}).

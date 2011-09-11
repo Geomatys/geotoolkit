@@ -126,16 +126,6 @@ public class DefaultAddress extends MetadataEntity implements Address {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultAddress wrap(final Address object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Return the state, province of the location.
      * Returns {@code null} if unspecified.
      */

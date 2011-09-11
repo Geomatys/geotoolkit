@@ -104,16 +104,6 @@ public class AbstractGeolocationInformation extends MetadataEntity implements Ge
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static AbstractGeolocationInformation wrap(final GeolocationInformation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns an overall assessment of quality of geolocation information.
      */
     @Override

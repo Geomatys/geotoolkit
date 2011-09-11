@@ -121,16 +121,6 @@ public class DefaultPlan extends MetadataEntity implements Plan {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultPlan wrap(final Plan object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the manner of sampling geometry that the planner expects for collection of
      * objective data. {@code null} if unspecified.
      */

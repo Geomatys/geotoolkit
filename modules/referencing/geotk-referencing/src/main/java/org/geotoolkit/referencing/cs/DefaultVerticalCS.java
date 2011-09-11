@@ -162,16 +162,6 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultVerticalCS wrap(final VerticalCS object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns {@code true} if the specified axis direction is allowed for this coordinate
      * system. The default implementation accepts only vertical directions (i.e.
      * {@link AxisDirection#UP UP} and {@link AxisDirection#DOWN DOWN}).

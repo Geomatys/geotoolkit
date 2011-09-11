@@ -510,26 +510,13 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @param  other The grid geometry to cast or copy.
      * @return The wrapped geometry, or {@code null} if {@code other} was null.
      *
-     * @since 3.19
+     * @since 3.19 (derived from 2.5)
      */
     public static GridGeometry2D castOrCopy(final GridGeometry other) {
         if (other == null || other instanceof GridGeometry2D) {
             return (GridGeometry2D) other;
         }
         return new GridGeometry2D(other);
-    }
-
-    /**
-     * @deprecated Renamed {@link #castOrCopy(GridGeometry)}.
-     *
-     * @param  other The grid geometry to cast or copy.
-     * @return The wrapped geometry, or {@code null} if {@code other} was null.
-     *
-     * @since 2.5
-     */
-    @Deprecated
-    public static GridGeometry2D wrap(final GridGeometry other) {
-        return castOrCopy(other);
     }
 
     /**

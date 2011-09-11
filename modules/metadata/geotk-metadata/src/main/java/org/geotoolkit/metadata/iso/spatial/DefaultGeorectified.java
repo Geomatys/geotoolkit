@@ -186,16 +186,6 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultGeorectified wrap(final Georectified object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns an indication of whether or not geographic position points are available to test the
      * accuracy of the georeferenced grid data.
      */

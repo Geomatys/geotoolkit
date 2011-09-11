@@ -78,9 +78,4 @@ public class LE_ProcessStep extends DefaultProcessStep {
         }
         return DefaultProcessStep.castOrCopy(original);
     }
-
-    @Deprecated
-    public static DefaultProcessStep wrap(final ProcessStep original) {
-        return castOrCopy(original);
-    }
 }

@@ -225,16 +225,6 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultCompoundCRS wrap(final CompoundCRS object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * The ordered list of coordinate reference systems.
      *
      * @return The coordinate reference systems as an unmodifiable list.

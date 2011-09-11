@@ -128,16 +128,6 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultCoverageDescription wrap(final CoverageDescription object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the description of the attribute described by the measurement value.
      */
     @Override

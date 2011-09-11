@@ -178,16 +178,6 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultTemporalDatum wrap(final TemporalDatum object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * The date and time origin of this temporal datum.
      *
      * @return The date and time origin of this temporal datum.

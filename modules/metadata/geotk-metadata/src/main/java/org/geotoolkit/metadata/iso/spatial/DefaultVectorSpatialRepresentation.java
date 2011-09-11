@@ -103,16 +103,6 @@ public class DefaultVectorSpatialRepresentation extends AbstractSpatialRepresent
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultVectorSpatialRepresentation wrap(final VectorSpatialRepresentation object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the code which identifies the degree of complexity of the spatial relationships.
      */
     @Override

@@ -111,16 +111,6 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultEnvironmentalRecord wrap(final EnvironmentalRecord object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns the average air temperature along the flight pass during the photo flight.
      */
     @Override

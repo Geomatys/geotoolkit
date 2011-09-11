@@ -141,16 +141,6 @@ public class DefaultUsage extends MetadataEntity implements Usage {
     }
 
     /**
-     * @deprecated Renamed {@link #castOrCopy castOrCopy}.
-     * @param object The object to get as a Geotk implementation, or {@code null} if none.
-     * @return The given object as a Geotk implementation.
-     */
-    @Deprecated
-    public static DefaultUsage wrap(final Usage object) {
-        return castOrCopy(object);
-    }
-
-    /**
      * Returns a brief description of the resource and/or resource series usage.
      */
     @Override
