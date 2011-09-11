@@ -64,7 +64,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
         if(shape == null) return null;
 
 
-        final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
+        final FontMetrics metric = context.getFontMetrics(label.getTextFont());
         final int textUpper = metric.getAscent();
         final int textLower = metric.getDescent();
         final int textWidth = metric.stringWidth(label.getText());
@@ -119,7 +119,9 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
 //                (int)pointCandidate.getCorrectedY());
 
         //rotation--------------------------------------------------------------
-        g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        if(rotation != 0){
+            g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());
+        }
         
         //paint halo------------------------------------------------------------
         final float haloWidth = label.getHaloWidth();

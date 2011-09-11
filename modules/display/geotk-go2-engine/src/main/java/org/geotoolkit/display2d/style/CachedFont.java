@@ -41,6 +41,7 @@ public class CachedFont extends Cache<Font>{
     }
     
     public java.awt.Font getJ2dFont(final Object candidate, final float coeff) {
+        evaluate();
 
         if(cache != null && coeff == 1){
             return cache;

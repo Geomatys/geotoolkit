@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
@@ -25,6 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -93,7 +96,8 @@ import org.opengis.referencing.operation.TransformException;
 public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     private static final Logger LOGGER = Logging.getLogger(DefaultRenderingContext2D.class);
-
+    private static Map<Font,FontMetrics> fontMetrics = new HashMap<Font, FontMetrics>();
+    
     private static final int DISPLAY_TRS = 0;
     private static final int OBJECTIVE_TRS = 1;
     private static final int OTHER_TRS = 2;
@@ -783,6 +787,16 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
         sb.append("========== Rendering Context 2D ==========\n");
         return sb.toString();
+    }
+
+    @Override
+    public FontMetrics getFontMetrics(Font f) {
+        FontMetrics fm = fontMetrics.get(f);
+        if(fm == null){
+            fm = getGraphics().getFontMetrics(f);
+            fontMetrics.put(f, fm);
+        }
+        return fm;
     }
 
 }

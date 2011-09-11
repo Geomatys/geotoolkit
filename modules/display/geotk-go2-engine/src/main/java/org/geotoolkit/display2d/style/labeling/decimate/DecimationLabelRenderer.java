@@ -19,6 +19,8 @@ package org.geotoolkit.display2d.style.labeling.decimate;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.geom.Area;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -141,41 +143,30 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         candidates = LabelingUtilities.clipOutofBounds(context,candidates);
         candidates = LabelingUtilities.sortByXY(candidates);
 
-        final List<Candidate> cleaned = new ArrayList<Candidate>();
+//        final List<Candidate> cleaned = new ArrayList<Candidate>();
+//
+//        loop:
+//        for(int i= candidates.size()-1; i>=0; i--){
+//            Candidate candidate = candidates.get(i);
+//
+//            for(Candidate other : cleaned){
+//                if(other == candidate) continue;
+//
+//                if(LabelingUtilities.intersects(candidate,other)){
+//                    continue loop;
+//                }
+//            }
+//
+//            cleaned.add(candidate);
+//        }
 
-        loop:
-        for(int i= candidates.size()-1; i>=0; i--){
-            Candidate candidate = candidates.get(i);
-
-            for(Candidate other : cleaned){
-                if(other == candidate) continue;
-
-                if(LabelingUtilities.intersects(candidate,other)){
-                    continue loop;
-                }
-            }
-
-            cleaned.add(candidate);
-        }
-
-        return cleaned;
+        return candidates;
     }
 
 
     private class DecimateLabelLayer implements LabelLayer{
 
-        private final Rectangle bounds = context.getCanvasDisplayBounds();
-        private SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR){
-
-            @Override
-            public boolean add(Candidate candidate) {
-                if(!LabelingUtilities.intersects(candidate,candidates)){
-                    return super.add(candidate);
-                }
-                return false;
-            }
-
-        };
+        private SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR);
 
         private final List<LabelDescriptor> labels = new ArrayList<LabelDescriptor>(){
 
@@ -186,9 +177,9 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
                     final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
                     if(pc == null) return true;
                     pc.setPriority(1);
-                    if(bounds.contains(pc.getBounds())){
+                    if(!LabelingUtilities.intersects(pc,candidates)){
                         candidates.add(pc);
-                    }
+                    }                  
                 }else if(label instanceof LinearLabelDescriptor){
                     final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
                     lc.setPriority(1);

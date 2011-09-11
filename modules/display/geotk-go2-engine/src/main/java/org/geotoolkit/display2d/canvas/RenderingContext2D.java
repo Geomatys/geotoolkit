@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -95,6 +97,8 @@ public interface RenderingContext2D extends RenderingContext{
      */
     LabelRenderer getLabelRenderer(boolean create);
 
+    FontMetrics getFontMetrics(Font f);
+    
     // Informations related to scale datas -------------------------------------
     /**
      * Find the coefficient between the given Unit and the Objective CRS.

@@ -105,7 +105,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
     private void portray(final Graphics2D g2, final PointLabelDescriptor label){
         context.switchToDisplayCRS();
 
-        final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
+        final FontMetrics metric = context.getFontMetrics(label.getTextFont());
         final int textHeight = metric.getHeight();
         final int textWidth = metric.stringWidth(label.getText());
 
