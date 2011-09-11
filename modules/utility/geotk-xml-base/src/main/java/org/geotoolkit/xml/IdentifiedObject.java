@@ -133,30 +133,4 @@ public interface IdentifiedObject {
      * @since 3.19
      */
     IdentifierMap getIdentifierMap();
-
-    /**
-     * Returns the XML {@code xlink} attributes associated to this identified object,
-     * or {@code null} if none. The {@code xlink} attributes are often processed in a
-     * special way. See {@link org.geotoolkit.metadata.iso.MetadataEntity#getXLink()}
-     * for an example applicable to ISO 19139 document.
-     *
-     * @return XML {@code xlink} attributes, or {@code null} if none.
-     *
-     * @deprecated Replaced by <code>getIdentifierMap().getSpecialized({@linkplain IdentifierSpace#XLINK})</code>.
-     */
-    @Deprecated
-    XLink getXLink();
-
-    /**
-     * Sets the XML {@code xlink} attributes for this identified object. Callers should define
-     * one or many {@link XLink} attributes ({@code href}, {@code role}, {@code arcrole},
-     * {@code title}, {@code show} and {@code actuate}) before to invoke this method.
-     *
-     * @param link XML {@code xlink} attributes, or {@code null} if none.
-     * @throws UnsupportedOperationException if this object is unmodifiable.
-     *
-     * @deprecated Replaced by <code>getIdentifierMap().putSpecialized({@linkplain IdentifierSpace#XLINK}, link)</code>.
-     */
-    @Deprecated
-    void setXLink(final XLink link) throws UnsupportedOperationException;
 }

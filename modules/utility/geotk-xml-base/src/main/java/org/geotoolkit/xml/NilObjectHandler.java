@@ -130,10 +130,6 @@ final class NilObjectHandler implements InvocationHandler {
                 return (attribute instanceof IdentifierMapAdapter) ?
                         ((IdentifierMapAdapter) attribute).identifiers : null;
             }
-            if (name.equals("getXLink")) { // @Deprecated method
-                return (attribute instanceof IdentifierMap) ?
-                        ((IdentifierMap) attribute).getSpecialized(IdentifierSpace.XLINK) : null;
-            }
             if (name.equals("toString")) {
                 return getInterface(proxy).getSimpleName() + '[' + attribute + ']';
             }

@@ -32,10 +32,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.AbstractTableModel;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.opengis.util.ProgressListener;
-
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.process.ProgressController;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
@@ -291,12 +290,12 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      * @param  provider The image reader provider to use for reading image data, or {@code null}
      *         for attempting an automatic detection.
      * @param  files The files from which to creates tiles.
-     * @param  progress An optional listener where to report progress, or {@code null} if none.
+     * @param  progress An optional controller for reporting progresses, or {@code null} if none.
      * @throws UnsupportedOperationException if the underlying {@linkplain #elements list of tiles}
      *         is not modifiable.
      * @return {@code null} on success, or a list of files that failed otherwise.
      */
-    public TableModel add(final ImageReaderSpi provider, final File[] files, final ProgressListener progress)
+    public TableModel add(final ImageReaderSpi provider, final File[] files, final ProgressController progress)
             throws UnsupportedOperationException
     {
         if (progress != null) {
@@ -355,7 +354,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
              */
             toAdd.addAll(tiles);
             if (progress != null) {
-                progress.progress(100f * i/files.length);
+                progress.setProgress(100f * i/files.length);
                 if (progress.isCanceled()) {
                     break;
                 }
@@ -378,7 +377,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             });
         }
         if (progress != null) {
-            progress.complete();
+            progress.completed();
         }
         return failures;
     }

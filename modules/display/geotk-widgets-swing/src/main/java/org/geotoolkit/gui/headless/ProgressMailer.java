@@ -245,14 +245,4 @@ public class ProgressMailer extends ProgressController {
         exception.printStackTrace(new PrintWriter(buffer));
         send("exceptionOccurred", Vocabulary.Keys.EXCEPTION, buffer.toString());
     }
-
-    /**
-     * Releases any resource used by this object.
-     *
-     * @deprecated Not needed for this controller.
-     */
-    @Override
-    @Deprecated
-    public void dispose() {
-    }
 }

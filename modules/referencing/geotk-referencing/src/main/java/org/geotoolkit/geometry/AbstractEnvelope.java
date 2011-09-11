@@ -126,15 +126,8 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * Formats a {@code BOX} element from an envelope. This method formats the given envelope in
-     * the <cite>Well Known Text</cite> (WKT) format. The output is like below, where <var>n</var>
-     * is the {@linkplain Envelope#getDimension() number of dimensions}:
-     *
-     * <blockquote>{@code BOX}<var>n</var>{@code D(}{@linkplain #getLowerCorner() lower corner}{@code ,}
-     * {@linkplain #getUpperCorner() upper corner}{@code )}</blockquote>
-     *
-     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
-     * by the {@link GeneralEnvelope} constructor.
+     * Implementation of {@link Envelopes#toWKT(Envelope)}. Formats a {@code BOX} element from an
+     * envelope in <cite>Well Known Text</cite> (WKT) format.
      *
      * @param  envelope The envelope to format.
      * @return The envelope as a {@code BOX2D} or {@code BOX3D} in WKT format.
@@ -144,12 +137,8 @@ public abstract class AbstractEnvelope implements Envelope {
      * @see org.geotoolkit.io.wkt
      *
      * @since 3.09
-     *
-     * @deprecated Moved to {@link Envelopes#toWKT(Envelope)}.
      */
-    // After deprecation cycle, don't remove this method. Just make it package-privated.
-    @Deprecated
-    public static String toString(final Envelope envelope) {
+    static String toString(final Envelope envelope) {
         final int dimension = envelope.getDimension();
         final StringBuilder buffer = new StringBuilder("BOX").append(dimension).append("D(");
         for (int i=0; i<dimension; i++) {

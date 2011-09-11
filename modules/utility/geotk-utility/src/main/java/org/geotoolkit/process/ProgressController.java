@@ -61,7 +61,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @module
  */
 @ThreadSafe
-public abstract class ProgressController implements Localized, ProcessListener, org.opengis.util.ProgressListener {
+public abstract class ProgressController implements Localized, ProcessListener {
     /**
      * The language to use for formatting messages.
      */
@@ -130,34 +130,6 @@ public abstract class ProgressController implements Localized, ProcessListener, 
     }
 
     /**
-     * @deprecated Replaced by {@link #setTask(CharSequence)}.
-     */
-    @Override
-    @Deprecated
-    public final void setTask(final InternationalString task) {
-        setTask((CharSequence) task);
-    }
-
-    /**
-     * @deprecated Replaced by {@code getTask().toString()}.
-     */
-    @Override
-    @Deprecated
-    public final String getDescription() {
-        final InternationalString task = getTask();
-        return (task != null) ? task.toString() : null;
-    }
-
-    /**
-     * @deprecated Replaced by {@link #setTask(CharSequence)}.
-     */
-    @Override
-    @Deprecated
-    public final void setDescription(final String description) {
-        setTask(description);
-    }
-
-    /**
      * Notifies this controller that the operation begins.
      */
     public abstract void started();
@@ -196,15 +168,6 @@ public abstract class ProgressController implements Localized, ProcessListener, 
         if (percent < 0  ) percent = 0;
         if (percent > 100) percent = 100;
         progress = percent;
-    }
-
-    /**
-     * @deprecated Renamed {@link #setProgress(float)}.
-     */
-    @Override
-    @Deprecated
-    public final void progress(float percent) {
-        setProgress(percent);
     }
 
     /**
@@ -253,16 +216,6 @@ public abstract class ProgressController implements Localized, ProcessListener, 
     public abstract void completed();
 
     /**
-     * @deprecated Renamed {@link #completed()} for consistency with the {@link ProcessListener}
-     * interface.
-     */
-    @Override
-    @Deprecated
-    public final void complete() {
-        completed();
-    }
-
-    /**
      * Notifies this controller that the operation has finished and sets the states of this
      * controller according the given event. The default implementation first invokes
      * <code>{@linkplain #progressing(ProcessEvent) progressing}(event)</code>, then
@@ -300,17 +253,6 @@ public abstract class ProgressController implements Localized, ProcessListener, 
      */
     public void cancel() {
         canceled = true;
-    }
-
-    /**
-     * @deprecated Replaced by {@link #cancel()}.
-     *
-     * @since 2.3
-     */
-    @Override
-    @Deprecated
-    public final void setCanceled(final boolean cancel) {
-        if (cancel) cancel();
     }
 
     /**

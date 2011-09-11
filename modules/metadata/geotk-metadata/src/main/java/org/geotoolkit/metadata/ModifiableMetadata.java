@@ -767,27 +767,4 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         return (Class) (CodeList.class.isAssignableFrom(elementType) ||
                             Enum.class.isAssignableFrom(elementType) ? Set.class : List.class);
     }
-
-    /**
-     * If a XML marshalling is under progress and the given collection is empty, returns
-     * {@code null}. Otherwise returns the collection unchanged. This method is invoked
-     * by implementation having optional elements to omit when empty.
-     *
-     * @param  <E> The type of elements in the given collection.
-     * @param  elements The collection to return.
-     * @return The given collection, or {@code null} if the collection is empty and a marshalling
-     *         is under progress.
-     *
-     * @since 3.18 (derived from 2.5)
-     * @level advanced
-     *
-     * @deprecated It doesn't appear to work. No replacement for now.
-     */
-    @Deprecated
-    protected static <E> Collection<E> xmlOptional(final Collection<E> elements) {
-        if (elements != null && elements.isEmpty() && MarshalContext.isMarshaling()) {
-            return null;
-        }
-        return elements;
-    }
 }

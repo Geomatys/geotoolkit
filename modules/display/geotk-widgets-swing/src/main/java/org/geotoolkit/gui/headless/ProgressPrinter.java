@@ -381,14 +381,4 @@ public class ProgressPrinter extends ProgressController {
         carriageReturn(0);
         out.flush();
     }
-
-    /**
-     * Releases any resource used by this object.
-     *
-     * @deprecated Not needed for this controller.
-     */
-    @Override
-    @Deprecated
-    public void dispose() {
-    }
 }
