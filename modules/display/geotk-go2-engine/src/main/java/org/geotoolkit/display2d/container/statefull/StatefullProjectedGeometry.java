@@ -113,6 +113,9 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Shape getDisplayShape() throws TransformException{
+        if(objectiveGeometryJTS == null){
+            return null;
+        }
         return displayShape;
     }
 

@@ -145,7 +145,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final CanvasMonitor monitor = context.getMonitor();
         try {
             final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
-            currentQuery = prepareQuery(context, item, attributs);
+            currentQuery = prepareQuery(context, item, attributs,null);
         } catch (PortrayalException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
@@ -201,7 +201,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final Query query;
         try {
             final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
-            query = prepareQuery(context, layer, attributs);
+            query = prepareQuery(context, layer, attributs,null);
         } catch (PortrayalException ex) {
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;

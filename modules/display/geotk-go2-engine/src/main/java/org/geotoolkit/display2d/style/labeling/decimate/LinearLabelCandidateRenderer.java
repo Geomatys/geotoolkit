@@ -68,7 +68,11 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
 
         final TextStroke stroke = new TextStroke(label.getText(), label.getTextFont(), label.isRepeated(),
                 label.getOffSet(), label.getInitialGap(), label.getGap(),context.getCanvasDisplayBounds());
-        final Shape shape = stroke.createStrokedShape(linearCandidate.getShape());
+        Shape shp = linearCandidate.getShape();
+        if(shp == null){
+            return;
+        }
+        final Shape shape = stroke.createStrokedShape(shp);
 
         //paint halo
         if(label.getHaloWidth() > 0){

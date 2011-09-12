@@ -106,19 +106,21 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             return;
         }
 
-        final CachedRule[] rules = prepareStyleRules(renderingContext, item, null);
-
+        //first extract the valid rules at this scale
+        final List<Rule> validRules = getValidRules(renderingContext,item,null);
+        
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
-        if (rules.length == 0) {
+        if(validRules.isEmpty()){
             return;
         }
-
+        
+        final CachedRule[] rules = toCachedRules(validRules, null);
         final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
         
         final Collection<?> candidates;
         try {
-            candidates = optimizeCollection(renderingContext, attributs);
+            candidates = optimizeCollection(renderingContext, attributs, validRules);
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -266,7 +268,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     }
 
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
-            final Set<String> requieredAtts) throws Exception {
+            final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
         return item.getCollection();
     }
 

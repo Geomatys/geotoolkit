@@ -28,7 +28,7 @@ import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
-//import net.iharder.Base64;
+import net.iharder.Base64;
 
 
 /**
@@ -65,7 +65,7 @@ public final class WKBAttributeIO {
      *         representation.
      */
     private Geometry wkb2Geometry(final byte[] wkbBytes) throws IOException {
-        if (wkbBytes == null) { 
+        if (wkbBytes == null) {
             //DJB: null value from database --> null geometry (the same behavior as WKT).
             //NOTE: sending back a GEOMETRYCOLLECTION(EMPTY) is also a possibility, but this is not the same as NULL
             return null;
@@ -81,16 +81,16 @@ public final class WKBAttributeIO {
     public Object read(final ResultSet rs, final String columnName) throws IOException {
         final byte bytes[];
         try {
-            bytes = rs.getBytes(columnName);            
+            bytes = rs.getBytes(columnName);
         } catch (SQLException e) {
             throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
-
+        
         if (bytes == null) {
             // ie. its a null column -> return a null geometry!
             return null;
         }
-        return wkb2Geometry(bytes);
+        return wkb2Geometry(Base64.decode(bytes));
     }
 
     public Object read(final ResultSet rs, final int columnIndex) throws IOException {
@@ -100,12 +100,12 @@ public final class WKBAttributeIO {
         } catch (SQLException e) {
             throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
-
+        
         if (bytes == null) {
             // ie. its a null column -> return a null geometry!
             return null;
         }
-        return wkb2Geometry(bytes);
+        return wkb2Geometry(Base64.decode(bytes));
     }
 
     public void write(final PreparedStatement ps, final int position, final Object value)

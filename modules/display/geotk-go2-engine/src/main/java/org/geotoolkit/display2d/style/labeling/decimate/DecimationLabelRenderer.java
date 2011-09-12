@@ -45,6 +45,27 @@ import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
  * @module pending
  */
 public class DecimationLabelRenderer extends DefaultLabelRenderer{
+    
+    private SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR){
+        
+        public boolean add(final LabelDescriptor label) {
+
+            if(label instanceof PointLabelDescriptor){
+                final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                if(pc == null) return true;
+                pc.setPriority(1);
+                if(!LabelingUtilities.intersects(pc,candidates)){
+                    candidates.add(pc);
+                }                  
+            }else if(label instanceof LinearLabelDescriptor){
+                final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
+                lc.setPriority(1);
+                candidates.add(lc);
+            }
+            return true;
+        }
+        
+    };
 
     private final List<LabelLayer> layers = new ArrayList<LabelLayer>();
 
@@ -93,40 +114,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         final Graphics2D g2 = context.getGraphics();
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        List<Candidate> candidates = new ArrayList<Candidate>();
-
-        //generate all the candidates
-        //priority is in the order of the layers provided.
-        int priority = layers.size();
-
-        for(final LabelLayer layer : layers){
-            if(layer instanceof DecimateLabelLayer){
-                candidates.addAll( ((DecimateLabelLayer)layer).candidates );
-            }
-
-            for(LabelDescriptor label : layer.labels()){
-                Candidate c = null;
-
-                if(label instanceof PointLabelDescriptor){
-                    c = pointRenderer.generateCandidat((PointLabelDescriptor) label);
-                }else if(label instanceof LinearLabelDescriptor){
-                    c = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
-                }else{
-                    c = null;
-                }
-
-                if(c != null){
-                    c.setPriority(priority);
-                    candidates.add(c);
-                }
-            }
-            priority--;
-        }
-
-        //displace or remove the candidates
-        candidates = optimize(candidates);
-
+        
         //paint the remaining candidates
         for(Candidate candidate : candidates){
             if(candidate instanceof PointCandidate){
@@ -135,38 +123,16 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
                 LinearRenderer.render(candidate);
             }
         }
-
         layers.clear();
     }
 
     private List<Candidate> optimize(List<Candidate> candidates){
         candidates = LabelingUtilities.clipOutofBounds(context,candidates);
         candidates = LabelingUtilities.sortByXY(candidates);
-
-//        final List<Candidate> cleaned = new ArrayList<Candidate>();
-//
-//        loop:
-//        for(int i= candidates.size()-1; i>=0; i--){
-//            Candidate candidate = candidates.get(i);
-//
-//            for(Candidate other : cleaned){
-//                if(other == candidate) continue;
-//
-//                if(LabelingUtilities.intersects(candidate,other)){
-//                    continue loop;
-//                }
-//            }
-//
-//            cleaned.add(candidate);
-//        }
-
         return candidates;
     }
 
-
     private class DecimateLabelLayer implements LabelLayer{
-
-        private SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR);
 
         private final List<LabelDescriptor> labels = new ArrayList<LabelDescriptor>(){
 

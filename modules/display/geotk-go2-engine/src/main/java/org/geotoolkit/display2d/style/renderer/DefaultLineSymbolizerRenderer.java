@@ -207,6 +207,10 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             }
         }
 
+        if(j2dShape == null){
+            return;
+        }
+        
         //handle offset
         final float offset = symbol.getOffset(feature, coeff);
         if(offset != 0){

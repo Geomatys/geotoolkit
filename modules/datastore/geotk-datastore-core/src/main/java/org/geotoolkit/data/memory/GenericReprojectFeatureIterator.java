@@ -364,7 +364,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             }
                         }
 
-                    }                    
+                    }else{
+                        values[i] = null;
+                    }
                     
                 }else{
                     values[i] = next.getAttribute(i);

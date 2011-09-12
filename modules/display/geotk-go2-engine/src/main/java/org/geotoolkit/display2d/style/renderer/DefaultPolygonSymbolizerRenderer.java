@@ -266,6 +266,10 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         //todo must hanlde graphic stroke
         //final float strokeAlpha = symbol.getJ2DStrokeComposite(feature).getAlpha();
 
+        if(j2dShape == null){
+            return false;
+        }
+        
         final Area area ;
         if(fillAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
             area = new Area(j2dShape);

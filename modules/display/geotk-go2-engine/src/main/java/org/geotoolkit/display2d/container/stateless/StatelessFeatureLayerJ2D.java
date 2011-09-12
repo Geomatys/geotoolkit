@@ -74,6 +74,9 @@ import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
+import org.geotoolkit.style.DefaultMutableRule;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.StyleUtilities;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -138,7 +141,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //first extract the valid rules at this scale
-        final Collection<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
+        final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
         
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -152,7 +155,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final FeatureCollection<Feature> candidates;
         try {
             //optimize
-            candidates = (FeatureCollection<Feature>)optimizeCollection(renderingContext, names);
+            candidates = (FeatureCollection<Feature>)optimizeCollection(renderingContext, names, validRules);
         } catch (Exception ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
@@ -169,8 +172,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     @Override
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
-            final Set<String> requieredAtts) throws Exception {
-        currentQuery = prepareQuery(context, item, requieredAtts);
+            final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
+        currentQuery = prepareQuery(context, item, requieredAtts, rules);
         final Query query = currentQuery;
         return ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
     }
@@ -243,7 +246,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final Query query;
         try {
             final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
-            query = prepareQuery(renderingContext, layer, attributs);
+            query = prepareQuery(renderingContext, layer, attributs,null);
         } catch (PortrayalException ex) {
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
@@ -327,7 +330,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final Set<String> styleRequieredAtts) throws PortrayalException{
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, 
+            final Set<String> styleRequieredAtts, final List<Rule> rules) throws PortrayalException{
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
@@ -516,6 +520,46 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         } catch (SchemaException ex) {
             throw new PortrayalException(ex);
         }
+        
+        //combine the filter with rule filters----------------------------------
+        if(rules != null){
+            List<Filter> rulefilters = new ArrayList<Filter>();
+            for(Rule rule : rules){
+                if(rule.isElseFilter()){
+                    //we can't append styling filters, an else rule match all features
+                    rulefilters = null;
+                    break;
+                }
+                final Filter rf = rule.getFilter();
+                if(rf == null || rf == Filter.INCLUDE){
+                    //we can't append styling filters, this rule matchs all features.
+                    rulefilters = null;
+                    break;
+                }
+                rulefilters.add(rf);
+            }
+
+            if(rulefilters != null){
+                final Filter combined;
+                if(rulefilters.size() == 1){
+                    //we can optimze here, since we pass the filter on the query, we can remove
+                    //the filter on the rule.
+                    final MutableRule mr = StyleUtilities.copy(rules.get(0));
+                    mr.setFilter(null);
+                    rules.set(0, mr);
+                    combined = rulefilters.get(0);
+                }else{
+                    combined = FILTER_FACTORY.or(rulefilters);
+                }
+
+                if(filter != Filter.INCLUDE){
+                    filter = FILTER_FACTORY.and(filter,combined);
+                }else{
+                    filter = combined;
+                }
+            }
+        }
+        
         
         //optimize the filter---------------------------------------------------
         filter = FilterUtilities.prepare(filter,Feature.class,expected);
