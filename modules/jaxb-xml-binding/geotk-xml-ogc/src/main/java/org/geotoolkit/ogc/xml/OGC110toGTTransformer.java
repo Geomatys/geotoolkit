@@ -505,8 +505,14 @@ public class OGC110toGTTransformer {
     public Expression visitExpression(final LiteralType type){
         final List<Object> content = type.getContent();
         
-        for(final Object obj : content){
+        for(Object obj : content){
             if(obj != null && !obj.toString().trim().isEmpty()){
+                //try to convert it to a number
+                try{
+                    obj = Double.valueOf(obj.toString().trim());
+                }catch(NumberFormatException ex){
+                }
+                
                 return filterFactory.literal(obj);
             }
         }
