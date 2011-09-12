@@ -20,7 +20,6 @@ package org.geotoolkit.filter.binarycomparison;
 import java.util.Calendar;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.converter.Numbers;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -56,11 +55,28 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
             return false;
         }
 
-        if(equalOrNumberEqual(value1, value2)){
+        //quick resolving to avoid using converters-----------------------------
+        if(value1.getClass() == value2.getClass()){
+            //same class, return the equal value directly.
+            
+            if(!match && value1 instanceof String ){
+                //special case if we are in case insensitive
+                return ((String)value1).equalsIgnoreCase((String)value2);
+            }else{
+                return value1.equals(value2);
+            }
+            
+        }else if(value1 instanceof Number && value2 instanceof Number){
+            //test number case
+            return numberEqual((Number)value1, (Number)value2);
+        }else if(value1.equals(value2)){
+            //test standard equal
+            //but classes are not the same, so will have to use the converters
+            //to ensure a proper compare
             return true;
         }
-
-        //use converters to make comparison
+        
+        //we rely on converters to ensure proper compare oparations
         Object converted1 = Converters.convert(value1, value2.getClass());
         if(converted1 != null){
             if(equalOrNumberEqual(value2, converted1)){
@@ -91,7 +107,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
         //no comparison matches
         return false;
     }
-
+    
     private boolean equalOrNumberEqual(final Object value1, final Object value2){
 
         //test general equal case
@@ -107,24 +123,29 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
 
         //test number case
         if(value1 instanceof Number && value2 instanceof Number){
-            final Number n1 = (Number) value1;
-            final Number n2 = (Number) value2;
-
-            if( (n1 instanceof Float) || (n1 instanceof Double) 
-             || (n2 instanceof Float) || (n2 instanceof Double)){
-                final double d1 = n1.doubleValue();
-                final double d2 = n2.doubleValue();
-                if (Double.doubleToLongBits(d1) == Double.doubleToLongBits(d2)) {
-                    return true;
-                }
-                if (Math.abs(d1 - d2) < EPS * Math.max(Math.abs(d1), Math.abs(d2))) {
-                    return true;
-                }
-            } else {
-                return n1.longValue() == n2.longValue();
-            }
+            return numberEqual((Number)value1, (Number)value2);
         }
 
+        return false;
+    }
+    
+    private static boolean numberEqual(final Number value1, final Number value2){
+        final Number n1 = (Number) value1;
+        final Number n2 = (Number) value2;
+
+        if( (n1 instanceof Float) || (n1 instanceof Double) 
+         || (n2 instanceof Float) || (n2 instanceof Double)){
+            final double d1 = n1.doubleValue();
+            final double d2 = n2.doubleValue();
+            if (Double.doubleToLongBits(d1) == Double.doubleToLongBits(d2)) {
+                return true;
+            }
+            if (Math.abs(d1 - d2) < EPS * Math.max(Math.abs(d1), Math.abs(d2))) {
+                return true;
+            }
+        } else {
+            return n1.longValue() == n2.longValue();
+        }
         return false;
     }
 
