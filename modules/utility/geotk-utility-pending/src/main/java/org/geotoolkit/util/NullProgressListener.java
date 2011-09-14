@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.util;
 
-import org.opengis.util.InternationalString;
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.process.ProgressController;
 
 
 /**
@@ -32,17 +31,7 @@ import org.opengis.util.ProgressListener;
  * @since 2.2
  * @version $Id$
  */
-public class NullProgressListener implements ProgressListener {
-    /**
-     * Description of the undergoing action.
-     */
-    private String description;
-
-    /**
-     * {@code true} if the action is canceled.
-     */
-    private boolean canceled = false;
-
+public class NullProgressListener extends ProgressController {
     /**
      * Creates a null progress listener with no description.
      */
@@ -53,72 +42,8 @@ public class NullProgressListener implements ProgressListener {
      * {@inheritDoc }
      */
     @Override
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void started() {
         //do nothing
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void progress(final float percent) {
-        //do nothing
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public float getProgress() {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void complete() {
-        //do nothing
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void dispose() {
-        //do nothing
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setCanceled(final boolean cancel) {
-        this.canceled = cancel;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isCanceled() {
-        return canceled;
     }
 
     /**
@@ -137,20 +62,8 @@ public class NullProgressListener implements ProgressListener {
         //do nothing
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public InternationalString getTask() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setTask(final InternationalString task) {
-        // do nothing
+    public void completed() {
+        //do nothing
     }
 }
