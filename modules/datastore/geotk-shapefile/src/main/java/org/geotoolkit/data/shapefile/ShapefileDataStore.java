@@ -47,8 +47,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.DefaultFeatureIDReader;
-import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -727,7 +725,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         return new ShapefileAttributeReader(atts, openShapeReader(read3D,resample), openDbfReader());
     }
 
-    protected DefaultSimpleFeatureReader createFeatureReader(final String typeName,
+    protected FeatureReader createFeatureReader(final String typeName,
             final ShapefileAttributeReader reader, final SimpleFeatureType readerSchema, final Hints hints)
             throws SchemaException {
 

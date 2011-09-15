@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,7 @@
 package org.geotoolkit.data.shapefile.fix;
 
 
+import org.geotoolkit.data.shapefile.FeatureIDReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -26,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
@@ -39,6 +40,7 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * This object reads from a file the fid of a feature in a shapefile.
  * 
  * @author Jesse
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class IndexedFidReader implements FeatureIDReader {
@@ -253,7 +255,6 @@ public class IndexedFidReader implements FeatureIDReader {
         }
     }
 
-    @Override
     public void close() throws DataStoreRuntimeException {
         try {
             if (reader != null){
@@ -272,7 +273,6 @@ public class IndexedFidReader implements FeatureIDReader {
         }
     }
 
-    @Override
     public boolean hasNext() throws DataStoreRuntimeException {
         if (done) {
             return false;
@@ -299,7 +299,6 @@ public class IndexedFidReader implements FeatureIDReader {
         return buffer.remaining() != 0;
     }
 
-    @Override
     public String next() throws DataStoreRuntimeException {
         if (reader != null) {
             try {

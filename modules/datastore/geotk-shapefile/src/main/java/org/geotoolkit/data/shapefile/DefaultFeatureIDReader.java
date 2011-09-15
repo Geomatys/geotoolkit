@@ -1,5 +1,5 @@
 /*
- *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    Geotoolkit  An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
  *    (C) 2009, Geomatys
@@ -14,8 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-package org.geotoolkit.data;
+package org.geotoolkit.data.shapefile;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,7 +29,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultFeatureIDReader implements FeatureIDReader{
+public class DefaultFeatureIDReader implements FeatureIDReader {
 
     private final String base;
     private final AtomicLong inc = new AtomicLong();
@@ -41,14 +40,14 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      *
      * @param type the feature type
      */
-    public DefaultFeatureIDReader(final FeatureType type){
+    public DefaultFeatureIDReader(final FeatureType type) {
         this(type.getName().getLocalPart());
     }
 
     /**
      * @param base string use as start element of the generated ids
      */
-    public DefaultFeatureIDReader(final String base){
+    public DefaultFeatureIDReader(final String base) {
         ensureNonNull("base string", base);
         this.base = base + ".";
     }
@@ -58,14 +57,14 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      */
     @Override
     public String next() {
-        return base+inc.incrementAndGet();
+        return base + inc.incrementAndGet();
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext(){
+    public boolean hasNext() {
         return true;
     }
 
@@ -73,7 +72,6 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      * {@inheritDoc }
      */
     @Override
-    public void close(){
+    public void close() {
     }
-
 }

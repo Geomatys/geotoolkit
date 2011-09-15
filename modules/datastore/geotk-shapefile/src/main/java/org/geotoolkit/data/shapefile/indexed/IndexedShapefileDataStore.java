@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.data.shapefile.FeatureIDReader;
+import org.geotoolkit.data.shapefile.DefaultSimpleFeatureReader;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -38,8 +40,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.DefaultSimpleFeatureReader;
-import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;

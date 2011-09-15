@@ -19,7 +19,6 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.util.List;
 
-import org.geotoolkit.data.AbstractPropertyReader;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
@@ -34,8 +33,9 @@ import org.opengis.feature.type.PropertyDescriptor;
  * DbaseFileReader
  * @module pending
  */
-public class ShapefileAttributeReader extends AbstractPropertyReader {
+public class ShapefileAttributeReader {
 
+    protected final PropertyDescriptor[] metaData;
     protected final boolean[] narrowing;
     protected final int[] attributIndex;
     protected ShapefileReader shp;
@@ -76,7 +76,7 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      */
     public ShapefileAttributeReader(final PropertyDescriptor[] atts,
             final ShapefileReader shp, final DbaseFileReader dbf, final double[] estimateRes) {
-        super(atts);
+        this.metaData = atts;
         this.shp = shp;
         this.dbf = dbf;
         if(estimateRes != null){
@@ -122,7 +122,6 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void close() throws IOException {
         try {
             if (shp != null) {
@@ -143,7 +142,6 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     /**
      * {@inheritDoc }
      */
-    @Override
     public boolean hasNext() throws IOException {
 
         if(shp.hasNext()){
@@ -177,7 +175,6 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void next() throws IOException {
         nextShape();
         nextDbf();
@@ -196,7 +193,6 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     /**
      * {@inheritDoc }
      */
-    @Override
     public Object read(final int param) throws IOException,IndexOutOfBoundsException {
 
         final int index = attributIndex[param];
@@ -223,10 +219,17 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     /**
      * {@inheritDoc }
      */
-    @Override
     public void read(final Object[] buffer) throws IOException {
-        for(int i=0,n=getPropertyCount();i<n;i++){
+        for(int i=0;i<metaData.length;i++){
             buffer[i] = read(i);
         }
+    }
+
+    public PropertyDescriptor[] getPropertyDescriptors() {
+        return metaData;
+    }
+
+    public int getPropertyCount() {
+        return metaData.length;
     }
 }

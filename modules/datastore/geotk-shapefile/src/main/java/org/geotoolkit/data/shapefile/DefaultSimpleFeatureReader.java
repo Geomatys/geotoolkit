@@ -1,9 +1,9 @@
 /*
- *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    Geotoolkit  An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 20032008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 20092010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,13 +15,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.shapefile;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
+import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
@@ -52,7 +54,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * This now feels sorta hacky, I'm not sure that I like it, but I'm going to
  * commit as I need to go now and revisit it in a bit.  I think the idea of
  * passing in an FIDAttributeReader might be cleaner, and if none is provided
- * then do an auto-increment one.  This might then work as the
+ * then do an autoincrement one.  This might then work as the
  * DefaultFeatureReader.
  * </p>
  *
@@ -67,17 +69,14 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      * Stores the creation stack trace if assertion are enable.
      */
     protected Throwable creationStack;
-
-    protected final PropertyReader attributeReader;
+    protected final ShapefileAttributeReader attributeReader;
     protected final SimpleFeatureType schema;
     protected final FeatureIDReader fidReader;
     protected final Object[] buffer;
-
     /**
      * if the attributs between reader and schema are the same but not in the same order.
      */
     protected final int[] attributIndexes;
-
     /**
      * Store the stat of the reader.
      */
@@ -92,7 +91,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      *
      * @throws SchemaException if we could not determine the correct FeatureType
      */
-    private DefaultSimpleFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader,
+    private DefaultSimpleFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
@@ -100,17 +99,17 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         if (schema == null) {
             schema = createSchema(attributeReader);
             attributIndexes = new int[0];
-        }else{
+        } else {
             //check if the attributs are mixed
             final AttributeDescriptor[] readerAtt = getDescriptors(attributeReader);
             final AttributeDescriptor[] schemaAtt = schema.getAttributeDescriptors().toArray(new AttributeDescriptor[schema.getAttributeCount()]);
 
-            if(Arrays.deepEquals(readerAtt, schemaAtt)){
+            if (Arrays.deepEquals(readerAtt, schemaAtt)) {
                 attributIndexes = new int[0];
-            }else{
+            } else {
                 //attributs are mixed
                 attributIndexes = new int[readerAtt.length];
-                for(int i=0; i<readerAtt.length;i++){
+                for (int i = 0; i < readerAtt.length; i++) {
                     attributIndexes[i] = schema.indexOf(readerAtt[i].getName());
                 }
             }
@@ -121,10 +120,10 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         this.buffer = new Object[attributeReader.getPropertyCount()];
 
         // init the tracer if we need to debug a connection leak
-        assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
+        assert (creationStack = new IllegalStateException().fillInStackTrace()) != null;
     }
 
-    public DefaultSimpleFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader)
+    public DefaultSimpleFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader)
             throws SchemaException {
         this(attributeReader, fidReader, null);
     }
@@ -134,7 +133,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      */
     @Override
     public SimpleFeature next() throws DataStoreRuntimeException, NoSuchElementException {
-        try{
+        try {
             if (attributeReader.hasNext()) {
                 attributeReader.next();
                 try {
@@ -145,7 +144,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
             } else {
                 throw new NoSuchElementException("There are no more Features to be read");
             }
-        }catch(IOException ex){
+        } catch (IOException ex) {
             throw new DataStoreRuntimeException(ex);
         }
     }
@@ -170,15 +169,15 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         try {
             attributeReader.close();
         } catch (IOException e) {
-            if(ex== null){
+            if (ex == null) {
                 ex = e;
-            }else{
+            } else {
                 //we tryed to close both and both failed
                 //return the first exception
             }
         }
 
-        if(ex != null){
+        if (ex != null) {
             throw new DataStoreRuntimeException(ex);
         }
 
@@ -188,11 +187,11 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     protected void finalize() throws Throwable {
         if (!closed) {
             Logging.getLogger(DefaultSimpleFeatureReader.class).warning(
-                "UNCLOSED ITERATOR : There is code leaving simple feature reader open, " +
-                "this may cause memory leaks or data integrity problems !");
-            if(creationStack != null) {
+                    "UNCLOSED ITERATOR : There is code leaving simple feature reader open, "
+                    + "this may cause memory leaks or data integrity problems !");
+            if (creationStack != null) {
                 Logging.getLogger(DefaultSimpleFeatureReader.class).log(Level.WARNING,
-                    "The unclosed reader originated on this stack trace", creationStack);
+                        "The unclosed reader originated on this stack trace", creationStack);
             }
             close();
         }
@@ -234,7 +233,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     /**
      * Create a FeatureType based on the attributs described in the attribut reader.
      */
-    private static SimpleFeatureType createSchema(final PropertyReader attributeReader) throws SchemaException {
+    private static SimpleFeatureType createSchema(final ShapefileAttributeReader attributeReader) throws SchemaException {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
         b.setName("noTypeName");
         b.addAll(getDescriptors(attributeReader));
@@ -245,30 +244,29 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      * {@inheritDoc }
      */
     @Override
-    public void remove() throws DataStoreRuntimeException{
+    public void remove() throws DataStoreRuntimeException {
         throw new DataStoreRuntimeException("Can not remove from a feature reader.");
     }
 
-
-    public static DefaultSimpleFeatureReader create(final PropertyReader attributeReader, final FeatureIDReader fidReader,
-            final SimpleFeatureType schema, final Hints hints) throws SchemaException{
+    public static DefaultSimpleFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
+            final SimpleFeatureType schema, final Hints hints) throws SchemaException {
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
-        if(detached == null || detached){
+        if (detached == null || detached) {
             //default behavior, make separate features
             return new DefaultSeparateFeatureReader(attributeReader, fidReader, schema);
-        }else{
+        } else {
             //reuse same feature
             return new DefaultReuseFeatureReader(attributeReader, fidReader, schema);
         }
     }
 
-    private static class DefaultSeparateFeatureReader extends DefaultSimpleFeatureReader{
+    private static class DefaultSeparateFeatureReader extends DefaultSimpleFeatureReader {
 
         protected final SimpleFeatureBuilder builder;
 
-        private DefaultSeparateFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader,
-            final SimpleFeatureType schema) throws SchemaException{
-            super(attributeReader,fidReader,schema);
+        private DefaultSeparateFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
+                final SimpleFeatureType schema) throws SchemaException {
+            super(attributeReader, fidReader, schema);
 
             this.builder = new SimpleFeatureBuilder(schema);
         }
@@ -284,11 +282,11 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
                 throw new DataStoreException(ex);
             }
 
-            if(attributIndexes.length == 0){
+            if (attributIndexes.length == 0) {
                 builder.addAll(buffer);
-            }else{
-                for(int i=0; i<attributIndexes.length; i++){
-                    if(attributIndexes[i] >=0 ){
+            } else {
+                for (int i = 0; i < attributIndexes.length; i++) {
+                    if (attributIndexes[i] >= 0) {
                         builder.set(attributIndexes[i], buffer[i]);
                     }
                 }
@@ -296,18 +294,17 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
             return builder.buildFeature(fid);
         }
-
     }
 
-    private static class DefaultReuseFeatureReader extends DefaultSimpleFeatureReader{
+    private static class DefaultReuseFeatureReader extends DefaultSimpleFeatureReader {
 
         protected final DefaultSimpleFeature feature;
 
-        private DefaultReuseFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader,
-            final SimpleFeatureType schema) throws SchemaException{
-            super(attributeReader,fidReader,schema);
+        private DefaultReuseFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
+                final SimpleFeatureType schema) throws SchemaException {
+            super(attributeReader, fidReader, schema);
 
-            feature = new DefaultSimpleFeature(schema, null,new Object[schema.getAttributeCount()], false);
+            feature = new DefaultSimpleFeature(schema, null, new Object[schema.getAttributeCount()], false);
         }
 
         @Override
@@ -322,11 +319,11 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
                 throw new DataStoreException(ex);
             }
 
-            if(attributIndexes.length == 0){
+            if (attributIndexes.length == 0) {
                 feature.setAttributes(buffer);
-            }else{
-                for(int i=0; i<attributIndexes.length; i++){
-                    if(attributIndexes[i] >=0 ){
+            } else {
+                for (int i = 0; i < attributIndexes.length; i++) {
+                    if (attributIndexes[i] >= 0) {
                         feature.setAttribute(attributIndexes[i], buffer[i]);
                     }
                 }
@@ -334,16 +331,14 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
             return feature;
         }
-
     }
 
-    private static AttributeDescriptor[] getDescriptors(final PropertyReader reader){
+    private static AttributeDescriptor[] getDescriptors(final ShapefileAttributeReader reader) {
         final PropertyDescriptor[] vals = reader.getPropertyDescriptors();
         final AttributeDescriptor[] atts = new AttributeDescriptor[vals.length];
-        for(int i=0; i<vals.length;i++){
+        for (int i = 0; i < vals.length; i++) {
             atts[i] = (AttributeDescriptor) vals[i];
         }
         return atts;
     }
-
 }

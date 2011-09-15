@@ -17,8 +17,8 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
+import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.FeatureIDReader;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -52,7 +52,6 @@ public class ShapeFIDReader implements FeatureIDReader {
     /**
      * Release any resources associated with this reader
      */
-    @Override
     public void close() {
         this.opened = false;
     }
@@ -65,7 +64,6 @@ public class ShapeFIDReader implements FeatureIDReader {
      * @return always return <code>true</code>
      * @throws IOException If closed
      */
-    @Override
     public boolean hasNext() throws DataStoreException {
         if (!this.opened) {
             throw new DataStoreException(CLOSE_MESG);
@@ -85,7 +83,6 @@ public class ShapeFIDReader implements FeatureIDReader {
      * @return the Feature Id
      * @throws IOException If closed
      */
-    @Override
     public String next() throws DataStoreException {
         if (!this.opened) {
             throw new DataStoreException(CLOSE_MESG);

@@ -1,5 +1,5 @@
 /*
- *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    Geotoolkit  An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
  *    (C) 2009, Geomatys
@@ -14,8 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-package org.geotoolkit.data;
+package org.geotoolkit.data.shapefile;
 
 import org.geotoolkit.storage.DataStoreException;
 
@@ -45,5 +44,4 @@ public interface FeatureIDReader {
      * Release any resources associated with this reader
      */
     void close() throws DataStoreException;
-
 }
