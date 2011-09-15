@@ -621,7 +621,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 value = value.getFactory().createLineString(((LinearRing) value).getCoordinateSequence());
             }
 
-            sql.append("GeomFromText('" + value.toText() + "', " + srid + ")");
+            sql.append("GeomFromText('").append(value.toText()).append("', ").append(srid).append(")");
         }
     }
 
