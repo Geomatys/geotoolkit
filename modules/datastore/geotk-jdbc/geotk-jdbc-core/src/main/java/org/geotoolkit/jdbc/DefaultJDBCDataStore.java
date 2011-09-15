@@ -368,7 +368,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final QueryBuilder builder = new QueryBuilder(query);
         builder.setFilter(preFilter);
         if(query.getResolution() != null){
-            builder.setHints(new Hints(RESAMPLING, query.getResolution()));
+            builder.getHints().add(new Hints(RESAMPLING, query.getResolution()));
         }
         final Query preQuery = builder.buildQuery();
 
@@ -418,6 +418,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         //create the reader
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
+        String sql = null;
         try {
             // this allows PostGIS to page the results and respect the fetch size
             // if (getState().getTransaction() == Transaction.AUTO_COMMIT)
@@ -429,7 +430,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 reader = new JDBCFeatureReader(ps, cx, this, query.getTypeName(), querySchema, pkey, query.getHints());
             } else {
                 //build up a statement for the content
-                final String sql = queryBuilder.selectSQL(querySchema, preQuery);
+                sql = queryBuilder.selectSQL(querySchema, preQuery);
                 //getLogger().fine(sql);
 
                 reader = new JDBCFeatureReader( sql, cx, this, query.getTypeName(), querySchema, pkey, query.getHints() );
@@ -438,7 +439,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             // close the connection
             closeSafe(cx);
             // safely rethrow
-            throw new DataStoreException(e);
+            throw new DataStoreException(e.getMessage()+" > "+ sql, e);
         } catch (IOException e) {
             // close the connection
             closeSafe(cx);
