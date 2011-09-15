@@ -75,6 +75,8 @@ import org.opengis.filter.expression.Subtract;
  */
 public class OGCforSLD100Test extends TestCase{
 
+    private static final double DELTA = 0.00000001;
+    
     private static final FilterFactory2 FILTER_FACTORY;
 
     static{
@@ -89,7 +91,6 @@ public class OGCforSLD100Test extends TestCase{
     
     private static final String valueStr = "feature_property_name";
     private static final float valueF = 456f;
-    private static final String valueFStr = "456";
         
     
     //FILES -------------------------------------
@@ -307,6 +308,10 @@ public class OGCforSLD100Test extends TestCase{
         }
         
     
+    }
+    
+    private static void numberEquals(Number reference, Object candidate){
+        assertEquals(reference.doubleValue(),Double.parseDouble(candidate.toString()),DELTA);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -585,8 +590,8 @@ public class OGCforSLD100Test extends TestCase{
         LiteralType up = (LiteralType) pibt.getUpperBoundary().getExpression().getValue();
 
         assertEquals(pnt.getContent(), valueStr);
-        assertEquals(low.getContent().get(0).toString().trim(), "455" );
-        assertEquals(up.getContent().get(0).toString().trim(), "457" );
+        numberEquals(455,low.getContent().get(0));
+        numberEquals(457,up.getContent().get(0));
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISBETWEEN);
 
@@ -626,8 +631,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0).toString().trim());
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISEQUAL);
 
@@ -668,8 +673,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0).toString().trim() );
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISGREATER);
 
@@ -710,8 +715,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0).toString().trim());
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISGREATEROREQUAL);
 
@@ -751,8 +756,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0).toString().trim());
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLESS);
 
@@ -792,8 +797,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0).toString().trim());
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISLESSOREQUAL);
         POOL.release(MARSHALLER);
@@ -887,8 +892,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) pibt.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) pibt.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0).toString().trim());
                 
         MARSHALLER.marshal(ft.getComparisonOps(), TEST_FILE_FIL_COMP_ISNOTEQUAL);
 
@@ -984,14 +989,14 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) leftoptype.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) leftoptype.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), "455" );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(455,rg.getContent().get(0));
         
         lf = (PropertyNameType) rightoptype.getExpression().get(0).getValue();
         rg = (LiteralType) rightoptype.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), "457" );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(457,rg.getContent().get(0));
         
                 
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_AND);
@@ -1044,14 +1049,14 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) leftoptype.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) leftoptype.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), "455" );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(455,rg.getContent().get(0));
         
         lf = (PropertyNameType) rightoptype.getExpression().get(0).getValue();
         rg = (LiteralType) rightoptype.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), "457" );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(457,rg.getContent().get(0));
         
                 
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_OR);
@@ -1098,8 +1103,8 @@ public class OGCforSLD100Test extends TestCase{
         PropertyNameType lf = (PropertyNameType) leftoptype.getExpression().get(0).getValue();
         LiteralType rg = (LiteralType) leftoptype.getExpression().get(1).getValue();
 
-        assertEquals(lf.getContent(), valueStr);
-        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+        assertEquals(valueStr,lf.getContent());
+        numberEquals(valueF,rg.getContent().get(0));
          
         MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_LOG_NOT);
 
