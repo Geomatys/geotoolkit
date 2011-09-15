@@ -44,7 +44,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opengis.util.FactoryException;
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.process.ProgressController;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -556,7 +556,7 @@ public class GeometryCollection extends Geometry implements Comparable {
      *         To avoid this exception, {@linkplain #clone clone} this geometry before to modify it.
      */
     public synchronized void assemble(Shape mapBounds, float[] toComplete,
-                                      final ProgressListener progress)
+                                      final ProgressController progress)
             throws TransformException, UnmodifiableGeometryException
     {
         if (frozen) {
@@ -583,7 +583,7 @@ public class GeometryCollection extends Geometry implements Comparable {
      * @throws UnmodifiableGeometryException if modifying this geometry would corrupt a container.
      *         To avoid this exception, {@linkplain #clone clone} this geometry before to modify it.
      */
-    public void assemble(final ProgressListener progress)
+    public void assemble(final ProgressController progress)
             throws TransformException, UnmodifiableGeometryException
     {
         assemble(null, new float[]{-0f,0f}, progress);

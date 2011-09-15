@@ -44,7 +44,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.process.ProgressController;
 
 
 /**
@@ -104,7 +104,7 @@ final class PolygonAssembler implements Comparator {
     /**
      * The progress listener, or <code>null</code> if none.
      */
-    private final ProgressListener progress;
+    private final ProgressController progress;
 
     /**
      * Forme g�om�trique de la r�gion dans laquelle ont �t� d�coup�s les polygones.
@@ -187,7 +187,7 @@ final class PolygonAssembler implements Comparator {
      *
      * @see #setGeometryCollection
      */
-    public PolygonAssembler(final Shape clip, final ProgressListener progress) {
+    public PolygonAssembler(final Shape clip, final ProgressController progress) {
         this.progress  = progress;
         this.flatness  = ShapeUtilities.getFlatness(clip);
         this.clip      = clip;
@@ -655,7 +655,7 @@ final class PolygonAssembler implements Comparator {
                 tryAgain = false;
                 pass++;
                 if (progress != null) {
-                    progress.setDescription("Analyzing (pass "+pass+')'); // TODO: localize
+                    progress.setTask("Analyzing (pass "+pass+')'); // TODO: localize
                 }
                 for (int j=0; j<polylines.length; j++) {
                     if (progress != null) {
@@ -667,7 +667,7 @@ final class PolygonAssembler implements Comparator {
                          * On utilisera donc plut�t la formule ci-dessous, qui ferra para�tre
                          * lin�aire la progression.
                          */
-                        progress.progress(100f * (j*(2*polylines.length-j)) /
+                        progress.setProgress(100f * (j*(2*polylines.length-j)) /
                                           (polylines.length*polylines.length));
                     }
                     final Polyline jPath = polylines[j];
@@ -799,8 +799,8 @@ final class PolygonAssembler implements Comparator {
             message = null;
         }
         if (progress != null) {
-            progress.setDescription("Assembling polygons"); // TODO: localize
-            progress.progress(0);
+            progress.setTask("Assembling polygons"); // TODO: localize
+            progress.setProgress(0);
         }
         int count = 0;
         final float progressScale = 100f / fermions.size();
@@ -808,7 +808,7 @@ final class PolygonAssembler implements Comparator {
         Iterator it=fermions.values().iterator();
         while (it.hasNext()) {
             if (progress != null) {
-                progress.progress(count++ * progressScale);
+                progress.setProgress(count++ * progressScale);
             }
             /*
              * D�termine quelles paires de polylignes sont s�par�es par la plus courte
@@ -928,8 +928,8 @@ final class PolygonAssembler implements Comparator {
             throws TransformException
     {
         if (progress != null) {
-            progress.setDescription("Creating map border"); // TODO: localize
-            progress.progress(0);
+            progress.setTask("Creating map border"); // TODO: localize
+            progress.setProgress(0);
         }
         final List intersections = new ArrayList();
         IntersectionPoint startingPoint;
@@ -989,7 +989,7 @@ final class PolygonAssembler implements Comparator {
              * peu pr�s proportionnels � <var>i</var>.
              */
             if (progress != null) {
-                progress.progress(100f * i / polylines.length);
+                progress.setProgress(100f * i / polylines.length);
             }
             /*
              * La boucle suivante ne sera ex�cut�e que deux fois. Le premier
@@ -1416,14 +1416,14 @@ final class PolygonAssembler implements Comparator {
             throws TransformException
     {
         if (progress != null) {
-            progress.setDescription("Analyzing"); // TODO: localize
+            progress.setTask("Analyzing"); // TODO: localize
             progress.started();
         }
         toComplete = (float[]) toComplete.clone();
         Arrays.sort(toComplete);
         assemble(collection, Collections.EMPTY_LIST, toComplete);
         if (progress != null) {
-            progress.complete();
+            progress.completed();
         }
     }
 }

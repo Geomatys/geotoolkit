@@ -36,7 +36,7 @@ import org.geotoolkit.index.quadtree.fs.IndexHeader;
 import org.geotoolkit.index.rtree.PageStore;
 import org.geotoolkit.util.NullProgressListener;
 
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.process.ProgressController;
 
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.index.quadtree.DataReader;
@@ -76,7 +76,7 @@ public class ShapeFileIndexer {
      *                 DOCUMENT ME!
      * @throws LockTimeoutException
      */
-    public int index(final boolean verbose, final ProgressListener listener)
+    public int index(final boolean verbose, final ProgressController listener)
             throws MalformedURLException, IOException, TreeException,
             StoreException, LockTimeoutException {
 

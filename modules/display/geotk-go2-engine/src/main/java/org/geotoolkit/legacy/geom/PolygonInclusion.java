@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.geotoolkit.util.Strings;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.ProgressListener;
+import org.geotoolkit.process.ProgressController;
 
 
 /**
@@ -113,7 +113,7 @@ final class PolygonInclusion {
      * trouvera qu'il contient enti�rement "�le" et l'ajoutera � sa propre liste interne
      * apr�s l'avoir retir� de la liste {@link #child} de "Continent".
      */
-    private static void buildTree(final Collection childs, final ProgressListener progress) {
+    private static void buildTree(final Collection childs, final ProgressController progress) {
         if (childs != null) {
             int count = 0;
             final Set alreadyProcessed = new HashSet(childs.size() + 64);
@@ -121,7 +121,7 @@ final class PolygonInclusion {
                 final PolygonInclusion node = (PolygonInclusion) it.next();
                 if (alreadyProcessed.add(node)) {
                     if (progress != null) {
-                        progress.progress(100f * (count++ / childs.size()));
+                        progress.setProgress(100f * (count++ / childs.size()));
                     }
                     node.addChilds(childs);
                     it = childs.iterator(); // Need a new iterator since collection changed.
@@ -173,12 +173,12 @@ final class PolygonInclusion {
      *         This exception should never happen if all polygons use the same
      *         coordinate system.
      */
-    static Collection process(final Polyline[] polygons, final ProgressListener progress)
+    static Collection process(final Polyline[] polygons, final ProgressController progress)
             throws TransformException
     {
         if (progress != null) {
             // TODO: localize...
-            progress.setDescription("Searching lakes");
+            progress.setTask("Searching lakes");
             progress.started();
         }
         final List nodes = new LinkedList();
