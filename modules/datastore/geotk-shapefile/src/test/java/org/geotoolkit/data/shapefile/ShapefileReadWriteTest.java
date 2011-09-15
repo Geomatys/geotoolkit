@@ -178,12 +178,8 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
     private void test(final String f, final Charset charset) throws Exception {
         copyShapefiles(f); // Work on File rather than URL from JAR.
-        ShapefileDataStore s = null;
-        if(charset == null) {
-            s = new ShapefileDataStore(TestData.url(AbstractTestCaseSupport.class, f));
-        } else {
-            s = new ShapefileDataStore(TestData.url(AbstractTestCaseSupport.class, f), false, charset);
-        }
+        ShapefileDataStore s = new ShapefileDataStore(
+                TestData.url(AbstractTestCaseSupport.class, f), null, false, charset);
         Name typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
@@ -224,11 +220,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         if (true) {
             // review open
-            ShapefileDataStore review;
-            if(charset == null) 
-                review = new ShapefileDataStore(tmp.toURL(), tmp.toString(), memorymapped);
-            else
-                review = new ShapefileDataStore(tmp.toURL(), tmp.toString(), memorymapped, charset);
+            ShapefileDataStore review = new ShapefileDataStore(tmp.toURL(), tmp.toString(), memorymapped, charset);
             typeName = review.getNames().iterator().next();
             FeatureCollection<SimpleFeature> again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 

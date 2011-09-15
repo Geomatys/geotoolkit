@@ -18,7 +18,7 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import org.geotoolkit.data.shapefile.FeatureIDReader;
-import org.geotoolkit.data.shapefile.DefaultSimpleFeatureReader;
+import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -359,7 +359,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             fidReader = new IndexedFidReader(shpFiles, r);
         }
 
-        return DefaultSimpleFeatureReader.create(r, fidReader, featureType, hints);
+        return ShapefileFeatureReader.create(r, fidReader, featureType, hints);
     }
 
     /**

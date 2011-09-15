@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 import org.geotoolkit.util.logging.Logging;
@@ -587,6 +589,39 @@ public class DbaseFileHeader {
         recordCnt = inNumRecords;
     }
 
+    /**
+     * Create the list of mathcing attribute descriptor from header informations.
+     * 
+     * @return List of AttributDescriptor
+     */
+    public List<AttributeDescriptor> createDescriptors(final String namespace){
+        final int nbFields = getNumFields();
+
+        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
+        
+        final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>(nbFields);
+        for(int i=0; i<nbFields; i++){
+            final String name = getFieldName(i);
+            final Class attributeClass = getFieldClass(i);
+            final int length = getFieldLength(i);
+            
+            buildAtt.reset();
+            buildAtt.setName(namespace, name);
+            buildAtt.setBinding(attributeClass);
+            buildAtt.setLength(length);
+
+            buildDesc.reset();
+            buildDesc.setName(namespace, name);
+            buildDesc.setNillable(true);
+            buildDesc.setType(buildAtt.buildType());
+
+            attributes.add(buildDesc.buildDescriptor());
+        }
+        
+        return attributes;
+    }
+    
     /**
      * Write the header data to the DBF file.
      * 

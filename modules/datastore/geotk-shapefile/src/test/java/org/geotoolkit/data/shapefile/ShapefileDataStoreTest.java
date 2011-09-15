@@ -110,7 +110,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     protected FeatureCollection<SimpleFeature> loadFeatures(final String resource, final Charset charset, final Query q) throws Exception {
 
         URL url = ShapeTestData.url(resource);
-        ShapefileDataStore s = new ShapefileDataStore(url, false, charset);
+        ShapefileDataStore s = new ShapefileDataStore(url, null, false, charset);
 
         if(q == null){
             return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));

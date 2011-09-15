@@ -18,6 +18,8 @@
 package org.geotoolkit.data.dbf;
 
 
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,13 +67,43 @@ public class DBFReadingTest extends AbstractReadingTests{
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
+        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
         Name name = new DefaultName("http://test.com", "dbfstore");
         builder.reset();
         builder.setName(name);
-        builder.add(new DefaultName(ns, "N1"), Double.class);
-        builder.add(new DefaultName(ns, "N2"), Double.class);
-        builder.add(new DefaultName(ns, "N3"), String.class);
+        
+        buildAtt.reset();
+        buildAtt.setName(ns, "N1");
+        buildAtt.setBinding(Double.class);
+        buildAtt.setLength(5);
+        buildDesc.reset();
+        buildDesc.setName(ns, "N1");
+        buildDesc.setNillable(true);
+        buildDesc.setType(buildAtt.buildType());
+        builder.add(buildDesc.buildDescriptor());
+        
+        buildAtt.reset();
+        buildAtt.setName(ns, "N2");
+        buildAtt.setBinding(Double.class);
+        buildAtt.setLength(5);
+        buildDesc.reset();
+        buildDesc.setName(ns, "N2");
+        buildDesc.setNillable(true);
+        buildDesc.setType(buildAtt.buildType());
+        builder.add(buildDesc.buildDescriptor());
+        
+        buildAtt.reset();
+        buildAtt.setName(ns, "N3");
+        buildAtt.setBinding(String.class);
+        buildAtt.setLength(6);
+        buildDesc.reset();
+        buildDesc.setName(ns, "N3");
+        buildDesc.setNillable(true);
+        buildDesc.setType(buildAtt.buildType());
+        builder.add(buildDesc.buildDescriptor());
+        
         final SimpleFeatureType type3 = builder.buildSimpleFeatureType();
         
         names.add(name);

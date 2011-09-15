@@ -63,7 +63,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
     /**
      * Stores the creation stack trace if assertion are enable.
@@ -91,7 +91,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      *
      * @throws SchemaException if we could not determine the correct FeatureType
      */
-    private DefaultSimpleFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
+    private ShapefileFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
@@ -123,7 +123,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         assert (creationStack = new IllegalStateException().fillInStackTrace()) != null;
     }
 
-    public DefaultSimpleFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader)
+    public ShapefileFeatureReader(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader)
             throws SchemaException {
         this(attributeReader, fidReader, null);
     }
@@ -186,11 +186,11 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     @Override
     protected void finalize() throws Throwable {
         if (!closed) {
-            Logging.getLogger(DefaultSimpleFeatureReader.class).warning(
+            Logging.getLogger(ShapefileFeatureReader.class).warning(
                     "UNCLOSED ITERATOR : There is code leaving simple feature reader open, "
                     + "this may cause memory leaks or data integrity problems !");
             if (creationStack != null) {
-                Logging.getLogger(DefaultSimpleFeatureReader.class).log(Level.WARNING,
+                Logging.getLogger(ShapefileFeatureReader.class).log(Level.WARNING,
                         "The unclosed reader originated on this stack trace", creationStack);
             }
             close();
@@ -248,7 +248,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         throw new DataStoreRuntimeException("Can not remove from a feature reader.");
     }
 
-    public static DefaultSimpleFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
+    public static ShapefileFeatureReader create(final ShapefileAttributeReader attributeReader, final FeatureIDReader fidReader,
             final SimpleFeatureType schema, final Hints hints) throws SchemaException {
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
         if (detached == null || detached) {
@@ -260,7 +260,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         }
     }
 
-    private static class DefaultSeparateFeatureReader extends DefaultSimpleFeatureReader {
+    private static class DefaultSeparateFeatureReader extends ShapefileFeatureReader {
 
         protected final SimpleFeatureBuilder builder;
 
@@ -296,7 +296,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         }
     }
 
-    private static class DefaultReuseFeatureReader extends DefaultSimpleFeatureReader {
+    private static class DefaultReuseFeatureReader extends ShapefileFeatureReader {
 
         protected final DefaultSimpleFeature feature;
 

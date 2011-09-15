@@ -23,6 +23,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.type.BasicFeatureTypes;
+import org.geotoolkit.util.converter.Classes;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * 
@@ -83,6 +90,27 @@ public class ShapefileHeader {
         return maxY;
     }
 
+    /**
+     * 
+     * @param namespace
+     * @return AttributeDescriptor mapping this header definition
+     */
+    public GeometryDescriptor createDescriptor(final String namespace, final CoordinateReferenceSystem crs){        
+        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
+        
+        final Class<?> geometryClass = getShapeType().bestJTSClass();
+        buildAtt.setName(namespace, Classes.getShortName(geometryClass));
+        buildAtt.setCRS(crs);
+        buildAtt.setBinding(geometryClass);
+
+        buildDesc.setNillable(true);
+        buildDesc.setName(namespace, BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+        buildDesc.setType(buildAtt.buildGeometryType());
+
+        return (GeometryDescriptor) buildDesc.buildDescriptor();
+    }
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ShapeFileHeader[");

@@ -37,7 +37,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,8 +61,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -73,7 +70,6 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -117,17 +113,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
      */
     public ShapefileDataStore(final URL url) throws DataStoreException,MalformedURLException {
-        this(url, false, DEFAULT_STRING_CHARSET);
-    }
-
-    public ShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer)
-            throws DataStoreException,MalformedURLException {
-        this(url, useMemoryMappedBuffer, DEFAULT_STRING_CHARSET);
-    }
-
-    public ShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer, final Charset dbfCharset)
-            throws DataStoreException,MalformedURLException {
-        this(url, null, false, dbfCharset);
+        this(url, null);
     }
 
     /**
@@ -142,21 +128,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             throws DataStoreException,MalformedURLException {
         this(url, namespace, false, DEFAULT_STRING_CHARSET);
     }
-
-    /**
-     * this sets the datastore's namespace during construction (so the schema -
-     * FeatureType - will have the correct value) You can call this with
-     * namespace = null, but I suggest you give it an actual namespace.
-     *
-     * @param url
-     * @param namespace
-     * @param useMemoryMapped
-     */
-    public ShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMapped)
-            throws DataStoreException,MalformedURLException {
-        this(url, namespace, useMemoryMapped, DEFAULT_STRING_CHARSET);
-    }
-
+    
     /**
      * This sets the datastore's namespace during construction (so the schema -
      * FeatureType - will have the correct value) You can call this with
@@ -165,13 +137,17 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param url
      * @param namespace
      * @param useMemoryMapped : default is true
-     * @param dbfCharset : default is ShapefileDataStore.DEFAULT_STRING_CHARSET
+     * @param dbfCharset : if null default will be ShapefileDataStore.DEFAULT_STRING_CHARSET
      */
     public ShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMapped,
-            final Charset dbfCharset) throws MalformedURLException, DataStoreException {
+            Charset dbfCharset) throws MalformedURLException, DataStoreException {
         super(namespace);
         shpFiles = new ShpFiles(url);
 
+        if(dbfCharset == null){
+            dbfCharset = DEFAULT_STRING_CHARSET;
+        }
+        
         if (!shpFiles.isLocal() || !shpFiles.exists(SHP)) {
             this.useMemoryMappedBuffer = false;
         } else {
@@ -218,7 +194,6 @@ public class ShapefileDataStore extends AbstractDataStore{
     @Override
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
-
         return schema;
     }
 
@@ -285,31 +260,6 @@ public class ShapefileDataStore extends AbstractDataStore{
             return super.getEnvelope(query);
         }
 
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
-            final Hints hints) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
     }
 
     /**
@@ -565,55 +515,16 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return The FeatureType that this DataStore contains.
      * @throws IOException If a type by the requested name is not present.
      */
-    private SimpleFeatureType buildSchema(String namespace) throws DataStoreException {
+    private SimpleFeatureType buildSchema(final String namespace) throws DataStoreException {
 
-        final List<AttributeDescriptor> types = readAttributes(namespace);
-        final GeometryDescriptor geomDescriptor = (GeometryDescriptor) types.get(0);
-        final Class<?> geomBinding = geomDescriptor.getType().getBinding();
-
-        SimpleFeatureType parent = null;
-        if ((geomBinding == Point.class) || (geomBinding == MultiPoint.class)) {
-            parent = BasicFeatureTypes.POINT;
-        } else if ((geomBinding == Polygon.class)
-                || (geomBinding == MultiPolygon.class)) {
-            parent = BasicFeatureTypes.POLYGON;
-        } else if ((geomBinding == LineString.class)
-                || (geomBinding == MultiLineString.class)) {
-            parent = BasicFeatureTypes.LINE;
-        }
-
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
-        builder.addAll(types);
-        builder.setDefaultGeometry(geomDescriptor.getLocalName());
-
-        //configure the name
-        final String local = shpFiles.getTypeName();
-//        if (namespace == null) {
-//            namespace = BasicFeatureTypes.DEFAULT_NAMESPACE;
-//        }
-
-        builder.setName(namespace,local);
-        builder.setAbstract(false);
-        if (parent != null) {
-            builder.setSuperType(parent);
-        }
-
-        return builder.buildSimpleFeatureType();
-    }
-
-    /**
-     * Create the AttributeDescriptor contained within this DataStore.
-     *
-     * @return List of new AttributeDescriptor
-     * @throws DataStoreException If AttributeType reading fails
-     */
-    protected List<AttributeDescriptor> readAttributes(final String namespace) throws DataStoreException {
+        //read all attributes///////////////////////////////////////////////////
         final ShapefileReader shp = openShapeReader(true,null);
         final DbaseFileReader dbf = openDbfReader();
 
         CoordinateReferenceSystem crs = null;
         ReadableByteChannel channel = null;
 
+        //read the projection
         try{
             channel = shpFiles.getReadChannel(PRJ, new Object());
             crs = PrjFiles.read(channel, true);
@@ -630,60 +541,19 @@ public class ShapefileDataStore extends AbstractDataStore{
             }
         }
 
-
-        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
-        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
+        final GeometryDescriptor geomDescriptor;
         final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>();
 
         try {
-            final Class<?> geometryClass = shp.getHeader().getShapeType().bestJTSClass();
-            buildAtt.setName(ensureGMLNS(namespace, Classes.getShortName(geometryClass)));
-            buildAtt.setCRS(crs);
-            buildAtt.setBinding(geometryClass);
-
-            buildDesc.setNillable(true);
-            buildDesc.setName(ensureGMLNS(namespace, BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME));
-            buildDesc.setType(buildAtt.buildGeometryType());
-
-            attributes.add(buildDesc.buildDescriptor());
-
-            // record names in case of duplicates
-            final Set<String> usedNames = new HashSet<String>();
-            usedNames.add(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
-
-            // take care of the case where no dbf and query wants all =>
-            // geometry only
+            //get the descriptor from shp
+            geomDescriptor = shp.getHeader().createDescriptor(namespace, crs);
+            attributes.add(geomDescriptor);
+            
+            //get dbf attributes if exist
             if (dbf != null) {
                 final DbaseFileHeader header = dbf.getHeader();
-                for (int i=0, n=header.getNumFields(); i<n; i++) {
-                    final Class attributeClass = header.getFieldClass(i);
-                    final int length = header.getFieldLength(i);
-                    String name = header.getFieldName(i);
-                    if (usedNames.contains(name)) {
-                        final String origional = name;
-                        int count = 1;
-                        name = name + count;
-                        while (usedNames.contains(name)) {
-                            count++;
-                            name = origional + count;
-                        }
-                    }
-                    usedNames.add(name);
-
-                    buildAtt.reset();
-                    buildAtt.setName(ensureGMLNS(namespace, name));
-                    buildAtt.setBinding(attributeClass);
-                    buildAtt.setLength(length);
-
-                    buildDesc.reset();
-                    buildDesc.setName(ensureGMLNS(namespace, name));
-                    buildDesc.setNillable(true);
-                    buildDesc.setType(buildAtt.buildType());
-
-                    attributes.add(buildDesc.buildDescriptor());
-                }
+                attributes.addAll(header.createDescriptors(namespace));
             }
-            return attributes;
         } finally {
             //todo replace by ARM in JDK 1.7
             try {
@@ -701,6 +571,31 @@ public class ShapefileDataStore extends AbstractDataStore{
                 // do nothing
             }
         }
+        
+        //create the feature type //////////////////////////////////////////////
+        final Class<?> geomBinding = geomDescriptor.getType().getBinding();
+
+        SimpleFeatureType parent = null;
+        if ((geomBinding == Point.class) || (geomBinding == MultiPoint.class)) {
+            parent = BasicFeatureTypes.POINT;
+        } else if ((geomBinding == Polygon.class)
+                || (geomBinding == MultiPolygon.class)) {
+            parent = BasicFeatureTypes.POLYGON;
+        } else if ((geomBinding == LineString.class)
+                || (geomBinding == MultiLineString.class)) {
+            parent = BasicFeatureTypes.LINE;
+        }
+
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        builder.setName(namespace,shpFiles.getTypeName());
+        builder.setAbstract(false);
+        if (parent != null) {
+            builder.setSuperType(parent);
+        }
+        builder.addAll(attributes);
+        builder.setDefaultGeometry(geomDescriptor.getLocalName());
+
+        return builder.buildSimpleFeatureType();
     }
 
     /**
@@ -729,7 +624,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             final ShapefileAttributeReader reader, final SimpleFeatureType readerSchema, final Hints hints)
             throws SchemaException {
 
-        return DefaultSimpleFeatureReader.create(reader, new DefaultFeatureIDReader(typeName), readerSchema, hints);
+        return ShapefileFeatureReader.create(reader, new DefaultFeatureIDReader(typeName), readerSchema, hints);
     }
 
     /**
@@ -791,6 +686,35 @@ public class ShapefileDataStore extends AbstractDataStore{
             // could happen if shx file does not exist remotely
             return null;
         }
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //Fallback on iterative reader and writer //////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+            final Hints hints) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures, hints);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        handleUpdateWithFeatureWriter(groupName, filter, values);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
+        handleRemoveWithFeatureWriter(groupName, filter);
     }
 
 }

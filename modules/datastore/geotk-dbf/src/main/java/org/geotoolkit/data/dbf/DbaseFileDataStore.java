@@ -48,6 +48,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -99,16 +100,10 @@ public class DbaseFileDataStore extends AbstractDataStore{
             raf = new RandomAccessFile(file, "r");
             final DbaseFileReader reader = new DbaseFileReader(raf.getChannel(), true, null);
             final DbaseFileHeader header = reader.getHeader();
-            final int nbFields = header.getNumFields();
-
-            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             final String defaultNs = getDefaultNamespace();
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
             ftb.setName(defaultNs, name);
-            for(int i=0; i<nbFields; i++){
-                final String name = header.getFieldName(i);
-                final Class type = header.getFieldClass(i);
-                ftb.add(new DefaultName(defaultNs, name), type);
-            }
+            ftb.addAll(header.createDescriptors(defaultNs));
             return ftb.buildSimpleFeatureType();
         }catch(IOException ex){
             throw new DataStoreException(ex);
