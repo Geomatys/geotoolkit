@@ -73,17 +73,20 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
 
     @Override
     public Object visit(Style style, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO
+        return style;
     }
 
     @Override
     public Object visit(FeatureTypeStyle fts, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO
+        return fts;
     }
 
     @Override
     public Object visit(Rule rule, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO
+        return rule;
     }
 
     @Override
@@ -197,12 +200,12 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
 
     @Override
     public Object visit(ExtensionSymbolizer es, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return es;
     }
 
     @Override
     public Object visit(Description d, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return d;
     }
 
     @Override
@@ -351,7 +354,7 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
 
     @Override
     public Object visit(GraphicLegend gl, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return gl;
     }
 
     @Override
@@ -362,32 +365,32 @@ public class PrepareStyleVisitor extends PrepareFilterVisitor implements StyleVi
 
     @Override
     public Object visit(ColorMap cm, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return cm;
     }
 
     @Override
     public Object visit(ColorReplacement cr, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return cr;
     }
 
     @Override
     public Object visit(ContrastEnhancement ce, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return ce;
     }
 
     @Override
     public Object visit(ChannelSelection cs, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return cs;
     }
 
     @Override
     public Object visit(SelectedChannelType sct, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return sct;
     }
 
     @Override
     public Object visit(ShadedRelief sr, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return sr;
     }
     
 }
