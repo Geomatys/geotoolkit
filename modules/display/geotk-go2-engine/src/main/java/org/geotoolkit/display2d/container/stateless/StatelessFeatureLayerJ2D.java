@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import java.util.logging.Logger;
 import org.opengis.style.Rule;
 import java.awt.RenderingHints;
 import java.io.IOException;
@@ -70,13 +69,11 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
-
-import org.geotoolkit.style.DefaultMutableRule;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
+
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -181,21 +178,6 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     @Override
     protected FeatureId id(Object candidate) {
         return ((Feature)candidate).getIdentifier();
-    }
-
-    @Override
-    protected Collection<?> getIdFilteredCollection(final Collection<?> features,
-            final RenderingContext2D renderingContext, final StatefullContextParams params,
-            final Set<FeatureId> ids) throws PortrayalException {
-
-        final QueryBuilder qb = new QueryBuilder(currentQuery);
-        qb.setFilter(new DefaultId(ids));
-        final Query query = qb.buildQuery();
-        try {
-            return ((FeatureCollection) features).subCollection(query);
-        } catch (DataStoreException ex) {
-            throw new PortrayalException(ex);
-        }
     }
 
     @Override

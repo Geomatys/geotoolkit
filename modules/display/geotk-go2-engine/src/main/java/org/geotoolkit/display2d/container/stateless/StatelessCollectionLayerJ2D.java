@@ -24,10 +24,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.AbstractCollection;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +53,6 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.type.FeatureType;
@@ -65,7 +61,6 @@ import org.opengis.feature.type.ComplexType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
@@ -86,12 +81,12 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     private static final Literal ID_EXPRESSION = FactoryFinder.getFilterFactory(null).literal("@id");
 
     protected final StatefullContextParams params;
-
+    
     public StatelessCollectionLayerJ2D(final J2DCanvas canvas, final T layer){
         super(canvas, layer);
         params = new StatefullContextParams(canvas,layer);
     }
-
+    
     /**
      * {@inheritDoc }
      */
@@ -311,9 +306,13 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
     protected final void renderByObjectOrder(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules,
             final StatefullContextParams params) throws PortrayalException{
-        final CanvasMonitor monitor = context.getMonitor();
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
-
+        renderByObjectOrder(statefullIterator, context, rules);
+    }
+    
+    protected final void renderByObjectOrder(final RenderingIterator statefullIterator,
+            final RenderingContext2D context, final CachedRule[] rules) throws PortrayalException{
+        final CanvasMonitor monitor = context.getMonitor();
 
         //prepare the renderers
         final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
@@ -366,6 +365,8 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             }
         }
     }
+    
+    
 
     /**
      * render by symbol order.
@@ -389,117 +390,27 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             }
             return;
         }
-
-        //Always use Parallale buffer, otherwise collection with no valid ids will fail
-        //to render properly.
-        //final Boolean parallal = (Boolean)context.getCanvas().getRenderingHint(GO2Hints.KEY_PARALLAL_BUFFER);
-        //if(parallal != null && parallal){
-//            renderBySymbolParallal(candidates, context, rules, params);
-            renderBySymbolIndexInRule(candidates,context,rules,params);
-        //}else{
-        //    renderBySymbolStream(candidates, context, rules, params);
-        //}
-    }
-
-    /**
-     * Render by symbol order in multiple passes. consume less memory but require
-     * more time.
-     */
-    private void renderBySymbolStream(final Collection<?> candidates,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
-            throws PortrayalException {
-        final CanvasMonitor monitor = context.getMonitor();
-
-        //prepare the renderers
-        final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
-
-        //store the ids of the features painted during the first round ---------
-        final Set<FeatureId> painted;
-        if(renderers.elseRuleIndex >= renderers.rules.length){
-            painted = new HashSet<FeatureId>();
-        }else{
-            //no need to store ids since we don't have any else rule
-            painted = null;
-        }
-
-        //render the main rules ------------------------------------------------
-        for (int i = 0; i < renderers.elseRuleIndex; i++) {
-            if(monitor.stopRequested()) return;
-            final CachedRule rule = renderers.rules[i];
-            final Filter rulefilter = rule.getFilter();
-
-            //starting from second path and after, we ask for features knowing there ids
-            //it should be much more efficient.
-            final Set<FeatureId> ruleFeatures = new HashSet<FeatureId>();
-            Collection<?> col = candidates;
-
-            //encapsulate interator
-            for (int k=0,n=renderers.renderers[i].length; k<n;k++){
-
-                final SymbolizerRenderer renderer = renderers.renderers[i][k];
-                if(monitor.stopRequested()) return;
-
-                if(k==1){
-                    //we have collected all ids from the last round, let's optimize the query
-                    col = getIdFilteredCollection(col, context, params, ruleFeatures);
-                }
-
-                RenderingIterator ite = getIterator(col, context, params);
-                if(k==0){
-                    //first pass, we must filter using the rule filter
-                    //next passes have a ids filter, so no need to filter anymore
-                    ite = getFilteredIterator(ite, rulefilter, (n>1)?ruleFeatures:null);
-                }
-
-                try {
-                    renderer.portray(ite);
-                } finally {
-                    try {
-                        ite.close();
-                    } catch (IOException ex) {
-                        getLogger().log(Level.WARNING, null, ex);
-                    }
-                }
-            }
-
-            if(painted!=null){ painted.addAll(ruleFeatures); }
-        }
-
-        //render the else rules ------------------------------------------------
-        for (int i = renderers.elseRuleIndex; i < renderers.rules.length; i++) {
-            if(monitor.stopRequested()) return;
-            final CachedRule rule = renderers.rules[i];
-            final Filter rulefilter = rule.getFilter();
-
-            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                if(monitor.stopRequested()) return;
-                final RenderingIterator ite = getIterator(candidates, context, params);
-                try {
-                    while (ite.hasNext()) {
-                        if(monitor.stopRequested()) return;
-                        final ProjectedObject pf = ite.next();
-                        final Object f = pf.getCandidate();
-                        if (!contain(painted, f) && (rulefilter == null || rulefilter.evaluate(f))) {
-                            renderer.portray(pf);
-                        }
-                    }
-                } finally {
-                    try {
-                        ite.close();
-                    } catch (IOException ex) {
-                        getLogger().log(Level.WARNING, null, ex);
-                    }
-                }
-            }
-        }
+        
+        renderBySymbolIndexInRule(candidates,context,rules,params);
     }
 
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    private void renderBySymbolIndexInRule(final Collection<?> candidates,
+    protected void renderBySymbolIndexInRule(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
+            throws PortrayalException {
+        final RenderingIterator statefullIterator = getIterator(candidates, context, params);
+        renderBySymbolIndexInRule(statefullIterator, context, rules);
+    }
+    
+    /**
+     * Render by symbol index order in a single pass, this results in creating a buffered image
+     * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
+     */
+    protected void renderBySymbolIndexInRule(final RenderingIterator statefullIterator,
+            final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
         final CanvasMonitor monitor = context.getMonitor();
@@ -552,9 +463,6 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
             }
         }
         
-        
-        
-        final RenderingIterator statefullIterator = getIterator(candidates, context, params);
         try{
             while(statefullIterator.hasNext()){
                 if(monitor.stopRequested()) return;
@@ -609,158 +517,6 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         }
     }
     
-    
-    /**
-     * Render by symbol order in a single pass, this results in creating a buffered image
-     * for each symbol, which may be expensive in memory but efficient in performance.
-     */
-    private void renderBySymbolParallal(final Collection<?> candidates,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
-            throws PortrayalException {
-
-        final CanvasMonitor monitor = context.getMonitor();
-
-        final int elseRuleIndex = StatefullCachedRule.sortByElseRule(rules);
-
-
-        //store the ids of the features painted during the first round -----------------------------
-        final BufferedImage originalBuffer = (BufferedImage) context.getCanvas().getSnapShot();
-        final ColorModel cm = ColorModel.getRGBdefault();
-        final SampleModel sm = cm.createCompatibleSampleModel(originalBuffer.getWidth(), originalBuffer.getHeight());
-        final RenderingContext2D originalContext = context;
-
-        final Image[][] images = new Image[rules.length][0];
-        final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
-        final boolean[][] used = new boolean[rules.length][0];
-
-        for(int i=0;i<rules.length;i++){
-            final CachedRule cr = rules[i];
-            final CachedSymbolizer[] css = cr.symbolizers();
-            images[i] = new Image[css.length];
-            //renderers[i] = new SymbolizerRenderer[css.length];
-            used[i] = new boolean[css.length];
-            Arrays.fill(used[i], false);
-        }
-
-        final RenderingIterator statefullIterator = getIterator(candidates, context, params);
-
-        try{
-            while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
-                final ProjectedObject projectedCandidate = statefullIterator.next();
-
-                boolean painted = false;
-                for(int i=0; i<elseRuleIndex; i++){
-                    final CachedRule rule = rules[i];
-                    final Filter ruleFilter = rule.getFilter();
-                    //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
-                        painted = true;
-                        SymbolizerRenderer[] rss = renderers[i];
-
-                        //if not created yet --------------
-                        if(rss.length==0){
-                            final CachedSymbolizer[] css = rule.symbolizers();
-                            renderers[i] = new SymbolizerRenderer[css.length];
-                            for(int k=0; k<css.length; k++){
-                                final CachedSymbolizer cs = css[k];
-                                if(cs.getSource() instanceof TextSymbolizer){
-                                    images[i][k] = originalBuffer;
-                                    renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                }else{
-                                    if(i==0 && k==0){
-                                        //first buffer is the current one
-                                        images[i][k] = originalBuffer ;
-                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                    }else{
-                                        final BufferedImage img = createBufferedImage(cm, sm);
-                                        final RenderingContext2D ctx = context.create(img.createGraphics());
-                                        images[i][k] = img ;
-                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
-                                    }
-                                }
-                            }
-                            rss = renderers[i];
-                        }
-
-                        for (int k=0;k<rss.length;k++) {
-                            final SymbolizerRenderer renderer = rss[k];
-                            used[i][k] = true;
-                            renderer.portray(projectedCandidate);
-                        }
-                    }
-                }
-
-                //the feature hasn't been painted, paint it with the 'else' rules
-                if(!painted){
-                    for(int i=elseRuleIndex; i<rules.length; i++){
-                        final CachedRule rule = rules[i];
-                        final Filter ruleFilter = rule.getFilter();
-                        //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedCandidate.getCandidate())) {
-                            SymbolizerRenderer[] rss = renderers[i];
-
-                            //if not created yet --------------
-                            if(rss.length==0){
-                                final CachedSymbolizer[] css = rule.symbolizers();
-                                renderers[i] = new SymbolizerRenderer[css.length];
-                                for(int k=0; k<css.length; k++){
-                                    final CachedSymbolizer cs = css[k];
-                                    if(cs.getSource() instanceof TextSymbolizer){
-                                        images[i][k] = originalBuffer;
-                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                    }else{
-                                        if(i==0 && k==0){
-                                            //first buffer is the current one
-                                            images[i][k] = originalBuffer ;
-                                            renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                        }else{
-                                            final BufferedImage img = createBufferedImage(cm, sm);
-                                            final RenderingContext2D ctx = context.create(img.createGraphics());
-                                            images[i][k] = img ;
-                                            renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
-                                        }
-                                    }
-                                }
-                                rss = renderers[i];
-                            }
-
-
-
-                            for (int k=0;k<rss.length;k++) {
-                                final SymbolizerRenderer renderer = rss[k];
-                                used[i][k] = true;
-                                renderer.portray(projectedCandidate);
-                            }
-                        }
-                    }
-                }
-            }
-        }finally{
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
-        }
-
-        //merge images --------------------------
-        originalContext.switchToDisplayCRS();
-        final Graphics2D g = originalContext.getGraphics();
-        g.setComposite(ALPHA_COMPOSITE_1F);
-        for(int i=0;i<images.length;i++){
-            for(int k=0,n=images[i].length; k<n; k++){
-                final Image img = images[i][k];
-                if(img != originalBuffer){
-                    if(used[i][k]){
-                        g.drawImage(img, 0, 0, null);
-                    }
-                    recycleBufferedImage((BufferedImage)img);
-                }
-            }
-        }
-    }
-
     protected boolean contain(final Set<FeatureId> ids, final Object candidate){
         return ids.contains(id(candidate));
     }
@@ -774,28 +530,6 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         }
     }
 
-    private void paintObject(final Object object, final Style style, 
-            final RenderingContext2D context) throws PortrayalException{
-        for(final FeatureTypeStyle fts : style.featureTypeStyles()){
-            for(final Rule rule : fts.rules()){
-                final Filter filter = rule.getFilter();
-                if(filter == null || filter.evaluate(object)){
-                    for(final Symbolizer symbolizer : rule.symbolizers()){
-                        paintObject(object, symbolizer, context);
-                    }
-                }
-            }
-        }
-    }
-
-    private void paintObject(final Object object, final Symbolizer symbolizer, 
-            final RenderingContext2D context) throws PortrayalException{
-        final CachedSymbolizer cached = GO2Utilities.getCached(symbolizer,null);
-        final SymbolizerRenderer renderer = cached.getRenderer().createRenderer(cached, context);
-        final ProjectedObject projected = new DefaultProjectedObject(params, object);
-        renderer.portray(projected);
-    }
-
     /**
      * {@inheritDoc }
      */
@@ -805,23 +539,11 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         return graphics;
     }
 
-
-    protected Collection<?> getIdFilteredCollection(final Collection<?> features,
-            final RenderingContext2D renderingContext, final StatefullContextParams params,
-            final Set<FeatureId> ids) throws PortrayalException{
-        return new FilteredCollection(features,new DefaultId(ids));
-    }
-
     protected RenderingIterator getIterator(final Collection<?> features,
             final RenderingContext2D renderingContext, final StatefullContextParams params){
         final Iterator<?> iterator = features.iterator();
         final DefaultProjectedObject projectedFeature = new DefaultProjectedObject(params);
         return new GraphicIterator(iterator, projectedFeature);
-    }
-
-    protected RenderingIterator getFilteredIterator(final RenderingIterator ite,
-            final Filter filter, final Set<FeatureId> ids){
-        return new FilterGraphicIterator(ite, filter, ids);
     }
 
     protected static interface RenderingIterator extends Iterator<ProjectedObject>,Closeable{}
@@ -845,136 +567,6 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         public ProjectedObject next() {
             projected.setCandidate(ite.next());
             return projected;
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public void close() throws IOException {
-            if(ite instanceof Closeable){
-                ((Closeable)ite).close();
-            }
-        }
-
-    }
-
-    protected class FilterGraphicIterator implements RenderingIterator{
-
-        private RenderingIterator ite;
-        private Filter filter;
-        private ProjectedObject next = null;
-        private final Set<FeatureId> ids;
-
-        public FilterGraphicIterator(final RenderingIterator ite, final Filter filter, final Set<FeatureId> ids) {
-            this.ite = ite;
-            this.filter = (filter==null)?Filter.INCLUDE : filter ;
-            this.ids = ids;
-        }
-
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return next != null;
-        }
-
-        @Override
-        public ProjectedObject next() {
-            //we know the hasNext has been called before
-            final ProjectedObject t = next;
-            next = null;
-            return t;
-        }
-
-        private void findNext(){
-            if(next != null){
-                return;
-            }
-
-            while(ite.hasNext()){
-                final ProjectedObject candidate = ite.next();
-                final Object f = candidate.getCandidate();
-                if(filter.evaluate(f)){
-                    next = candidate;
-                    if(ids!=null){ids.add(id(f));}
-                    return;
-                }
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public void close() throws IOException {
-            ite.close();
-        }
-
-    }
-
-    private static class FilteredCollection extends AbstractCollection{
-
-        private final Collection wrapped;
-        private final Filter filter;
-
-        public FilteredCollection(final Collection wrapped,final Filter filter) {
-            this.wrapped = wrapped;
-            this.filter = filter;
-        }
-
-        @Override
-        public Iterator iterator() {
-            return new FilteredIterator(wrapped.iterator(), filter);
-        }
-
-        @Override
-        public int size() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-    }
-
-    private static class FilteredIterator implements Iterator,Closeable{
-
-        private Iterator ite;
-        private Filter filter;
-        private Object next = null;
-
-        public FilteredIterator(Iterator ite, Filter filter) {
-            this.ite = ite;
-            this.filter = filter;
-        }
-
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return next != null;
-        }
-
-        @Override
-        public Object next() {
-            //we know the hasNext has been called before
-            final Object t = next;
-            next = null;
-            return t;
-        }
-
-        private void findNext(){
-            if(next != null){
-                return;
-            }
-
-            while(ite.hasNext()){
-                final Object candidate = ite.next();
-                if(filter.evaluate(candidate)){
-                    next = candidate;
-                    return;
-                }
-            }
         }
 
         @Override
