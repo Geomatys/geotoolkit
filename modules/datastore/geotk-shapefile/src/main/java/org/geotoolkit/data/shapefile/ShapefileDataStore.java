@@ -300,7 +300,9 @@ public class ShapefileDataStore extends AbstractDataStore{
                 final SimpleFeatureType newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
                
-                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false,read3D,resample), newSchema,hints);
+                final ShapefileAttributeReader attReader = getAttributesReader(false,read3D,resample);
+                final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
+                FeatureReader reader = ShapefileFeatureReader.create(attReader, idReader, newSchema, hints);
                 final QueryBuilder remaining = new QueryBuilder(query.getTypeName());
                 remaining.setProperties(query.getPropertyNames());
                 remaining.setFilter(query.getFilter());
@@ -321,7 +323,9 @@ public class ShapefileDataStore extends AbstractDataStore{
                     newSchema = schema;
                 }
 
-                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(true,read3D,resample), newSchema, hints);
+                final ShapefileAttributeReader attReader = getAttributesReader(true,read3D,resample);
+                final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName);
+                FeatureReader reader = ShapefileFeatureReader.create(attReader,idReader, newSchema, hints);
                 QueryBuilder query2 = new QueryBuilder(query.getTypeName());
                 query2.setProperties(query.getPropertyNames());
                 query2.setFilter(query.getFilter());
@@ -346,10 +350,10 @@ public class ShapefileDataStore extends AbstractDataStore{
         typeCheck(typeName);
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
+        final FeatureIDReader idReader = new DefaultFeatureIDReader(typeName.getLocalPart());
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
         try {
-            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema,null);
-
+            featureReader = ShapefileFeatureReader.create(attReader,idReader, schema, hints);
         } catch (Exception e) {
             featureReader = GenericEmptyFeatureIterator.createReader(schema);
         }
@@ -620,13 +624,6 @@ public class ShapefileDataStore extends AbstractDataStore{
         return new ShapefileAttributeReader(atts, openShapeReader(read3D,resample), openDbfReader());
     }
 
-    protected FeatureReader createFeatureReader(final String typeName,
-            final ShapefileAttributeReader reader, final SimpleFeatureType readerSchema, final Hints hints)
-            throws SchemaException {
-
-        return ShapefileFeatureReader.create(reader, new DefaultFeatureIDReader(typeName), readerSchema, hints);
-    }
-
     /**
      * Convenience method for opening a ShapefileReader.
      *
@@ -664,7 +661,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             return null;
         }
     }
-
+    
     /**
      * Convenience method for opening an index file.
      *

@@ -349,6 +349,45 @@ public class DbaseFileReader {
     }
 
     /**
+     * If this method return true, then the index navigation (goto method) can be used.
+     * @return true if source is a FileChannel
+     */
+    public boolean IsRandomAccessEnabled() {
+        return this.randomAccessEnabled;
+    }
+    
+    /**
+     * Navigate to the given record index.
+     * 
+     * @param recno
+     * @throws IOException
+     * @throws UnsupportedOperationException 
+     */
+    public void goTo(final int recno) throws IOException, UnsupportedOperationException {
+
+        if (randomAccessEnabled) {
+            final long newPosition = header.getHeaderLength()
+                    + header.getRecordLength() * (long)(recno - 1);
+
+            if (useMemoryMappedBuffer) {
+                buffer.position((int)newPosition);
+            } else {
+                final FileChannel fc = (FileChannel) channel;
+                fc.position(newPosition);
+                buffer.limit(buffer.capacity());
+                buffer.position(0);
+                fill(buffer, channel);
+                buffer.position(0);
+
+                this.currentOffset = newPosition;
+            }
+        } else {
+            throw new UnsupportedOperationException("Random access not enabled!");
+        }
+
+    }
+    
+    /**
      * Copy the next entry into the array.
      * 
      * @param entry

@@ -70,7 +70,7 @@ public class FidQueryTest extends FIDTestCase {
         super.setUp();
 
         final URL url = backshp.toURI().toURL();
-        ds = new IndexedShapefileDataStore(url, null, false, true, IndexType.QIX);
+        ds = new IndexedShapefileDataStore(url, null, false, true, IndexType.QIX,null);
         numFeatures = 0;
         name = ds.getNames().iterator().next();
         session = ds.createSession(true);

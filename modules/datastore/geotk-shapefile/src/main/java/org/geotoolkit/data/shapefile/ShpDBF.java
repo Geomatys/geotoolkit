@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import org.geotoolkit.data.dbf.DbaseFileReader;
-import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 
 /**
  * Wrap a dbf reader/writer.
@@ -36,13 +35,6 @@ public class ShpDBF {
         final ShpDBF wrap = new ShpDBF();
         final ReadableByteChannel rbc = files.getReadChannel(ShpFileType.DBF, wrap);
         final DbaseFileReader reader = new DbaseFileReader(rbc, memoryMapped, set);
-        return reader;
-    }
-
-    public static IndexedDbaseFileReader indexed(final ShpFiles files, final boolean memoryMapped, final Charset set) throws IOException{
-        final ShpDBF wrap = new ShpDBF();
-        final ReadableByteChannel rbc = files.getReadChannel(ShpFileType.DBF, wrap);
-        final IndexedDbaseFileReader reader = new IndexedDbaseFileReader(rbc, memoryMapped, set);
         return reader;
     }
 

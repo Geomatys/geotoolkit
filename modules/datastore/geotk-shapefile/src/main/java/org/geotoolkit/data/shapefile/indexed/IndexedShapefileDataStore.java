@@ -47,7 +47,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
@@ -126,7 +126,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      */
     public IndexedShapefileDataStore(final URL url)
             throws MalformedURLException,DataStoreException {
-        this(url, null, false, true, IndexType.QIX);
+        this(url, null, false, true, IndexType.QIX,null);
     }
 
     /**
@@ -137,7 +137,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      */
     public IndexedShapefileDataStore(final URL url, final String namespace)
             throws MalformedURLException,DataStoreException {
-        this(url, namespace, false, true, IndexType.QIX);
+        this(url, namespace, false, true, IndexType.QIX,null);
     }
 
     /**
@@ -149,23 +149,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      */
     public IndexedShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer,
             final boolean createIndex) throws MalformedURLException,DataStoreException {
-        this(url, null, useMemoryMappedBuffer, createIndex, IndexType.QIX);
-    }
-
-    /**
-     * Creates a new instance of ShapefileDataStore.
-     * 
-     * @param url The URL of the shp file to use for this DataSource.
-     * @param namespace DOCUMENT ME!
-     * @param useMemoryMappedBuffer enable/disable memory mapping of files
-     * @param createIndex enable/disable automatic index creation if needed
-     * @param treeType The type of index to use
-     * 
-     */
-    public IndexedShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
-            final boolean createIndex, final IndexType treeType)
-            throws MalformedURLException,DataStoreException {
-        this(url, namespace, useMemoryMappedBuffer, createIndex, treeType, DEFAULT_STRING_CHARSET);
+        this(url, null, useMemoryMappedBuffer, createIndex, IndexType.QIX,null);
     }
 
     /**
@@ -415,7 +399,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
         }
 
-        final IndexedDbaseFileReader dbfR;
+        final DbaseFileReader dbfR;
         //check if we need to open the dbf reader, no need when only geometry
         if(properties.size() == 1 && properties.get(0) instanceof GeometryDescriptor){
             dbfR = null;
@@ -455,7 +439,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         final LazySearchCollection<ShpData> col = (LazySearchCollection) goodCollec;
         
         //check if we need to open the dbf reader, no need when only geometry
-        final IndexedDbaseFileReader dbfR;
+        final DbaseFileReader dbfR;
         if(properties.size() == 1 && properties.get(0) instanceof GeometryDescriptor){
             dbfR = null;
         }else{
@@ -644,7 +628,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws DataStoreException If an error occurs during creation.
      */
     @Override
-    protected IndexedDbaseFileReader openDbfReader() throws DataStoreException {
+    protected DbaseFileReader openDbfReader() throws DataStoreException {
         if (shpFiles.get(DBF) == null) {
             return null;
         }
@@ -653,7 +637,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             return null;
         }
         try {
-            return ShpDBF.indexed(shpFiles, false, dbfCharset);
+            return ShpDBF.reader(shpFiles, false, dbfCharset);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

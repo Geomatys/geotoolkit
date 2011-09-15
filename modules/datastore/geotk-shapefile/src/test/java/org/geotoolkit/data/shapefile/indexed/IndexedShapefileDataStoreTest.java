@@ -191,7 +191,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private void testEnvelope(final FeatureCollection<SimpleFeature> features, final IndexType treeType)
             throws MalformedURLException, IOException, DataStoreException {
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(ShapeTestData
-                .url(STATE_POP), null, true, true, treeType);
+                .url(STATE_POP), null, true, true, treeType,null);
         Name typeName = s.getName();
         FeatureCollection<SimpleFeature> all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -212,7 +212,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
         file.deleteOnExit();
 
-        IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.QIX);
+        IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.QIX,null);
         FeatureIterator<SimpleFeature> indexIter = ds.getFeatureReader(QueryBuilder.all(ds.getName()));
 
         GeometryFactory factory = new GeometryFactory();
@@ -234,7 +234,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         indexIter.close();
 
         IndexedShapefileDataStore ds2 = new IndexedShapefileDataStore(url,
-                null, false, false, IndexType.NONE);
+                null, false, false, IndexType.NONE,null);
 
         Envelope newBounds = (JTSEnvelope2D)ds.getEnvelope(QueryBuilder.all(ds2.getNames().iterator().next()));
         double dx = newBounds.getWidth() / 4;
@@ -255,7 +255,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testFidFilter() throws Exception {
         File shpFile = copyShapefiles(STATE_POP);
         URL url = shpFile.toURL();
-        IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.NONE);
+        IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.NONE,null);
         FeatureCollection<SimpleFeature> features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
         FeatureIterator<SimpleFeature> indexIter = features.iterator();
 

@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import java.io.IOException;
 import java.util.List;
 
-import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
@@ -67,7 +67,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private int geomAttIndex = 0;
 
     public IndexedBBoxShapefileAttributeReader(final List<? extends PropertyDescriptor> properties,
-            final ShapefileReader shpReader, final IndexedDbaseFileReader dbfR, final CloseableCollection<ShpData> goodRec,
+            final ShapefileReader shpReader, final DbaseFileReader dbfR, final CloseableCollection<ShpData> goodRec,
             final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox, final boolean loose, final double[] estimateRes, final double[] minRes) {
         super(properties, shpReader, dbfR, goodRec, ite,estimateRes);
         this.bboxMinX = bbox.getMinX();

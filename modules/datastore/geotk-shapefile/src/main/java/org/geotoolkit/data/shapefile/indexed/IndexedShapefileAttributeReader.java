@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.geotoolkit.data.shapefile.ShapefileAttributeReader;
-import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
@@ -44,13 +44,13 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
     private ShpData next;
 
     public IndexedShapefileAttributeReader( final List<? extends PropertyDescriptor> attributes,
-            final ShapefileReader shp, final IndexedDbaseFileReader dbf, final CloseableCollection<ShpData> col,
+            final ShapefileReader shp, final DbaseFileReader dbf, final CloseableCollection<ShpData> col,
             final T goodRecs) {
         this(attributes, shp, dbf, col, goodRecs,null);
     }
 
     public IndexedShapefileAttributeReader( final List<? extends PropertyDescriptor> attributes,
-            final ShapefileReader shp, final IndexedDbaseFileReader dbf, final CloseableCollection<ShpData> col,
+            final ShapefileReader shp, final DbaseFileReader dbf, final CloseableCollection<ShpData> col,
             final T goodRecs, final double[] estimateRes) {
         this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs,estimateRes);
     }
@@ -65,7 +65,7 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
      * @param goodRecs Collection of good indexes that match the query.
      */
     public IndexedShapefileAttributeReader(final PropertyDescriptor[] atts,
-            final ShapefileReader shp, final IndexedDbaseFileReader dbf,
+            final ShapefileReader shp, final DbaseFileReader dbf,
             final CloseableCollection<ShpData> col, final T goodRecs, final double[] estimateRes) {
         super(atts, shp, dbf,estimateRes);
         this.goodRecs = goodRecs;
@@ -129,7 +129,7 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
 
     protected void moveToNextDbf() throws IOException{
         if (this.goodRecs != null && dbf != null) {
-            ((IndexedDbaseFileReader) dbf).goTo(this.recno);
+            dbf.goTo(this.recno);
             nextDbf();
         }
     }
