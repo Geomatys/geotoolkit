@@ -69,11 +69,32 @@
 
   <!-- ===========================================================
            Dependency Management
+           We must declare transitive dependencies explicitely,
+           otherwise they will not be included by geotk-unopkg.
        =========================================================== -->
   <dependencies>
     <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-metadata</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-xml-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

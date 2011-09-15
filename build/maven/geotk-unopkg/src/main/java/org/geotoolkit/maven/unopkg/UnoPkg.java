@@ -18,7 +18,6 @@
 package org.geotoolkit.maven.unopkg;
 
 import java.io.*;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -32,7 +31,7 @@ import org.apache.maven.artifact.Artifact;
 /**
  * Creates a <code>.oxt</code> package for <a href="http://www.openoffice.org">OpenOffice</a>
  * addins.
- * 
+ *
  * @goal unopkg
  * @phase package
  * @description Creates a .oxt package for OpenOffice addins
@@ -88,14 +87,6 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
     private String oxtName;
 
     /**
-     * Project dependencies.
-     *
-     * @parameter expression="${project.artifacts}"
-     * @required
-     */
-    private Set<Artifact> dependencies;
-
-    /**
      * The Maven project running this plugin.
      *
      * @parameter expression="${project}"
@@ -122,6 +113,9 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
      */
     @Override
     public boolean accept(final File directory, final String name) {
+        if (name.endsWith("-sources.jar") || name.endsWith("-javadoc.jar")) {
+            return false;
+        }
         return name.endsWith(".jar") || name.endsWith(".JAR") ||
                name.endsWith(".rdb") || name.endsWith(".RDB");
     }
@@ -172,20 +166,18 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
         /*
          * Copies the dependencies.
          */
-        if (dependencies != null) {
-            for (final Artifact artifact : dependencies) {
-                final String scope = artifact.getScope();
-                if (scope != null &&  // Maven 2.0.6 bug?
-                   (scope.equalsIgnoreCase(Artifact.SCOPE_COMPILE) ||
-                    scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
-                {
-                    final File file = artifact.getFile();
-                    String name = file.getName();
-                    if (artifact.getGroupId().startsWith(prefixGroup) && !name.startsWith(prefix)) {
-                        name = prefix + name;
-                    }
-                    copy(file, out, name);
+        for (final Artifact artifact : project.getDependencyArtifacts()) {
+            final String scope = artifact.getScope();
+            if (scope != null &&  // Maven 2.0.6 bug?
+               (scope.equalsIgnoreCase(Artifact.SCOPE_COMPILE) ||
+                scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
+            {
+                final File file = artifact.getFile();
+                String name = file.getName();
+                if (artifact.getGroupId().startsWith(prefixGroup) && !name.startsWith(prefix)) {
+                    name = prefix + name;
                 }
+                copy(file, out, name);
             }
         }
         out.close();
