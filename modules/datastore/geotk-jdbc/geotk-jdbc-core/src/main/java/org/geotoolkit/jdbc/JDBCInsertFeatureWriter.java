@@ -59,7 +59,11 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
             throws SQLException, IOException, DataStoreException {
         super( ps, cx, store, groupName, type, pkey, hints );
         last = new ResultSetFeature( rs, ps.getConnection() );
-        batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
+        if(hints == null){
+            batchInsert = Boolean.FALSE;
+        }else{
+            batchInsert = Boolean.FALSE.equals(hints.get(HintsPending.UPDATE_ID_ON_INSERT));
+        }
         toAdd = (batchInsert) ? new ArrayList<SimpleFeature>() : null;
     }
 

@@ -229,7 +229,7 @@ public abstract class AbstractDataStore implements DataStore{
 
     @Override
     public final List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return addFeatures(groupName,newFeatures,null);
+        return addFeatures(groupName,newFeatures,new Hints());
     }
 
     /**

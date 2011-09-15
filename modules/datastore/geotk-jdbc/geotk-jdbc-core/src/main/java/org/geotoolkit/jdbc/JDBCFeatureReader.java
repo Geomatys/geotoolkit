@@ -43,11 +43,9 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
-import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Property;
-import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -69,6 +67,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * Reader for jdbc datastore
  *
  * @author Justin Deoliveira, The Open Plannign Project.
+ * @author Johann Sorel (Geomatys)
  *
  * @module pending
  */
