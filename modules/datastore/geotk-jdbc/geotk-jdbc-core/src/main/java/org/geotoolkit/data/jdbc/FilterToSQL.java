@@ -464,6 +464,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
         //JD: hack for date values, we append some additional padding to handle
         // the matching of time/timezone/etc...
         final AttributeDescriptor ad = (AttributeDescriptor) att.evaluate( featureType );
+        final Class adClazz = ad.getType().getBinding();
         final String literal;
         if ( ad != null && Date.class.isAssignableFrom( ad.getType().getBinding() ) ) {
             literal = filter.getLiteral() + multi;
@@ -471,14 +472,25 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             literal = filter.getLiteral();
         }
 
-        final String pattern = DefaultPropertyIsLike.convertToSQL92(esc, multi, single, literal);
+        String pattern = DefaultPropertyIsLike.convertToSQL92(esc, multi, single, literal);
+        if (!matchCase){
+            pattern = pattern.toUpperCase();
+        }
 
         try {
             if (!matchCase){
                 out.write(" UPPER(");
             }
 
-            att.accept(this, extraData);
+            if(!CharSequence.class.isAssignableFrom(adClazz)){
+                //we must make a type cast
+                out.write(" CAST( ");
+                att.accept(this, extraData);
+                out.write(" AS VARCHAR)");
+            }else{
+                att.accept(this, extraData);
+            }
+            
 
             if (!matchCase){
                 out.write(") LIKE '");
