@@ -686,14 +686,24 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
             // as context to the tree walker.
             final AttributeDescriptor attType = (AttributeDescriptor)left.evaluate(featureType);
             if (attType != null) {
-                rightContext = attType.getType().getBinding();
+                leftContext = attType.getType().getBinding();
+            }
+        }else if(left instanceof Literal){
+            final Literal l = (Literal) left;
+            if(l.getValue() != null){
+                leftContext = l.getValue().getClass();
             }
         }
 
         if (right instanceof PropertyName) {
             final AttributeDescriptor attType = (AttributeDescriptor)right.evaluate(featureType);
             if (attType != null) {
-                leftContext = attType.getType().getBinding();
+                rightContext = attType.getType().getBinding();
+            }
+        }else if(right instanceof Literal){
+            final Literal l = (Literal) right;
+            if(l.getValue() != null){
+                rightContext = l.getValue().getClass();
             }
         }
 
@@ -729,6 +739,9 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                     }
                 };
                 absFuncLeft.accept(this, Arrays.asList(leftContext));
+                
+                out.write(" " + type + " ");
+                
                 final AbstractFunction absFuncRight = new AbstractFunction("lower", new Expression[]{right}, null) {
                     @Override
                     public Object evaluate(Object object) {

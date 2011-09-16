@@ -175,24 +175,34 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     public void testGetFeatureReaderFilterPrePost() throws IOException, Exception {
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+         FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
 
         FilterFactory factory = FactoryFinder.getFilterFactory(null);
         GeometryTypeFunction geomTypeExpr = new GeometryTypeFunction(factory.property(aname("geom")));
 
         PropertyIsEqualTo filter = factory.equals(geomTypeExpr, factory.literal("Polygon"));
         Query q = QueryBuilder.filtered(dataStore.getFeatureType(tname("road")).getName(),filter);
-        reader = dataStore.getFeatureReader(q);
 
-        assertNotNull(reader);
-        assertFalse(reader.hasNext());
-        reader.close();
+        try{
+            reader = dataStore.getFeatureReader(q);
+            assertNotNull(reader);
+            assertFalse(reader.hasNext());
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
 
-        filter = factory.equals(geomTypeExpr, factory.literal("LineString"));
+        filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false);
         q = QueryBuilder.filtered(dataStore.getFeatureType(tname("road")).getName(),filter);
-        reader = dataStore.getFeatureReader(q);
-        assertTrue(reader.hasNext());
-        reader.close();
+        try{
+            reader = dataStore.getFeatureReader(q);
+            assertTrue(reader.hasNext());
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
     }
 
     public void testGetFeatureReaderFilterPrePostWithNoGeometry()
@@ -210,17 +220,29 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         builder.setProperties(new String[]{aname("id")});
         Query query = builder.buildQuery();
 
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query);
-        // if the above statement didn't throw an exception, we're content
-        assertNotNull(reader);
-        reader.close();
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
+        try{
+             reader = dataStore.getFeatureReader(query);
+            // if the above statement didn't throw an exception, we're content
+            assertNotNull(reader);
+            reader.close();
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
 
-        filter = factory.equals(geomTypeExpr, factory.literal("LineString"));
+        filter = factory.equal(geomTypeExpr, factory.literal("LineString"),false);
         builder.setFilter(filter);
         query = builder.buildQuery();
-        reader = dataStore.getFeatureReader(query);
-        assertTrue(reader.hasNext());
-        reader.close();
+        try{
+            reader = dataStore.getFeatureReader(query);
+            assertTrue(reader.hasNext());
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
 
     }
 
@@ -229,7 +251,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         // this is here to avoid http://jira.codehaus.org/browse/GEOT-1069
         // to come up again
         SimpleFeatureType type = (SimpleFeatureType) dataStore.getFeatureType(tname("river"));
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property(aname("flow")), ff.literal(4.5));
@@ -241,12 +263,17 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         Query q = builder.buildQuery();
 
         // with GEOT-1069 an exception is thrown here
-        reader = dataStore.getFeatureReader(q);
-        assertTrue(reader.hasNext());
-        assertEquals(1, reader.getFeatureType().getAttributeCount());
-        reader.next();
-        assertFalse(reader.hasNext());
-        reader.close();
+        try{
+            reader = dataStore.getFeatureReader(q);
+            assertTrue(reader.hasNext());
+            assertEquals(1, reader.getFeatureType().getAttributeCount());
+            reader.next();
+            assertFalse(reader.hasNext());
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
     }
 
     public void testGetFeatureReaderFilterWithAttributesNotRequested2()
@@ -254,7 +281,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         // this is here to avoid http://jira.codehaus.org/browse/GEOT-1069
         // to come up again
         SimpleFeatureType type = (SimpleFeatureType) dataStore.getFeatureType(tname("river"));
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         CeilFunction ceil = new CeilFunction(ff.property(aname("flow")));
@@ -268,16 +295,21 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         Query q = builder.buildQuery();
 
         // with GEOT-1069 an exception is thrown here
-        reader = dataStore.getFeatureReader(q);
-        assertTrue(reader.hasNext());
-        assertEquals(1, reader.getFeatureType().getAttributeCount());
-        reader.next();
-        assertFalse(reader.hasNext());
-        reader.close();
+        try{
+            reader = dataStore.getFeatureReader(q);
+            assertTrue(reader.hasNext());
+            assertEquals(1, reader.getFeatureType().getAttributeCount());
+            reader.next();
+            assertFalse(reader.hasNext());
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
     }
 
     public void testGetFeatureInvalidFilter() throws Exception {
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader;
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = null;
 
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
@@ -291,10 +323,13 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         // make sure a complaint related to the invalid filter is thrown here
         try {
             reader = dataStore.getFeatureReader(q);
-            reader.close();
             fail("This query should have failed, it contains an invalid filter");
         } catch(Exception e) {
             // fine
+        }finally{
+            if(reader != null){
+                reader.close();
+            }
         }
     }
 
