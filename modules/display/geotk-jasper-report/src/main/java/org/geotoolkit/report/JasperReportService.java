@@ -17,12 +17,14 @@
 
 package org.geotoolkit.report;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ServiceLoader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.HashMap;
@@ -95,6 +97,12 @@ public final class JasperReportService extends Static {
             jasperDesign = JRXmlLoader.load((File)jrxml);
         }else if(jrxml instanceof InputStream){
             jasperDesign = JRXmlLoader.load((InputStream)jrxml);
+        }else if(jrxml instanceof URL){
+            try {
+                jasperDesign = JRXmlLoader.load( ((URL)jrxml).openStream() );
+            } catch (IOException ex) {
+                throw new JRException(ex);
+            }
         }else if(jrxml instanceof String){
             jasperDesign = JRXmlLoader.load((String)jrxml);
         }else{
