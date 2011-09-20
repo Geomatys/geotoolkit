@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.wms.xml.AbstractMetadataURL;
 import org.geotoolkit.wms.xml.AbstractURL;
 
 
@@ -42,7 +43,7 @@ import org.geotoolkit.wms.xml.AbstractURL;
     "onlineResource"
 })
 @XmlRootElement(name = "MetadataURL")
-public class MetadataURL extends AbstractURL {
+public class MetadataURL extends AbstractMetadataURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;
