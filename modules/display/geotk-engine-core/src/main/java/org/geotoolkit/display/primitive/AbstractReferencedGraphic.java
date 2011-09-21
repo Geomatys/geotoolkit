@@ -277,20 +277,24 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
     }
 
     @Override
-    public boolean intersects(final Envelope candidateEnvelope){
+    public boolean intersects(final Envelope candidate){
 
-        if(this.envelope.getCoordinateReferenceSystem().equals(candidateEnvelope.getCoordinateReferenceSystem())){
+        final GeneralEnvelope copy = new GeneralEnvelope(this.envelope);
+        copy.reduceToDomain(false);
+        
+        if(CRS.equalsIgnoreMetadata(copy.getCoordinateReferenceSystem(),
+                                    candidate.getCoordinateReferenceSystem())){
             //same crs for both envelope, we can directly try a contain.
-            return envelope.intersects(candidateEnvelope, true);            
+            return copy.intersects(candidate, true);            
         }else{
             //envelope have different projection, we need to reproject them
             //try reproject data envelope
             try {
                 final MathTransform trs = CRS.findMathTransform(
-                        this.envelope.getCoordinateReferenceSystem(), 
-                        candidateEnvelope.getCoordinateReferenceSystem(), true);
-                final GeneralEnvelope projEnv = CRS.transform(trs,this.envelope);
-                return projEnv.intersects(candidateEnvelope, true);
+                        copy.getCoordinateReferenceSystem(), 
+                        candidate.getCoordinateReferenceSystem(), true);
+                final GeneralEnvelope projEnv = CRS.transform(trs,copy);
+                return projEnv.intersects(candidate, true);
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, "",ex);
                 //we failed this way, this may happen since reprojection from one
@@ -304,11 +308,11 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
             //We could not reproject the envelope one way, try the other way
             try {
                 final MathTransform trs = CRS.findMathTransform(
-                        candidateEnvelope.getCoordinateReferenceSystem(),
-                        this.envelope.getCoordinateReferenceSystem(), 
+                        candidate.getCoordinateReferenceSystem(),
+                        copy.getCoordinateReferenceSystem(), 
                         true);
-                final GeneralEnvelope projEnv = CRS.transform(trs,candidateEnvelope);
-                return projEnv.intersects(this.envelope, true);
+                final GeneralEnvelope projEnv = CRS.transform(trs,candidate);
+                return projEnv.intersects(copy, true);
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, "",ex);
                 //we failed this way, this may happen since reprojection from one
