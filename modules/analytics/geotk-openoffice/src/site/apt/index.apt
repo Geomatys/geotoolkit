@@ -1,12 +1,14 @@
                              ------------------------------
-                                        Overview
+                                 OpenOffice.org add-in
                              ------------------------------
 
 
-OpenOffice add-in
+OpenOffice.org add-in
 
-  Provides some Geotk's fonctionalities as OpenOffice add-ins. For example, the add-in
-  provides coordinate operation services as formulas inside the Calc spreadsheet.
+  Implementation of the {{{http://www.geoapi.org/geoapi-openoffice/index.html}GeoAPI add-in for OpenOffice.org}}
+  using the Geotk library. This pure-java implementation supports all the formulas documented in the GeoAPI page,
+  plus some additional ones. For example, the add-in provides coordinate transformation services as formulas inside
+  the Calc spreadsheet.
 
   * {{{./fr/index.html}Installation and usage instructions (French)}}
 

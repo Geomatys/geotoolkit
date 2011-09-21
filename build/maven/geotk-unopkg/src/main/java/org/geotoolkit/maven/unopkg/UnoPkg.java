@@ -117,7 +117,9 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
             return false;
         }
         return name.endsWith(".jar") || name.endsWith(".JAR") ||
-               name.endsWith(".rdb") || name.endsWith(".RDB");
+               name.endsWith(".rdb") || name.endsWith(".RDB") ||
+               name.endsWith(".xml") || name.endsWith(".XML") |
+               name.endsWith(".png") || name.endsWith(".PNG");
     }
 
     /**

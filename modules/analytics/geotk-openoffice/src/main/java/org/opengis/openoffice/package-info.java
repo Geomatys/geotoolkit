@@ -17,14 +17,13 @@
  */
 
 /**
- * Geotk services made available to <A HREF="http://www.openoffice.org">OpenOffice</A> excluding the
- * services defined in the <A HREF="http://www.geoapi.org/geoapi-openoffice/index.html">GeoAPI-OpenOffice</A>
- * module.
+ * Services from the <A HREF="http://www.geoapi.org/geoapi-openoffice/index.html">GeoAPI-OpenOffice</A>
+ * module to be implemented by Geotk.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *
- * @since 3.09 (derived from 2.2)
+ * @since 3.20 (derived from 2.2)
  * @module
  */
-package org.geotoolkit.openoffice;
+package org.opengis.openoffice;

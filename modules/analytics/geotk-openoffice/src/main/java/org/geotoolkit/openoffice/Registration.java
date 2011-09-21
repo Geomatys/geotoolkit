@@ -19,21 +19,22 @@ package org.geotoolkit.openoffice;
 
 import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lang.XMultiServiceFactory;
+import com.sun.star.comp.loader.FactoryHelper;
 import com.sun.star.registry.XRegistryKey;
 
 
 /**
  * The registration of all formulas provided in this package.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.09
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 3.09 (derived from 2.2)
  * @module
  */
 public final class Registration {
     /**
-     * Do not allows instantiation of this class.
+     * Do not allow instantiation of this class.
      */
     private Registration() {
     }
@@ -48,16 +49,21 @@ public final class Registration {
      * @return  A factory for creating the component.
      */
     public static XSingleServiceFactory __getServiceFactory(
-                                        final String               implementation,
-                                        final XMultiServiceFactory factories,
-                                        final XRegistryKey         registry)
+            final String               implementation,
+            final XMultiServiceFactory factories,
+            final XRegistryKey         registry)
     {
-        XSingleServiceFactory factory;
-        factory = Referencing.__getServiceFactory(implementation, factories, registry);
-        if (factory == null) {
-            factory = Nature.__getServiceFactory(implementation, factories, registry);
+        if (implementation.equals(org.geotoolkit.openoffice.geoapi.Referencing.class.getName())) {
+            return FactoryHelper.getServiceFactory(org.geotoolkit.openoffice.geoapi.Referencing.class,
+                    org.geotoolkit.openoffice.geoapi.Referencing.__serviceName, factories, registry);
         }
-        return factory;
+        if (implementation.equals(Referencing.class.getName())) {
+            return FactoryHelper.getServiceFactory(Referencing.class, Referencing.__serviceName, factories, registry);
+        }
+        if (implementation.equals(Nature.class.getName())) {
+            return FactoryHelper.getServiceFactory(Nature.class, Nature.__serviceName, factories, registry);
+        }
+        return null;
     }
 
     /**
@@ -68,7 +74,20 @@ public final class Registration {
      * @return {@code true} if the operation succeeded.
      */
     public static boolean __writeRegistryServiceInfo(final XRegistryKey registry) {
-        return Referencing.__writeRegistryServiceInfo(registry) &&
-                    Nature.__writeRegistryServiceInfo(registry);
+        return register(org.geotoolkit.openoffice.geoapi.Referencing.class,
+                        org.geotoolkit.openoffice.geoapi.Referencing.__serviceName, registry)
+            && register(Referencing.class, Referencing.__serviceName, registry)
+            && register(Nature     .class, Nature.     __serviceName, registry);
+    }
+
+    /**
+     * Helper method for the above {@link #__writeRegistryServiceInfo} method.
+     */
+    private static boolean register(final Class<? extends Formulas> classe,
+            final String serviceName, final XRegistryKey registry)
+    {
+        final String cn = classe.getName();
+        return FactoryHelper.writeRegistryServiceInfo(cn, serviceName, registry)
+            && FactoryHelper.writeRegistryServiceInfo(cn, Formulas.ADDIN_SERVICE, registry);
     }
 }

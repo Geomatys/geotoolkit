@@ -1,0 +1,82 @@
+                           ----------------------------------------
+                           OpenOffice.org add-in build instructions
+                           ----------------------------------------
+
+OpenOffice.org add-in build instructions
+
+  All <<<XFoo>>> Java interfaces are generated from IDL files with the same name. As long as <<<XFoo>>>
+  Java/IDL interfaces are not modified, there is no need for the OpenOffice.org SDK. But if any <<<XFoo>>>
+  interface is modified, then the steps documented below must be done. The last step shall be executed on
+  the client machine (users can also use the "<Tools / Package manager>" menu from OpenOffice.org GUI).
+
+* Requirements
+
+  See the requirement section in the {{{http://www.geoapi.org/geoapi-openoffice/build.html}GeoAPI build page}}
+  for a list of required tools.
+
+* Build
+
+** Configuration
+
+  Replace <ooo-path> by the path to the OpenOffice.org installation directory. This directory
+  should contain the <<<program>>> and <<<ure-link>>> sub-directories. The OpenOffice.org SDK
+  shall be installed as a sub-directory of the OpenOffice.org root directory. If the name of
+  that SDK directory is different than <<<OpenOffice.org3.3_SDK>>>, then modify the
+  <<<OO_SDK_HOME>>> value below accordingly.
+
++-----------------------------------------------------------------------------------------------
+export OFFICE_BASE_HOME=ooo-path
+export OO_SDK_HOME=$OFFICE_BASE_HOME/OpenOffice.org3.3_SDK
+export PATH=$OFFICE_BASE_HOME/ure-link/bin:$OO_SDK_HOME/bin:$PATH
++-----------------------------------------------------------------------------------------------
+
+
+** Compiles the UNO <<<.urd>>> binary file
+
++-----------------------------------------------------------------------------------------------
+cd modules/analytics/geotk-openoffice/src/main/java
+idlc -C -cid -w -I $OO_SDK_HOME/idl org/opengis/openoffice/*.idl org/geotoolkit/openoffice/*.idl
++-----------------------------------------------------------------------------------------------
+
+
+** Compiles the UNO <<<.rdb>>> registry file
+
++-----------------------------------------------------------------------------------------------
+regmerge ../unopkg/geotk.rdb /UCR org/opengis/openoffice/*.urd org/geotoolkit/openoffice/*.urd
+rm org/opengis/openoffice/*.urd org/geotoolkit/openoffice/*.urd
+cd ../unopkg
++-----------------------------------------------------------------------------------------------
+
+
+** Creates the <<<.class>>> file for Java interfaces
+
++-----------------------------------------------------------------------------------------------
+javamaker -BUCR -nD geotk.rdb $OFFICE_BASE_HOME/ure-link/share/misc/types.rdb \
+    -Torg.opengis.openoffice.XReferencing \
+    -Torg.geotoolkit.openoffice.XReferencing \
+    -Torg.geotoolkit.openoffice.XNature
++-----------------------------------------------------------------------------------------------
+
+
+** Derives a <<<.java>>> source from the <<<.class>>> file
+
++-----------------------------------------------------------------------------------------------
+javap org.opengis.openoffice.XReferencing \
+   org.geotoolkit.openoffice.XReferencing org.geotoolkit.openoffice.XNature
++-----------------------------------------------------------------------------------------------
+
+
+** Build
+
++-----------------------------------------------------------------------------------------------
+cd ../../..
+mvn install
++-----------------------------------------------------------------------------------------------
+
+
+** deploy
+
++-----------------------------------------------------------------------------------------------
+cd target
+unopkg add geotk-3.x-SNAPSHOT.oxt --log-file log.txt
++-----------------------------------------------------------------------------------------------

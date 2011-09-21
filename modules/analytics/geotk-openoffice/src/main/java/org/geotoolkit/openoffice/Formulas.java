@@ -44,8 +44,8 @@ import org.geotoolkit.util.logging.Logging;
  * Base class for methods to export as formulas in the
  * <A HREF="http://www.openoffice.org">OpenOffice</A> spread sheet.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.09
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -56,6 +56,11 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * Used for date conversions as in {@link #toDate}.
      */
     protected static final long DAY_TO_MILLIS = 24*60*60*1000L;
+
+    /**
+     * The name of the provided service.
+     */
+    protected static final String ADDIN_SERVICE = "com.sun.star.sheet.AddIn";
 
     /**
      * Informations about exported methods.
@@ -81,7 +86,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
     /**
      * The logger, fetched when first needed.
      */
-    private transient Logger logger;
+    private static Logger logger;
 
     /**
      * Default constructor. Subclass constructors need to add entries in the {@link #methods} map.
@@ -99,14 +104,14 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
         this.locale = locale;
         javaLocale = null;
     }
-    
+
     /**
      * Returns the locale, which is used by this object.
      *
      * @return The current locale.
      */
     @Override
-    public Locale getLocale() {
+    public final Locale getLocale() {
         return locale;
     }
 
@@ -128,7 +133,29 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
         }
         return javaLocale;
     }
-    
+
+    /**
+     * Provides the supported service names of the implementation, including also
+     * indirect service names.
+     *
+     * @return Sequence of service names that are supported.
+     */
+    @Override
+    public final String[] getSupportedServiceNames() {
+        return new String[] {ADDIN_SERVICE, getServiceName()};
+    }
+
+    /**
+     * Tests whether the specified service is supported, i.e. implemented by the implementation.
+     *
+     * @param  name Name of service to be tested.
+     * @return {@code true} if the service is supported, {@code false} otherwise.
+     */
+    @Override
+    public final boolean supportsService(final String name) {
+        return name.equals(ADDIN_SERVICE) || name.equals(getServiceName());
+    }
+
     /**
      * The service name that can be used to create such an object by a factory.
      * This is defined as a field in the subclass with exactly the following signature:
@@ -148,12 +175,12 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @return Unique name of the implementation.
      */
     @Override
-    public String getImplementationName() {
+    public final String getImplementationName() {
         return getClass().getName();
     }
 
     /**
-     * Returns the programmatic name of the category the function belongs to. 
+     * Returns the programmatic name of the category the function belongs to.
      * The category name is used to group similar functions together. The programmatic
      * category name should always be in English, it is never shown to the user. It
      * is usually one of the names listed in {@code com.sun.star.sheet.XAddIn} interface.
@@ -162,20 +189,20 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @return The category name the specified function belongs to.
      */
     @Override
-    public String getProgrammaticCategoryName(final String function) {
+    public final String getProgrammaticCategoryName(final String function) {
         final MethodInfo info = methods.get(function);
         return (info != null) ? info.category : "Add-In";
     }
 
     /**
-     * Returns the user-visible name of the category the function belongs to. 
+     * Returns the user-visible name of the category the function belongs to.
      * This is used when category names are shown to the user.
      *
      * @param  function The exact name of a method within its interface.
      * @return The user-visible category name the specified function belongs to.
      */
     @Override
-    public String getDisplayCategoryName(final String function) {
+    public final String getDisplayCategoryName(final String function) {
         return getProgrammaticCategoryName(function);
     }
 
@@ -188,11 +215,11 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * Attention: The method name contains a spelling error. Due to compatibility
      * reasons the name cannot be changed.
      *
-     * @param  display The user-visible name of a function. 
+     * @param  display The user-visible name of a function.
      * @return The exact name of the method within its interface.
      */
     @Override
-    public String getProgrammaticFuntionName(final String display) {
+    public final String getProgrammaticFuntionName(final String display) {
         for (final Map.Entry<String,MethodInfo> entry : methods.entrySet()) {
             if (display.equals(entry.getValue().display)) {
                 return entry.getKey();
@@ -202,7 +229,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
     }
 
     /**
-     * Returns the user-visible function name for an internal name. 
+     * Returns the user-visible function name for an internal name.
      * The user-visible name of a function is the name shown to the user.
      * It may be translated to the {@linkplain #getLocale current language},
      * so it is never stored in files. It should be a single word and is used
@@ -212,7 +239,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @return The user-visible name of the specified function.
      */
     @Override
-    public String getDisplayFunctionName(final String function) {
+    public final String getDisplayFunctionName(final String function) {
         final MethodInfo info = methods.get(function);
         return (info != null) ? info.display : "";
     }
@@ -226,7 +253,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @return The description of the specified function.
      */
     @Override
-    public String getFunctionDescription(final String function) {
+    public final String getFunctionDescription(final String function) {
         final MethodInfo info = methods.get(function);
         return (info != null) ? info.description : "";
     }
@@ -241,7 +268,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @return The user-visible name of the specified argument.
      */
     @Override
-    public String getDisplayArgumentName(final String function, int argument) {
+    public final String getDisplayArgumentName(final String function, int argument) {
         final MethodInfo info = methods.get(function);
         if (info != null) {
             argument <<= 1;
@@ -263,7 +290,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @return The description of the specified argument.
      */
     @Override
-    public String getArgumentDescription(final String function, int argument) {
+    public final String getArgumentDescription(final String function, int argument) {
         final MethodInfo info = methods.get(function);
         if (info != null) {
             argument = (argument << 1) + 1;
@@ -281,7 +308,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      *
      * @param timezone The new timezone.
      */
-    protected void setTimeZone(final String timezone) {
+    protected final void setTimeZone(final String timezone) {
         final TimeZone tz = TimeZone.getTimeZone(timezone);
         if (calendar == null) {
             calendar = new GregorianCalendar(tz);
@@ -296,9 +323,9 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * as in {@link #toDate}.
      *
      * @param  xOptions Provided by OpenOffice.
-     * @return The spreedsheet epoch, always as a new Java Date object.
+     * @return The spreadsheet epoch, always as a new Java Date object.
      */
-    protected java.util.Date getEpoch(final XPropertySet xOptions) {
+    protected final java.util.Date getEpoch(final XPropertySet xOptions) {
         final Date date;
         try {
             date = (Date) AnyConverter.toObject(Date.class, xOptions.getPropertyValue("NullDate"));
@@ -323,7 +350,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @param  time The spreadsheet numerical value for a date, by default in the local timezone.
      * @return The date as a Java object.
      */
-    protected java.util.Date toDate(final XPropertySet xOptions, final double time) {
+    protected final java.util.Date toDate(final XPropertySet xOptions, final double time) {
         final java.util.Date date = getEpoch(xOptions);
         if (date != null) {
             date.setTime(date.getTime() + Math.round(time * DAY_TO_MILLIS));
@@ -339,7 +366,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @param  time The date as a Java object.
      * @return The spreadsheet numerical value for a date, by default in the local timezone.
      */
-    protected double toDouble(final XPropertySet xOptions, final java.util.Date time) {
+    protected final double toDouble(final XPropertySet xOptions, final java.util.Date time) {
         final java.util.Date epoch = getEpoch(xOptions);
         if (epoch != null) {
             return (time.getTime() - epoch.getTime()) / (double)DAY_TO_MILLIS;
@@ -351,9 +378,10 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
     /**
      * The string to returns when a formula don't have any value to return.
      *
+     * @return The string with a message for missing values.
      * @todo localize.
      */
-    static String emptyString() {
+    protected static String emptyString() {
         return "(none)";
     }
 
@@ -413,7 +441,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      * @param method    The method from which an exception occurred.
      * @param exception The exception.
      */
-    protected void reportException(final String method, final Throwable exception) {
+    protected final void reportException(final String method, final Throwable exception) {
         final Logger logger = getLogger();
         final LogRecord record = new LogRecord(Level.FINE, getLocalizedMessage(exception));
         record.setLoggerName      (logger.getName());
@@ -424,15 +452,13 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
     }
 
     /**
-     * Returns the logger to use for logging warnings. The default implementation returns the
-     * {@link org.geotoolkit.openoffice} logger. Subclasses should override this method if they
-     * want to use a different logger.
+     * Returns the logger to use for logging warnings.
      *
      * @return The logger to use.
      */
-    protected Logger getLogger() {
+    protected static synchronized Logger getLogger() {
         if (logger == null) {
-            logger = Logging.getLogger("org.geotoolkit.openoffice");
+            logger = Logging.getLogger(Formulas.class);
         }
         return logger;
     }

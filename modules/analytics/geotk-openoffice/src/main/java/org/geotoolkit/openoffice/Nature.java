@@ -17,10 +17,6 @@
  */
 package org.geotoolkit.openoffice;
 
-import com.sun.star.lang.XSingleServiceFactory;
-import com.sun.star.lang.XMultiServiceFactory;
-import com.sun.star.comp.loader.FactoryHelper;
-import com.sun.star.registry.XRegistryKey;
 import com.sun.star.beans.XPropertySet;
 
 import org.geotoolkit.nature.Calendar;
@@ -32,29 +28,18 @@ import org.geotoolkit.nature.SunRelativePosition;
  * Exports methods from the {@link org.geotoolkit.nature} package as
  * <A HREF="http://www.openoffice.org">OpenOffice</A> add-ins.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.09
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 3.09 (derived from 2.2)
  * @module
  */
 public final class Nature extends Formulas implements XNature {
     /**
-     * The name for the registration of this component.<BR>
+     * The name for the registration of this component.
      * <strong>NOTE:</strong> OpenOffice expects a field with exactly that name; do not rename!
      */
-    private static final String __serviceName = "org.geotoolkit.openoffice.Nature";
-
-    /**
-     * The name of the provided service.
-     */
-    private static final String ADDIN_SERVICE = "com.sun.star.sheet.AddIn";
-
-    /**
-     * The number of milliseconds in a day. Divide by this quantity for conversions from
-     * milliseconds to days.
-     */
-    private static final double DAY_TO_MILLIS = 24.0*60*60*1000;
+    static final String __serviceName = "org.geotoolkit.openoffice.Nature";
 
     /**
      * The calculator for sun relative position. Will be created only when first needed.
@@ -135,66 +120,11 @@ public final class Nature extends Formulas implements XNature {
     }
 
     /**
-     * Returns a factory for creating the service.
-     * This method is called by the {@code com.sun.star.comp.loader.JavaLoader}; do not rename!
-     *
-     * @param   implementation The name of the implementation for which a service is desired.
-     * @param   factories      The service manager to be used if needed.
-     * @param   registry       The registry key
-     * @return  A factory for creating the component.
-     */
-    public static XSingleServiceFactory __getServiceFactory(
-                                        final String               implementation,
-                                        final XMultiServiceFactory factories,
-                                        final XRegistryKey         registry)
-    {
-        if (implementation.equals(Nature.class.getName())) {
-            return FactoryHelper.getServiceFactory(Nature.class, __serviceName, factories, registry);
-        }
-        return null;
-    }
-
-    /**
-     * Writes the service information into the given registry key.
-     * This method is called by the {@code com.sun.star.comp.loader.JavaLoader}; do not rename!
-     *
-     * @param  registry     The registry key.
-     * @return {@code true} if the operation succeeded.
-     */
-    public static boolean __writeRegistryServiceInfo(final XRegistryKey registry) {
-        final String classname = Nature.class.getName();
-        return FactoryHelper.writeRegistryServiceInfo(classname, __serviceName, registry)
-            && FactoryHelper.writeRegistryServiceInfo(classname, ADDIN_SERVICE, registry);
-    }
-    
-    /**
      * The service name that can be used to create such an object by a factory.
      */
     @Override
     public String getServiceName() {
         return __serviceName;
-    }
-
-    /**
-     * Provides the supported service names of the implementation, including also
-     * indirect service names.
-     *
-     * @return Sequence of service names that are supported.
-     */
-    @Override
-    public String[] getSupportedServiceNames() {
-        return new String[] {ADDIN_SERVICE, __serviceName};
-    }
-
-    /**
-     * Tests whether the specified service is supported, i.e. implemented by the implementation.
-     *
-     * @param  name Name of service to be tested.
-     * @return {@code true} if the service is supported, {@code false} otherwise.
-     */
-    @Override
-    public boolean supportsService(final String name) {
-        return name.equals(ADDIN_SERVICE) || name.equals(__serviceName);
     }
 
     /**
@@ -227,7 +157,7 @@ public final class Nature extends Formulas implements XNature {
                               final double       longitude,
                               final double       time)
     {
-        return getSunRelativePosition(xOptions, latitude, longitude, time).getNoonTime() / DAY_TO_MILLIS;
+        return getSunRelativePosition(xOptions, latitude, longitude, time).getNoonTime() / (double) DAY_TO_MILLIS;
     }
 
     /**
