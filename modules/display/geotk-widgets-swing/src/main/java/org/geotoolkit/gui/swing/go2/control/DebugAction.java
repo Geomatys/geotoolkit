@@ -75,13 +75,10 @@ public class DebugAction extends AbstractMapAction {
         if (map == this.map) {
             return;
         }
-
         if (this.map != null) {
             this.map.removeDecoration(deco);
         }
-
-        this.map = map;
-        setEnabled(map != null);
+        super.setMap(map);
     }
 
     private static class DebugDecoration extends AbstractMapDecoration implements GraphicProbe.ProbeMonitor {
