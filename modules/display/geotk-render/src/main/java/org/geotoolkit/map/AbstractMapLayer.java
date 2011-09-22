@@ -249,6 +249,10 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
         for(LayerListener listener : lists){
             listener.styleChange(this, event);
         }
+        
+        //fire a property change for others
+        firePropertyChange(STYLE_PROPERTY, event, this.getStyle());
+        
     }
 
     //--------------------------------------------------------------------------
