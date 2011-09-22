@@ -174,6 +174,10 @@ public class JBankPanel extends javax.swing.JPanel implements PropertyPane{
         jsp.repaint();
     }
 
+    @Override
+    public boolean canHandle(Object target) {
+        return target instanceof MapLayer;
+    }
 
     @Override
     public void setTarget(final Object target) {

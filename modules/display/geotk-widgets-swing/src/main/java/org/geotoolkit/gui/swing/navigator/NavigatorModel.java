@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.navigator;
 
 import java.beans.PropertyChangeListener;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -28,6 +29,14 @@ public interface NavigatorModel {
 
     public static final String TRANSFORM_PROPERTY = "transform";
 
+    /**
+     * 
+     * @return the dimension as a crs on which this navigator apply
+     */
+    CoordinateReferenceSystem getCRS();
+    
+    void setCRS(final CoordinateReferenceSystem axis);
+    
     double getGraphicValueAt(double d);
 
     double getDimensionValueAt(double candidate);

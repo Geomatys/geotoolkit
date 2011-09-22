@@ -35,6 +35,7 @@ import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -51,7 +52,7 @@ import static java.awt.event.KeyEvent.*;
 public class JNavigator extends JPanel implements
         MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 
-    private final NavigatorModel model = new DoubleNavigatorModel();
+    private final NavigatorModel model = new DoubleNavigatorModel(null);
     private NavigatorRenderer renderer;
     private final JComponent graduation = new JComponent(){};
     private final JPanel bandsPan = new JPanel(new GridLayout(0, 1));
@@ -116,6 +117,10 @@ public class JNavigator extends JPanel implements
         bandsPan.repaint();
         revalidate();
         repaint();
+    }
+    
+    public List<JNavigatorBand> getBands(){
+        return Collections.unmodifiableList(bands);
     }
 
     public NavigatorModel getModel() {

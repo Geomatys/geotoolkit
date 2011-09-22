@@ -116,6 +116,11 @@ public class ContextGeneralPanel extends javax.swing.JPanel implements PropertyP
     }
 
     @Override
+    public boolean canHandle(Object target) {
+        return true;
+    }
+    
+    @Override
     public String getTitle() {
         return "General";
     }

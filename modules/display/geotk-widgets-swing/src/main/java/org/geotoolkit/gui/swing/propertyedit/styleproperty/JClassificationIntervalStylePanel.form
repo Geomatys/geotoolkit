@@ -17,12 +17,12 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
-          <Component id="jScrollPane1" alignment="0" pref="468" max="32767" attributes="0"/>
+          <Component id="jScrollPane1" alignment="0" pref="490" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <Component id="guiInvert" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiRemoveAll" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="251" max="32767" attributes="0"/>
+              <EmptySpace pref="253" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -94,7 +94,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="guiLblPalette" linkSize="2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="guiPalette" pref="275" max="32767" attributes="0"/>
+                              <Component id="guiPalette" pref="284" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="guiLblModel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>

@@ -25,6 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -38,11 +39,23 @@ public class DoubleNavigatorModel implements NavigatorModel{
      */
     protected final PropertyChangeSupport propertyListeners;
     private final AffineTransform dimToGraphic = new AffineTransform();
+    private CoordinateReferenceSystem axis;
 
-    public DoubleNavigatorModel() {
+    public DoubleNavigatorModel(final CoordinateReferenceSystem axis) {
+        this.axis = axis;
         this.propertyListeners = new PropertyChangeSupport(this);
     }
 
+    @Override
+    public CoordinateReferenceSystem getCRS() {
+        return axis;
+    }
+    
+    @Override
+    public void setCRS(final CoordinateReferenceSystem axis) {
+        this.axis = axis;
+    }
+    
     @Override
     public double getGraphicValueAt(final double d) {
         final Point2D pt = dimToGraphic.transform(new Point2D.Double(d, 0), null);

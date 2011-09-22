@@ -255,6 +255,11 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     }
 
     @Override
+    public boolean canHandle(Object target) {
+        return true;
+    }
+    
+    @Override
     public String getTitle() {
         return title;
     }

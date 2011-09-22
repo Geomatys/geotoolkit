@@ -454,6 +454,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     }
 
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof FeatureMapLayer;
+    }
+    
+    @Override
     public void apply() {
     }
 

@@ -29,6 +29,8 @@ import javax.swing.ImageIcon;
  */
 public interface PropertyPane {
     
+    public boolean canHandle(Object target);
+    
     public void setTarget(Object target);
     
     public void apply();

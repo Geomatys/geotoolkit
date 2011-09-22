@@ -76,4 +76,9 @@ public class LayerStylePropertyPanel extends MultiPropertyPanel {
         return MessageBundle.getString("property_style");
     }
 
+    @Override
+    public boolean canHandle(Object target) {
+        return true;
+    }
+    
 }

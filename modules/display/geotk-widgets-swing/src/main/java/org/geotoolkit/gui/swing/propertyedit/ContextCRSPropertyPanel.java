@@ -233,6 +233,11 @@ public class ContextCRSPropertyPanel extends javax.swing.JPanel implements Prope
     }
 
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof MapContext;
+    }
+    
+    @Override
     public void apply() {
         if(liste!=null)context.setCoordinateReferenceSystem(liste.getCRS());
     }

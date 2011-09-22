@@ -323,6 +323,11 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }//GEN-LAST:event_guiModelActionPerformed
 
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof FeatureMapLayer;
+    }
+    
+    @Override
     public void setTarget(final Object layer) {
         if(layer instanceof FeatureMapLayer){
             this.layer = (FeatureMapLayer) layer;

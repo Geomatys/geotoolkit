@@ -35,7 +35,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="guiShowId" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="guiCount" pref="98" max="32767" attributes="0"/>
+                  <Component id="guiCount" pref="63" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="guiCommit" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>

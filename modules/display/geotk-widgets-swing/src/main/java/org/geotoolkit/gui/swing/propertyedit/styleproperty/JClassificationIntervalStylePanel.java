@@ -476,6 +476,11 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }//GEN-LAST:event_guiClassifyActionPerformed
 
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof FeatureMapLayer;
+    }
+    
+    @Override
     public void setTarget(final Object layer) {
         if(layer instanceof FeatureMapLayer){
             this.layer = (FeatureMapLayer) layer;

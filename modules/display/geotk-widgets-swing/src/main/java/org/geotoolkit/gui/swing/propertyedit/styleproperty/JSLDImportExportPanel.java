@@ -175,6 +175,10 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
         }
     }
 
+    @Override
+    public boolean canHandle(Object target) {
+        return target instanceof MapLayer;
+    }
 
     @Override
     public void setTarget(Object candidate) {

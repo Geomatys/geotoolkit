@@ -197,6 +197,11 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
     }// </editor-fold>//GEN-END:initComponents
     
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof MapLayer;
+    }
+    
+    @Override
     public void apply() {
 
         applyEditor(tree.getSelectionModel().getSelectionPath());

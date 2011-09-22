@@ -106,12 +106,6 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
         }
     }
 
-    /*public boolean removePropertyPanel(PropertyPanel panel) {
-    if (panel != null) {
-    return panels.remove(panel);
-    }
-    return false;
-    }*/
     public boolean setSelectedPropertyPanel(final PropertyPane panel) {
 
         if (panel != null) {
@@ -130,6 +124,11 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
 
                 return true;
             }
+        }else{
+            active = null;
+            panprop.removeAll();
+            panprop.revalidate();
+            panprop.repaint();
         }
 
         return false;
@@ -186,9 +185,27 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
     }// </editor-fold>//GEN-END:initComponents
     @Override
     public void setTarget(final Object target) {
-        for (PropertyPane pan : panels) {
-            pan.setTarget(target);
+        //select only panels which handle this target
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+        root.removeAllChildren();
+        
+        for (PropertyPane pan : panels) {            
+            if(pan.canHandle(target)){
+                pan.setTarget(target);
+                root.add(new DefaultMutableTreeNode(pan));
+            }else{
+                pan.setTarget(null);
+            }
         }
+                
+        if(root.getChildCount() > 0){
+            PropertyPane pan = (PropertyPane) ((DefaultMutableTreeNode)root.getChildAt(0)).getUserObject();
+            setSelectedPropertyPanel(pan);
+        }
+        
+        
+        model.reload();
+        tree.expandAll();
     }
 
     @Override

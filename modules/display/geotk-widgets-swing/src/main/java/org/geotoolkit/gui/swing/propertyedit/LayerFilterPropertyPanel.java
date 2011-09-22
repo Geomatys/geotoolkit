@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.FeatureMapLayer;
 
 /**
  * layer filter panel
@@ -62,6 +63,10 @@ public class LayerFilterPropertyPanel extends MultiPropertyPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 
+    @Override
+    public boolean canHandle(Object target) {
+        return target instanceof FeatureMapLayer;
+    }
 
     @Override
     public String getTitle() {

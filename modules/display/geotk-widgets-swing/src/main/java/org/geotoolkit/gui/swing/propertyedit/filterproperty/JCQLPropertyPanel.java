@@ -38,6 +38,11 @@ public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
     }
     
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof FeatureMapLayer;
+    }
+    
+    @Override
     public void setTarget(final Object target) {
         if (target instanceof FeatureMapLayer) {
             layer = (FeatureMapLayer) target;

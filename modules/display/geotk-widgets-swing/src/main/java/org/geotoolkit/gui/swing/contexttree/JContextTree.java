@@ -58,6 +58,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -665,6 +666,13 @@ public class JContextTree extends JScrollPane {
         }
 
         private synchronized void resetStructure(){
+                        
+            boolean expanded = false;
+            if(this.getChildCount()>0){
+                final TreePath tp = new TreePath(((DefaultMutableTreeNode)this.getFirstChild()).getPath());
+                expanded = tree.isExpanded(tp);
+            }
+            
             removeAllChildren();
             final MapItem item = (MapItem) getUserObject();
             
@@ -678,6 +686,14 @@ public class JContextTree extends JScrollPane {
             if(item instanceof MapLayer){
                 fillStyleNodes((MapLayer)item);
             }
+            
+            ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(this);
+            
+            if(expanded && this.getChildCount()>0){
+                final TreePath tp = new TreePath(((DefaultMutableTreeNode)this.getFirstChild()).getPath());
+                tree.expandPath(tp);
+            }
+            
         }
 
         @Override
@@ -725,7 +741,6 @@ public class JContextTree extends JScrollPane {
             if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName())){
                 //must regenerate style node elements
                 resetStructure();
-                ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(this);
             }else{
                 ((DefaultTreeModel)tree.getModel()).nodeChanged(this);
             }

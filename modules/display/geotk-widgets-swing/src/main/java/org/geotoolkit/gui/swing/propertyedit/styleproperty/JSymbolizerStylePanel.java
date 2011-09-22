@@ -79,6 +79,11 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
     }
 
     @Override
+    public boolean canHandle(Object target) {
+        return target instanceof MapLayer;
+    }
+    
+    @Override
     public void setTarget(final Object layer) {
 
         if (layer instanceof MapLayer) {
