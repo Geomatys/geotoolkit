@@ -24,6 +24,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 
+import java.awt.font.GlyphVector;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +49,7 @@ import org.geotoolkit.map.LayerListener.Weak;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.random.RandomStyleBuilder;
 import org.geotoolkit.util.ArgumentChecks;
@@ -65,8 +67,12 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Description;
+import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.util.InternationalString;
 
 /**
@@ -92,7 +98,19 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         this.layer = layer;
         layer.addLayerListener(new Weak(this));
     }
-    
+
+    public MapLayer getLayer() {
+        return layer;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+        repaint();
+    }
     
     private String getLayerName(){
         final Description desc = layer.getDescription();
@@ -116,28 +134,35 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         
         if(layer instanceof CoverageMapLayer){
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
+            final Envelope env = layer.getBounds();                        
             
-            try {
-                final GridCoverageReader reader = cml.getCoverageReader();
-                final List<String> names = reader.getCoverageNames();           
+            final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
+            for(int i=0;i<cs.getDimension();i++){
+                CoordinateSystemAxis csa = cs.getAxis(i);
+                final AxisDirection direction = csa.getDirection();
                 
-            } catch (CoverageStoreException ex) {
-                LOGGER.log(Level.FINE,ex.getMessage(),ex);
-            } catch (CancellationException ex) {
-                LOGGER.log(Level.FINE,ex.getMessage(),ex);
+                if(axis instanceof TemporalCRS){
+                    if(!(AxisDirection.FUTURE.equals(direction) || AxisDirection.PAST.equals(direction))){
+                        csa = null;
+                    }
+                }else if(axis instanceof VerticalCRS){
+                    if(!(AxisDirection.UP.equals(direction) || AxisDirection.DOWN.equals(direction))){
+                        csa = null;
+                    }
+                }
+                
+                if(csa instanceof DiscreteCoordinateSystemAxis){
+                    final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) csa;
+                    for(int k=0;k<dcsa.length();k++){
+                        final Comparable c = dcsa.getOrdinateAt(k);
+                        final Double d = toValue(c);
+                        if(d != null){
+                            ponctuals.add(d);
+                        }
+                    }
+                }
             }
-            Envelope env = layer.getBounds();
-            
-            try {
-                env = CRS.transform(env, axis);
-            } catch (TransformException ex) {
-                LOGGER.log(Level.FINE,ex.getMessage(),ex);
-            }
-            
-            if(env != null){
-                ranges.add(NumberRange.create(env.getMinimum(0), env.getMaximum(0)));
-            }
-            
+                        
         }else if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
             
@@ -227,9 +252,16 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             g2d.setColor(color);
             g2d.setStroke(new BasicStroke(width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             for(Range<Double> range : ranges){
-                startX = getModel().getGraphicValueAt(range.getMinValue());
-                endX = getModel().getGraphicValueAt(range.getMaxValue());
-                final Shape shape = new java.awt.geom.Line2D.Double(startX, midHeight, endX, midHeight);
+                double start = getModel().getGraphicValueAt(range.getMinValue());
+                double end = getModel().getGraphicValueAt(range.getMaxValue());
+                if(startX == null || startX>start){
+                    startX = start;
+                }
+                if(endX==null || endX<end){
+                    endX = end;
+                }
+                
+                final Shape shape = new java.awt.geom.Line2D.Double(start, midHeight, end, midHeight);
                 g2d.draw(shape);
             }
         }
@@ -244,6 +276,9 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                 if(startX == null || pos < startX){
                     startX = pos;
                 }
+                if(endX == null || pos > endX){
+                    endX = pos;
+                }
                 
                 final Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, midHeight - circleSize/2, circleSize, circleSize);
                 g2d.setColor(Color.WHITE);
@@ -256,18 +291,36 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         
         //name
         if(startX != null){
-            if(startX < 0){
-                startX = 0d;
+            String name = getLayerName();
+            if(startX-20 < 0){
+                startX = 20d;
+                name = " ❮❮ " + name;
+            }
+            if(endX > getWidth()){
+                endX = 0d;
+                name = name + " ❯❯ ";
+            }
+                        
+            final Font f = new Font("Dialog", Font.BOLD, 12);
+            final FontMetrics fm = g2d.getFontMetrics();
+            final double strWidth = fm.getStringBounds(name, g2d).getWidth() + 20; //20 to keep it far from border
+            
+            if(startX+strWidth > getWidth()){
+                startX = getWidth() - strWidth;
             }
             
+            //draw halo
+            final GlyphVector glyph = f.createGlyphVector(g2d.getFontRenderContext(), name);
+            final Shape shape = glyph.getOutline(startX.floatValue(), midHeight-circleSize/2);
+            g2d.setPaint(Color.WHITE);
+            g2d.setStroke(new BasicStroke(3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            g2d.draw(shape);
+            
+            //draw text
             g2d.setColor(color);
-            final String name = getLayerName();
-            final Font f = new Font("Arial", Font.PLAIN, 12);
-            final FontMetrics fm = g2d.getFontMetrics(f);
             g2d.setFont(f);
             g2d.drawString(name, startX.floatValue(), midHeight-circleSize/2);
         }
-        
         
     }
 

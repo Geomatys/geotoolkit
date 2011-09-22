@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.resource;
 
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.util.InternationalString;
@@ -36,7 +37,11 @@ public class MessageBundle {
      * Get the local string for the given key.
      */
     public static String getString(final String key){
-        return BUNDLE.getString(key);
+        try{
+            return BUNDLE.getString(key);
+        }catch(MissingResourceException ex){
+            return "Missing key : "+key;
+        }
     }
 
     public static InternationalString getI18NString(final String key){

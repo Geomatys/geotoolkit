@@ -50,6 +50,7 @@ import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 
@@ -107,12 +108,15 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 }
             }
         };
+    
+    private final JLayerBandMenu layers = new JLayerBandMenu(this);
 
     private volatile JMap2D map = null;
 
     public JMapElevationLine(){
         animation.setSpeedFactor(10);
         setModelRenderer(new DoubleRenderer());
+        getModel().setCRS(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
         setOrientation(SwingConstants.WEST);
         getModel().scale(-1, 0);
 
@@ -155,6 +159,10 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
             }
 
         };
+        
+        menu.add(layers);
+
+        menu.addSeparator();
 
         menu.add(animation);
 
@@ -387,6 +395,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
         this.map = map;
         animation.setMap(map);
+        layers.setMap(map);
         
         if(map != null){
             this.map.getCanvas().addPropertyChangeListener(this);

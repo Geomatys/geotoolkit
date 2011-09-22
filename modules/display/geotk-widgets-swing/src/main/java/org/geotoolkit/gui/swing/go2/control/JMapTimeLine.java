@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,13 +39,9 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DateRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
-import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -89,6 +84,8 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             }
         }
     };
+    private final JLayerBandMenu layers = new JLayerBandMenu(this);
+    
     private volatile JMap2D map = null;
 
 
@@ -113,6 +110,10 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
         };
 
+        menu.add(layers);
+
+        menu.addSeparator();
+        
         menu.add(animation);
 
         menu.addSeparator();
@@ -313,35 +314,14 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         }
         this.map = map;
         animation.setMap(map);
+        layers.setMap(map);
         
         if(map != null){
             this.map.getCanvas().addPropertyChangeListener(this);
         }
-        checkBands();
         repaint();
     }
     
-    private void checkBands(){
-        for(JNavigatorBand b : new ArrayList<JNavigatorBand>(getBands())){
-            removeBand(b);
-        }
-        
-        if(map == null){
-            return;
-        }
-        
-        final MapContext context = map.getContainer().getContext();
-        if(context == null){
-            return;
-        }
-        
-        for(MapLayer layer : context.layers()){
-            addBand(new JLayerBand(layer));
-        }
-        
-    }
-    
-
     //handle mouse event for dragging range ends -------------------------------
 
     // 0 for left limit
