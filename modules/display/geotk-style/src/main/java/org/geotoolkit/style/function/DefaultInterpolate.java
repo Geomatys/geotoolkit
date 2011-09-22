@@ -136,7 +136,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                 }else if(diff > 0){
                     return +1;
                 }else{
-                    throw new IllegalArgumentException("Two interpolation points have the same value. this is not authorized.");
+                    return 0;
                 }
             }
         });

@@ -80,8 +80,8 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
     @Override
     public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedRasterSymbolizer symbol, final MapLayer layer) {
 
-        final float[] fractions;
-        final Color[] colors;
+        float[] fractions;
+        Color[] colors;
         
         final ColorMap cm = symbol.getSource().getColorMap();
         if(cm != null && cm.getFunction() != null){
@@ -133,6 +133,17 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
             colors[2] = Color.BLUE;
         }
 
+        //paint nothing
+        if(colors.length == 0){
+            return;
+        }
+        
+        //ensure we have at least 2 colors
+        if(colors.length == 1){
+            colors = new Color[]{colors[0],colors[0]};
+            fractions = new float[]{fractions[0],fractions[0]};
+        }
+        
         
         final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
         final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
