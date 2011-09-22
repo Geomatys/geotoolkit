@@ -22,21 +22,18 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
-
 import java.awt.font.GlyphVector;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventObject;
 import java.util.List;
-import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.coverage.io.GridCoverageReader;
+import javax.swing.SwingConstants;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -48,13 +45,11 @@ import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.LayerListener.Weak;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.random.RandomStyleBuilder;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
@@ -70,9 +65,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Description;
-import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.util.InternationalString;
 
 /**
@@ -239,13 +232,26 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        analyze();
-        
+        analyze();        
         final Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         
-        final float midHeight = getHeight()/2;
-        Double startX = null;
-        Double endX = null;
+        final int orientation = getNavigator().getOrientation();
+        final boolean horizontal = (orientation==SwingConstants.NORTH || orientation==SwingConstants.SOUTH);
+        
+        
+        final float extent =  horizontal ? getWidth() : getHeight();
+        final float centered = horizontal ? getHeight()/2 : getWidth()/2;
+        Double StartPos = null;
+        Double endPos = null;
+        
+        if(!horizontal){
+            //we apply a transform on eveyrthing we paint
+            g2d.translate(getWidth(), 0);
+            g2d.rotate(Math.toRadians(90));
+        }
+        
         
         //draw range as a line
         if(ranges != null){
@@ -254,14 +260,14 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             for(Range<Double> range : ranges){
                 double start = getModel().getGraphicValueAt(range.getMinValue());
                 double end = getModel().getGraphicValueAt(range.getMaxValue());
-                if(startX == null || startX>start){
-                    startX = start;
+                if(StartPos == null || StartPos>start){
+                    StartPos = start;
                 }
-                if(endX==null || endX<end){
-                    endX = end;
+                if(endPos==null || endPos<end){
+                    endPos = end;
                 }
                 
-                final Shape shape = new java.awt.geom.Line2D.Double(start, midHeight, end, midHeight);
+                final Shape shape = new java.awt.geom.Line2D.Double(start, centered, end, centered);
                 g2d.draw(shape);
             }
         }
@@ -273,31 +279,31 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             
             for(final Double d : ponctuals){
                 double pos = getModel().getGraphicValueAt(d);
-                if(startX == null || pos < startX){
-                    startX = pos;
+                if(StartPos == null || pos < StartPos){
+                    StartPos = pos;
                 }
-                if(endX == null || pos > endX){
-                    endX = pos;
+                if(endPos == null || pos > endPos){
+                    endPos = pos;
                 }
                 
-                final Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, midHeight - circleSize/2, circleSize, circleSize);
+                final Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, centered - circleSize/2, circleSize, circleSize);
+                
                 g2d.setColor(Color.WHITE);
                 g2d.fill(circle);
                 g2d.setColor(color);
                 g2d.draw(circle);
             }
         }
-        
-        
+                
         //name
-        if(startX != null){
+        if(StartPos != null){
             String name = getLayerName();
-            if(startX-20 < 0){
-                startX = 20d;
+            if(StartPos-20 < 0){
+                StartPos = 20d;
                 name = " ❮❮ " + name;
             }
-            if(endX > getWidth()){
-                endX = 0d;
+            if(endPos > extent){
+                endPos = 0d;
                 name = name + " ❯❯ ";
             }
                         
@@ -305,13 +311,13 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             final FontMetrics fm = g2d.getFontMetrics();
             final double strWidth = fm.getStringBounds(name, g2d).getWidth() + 20; //20 to keep it far from border
             
-            if(startX+strWidth > getWidth()){
-                startX = getWidth() - strWidth;
+            if(StartPos+strWidth > extent){
+                StartPos = extent - strWidth;
             }
             
             //draw halo
             final GlyphVector glyph = f.createGlyphVector(g2d.getFontRenderContext(), name);
-            final Shape shape = glyph.getOutline(startX.floatValue(), midHeight-circleSize/2);
+            final Shape shape = glyph.getOutline(StartPos.floatValue(), centered-circleSize/2);
             g2d.setPaint(Color.WHITE);
             g2d.setStroke(new BasicStroke(3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             g2d.draw(shape);
@@ -319,7 +325,7 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             //draw text
             g2d.setColor(color);
             g2d.setFont(f);
-            g2d.drawString(name, startX.floatValue(), midHeight-circleSize/2);
+            g2d.drawString(name, StartPos.floatValue(), centered-circleSize/2);
         }
         
     }

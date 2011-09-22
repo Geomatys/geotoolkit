@@ -102,6 +102,7 @@ public class JNavigator extends JPanel implements
 
     public void addBand(final JNavigatorBand band){
         band.setModel(getModel());
+        band.setNavigator(this);
         bands.add(band);
         bandsPan.add(band);
         bandsPan.revalidate();

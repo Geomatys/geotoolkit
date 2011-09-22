@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 public abstract class JNavigatorBand extends JComponent {
 
     private NavigatorModel model = null;
+    private JNavigator navigator = null;
 
     public JNavigatorBand(){
         setOpaque(false);
@@ -41,5 +42,12 @@ public abstract class JNavigatorBand extends JComponent {
         this.model = model;
     }
 
+    public JNavigator getNavigator() {
+        return navigator;
+    }
 
+    public void setNavigator(JNavigator navigator) {
+        this.navigator = navigator;
+    }
+    
 }
