@@ -24,10 +24,16 @@ import java.awt.MultipleGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import java.util.List;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.map.MapLayer;
 
+import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.Interpolate;
+import org.geotoolkit.style.function.InterpolationPoint;
+import org.opengis.filter.expression.Function;
+import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
 
 /**
@@ -74,18 +80,62 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
     @Override
     public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedRasterSymbolizer symbol, final MapLayer layer) {
 
-        final float[] fractions = new float[3];
-        final Color[] colors = new Color[3];
+        final float[] fractions;
+        final Color[] colors;
+        
+        final ColorMap cm = symbol.getSource().getColorMap();
+        if(cm != null && cm.getFunction() != null){
+            final Function fct = cm.getFunction();
+            if(fct instanceof Interpolate){
+                final Interpolate interpolate = (Interpolate) fct;
+                final List<InterpolationPoint> points = interpolate.getInterpolationPoints();
+                final int size = points.size();
+                fractions = new float[size];
+                colors = new Color[size];
+                for(int i=0;i<size;i++){
+                    final InterpolationPoint pt = points.get(i);
+                    fractions[i] = ((float)i)/(size-1);
+                    Color c = pt.getValue().evaluate(null, Color.class);
+                    if(c == null){
+                        c = new Color(0, 0, 0, 0);
+                    }
+                    colors[i] = c;
+                }
+                
+            }
+//            else if(fct instanceof Categorize){
+//                final Categorize categorize = (Categorize) fct;
+//                //TODO
+//                
+//            }
+            else{
+                fractions = new float[3];
+                colors = new Color[3];
+
+                fractions[0] = 0.0f;
+                fractions[1] = 0.5f;
+                fractions[2] = 1f;
+
+                colors[0] = Color.RED;
+                colors[1] = Color.GREEN;
+                colors[2] = Color.BLUE;
+            }
+        }else{
+            fractions = new float[3];
+            colors = new Color[3];
+            
+            fractions[0] = 0.0f;
+            fractions[1] = 0.5f;
+            fractions[2] = 1f;
+
+            colors[0] = Color.RED;
+            colors[1] = Color.GREEN;
+            colors[2] = Color.BLUE;
+        }
+
+        
         final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
         final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
-
-        fractions[0] = 0.0f;
-        fractions[1] = 0.5f;
-        fractions[2] = 1f;
-
-        colors[0] = Color.RED;
-        colors[1] = Color.GREEN;
-        colors[2] = Color.BLUE;
 
         final LinearGradientPaint paint = new LinearGradientPaint(
             new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
