@@ -22,9 +22,14 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,13 +37,19 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
+
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.LayerListener;
@@ -52,6 +63,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Range;
+import org.geotoolkit.util.SwingEventPassThrough;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.logging.Logging;
 
@@ -85,13 +97,29 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
     private boolean analyzed = false;
     private List<Range<Double>> ranges = new ArrayList<Range<Double>>();
     private List<Double> ponctuals = new ArrayList<Double>();
+    private final ActionMenu popupmenu = new ActionMenu();
+    private final passthrought listener = new passthrought();
+    
+    //used by the popup menu
+    private Point mousePosition = null;
     
     public JLayerBand(final MapLayer layer){
         ArgumentChecks.ensureNonNull("layer", layer);
         this.layer = layer;
         layer.addLayerListener(new Weak(this));
+        setComponentPopupMenu(popupmenu);
     }
-
+    
+    @Override
+    public JPopupMenu getComponentPopupMenu() {
+        if(popupmenu.buildElements()){
+            //return this popup menu if it contains some elements only
+            //otherwise return the parent popup
+            return popupmenu;
+        }
+        return null;
+    }    
+    
     public MapLayer getLayer() {
         return layer;
     }
@@ -129,6 +157,9 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final Envelope env = layer.getBounds();                        
             
+            Double min = null;
+            Double max = null;
+            
             final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
             for(int i=0;i<cs.getDimension();i++){
                 CoordinateSystemAxis csa = cs.getAxis(i);
@@ -151,10 +182,23 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                         final Double d = toValue(c);
                         if(d != null){
                             ponctuals.add(d);
+                            
+                            if(min == null || min>d){
+                                min = d;
+                            }
+                            if(max == null || max<d){
+                                max = d;
+                            }
+                            
                         }
                     }
                 }
             }
+            
+            if(min != null && max != null){
+                ranges.add(NumberRange.create(min, max));
+            }
+            
                         
         }else if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer fml = (FeatureMapLayer) layer;
@@ -342,6 +386,116 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         analyzed = false;
+    }
+    
+    // Forward events to sub components ////////////////////////////////////////
+    
+    private class passthrought extends SwingEventPassThrough{
+        
+        private passthrought(){
+            super(JLayerBand.this);
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            JLayerBand.this.mousePosition = e.getPoint();
+            super.mouseClicked(e);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            JLayerBand.this.mousePosition = e.getPoint();
+            super.mousePressed(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            JLayerBand.this.mousePosition = e.getPoint();
+            super.mouseReleased(e);
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            JLayerBand.this.mousePosition = e.getPoint();
+            super.mouseMoved(e);
+        }
+        
+    }
+    
+    private class ActionMenu extends JPopupMenu{
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+            removeAll();
+            
+            if(visible){
+                buildElements();
+            }
+            
+        }
+        
+        public boolean buildElements(){
+            ActionMenu.this.removeAll();
+            
+            //check if we intersect some data at this position
+            requestFocus();
+            final Point pt = mousePosition;
+            if(pt == null){
+                return false;
+            }
+            
+            final int orientation = getNavigator().getOrientation();
+            final boolean horizontal = (orientation==SwingConstants.NORTH || orientation==SwingConstants.SOUTH);
+
+
+            final float extent =  horizontal ? JLayerBand.this.getWidth() : JLayerBand.this.getHeight();
+            final float centered = horizontal ? JLayerBand.this.getHeight()/2 : JLayerBand.this.getWidth()/2;
+
+            final AffineTransform trs = new AffineTransform();
+            if(!horizontal){
+                //we apply a transform on everything
+                trs.translate(JLayerBand.this.getWidth(), 0);
+                trs.rotate(Math.toRadians(90));
+            }
+            
+            for(final Double pc : ponctuals){
+                double pos = getModel().getGraphicValueAt(pc);     
+                
+                if(pos < 0 || pos > extent){
+                    continue;
+                }
+                
+                Shape circle = new java.awt.geom.Ellipse2D.Double(pos- circleSize/2, centered - circleSize/2, circleSize, circleSize);
+                circle = trs.createTransformedShape(circle);
+                Rectangle rect = circle.getBounds();
+                //expend the rectengle for the line width, normaly width/2 should be used
+                //but we want to be a bit more tolerant
+                rect.x      -= width;
+                rect.y      -= width;
+                rect.height += width*2;
+                rect.width  += width*2;
+                                
+                if(rect.contains(pt)){
+                    ActionMenu.this.add(new AbstractAction(MessageBundle.getString("movetoposition")) {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {                            
+                            JNavigator navi = JLayerBand.this.getNavigator();
+                            if(navi instanceof JMapTimeLine){
+                                ((JMapTimeLine)navi).moveTo(new Date(pc.longValue()));
+                            }else if(navi instanceof JMapElevationLine){
+                                ((JMapElevationLine)navi).moveTo(pc);
+                            }
+                        }
+                    });
+                    break;
+                }
+            }            
+            
+            ActionMenu.this.revalidate();
+            return getComponentCount() > 0;
+        }
+        
     }
     
 }

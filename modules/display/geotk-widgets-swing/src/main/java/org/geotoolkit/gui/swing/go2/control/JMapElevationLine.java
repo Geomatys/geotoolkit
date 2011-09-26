@@ -172,25 +172,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 new AbstractAction(MessageBundle.getString("map_move_elevation_center")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
-                        if (getMap() != null && popupEdit != null) {
-                            final CanvasController2D controller = getMap().getCanvas().getController();
-                            final Double[] range = controller.getElevationRange();
-                            try{
-                                if (range == null || range[0] == null || range[1] == null) {
-                                    controller.setElevationRange(popupEdit, popupEdit,null);
-                                } else {
-                                    double middle = (range[0] + range[1]) / 2l;
-                                    double step = popupEdit - middle;
-                                    double start = range[0] + step;
-                                    double end = range[1] + step;
-                                    getMap().getCanvas().getController().setElevationRange(start, end, null);
-                                }
-                            } catch (TransformException ex) {
-                                LOGGER.log(Level.WARNING, null, ex);
-                            }
-                            JMapElevationLine.this.repaint();
-                        }
+                        moveTo(popupEdit);
                     }
                 }){
 
@@ -522,6 +504,27 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
             updateSpiners(range[0], range[1]);
             repaint();
+        }
+    }
+
+    void moveTo(final Double targetValue) {
+        if (getMap() != null && targetValue != null) {
+            final CanvasController2D controller = getMap().getCanvas().getController();
+            final Double[] range = controller.getElevationRange();
+            try{
+                if (range == null || range[0] == null || range[1] == null) {
+                    controller.setElevationRange(targetValue, targetValue,null);
+                } else {
+                    double middle = (range[0] + range[1]) / 2l;
+                    double step = targetValue - middle;
+                    double start = range[0] + step;
+                    double end = range[1] + step;
+                    getMap().getCanvas().getController().setElevationRange(start, end, null);
+                }
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            }
+            JMapElevationLine.this.repaint();
         }
     }
 

@@ -431,8 +431,10 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         if (index >= 0) {
             final Envelope envelope = canvas.getVisibleEnvelope();
             final Date[] range = new Date[2];
-            range[0] = new Date((long) envelope.getMinimum(index));
-            range[1] = new Date((long) envelope.getMaximum(index));
+            final double min = envelope.getMinimum(index);
+            final double max = envelope.getMaximum(index);
+            range[0] = Double.isInfinite(min) ? null : new Date((long)min);
+            range[1] = Double.isInfinite(max) ? null : new Date((long)max);
             return range;
         }
         return null;

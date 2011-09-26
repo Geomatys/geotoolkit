@@ -122,25 +122,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                 new AbstractAction(MessageBundle.getString("map_move_temporal_center")) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
-                        if (getMap() != null && popupEdit != null) {
-                            final CanvasController2D controller = getMap().getCanvas().getController();
-                            final Date[] range = controller.getTemporalRange();
-                            try{
-                                if (range == null || range[0] == null || range[1] == null) {
-                                    controller.setTemporalRange(popupEdit, popupEdit);
-                                } else {
-                                    long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
-                                    long step = popupEdit.getTime() - middleDate;
-                                    Date start = new Date(range[0].getTime() + step);
-                                    Date end = new Date(range[1].getTime() + step);
-                                    controller.setTemporalRange(start, end);
-                                }
-                            }catch(TransformException ex){
-                                LOGGER.log(Level.WARNING, null,ex);
-                            }
-                            JMapTimeLine.this.repaint();
-                        }
+                        moveTo(popupEdit);
                     }
                 }){
 
@@ -322,6 +304,28 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         repaint();
     }
     
+    public void moveTo(final Date targetDate){
+        
+        if (getMap() != null && targetDate != null) {
+            final CanvasController2D controller = getMap().getCanvas().getController();
+            final Date[] range = controller.getTemporalRange();
+            try{
+                if (range == null || range[0] == null || range[1] == null) {
+                    controller.setTemporalRange(targetDate, targetDate);
+                } else {
+                    long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
+                    long step = targetDate.getTime() - middleDate;
+                    Date start = new Date(range[0].getTime() + step);
+                    Date end = new Date(range[1].getTime() + step);
+                    controller.setTemporalRange(start, end);
+                }
+            }catch(TransformException ex){
+                LOGGER.log(Level.WARNING, null,ex);
+            }
+            JMapTimeLine.this.repaint();
+        }
+    }
+    
     //handle mouse event for dragging range ends -------------------------------
 
     // 0 for left limit
@@ -438,7 +442,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         if(range == null) return;
 
         if(range[0] == null && range[1] == null) return;
-
+        
         double start = -5;
         double end = getWidth() +5;
         double center = -5;

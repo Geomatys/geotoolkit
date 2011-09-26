@@ -18,11 +18,18 @@
 package org.geotoolkit.style.interval;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -59,10 +66,28 @@ public class DefaultRandomPalette implements RandomPalette{
             colors,
             cycleMethod
         );
-
+        
         g.setPaint(paint);
         g.fill(rectangle);
+        
+        g.setColor(Color.WHITE);
+        final Font font = new Font("Dialog", Font.BOLD, 13);
+        final FontMetrics fm = g.getFontMetrics(font);
+        final String text = "Random";
+        final Rectangle2D rect = fm.getStringBounds(text, g);
+        g.drawString(text, 
+                (float)( (rectangle.getWidth()-rect.getWidth())/2), 
+                (float)(rectangle.getHeight() - (rectangle.getHeight()-rect.getHeight())/2) );
 
+    }
+
+    @Override
+    public List<Entry<Double, Color>> getSteps() {
+        final List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();     
+        steps.add(new SimpleImmutableEntry<Double, Color>(0d, next()));
+        steps.add(new SimpleImmutableEntry<Double, Color>(0.5d, next()));
+        steps.add(new SimpleImmutableEntry<Double, Color>(1d, next()));
+        return steps;
     }
 
 }

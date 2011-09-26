@@ -23,6 +23,10 @@ import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -32,14 +36,36 @@ import java.awt.geom.Point2D;
 public class DefaultIntervalPalette implements IntervalPalette{
 
     private final int[] ARGB;
+    private final double[] fractions;
 
     public DefaultIntervalPalette(final Color[] colors) {
+        this(null,colors);
+    }
+    
+    public DefaultIntervalPalette(double[] fractions, final Color[] colors) {
+        if(fractions == null){
+            fractions = new double[colors.length];
+            for(int i=0;i<colors.length;i++){
+                fractions[i] = ((double)i)/ (colors.length-1);
+            }
+        }
+        
         this.ARGB = new int[colors.length];
 
         for(int i=0;i<colors.length;i++){
             ARGB[i] = colors[i].getRGB();
         }
 
+        this.fractions = fractions;
+    }
+    
+    @Override
+    public List<Entry<Double, Color>> getSteps() {
+        final List<Entry<Double, Color>> steps = new ArrayList<Entry<Double, Color>>();
+        for(int i=0;i<fractions.length;i++){
+            steps.add(new SimpleImmutableEntry<Double, Color>(fractions[i], new Color(ARGB[i])) );
+        }
+        return steps;
     }
 
     @Override
@@ -119,5 +145,6 @@ public class DefaultIntervalPalette implements IntervalPalette{
 
         return new Color(ARGB[ARGB.length-1]);
     }
+
 
 }

@@ -17,8 +17,11 @@
 
 package org.geotoolkit.style.interval;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -29,4 +32,6 @@ public interface Palette {
 
     void render(Graphics2D g, Rectangle rect);
 
+    List<Entry<Double,Color>> getSteps();
+    
 }

@@ -18,8 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 
-import org.opengis.filter.expression.Function;
-import org.geotoolkit.style.function.Interpolate;
+import java.util.Map.Entry;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import java.awt.Color;
@@ -30,8 +29,12 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -51,6 +54,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
@@ -62,17 +67,19 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.interval.DefaultRandomPalette;
-import org.geotoolkit.style.interval.RandomPalette;
+import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.style.interval.DefaultIntervalPalette;
+import org.geotoolkit.style.interval.Palette;
 import org.geotoolkit.util.ColorCellEditor;
 import org.geotoolkit.util.ColorCellRenderer;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.logging.Logging;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -86,21 +93,34 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.style.Symbolizer;
+import org.opengis.filter.expression.Function;
 
 import static org.geotoolkit.style.StyleConstants.*;
 
 /**
- *
+ * Style editor which handle Raster colormap edition.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
-    private static final List<RandomPalette> PALETTES;
+    private static final Logger LOGGER = Logging.getLogger(JRasterColorMapStylePanel.class);
+    
+    private static final List<Palette> PALETTES;
 
     static{
-        PALETTES = new ArrayList<RandomPalette>();
+        PALETTES = new ArrayList<Palette>();
         PALETTES.add(new DefaultRandomPalette());
+        PALETTES.add(new DefaultIntervalPalette(
+                new Color[]{Color.BLUE,Color.CYAN,Color.GREEN,Color.YELLOW,Color.ORANGE,Color.RED}
+                ));
+        PALETTES.add(new DefaultIntervalPalette(
+                new Color[]{Color.RED,Color.YELLOW}
+                ));
+        PALETTES.add(new DefaultIntervalPalette(
+                new Color[]{Color.BLUE,Color.WHITE}
+                ));
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
@@ -131,7 +151,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     private void parse(){
         guiTable.revalidate();
         guiTable.repaint();
-        guiOther.setSelected(true);
+        guiNaN.setSelected(true);
                 
         RasterSymbolizer rs = null;
         search:
@@ -177,10 +197,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiAddOne = new JButton();
         guiRemoveAll = new JButton();
         jPanel1 = new JPanel();
-        guiOther = new JCheckBox();
+        guiNaN = new JCheckBox();
         guiLblPalette = new JLabel();
         guiGenerate = new JButton();
         guiPalette = new JComboBox();
+        guiInvert = new JCheckBox();
         jScrollPane1 = new JScrollPane();
         guiTable = new JXTable();
 
@@ -200,8 +221,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("properties"))); // NOI18N
 
-        guiOther.setSelected(true);
-        guiOther.setText(MessageBundle.getString("nanValue")); // NOI18N
+        guiNaN.setSelected(true);
+        guiNaN.setText(MessageBundle.getString("nanValue")); // NOI18N
 
         guiLblPalette.setText(MessageBundle.getString("palette")); // NOI18N
 
@@ -211,6 +232,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                 guiGenerateActionPerformed(evt);
             }
         });
+
+        guiInvert.setText(MessageBundle.getString("invert")); // NOI18N
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -224,8 +247,10 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(guiPalette, 0, 379, Short.MAX_VALUE))
                     .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiOther)
-                        .addPreferredGap(ComponentPlacement.RELATED, 277, Short.MAX_VALUE)
+                        .addComponent(guiNaN)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiInvert)
+                        .addPreferredGap(ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
                         .addComponent(guiGenerate)))
                 .addContainerGap())
         );
@@ -237,8 +262,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                     .addComponent(guiLblPalette, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(guiOther)
-                    .addComponent(guiGenerate)))
+                    .addComponent(guiNaN)
+                    .addComponent(guiGenerate)
+                    .addComponent(guiInvert)))
         );
 
         jScrollPane1.setViewportView(guiTable);
@@ -281,6 +307,51 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     private void guiGenerateActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
 
+        if(layer == null){
+            return;
+        }
+        
+        model.points.clear();
+        
+        //add the NaN if specified
+        if(guiNaN.isSelected()){
+            model.points.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
+        }
+        
+        final Palette palette = (Palette) guiPalette.getSelectedItem();
+        List<Entry<Double, Color>> steps = palette.getSteps();
+        if(guiInvert.isSelected()){
+            final List<Entry<Double, Color>> inverted = new ArrayList<Entry<Double, Color>>();
+            for(int i=0,n=steps.size();i<n;i++){
+                inverted.add(new SimpleImmutableEntry<Double, Color>(
+                        steps.get(i).getKey(),
+                        steps.get(n-1-i).getValue()));
+            }
+            steps = inverted;
+        }
+        final GridCoverageReader reader = layer.getCoverageReader();
+        try {
+            final List<String> names = reader.getCoverageNames();
+            
+            for(int i=0,n=names.size();i<n;i++){
+                final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
+                for(MeasurementRange r : ranges){
+                    final double min = r.getMinimum();
+                    final double max = r.getMaximum();                    
+                    for(int s=0,l=steps.size();s<l;s++){
+                        final Entry<Double, Color> step = steps.get(s);
+                        model.points.add(SF.interpolationPoint(
+                                min + (step.getKey()*(max-min)), 
+                                SF.literal(step.getValue())));
+                    }
+                }
+            }
+            
+        } catch (CoverageStoreException ex) {
+            LOGGER.log(Level.INFO, ex.getMessage(),ex);
+        }
+        
+        model.fireTableDataChanged();
 
     }//GEN-LAST:event_guiGenerateActionPerformed
 
@@ -361,8 +432,9 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiAddOne;
     private JButton guiGenerate;
+    private JCheckBox guiInvert;
     private JLabel guiLblPalette;
-    private JCheckBox guiOther;
+    private JCheckBox guiNaN;
     private JComboBox guiPalette;
     private JButton guiRemoveAll;
     private JXTable guiTable;
@@ -373,16 +445,16 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
 
     private class PaletteRenderer extends DefaultListCellRenderer{
 
-        private RandomPalette palette = null;
+        private Palette palette = null;
 
         @Override
         public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-            PaletteRenderer.this.setText(" Random ");
+            PaletteRenderer.this.setText(" Palette ");
 
-            if(value instanceof RandomPalette){
-                palette = (RandomPalette)value;
+            if(value instanceof Palette){
+                palette = (Palette)value;
             }
             return PaletteRenderer.this;
         }
