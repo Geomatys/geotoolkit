@@ -60,6 +60,7 @@ public class KrigingProcess extends AbstractProcess{
         final CoordinateReferenceSystem crs = Parameters.value(KrigingDescriptor.IN_CRS, inputParameters);
         final double step                   = Parameters.value(KrigingDescriptor.IN_STEP, inputParameters);
         final DirectPosition[] coords       = Parameters.value(KrigingDescriptor.IN_POINTS, inputParameters);
+        final Dimension maxDim              = Parameters.value(KrigingDescriptor.IN_DIMENSION, inputParameters);
         
         //calculate the envelope
         double minx = Double.POSITIVE_INFINITY;
@@ -93,8 +94,14 @@ public class KrigingProcess extends AbstractProcess{
                 
         final Rectangle2D rect = new Rectangle2D.Double(minx,miny,maxx-minx,maxy-miny);
         
+        final Dimension dim = new Dimension(s*s, s*s);
+        //limit size to 200
+        if(maxDim != null){
+            if(dim.height > maxDim.height) dim.height = maxDim.height;
+            if(dim.width > maxDim.width)   dim.width  = maxDim.width;
+        }
         
-        final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, new Dimension(s*s, s*s));
+        final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, dim);
         final double[] computed;
         try{
             computed = ob.interpole(x, y, z);

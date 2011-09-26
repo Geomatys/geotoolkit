@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.ext.isoline;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.parameter.Parameters;
@@ -49,11 +51,15 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.process.ProcessListenerAdapter;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.feature.Feature;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -139,6 +145,10 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         }
         
 
+        double minx = Double.NaN;
+        double miny = Double.NaN;
+        double maxx = Double.NaN;
+        double maxy = Double.NaN;
         try {
             final List<DirectPosition> coordinates = new ArrayList<DirectPosition>();
             final FeatureIterator<? extends Feature> iterator = collection.iterator();
@@ -149,6 +159,10 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                     if(coord == null) continue;
                     final GeneralDirectPosition pos = new GeneralDirectPosition(coord.x, coord.y, coord.z);
                     coordinates.add(pos);
+                    minx = Double.isNaN(minx) ? coord.x : Math.min(minx, coord.x);
+                    maxx = Double.isNaN(maxx) ? coord.x : Math.max(maxx, coord.x);
+                    miny = Double.isNaN(miny) ? coord.y : Math.min(miny, coord.y);
+                    maxy = Double.isNaN(maxy) ? coord.y : Math.max(maxy, coord.y);
                 }
             }catch(Exception ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
@@ -156,7 +170,20 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }finally {
                 iterator.close();
             }
-
+            final CoordinateReferenceSystem crs = collection.getFeatureType().getCoordinateReferenceSystem();
+            
+            final GeneralEnvelope env = new GeneralEnvelope(crs);
+            env.setRange(0, minx, maxx);
+            env.setRange(1, miny, maxy);
+            final Envelope objenv = CRS.transform(env, context.getObjectiveCRS2D());
+            final double[] res = context.getResolution();
+                        
+            if(objenv.getSpan(0) <= res[0]*8 || objenv.getSpan(1) <= res[1]*8){
+                //envelope is too small, do not paint
+                return;
+            }
+            
+            
             final ProcessListener redirect = new ProcessListenerAdapter(){
                 @Override
                 public void failed(ProcessEvent event) {
@@ -177,9 +204,11 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             Parameters.getOrCreate(KrigingDescriptor.IN_POINTS, input)
                     .setValue(coordinates.toArray(new DirectPosition[coordinates.size()]));
             Parameters.getOrCreate(KrigingDescriptor.IN_CRS, input)
-                    .setValue(collection.getFeatureType().getCoordinateReferenceSystem());
+                    .setValue(crs);
             Parameters.getOrCreate(KrigingDescriptor.IN_STEP, input)
                     .setValue(step);
+            Parameters.getOrCreate(KrigingDescriptor.IN_DIMENSION, input)
+                    .setValue(new Dimension(150, 150));
             final Process p = desc.createProcess(input);
             
             p.addListener(redirect);
@@ -216,6 +245,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 graphic.paint(context);
             }
             
+        } catch (TransformException ex) {
+            getLogger().log(Level.WARNING, null, ex);
         } catch (DataStoreRuntimeException ex) {
             getLogger().log(Level.WARNING, null, ex);
         }

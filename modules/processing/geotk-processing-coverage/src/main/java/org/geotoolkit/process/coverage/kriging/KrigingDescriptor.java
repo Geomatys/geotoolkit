@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.coverage.kriging;
 
+import java.awt.Dimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -56,6 +57,12 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptor<Double> IN_STEP =
             new DefaultParameterDescriptor<Double>("step",
             "step for isolines",Double.class,0d,true);
+    /**
+     * Optional - maximum size of the image.
+     */
+    public static final ParameterDescriptor<Dimension> IN_DIMENSION =
+            new DefaultParameterDescriptor<Dimension>("dimension",
+            "Result grid size",Dimension.class,null,false);
 
     /**
      * Mandatory - Coverage crs
@@ -67,7 +74,7 @@ public final class KrigingDescriptor extends AbstractProcessDescriptor{
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_POINTS, IN_CRS, IN_STEP);
+                IN_POINTS, IN_CRS, IN_STEP, IN_DIMENSION);
     
     /**
      * Output coverage.
