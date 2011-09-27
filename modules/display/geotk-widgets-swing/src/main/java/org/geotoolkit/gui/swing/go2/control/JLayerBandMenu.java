@@ -32,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 
 import javax.swing.SwingConstants;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
@@ -77,6 +78,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
         this.map = new WeakReference<JMap2D>(map);
         
         if(map != null){
+            map.getContainer().addPropertyChangeListener(this);
             final MapContext context = map.getContainer().getContext();
             if(context != null){
                 context.addContextListener(new ContextListener.Weak(this));
@@ -133,7 +135,24 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     public void itemChange(CollectionChangeEvent<MapItem> event) {}
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {}
+    public void propertyChange(PropertyChangeEvent evt) {
+        final String propName = evt.getPropertyName();
+        if(propName.equals(ContextContainer2D.CONTEXT_PROPERTY)){
+            if(map == null){
+               return;
+            }
+            final JMap2D map2d = map.get();
+            if(map2d == null){
+                return;
+            }
+            
+            final MapContext context = map2d.getContainer().getContext();
+            if(context != null){
+                context.addContextListener(new ContextListener.Weak(this));
+            }
+            checkBands();
+        }
+    }
 
     private final class LayerPane extends JPanel implements ActionListener,org.geotoolkit.map.ItemListener{
     
