@@ -39,6 +39,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -55,6 +56,18 @@ public class QueryTest extends TestCase{
     private final MemoryDataStore store = new MemoryDataStore();
     private final Name name1;
     private final Name name2;
+    
+    private final String fid_1_0;
+    private final String fid_1_1;
+    private final String fid_1_2;
+    private final String fid_1_3;
+    private final String fid_1_4;
+    private final String fid_2_0;
+    private final String fid_2_1;
+    private final String fid_2_2;
+    private final String fid_2_3;
+    private final String fid_2_4;
+    private final String fid_2_5;
 
     public QueryTest() throws Exception {
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
@@ -73,22 +86,31 @@ public class QueryTest extends TestCase{
         sf.setAttribute("att1", "str1");
         sf.setAttribute("att2", 1);
         fw.write();
+        fid_1_0 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att1", "str2");
         sf.setAttribute("att2", 2);
         fw.write();
+        fid_1_1 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att1", "str3");
         sf.setAttribute("att2", 3);
         fw.write();
+        fid_1_2 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att1", "str50");
         sf.setAttribute("att2", 50);
         fw.write();
+        fid_1_3 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att1", "str51");
         sf.setAttribute("att2", 51);
         fw.write();
+        fid_1_4 = sf.getIdentifier().getID();
 
         fw.close();
 
@@ -107,26 +129,37 @@ public class QueryTest extends TestCase{
         sf.setAttribute("att3", 1);
         sf.setAttribute("att4", 10d);
         fw.write();
+        fid_2_0 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 2);
         sf.setAttribute("att4", 20d);
         fw.write();
+        fid_2_1 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 2);
         sf.setAttribute("att4", 30d);
         fw.write();
+        fid_2_2 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 3);
         sf.setAttribute("att4", 40d);
         fw.write();
+        fid_2_3 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 60);
         sf.setAttribute("att4", 60d);
         fw.write();
+        fid_2_4 = sf.getIdentifier().getID();
+        
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 61);
         sf.setAttribute("att4", 61d);
         fw.write();
+        fid_2_5 = sf.getIdentifier().getID();
 
         fw.close();
 
@@ -346,39 +379,44 @@ public class QueryTest extends TestCase{
         ComplexAttribute c1 = null;
         ComplexAttribute c2 = null;
 
-        f = ite.next();
-        c1 = (ComplexAttribute) f.getProperty("s1");
-        c2 = (ComplexAttribute) f.getProperty("s2");
-        assertEquals("str1", c1.getProperty("att1").getValue());
-        assertEquals(1, c1.getProperty("att2").getValue());
-        assertEquals(1, c2.getProperty("att3").getValue());
-        assertEquals(10d, c2.getProperty("att4").getValue());
-
-        f = ite.next();
-        c1 = (ComplexAttribute) f.getProperty("s1");
-        c2 = (ComplexAttribute) f.getProperty("s2");
-        assertEquals("str2", c1.getProperty("att1").getValue());
-        assertEquals(2, c1.getProperty("att2").getValue());
-        assertEquals(2, c2.getProperty("att3").getValue());
-        assertEquals(20d, c2.getProperty("att4").getValue());
-
-        f = ite.next();
-        c1 = (ComplexAttribute) f.getProperty("s1");
-        c2 = (ComplexAttribute) f.getProperty("s2");
-        assertEquals("str2", c1.getProperty("att1").getValue());
-        assertEquals(2, c1.getProperty("att2").getValue());
-        assertEquals(2, c2.getProperty("att3").getValue());
-        assertEquals(30d, c2.getProperty("att4").getValue());
-
-        f = ite.next();
-        c1 = (ComplexAttribute) f.getProperty("s1");
-        c2 = (ComplexAttribute) f.getProperty("s2");
-        assertEquals("str3", c1.getProperty("att1").getValue());
-        assertEquals(3, c1.getProperty("att2").getValue());
-        assertEquals(3, c2.getProperty("att3").getValue());
-        assertEquals(40d, c2.getProperty("att4").getValue());
-
-        assertFalse(ite.hasNext());
+        int count = 0;
+        while(ite.hasNext()){
+            count++;
+            f = ite.next();
+            if(f.getIdentifier().getID().equals(fid_1_0 +" "+fid_2_0)){
+                c1 = (ComplexAttribute) f.getProperty("s1");
+                c2 = (ComplexAttribute) f.getProperty("s2");
+                assertEquals("str1", c1.getProperty("att1").getValue());
+                assertEquals(1, c1.getProperty("att2").getValue());
+                assertEquals(1, c2.getProperty("att3").getValue());
+                assertEquals(10d, c2.getProperty("att4").getValue());
+            }else if(f.getIdentifier().getID().equals(fid_1_1 +" "+fid_2_1)){
+                c1 = (ComplexAttribute) f.getProperty("s1");
+                c2 = (ComplexAttribute) f.getProperty("s2");
+                assertEquals("str2", c1.getProperty("att1").getValue());
+                assertEquals(2, c1.getProperty("att2").getValue());
+                assertEquals(2, c2.getProperty("att3").getValue());
+                assertEquals(20d, c2.getProperty("att4").getValue());
+            }else if(f.getIdentifier().getID().equals(fid_1_1 +" "+fid_2_2)){
+                c1 = (ComplexAttribute) f.getProperty("s1");
+                c2 = (ComplexAttribute) f.getProperty("s2");
+                assertEquals("str2", c1.getProperty("att1").getValue());
+                assertEquals(2, c1.getProperty("att2").getValue());
+                assertEquals(2, c2.getProperty("att3").getValue());
+                assertEquals(30d, c2.getProperty("att4").getValue());
+            }else if(f.getIdentifier().getID().equals(fid_1_2 +" "+fid_2_3)){
+                c1 = (ComplexAttribute) f.getProperty("s1");
+                c2 = (ComplexAttribute) f.getProperty("s2");
+                assertEquals("str3", c1.getProperty("att1").getValue());
+                assertEquals(3, c1.getProperty("att2").getValue());
+                assertEquals(3, c2.getProperty("att3").getValue());
+                assertEquals(40d, c2.getProperty("att4").getValue());
+            }else{
+                fail("unexpected feature");
+            }
+        }
+        
+        assertEquals("Was expecting 4 features.",4, count);
         ite.close();
     }
 
