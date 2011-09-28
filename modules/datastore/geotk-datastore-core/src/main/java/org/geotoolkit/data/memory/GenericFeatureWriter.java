@@ -19,6 +19,7 @@ package org.geotoolkit.data.memory;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.data.DataStore;
@@ -28,6 +29,7 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
 
@@ -37,6 +39,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.identity.FeatureId;
 
 /**
  * Basic support for a  FeatureWriter that redicts it's calls to
@@ -155,7 +158,10 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
             if(modified != null){
                 //it's an add operation
                 try {
-                    store.addFeatures(typeName, Collections.singleton(modified));
+                    final List<FeatureId> res = store.addFeatures(typeName, Collections.singleton(modified));
+                    if(modified instanceof AbstractFeature){
+                        ((AbstractFeature)modified).setId(res.get(0));
+                    }
                 } catch (DataStoreException ex) {
                     throw new DataStoreRuntimeException(ex);
                 }
