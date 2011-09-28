@@ -70,6 +70,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 
+import org.geotoolkit.test.Assert;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -425,13 +426,14 @@ public class ColorModelTest {
         //we should obtain a white background image
         final BufferedImage img = ImageIO.read(tempFile);
 
-        //jpeg can't encode a perfect white image, CMY to RGB conversion lost I guess.
-        //it's R:253 G:255 B:255
-        final int white = new Color(253, 255, 255, 255).getRGB();
-
         for(int x=0; x<img.getWidth(); x++){
             for(int y=0; y<img.getHeight(); y++){
-                assertEquals(white, img.getRGB(x, y));
+                //jpeg can't encode a perfect white image, CMY to RGB conversion lost I guess.
+                Color c = new Color(img.getRGB(x, y));
+                Assert.assertBetween("color is not white", 250, 255, c.getRed());
+                Assert.assertBetween("color is not white", 250, 255, c.getGreen());
+                Assert.assertBetween("color is not white", 250, 255, c.getBlue());
+                Assert.assertBetween("color is not white", 250, 255, c.getAlpha());
             }
         }
     }
