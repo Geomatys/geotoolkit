@@ -1347,17 +1347,17 @@ public final class GO2Utilities {
                             valid = true;
                             break;
                         }else if(semantic == SemanticType.LINE){
-                            if(ctype == LineString.class || ctype == MultiLineString.class){
+                            if(ctype == LineString.class || ctype == MultiLineString.class || ctype == Geometry.class ){
                                 valid = true;
                                 break;
                             }
                         }else if(semantic == SemanticType.POINT){
-                            if(ctype == Point.class || ctype == MultiPoint.class){
+                            if(ctype == Point.class || ctype == MultiPoint.class || ctype == Geometry.class){
                                 valid = true;
                                 break;
                             }
                         }else if(semantic == SemanticType.POLYGON){
-                            if(ctype == Polygon.class || ctype == MultiPolygon.class){
+                            if(ctype == Polygon.class || ctype == MultiPolygon.class || ctype == Geometry.class){
                                 valid = true;
                                 break;
                             }
