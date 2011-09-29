@@ -704,7 +704,9 @@ public final class JTS {
      * 1 - search if the user data is a CRS
      * 2 - search if the user data is a Map and has key JTSGeometryCRS
      * 3 - try to rebuild CRS from the srid.
-     * return null if none where successful.
+     * @param geom a Geometry.
+     * @return null if none where successful.
+     * @throws NoSuchAuthorityCodeException, FactoryException
      */
     public static CoordinateReferenceSystem findCoordinateReferenceSystem(final Geometry geom)
             throws NoSuchAuthorityCodeException, FactoryException{
