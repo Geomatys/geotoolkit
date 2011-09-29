@@ -195,7 +195,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
     
 
     private static final String BLANCK = "\u00A0\u00A0\u00A0\u00A0";
-    private static final String LINE =    "\u00A0\u00A0\u2502\u00A0";
+    private static final String LINE =   "\u00A0\u00A0\u2502\u00A0";
     private static final String CROSS =  "\u00A0\u00A0\u251C\u2500";
     private static final String END =    "\u00A0\u00A0\u2514\u2500";
 
@@ -216,7 +216,12 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
 
         //write property name
-        final Name name = property.getName();
+        Name name = property.getName();
+        if(name == null){
+            //use the type name
+            name = property.getType().getName();
+        }
+        
         if(name != null){
             tablewriter.write(DefaultName.toJCRExtendedForm(name));
         }
