@@ -809,7 +809,30 @@ public class Concept implements Serializable {
             sb.append("example:").append(example).append('\n');
         if (geometry != null)
             sb.append("geometry:").append(geometry).append('\n');
-
+        if (resource != null)
+            sb.append("resource:").append(resource).append('\n');
+        if (hierarchyRoot != null)
+            sb.append("hierarchyRoot:").append(hierarchyRoot).append('\n');
+        if (hierarchyRootType != null)
+            sb.append("hierarchyRootType:").append(hierarchyRootType).append('\n');
+        if (hasTopConcept != null) {
+            sb.append("hasTopConcept:").append('\n');
+            for (Concept b : hasTopConcept) {
+                sb.append(b).append('\n');
+            }
+        }
+        if (narrowerTransitive != null) {
+            sb.append("narrowerTransitive:").append('\n');
+            for (Concept b : narrowerTransitive) {
+                sb.append(b).append('\n');
+            }
+        }
+        if (subject != null)
+            sb.append("subject:").append(hierarchyRootType).append('\n');
+        if (contributor != null)
+            sb.append("contributor:").append(contributor).append('\n');
+        if (hasVersion != null)
+            sb.append("hasVersion:").append(hasVersion).append('\n');
         return sb.toString();
     }
 
@@ -823,31 +846,38 @@ public class Concept implements Serializable {
         }
         if (object instanceof Concept) {
             final Concept that = (Concept) object;
-
-            return Utilities.equals(this.about,       that.about)       &&
-                   Utilities.equals(this.altLabel,    that.altLabel)    &&
-                   Utilities.equals(this.broader,     that.broader)     &&
-                   Utilities.equals(this.changeNote,  that.changeNote)  &&
-                   Utilities.equals(this.creator,     that.creator)     &&
-                   Utilities.equals(this.date,        that.date)        &&
-                   Utilities.equals(this.definition,  that.definition)  &&
-                   Utilities.equals(this.description, that.description) &&
-                   Utilities.equals(this.externalID,  that.externalID)  &&
-                   Utilities.equals(this.issued,      that.issued)      &&
-                   Utilities.equals(this.label,       that.label)       &&
-                   Utilities.equals(this.language,    that.language)    &&
-                   Utilities.equals(this.modified,    that.modified)    &&
-                   Utilities.equals(this.name,        that.name)        &&
-                   Utilities.equals(this.narrower,    that.narrower)    &&
-                   Utilities.equals(this.prefLabel,   that.prefLabel)   &&
-                   Utilities.equals(this.related,     that.related)     &&
-                   Utilities.equals(this.rights,      that.rights)      &&
-                   Utilities.equals(this.scopeNote,   that.scopeNote)   &&
-                   Utilities.equals(this.title,       that.title)       &&
-                   Utilities.equals(this.type,        that.type)        &&
-                   Utilities.equals(this.example,     that.example)     &&
-                   Utilities.equals(this.geometry,    that.geometry)    &&
-                   Utilities.equals(this.value,       that.value);
+            return Utilities.equals(this.about,              that.about)       &&
+                   Utilities.equals(this.resource,           that.resource)    &&
+                   Utilities.equals(this.hierarchyRoot,      that.hierarchyRoot)    &&
+                   Utilities.equals(this.hierarchyRootType,  that.hierarchyRootType)    &&
+                   Utilities.equals(this.hasTopConcept,      that.hasTopConcept)    &&
+                   Utilities.equals(this.narrowerTransitive, that.narrowerTransitive)    &&
+                   Utilities.equals(this.subject,            that.subject)    &&
+                   Utilities.equals(this.contributor,        that.contributor)    &&
+                   Utilities.equals(this.hasVersion,         that.hasVersion)    &&
+                   Utilities.equals(this.altLabel,           that.altLabel)    &&
+                   Utilities.equals(this.broader,            that.broader)     &&
+                   Utilities.equals(this.changeNote,         that.changeNote)  &&
+                   Utilities.equals(this.creator,            that.creator)     &&
+                   Utilities.equals(this.date,               that.date)        &&
+                   Utilities.equals(this.definition,         that.definition)  &&
+                   Utilities.equals(this.description,        that.description) &&
+                   Utilities.equals(this.externalID,         that.externalID)  &&
+                   Utilities.equals(this.issued,             that.issued)      &&
+                   Utilities.equals(this.label,              that.label)       &&
+                   Utilities.equals(this.language,           that.language)    &&
+                   Utilities.equals(this.modified,           that.modified)    &&
+                   Utilities.equals(this.name,               that.name)        &&
+                   Utilities.equals(this.narrower,           that.narrower)    &&
+                   Utilities.equals(this.prefLabel,          that.prefLabel)   &&
+                   Utilities.equals(this.related,            that.related)     &&
+                   Utilities.equals(this.rights,             that.rights)      &&
+                   Utilities.equals(this.scopeNote,          that.scopeNote)   &&
+                   Utilities.equals(this.title,              that.title)       &&
+                   Utilities.equals(this.type,               that.type)        &&
+                   Utilities.equals(this.example,            that.example)     &&
+                   Utilities.equals(this.geometry,           that.geometry)    &&
+                   Utilities.equals(this.value,              that.value);
         }
         return false;
     }
