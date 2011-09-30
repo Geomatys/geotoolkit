@@ -35,6 +35,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Property;
+import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -203,8 +204,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
         final Collection<PropertyDescriptor> descs = getDescriptors();
-        final Set<PropertyType> loops = new HashSet<PropertyType>();
-        loops.add(this);
+        final Set<Name> loops = new HashSet<Name>();
+        loops.add(this.getName());
         for (PropertyDescriptor property : descs) {
             tablewriter.write(toString(property,loops));
             tablewriter.write('\n');
@@ -238,18 +239,18 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return sb.toString();
     }
 
-    private static String toString(final PropertyDescriptor property, final Set<PropertyType> visited){
+    private static String toString(final PropertyDescriptor property, final Set<Name> visited){
         final StringBuilder builder = new StringBuilder();
 
         //check if we are in a cycle
         final PropertyType type = property.getType();
-        final boolean inCycle = visited.contains(type);
+        final boolean inCycle = visited.contains(type.getName());
 
         builder.append(DefaultName.toJCRExtendedForm(property.getName()));
         if(inCycle){
             builder.append(" <...CYCLIC...>");
         }
-
+        
         builder.append("\t");
         builder.append(Integer.toString(property.getMinOccurs()));
         builder.append("\t");
@@ -260,6 +261,8 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final PropertyType pt = property.getType();
         if(pt instanceof ComplexType){
             builder.append("CX:").append( ((ComplexType)pt).getName().getLocalPart() );
+        }else if(pt instanceof AssociationType){
+            builder.append("AS:").append( ((AssociationType)pt).getRelatedType().getName().getLocalPart() );
         }else{
             builder.append(pt.getBinding().getSimpleName());
         }
@@ -298,9 +301,22 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                 builder.append('\n');
             }
 
-            visited.add(ct);
+            visited.add(ct.getName());
             builder.append(toStringTree(descs,visited));
             visited.remove(ct);
+        }else if(!inCycle && type instanceof AssociationType){
+            final AssociationType ct = (AssociationType) type;
+            final AttributeType at = ct.getRelatedType();
+            visited.add(ct.getName());
+            if(at instanceof ComplexType){
+                visited.add(at.getName());
+                final Collection<PropertyDescriptor> descs = ((ComplexType)at).getDescriptors();
+                if(!descs.isEmpty()){
+                    builder.append('\n');
+                }
+
+                builder.append(toStringTree(descs,visited));
+            }
         }
 
         return builder.toString();
@@ -312,7 +328,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      * @param cycles : descriptors already visited, to avoid infinite cycles
      * @return tree string form
      */
-    private static String toStringTree(final Collection<PropertyDescriptor> objects, final Set<PropertyType> cycles){
+    private static String toStringTree(final Collection<PropertyDescriptor> objects, final Set<Name> cycles){
         final StringBuilder sb = new StringBuilder();
 
         final int size = objects.size();

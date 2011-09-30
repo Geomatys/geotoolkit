@@ -71,9 +71,9 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
             return false;
         }
 
-        AssociationType ass /*(tee hee)*/ = (AssociationType) other;
+        AssociationType asso = (AssociationType) other;
 
-        return super.equals(ass) && Utilities.equals(relatedType, ass.getRelatedType());
+        return super.equals(asso) && Utilities.equals(relatedType, asso.getRelatedType());
     }
 
     /**

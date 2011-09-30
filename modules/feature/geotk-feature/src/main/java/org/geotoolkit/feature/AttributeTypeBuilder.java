@@ -28,10 +28,12 @@ import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.util.SimpleInternationalString;
 
+import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -121,7 +123,7 @@ public class AttributeTypeBuilder {
     /**
      * super type
      */
-    private AttributeType superType;
+    private PropertyType superType;
     
     /**
      * GeometryType CRS
@@ -273,6 +275,14 @@ public class AttributeTypeBuilder {
         userData.put(key, value);
     }
 
+    public PropertyType getParentType() {
+        return superType;
+    }
+
+    public void setParentType(final PropertyType superType) {
+        this.superType = superType;
+    }
+
     /**
      * Builds the attribute type.
      * <p>
@@ -295,11 +305,10 @@ public class AttributeTypeBuilder {
 
         final AttributeType type = factory.createAttributeType(
                 name, binding, isIdentifiable, isAbstract,
-                restrictions(), superType, description());
+                restrictions(), (AttributeType)superType, description());
         type.getUserData().putAll(userData);
         return type;
     }
-
 
     /**
      * Builds the geometry attribute type.
@@ -317,11 +326,25 @@ public class AttributeTypeBuilder {
 
         final GeometryType type = factory.createGeometryType(
                 name, binding, crs, isIdentifiable, isAbstract,
-                restrictions(), superType, description());
+                restrictions(), (AttributeType)superType, description());
         type.getUserData().putAll(userData);
         return type;
     }
 
+    public AssociationType buildAssociationType(final AttributeType distType){
+        final Name name;
+        if(this.name == null){
+            name = new DefaultName(binding.getSimpleName());
+        }else{
+            name = this.name;
+        }
+
+        final AssociationType type = factory.createAssociationType(name, distType, 
+                isAbstract, restrictions(),(AssociationType)superType,description());
+        type.getUserData().putAll(userData);
+        return type;
+    }
+    
     private InternationalString description() {
         return description != null ? new SimpleInternationalString(description) : null;
     }

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.util.collection.Cache;
 import org.opengis.feature.ComplexAttribute;
@@ -262,6 +263,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
                 final Property prop = ((ComplexAttribute) object).getProperty(xpath);
                 if(prop == null){
                     return null;
+                }else if(prop instanceof DefaultAssociation){
+                    return ((DefaultAssociation)prop).getLink();
                 }else{
                     return prop.getValue();
                 }

@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 
+import org.opengis.feature.type.AssociationDescriptor;
+import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureTypeFactory;
@@ -101,7 +103,7 @@ public class AttributeDescriptorBuilder {
      */
     private final Map<Object,Object> userData = new HashMap<Object, Object>();
     private Object defaultValue = null;
-    private AttributeType type = null;
+    private PropertyType type = null;
     
     /**
      * Constructs the builder.
@@ -202,11 +204,11 @@ public class AttributeDescriptorBuilder {
         return defaultValue;
     }
 
-    public void setType(final AttributeType type) {
+    public void setType(final PropertyType type) {
         this.type = type;
     }
 
-    public AttributeType getType() {
+    public PropertyType getType() {
         return type;
     }
 
@@ -251,7 +253,7 @@ public class AttributeDescriptorBuilder {
                 (GeometryType)type, name, getMinOccurs(), maxOccurs, isNillable, defaultValue);
         }else{
             descriptor = factory.createAttributeDescriptor(
-                type, name, getMinOccurs(), maxOccurs, isNillable, defaultValue);
+                (AttributeType)type, name, getMinOccurs(), maxOccurs, isNillable, defaultValue);
         }
 
         // set the user data
@@ -259,6 +261,30 @@ public class AttributeDescriptorBuilder {
         return descriptor;
     }
 
+    public AssociationDescriptor buildAssociationDescriptor(){
+        if(type == null){
+            throw new IllegalStateException("Descriptor type has not been configured");
+        }
+        if(name == null){
+            throw new IllegalStateException("Descriptor name has not been configured");
+        }
+
+        if(defaultValue != null){
+            if(!type.getBinding().isInstance(defaultValue)){
+                throw new IllegalStateException("Default value class : "+defaultValue.getClass()
+                        +" doesn't match type binding : "+ type.getBinding());
+            }
+        }
+
+        final AssociationDescriptor descriptor;
+        descriptor = factory.createAssociationDescriptor(
+                (AssociationType)type, name, minOccurs, maxOccurs, isNillable);
+
+        // set the user data
+        descriptor.getUserData().putAll(userData);
+        return descriptor;
+    }
+    
 
     public AttributeDescriptor create(final Name name, final Class binding,
             final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {

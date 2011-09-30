@@ -22,18 +22,24 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
+import java.util.Set;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.converter.Classes;
 
+import org.opengis.feature.Association;
 import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
 /**
@@ -178,7 +184,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         tablewriter.write("name\t value\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
-        toString(tablewriter, this, null, true, depth);
+        final Set<FeatureId> visited = new HashSet<FeatureId>();        
+        toString(tablewriter, this, null, true, depth, visited);
 
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -208,7 +215,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * @param last node of the tree
      */
     private static void toString(final TableWriter tablewriter, final Property property, 
-            final Integer index, final boolean last, final int depth, final String... path){
+            final Integer index, final boolean last, final int depth, final Set<FeatureId> visited,final String... path){
 
         //draw the path.
         for(String t : path){
@@ -225,18 +232,36 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         if(name != null){
             tablewriter.write(DefaultName.toJCRExtendedForm(name));
         }
-        
-        if(depth == 0){
-            tablewriter.write("⋅⋅⋅ \n");
-            return;
-        }
-        
+                
         //write the index if one
         if(index != null){
             tablewriter.write('[');
             tablewriter.write(index.toString());
             tablewriter.write(']');
         }
+        
+        if(property instanceof Association){
+            tablewriter.write(" <ASSO> ↴");
+        }
+        
+        //check if we reached depth limit
+        if( (depth <= 1 && (property.getType() instanceof ComplexType || property.getType() instanceof AssociationType))
+            || depth == 0 ){
+            tablewriter.write(" ⋅⋅⋅ \t ⋅⋅⋅ \n");
+            return;
+        }
+        
+        //check if we already visited this element
+        //with complex type and associations this can happen
+        if(property instanceof Feature){
+            final Feature f = (Feature) property;
+            if(visited.contains(f.getIdentifier())){
+                tablewriter.write(" <CYCLIC> \t ⋅⋅⋅ \n");
+                return;
+            }
+            visited.add(f.getIdentifier());
+        }
+        
 
         tablewriter.write('\t');
 
@@ -261,7 +286,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                         nb++;
                         if(last){ subPath = last(path, BLANCK); }
 
-                        toString(tablewriter, sub, null, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
+                        toString(tablewriter, sub, null, nb==nbProperty, depth-1, visited, 
+                                append(subPath, (nb==nbProperty)?END:CROSS));
                         
                     }
                 }else{
@@ -273,17 +299,30 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                         if(last){ subPath = last(path, BLANCK); }
                         
                         if(i==n){
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, visited, 
+                                    append(subPath, (nb==nbProperty)?END:CROSS));
                         }else if(i == 0){
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, visited,
+                                    append(subPath, (nb==nbProperty)?END:CROSS));
                         }else{
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, visited,
+                                    append(subPath, (nb==nbProperty)?END:CROSS));
                         }
                         i++;
                     }
                 }
             }
 
+        }else if(pt instanceof AssociationType){
+            //no value
+            tablewriter.write('\n');
+            
+            //encode association value
+            final AssociationType at = (AssociationType) pt;
+            final Property ca = (Property) property.getValue();
+            final String[] subPath = last(path, LINE);            
+            toString(tablewriter, ca, null, true, depth-1, visited, append(subPath, END));
+            
         }else{
             //simple property
             final Object value = property.getValue();

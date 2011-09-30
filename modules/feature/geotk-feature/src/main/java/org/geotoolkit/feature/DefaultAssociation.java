@@ -31,10 +31,30 @@ import org.opengis.feature.type.AttributeType;
  */
 public class DefaultAssociation extends DefaultProperty<Attribute,AssociationDescriptor> implements Association {
 
-    protected DefaultAssociation(final Attribute value, final AssociationDescriptor descriptor) {
+    /**
+     * Additional information when relation is 0:N.
+     * This value can be a reference id, an URI ...
+     */
+    private final Object link;
+    
+    public DefaultAssociation(final Attribute value, final AssociationDescriptor descriptor) {
+        this(value, descriptor, null);
+    }
+    
+    public DefaultAssociation(final Attribute value, final AssociationDescriptor descriptor, final Object link) {
         super(value, descriptor);
+        this.link = link;
     }
 
+    /**
+     * Additional information when relation is 0:N.
+     * This value can be a reference id, an URI ...
+     * @return Object : can be null
+     */
+    public Object getLink() {
+        return link;
+    }
+    
     /**
      * {@inheritDoc }
      */
