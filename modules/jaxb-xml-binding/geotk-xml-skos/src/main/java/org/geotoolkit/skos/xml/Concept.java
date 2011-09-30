@@ -169,6 +169,8 @@ public class Concept implements Serializable {
     @XmlElement(namespace="http://www.opengis.net/gml")
     private List<AbstractGMLType> geometry;
 
+    @XmlElement(namespace="http://www.geomatys.com/count")
+    private Integer count;
 
 
     public Concept() {
@@ -749,6 +751,20 @@ public class Concept implements Serializable {
     public void setGeometry(final List<AbstractGMLType> geometry) {
         this.geometry = geometry;
     }
+    
+    /**
+     * @return the count
+     */
+    public Integer getCount() {
+        return count;
+    }
+
+    /**
+     * @param count the count to set
+     */
+    public void setCount(Integer count) {
+        this.count = count;
+    }
 
     @Override
     public String toString() {
@@ -833,6 +849,8 @@ public class Concept implements Serializable {
             sb.append("contributor:").append(contributor).append('\n');
         if (hasVersion != null)
             sb.append("hasVersion:").append(hasVersion).append('\n');
+        if (count != null)
+            sb.append("count:").append(count).append('\n');
         return sb.toString();
     }
 
@@ -877,6 +895,7 @@ public class Concept implements Serializable {
                    Utilities.equals(this.type,               that.type)        &&
                    Utilities.equals(this.example,            that.example)     &&
                    Utilities.equals(this.geometry,           that.geometry)    &&
+                   Utilities.equals(this.count,              that.count)       &&
                    Utilities.equals(this.value,              that.value);
         }
         return false;
