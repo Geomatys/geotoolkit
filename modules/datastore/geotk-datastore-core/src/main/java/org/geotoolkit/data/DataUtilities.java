@@ -38,6 +38,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
@@ -187,7 +188,7 @@ public class DataUtilities {
      * Iterate on the given iterator and calculate count.
      * @throws DataStoreRuntimeException
      */
-    public static long calculateCount(final FeatureIterator reader) throws DataStoreRuntimeException{
+    public static long calculateCount(final CloseableIterator reader) throws DataStoreRuntimeException{
         long count = 0;
 
         try{
