@@ -50,7 +50,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public abstract class AbstractComplexAttribute<V extends Collection<Property>,I extends Identifier> extends DefaultAttribute<V,AttributeDescriptor,I>
         implements ComplexAttribute {
-
+    
     protected AbstractComplexAttribute(final AttributeDescriptor descriptor, final I id) {
         super( descriptor, id );
     }
@@ -165,10 +165,10 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
     @Override
     public String toString() {
-        return toString(3);
+        return toString(3,5);
     }
     
-    public String toString(int depth) {
+    public String toString(int depth, int maxarray) {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(" ");
         sb.append(getName());
@@ -185,7 +185,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
         final Set<FeatureId> visited = new HashSet<FeatureId>();        
-        toString(tablewriter, this, null, true, depth, visited);
+        toString(tablewriter, this, null, true, depth, maxarray, visited);
 
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -215,7 +215,8 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * @param last node of the tree
      */
     private static void toString(final TableWriter tablewriter, final Property property, 
-            final Integer index, final boolean last, final int depth, final Set<FeatureId> visited,final String... path){
+            final Integer index, final boolean last, final int depth, final int maxArray,
+            final Set<FeatureId> visited,final String... path){
 
         //draw the path.
         for(String t : path){
@@ -259,7 +260,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             //with complex type and associations this can happen
             final Feature f = (Feature) property;
             if(visited.contains(f.getIdentifier())){
-                tablewriter.write(" <CYCLIC> \t\t ⋅⋅⋅ \n");
+                tablewriter.write(" <CYCLIC> \t\t \n");
                 return;
             }
             visited.add(f.getIdentifier());
@@ -268,7 +269,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         //check if we reached depth limit
         if( (depth <= 1 && (property.getType() instanceof ComplexType || property.getType() instanceof AssociationType))
             || depth == 0 ){
-            tablewriter.write(" ⋅⋅⋅ \t\t ⋅⋅⋅ \n");
+            tablewriter.write(" ⋅⋅⋅ \t\t \n");
             return;
         }
         
@@ -302,27 +303,38 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                         nb++;
                         if(last){ subPath = last(path, BLANCK); }
 
-                        toString(tablewriter, sub, null, nb==nbProperty, depth-1, visited, 
-                                append(subPath, (nb==nbProperty)?END:CROSS));
+                        toString(tablewriter, sub, null, nb==nbProperty, depth-1, 
+                                maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                         
                     }
                 }else{
                     final Collection<? extends Property> properties = ca.getProperties(desc.getName());
                     int i = 0;
                     int n = properties.size()-1;
+                    final int k = nb;
                     for(Property sub : properties){
                         nb++;
                         if(last){ subPath = last(path, BLANCK); }
                         
-                        if(i==n){
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, visited, 
-                                    append(subPath, (nb==nbProperty)?END:CROSS));
+                        if(i==maxArray){
+                            //do not display to much values if there are plenty
+                            final String[] ep = append(subPath, (k+n+1==nbProperty)?END:CROSS);
+                            for(String t : ep) tablewriter.write(t);
+                            tablewriter.write("... ");
+                            tablewriter.write(Integer.toString(n));
+                            tablewriter.write(" elements... \n");
+                            nb += n-i;
+                            break;
+                            
+                        }else if(i==n){
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                    maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                         }else if(i == 0){
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, visited,
-                                    append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                    maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                         }else{
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, visited,
-                                    append(subPath, (nb==nbProperty)?END:CROSS));
+                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                    maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                         }
                         i++;
                     }
@@ -334,16 +346,21 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             tablewriter.write('\n');
             
             //encode association value
-            final AssociationType at = (AssociationType) pt;
             final Property ca = (Property) property.getValue();
             final String[] subPath = last(path, (last)?BLANCK:LINE);            
-            toString(tablewriter, ca, null, true, depth-1, visited, append(subPath, END));
+            toString(tablewriter, ca, null, true, depth-1, 
+                    maxArray, visited, append(subPath, END));
             
         }else{
             //simple property
-            final Object value = property.getValue();
+            String strValue = String.valueOf(property.getValue());
+            if(strValue.length() > 100){
+                //clip the string, to avoid a to big table
+                strValue = strValue.substring(0, 100) +" ...";
+            }
+            
             tablewriter.write("\t");
-            tablewriter.write((value == null)? "null" : value.toString());
+            tablewriter.write(strValue);
             tablewriter.write('\n');
         }
     }

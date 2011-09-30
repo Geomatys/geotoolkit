@@ -116,15 +116,25 @@ public class FeatureTypeBuilder {
 
     protected final List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>(){
 
+        private void checkName(Name n){
+            for(PropertyDescriptor desc : properties){
+                if(desc.getName().equals(n)){
+                    throw new IllegalArgumentException("Descriptor for name : "+n+" already exist.");
+                }
+            }
+        }
+        
         @Override
         public boolean add(PropertyDescriptor e) {
             ensureNonNull("property descriptor", e);
+            checkName(e.getName());
             return super.add(e);
         }
 
         @Override
         public void add(int i, PropertyDescriptor e) {
             ensureNonNull("property descriptor", e);
+            checkName(e.getName());
             super.add(i, e);
         }
 
@@ -132,6 +142,7 @@ public class FeatureTypeBuilder {
         public boolean addAll(Collection<? extends PropertyDescriptor> clctn) {
             for(PropertyDescriptor att : clctn){
                 ensureNonNull("property descriptor", att);
+                checkName(att.getName());
             }
             return super.addAll(clctn);
         }
@@ -140,6 +151,7 @@ public class FeatureTypeBuilder {
         public boolean addAll(int i, Collection<? extends PropertyDescriptor> clctn) {
             for(PropertyDescriptor att : clctn){
                 ensureNonNull("property descriptor", att);
+                checkName(att.getName());
             }
             return super.addAll(i, clctn);
         }
@@ -533,8 +545,9 @@ public class FeatureTypeBuilder {
      * Use of this method is discouraged. Consider using {@link #add(String, Class)}.
      * </p>
      */
-    public void add(final PropertyDescriptor descriptor) {
+    public int add(final PropertyDescriptor descriptor) {
         properties.add(descriptor);
+        return properties.indexOf(descriptor);
     }
 
     /**

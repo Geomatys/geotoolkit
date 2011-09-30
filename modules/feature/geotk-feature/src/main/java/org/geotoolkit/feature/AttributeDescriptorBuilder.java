@@ -30,6 +30,7 @@ import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -137,10 +138,12 @@ public class AttributeDescriptorBuilder {
     /**
      * Initializes builder state from another attribute descriptor.
      */
-    public void copy(final AttributeDescriptor descriptor) {
+    public void copy(final PropertyDescriptor descriptor) {
         reset();
         name = descriptor.getName();
-        defaultValue = descriptor.getDefaultValue();
+        if(descriptor instanceof AttributeDescriptor){
+            defaultValue = ((AttributeDescriptor)descriptor).getDefaultValue();
+        }
         minOccurs = descriptor.getMinOccurs();
         maxOccurs = descriptor.getMaxOccurs();
         isNillable = descriptor.isNillable();
