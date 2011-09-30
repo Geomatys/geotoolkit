@@ -68,7 +68,8 @@ propOrder = {
     "narrowerTransitive",
     "modified",
     "example",
-    "geometry"
+    "geometry",
+    "count"
 
 })
 public class Concept implements Serializable {
