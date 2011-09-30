@@ -18,7 +18,6 @@ package org.geotoolkit.process.jts.union;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
