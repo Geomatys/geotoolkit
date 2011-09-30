@@ -181,7 +181,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         final StringWriter writer = new StringWriter();
         final TableWriter tablewriter = new TableWriter(writer);
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("name\t value\n");
+        tablewriter.write("name\tid\tvalue\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
         final Set<FeatureId> visited = new HashSet<FeatureId>();        
@@ -241,33 +241,49 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
         
         if(property instanceof Association){
-            tablewriter.write(" <ASSO> ↴");
+            tablewriter.write("  <ASSO> ");
+            //check if we already visited this element
+            //with complex type and associations this can happen
+            final Object value = property.getValue();
+            if(value instanceof Feature){
+                final Feature f = (Feature) value;
+                if(visited.contains(f.getIdentifier())){
+                    tablewriter.write(" <CYCLIC> \t");
+                    tablewriter.write(f.getIdentifier().getID());
+                    tablewriter.write("\n");
+                    return;
+                }
+            }
+        } else if(property instanceof Feature){
+            //check if we already visited this element
+            //with complex type and associations this can happen
+            final Feature f = (Feature) property;
+            if(visited.contains(f.getIdentifier())){
+                tablewriter.write(" <CYCLIC> \t\t ⋅⋅⋅ \n");
+                return;
+            }
+            visited.add(f.getIdentifier());
         }
         
         //check if we reached depth limit
         if( (depth <= 1 && (property.getType() instanceof ComplexType || property.getType() instanceof AssociationType))
             || depth == 0 ){
-            tablewriter.write(" ⋅⋅⋅ \t ⋅⋅⋅ \n");
+            tablewriter.write(" ⋅⋅⋅ \t\t ⋅⋅⋅ \n");
             return;
         }
         
-        //check if we already visited this element
-        //with complex type and associations this can happen
-        if(property instanceof Feature){
-            final Feature f = (Feature) property;
-            if(visited.contains(f.getIdentifier())){
-                tablewriter.write(" <CYCLIC> \t ⋅⋅⋅ \n");
-                return;
-            }
-            visited.add(f.getIdentifier());
-        }
+        
         
 
         tablewriter.write('\t');
 
         final PropertyType pt = property.getType();
         if(pt instanceof ComplexType){
-            //no value
+            //show id in value column if a feature
+            if(property instanceof Feature){
+                tablewriter.write(((Feature)property).getIdentifier().getID());
+            }
+            
             tablewriter.write('\n');
             
             final ComplexType ct = (ComplexType) pt;
@@ -320,12 +336,13 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             //encode association value
             final AssociationType at = (AssociationType) pt;
             final Property ca = (Property) property.getValue();
-            final String[] subPath = last(path, LINE);            
+            final String[] subPath = last(path, (last)?BLANCK:LINE);            
             toString(tablewriter, ca, null, true, depth-1, visited, append(subPath, END));
             
         }else{
             //simple property
             final Object value = property.getValue();
+            tablewriter.write("\t");
             tablewriter.write((value == null)? "null" : value.toString());
             tablewriter.write('\n');
         }
