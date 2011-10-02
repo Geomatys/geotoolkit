@@ -71,9 +71,8 @@ public final strictfp class PassThroughTransformTest extends TransformTestBase {
      * Verify after each test case that all GeoAPI tests were enabled.
      */
     @After
-    @Override
     public void assertAllTestsEnabled() {
-        super.assertAllTestsEnabled();
+        assertTrue(getDisabledOperations().isEmpty());
     }
 
     /**

@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
 import org.opengis.test.SupportedOperation;
 import org.opengis.test.ToleranceModifier;
+import org.opengis.test.FactoryFilter;
 import org.opengis.test.TestSuite;
 
 import org.geotoolkit.referencing.CRS;
@@ -74,7 +75,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  *
  * @since 3.19
  */
-public final strictfp class GeoapiTest extends TestSuite implements ImplementationDetails {
+public final strictfp class GeoapiTest extends TestSuite implements ImplementationDetails, FactoryFilter {
     /**
      * The configuration map, which lists the tests to disable.
      */
