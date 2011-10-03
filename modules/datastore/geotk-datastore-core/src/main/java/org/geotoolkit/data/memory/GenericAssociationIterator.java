@@ -125,7 +125,7 @@ public class GenericAssociationIterator implements CloseableIterator {
 
         @Override
         public int size() {
-            return (int) DataUtilities.calculateCount(iterator());
+            return original.size();
         }
 
     }

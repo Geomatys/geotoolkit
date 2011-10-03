@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Set;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Association;
@@ -309,35 +311,44 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                     }
                 }else{
                     final Collection<? extends Property> properties = ca.getProperties(desc.getName());
+                    final Iterator<? extends Property> ite = properties.iterator();
                     int i = 0;
                     int n = properties.size()-1;
                     final int k = nb;
-                    for(Property sub : properties){
-                        nb++;
-                        if(last){ subPath = last(path, BLANCK); }
-                        
-                        if(i==maxArray){
-                            //do not display to much values if there are plenty
-                            final String[] ep = append(subPath, (k+n+1==nbProperty)?END:CROSS);
-                            for(String t : ep) tablewriter.write(t);
-                            tablewriter.write("... ");
-                            tablewriter.write(Integer.toString(n));
-                            tablewriter.write(" elements... \n");
-                            nb += n-i;
-                            break;
-                            
-                        }else if(i==n){
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
-                                    maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
-                        }else if(i == 0){
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
-                                    maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
-                        }else{
-                            toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
-                                    maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
+                    try{
+                        while(ite.hasNext()){
+                            final Property sub = ite.next();
+                            nb++;
+                            if(last){ subPath = last(path, BLANCK); }
+
+                            if(i==maxArray){
+                                //do not display to much values if there are plenty
+                                final String[] ep = append(subPath, (k+n+1==nbProperty)?END:CROSS);
+                                for(String t : ep) tablewriter.write(t);
+                                tablewriter.write("... ");
+                                tablewriter.write(Integer.toString(n));
+                                tablewriter.write(" elements... \n");
+                                nb += n-i;
+                                break;
+
+                            }else if(i==n){
+                                toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                        maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
+                            }else if(i == 0){
+                                toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                        maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
+                            }else{
+                                toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                        maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
+                            }
+                            i++;
                         }
-                        i++;
+                    }finally{
+                        if(ite instanceof CloseableIterator){
+                            ((CloseableIterator)ite).close();
+                        }
                     }
+                    
                 }
             }
 
