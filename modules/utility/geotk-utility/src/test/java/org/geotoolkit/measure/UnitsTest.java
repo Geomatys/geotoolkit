@@ -44,7 +44,7 @@ import static org.geotoolkit.test.Assert.*;
  * Test conversions using the units declared in {@link Units}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.5
  */
@@ -215,13 +215,16 @@ public final strictfp class UnitsTest {
      */
     @Test
     public void testValueOf() {
+        assertSame(DEGREE_ANGLE, Units.valueOf("°"));
         assertSame(DEGREE_ANGLE, Units.valueOf("deg"));
         assertSame(DEGREE_ANGLE, Units.valueOf("degree"));
         assertSame(DEGREE_ANGLE, Units.valueOf("degrees"));
         assertSame(DEGREE_ANGLE, Units.valueOf("degrées"));
         assertSame(DEGREE_ANGLE, Units.valueOf("DEGREES"));
         assertSame(DEGREE_ANGLE, Units.valueOf("DEGRÉES"));
-        assertSame(DEGREE_ANGLE, Units.valueOf("°"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("degrees_east"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("degrées_north"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("decimal_degree"));
         assertSame(RADIAN,       Units.valueOf("rad"));
         assertSame(RADIAN,       Units.valueOf("radian"));
         assertSame(RADIAN,       Units.valueOf("radians"));

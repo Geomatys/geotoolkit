@@ -36,13 +36,14 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.XArrays;
 
 
 /**
  * A set of units to use in addition of {@link SI} and {@link NonSI}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -52,6 +53,13 @@ public final class Units extends Static {
      * Small tolerance factor for the comparisons of floating point values.
      */
     private static final double EPS = 1E-12;
+
+    /**
+     * The suffixes that NetCDF files sometime put after the "degrees" unit.
+     *
+     * @since 3.20
+     */
+    private static final String[] DEGREE_SUFFIXES = {"east", "west", "north", "south"};
 
     /**
      * Do not allows instantiation of this class.
@@ -401,47 +409,75 @@ public final class Units extends Static {
             return null;
         }
         uom = Strings.toASCII(uom.trim()).toString();
-        if (uom.isEmpty()) {
-            return Unit.ONE;
-        } else if (equalsIgnorePlural(uom, "pixel")) {
-            return NonSI.PIXEL;
-        } else if (uom.equalsIgnoreCase("deg") || equalsIgnorePlural(uom, "degree") ||
-                equalsIgnorePlural(uom, "decimal_degree") || uom.equals("°"))
-        {
-            return NonSI.DEGREE_ANGLE;
-        } else if (uom.equalsIgnoreCase("rad") || equalsIgnorePlural(uom, "radian")) {
-            return SI.RADIAN;
-        } else if (equalsIgnorePlural(uom, "kilometer") || equalsIgnorePlural(uom, "kilometre")) {
-            return SI.KILOMETRE;
-        } else if (equalsIgnorePlural(uom, "meter") || equalsIgnorePlural(uom, "metre")) {
-            return SI.METRE;
-        } else if (equalsIgnorePlural(uom, "week")) {
-            return NonSI.WEEK;
-        } else if (equalsIgnorePlural(uom, "day")) {
-            return NonSI.DAY;
-        } else if (equalsIgnorePlural(uom, "hour")) {
-            return NonSI.HOUR;
-        } else if (equalsIgnorePlural(uom, "minute")) {
-            return NonSI.MINUTE;
-        } else if (equalsIgnorePlural(uom, "second")) {
-            return SI.SECOND;
-        } else if (uom.equalsIgnoreCase("psu")) { // Pratical Salinity Scale
-            return Unit.ONE;
-        } else if (uom.equalsIgnoreCase("level")) { // Sigma level
-            return Unit.ONE;
-        } else if (equalsIgnorePrefix(uom, "degree", "Celsius", "Celcius")) { // "Celcius" is a common mispelling.
-            return SI.CELSIUS;
-        } else {
-            final Unit<?> unit;
-            try {
-                unit = Unit.valueOf(uom);
-            } catch (IllegalArgumentException e) {
-                // Provides a better error message than the default JSR-275 0.9.4 implementation.
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), e);
+        if (uom.length() >= 3) {
+            if (uom.regionMatches(true, 0, "deg", 0, 3)) {
+                if (uom.length() == 3) {
+                    return NonSI.DEGREE_ANGLE; // "deg"
+                }
+                boolean isTemperature = false;
+                int s = uom.indexOf(' ', 3);
+                if (s < 0) {
+                    s = uom.indexOf('_', 3);
+                }
+                if (s >= 0) {
+                    final String prefix = uom.substring(0,s).trim();
+                    final String suffix = uom.substring(s+1).trim();
+                    if (!prefix.isEmpty() && !suffix.isEmpty()) {
+                        if (XArrays.containsIgnoreCase(DEGREE_SUFFIXES, suffix)) {
+                            uom = prefix;
+                        } else {
+                            uom = prefix;
+                            isTemperature = isCelsius(suffix);
+                        }
+                    }
+                }
+                if (equalsIgnorePlural(uom, "degree")) {
+                    return isTemperature ? SI.CELSIUS : NonSI.DEGREE_ANGLE;
+                }
+            } else if (equalsIgnorePlural(uom, "pixel")) {
+                return NonSI.PIXEL;
+            } else if (equalsIgnorePlural(uom, "decimal_degree")) {
+                return NonSI.DEGREE_ANGLE;
+            } else if (uom.equalsIgnoreCase("rad") || equalsIgnorePlural(uom, "radian")) {
+                return SI.RADIAN;
+            } else if (equalsIgnorePlural(uom, "kilometer") || equalsIgnorePlural(uom, "kilometre")) {
+                return SI.KILOMETRE;
+            } else if (equalsIgnorePlural(uom, "meter") || equalsIgnorePlural(uom, "metre")) {
+                return SI.METRE;
+            } else if (equalsIgnorePlural(uom, "week")) {
+                return NonSI.WEEK;
+            } else if (equalsIgnorePlural(uom, "day")) {
+                return NonSI.DAY;
+            } else if (equalsIgnorePlural(uom, "hour")) {
+                return NonSI.HOUR;
+            } else if (equalsIgnorePlural(uom, "minute")) {
+                return NonSI.MINUTE;
+            } else if (equalsIgnorePlural(uom, "second")) {
+                return SI.SECOND;
+            } else if (uom.equalsIgnoreCase("psu")) { // Pratical Salinity Scale
+                return Unit.ONE;
+            } else if (uom.equalsIgnoreCase("level")) { // Sigma level
+                return Unit.ONE;
+            } else if (isCelsius(uom)) {
+                return SI.CELSIUS;
             }
-            return canonicalize(unit);
+        } else {
+            // Symbols having less than 3 characters.
+            if (uom.isEmpty()) {
+                return Unit.ONE;
+            } else if (uom.equals("°")) {
+                return NonSI.DEGREE_ANGLE;
+            }
         }
+        final Unit<?> unit;
+        try {
+            unit = Unit.valueOf(uom);
+        } catch (IllegalArgumentException e) {
+            // Provides a better error message than the default JSR-275 0.9.4 implementation.
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), e);
+        }
+        return canonicalize(unit);
     }
 
     /**
@@ -458,17 +494,11 @@ public final class Units extends Static {
     }
 
     /**
-     * Returns {@code true} if the given {@code uom} is equals to the given expected string,
-     * ignoring the given prefix (if any). This method also replaces {@code '_'} characters
-     * by spaces, since the prefix is typically the first word of a sentence like
-     * {@code "degree Celsius"}.
+     * Returns {@code true} if the given {@code uom} is equals to {@code "Celsius"} or
+     * {@code "Celcius"}. The later is a common mispelling.
      */
-    private static boolean equalsIgnorePrefix(String uom, final String prefix, final String exp1, final String exp2) {
-        uom = uom.replace('_', ' ');
-        if (uom.regionMatches(true, 0, prefix, 0, prefix.length())) {
-            uom = uom.substring(prefix.length()).trim();
-        }
-        return uom.equalsIgnoreCase(exp1) || uom.equalsIgnoreCase(exp2);
+    private static boolean isCelsius(final String uom) {
+        return uom.equalsIgnoreCase("Celsius") || uom.equalsIgnoreCase("Celcius");
     }
 
     /**

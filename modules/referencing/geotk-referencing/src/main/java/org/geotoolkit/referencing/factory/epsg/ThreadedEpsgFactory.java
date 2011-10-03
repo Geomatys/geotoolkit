@@ -344,7 +344,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
             }
         }
         final StringBuilder buffer = new StringBuilder("jdbc:").append(driver).append(':')
-                .append(directory.getPath().replace(File.pathSeparatorChar, '/'))
+                .append(directory.getPath().replace(File.separatorChar, '/'))
                 .append('/').append(VERSION);
         if (create) {
             // Allow the creation of the database only if the needed scripts are available.
