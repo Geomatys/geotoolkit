@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.geotoolkit.internal.OS;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -52,9 +53,14 @@ public final strictfp class SeriesEntryTest {
         final String   expected = "/SomeRoot/SomeSub/SomeSeries/2/foo.png";
         final File         file = entry.file("foo");
         final URI           uri = entry.uri ("foo");
-        assertTrue  (file.isAbsolute());
-        assertEquals(new File(expected), file);
-        assertEquals(new URI("file://" + expected), uri);
+        final boolean      unix = OS.current() != OS.WINDOWS;
+
+        // Path without drive letter is not absolute on Window platform.
+        assertEquals("isAbsolute", unix, file.isAbsolute());
+        assertEquals("File",       new File(expected), file);
+        if (unix) {
+            assertEquals("URI", new URI("file://" + expected), uri);
+        }
     }
 
     /**
@@ -68,9 +74,14 @@ public final strictfp class SeriesEntryTest {
         final String   expected = "/SomeSeries/2/foo.png";
         final File         file = entry.file("foo");
         final URI           uri = entry.uri ("foo");
-        assertTrue  (file.isAbsolute());
-        assertEquals(new File(expected), file);
-        assertEquals(new URI("file://" + expected), uri);
+        final boolean      unix = OS.current() != OS.WINDOWS;
+
+        // Path without drive letter is not absolute on Window platform.
+        assertEquals("isAbsolute", unix, file.isAbsolute());
+        assertEquals("File",       new File(expected), file);
+        if (unix) {
+            assertEquals("URI", new URI("file://" + expected), uri);
+        }
     }
 
     /**
@@ -84,9 +95,9 @@ public final strictfp class SeriesEntryTest {
         final String   expected = "SomeRoot/SomeSub/SomeSeries/2/foo.png";
         final File         file = entry.file("foo");
         final URI           uri = entry.uri ("foo");
-        assertFalse (file.isAbsolute());
-        assertEquals(new File(expected), file);
-        assertEquals(new URI("ftp://localhost/" + expected), uri);
+        assertFalse ("isAbsolute", file.isAbsolute());
+        assertEquals("File",       new File(expected), file);
+        assertEquals("URI",        new URI("ftp://localhost/" + expected), uri);
     }
 
     /**
@@ -100,8 +111,8 @@ public final strictfp class SeriesEntryTest {
         final String   expected = "SomeSeries/2/foo.png";
         final File         file = entry.file("foo");
         final URI           uri = entry.uri ("foo");
-        assertFalse (file.isAbsolute());
-        assertEquals(new File(expected), file);
-        assertEquals(new URI("ftp://localhost/" + expected), uri);
+        assertFalse ("isAbsolute", file.isAbsolute());
+        assertEquals("File",       new File(expected), file);
+        assertEquals("URI", new URI("ftp://localhost/" + expected), uri);
     }
 }

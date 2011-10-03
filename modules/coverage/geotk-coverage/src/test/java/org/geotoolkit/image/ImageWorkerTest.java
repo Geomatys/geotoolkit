@@ -48,7 +48,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
     }
 
     /**
-     * To ensure strict reproductibility of the test suite across different platforms,
+     * To ensure strict reproducibility of the test suite across different platforms,
      * disable native acceleration for some image operations that {@link ImageWorker}
      * uses through this test suite.
      */
@@ -220,7 +220,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(indexed, image = worker.image);
-        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 163325088L);
+        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 163325088L, 3717990294L);
         showCurrentImage("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;

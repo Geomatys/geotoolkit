@@ -151,6 +151,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
                 "AXIS[“Easting”, EAST],\n" +
                 "AXIS[“Northing”, NORTH]]"), wkt);
         } finally {
+            writer.dispose();
             assertTrue(TemporaryFile.delete(file));
             if (fileTFW != null) {
                 assertTrue(fileTFW.delete());
@@ -159,7 +160,6 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
                 assertTrue(filePRJ.delete());
             }
         }
-        writer.dispose();
     }
 
     /**
