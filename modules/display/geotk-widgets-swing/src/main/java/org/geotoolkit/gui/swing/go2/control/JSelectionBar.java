@@ -121,16 +121,16 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         menu.add(guiGeographic);
         menu.add(guiVisual);
         menu.add(new JSeparator(SwingConstants.HORIZONTAL));
-        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copytoappclipboard")) {
+        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselection")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyToClipboard(false);
+                copyToClipboard(false,false);
             }
         }));
-        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copytosysclipboard")) {
+        menu.add(new JMenuItem(new AbstractAction(MessageBundle.getString("copyselectionappend")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                copyToClipboard(true);
+                copyToClipboard(false,true);
             }
         }));
 
@@ -151,6 +151,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             @Override
             public void mouseExited(MouseEvent arg0) {}
         });
+        handler.setMenu(menu);
 
         guiIntersect.setSelected(true);
         groupClip.add(guiIntersect);
@@ -174,6 +175,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
 
         add(guiSelect);
         add(guiConfig);
+        
     }
 
     @Override
@@ -192,8 +194,7 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
         map.setHandler(handler);
     }
 
-    
-    private void copyToClipboard(boolean systemclipboard){
+    private void copyToClipboard(boolean systemclipboard, boolean append){
         final AbstractContainer2D container = map.getCanvas().getContainer();
 
         if(container instanceof ContextContainer2D){
@@ -235,8 +236,15 @@ public class JSelectionBar extends AbstractMapControlBar implements ActionListen
             if(systemclipboard){
                 GeotkClipboard.setSystemClipboardValue(sb.toString());
             }else{
-                final Transferable trs = new FeatureCollectionListTransferable(selections);
-                GeotkClipboard.INSTANCE.setContents(trs, null);
+                Transferable trs = GeotkClipboard.INSTANCE.getContents(this);
+                
+                if(append && trs instanceof FeatureCollectionListTransferable){
+                    final List lst = ((FeatureCollectionListTransferable)trs).selections;
+                    lst.addAll(selections);                    
+                }else{
+                    trs = new FeatureCollectionListTransferable(selections);
+                    GeotkClipboard.INSTANCE.setContents(trs, null);
+                }
             }
             
         }

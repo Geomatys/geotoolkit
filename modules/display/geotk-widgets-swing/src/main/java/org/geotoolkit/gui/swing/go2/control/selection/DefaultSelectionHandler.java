@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
+import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -146,11 +148,16 @@ public class DefaultSelectionHandler implements CanvasHandler {
     private boolean withinArea;
     private boolean geographicArea;
     private JMap2D map2D;
+    private JPopupMenu menu;
     private int key = -1;
 
 
     public DefaultSelectionHandler() {
         mouseInputListener = new EventListener();
+    }
+
+    public void setMenu(JPopupMenu menu) {
+        this.menu = menu;
     }
 
     public boolean isGeographicArea() {
@@ -311,6 +318,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         component.addMouseListener(mouseInputListener);
         component.addMouseMotionListener(mouseInputListener);
         component.addKeyListener(mouseInputListener);
+        ((JComponent)component).setComponentPopupMenu(menu);
     }
 
     @Override
@@ -319,6 +327,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         component.removeMouseListener(mouseInputListener);
         component.removeMouseMotionListener(mouseInputListener);
         component.removeKeyListener(mouseInputListener);
+        ((JComponent)component).setComponentPopupMenu(null);
     }
 
     private class EventListener implements MouseInputListener,KeyListener {
@@ -329,9 +338,13 @@ public class DefaultSelectionHandler implements CanvasHandler {
         final List<Point> points = new ArrayList<Point>();
         private int startX = 0;
         private int startY = 0;
+        private boolean selecting = false;
 
         @Override
         public void mouseClicked(final MouseEvent e) {
+            if(e.getButton()!=MouseEvent.BUTTON1)return;
+            selecting = true;
+            
             final Point point = e.getPoint();
             points.clear();
             points.add(new Point(point.x-1, point.y-1));
@@ -340,10 +353,14 @@ public class DefaultSelectionHandler implements CanvasHandler {
             points.add(new Point(point.x+1, point.y-1));
             doSelection(points,key);
             points.clear();
+            selecting = false;
         }
 
         @Override
         public void mousePressed(final MouseEvent e) {
+            if(e.getButton()!=MouseEvent.BUTTON1)return;
+            selecting = true;
+            
             lastValid = e.getPoint();
             points.clear();
             if(squareArea){
@@ -356,6 +373,8 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
         @Override
         public void mouseReleased(final MouseEvent e) {
+            if(e.getButton()!=MouseEvent.BUTTON1)return;
+            
             final Point lastPoint = e.getPoint();
             if(squareArea){
                 points.clear();
@@ -369,6 +388,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
             doSelection(points,key);
             selectionPane.setPoints(null);
             points.clear();
+            selecting = false;
         }
 
         @Override
@@ -383,6 +403,8 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
         @Override
         public void mouseDragged(final MouseEvent e) {
+            if(!selecting)return;
+            
             Point eventPoint = e.getPoint();
             if(squareArea){
                 points.clear();

@@ -289,17 +289,8 @@ public class JClipboardPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        guiRollback = new javax.swing.JButton();
         guiApply = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-
-        guiRollback.setText(MessageBundle.getString("paste")); // NOI18N
-        guiRollback.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pasteFromSys(evt);
-            }
-        });
 
         guiApply.setText(MessageBundle.getString("paste")); // NOI18N
         guiApply.addActionListener(new java.awt.event.ActionListener() {
@@ -308,9 +299,7 @@ public class JClipboardPanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel1.setText(MessageBundle.getString("applicationclipboard")); // NOI18N
-
-        jLabel2.setText(MessageBundle.getString("systemclipboard")); // NOI18N
+        jLabel1.setText(MessageBundle.getString("clipboard")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -318,31 +307,15 @@ public class JClipboardPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addComponent(guiApply))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addComponent(guiRollback))))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                .addComponent(guiApply))
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiApply, guiRollback});
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel2});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(guiApply)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(guiRollback, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(guiApply)
+                .addComponent(jLabel1))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -353,17 +326,8 @@ public class JClipboardPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_pasteFromApp
 
-    private void pasteFromSys(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteFromSys
-        final Geometry old = getGeometry();
-        if(checkClipboard(true)){
-            firePropertyChange(GEOMETRY_PROPERTY, old, getGeometry());
-        }
-    }//GEN-LAST:event_pasteFromSys
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton guiApply;
-    private javax.swing.JButton guiRollback;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
 }
