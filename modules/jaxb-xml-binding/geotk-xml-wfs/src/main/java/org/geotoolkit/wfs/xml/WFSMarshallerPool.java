@@ -36,9 +36,23 @@ public class WFSMarshallerPool {
             Logger.getLogger(WFSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private static MarshallerPool instance100;
+    static {
+        try {
+            instance100 = new MarshallerPool("org.geotoolkit.wfs.xml.v100:org.geotoolkit.gml.xml.v212");
+        } catch (JAXBException ex) {
+            Logger.getLogger(WFSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     private WFSMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
         return instance;
+    }
+    
+    public static MarshallerPool getInstanceV100() {
+        return instance100;
     }
 }

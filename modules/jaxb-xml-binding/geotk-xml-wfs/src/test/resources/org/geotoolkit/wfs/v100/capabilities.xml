@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding="ISO-8859-1" ?>
+<WFS_Capabilities 
+   version="1.0.0" 
+   updateSequence="0" 
+   xmlns="http://www.opengis.net/wfs" 
+   xmlns:ogc="http://www.opengis.net/ogc" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.0.0/WFS-capabilities.xsd">
+    <Service>
+        <Name>MapServer WFS</Name>
+        <Title>MNHN - INPN - Metropole</Title>
+        <OnlineResource>http://url.com?</OnlineResource>
+    </Service>
+    <Capability>
+        <Request>
+            <GetCapabilities>
+                <DCPType>
+                    <HTTP>
+                        <Get onlineResource="http://ws.carmencarto.fr/WFS/119/fxx_inpn?" />
+                    </HTTP>
+                </DCPType>
+                <DCPType>
+                    <HTTP>
+                        <Post onlineResource="http://ws.carmencarto.fr/WFS/119/fxx_inpn?" />
+                    </HTTP>
+                </DCPType>
+            </GetCapabilities>
+            <DescribeFeatureType>
+                <SchemaDescriptionLanguage>
+                    <XMLSCHEMA/>
+                </SchemaDescriptionLanguage>
+                <DCPType>
+                    <HTTP>
+                        <Get onlineResource="http://ws.carmencarto.fr/WFS/119/fxx_inpn?" />
+                    </HTTP>
+                </DCPType>
+                <DCPType>
+                    <HTTP>
+                        <Post onlineResource="http://ws.carmencarto.fr/WFS/119/fxx_inpn?" />
+                    </HTTP>
+                </DCPType>
+            </DescribeFeatureType>
+            <GetFeature>
+                <ResultFormat>
+                    <GML2/>
+                </ResultFormat>
+                <DCPType>
+                    <HTTP>
+                        <Get onlineResource="http://ws.carmencarto.fr/WFS/119/fxx_inpn?" />
+                    </HTTP>
+                </DCPType>
+                <DCPType>
+                    <HTTP>
+                        <Post onlineResource="http://ws.carmencarto.fr/WFS/119/fxx_inpn?" />
+                    </HTTP>
+                </DCPType>
+            </GetFeature>
+        </Request>
+    </Capability>
+    <FeatureTypeList>
+        <FeatureType>
+            <Name>Zones_de_protection_speciale</Name>
+            <Title>Zones de protection speciale</Title>
+            <SRS>EPSG:2154</SRS>
+            <LatLongBoundingBox minx="99038.3" miny="6.00684" maxx="1.24244" maxy="7.15024" />
+        </FeatureType>
+        <FeatureType>
+            <Name>Sites_d_importance_communautaire</Name>
+            <Title>Sites importance communautaire</Title>
+            <SRS>EPSG:2154</SRS>
+            <LatLongBoundingBox minx="99038.3" miny="6.00684" maxx="1.24244" maxy="7.15024" />
+        </FeatureType>
+    </FeatureTypeList>
+</WFS_Capabilities>

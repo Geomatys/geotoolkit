@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -64,6 +65,38 @@ public class PropertyIsLikeType extends ComparisonOpsType {
     private String singleChar;
     @XmlAttribute(required = true)
     private String wildCard;
+
+    /**
+     * An empty constructor used by JAXB.
+     */
+    public PropertyIsLikeType() {
+        
+    }
+    
+    /**
+     *Build a new Property is like operator
+     */
+    public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
+        this.escape   = escape;
+        if (expr instanceof PropertyNameType)
+            this.propertyName = (PropertyNameType) expr;
+        else
+            throw new IllegalArgumentException("expr must be of type PropertyNameType.");
+        this.singleChar   = singleChar;
+        this.wildCard     = wildcard;
+        this.literal      = new LiteralType(pattern);
+    }
+
+    /**
+     *Build a new Property is like operator
+     */
+    public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
+        this.escape   = escape;
+        this.propertyName =  new PropertyNameType(expr);
+        this.singleChar   = singleChar;
+        this.wildCard     = wildcard;
+        this.literal      = new LiteralType(pattern);
+    }
 
     /**
      * Gets the value of the propertyName property.

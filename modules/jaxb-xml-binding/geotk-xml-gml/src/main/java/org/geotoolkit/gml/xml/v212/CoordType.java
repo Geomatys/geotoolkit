@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v212;
 
-import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -58,21 +57,36 @@ import javax.xml.bind.annotation.XmlType;
 public class CoordType {
 
     @XmlElement(name = "X", required = true)
-    private BigDecimal x;
+    private Double x;
     @XmlElement(name = "Y")
-    private BigDecimal y;
+    private Double y;
     @XmlElement(name = "Z")
-    private BigDecimal z;
+    private Double z;
 
+    public CoordType() {
+        
+    }
+    
+    public CoordType(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    
+    public CoordType(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+    
     /**
      * Gets the value of the x property.
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Double }
      *     
      */
-    public BigDecimal getX() {
+    public Double getX() {
         return x;
     }
 
@@ -81,10 +95,10 @@ public class CoordType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Double }
      *     
      */
-    public void setX(final BigDecimal value) {
+    public void setX(final Double value) {
         this.x = value;
     }
 
@@ -93,10 +107,10 @@ public class CoordType {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Double }
      *     
      */
-    public BigDecimal getY() {
+    public Double getY() {
         return y;
     }
 
@@ -105,10 +119,10 @@ public class CoordType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Double }
      *     
      */
-    public void setY(final BigDecimal value) {
+    public void setY(final Double value) {
         this.y = value;
     }
 
@@ -117,10 +131,10 @@ public class CoordType {
      * 
      * @return
      *     possible object is
-     *     {@link BigDecimal }
+     *     {@link Double }
      *     
      */
-    public BigDecimal getZ() {
+    public Double getZ() {
         return z;
     }
 
@@ -129,10 +143,10 @@ public class CoordType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigDecimal }
+     *     {@link Double }
      *     
      */
-    public void setZ(final BigDecimal value) {
+    public void setZ(final Double value) {
         this.z = value;
     }
 

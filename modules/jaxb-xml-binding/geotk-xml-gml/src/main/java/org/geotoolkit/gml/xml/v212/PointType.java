@@ -58,6 +58,18 @@ public class PointType extends AbstractGeometryType {
     private CoordType coord;
     private CoordinatesType coordinates;
 
+    public PointType() {
+        
+    }
+    
+    public PointType(final CoordType coord) {
+        this.coord = coord;
+    }
+    
+    public PointType(final CoordinatesType coord) {
+        this.coordinates = coord;
+    }
+    
     /**
      * Gets the value of the coord property.
      * 

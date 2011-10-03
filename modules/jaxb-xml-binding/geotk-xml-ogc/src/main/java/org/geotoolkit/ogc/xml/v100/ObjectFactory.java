@@ -229,6 +229,214 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LogicalOperators }
+     * 
+     */
+    public LogicalOperators createLogicalOperators() {
+        return new LogicalOperators();
+    }
+
+    /**
+     * Create an instance of {@link BBOX }
+     * 
+     */
+    public BBOX createBBOX() {
+        return new BBOX();
+    }
+
+    /**
+     * Create an instance of {@link Between }
+     * 
+     */
+    public Between createBetween() {
+        return new Between();
+    }
+
+    /**
+     * Create an instance of {@link Crosses }
+     * 
+     */
+    public Crosses createCrosses() {
+        return new Crosses();
+    }
+
+    /**
+     * Create an instance of {@link FilterCapabilities }
+     * 
+     */
+    public FilterCapabilities createFilterCapabilities() {
+        return new FilterCapabilities();
+    }
+
+    /**
+     * Create an instance of {@link SimpleArithmetic }
+     * 
+     */
+    public SimpleArithmetic createSimpleArithmetic() {
+        return new SimpleArithmetic();
+    }
+
+    /**
+     * Create an instance of {@link FunctionNamesType }
+     * 
+     */
+    public FunctionNamesType createFunctionNamesType() {
+        return new FunctionNamesType();
+    }
+
+    /**
+     * Create an instance of {@link SpatialCapabilitiesType }
+     * 
+     */
+    public SpatialCapabilitiesType createSpatialCapabilitiesType() {
+        return new SpatialCapabilitiesType();
+    }
+
+    /**
+     * Create an instance of {@link SimpleComparisons }
+     * 
+     */
+    public SimpleComparisons createSimpleComparisons() {
+        return new SimpleComparisons();
+    }
+
+    /**
+     * Create an instance of {@link SpatialOperatorsType }
+     * 
+     */
+    public SpatialOperatorsType createSpatialOperatorsType() {
+        return new SpatialOperatorsType();
+    }
+
+    /**
+     * Create an instance of {@link DWithin }
+     * 
+     */
+    public DWithin createDWithin() {
+        return new DWithin();
+    }
+
+    /**
+     * Create an instance of {@link Disjoint }
+     * 
+     */
+    public Disjoint createDisjoint() {
+        return new Disjoint();
+    }
+
+    /**
+     * Create an instance of {@link Contains }
+     * 
+     */
+    public Contains createContains() {
+        return new Contains();
+    }
+
+    /**
+     * Create an instance of {@link Within }
+     * 
+     */
+    public Within createWithin() {
+        return new Within();
+    }
+
+    /**
+     * Create an instance of {@link Touches }
+     * 
+     */
+    public Touches createTouches() {
+        return new Touches();
+    }
+
+    /**
+     * Create an instance of {@link ArithmeticOperatorsType }
+     * 
+     */
+    public ArithmeticOperatorsType createArithmeticOperatorsType() {
+        return new ArithmeticOperatorsType();
+    }
+
+    /**
+     * Create an instance of {@link Beyond }
+     * 
+     */
+    public Beyond createBeyond() {
+        return new Beyond();
+    }
+
+    /**
+     * Create an instance of {@link Equals }
+     * 
+     */
+    public Equals createEquals() {
+        return new Equals();
+    }
+
+    /**
+     * Create an instance of {@link ScalarCapabilitiesType }
+     * 
+     */
+    public ScalarCapabilitiesType createScalarCapabilitiesType() {
+        return new ScalarCapabilitiesType();
+    }
+
+    /**
+     * Create an instance of {@link FunctionNameType }
+     * 
+     */
+    public FunctionNameType createFunctionNameType() {
+        return new FunctionNameType();
+    }
+
+    /**
+     * Create an instance of {@link Intersect }
+     * 
+     */
+    public Intersect createIntersect() {
+        return new Intersect();
+    }
+
+    /**
+     * Create an instance of {@link FunctionsType }
+     * 
+     */
+    public FunctionsType createFunctionsType() {
+        return new FunctionsType();
+    }
+
+    /**
+     * Create an instance of {@link ComparisonOperatorsType }
+     * 
+     */
+    public ComparisonOperatorsType createComparisonOperatorsType() {
+        return new ComparisonOperatorsType();
+    }
+
+    /**
+     * Create an instance of {@link Overlaps }
+     * 
+     */
+    public Overlaps createOverlaps() {
+        return new Overlaps();
+    }
+
+    /**
+     * Create an instance of {@link Like }
+     * 
+     */
+    public Like createLike() {
+        return new Like();
+    }
+
+    /**
+     * Create an instance of {@link NullCheck }
+     * 
+     */
+    public NullCheck createNullCheck() {
+        return new NullCheck();
+    }
+    
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryOperatorType }{@code >}}
      * 
      */

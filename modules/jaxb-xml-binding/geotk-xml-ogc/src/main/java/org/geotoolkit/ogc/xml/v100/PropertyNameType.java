@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -48,6 +49,33 @@ public class PropertyNameType {
     @XmlValue
     private String content;
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public PropertyNameType() {
+        
+    }
+    
+    /**
+     * Build a new propertyName with the specified name.
+     */
+    public PropertyNameType(final String content) {
+        this.content = content;
+    }
+
+    /**
+     * Build a new propertyName with the specified name.
+     */
+    public PropertyNameType(final QName content) {
+        if (content != null) {
+            if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
+                this.content = content.getNamespaceURI() + ':' + content.getLocalPart();
+            } else {
+                this.content = content.getLocalPart();
+            }
+        }
+    }
+    
     /**
      * Gets the value of the content property.
      * 

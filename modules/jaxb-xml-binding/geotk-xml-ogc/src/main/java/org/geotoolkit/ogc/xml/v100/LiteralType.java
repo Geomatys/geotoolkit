@@ -55,6 +55,32 @@ public class LiteralType {
     @XmlAnyElement(lax = true)
     private List<Object> content;
 
+    public LiteralType() {
+    }
+    
+    /**
+     * build a new Literal with the specified list of object
+     */
+    public LiteralType(final List<Object> content) {
+        this.content = content;
+    }
+    
+     /**
+     * build a new Literal with the specified Object.
+     */
+    public LiteralType(final Object content) {
+        this.content = new ArrayList<Object>(); 
+        this.content.add(content);
+    }
+    
+    /**
+     * build a new Literal with the specified String
+     */
+    public LiteralType(final String content) {
+        this.content = new ArrayList<Object>(); 
+        this.content.add(content);
+    }
+    
     /**
      * Gets the value of the content property.
      */

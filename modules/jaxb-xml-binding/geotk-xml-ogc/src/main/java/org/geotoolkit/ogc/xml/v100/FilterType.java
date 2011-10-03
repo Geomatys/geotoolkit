@@ -68,6 +68,23 @@ public class FilterType {
     private List<FeatureIdType> featureId;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public FilterType() {
+        
+    }
+    
+    /**
+     * build a new FilterType with the specified logical operator
+     */
+    public FilterType(final JAXBElement<? extends SpatialOpsType> spatialOps, final JAXBElement<? extends ComparisonOpsType> comparisonOps, JAXBElement<? extends LogicOpsType> logicOps, List<FeatureIdType> featureId) {
+        this.comparisonOps = comparisonOps;
+        this.featureId = featureId;
+        this.logicOps = logicOps;
+        this.spatialOps = spatialOps;
+    }
+    
+    /**
      * Gets the value of the spatialOps property.
      * 
      */
@@ -124,5 +141,5 @@ public class FilterType {
         }
         return this.featureId;
     }
-
+    
 }

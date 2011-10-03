@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wfs.xml.v110;
+package org.geotoolkit.wfs.xml.v100;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -28,16 +28,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
-import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
+import org.geotoolkit.gml.xml.v212.CoordType;
+import org.geotoolkit.gml.xml.v212.PointType;
+import org.geotoolkit.ogc.xml.v100.ComparisonOpsType;
+import org.geotoolkit.ogc.xml.v100.FilterType;
+import org.geotoolkit.ogc.xml.v100.PropertyIsLikeType;
 
 //Junit dependencies
-import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -54,7 +52,7 @@ public class WfsXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool         = WFSMarshallerPool.getInstance();
+        pool         = WFSMarshallerPool.getInstanceV100();
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }
@@ -72,7 +70,7 @@ public class WfsXMLBindingTest {
     @Test
     public void unmarshallingTest() throws JAXBException, FileNotFoundException {
 
-        InputStream is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v110/capabilities.xml");
+        InputStream is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v100/capabilities.xml");
         Object unmarshalled = unmarshaller.unmarshal(is);
         if (unmarshalled instanceof JAXBElement) {
             unmarshalled = ((JAXBElement)unmarshalled).getValue();
@@ -85,16 +83,14 @@ public class WfsXMLBindingTest {
 
         WFSCapabilitiesType expResult = new WFSCapabilitiesType();
         List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
-        List<String> otherSRS = Arrays.asList("urn:ogc:def:crs","crs:EPSG::32615","crs:EPSG::5773");
-        WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
-        FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
+        LatLongBoundingBoxType bbox = new LatLongBoundingBoxType(99038.3, 6.00684, 1.24244, 7.15024);
+        FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/wfs","Zones_de_protection_speciale"), "Zones de protection speciale", "EPSG:2154", Arrays.asList(bbox));
         featList.add(ft1);
 
-        FeatureTypeType ft2 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "AircraftTransportationComplex", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
+        FeatureTypeType ft2 = new FeatureTypeType(new QName("http://www.opengis.net/wfs","Sites_d_importance_communautaire"), "Sites importance communautaire", "EPSG:2154", Arrays.asList(bbox));
         featList.add(ft2);
 
-        FeatureTypeType ft3 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Fence", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
-        featList.add(ft3);
+        
 
         FeatureTypeListType featureList = new FeatureTypeListType(null, featList);
         expResult.setFeatureTypeList(featureList);
@@ -107,26 +103,29 @@ public class WfsXMLBindingTest {
 
         // TEST with WFSBindingUtilities
 
-        is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v110/capabilities.xml");
-        result = WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
+        is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v100/capabilities.xml");
+        
+        result = ((JAXBElement<WFSCapabilitiesType>) unmarshaller.unmarshal(is)).getValue();
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
         
         String xml = 
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
-                "<wfs:Transaction version=\"1.1.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
+                "<wfs:Transaction version=\"1.0.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
-                "    <wfs:Insert idgen=\"UseExisting\">" + '\n' +
+                "    <wfs:Insert>" + '\n' +
                 "    </wfs:Insert>" + '\n' +
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
         
-        assertTrue(unmarshalled instanceof TransactionType);
+        if (unmarshalled instanceof JAXBElement) {
+            unmarshalled = ((JAXBElement)unmarshalled).getValue();
+        }
+        assertTrue("was no transaction but " + unmarshalled, unmarshalled instanceof TransactionType);
         TransactionType resultT = (TransactionType) unmarshalled;
         
         InsertElementType ins = new InsertElementType();
-        ins.setIdgen(IdentifierGenerationOptionType.USE_EXISTING);
         TransactionType expResultT = new TransactionType("WFS", "1.1.0", null, null, ins);
         
         assertEquals(expResultT, resultT);
@@ -140,6 +139,10 @@ public class WfsXMLBindingTest {
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
+        
+        if (unmarshalled instanceof JAXBElement) {
+            unmarshalled = ((JAXBElement)unmarshalled).getValue();
+        }
         
         assertTrue(unmarshalled instanceof TransactionType);
         resultT = (TransactionType) unmarshalled;
@@ -158,9 +161,9 @@ public class WfsXMLBindingTest {
 
         WFSCapabilitiesType capa = new WFSCapabilitiesType();
         List<FeatureTypeType> featList = new ArrayList<FeatureTypeType>();
-        List<String> otherSRS = Arrays.asList("urn:ogc:def:crs","crs:EPSG::32615","crs:EPSG::5773");
-        WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
-        FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
+        
+        LatLongBoundingBoxType bbox = new LatLongBoundingBoxType(29.8, -90.1, 30, -89.9);
+        FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", Arrays.asList(bbox));
         featList.add(ft1);
         FeatureTypeListType featureList = new FeatureTypeListType(null, featList);
         capa.setFeatureTypeList(featureList);
@@ -172,12 +175,14 @@ public class WfsXMLBindingTest {
         DeleteElementType del = null;
         TransactionType transac = new TransactionType("WFS", "1.1.0", null, AllSomeType.ALL, del);
         PropertyIsLikeType pis = new PropertyIsLikeType("NAME", "Ashton", "*", "?", "\\");
-        FilterType filter = new FilterType(pis);
-        DirectPositionType dp = new DirectPositionType(21400.0,2001368.0);
-        PointType pt = new PointType(null, dp);
+        org.geotoolkit.ogc.xml.v100.ObjectFactory factory = new org.geotoolkit.ogc.xml.v100.ObjectFactory();
+        final JAXBElement<? extends ComparisonOpsType> jbPis = factory.createPropertyIsLike(pis);
+        FilterType filter = new FilterType(null, jbPis, null, null);
+        CoordType dp = new CoordType(21400.0,2001368.0);
+        PointType pt = new PointType(dp);
         pt.setSrsName("urn:ogc:def:crs:epsg:7.4:27582");
-        PropertyType property = new PropertyType(new QName("the_geom"), new ValueType(pt));
-        UpdateElementType update = new UpdateElementType(Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
+        PropertyType property = new PropertyType("the_geom", pt);
+        UpdateElementType update = new UpdateElementType(Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"));
         transac.getInsertOrUpdateOrDelete().add(update);
 
         //marshaller.marshal(transac, System.out);
