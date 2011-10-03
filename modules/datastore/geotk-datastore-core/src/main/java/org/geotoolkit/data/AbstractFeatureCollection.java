@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import java.util.Iterator;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.storage.DataStoreException;
 
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -159,6 +161,72 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         return (int) DataUtilities.calculateCount(iterator());
     }
 
+    @Override
+    public boolean contains(Object o) {
+        final FeatureIterator<F> e = iterator();
+        try{
+            if (o==null) {
+                while (e.hasNext())
+                    if (e.next()==null)
+                        return true;
+            } else {
+                while (e.hasNext())
+                    if (o.equals(e.next()))
+                        return true;
+            }
+            return false;
+        }finally{
+            e.close();
+        }
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        final Iterator<?> e = c.iterator();
+        try{
+            while (e.hasNext())
+                if (!contains(e.next()))
+                    return false;
+            return true;
+        }finally{
+            if(e instanceof CloseableIterator){
+                ((CloseableIterator)e).close();
+            }
+        }
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        boolean modified = false;
+	final FeatureIterator<F> e = iterator();
+        try{
+            while (e.hasNext()) {
+                if (!c.contains(e.next())) {
+                    e.remove();
+                    modified = true;
+                }
+            }
+            return modified;
+        }finally{
+            e.close();
+        }
+    }
+
+    @Override
+    public void clear() {
+        FeatureIterator<F> e = iterator();
+        try{
+            while (e.hasNext()) {
+                e.next();
+                e.remove();
+            }
+        }finally{
+            e.close();
+        }
+            
+    }
+    
+    
     /**
      * {@inheritDoc }
      */

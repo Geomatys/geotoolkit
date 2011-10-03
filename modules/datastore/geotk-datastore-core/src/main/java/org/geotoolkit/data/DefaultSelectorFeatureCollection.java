@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -36,6 +37,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 
+import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -212,9 +214,17 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
         if(isWritable()){
             final Set<Identifier> ids = new HashSet<Identifier>();
 
-            for(Object o : clctn){
-                if(o instanceof Feature){
-                    ids.add(((Feature)o).getIdentifier());
+            final Iterator<?> ite = clctn.iterator();
+            try{
+                while(ite.hasNext()){
+                    final Object o = ite.next();
+                    if(o instanceof Feature){
+                        ids.add(((Feature)o).getIdentifier());
+                    }
+                }
+            }finally{
+                if(ite instanceof CloseableIterator){
+                    ((CloseableIterator)ite).close();
                 }
             }
 

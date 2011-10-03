@@ -108,6 +108,7 @@ public class FeatureTypeBuilder {
      */
     protected final FeatureTypeFactory factory;
     protected final AttributeDescriptorBuilder attributeDescBuilder;
+    private final boolean nameCheck;
 
     /**
      * Map of java class bound to properties types.
@@ -117,9 +118,11 @@ public class FeatureTypeBuilder {
     protected final List<PropertyDescriptor> properties = new ArrayList<PropertyDescriptor>(){
 
         private void checkName(Name n){
-            for(PropertyDescriptor desc : properties){
-                if(desc.getName().equals(n)){
-                    throw new IllegalArgumentException("Descriptor for name : "+n+" already exist.");
+            if(nameCheck){
+                for(PropertyDescriptor desc : properties){
+                    if(desc.getName().equals(n)){
+                        throw new IllegalArgumentException("Descriptor for name : "+n+" already exist.");
+                    }
                 }
             }
         }
@@ -168,7 +171,7 @@ public class FeatureTypeBuilder {
      * Constructs the builder.
      */
     public FeatureTypeBuilder() {
-        this(null);
+        this(null,true);
     }
 
     /**
@@ -176,12 +179,21 @@ public class FeatureTypeBuilder {
      * feature collection types.
      */
     public FeatureTypeBuilder(final FeatureTypeFactory factory) {
+        this(factory,true);
+    }
+    
+    /**
+     * Constructs the builder specifying the factory for creating feature and
+     * feature collection types.
+     */
+    public FeatureTypeBuilder(final FeatureTypeFactory factory, boolean namecheck) {
         if(factory == null){
             this.factory = FactoryFinder.getFeatureTypeFactory(null);
         }else{
             this.factory = factory;
         }
         this.attributeDescBuilder = new AttributeDescriptorBuilder(this.factory);
+        this.nameCheck = namecheck;
         setBindings(new DefaultSimpleSchema());
         reset();
     }

@@ -590,7 +590,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             parent = BasicFeatureTypes.LINE;
         }
 
-        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder(null,false);
         builder.setName(namespace,shpFiles.getTypeName());
         builder.setAbstract(false);
         if (parent != null) {
