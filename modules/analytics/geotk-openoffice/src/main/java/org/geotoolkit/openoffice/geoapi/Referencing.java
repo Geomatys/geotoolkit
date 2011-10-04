@@ -292,7 +292,7 @@ public final class Referencing extends Formulas implements XReferencing {
         final InternationalString description;
         try {
             description = crsFactory().getDescriptionText(authorityCode);
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
         return (description != null) ? description.toString(getJavaLocale()) : emptyString();
@@ -308,7 +308,7 @@ public final class Referencing extends Formulas implements XReferencing {
         final IdentifiedObject object;
         try {
             object = crsFactory().createObject(authorityCode);
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
         final InternationalString description;
@@ -334,7 +334,7 @@ public final class Referencing extends Formulas implements XReferencing {
         Extent validArea;
         try {
             validArea = crsFactory().createCoordinateReferenceSystem(authorityCode).getDomainOfValidity();
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
         if (validArea != null) {
@@ -360,8 +360,8 @@ public final class Referencing extends Formulas implements XReferencing {
         Extent validArea;
         try {
             validArea = crsFactory().createCoordinateReferenceSystem(authorityCode).getDomainOfValidity();
-        } catch (Exception exception) {
-            reportException("getBoundingBox", exception);
+        } catch (Throwable exception) {
+            reportException("getBoundingBox", exception, THROW_EXCEPTION);
             return getFailure(4,4);
         }
         final GeographicBoundingBox box = DefaultExtent.getGeographicBoundingBox(validArea);
@@ -385,7 +385,7 @@ public final class Referencing extends Formulas implements XReferencing {
         final IdentifiedObject object;
         try {
             object = crsFactory().createObject(authorityCode);
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
         final InternationalString remarks = object.getRemarks();
@@ -403,7 +403,7 @@ public final class Referencing extends Formulas implements XReferencing {
         CoordinateSystem cs;
         try {
             cs = crsFactory().createCoordinateReferenceSystem(authorityCode).getCoordinateSystem();
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
         if (dimension >= 1 && dimension <= cs.getDimension()) {
@@ -424,7 +424,7 @@ public final class Referencing extends Formulas implements XReferencing {
         final IdentifiedObject object;
         try {
             object = crsFactory().createObject(authorityCode);
-        } catch (FactoryException exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
         final ParameterValueGroup parameters;
@@ -439,7 +439,7 @@ public final class Referencing extends Formulas implements XReferencing {
             return parameters.parameter(parameter).getValue();
         } catch (ParameterNotFoundException exception) {
             return Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, parameter);
-        } catch (RuntimeException exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
     }
@@ -454,7 +454,7 @@ public final class Referencing extends Formulas implements XReferencing {
     {
         try {
             return toWKT(crsFactory().createObject(authorityCode), authority);
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
     }
@@ -470,7 +470,7 @@ public final class Referencing extends Formulas implements XReferencing {
     {
         try {
             return toWKT(getCoordinateOperation("getTransformWKT", sourceCRS, targetCRS).getMathTransform(), authority);
-        } catch (Exception exception) {
+        } catch (Throwable exception) {
             return getLocalizedMessage(exception);
         }
     }
@@ -486,8 +486,8 @@ public final class Referencing extends Formulas implements XReferencing {
         final CoordinateOperation operation;
         try {
              operation = getCoordinateOperation("getAccuracy", sourceCRS, targetCRS);
-        } catch (FactoryException exception) {
-            reportException("getAccuracy", exception);
+        } catch (Throwable exception) {
+            reportException("getAccuracy", exception, THROW_EXCEPTION);
             return Double.NaN;
         }
         return AbstractCoordinateOperation.getAccuracy(operation);
@@ -505,8 +505,8 @@ public final class Referencing extends Formulas implements XReferencing {
         final CoordinateOperation operation;
         try {
              operation = getCoordinateOperation("getTransformedCoordinates", sourceCRS, targetCRS);
-        } catch (FactoryException exception) {
-            reportException("getTransformedCoordinates", exception);
+        } catch (Throwable exception) {
+            reportException("getTransformedCoordinates", exception, THROW_EXCEPTION);
             return getFailure(coordinates.length, 2);
         }
         /*
@@ -537,7 +537,7 @@ public final class Referencing extends Formulas implements XReferencing {
                  * all subsequent failures are likely to be the same one.
                  */
                 if (!failureReported) {
-                    reportException("getTransformedCoordinates", exception);
+                    reportException("getTransformedCoordinates", exception, false);
                     failureReported = true;
                 }
                 continue;

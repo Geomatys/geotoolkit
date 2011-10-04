@@ -271,7 +271,8 @@ public final class Referencing extends Formulas implements XReferencing {
                 // Ignore; will throw the first exception.
                 // TODO: addSuppress with JDK7.
             }
-            throw new IllegalArgumentException(getLocalizedMessage(exception));
+            reportException("getValueAngle", exception, THROW_EXCEPTION);
+            return Double.NaN;
         }
     }
 
@@ -323,8 +324,8 @@ public final class Referencing extends Formulas implements XReferencing {
         final GeodeticCalculator calculator;
         try {
             calculator = getGeodeticCalculator(CRS);
-        } catch (Exception exception) {
-            reportException("getOrthodromicDistance", exception);
+        } catch (Throwable exception) {
+            reportException("getOrthodromicDistance", exception, THROW_EXCEPTION);
             return getFailure(source.length, 2);
         }
         boolean failureReported = false;
@@ -347,7 +348,7 @@ public final class Referencing extends Formulas implements XReferencing {
                 calculator.setDestinationPosition(targetPt);
             } catch (TransformException exception) {
                 if (!failureReported) {
-                    reportException("getOrthodromicDistance", exception);
+                    reportException("getOrthodromicDistance", exception, false);
                     failureReported = true;
                 }
                 continue;
@@ -373,8 +374,8 @@ public final class Referencing extends Formulas implements XReferencing {
         final GeodeticCalculator calculator;
         try {
             calculator = getGeodeticCalculator(CRS);
-        } catch (Exception exception) {
-            reportException("getOrthodromicForward", exception);
+        } catch (Throwable exception) {
+            reportException("getOrthodromicForward", exception, THROW_EXCEPTION);
             return getFailure(source.length, 2);
         }
         boolean failureReported = false;
@@ -404,7 +405,7 @@ public final class Referencing extends Formulas implements XReferencing {
                 targetPt = calculator.getDestinationPosition();
             } catch (TransformException exception) {
                 if (!failureReported) {
-                    reportException("getOrthodromicForward", exception);
+                    reportException("getOrthodromicForward", exception, false);
                     failureReported = true;
                 }
                 continue;

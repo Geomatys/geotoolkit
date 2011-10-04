@@ -36,6 +36,7 @@ import com.sun.star.beans.XPropertySet;
 import com.sun.star.uno.AnyConverter;
 import com.sun.star.lib.uno.helper.WeakBase;
 
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
@@ -51,6 +52,13 @@ import org.geotoolkit.util.logging.Logging;
  * @module
  */
 public abstract class Formulas extends WeakBase implements XAddIn, XServiceName, XServiceInfo {
+    /**
+     * {@code true} for throwing an exception in case of failure, or {@code false} for returning
+     * {@code NaN} instead. This apply only to numerical computations. Formulas returning a text
+     * value returns in the exception message in current implementation.
+     */
+    protected static final boolean THROW_EXCEPTION = true;
+
     /**
      * Factor for conversions of days to milliseconds.
      * Used for date conversions as in {@link #toDate}.
@@ -331,7 +339,7 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
             date = (Date) AnyConverter.toObject(Date.class, xOptions.getPropertyValue("NullDate"));
         } catch (Exception e) {
             // Les exception lancées par la ligne ci-dessus sont nombreuses...
-            reportException("getEpoch", e);
+            reportException("getEpoch", e, THROW_EXCEPTION);
             return null;
         }
         if (calendar == null) {
@@ -440,8 +448,9 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
      *
      * @param method    The method from which an exception occurred.
      * @param exception The exception.
+     * @param rethrow   {@code true} for rethrowing the exception after the report.
      */
-    protected final void reportException(final String method, final Throwable exception) {
+    protected final void reportException(final String method, final Throwable exception, final boolean rethrow) {
         final Logger logger = getLogger();
         final LogRecord record = new LogRecord(Level.FINE, getLocalizedMessage(exception));
         record.setLoggerName      (logger.getName());
@@ -449,6 +458,15 @@ public abstract class Formulas extends WeakBase implements XAddIn, XServiceName,
         record.setSourceMethodName(method);
         record.setThrown          (exception);
         logger.log(record);
+        if (rethrow) {
+            if (exception instanceof RuntimeException) {
+                throw (RuntimeException) exception;
+            }
+            if (exception instanceof Error) {
+                throw (Error) exception;
+            }
+            throw new BackingStoreException(exception);
+        }
     }
 
     /**
