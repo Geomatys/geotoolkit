@@ -616,8 +616,11 @@ public final class DataBaseModel {
                 // create N:1 relations-----------------------------------------
                 for(final RelationMetaModel relation : table.exportedKeys){
 
+                    final Name n = new DefaultName(store.getNamespaceURI(),
+                            relation.foreignTable+"→"+relation.foreignColumn);
+                    
                     adb.reset();
-                    adb.setName(relation.foreignTable);
+                    adb.setName(n);
                     adb.setType(FLAG_TYPE);
                     adb.setMinOccurs(0);
                     adb.setMaxOccurs(Integer.MAX_VALUE);
@@ -670,16 +673,21 @@ public final class DataBaseModel {
                     final String relCode = relation.foreignSchema +"."+relation.foreignTable;
                     final ComplexType relType = builded.get(relCode);
 
+                    final Name expn = new DefaultName(store.getNamespaceURI(),
+                            relation.foreignTable+"→"+relation.foreignColumn);
+                    
+                    
                     //find the descriptor to replace
                     final List<PropertyDescriptor> descs = candidate.getDescriptors();
                     int index = -1;
                     for(int i=0,n=descs.size();i<n;i++){
                         final PropertyDescriptor pd = descs.get(i);
-                        if(pd.getName().getLocalPart().equals(relation.foreignTable)){
+                        if(pd.getName().equals(expn)){
                             index = i;
                         }
                     }
 
+                    
                     //create the new descriptor derivated
                     final PropertyDescriptor baseDescriptor = descs.get(index);
                     adb.reset();
