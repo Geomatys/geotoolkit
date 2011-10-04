@@ -50,8 +50,8 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.Commons.*;
 
 
@@ -411,7 +411,7 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
         finder.setFullScanAllowed(true);
         IdentifiedObject find = finder.find(DefaultGeographicCRS.WGS84);
         assertNotNull("With scan allowed, should find the CRS.", find);
-        assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, find));
+        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, find, false);
         assertEquals("Expected a right-handed CS.", +90, getAngle((CoordinateReferenceSystem) find), EPS);
         /*
          * Search a CRS using (latitude,longitude) axis order. The IdentifiedObjectFinder
@@ -429,7 +429,7 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
                 "  AXIS[\"Geodetic longitude\", EAST]]";
         final CoordinateReferenceSystem search   = CRS.parseWKT(wkt);
         final CoordinateReferenceSystem standard = CRS.decode("EPSG:4326", false);
-        assertTrue(CRS.equalsIgnoreMetadata(search, standard));
+        assertEqualsIgnoreMetadata(search, standard, false);
         assertFalse("Identifiers should not be the same.", search.equals(standard));
         finder.setFullScanAllowed(false);
         assertNull("Should not find the CRS without a scan.", finder.find(search));
@@ -439,9 +439,9 @@ public final strictfp class OrderedAxisAuthorityFactoryTest extends ReferencingT
         final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) find;
         assertNotNull("Should find the CRS despite the different axis order.", find);
         assertEquals("Expected a left-handed CS.", -90, getAngle(crs), EPS);
-        assertFalse(CRS.equalsIgnoreMetadata(find, DefaultGeographicCRS.WGS84));
-        assertTrue (CRS.equalsIgnoreMetadata(find, search));
-        assertTrue (CRS.equalsIgnoreMetadata(find, standard));
+        assertNotDeepEquals(find, DefaultGeographicCRS.WGS84);
+        assertEqualsIgnoreMetadata(find, search,   false);
+        assertEqualsIgnoreMetadata(find, standard, false);
         assertSame("Expected caching to work.", standard, find);
     }
 

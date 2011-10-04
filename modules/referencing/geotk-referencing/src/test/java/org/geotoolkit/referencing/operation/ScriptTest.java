@@ -79,7 +79,7 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
 
     /**
      * Run {@code "ParameterizedTransform.txt"}. This script is different than the other ones,
-     * in that it creates the math transform directly instead than infering them from a source
+     * in that it creates the math transform directly instead than inferring them from a source
      * and a target CRS. Consequently it is a more direct test of projection implementations
      * than the other scripts.
      *

@@ -50,7 +50,6 @@ import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeometricObjects;
 import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -66,8 +65,8 @@ import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 
-import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.getSingleton;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
 
@@ -146,10 +145,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         // Here we are not able to check the equality on these two geographic CRS,
         // because some default values are set at creation-time, and they are not
         // unmarshalled. So those objects are not equals, just their values are.
-        if (!CRS.equalsIgnoreMetadata(expected, result)) {
-            fail("The objects (without their metadata) are different, and should not: " +
-                    expected + "\nbut got:\n" + result);
-        }
+        assertEqualsIgnoreMetadata(expected, result, false);
         assertEquals(expected.getName(),                       result.getName());
         assertEquals(expected.getDatum().getName(),            result.getDatum().getName());
         assertEquals(expected.getCoordinateSystem().getName(), result.getCoordinateSystem().getName());

@@ -697,7 +697,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
              * that ignore metadata is okay only if the implementation note described in the
              * 'computeHashCode()' javadoc hold (metadata not used in hash code computation).
              */
-            if (mode != ComparisonMode.APPROXIMATIVE) {
+            if (mode.ordinal() < ComparisonMode.APPROXIMATIVE.ordinal()) {
                 final int tc = hashCode;
                 if (tc != 0) {
                     final int oc = ((AbstractIdentifiedObject) object).hashCode;
@@ -727,7 +727,8 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                        deepEquals(getRemarks(),     that.getRemarks(),     mode);
             }
             case IGNORE_METADATA:
-            case APPROXIMATIVE: {
+            case APPROXIMATIVE:
+            case DEBUG: {
                 return true;
             }
             default: {

@@ -66,10 +66,8 @@ import static org.geotoolkit.referencing.Commons.isEpsgFactoryAvailable;
 import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.*;
-import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
-import static org.geotoolkit.referencing.CRS.equalsApproximatively;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.operation.SamplePoints.MOLODENSKY_TOLERANCE;
 
 
@@ -499,10 +497,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         if (useAuthorityFactory()) {
             assertNotSame(sourceCRS, op.getSourceCRS());
             assertNotSame(targetCRS, op.getTargetCRS());
-            assertFalse  (equalsIgnoreMetadata (sourceCRS, op.getSourceCRS()));
-            assertTrue   (equalsIgnoreMetadata (targetCRS, op.getTargetCRS()));
-            assertTrue   (equalsApproximatively(sourceCRS, op.getSourceCRS()));
-            assertTrue   (equalsApproximatively(targetCRS, op.getTargetCRS()));
+            assertEqualsApproximatively(sourceCRS, op.getSourceCRS(), true);
+            assertEqualsIgnoreMetadata (targetCRS, op.getTargetCRS(), false);
             assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
             // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
             // appropriate operation, but this is the one selected by the current ordering
@@ -662,8 +658,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         assertTrue(op.getSourceCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
         assertTrue(targetCRS         instanceof CompoundCRS);
         assertTrue(op.getTargetCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
-        assertFalse(equalsIgnoreMetadata(sourceCRS, targetCRS));
-        assertFalse(equalsIgnoreMetadata(op.getSourceCRS(), op.getTargetCRS()));
+        assertNotDeepEquals(sourceCRS, targetCRS);
+        assertNotDeepEquals(op.getSourceCRS(), op.getTargetCRS());
         if (useAuthorityFactory()) {
             assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
             // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
@@ -826,10 +822,8 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         if (useAuthorityFactory()) {
             assertNotSame(sourceCRS, op.getSourceCRS());
             assertNotSame(targetCRS, op.getTargetCRS());
-            assertFalse  (equalsIgnoreMetadata (sourceCRS, op.getSourceCRS()));
-            assertFalse  (equalsIgnoreMetadata (targetCRS, op.getTargetCRS()));
-            assertTrue   (equalsApproximatively(sourceCRS, op.getSourceCRS()));
-            assertFalse  (equalsApproximatively(targetCRS, op.getTargetCRS()));
+            assertEqualsApproximatively(sourceCRS, op.getSourceCRS(), true);
+            assertNotDeepEquals        (targetCRS, op.getTargetCRS());
             assertEquals("15978", op.getIdentifiers().iterator().next().getCode());
             // Coordinate operation "NAD27 to WGS 84 (88)" for Cuba. May not be the most
             // appropriate operation, but this is the one selected by the current ordering

@@ -51,8 +51,8 @@ import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.util.ComparisonMode;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.Commons.*;
 
 
@@ -618,7 +618,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         /*
          * WGS 72BE / UTM zone 10N
          */
-        assertFalse(CRS.equalsIgnoreMetadata(crs, factory.createProjectedCRS("32410")));
+        assertNotDeepEquals(crs, factory.createProjectedCRS("32410"));
         /*
          * Creates a projected CRS from base and projected CRS codes.
          */
@@ -787,8 +787,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         assumeNotNull(factory);
         final CoordinateReferenceSystem crs1 = CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NAD83);
         final CoordinateReferenceSystem crs2 = CRS.decode("EPSG:26986");
-        assertFalse(CRS.equalsIgnoreMetadata (crs1, crs2));
-        assertTrue (CRS.equalsApproximatively(crs1, crs2));
+        assertEqualsApproximatively(crs1, crs2, true);
     }
 
     /**
@@ -820,8 +819,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         finder.setFullScanAllowed(true);
         final IdentifiedObject find = finder.find(crs);
         assertNotNull("With full scan allowed, the CRS should be found.", find);
-        assertTrue("Should found an object equals (ignoring metadata) to the requested one.",
-                CRS.equalsIgnoreMetadata(crs, find));
+        assertEqualsIgnoreMetadata(crs, find, false);
         assertEquals("Not the expected CRS.", "4326",
                 IdentifiedObjects.getIdentifier(find, factory.getAuthority()).getCode());
         /*
@@ -871,8 +869,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         finder.setFullScanAllowed(true);
         final IdentifiedObject find = finder.find(crs);
         assertNotNull("With full scan allowed, the CRS should be found.", find);
-        assertTrue("Should found an object equals (ignoring metadata) to the requested one.",
-                   CRS.equalsIgnoreMetadata(crs, find));
+        assertEqualsIgnoreMetadata(crs, find, false);
         /*
          * Both EPSG:2442 and EPSG:21463 defines the same projection with the same parameters
          * and the same base GeographicCRS (EPSG:4214). The only difference I found was the
@@ -928,8 +925,7 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
         finder.setComparisonMode(ComparisonMode.APPROXIMATIVE);
         find = finder.find(crs);
         assertNotNull("In approximative mode, the CRS should be found.", find);
-        assertTrue ("Should be approximatively equals.",  CRS.equalsApproximatively(crs, find));
-        assertFalse("Should be slightly different.",      CRS.equalsIgnoreMetadata (crs, find));
+        assertEqualsApproximatively(crs, find, true);
     }
 
     /**

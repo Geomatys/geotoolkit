@@ -38,11 +38,11 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.*;
-import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.Commons.*;
 import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.forceAxisOrderHonoring;
+import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 
 
 /**
@@ -174,13 +174,12 @@ public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBas
         assertSame(crs, CRS.decode("http://www.opengis.net/gml/srs/crs.xml#84"));
         assertSame(crs, CRS.decode("CRS:84"));
         assertNotSame(crs, DefaultGeographicCRS.WGS84);
-        assertFalse(DefaultGeographicCRS.WGS84.equals(crs));
-        assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, true);
 
         // Test CRS:83
         crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/crs.xml#83");
         assertSame(crs, CRS.decode("CRS:83"));
-        assertFalse(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+        assertNotDeepEquals(DefaultGeographicCRS.WGS84, crs);
     }
 
     /**

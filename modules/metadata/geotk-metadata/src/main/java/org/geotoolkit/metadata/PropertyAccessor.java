@@ -1016,7 +1016,7 @@ final class PropertyAccessor {
                 continue;
             }
             if (!Utilities.deepEquals(value1, value2, mode)) {
-                if (mode == ComparisonMode.APPROXIMATIVE && floatEpsilonEqual(value1, value2)) {
+                if (mode.ordinal() < ComparisonMode.APPROXIMATIVE.ordinal() && floatEpsilonEqual(value1, value2)) {
                     continue; // Accept this slight difference.
                 }
                 if (!skipNulls || (!empty1 && !empty2)) {

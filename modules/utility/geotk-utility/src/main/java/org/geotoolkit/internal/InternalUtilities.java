@@ -100,7 +100,15 @@ public final class InternalUtilities extends Static {
      * @since 3.18
      */
     public static boolean epsilonEqual(final double v1, final double v2, final ComparisonMode mode) {
-        return (mode == ComparisonMode.APPROXIMATIVE) ? epsilonEqual(v1, v2) : Utilities.equals(v1, v2);
+        switch (mode) {
+            default:            return Utilities.equals(v1, v2);
+            case APPROXIMATIVE: return epsilonEqual(v1, v2);
+            case DEBUG: {
+                final boolean equal = epsilonEqual(v1, v2);
+                assert equal : "v1=" + v1 + " v2=" + v2 + " Δv=" + abs(v1-v2);
+                return equal;
+            }
+        }
     }
 
     /**

@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 
 
@@ -126,17 +126,13 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
             "PARAMETER[“Standard_Parallel_2”,34.916666666666664]," +
             "PARAMETER[“Latitude_Of_Origin”,31.166666666666668]," +
             "UNIT[“Foot”,0.3048]]");
-        /*
-         * The above WKT will be parsed with "X" and "Y" axis names
-         * by default. Now specifies explicitly different axis names.
-         */
+
+        // The above WKT will be parsed with "X" and "Y" axis names
+        // by default. Now specifies explicitly different axis names.
         final String wkt2 = decodeQuotes(wkt1.substring(0, wkt1.length()-1) + "," +
                 "AXIS[“Easting”, EAST]," +
                 "AXIS[“Northing”, NORTH]]");
-
-        final CoordinateReferenceSystem crs1 = CRS.parseWKT(wkt1);
-        final CoordinateReferenceSystem crs2 = CRS.parseWKT(wkt2);
-        assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
+        assertEqualsIgnoreMetadata(CRS.parseWKT(wkt1), CRS.parseWKT(wkt2), false);
     }
 
     /**
@@ -275,8 +271,7 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
                 "  AUTHORITY[“EPSG”,“26986”]]"));
 
         assertEquals("EPSG:26986", IdentifiedObjects.getIdentifier(crs2));
-
-        assertTrue(CRS.equalsApproximatively(crs1, crs2));
+        assertEqualsApproximatively(crs1, crs2, false);
     }
 
     /**

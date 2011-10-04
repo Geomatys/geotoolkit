@@ -21,13 +21,12 @@ import javax.measure.unit.SI;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.geotoolkit.referencing.CRS;
 
 import org.junit.*;
 import org.opengis.test.Validators;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.Assert.*;
 
 
 /**
@@ -166,6 +165,6 @@ public final strictfp class CartesianTest extends ReferencingTestBase {
                                       final String expectedX, final String expectedY)
     {
         final CoordinateSystem cs = AbstractCS.standard(create(testX, testY));
-        assertTrue(CRS.equalsIgnoreMetadata(create(expectedX, expectedY), cs));
+        assertEqualsIgnoreMetadata(create(expectedX, expectedY), cs, false);
     }
 }

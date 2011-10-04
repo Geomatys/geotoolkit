@@ -34,8 +34,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.referencing.Assert.*;
 
 
 /**
@@ -99,8 +99,7 @@ public final strictfp class WebCRSFactoryTest {
         assertSame   (crs,  factory.createGeographicCRS("CRS:CRS84"));
         assertSame   (crs,  factory.createGeographicCRS("crs : crs84"));
         assertNotSame(crs,  factory.createGeographicCRS("CRS:83"));
-        assertFalse(DefaultGeographicCRS.WGS84.equals(crs));
-        assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, true);
     }
 
     /**
@@ -115,7 +114,7 @@ public final strictfp class WebCRSFactoryTest {
         assertSame   (crs,  factory.createGeographicCRS("CRS83"));
         assertSame   (crs,  factory.createGeographicCRS("CRS:CRS83"));
         assertNotSame(crs,  factory.createGeographicCRS("CRS:84"));
-        assertFalse(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+        assertNotDeepEquals(DefaultGeographicCRS.WGS84, crs);
     }
 
     /**
@@ -171,9 +170,7 @@ public final strictfp class WebCRSFactoryTest {
         assertSame("Allowing scanning should not make any difference for this CRS84 instance.",
                    CRS84, finder.find(CRS84));
 
-        assertNotSame("Required condition for next test.", CRS84, DefaultGeographicCRS.WGS84);
-        assertFalse  ("Required condition for next test.", CRS84.equals(DefaultGeographicCRS.WGS84));
-        assertTrue   ("Required condition for next test.", CRS.equalsIgnoreMetadata(CRS84, DefaultGeographicCRS.WGS84));
+        assertEqualsIgnoreMetadata(CRS84, DefaultGeographicCRS.WGS84, true); // Required condition for next test.
 
         finder.setFullScanAllowed(false);
         assertNull("Should not find WGS84 without a full scan, since it doesn't contains the CRS:84 identifier.",
@@ -197,8 +194,7 @@ public final strictfp class WebCRSFactoryTest {
                      "  PRIMEM[\"Greenwich\", 0.0],\n" +
                      "  UNIT[\"degree\", 0.017453292519943295]]";
         CoordinateReferenceSystem search = CRS.parseWKT(wkt);
-        assertFalse("Required condition for next test.", CRS84.equals(search));
-        assertTrue ("Required condition for next test.", CRS.equalsIgnoreMetadata(CRS84, search));
+        assertEqualsIgnoreMetadata(CRS84, search, true); // Required condition for next test.
 
         finder.setFullScanAllowed(false);
         assertNull("Should not find WGS84 without a full scan, since it doesn't contains the CRS:84 identifier.",

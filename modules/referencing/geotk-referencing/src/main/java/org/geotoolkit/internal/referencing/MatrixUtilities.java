@@ -520,6 +520,11 @@ search:     for (int j=numRow; --j>=0;) {
             case BY_CONTRACT:     // Fall through
             case IGNORE_METADATA: return (m2 instanceof Matrix) && epsilonEqual(m1, (Matrix) m2, 0, false);
             case APPROXIMATIVE:   return (m2 instanceof Matrix) && epsilonEqual(m1, (Matrix) m2, COMPARISON_THRESHOLD, true);
+            case DEBUG: {
+                // A ClassCastException would be a programming error (so we want the stack trace),
+                // since this mode is used in assertions when two matrixes should be equal.
+                return epsilonEqual(m1, (Matrix) m2, COMPARISON_THRESHOLD, true);
+            }
             default: throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_ENUM_$1, mode));
         }
     }

@@ -37,14 +37,13 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import org.postgresql.ds.PGSimpleDataSource;
 
-import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.IdentifiedObjects.getIdentifier;
 
 
@@ -103,12 +102,12 @@ public final strictfp class DirectPostgisFactoryTest {
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
             assertEquals("EPSG:4326",    getIdentifier(geoCRS, Citations.EPSG).toString());
             assertEquals("PostGIS:4326", getIdentifier(geoCRS, Citations.POSTGIS).toString());
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS, false);
 
             final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
             assertEquals("EPSG:3395",    getIdentifier(projCRS, Citations.EPSG).toString());
             assertEquals("PostGIS:3395", getIdentifier(projCRS, Citations.POSTGIS).toString());
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS(), false);
 
             final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
             assertEquals("EPSG:57150",   getIdentifier(vertCRS, Citations.EPSG).toString());
@@ -161,12 +160,12 @@ public final strictfp class DirectPostgisFactoryTest {
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
             assertEquals("EPSG:4326",    getIdentifier(geoCRS, Citations.EPSG).toString());
             assertEquals("PostGIS:4326", getIdentifier(geoCRS, Citations.POSTGIS).toString());
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS, false);
 
             final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
             assertEquals("EPSG:3395",    getIdentifier(projCRS, Citations.EPSG).toString());
             assertEquals("PostGIS:3395", getIdentifier(projCRS, Citations.POSTGIS).toString());
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS(), false);
 
             final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
             assertEquals("EPSG:57150",   getIdentifier(vertCRS, Citations.EPSG).toString());

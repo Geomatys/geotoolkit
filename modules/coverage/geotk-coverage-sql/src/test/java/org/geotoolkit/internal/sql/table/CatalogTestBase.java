@@ -25,6 +25,8 @@ import java.lang.reflect.Constructor;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.internal.io.Installation;
@@ -49,7 +51,7 @@ import static org.junit.Assume.*;
  * is provided here.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -166,5 +168,19 @@ public abstract strictfp class CatalogTestBase extends ImageTestBase {
         final File file = new File(rootDirectory, path);
         assertTrue("Not a file: " + file, file.isFile());
         return file;
+    }
+
+    /**
+     * Asserts that the two given objects are approximatively equal.
+     * See {@link ComparisonMode#APPROXIMATIVE} for more information.
+     *
+     * @param expected  The expected object.
+     * @param actual    The actual object.
+     *
+     * @since 3.20
+     */
+    public static void assertEqualsApproximatively(final Object expected, final Object actual) {
+        assertTrue(Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
+        assertTrue(Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATIVE));
     }
 }

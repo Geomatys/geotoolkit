@@ -37,6 +37,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -139,7 +141,7 @@ public final class Envelopes extends Static {
                         envelope = transform(operation, envelope);
                     }
                 }
-                assert CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), targetCRS);
+                assert Utilities.deepEquals(envelope.getCoordinateReferenceSystem(), targetCRS, ComparisonMode.DEBUG);
             }
         }
         return envelope;

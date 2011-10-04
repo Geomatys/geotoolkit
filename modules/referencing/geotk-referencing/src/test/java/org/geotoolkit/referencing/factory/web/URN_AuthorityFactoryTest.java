@@ -37,10 +37,10 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
-import static org.junit.Assert.*;
 import static org.junit.Assume.*;
-import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.Commons.*;
+import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 
 
 /**
@@ -118,14 +118,12 @@ public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase
         assertSame(crs, CRS.decode("urn:ogc:def:crs:OGC:1.3:CRS84"));
         assertSame(crs, CRS.decode("CRS:84"));
         assertSame(crs, CRS.decode("OGC:CRS84"));
-        assertNotSame(crs, DefaultGeographicCRS.WGS84);
-        assertFalse(DefaultGeographicCRS.WGS84.equals(crs));
-        assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+        assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, true);
 
         // Test CRS:83
         crs = factory.createGeographicCRS("urn:ogc:def:crs:CRS:1.3:83");
         assertSame(crs, CRS.decode("CRS:83"));
-        assertFalse(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+        assertNotDeepEquals(DefaultGeographicCRS.WGS84, crs);
     }
 
     /**
@@ -148,15 +146,15 @@ public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase
 
             CoordinateReferenceSystem crs;
             crs = factory.createCoordinateReferenceSystem("URN:OGC:DEF:CRS:CRS:84");
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, false);
             final CoordinateReferenceSystem reference = crs;
 
             crs = CRS.decode("URN:OGC:DEF:CRS:CRS:84", true);
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, false);
             assertSame(reference, crs);
 
             crs = CRS.decode("URN:OGC:DEF:CRS:CRS:84");
-            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+            assertEqualsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs, false);
             assertSame(reference, crs);
         } finally {
             Hints.removeSystemDefault(Hints.FORCE_AXIS_ORDER_HONORING);

@@ -60,7 +60,7 @@ import org.geotoolkit.lang.Static;
  * {@linkplain java.io.Serializable} classes can use {@code (int) serialVersionUID} for example.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -331,6 +331,7 @@ public final class Utilities extends Static {
             return true;
         }
         if (object1 == null || object2 == null) {
+            assert isNotDebug(mode) : "object" + (object1 == null ? '1' : '2') + " is null";
             return false;
         }
         if (object1 instanceof LenientComparable) {
@@ -340,24 +341,34 @@ public final class Utilities extends Static {
             return ((LenientComparable) object2).equals(object1, mode);
         }
         if (object1 instanceof Map.Entry<?,?>) {
-            if (!(object2 instanceof Map.Entry<?,?>)) {
-                return false;
+            if (object2 instanceof Map.Entry<?,?>) {
+                final Map.Entry<?,?> e1 = (Map.Entry<?,?>) object1;
+                final Map.Entry<?,?> e2 = (Map.Entry<?,?>) object2;
+                return deepEquals(e1.getKey(),   e2.getKey(),   mode) &&
+                       deepEquals(e1.getValue(), e2.getValue(), mode);
             }
-            final Map.Entry<?,?> e1 = (Map.Entry<?,?>) object1;
-            final Map.Entry<?,?> e2 = (Map.Entry<?,?>) object2;
-            return deepEquals(e1.getKey(),   e2.getKey(),   mode) &&
-                   deepEquals(e1.getValue(), e2.getValue(), mode);
+            assert isNotDebug(mode) : mismatchedType(Map.Entry.class, object2);
+            return false;
         }
         if (object1 instanceof Map<?,?>) {
-            return (object2 instanceof Map<?,?>) &&
-                    equals(((Map<?,?>) object1).entrySet(), ((Map<?,?>) object2).entrySet(), mode);
+            if (object2 instanceof Map<?,?>) {
+                return equals(((Map<?,?>) object1).entrySet(),
+                              ((Map<?,?>) object2).entrySet(), mode);
+            }
+            assert isNotDebug(mode) : mismatchedType(Map.class, object2);
+            return false;
         }
         if (object1 instanceof Collection<?>) {
-            return (object2 instanceof Collection<?>) &&
-                    equals((Collection<?>) object1, (Collection<?>) object2, mode);
+            if (object2 instanceof Collection<?>) {
+                return equals((Collection<?>) object1,
+                              (Collection<?>) object2, mode);
+            }
+            assert isNotDebug(mode) : mismatchedType(Collection.class, object2);
+            return false;
         }
         if (object1 instanceof Object[]) {
             if (!(object2 instanceof Object[])) {
+                assert isNotDebug(mode) : mismatchedType(Object[].class, object2);
                 return false;
             }
             final Object[] array1 = (Object[]) object1;
@@ -370,10 +381,12 @@ public final class Utilities extends Static {
             }
             final int length = array1.length;
             if (array2.length != length) {
+                assert isNotDebug(mode) : "Length " + length + " != " + array2.length;
                 return false;
             }
             for (int i=0; i<length; i++) {
                 if (!deepEquals(array1[i], array2[i], mode)) {
+                    assert isNotDebug(mode) : "object[" + i + "] not equal";
                     return false;
                 }
             }
@@ -396,6 +409,7 @@ public final class Utilities extends Static {
             final LenientComparable e1 = array1[i];
             final Object e2 = array2[i];
             if (e1 != e2 && (e1 == null || !e1.equals(e2, mode))) {
+                assert isNotDebug(mode) : "object[" + i + "] not equal";
                 return false;
             }
         }
@@ -411,6 +425,7 @@ public final class Utilities extends Static {
         final Iterator<?> it2 = object2.iterator();
         while (it1.hasNext()) {
             if (!it2.hasNext()) {
+                assert isNotDebug(mode) : "Sizes not equal";
                 return false;
             }
             Object element1 = it1.next();
@@ -419,6 +434,7 @@ public final class Utilities extends Static {
                 continue;
             }
             if (!(object1 instanceof Set<?> && object2 instanceof Set<?>)) {
+                assert isNotDebug(mode) : "Lists not equal";
                 return false;
             }
             /*
@@ -438,6 +454,7 @@ public final class Utilities extends Static {
             while (true) {
                 final Iterator<?> it = copy.iterator();
                 do if (!it.hasNext()) {
+                    assert isNotDebug(mode) : "Sets not equal";
                     return false; // An element has not been found.
                 } while (!deepEquals(it.next(), element2, mode));
                 it.remove();
@@ -449,6 +466,24 @@ public final class Utilities extends Static {
             return copy.isEmpty();
         }
         return !it2.hasNext();
+    }
+
+    /**
+     * Returns {@code true} if the given mode is not {@link ComparisonMode#DEBUG}.
+     */
+    private static boolean isNotDebug(final ComparisonMode mode) {
+        return mode != ComparisonMode.DEBUG;
+    }
+
+    /**
+     * Returns an assertion error message for mismatched types.
+     *
+     * @param  expected The expected type.
+     * @param  actual The actual object (not its type).
+     * @return The error message to use in assertions.
+     */
+    private static String mismatchedType(final Class<?> expected, final Object actual) {
+        return "Expected " + expected + " but got " + actual.getClass();
     }
 
     /**

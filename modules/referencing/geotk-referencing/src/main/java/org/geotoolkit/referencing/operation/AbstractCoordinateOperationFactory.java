@@ -40,6 +40,7 @@ import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -53,7 +54,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 import static java.util.Collections.singletonMap;
-import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.operation.CoordinateOperation.COORDINATE_OPERATION_ACCURACY_KEY;
 import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.DATUM_SHIFT_APPLIED;
@@ -531,14 +531,11 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         if (step1 == null) return step2;
         if (step2 == null) return step1;
-        if (false) {
-            // Note: we sometime get this assertion failure if the user provided CRS with two
-            //       different ellipsoids but an identical TOWGS84 conversion infos (which is
-            //       usually wrong, but still happen).
-            assert equalsIgnoreMetadata(step1.getTargetCRS(), step2.getSourceCRS()) :
-                   "CRS 1 =" + step1.getTargetCRS() + '\n' +
-                   "CRS 2 =" + step2.getSourceCRS();
-        }
+        // Note: we sometime get this assertion failure if the user provided CRS with two
+        //       different ellipsoids but an identical TOWGS84 conversion infos (which is
+        //       usually wrong, but still happen).
+        assert Utilities.deepEquals(step1.getTargetCRS(), step2.getSourceCRS(), ComparisonMode.DEBUG);
+
         if (isIdentity(step1)) return step2;
         if (isIdentity(step2)) return step1;
         final MathTransform mt1 = step1.getMathTransform();
@@ -582,8 +579,15 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         if (step1 == null) return concatenate(step2, step3);
         if (step2 == null) return concatenate(step1, step3);
         if (step3 == null) return concatenate(step1, step2);
-        assert equalsIgnoreMetadata(step1.getTargetCRS(), step2.getSourceCRS()) : step1;
-        assert equalsIgnoreMetadata(step2.getTargetCRS(), step3.getSourceCRS()) : step3;
+        // Note: we use approximative equality check because the CRS objects may be slightly
+        //       different if one CRS has been created from the EPSG database while the other
+        //       CRS has been created from WKT parsing. There is rounding error in the second
+        //       defining parameter of the ellipsoid, because the WKT parser always use the
+        //       createFlattenedSphere(...) constructor while the EPSG database will select
+        //       createFlattenedSphere(...) or createEllipsoid(...) depending on the Ellipsoid
+        //       definition.
+        assert Utilities.deepEquals(step1.getTargetCRS(), step2.getSourceCRS(), ComparisonMode.DEBUG) : step1;
+        assert Utilities.deepEquals(step2.getTargetCRS(), step3.getSourceCRS(), ComparisonMode.DEBUG) : step3;
 
         if (isIdentity(step1)) return concatenate(step2, step3);
         if (isIdentity(step2)) return concatenate(step1, step3);

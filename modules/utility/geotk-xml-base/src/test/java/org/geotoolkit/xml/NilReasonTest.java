@@ -127,6 +127,7 @@ public final strictfp class NilReasonTest {
         assertFalse(c.equals(e2, ComparisonMode.BY_CONTRACT));
         assertTrue (c.equals(e2, ComparisonMode.IGNORE_METADATA));
         assertTrue (c.equals(e2, ComparisonMode.APPROXIMATIVE));
+        assertTrue (c.equals(e2, ComparisonMode.DEBUG));
 
         // Following object should alway be different because it does not implement the same interface.
         final ResponsibleParty r1 = NilReason.TEMPLATE.createNilObject(ResponsibleParty.class);
@@ -134,5 +135,6 @@ public final strictfp class NilReasonTest {
         assertFalse(c.equals(r1, ComparisonMode.BY_CONTRACT));
         assertFalse(c.equals(r1, ComparisonMode.IGNORE_METADATA));
         assertFalse(c.equals(r1, ComparisonMode.APPROXIMATIVE));
+        assertFalse(c.equals(r1, ComparisonMode.DEBUG));
     }
 }

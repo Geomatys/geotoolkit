@@ -124,8 +124,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         CoordinateSystemAxis axis1 = cs.getAxis(1);
         assertEquals("Lat", axis1.getAbbreviation());
 
-        final CoordinateReferenceSystem standard = CRS.decode("EPSG:4326");
-        assertFalse("Should not be (long,lat) axis order.", CRS.equalsIgnoreMetadata(crs, standard));
+        assertNotDeepEquals(crs, CRS.decode("EPSG:4326")); // Should not be (lon,lat) axis order.
     }
 
     /**

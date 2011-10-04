@@ -21,6 +21,8 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
@@ -34,7 +36,7 @@ import static org.geotoolkit.test.Commons.*;
  * {@code geotk-test} module).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.19 (derived from 3.00)
  */
@@ -48,6 +50,61 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      * Do not allow instantiation of this class.
      */
     private Assert() {
+    }
+
+    /**
+     * Asserts that the two given objects are not equal.
+     *
+     * @param o1  The first object.
+     * @param o2  The second object.
+     *
+     * @since 3.20
+     */
+    public static void assertNotDeepEquals(final Object o1, final Object o2) {
+        assertNotSame("same", o1, o2);
+        assertFalse("equals",                      Utilities.equals    (o1, o2));
+        assertFalse("deepEquals",                  Utilities.deepEquals(o1, o2));
+        assertFalse("deepEquals(STRICT)",          Utilities.deepEquals(o1, o2, ComparisonMode.STRICT));
+        assertFalse("deepEquals(IGNORE_METADATA)", Utilities.deepEquals(o1, o2, ComparisonMode.IGNORE_METADATA));
+        assertFalse("deepEquals(APPROXIMATIVE)",   Utilities.deepEquals(o1, o2, ComparisonMode.APPROXIMATIVE));
+    }
+
+    /**
+     * Asserts that the two given objects are approximatively equal.
+     * See {@link ComparisonMode#APPROXIMATIVE} for more information.
+     *
+     * @param expected  The expected object.
+     * @param actual    The actual object.
+     * @param slightlyDifferent {@code true} if the objects should also be slightly different.
+     *
+     * @since 3.20
+     */
+    public static void assertEqualsApproximatively(final Object expected, final Object actual, final boolean slightlyDifferent) {
+        assertTrue("Should be approximatively equals",      Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
+        assertTrue("DEBUG inconsistent with APPROXIMATIVE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATIVE));
+        if (slightlyDifferent) {
+            assertFalse("Should be slightly different",     Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
+            assertFalse("Should not be strictly equals",    Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
+        }
+    }
+
+    /**
+     * Asserts that the two given objects are equal ignoring metadata.
+     * See {@link ComparisonMode#IGNORE_METADATA} for more information.
+     *
+     * @param expected  The expected object.
+     * @param actual    The actual object.
+     * @param strictlyDifferent {@code true} if the objects should not be strictly equal.
+     *
+     * @since 3.20
+     */
+    public static void assertEqualsIgnoreMetadata(final Object expected, final Object actual, final boolean strictlyDifferent) {
+        assertTrue("Should be approximatively equals",      Utilities.deepEquals(expected, actual, ComparisonMode.DEBUG));
+        assertTrue("DEBUG inconsistent with APPROXIMATIVE", Utilities.deepEquals(expected, actual, ComparisonMode.APPROXIMATIVE));
+        assertTrue("Should be equals, ignoring metadata",   Utilities.deepEquals(expected, actual, ComparisonMode.IGNORE_METADATA));
+        if (strictlyDifferent) {
+            assertFalse("Should not be strictly equals",    Utilities.deepEquals(expected, actual, ComparisonMode.STRICT));
+        }
     }
 
     /**

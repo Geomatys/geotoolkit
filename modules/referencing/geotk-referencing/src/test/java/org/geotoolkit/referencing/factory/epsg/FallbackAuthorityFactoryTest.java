@@ -34,7 +34,7 @@ import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.Assert.*;
 
 
 /**
@@ -152,7 +152,7 @@ public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTest
                 "an explicit AUTHORITY element.", "EPSG:27572", code);
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:27572");
-        assertFalse(CRS.equalsIgnoreMetadata(crs, crsXY));
+        assertNotDeepEquals(crs, crsXY);
         code = IdentifiedObjects.lookupIdentifier(crs, false);
         assertEquals("EPSG:27572", code);
     }
@@ -173,7 +173,7 @@ public final strictfp class FallbackAuthorityFactoryTest extends ReferencingTest
                 "element because the factory should have added it automatically.", "EPSG:3035", code);
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-        assertFalse(CRS.equalsIgnoreMetadata(crs, crsXY));
+        assertNotDeepEquals(crs, crsXY);
         code = IdentifiedObjects.lookupIdentifier(crs, false);
         assertEquals("EPSG:3035", code);
     }

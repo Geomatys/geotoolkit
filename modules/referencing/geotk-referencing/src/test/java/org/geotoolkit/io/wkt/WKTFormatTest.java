@@ -38,8 +38,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.referencing.Assert.*;
 
 
 /**
@@ -295,7 +295,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“Geocentric Z”, GEOCENTRIC_Z]]");
         wktFormat.setAuthority(DefaultGeocentricCRS.INTERNAL);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
-        assertTrue(CRS.equalsIgnoreMetadata(crs, wktFormat.parseObject(wkt)));
+        assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
         /*
          * Now try the fomatting as standard WKT.
          */
@@ -311,7 +311,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“Z”, NORTH]]");
         wktFormat.setAuthority(DefaultGeocentricCRS.OGC);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
-        assertTrue(CRS.equalsIgnoreMetadata(crs, wktFormat.parseObject(wkt)));
+        assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
     }
 
     /**

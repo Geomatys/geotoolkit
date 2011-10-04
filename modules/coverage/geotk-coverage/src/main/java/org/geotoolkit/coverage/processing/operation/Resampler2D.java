@@ -56,6 +56,8 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -671,8 +673,8 @@ final class Resampler2D extends GridCoverage2D {
          *     value is 255.
          */
         targetCoverage = create(sourceCoverage, targetImage, targetGG, finalView, hints);
-        assert CRS.equalsIgnoreMetadata(targetCoverage.getCoordinateReferenceSystem(), targetCRS) : targetGG;
-        assert targetCoverage.getGridGeometry().getGridRange2D().equals(targetImage.getBounds())  : targetGG;
+        assert Utilities.deepEquals(targetCoverage.getCoordinateReferenceSystem(), targetCRS, ComparisonMode.DEBUG) : targetGG;
+        assert targetCoverage.getGridGeometry().getGridRange2D().equals(targetImage.getBounds()) : targetGG;
         if (AbstractCoverageProcessor.LOGGER.isLoggable(LOGGING_LEVEL)) {
             final Comparable<?> backgroundText;
             if (background == null) {

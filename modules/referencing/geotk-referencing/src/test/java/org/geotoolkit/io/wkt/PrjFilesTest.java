@@ -19,10 +19,9 @@ package org.geotoolkit.io.wkt;
 
 import java.io.*;
 import org.junit.*;
-import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.Assert.*;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 
 
@@ -52,7 +51,7 @@ public final strictfp class PrjFilesTest {
     public void testRead() throws IOException {
         final StringReader in = new StringReader(WKT);
         final CoordinateReferenceSystem crs = PrjFiles.read(new BufferedReader(in), true);
-        assertTrue(CRS.equalsIgnoreMetadata(WGS84, crs));
+        assertEqualsIgnoreMetadata(WGS84, crs, false);
     }
 
     /**

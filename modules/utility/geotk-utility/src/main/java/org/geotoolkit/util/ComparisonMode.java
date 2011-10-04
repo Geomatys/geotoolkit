@@ -29,7 +29,7 @@ package org.geotoolkit.util;
  * {@link #IGNORE_METADATA} but not necessarily at the degree {@link #STRICT}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see LenientComparable#equals(Object, ComparisonMode)
  * @see Utilities#deepEquals(Object, Object, ComparisonMode)
@@ -125,7 +125,24 @@ public enum ComparisonMode {
      * is "small" is implementation dependent - the threshold can not be specified in the current
      * implementation, because of the non-linear nature of map projections.
      */
-    APPROXIMATIVE;
+    APPROXIMATIVE,
+
+    /**
+     * Same as {@link #APPROXIMATIVE}, except that an {@link AssertionError} is thrown if the two
+     * objects are not equal and assertions are enabled. The exception message and stack trace help
+     * to locate which attributes are not equal. This mode is typically used in assertions like below:
+     *
+     * {@preformat java
+     *     assert Utilities.deepEquals(object1, object2, ComparisonMode.DEBUG);
+     * }
+     *
+     * Note that a comparison in {@code DEBUG} mode may still return {@code false} without
+     * throwing an exception, since not all corner cases are tested. The exception is only
+     * intended to provide more details for some common cases.
+     *
+     * @since 3.20
+     */
+    DEBUG;
 
     /**
      * If the two given objects are equals according one of the mode enumerated in this class,

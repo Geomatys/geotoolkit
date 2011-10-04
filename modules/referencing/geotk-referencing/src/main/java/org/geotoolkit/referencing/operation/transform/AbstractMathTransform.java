@@ -1110,7 +1110,7 @@ public abstract class AbstractMathTransform extends FormattableObject
              * way. Since those codes are cached, this is an efficient way to quickly check if
              * the two objects are different.
              */
-            if (mode != ComparisonMode.APPROXIMATIVE) {
+            if (mode.ordinal() < ComparisonMode.APPROXIMATIVE.ordinal()) {
                 final int tc = hashCode;
                 if (tc != 0) {
                     final int oc = that.hashCode;
