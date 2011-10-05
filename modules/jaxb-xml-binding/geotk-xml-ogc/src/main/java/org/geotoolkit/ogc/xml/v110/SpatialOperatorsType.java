@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.SpatialOperator;
 import org.opengis.filter.capability.SpatialOperators;
 
@@ -103,5 +104,41 @@ public class SpatialOperatorsType implements SpatialOperators {
         }        
         return null;
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[SpatialOperatorsType]").append("\n");
+        if (spatialOperator != null) {
+            sb.append("spatialOperator:\n");
+            for (SpatialOperatorType q: spatialOperator) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SpatialOperatorsType) {
+            final SpatialOperatorsType that = (SpatialOperatorsType) object;
+
+            return Utilities.equals(this.spatialOperator, that.spatialOperator);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + (this.spatialOperator != null ? this.spatialOperator.hashCode() : 0);
+        return hash;
+    }
+
 
 }

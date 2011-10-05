@@ -44,5 +44,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "AnyValue")
 public class AnyValue {
 
+    @Override
+    public boolean equals(final Object object) {
+        return object instanceof AnyValue;
+    }
+
+    @Override
+    public String toString() {
+        return "[AnyValue]";
+    }
 
 }

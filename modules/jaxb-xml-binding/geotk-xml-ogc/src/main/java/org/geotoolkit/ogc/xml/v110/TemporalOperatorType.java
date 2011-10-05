@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -85,6 +86,44 @@ public class TemporalOperatorType {
      */
     public void setName(final TemporalOperatorNameType value) {
         this.name = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TemporalOperatorType]").append("\n");
+        if (temporalOperands != null) {
+            sb.append("temporalOperands: ").append(temporalOperands).append('\n');
+        }
+        if (name != null) {
+            sb.append("name: ").append(name).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof TemporalOperatorType) {
+           final TemporalOperatorType that = (TemporalOperatorType) object;
+       
+            return Utilities.equals(this.temporalOperands, that.temporalOperands) &&
+                   Utilities.equals(this.name, that.name);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.temporalOperands != null ? this.temporalOperands.hashCode() : 0);
+        hash = 23 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
 
 }

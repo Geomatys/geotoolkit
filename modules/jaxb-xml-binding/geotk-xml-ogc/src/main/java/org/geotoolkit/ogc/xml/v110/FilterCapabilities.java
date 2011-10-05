@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.IdCapabilities;
 import org.opengis.filter.capability.ScalarCapabilities;
 import org.opengis.filter.capability.SpatialCapabilities;
@@ -140,4 +141,65 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     public String getVersion() {
         return "1.1.0";
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[FilterCapabilities]").append("\n");
+        if (classificationCapabilities != null) {
+            sb.append("classificationCapabilities: ").append(classificationCapabilities).append('\n');
+        }
+        if (existenceCapabilities != null) {
+            sb.append("existenceCapabilities: ").append(existenceCapabilities).append('\n');
+        }
+        if (idCapabilities != null) {
+            sb.append("idCapabilities: ").append(idCapabilities).append('\n');
+        }
+        if (scalarCapabilities != null) {
+            sb.append("scalarCapabilities: ").append(scalarCapabilities).append('\n');
+        }
+        if (spatialCapabilities != null) {
+            sb.append("spatialCapabilities: ").append(spatialCapabilities).append('\n');
+        }
+        if (temporalCapabilities != null) {
+            sb.append("temporalCapabilities: ").append(temporalCapabilities).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof FilterCapabilities) {
+           final FilterCapabilities that = (FilterCapabilities) object;
+       
+            
+            return Utilities.equals(this.classificationCapabilities, that.classificationCapabilities) &&
+                   Utilities.equals(this.existenceCapabilities,      that.existenceCapabilities)      &&
+                   Utilities.equals(this.idCapabilities,             that.idCapabilities)             &&
+                   Utilities.equals(this.scalarCapabilities,         that.scalarCapabilities)         &&
+                   Utilities.equals(this.spatialCapabilities,        that.spatialCapabilities)        &&
+                   Utilities.equals(this.temporalCapabilities,        that.temporalCapabilities);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.spatialCapabilities != null ? this.spatialCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.temporalCapabilities != null ? this.temporalCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.existenceCapabilities != null ? this.existenceCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.classificationCapabilities != null ? this.classificationCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.scalarCapabilities != null ? this.scalarCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.idCapabilities != null ? this.idCapabilities.hashCode() : 0);
+        return hash;
+    }
+
+    
 }

@@ -44,5 +44,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "EID")
 public class EID {
 
+    @Override
+    public boolean equals(final Object object) {
+        return object instanceof EID;
+    }
 
 }

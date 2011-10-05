@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.IdCapabilities;
 
 
@@ -96,4 +97,41 @@ public class IdCapabilitiesType implements IdCapabilities {
         return fid != null;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[IdCapabilitiesType]").append("\n");
+        if (eid != null) {
+            sb.append("eid: ").append(eid).append('\n');
+        }
+        if (fid != null) {
+            sb.append("fid: ").append(fid).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof IdCapabilitiesType) {
+           final IdCapabilitiesType that = (IdCapabilitiesType) object;
+       
+            return Utilities.equals(this.eid, that.eid) &&
+                   Utilities.equals(this.fid, that.fid);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.eid != null ? this.eid.hashCode() : 0);
+        hash = 97 * hash + (this.fid != null ? this.fid.hashCode() : 0);
+        return hash;
+    }
 }

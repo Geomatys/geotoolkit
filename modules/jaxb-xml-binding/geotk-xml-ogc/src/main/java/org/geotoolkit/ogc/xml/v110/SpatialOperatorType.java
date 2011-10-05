@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialOperator;
 
@@ -112,5 +113,43 @@ public class SpatialOperatorType implements SpatialOperator {
             return name.name();
         }
         return null;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[SpatialOperatorType]").append("\n");
+        if (geometryOperands != null) {
+            sb.append("geometryOperands: ").append(geometryOperands).append('\n');
+        }
+        if (name != null) {
+            sb.append("name: ").append(name).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof SpatialOperatorType) {
+           final SpatialOperatorType that = (SpatialOperatorType) object;
+       
+            return Utilities.equals(this.geometryOperands, that.geometryOperands) &&
+                   Utilities.equals(this.name, that.name);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.geometryOperands != null ? this.geometryOperands.hashCode() : 0);
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        return hash;
     }
 }

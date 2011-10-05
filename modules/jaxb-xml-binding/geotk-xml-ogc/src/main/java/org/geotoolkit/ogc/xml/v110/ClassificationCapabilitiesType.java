@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -56,5 +57,38 @@ public class ClassificationCapabilitiesType {
      */
     public ClassificationOperatorsType getClassificationOperators() {
         return classificationOperators;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ClassificationCapabilitiesType]").append("\n");
+        if (classificationOperators != null) {
+            sb.append("classificationOperators: ").append(classificationOperators).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof ClassificationCapabilitiesType) {
+           final ClassificationCapabilitiesType that = (ClassificationCapabilitiesType) object;
+       
+            return Utilities.equals(this.classificationOperators, that.classificationOperators);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + (this.classificationOperators != null ? this.classificationOperators.hashCode() : 0);
+        return hash;
     }
 }

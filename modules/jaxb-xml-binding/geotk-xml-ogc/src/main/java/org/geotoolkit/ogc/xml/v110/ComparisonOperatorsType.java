@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.Operator;
 
@@ -108,4 +109,38 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         return null;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[ComparisonOperatorsType]").append("\n");
+        if (comparisonOperator != null) {
+            sb.append("comparisonOperator:\n");
+            for (ComparisonOperatorType q: comparisonOperator) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComparisonOperatorsType) {
+            final ComparisonOperatorsType that = (ComparisonOperatorsType) object;
+
+            return Utilities.equals(this.comparisonOperator, that.comparisonOperator);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.comparisonOperator != null ? this.comparisonOperator.hashCode() : 0);
+        return hash;
+    }
 }

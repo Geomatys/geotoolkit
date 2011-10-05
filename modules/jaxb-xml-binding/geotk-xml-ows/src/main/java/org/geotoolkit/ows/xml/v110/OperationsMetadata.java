@@ -142,14 +142,20 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the parameter property.
      */
     public List<DomainType> getParameter() {
-        return Collections.unmodifiableList(parameter);
+        if (parameter != null) {
+            return Collections.unmodifiableList(parameter);
+        }
+        return null;
     }
 
     /**
      * Gets the value of the constraint property.
      */
     public List<DomainType> getConstraint() {
-        return Collections.unmodifiableList(constraint);
+        if (constraint != null) {
+            return Collections.unmodifiableList(constraint);
+        }
+        return null;
     }
 
     /**

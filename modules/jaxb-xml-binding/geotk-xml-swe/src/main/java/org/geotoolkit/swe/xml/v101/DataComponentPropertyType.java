@@ -165,6 +165,12 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.role      = role;
         this.quantityRange = quantityRange;
     }
+    
+    public DataComponentPropertyType(final String name, final String role, final Category category) {
+        this.name      = name;
+        this.role      = role;
+        this.category  = category;
+    }
 
     public DataComponentPropertyType(final DataComponentProperty d) {
         if (d != null){

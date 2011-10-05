@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.Functions;
 
@@ -92,5 +93,43 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
 
     public boolean hasSimpleArithmetic() {
         return simpleArithmetic != null;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ArithmeticOperatorsType]").append("\n");
+        if (simpleArithmetic != null) {
+            sb.append("simpleArithmetic: ").append(simpleArithmetic).append('\n');
+        }
+        if (functions != null) {
+            sb.append("functions: ").append(functions).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof ArithmeticOperatorsType) {
+           final ArithmeticOperatorsType that = (ArithmeticOperatorsType) object;
+       
+            return Utilities.equals(this.functions, that.functions) &&
+                   Utilities.equals(this.simpleArithmetic, that.simpleArithmetic);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.functions != null ? this.functions.hashCode() : 0);
+        hash = 23 * hash + (this.simpleArithmetic != null ? this.simpleArithmetic.hashCode() : 0);
+        return hash;
     }
 }

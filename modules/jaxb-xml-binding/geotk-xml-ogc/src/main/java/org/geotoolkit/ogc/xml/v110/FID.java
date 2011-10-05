@@ -44,5 +44,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "FID")
 public class FID {
 
-
+    @Override
+    public boolean equals(final Object object) {
+        return object instanceof FID;
+    }
 }

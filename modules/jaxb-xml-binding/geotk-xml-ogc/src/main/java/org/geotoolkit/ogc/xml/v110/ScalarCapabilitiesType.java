@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.ScalarCapabilities;
@@ -102,5 +103,48 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
 
     public boolean hasLogicalOperators() {
         return logicalOperators != null;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ScalarCapabilitiesType]").append("\n");
+        if (logicalOperators != null) {
+            sb.append("logicalOperators: ").append(logicalOperators).append('\n');
+        }
+        if (comparisonOperators != null) {
+            sb.append("comparisonOperators: ").append(comparisonOperators).append('\n');
+        }
+        if (arithmeticOperators != null) {
+            sb.append("arithmeticOperators: ").append(arithmeticOperators).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof ScalarCapabilitiesType) {
+           final ScalarCapabilitiesType that = (ScalarCapabilitiesType) object;
+       
+            return Utilities.equals(this.logicalOperators, that.logicalOperators) &&
+                   Utilities.equals(this.arithmeticOperators, that.arithmeticOperators) &&
+                   Utilities.equals(this.comparisonOperators, that.comparisonOperators);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.logicalOperators != null ? this.logicalOperators.hashCode() : 0);
+        hash = 67 * hash + (this.comparisonOperators != null ? this.comparisonOperators.hashCode() : 0);
+        hash = 67 * hash + (this.arithmeticOperators != null ? this.arithmeticOperators.hashCode() : 0);
+        return hash;
     }
 }

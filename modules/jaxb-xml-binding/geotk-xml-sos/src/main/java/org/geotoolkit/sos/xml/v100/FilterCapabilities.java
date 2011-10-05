@@ -105,6 +105,24 @@ public class FilterCapabilities {
         return idCapabilities;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[FilterCapabilities]").append("\n");
+        if (idCapabilities != null) {
+            sb.append("idCapabilities: ").append(idCapabilities).append('\n');
+        }
+        if (scalarCapabilities != null) {
+            sb.append("scalarCapabilities: ").append(scalarCapabilities).append('\n');
+        }
+        if (spatialCapabilities != null) {
+            sb.append("spatialCapabilities: ").append(spatialCapabilities).append('\n');
+        }
+        if (temporalCapabilities != null) {
+            sb.append("temporalCapabilities: ").append(temporalCapabilities).append('\n');
+        }
+        return sb.toString();
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */

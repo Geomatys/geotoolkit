@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -58,4 +59,36 @@ public class ExistenceCapabilitiesType {
         return existenceOperators;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ExistenceCapabilitiesType]").append("\n");
+        if (existenceOperators != null) {
+            sb.append("existenceOperators: ").append(existenceOperators).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof ExistenceCapabilitiesType) {
+           final ExistenceCapabilitiesType that = (ExistenceCapabilitiesType) object;
+       
+            return Utilities.equals(this.existenceOperators, that.existenceOperators);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.existenceOperators != null ? this.existenceOperators.hashCode() : 0);
+        return hash;
+    }
 }

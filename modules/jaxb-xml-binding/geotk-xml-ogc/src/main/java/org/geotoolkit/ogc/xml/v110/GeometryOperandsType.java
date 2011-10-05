@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.GeometryOperand;
 
 
@@ -97,4 +98,39 @@ public class GeometryOperandsType {
         return Collections.unmodifiableList(geometryOperand);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[GeometryOperandsType]").append("\n");
+        if (geometryOperand != null) {
+            sb.append("geometryOperand:\n");
+            for (QName q: geometryOperand) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof GeometryOperandsType) {
+           final GeometryOperandsType that = (GeometryOperandsType) object;
+       
+            return Utilities.equals(this.geometryOperand, that.geometryOperand);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (this.geometryOperand != null ? this.geometryOperand.hashCode() : 0);
+        return hash;
+    }
 }

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -123,6 +124,57 @@ public class RangeType {
      */
     public List<String> getRangeClosure() {
         return Collections.unmodifiableList(rangeClosure);
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof RangeType) {
+            final RangeType that = (RangeType) object;
+            return Utilities.equals(this.maximumValue,   that.maximumValue) &&
+                   Utilities.equals(this.minimumValue,   that.minimumValue) &&
+                   Utilities.equals(this.rangeClosure,   that.rangeClosure) &&
+                   Utilities.equals(this.spacing,        that.spacing);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.minimumValue != null ? this.minimumValue.hashCode() : 0);
+        hash = 53 * hash + (this.maximumValue != null ? this.maximumValue.hashCode() : 0);
+        hash = 53 * hash + (this.spacing != null ? this.spacing.hashCode() : 0);
+        hash = 53 * hash + (this.rangeClosure != null ? this.rangeClosure.hashCode() : 0);
+        return hash;
+    }
+
+    
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[RangeType]").append("\n");
+        if (rangeClosure != null) {
+            sb.append("rangeClosure:\n ");
+            for (Object obj : rangeClosure) {
+                sb.append(obj).append('\n');
+            }
+        }
+        if (minimumValue != null) {
+            sb.append("minimumValue:").append(minimumValue).append('\n');
+        }
+        if (maximumValue != null) {
+            sb.append("maximumValue:").append(maximumValue).append('\n');
+        }
+        if (spacing != null) {
+            sb.append("spacing:").append(spacing).append('\n');
+        }
+        return sb.toString();
     }
 
 }

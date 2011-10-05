@@ -133,4 +133,15 @@ public class AllowedValues {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[AllowedValues]").append("\n");
+        if (valueOrRange != null) {
+            sb.append("valueOrRange:\n ");
+            for (Object obj : valueOrRange) {
+                sb.append(obj).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

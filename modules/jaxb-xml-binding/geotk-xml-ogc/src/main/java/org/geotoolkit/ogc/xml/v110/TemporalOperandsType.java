@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -63,6 +64,42 @@ public class TemporalOperandsType {
             temporalOperand = new ArrayList<QName>();
         }
         return this.temporalOperand;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[TemporalOperandsType]").append("\n");
+        if (temporalOperand != null) {
+            sb.append("temporalOperand:\n");
+            for (QName q: temporalOperand) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof TemporalOperandsType) {
+           final TemporalOperandsType that = (TemporalOperandsType) object;
+       
+            return Utilities.equals(this.temporalOperand, that.temporalOperand);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.temporalOperand != null ? this.temporalOperand.hashCode() : 0);
+        return hash;
     }
 
 }
