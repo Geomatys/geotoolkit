@@ -166,10 +166,6 @@
        =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>java3d</groupId>
-      <artifactId>vecmath</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <scope>test</scope>
