@@ -24,6 +24,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -55,19 +56,38 @@ public class MapContextDemo {
         //create a coverage layer
         final GridCoverageReader reader = openWorldFile();
         final MutableStyle coverageStyle = SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
-        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"background");
+        final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"coverage");
 
         //create a WMS layer
-//        final WebMapServer server = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms"), WMSVersion.v130);
-//        final WMSMapLayer wmsLayer = new WMSMapLayer(server, "BlueMarble");
+        final WebMapServer server = new WebMapServer(new URL("http://demo.geomatys.com/constellation/WS/wms"), WMSVersion.v130);
+        final WMSMapLayer wmsLayer = new WMSMapLayer(server, "BlueMarble");
 
         //add all layers in the context
-//        context.layers().add(wmsLayer);
+        context.layers().add(wmsLayer);
         context.layers().add(coverageLayer);
         context.layers().add(featureLayer);
 
         //quickly test if it works
         JMap2DFrame.show(context);
+        
+        
+        //rebuild the context in a tree structure
+        //context.items().clear();
+        //
+        //MapItem bggroup = MapBuilder.createItem();
+        //bggroup.setDescription(SF.description("Background", ""));
+        //MapItem datagroup = MapBuilder.createItem();
+        //datagroup.setDescription(SF.description("Datas", ""));
+        //
+        //bggroup.items().add(wmsLayer);
+        //datagroup.items().add(coverageLayer);
+        //datagroup.items().add(featureLayer);
+        //
+        //context.items().add(bggroup);
+        //context.items().add(datagroup);
+        //
+        //JMap2DFrame.show(context);
+        
     }
 
     private static FeatureCollection openShapeFile() throws Exception{
