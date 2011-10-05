@@ -161,7 +161,7 @@ public class AbstractIndexSearcher extends IndexLucene {
     /**
      * Fill the list of identifiers ordered by doc ID
      */
-    private final void initIdentifiersList() throws IOException, CorruptIndexException, ParseException, SearchingException {
+    private void initIdentifiersList() throws IOException, CorruptIndexException, ParseException, SearchingException {
         identifiers = new ArrayList<String>();
         for (int i = 0; i < searcher.maxDoc(); i++) {
             final String metadataID = getMatchingID(searcher.doc(i));
@@ -293,15 +293,19 @@ public class AbstractIndexSearcher extends IndexLucene {
             final Filter filter = spatialQuery.getSpatialFilter();
             final int operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();
-            String sorted = "no Sorted";
+            String sorted = "";
             if (sort != null) {
-                sorted = "order by: " + sort.toString();
+                sorted = "\norder by: " + sort.toString();
             }
-            String f = "no Filter";
+            String f = "";
             if (filter != null) {
-                f = filter.toString();
+                f = '\n' + filter.toString();
             }
-            LOGGER.log(logLevel, "Searching for: " + query.toString(field) + '\n' + SerialChainFilter.valueOf(operator) + '\n' + f + '\n' + sorted + "\nmax records: " + maxRecords);
+            String operatorValue = "";
+            if (!(operator == SerialChainFilter.AND || (operator == SerialChainFilter.OR && filter == null))) {
+                operatorValue = '\n' + SerialChainFilter.valueOf(operator);
+            }
+            LOGGER.log(logLevel, "Searching for: " + query.toString(field) + operatorValue +  f + sorted + "\nmax records: " + maxRecords);
 
             // simple query with an AND
             if (operator == SerialChainFilter.AND || (operator == SerialChainFilter.OR && filter == null)) {
