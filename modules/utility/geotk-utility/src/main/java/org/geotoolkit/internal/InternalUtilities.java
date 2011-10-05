@@ -37,7 +37,7 @@ import static java.lang.Math.*;
  * Various utility methods not to be put in public API.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.18 (derived from 3.00)
  * @module
@@ -145,6 +145,21 @@ public final class InternalUtilities extends Static {
         return (v1 instanceof Float || v1 instanceof Double) &&
                (v2 instanceof Float || v2 instanceof Double) &&
                epsilonEqual(((Number) v1).doubleValue(), ((Number) v2).doubleValue());
+    }
+
+    /**
+     * Compares the given objects in {@link ComparisonMode#DEBUG} mode.
+     *
+     * @param  o1 The first object to compare.
+     * @param  o2 The second object to compare.
+     * @return {@code true} if the given objects are equal.
+     * @throws AssertionError If the given objects are not equal and the cause can be
+     *         specified in the exception message.
+     *
+     * @since 3.20
+     */
+    public static boolean debugEquals(final Object o1, final Object o2) throws AssertionError {
+        return Utilities.deepEquals(o1, o2, ComparisonMode.DEBUG);
     }
 
     /**

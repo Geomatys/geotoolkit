@@ -54,9 +54,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -78,6 +76,7 @@ import static java.lang.Double.isNaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
 
 /**
@@ -1051,8 +1050,8 @@ public class CoverageStack extends AbstractCoverage {
          * CRS assertions (for debugging purpose).
          */
         final CoordinateReferenceSystem sourceCRS;
-        assert Utilities.deepEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
-                CRS.getSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension()), ComparisonMode.DEBUG) : sourceCRS;
+        assert debugEquals((sourceCRS = coverage.getCoordinateReferenceSystem()),
+                CRS.getSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) : sourceCRS;
         assert coverage.getNumSampleDimensions() == numSampleDimensions : coverage;
         return coverage;
     }
@@ -1227,7 +1226,7 @@ public class CoverageStack extends AbstractCoverage {
             }
             coord = reducedPosition;
         } else {
-            assert Utilities.deepEquals(crs, targetCRS, ComparisonMode.DEBUG) : targetCRS;
+            assert debugEquals(crs, targetCRS) : targetCRS;
         }
         return coord;
     }

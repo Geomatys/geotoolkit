@@ -56,8 +56,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -82,6 +80,8 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.lang.Workaround;
+
+import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
 
 /**
@@ -673,7 +673,7 @@ final class Resampler2D extends GridCoverage2D {
          *     value is 255.
          */
         targetCoverage = create(sourceCoverage, targetImage, targetGG, finalView, hints);
-        assert Utilities.deepEquals(targetCoverage.getCoordinateReferenceSystem(), targetCRS, ComparisonMode.DEBUG) : targetGG;
+        assert debugEquals(targetCoverage.getCoordinateReferenceSystem(), targetCRS) : targetGG;
         assert targetCoverage.getGridGeometry().getGridRange2D().equals(targetImage.getBounds()) : targetGG;
         if (AbstractCoverageProcessor.LOGGER.isLoggable(LOGGING_LEVEL)) {
             final Comparable<?> backgroundText;

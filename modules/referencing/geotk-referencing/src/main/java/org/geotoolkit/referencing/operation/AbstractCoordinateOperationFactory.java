@@ -40,7 +40,6 @@ import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -60,6 +59,7 @@ import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.DAT
 import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED;
 import static org.geotoolkit.metadata.iso.citation.Citations.GEOTOOLKIT;
 import static org.geotoolkit.resources.Vocabulary.formatInternational;
+import static org.geotoolkit.internal.InternalUtilities.debugEquals;
 
 
 /**
@@ -534,7 +534,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         // Note: we sometime get this assertion failure if the user provided CRS with two
         //       different ellipsoids but an identical TOWGS84 conversion infos (which is
         //       usually wrong, but still happen).
-        assert Utilities.deepEquals(step1.getTargetCRS(), step2.getSourceCRS(), ComparisonMode.DEBUG);
+        assert debugEquals(step1.getTargetCRS(), step2.getSourceCRS());
 
         if (isIdentity(step1)) return step2;
         if (isIdentity(step2)) return step1;
@@ -586,8 +586,8 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         //       createFlattenedSphere(...) constructor while the EPSG database will select
         //       createFlattenedSphere(...) or createEllipsoid(...) depending on the Ellipsoid
         //       definition.
-        assert Utilities.deepEquals(step1.getTargetCRS(), step2.getSourceCRS(), ComparisonMode.DEBUG) : step1;
-        assert Utilities.deepEquals(step2.getTargetCRS(), step3.getSourceCRS(), ComparisonMode.DEBUG) : step3;
+        assert debugEquals(step1.getTargetCRS(), step2.getSourceCRS()) : step1;
+        assert debugEquals(step2.getTargetCRS(), step3.getSourceCRS()) : step3;
 
         if (isIdentity(step1)) return concatenate(step2, step3);
         if (isIdentity(step2)) return concatenate(step1, step3);
