@@ -8,6 +8,7 @@ import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 
 public class CQLDemo {
 
@@ -33,6 +34,9 @@ public class CQLDemo {
         System.out.println(CQL.toExpression("QUANTITY * 2"));
         System.out.println(CQL.toExpression("strConcat(NAME, 'suffix')"));
         List filters = CQL.toFilterList("NAME IS NULL;BBOX(SHAPE, 10,20,30,40);INCLUDE");
+        
+        String cqlfilter = CQL.toCQL(filter);
+        String cqlexpression = CQL.toCQL(FF.literal("hello"));
 
     }
 
