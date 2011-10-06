@@ -7,7 +7,7 @@ import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.process.ProcessDescriptor;
 
 
-public class FindProcess {
+public class FindProcessDemo {
     
     public static void main(String[] args) {
         
