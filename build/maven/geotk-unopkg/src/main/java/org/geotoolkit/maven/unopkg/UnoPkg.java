@@ -18,6 +18,10 @@
 package org.geotoolkit.maven.unopkg;
 
 import java.io.*;
+import java.util.Map;
+import java.util.zip.CRC32;
+import java.util.jar.JarFile;
+import java.util.jar.Pack200;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,6 +29,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.artifact.Artifact;
+
+import static java.util.jar.Pack200.Packer;
 
 
 // Note: javadoc in class and fields descriptions must be XHTML.
@@ -85,6 +91,15 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
      * @required
      */
     private String oxtName;
+
+    /**
+     * The name of the Pack200 file, or <code>none</code> for storing plain JAR files.
+     * If a Pack200 file is generated, then the add-in registration class needs to unpack
+     * the file itself before use.
+     *
+     * @parameter expression="none"
+     */
+    private String pack200;
 
     /**
      * The Maven project running this plugin.
@@ -150,6 +165,7 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
         final File[]          jars = outputDirectory.listFiles(this);
         final File[]          rdbs = new File(sourceDirectory).listFiles(this);
         final ZipOutputStream  out = new ZipOutputStream(new FileOutputStream(zipFile));
+        out.setLevel(9);
         if (manifestFile.isFile()) {
             copyFiltered(manifestFile, out, manifestName);
         }
@@ -161,13 +177,30 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
         }
         /*
          * Copies the JAR (and any additional JARs provided in the output directory).
+         * Do not pack this JAR, because it contains the code needed to inflate the
+         * PACK200 file.
          */
         for (int i=0; i<jars.length; i++) {
             copy(jars[i], out, null);
         }
         /*
-         * Copies the dependencies.
+         * Copies the dependencies, optionally in a single PACK200 entry.
          */
+        Pack200.Packer packer = null;
+        if (!pack200.trim().equalsIgnoreCase("none")) {
+            out.putNextEntry(new ZipEntry(pack200));
+            packer = Pack200.newPacker();
+            final Map<String,String> p = packer.properties();
+            p.put(Packer.EFFORT,            "9");           // take more time choosing codings for better compression.
+            p.put(Packer.SEGMENT_LIMIT,     "-1");          // use largest-possible archive segments (>10% better compression).
+            p.put(Packer.KEEP_FILE_ORDER,   Packer.FALSE);  // reorder files for better compression.
+            p.put(Packer.MODIFICATION_TIME, Packer.LATEST); // smear modification times to a single value.
+            p.put(Packer.CODE_ATTRIBUTE_PFX+"LineNumberTable",    Packer.STRIP); // discard debug attributes.
+            p.put(Packer.CODE_ATTRIBUTE_PFX+"LocalVariableTable", Packer.STRIP); // discard debug attributes.
+            p.put(Packer.CLASS_ATTRIBUTE_PFX+"SourceFile",        Packer.STRIP); // discard debug attributes.
+            p.put(Packer.DEFLATE_HINT,      Packer.TRUE);   // transmitting a single request to use "compress" mode.
+            p.put(Packer.UNKNOWN_ATTRIBUTE, Packer.ERROR);  // throw an error if an attribute is unrecognized.
+        }
         for (final Artifact artifact : project.getDependencyArtifacts()) {
             final String scope = artifact.getScope();
             if (scope != null &&  // Maven 2.0.6 bug?
@@ -175,18 +208,29 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
                 scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
             {
                 final File file = artifact.getFile();
-                String name = file.getName();
-                if (artifact.getGroupId().startsWith(prefixGroup) && !name.startsWith(prefix)) {
-                    name = prefix + name;
+                if (packer != null) {
+                    final JarFile jar = new JarFile(file);
+                    packer.pack(jar, out);
+                    jar.close();
+                } else {
+                    String name = file.getName();
+                    if (artifact.getGroupId().startsWith(prefixGroup) && !name.startsWith(prefix)) {
+                        name = prefix + name;
+                    }
+                    copy(file, out, name);
                 }
-                copy(file, out, name);
             }
+        }
+        if (packer != null) {
+            out.closeEntry();
         }
         out.close();
     }
 
     /**
      * Copies the content of the specified binary file to the specified output stream.
+     *
+     * @param name The ZIP entry name, or <code>null</code> for using the name of the given file.
      */
     private static void copy(final File file, final ZipOutputStream out, String name)
             throws IOException
@@ -195,6 +239,13 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
             name = file.getName();
         }
         final ZipEntry entry = new ZipEntry(name);
+        if (name.endsWith(".png")) {
+            final long size = file.length();
+            entry.setMethod(ZipOutputStream.STORED);
+            entry.setSize(size);
+            entry.setCompressedSize(size);
+            entry.setCrc(getCRC32(file));
+        }
         out.putNextEntry(entry);
         final InputStream in = new FileInputStream(file);
         final byte[] buffer = new byte[4*1024];
@@ -230,5 +281,20 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
         in.close();
         writer.flush();
         out.closeEntry();
+    }
+
+    /**
+     * Computes CRC32 for the given file.
+     */
+    private static long getCRC32(final File file) throws IOException {
+        final CRC32 crc = new CRC32();
+        final InputStream in = new FileInputStream(file);
+        final byte[] buffer = new byte[4*1024];
+        int length;
+        while ((length = in.read(buffer)) >= 0) {
+            crc.update(buffer, 0, length);
+        }
+        in.close();
+        return crc.getValue();
     }
 }
