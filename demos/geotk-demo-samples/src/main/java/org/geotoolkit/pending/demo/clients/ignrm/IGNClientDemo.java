@@ -1,5 +1,5 @@
 
-package org.geotoolkit.pending.demo.clients;
+package org.geotoolkit.pending.demo.clients.ignrm;
 
 import java.net.URL;
 import javax.swing.JOptionPane;

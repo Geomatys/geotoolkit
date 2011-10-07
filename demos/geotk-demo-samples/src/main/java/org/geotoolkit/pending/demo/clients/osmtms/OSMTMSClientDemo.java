@@ -1,5 +1,5 @@
 
-package org.geotoolkit.pending.demo.clients;
+package org.geotoolkit.pending.demo.clients.osmtms;
 
 import java.net.URL;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;

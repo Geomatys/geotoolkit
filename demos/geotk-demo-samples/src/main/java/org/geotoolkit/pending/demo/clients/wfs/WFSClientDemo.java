@@ -1,6 +1,6 @@
 
 
-package org.geotoolkit.pending.demo.clients;
+package org.geotoolkit.pending.demo.clients.wfs;
 
 import java.net.MalformedURLException;
 import java.net.URI;

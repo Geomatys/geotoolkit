@@ -1,5 +1,5 @@
 
-package org.geotoolkit.pending.demo.clients;
+package org.geotoolkit.pending.demo.clients.googlestaticmap;
 
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
