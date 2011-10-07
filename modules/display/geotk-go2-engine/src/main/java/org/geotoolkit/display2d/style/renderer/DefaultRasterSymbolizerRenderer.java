@@ -22,6 +22,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
@@ -348,12 +349,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }else if(candidate instanceof ComponentColorModel){
             final ComponentColorModel colors = (ComponentColorModel) candidate;
             final int nbbit = colors.getPixelSize();
+            final int type = image.getSampleModel().getDataType();
             
-            if(nbbit >= 32){
-                //we can't handle a index color model when values exceed int max value
-                model = new CompatibleColorModel(nbbit, function);
-                
-            }else{
+            if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
 
@@ -368,6 +366,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 transformColormap(ARGB, function);
                 model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+                
+            }else{
+                //we can't handle a index color model when values exceed int max value
+                model = new CompatibleColorModel(nbbit, function);
             }
             
         }else{
