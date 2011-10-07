@@ -16,6 +16,18 @@
  */
 package org.geotoolkit.process.jts.intersection;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.jts.JTSProcessingUtils;
+import org.geotoolkit.process.jts.union.UnionProcess;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
@@ -23,6 +35,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.process.jts.intersection.IntersectionDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 /**
+ * Compute the intersection geometry of the two inputs geometries.
+ * The process ensure that two geometries are into the same CoordinateReferenceSystem.
+ * The returned point keep the common geometry CRS.
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
@@ -35,13 +50,38 @@ public class IntersectionProcess extends AbstractProcess{
     @Override
     public ParameterValueGroup call() {
         
-        final Geometry geom1 = value(GEOM1, inputParameters); 
-        final Geometry geom2 = value(GEOM2, inputParameters); 
+         try {
+            
+            final Geometry geom1 = value(GEOM1, inputParameters); 
+            Geometry geom2 = value(GEOM2, inputParameters); 
+            
+            Geometry result = new GeometryFactory().buildGeometry(Collections.emptyList());
+            
+            // ensure geometries are in the same CRS
+            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
+            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            }
+            
+            result = (Geometry) geom1.intersection(geom2);
+            if(resultCRS != null){
+                JTS.setCRS(result, resultCRS);
+            }
+            
+            
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
+            
+        } catch (MismatchedDimensionException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.WARNING, null, ex);
+        } catch (TransformException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.WARNING, null, ex);
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.WARNING, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.WARNING, null, ex);
+        }
         
-        final Geometry result = (Geometry) geom1.intersection(geom2);
-        
-        getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
-        return outputParameters;
+         return outputParameters;
     }
     
 }

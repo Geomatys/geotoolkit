@@ -16,12 +16,18 @@
  */
 package org.geotoolkit.process.jts.intersects;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.process.jts.JTSProcessingUtils;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.intersects.IntersectsDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -35,13 +41,27 @@ public class IntersectsProcess extends AbstractProcess{
     @Override
     public ParameterValueGroup call() {
         
-        final Geometry geom1 = value(GEOM1, inputParameters); 
-        final Geometry geom2 = value(GEOM2, inputParameters); 
-        
-        final Boolean result = (Boolean) geom1.intersects(geom2);
-        
-        getOrCreate(RESULT, outputParameters).setValue(result);
-        return outputParameters;
+        try {
+            
+            final Geometry geom1 = value(GEOM1, inputParameters); 
+            Geometry geom2 = value(GEOM2, inputParameters); 
+            
+            // ensure geometries are in the same CRS
+            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
+            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            }
+            
+            final Boolean result = (Boolean) geom1.intersects(geom2);
+            
+            getOrCreate(RESULT, outputParameters).setValue(result);
+           
+        } catch (FactoryException ex) {
+            Logger.getLogger(IntersectsProcess.class.getName()).log(Level.WARNING, null, ex);
+        } catch (TransformException ex) {
+            Logger.getLogger(IntersectsProcess.class.getName()).log(Level.WARNING, null, ex);
+        }
+         return outputParameters;
     }
     
 }

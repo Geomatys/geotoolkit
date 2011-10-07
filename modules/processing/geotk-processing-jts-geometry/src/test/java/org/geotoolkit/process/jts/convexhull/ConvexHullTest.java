@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.process.jts.convexhull;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.jts.union.UnionProcess;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -44,7 +51,7 @@ public class ConvexHullTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testConvexHull() throws NoSuchIdentifierException, ProcessException {
+    public void testConvexHull() throws NoSuchIdentifierException, ProcessException, FactoryException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -59,6 +66,13 @@ public class ConvexHullTest extends AbstractProcessTest{
         
         final Geometry geom = fact.createPolygon(ring, null) ;
         
+        CoordinateReferenceSystem crs1 = null;
+        try{
+            crs1 = CRS.decode("EPSG:4326");
+            JTS.setCRS(geom, crs1);
+        }catch(FactoryException ex){
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
       
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "convexHull");
@@ -74,6 +88,7 @@ public class ConvexHullTest extends AbstractProcessTest{
         final Geometry expected = geom.convexHull();
         
         assertTrue(expected.equals(result));
+        assertTrue(crs1.equals(JTS.findCoordinateReferenceSystem(result)));
     }
     
 }

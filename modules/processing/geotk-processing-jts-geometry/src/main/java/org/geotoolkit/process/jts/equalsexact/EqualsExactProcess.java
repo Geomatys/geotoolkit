@@ -16,13 +16,22 @@
  */
 package org.geotoolkit.process.jts.equalsexact;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.equalsexact.EqualsExactDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+import org.geotoolkit.process.jts.JTSProcessingUtils;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 /**
+ * Compute if two input geometries are equalExact.
+ * The process ensure that two geometries are into the same CoordinateReferenceSystem. * 
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
@@ -34,20 +43,34 @@ public class EqualsExactProcess extends AbstractProcess{
     
     @Override
     public ParameterValueGroup call() {
-        final Geometry geom1 = value(GEOM1, inputParameters); 
-        final Geometry geom2 = value(GEOM2, inputParameters);
-        
-        Boolean result = false;
-        
-        if(value(TOLERANCE, inputParameters) != null){
-            final Double tolerance = value(TOLERANCE, inputParameters);
-            result = (Boolean) geom1.equalsExact(geom2,tolerance);
+        try {
+            final Geometry geom1 = value(GEOM1, inputParameters); 
+            Geometry geom2 = value(GEOM2, inputParameters);
             
-        }else{
-            result = (Boolean) geom1.equalsExact(geom2);
+             // ensure geometries are in the same CRS
+            final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
+            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+                geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
+            }
+            
+            Boolean result = false;
+            
+            if(value(TOLERANCE, inputParameters) != null){
+                final Double tolerance = value(TOLERANCE, inputParameters);
+                result = (Boolean) geom1.equalsExact(geom2,tolerance);
+                
+            }else{
+                result = (Boolean) geom1.equalsExact(geom2);
+            }
+            
+            getOrCreate(RESULT, outputParameters).setValue(result); 
+            
+        } catch (TransformException ex) {
+            Logger.getLogger(EqualsExactProcess.class.getName()).log(Level.WARNING, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(EqualsExactProcess.class.getName()).log(Level.WARNING, null, ex);
         }
         
-        getOrCreate(RESULT, outputParameters).setValue(result); 
         return outputParameters;
     }
     

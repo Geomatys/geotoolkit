@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.process.jts.envelope;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.jts.union.UnionProcess;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -36,30 +43,35 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class EnvelopeTest extends AbstractProcessTest{
+public class EnvelopeTest extends AbstractProcessTest {
 
-   
     public EnvelopeTest() {
         super("envelope");
     }
 
     @Test
-    public void testEnvelope() throws NoSuchIdentifierException, ProcessException {
-        
+    public void testEnvelope() throws NoSuchIdentifierException, ProcessException, FactoryException {
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
-        final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
-           new Coordinate(2.0, -5.0),
-           new Coordinate(0.0, 10.0),
-           new Coordinate(3.0, 8.0),
-           new Coordinate(5.0, 0.0),
-           new Coordinate(2.0, -5.0)
-        });
-        
-        final Geometry geom = fact.createPolygon(ring, null) ;
-        
-      
+        final LinearRing ring = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(2.0, -5.0),
+                    new Coordinate(0.0, 10.0),
+                    new Coordinate(3.0, 8.0),
+                    new Coordinate(5.0, 0.0),
+                    new Coordinate(2.0, -5.0)
+                });
+
+        final Geometry geom = fact.createPolygon(ring, null);
+        CoordinateReferenceSystem crs1 = null;
+        try {
+            crs1 = CRS.decode("EPSG:4326");
+            JTS.setCRS(geom, crs1);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "envelope");
 
@@ -69,11 +81,11 @@ public class EnvelopeTest extends AbstractProcessTest{
 
         //result
         final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
-       
-        
+
+
         final Geometry expected = geom.getEnvelope();
-        
+
         assertTrue(expected.equals(result));
+        assertTrue(crs1.equals(JTS.findCoordinateReferenceSystem(result)));
     }
-    
 }

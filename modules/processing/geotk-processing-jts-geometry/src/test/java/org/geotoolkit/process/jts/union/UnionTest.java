@@ -17,6 +17,7 @@
 package org.geotoolkit.process.jts.union;
 
 import org.geotoolkit.process.ProcessException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -96,7 +97,7 @@ public class UnionTest extends AbstractProcessTest{
     
     
     @Test
-    public void testUnionCRS() throws NoSuchIdentifierException, ProcessException {
+    public void testUnionCRS() throws NoSuchIdentifierException, ProcessException, NoSuchAuthorityCodeException, FactoryException {
         
         GeometryFactory fact = new GeometryFactory();
         
@@ -155,8 +156,8 @@ public class UnionTest extends AbstractProcessTest{
             Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
         }catch (TransformException ex) {
             Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       
+        }       
+        
         final Geometry expected = geom1.union(geom2);
         JTS.setCRS(expected, crs1);
         

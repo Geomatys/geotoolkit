@@ -17,12 +17,20 @@
 package org.geotoolkit.process.jts.boundary;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.geotoolkit.process.jts.boundary.BoundaryDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+import org.opengis.util.FactoryException;
 /**
+ * Compute boundary geometry of given geometry. 
+ * The returned boundary keep the CRS of the given geometry.
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
@@ -35,11 +43,23 @@ public class BoundaryProcess extends AbstractProcess{
     @Override
     public ParameterValueGroup call() {
         
-        final Geometry geom = value(GEOM, inputParameters);  
+        try {
+            final Geometry geom = value(GEOM, inputParameters);  
+            
+            final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
+            
+            final Geometry result = geom.getBoundary();
+            JTS.setCRS(result, geomCRS);
+           
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
+            
+            
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(BoundaryProcess.class.getName()).log(Level.WARNING, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(BoundaryProcess.class.getName()).log(Level.WARNING, null, ex);
+        }
         
-        final Geometry result = geom.getBoundary();
-        
-        getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
         return outputParameters;
     }
     

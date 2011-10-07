@@ -676,7 +676,7 @@ public final class JTS {
      * @param crs, if null method has no effect
      */
     public static void setCRS(Geometry geom, final CoordinateReferenceSystem crs){
-        ArgumentChecks.ensureNonNull("geommetry", geom);
+        ArgumentChecks.ensureNonNull("geometry", geom);
 
         if(crs == null){
             return;
@@ -705,11 +705,15 @@ public final class JTS {
      * 2 - search if the user data is a Map and has key JTSGeometryCRS
      * 3 - try to rebuild CRS from the srid.
      * @param geom a Geometry.
-     * @return null if none where successful.
+     * @return null if none where successful or if geometry is null.
      * @throws NoSuchAuthorityCodeException, FactoryException
      */
     public static CoordinateReferenceSystem findCoordinateReferenceSystem(final Geometry geom)
             throws NoSuchAuthorityCodeException, FactoryException{
+        //chexk if geometry is defined and prevent NullPointerException
+        if(geom == null){
+            return null;
+        }
         //we don't know in which crs it is, try to find it
         CoordinateReferenceSystem crs = null;
         final Object userData = geom.getUserData();

@@ -16,6 +16,15 @@
  */
 package org.geotoolkit.process.jts.difference;
 
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.jts.union.UnionProcess;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -36,39 +45,38 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class DifferenceTest extends AbstractProcessTest{
+public class DifferenceTest extends AbstractProcessTest {
 
-   
     public DifferenceTest() {
         super("difference");
     }
 
     @Test
     public void testDifference() throws NoSuchIdentifierException, ProcessException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
-        final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
-           new Coordinate(0.0, 0.0),
-           new Coordinate(0.0, 10.0),
-           new Coordinate(5.0, 10.0),
-           new Coordinate(5.0, 0.0),
-           new Coordinate(0.0, 0.0)
-        });
-        
-        final Geometry geom1 = fact.createPolygon(ring, null) ;
-        
-        
-        final LinearRing  ring2 = fact.createLinearRing(new Coordinate[]{
-           new Coordinate(-5.0, 0.0),
-           new Coordinate(-5.0, 10.0),
-           new Coordinate(2.0, 10.0),
-           new Coordinate(2.0, 0.0),
-           new Coordinate(-5.0, 0.0)
-        });
-      
-        final Geometry geom2 = fact.createPolygon(ring2, null) ;
+        final LinearRing ring = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(0.0, 0.0),
+                    new Coordinate(0.0, 10.0),
+                    new Coordinate(5.0, 10.0),
+                    new Coordinate(5.0, 0.0),
+                    new Coordinate(0.0, 0.0)
+                });
+
+        final Geometry geom1 = fact.createPolygon(ring, null);
+
+
+        final LinearRing ring2 = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(-5.0, 0.0),
+                    new Coordinate(-5.0, 10.0),
+                    new Coordinate(2.0, 10.0),
+                    new Coordinate(2.0, 0.0),
+                    new Coordinate(-5.0, 0.0)
+                });
+
+        final Geometry geom2 = fact.createPolygon(ring2, null);
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "difference");
 
@@ -79,11 +87,77 @@ public class DifferenceTest extends AbstractProcessTest{
 
         //result
         final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
-       
-        
+
+
         final Geometry expected = geom1.difference(geom2);
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
+    @Test
+    public void testDifferenceCRS() throws NoSuchIdentifierException, ProcessException {
+
+        GeometryFactory fact = new GeometryFactory();
+
+        // Inputs first
+        final LinearRing ring = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(0.0, 0.0),
+                    new Coordinate(0.0, 10.0),
+                    new Coordinate(5.0, 10.0),
+                    new Coordinate(5.0, 0.0),
+                    new Coordinate(0.0, 0.0)
+                });
+
+        final Geometry geom1 = fact.createPolygon(ring, null);
+        CoordinateReferenceSystem crs1 = null;
+        try {
+            crs1 = CRS.decode("EPSG:4326");
+            JTS.setCRS(geom1, crs1);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        final LinearRing ring2 = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(-5.0, 0.0),
+                    new Coordinate(-5.0, 10.0),
+                    new Coordinate(2.0, 10.0),
+                    new Coordinate(2.0, 0.0),
+                    new Coordinate(-5.0, 0.0)
+                });
+
+        Geometry geom2 = fact.createPolygon(ring2, null);
+        CoordinateReferenceSystem crs2 = null;
+        try {
+            crs2 = CRS.decode("EPSG:2154");
+            JTS.setCRS(geom2, crs2);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Process
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "difference");
+
+        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("geom1").setValue(geom1);
+        in.parameter("geom2").setValue(geom2);
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
+
+        //result
+        final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
+
+
+        MathTransform mt = null;
+        try {
+            mt = CRS.findMathTransform(crs2, crs1);
+            geom2 = JTS.transform(geom2, mt);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        final Geometry expected = geom1.difference(geom2);
+        JTS.setCRS(expected, crs1);
+
+        assertTrue(expected.equals(result));
+    }
 }

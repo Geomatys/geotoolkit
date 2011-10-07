@@ -16,6 +16,15 @@
  */
 package org.geotoolkit.process.jts.equalsexact;
 
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.jts.union.UnionProcess;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -36,32 +45,31 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class EqualsExactTest extends AbstractProcessTest{
+public class EqualsExactTest extends AbstractProcessTest {
 
-   
     public EqualsExactTest() {
         super("equals2d");
     }
 
     @Test
     public void testEquals2d() throws NoSuchIdentifierException, ProcessException {
-        
+
         GeometryFactory fact = new GeometryFactory();
-        
+
         // Inputs first
-        final LinearRing  ring = fact.createLinearRing(new Coordinate[]{
-           new Coordinate(2.0, -5.0),
-           new Coordinate(0.0, 10.0),
-           new Coordinate(3.0, 8.0),
-           new Coordinate(5.0, 0.0),
-           new Coordinate(2.0, -5.0)
-        });
-        
-        final Geometry geom = fact.createPolygon(ring, null) ;
-        final Geometry geom2 = fact.createPolygon(ring, null) ;
-        
+        final LinearRing ring = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(2.0, -5.0),
+                    new Coordinate(0.0, 10.0),
+                    new Coordinate(3.0, 8.0),
+                    new Coordinate(5.0, 0.0),
+                    new Coordinate(2.0, -5.0)
+                });
+
+        final Geometry geom = fact.createPolygon(ring, null);
+        final Geometry geom2 = fact.createPolygon(ring, null);
+
         final double tolerance = 0.00001;
-      
+
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "equals2d");
 
@@ -73,10 +81,72 @@ public class EqualsExactTest extends AbstractProcessTest{
 
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
-       
+
         final Boolean expected = geom.equalsExact(geom2, tolerance);
-        
+
         assertTrue(expected.equals(result));
     }
-    
+
+    @Test
+    public void testEquals2dCRS() throws NoSuchIdentifierException, ProcessException {
+
+        GeometryFactory fact = new GeometryFactory();
+
+        // Inputs first
+        final LinearRing ring = fact.createLinearRing(new Coordinate[]{
+                    new Coordinate(2.0, -5.0),
+                    new Coordinate(0.0, 10.0),
+                    new Coordinate(3.0, 8.0),
+                    new Coordinate(5.0, 0.0),
+                    new Coordinate(2.0, -5.0)
+                });
+
+        final Geometry geom = fact.createPolygon(ring, null);
+        Geometry geom2 = fact.createPolygon(ring, null);
+
+        CoordinateReferenceSystem crs1 = null;
+        try {
+            crs1 = CRS.decode("EPSG:4326");
+            JTS.setCRS(geom, crs1);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        CoordinateReferenceSystem crs2 = null;
+        try {
+            crs2 = CRS.decode("EPSG:4326");
+            JTS.setCRS(geom2, crs2);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+        final double tolerance = 0.00001;
+
+        // Process
+        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "equals2d");
+
+        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("geom1").setValue(geom);
+        in.parameter("geom2").setValue(geom);
+        in.parameter("tolerance").setValue(tolerance);
+        final org.geotoolkit.process.Process proc = desc.createProcess(in);
+
+        //result
+        final Boolean result = (Boolean) proc.call().parameter("result").getValue();
+
+        
+        MathTransform mt = null;
+        try {
+            mt = CRS.findMathTransform(crs2, crs1);
+            geom2 = JTS.transform(geom2, mt);
+        } catch (FactoryException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformException ex) {
+            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        final Boolean expected = geom.equalsExact(geom2, tolerance);
+
+        assertTrue(expected.equals(result));
+    }
 }
