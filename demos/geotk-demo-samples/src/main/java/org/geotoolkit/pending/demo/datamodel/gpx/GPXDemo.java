@@ -1,6 +1,6 @@
 
 
-package org.geotoolkit.pending.demo.datamodel;
+package org.geotoolkit.pending.demo.datamodel.gpx;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,12 +11,12 @@ import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
-public class OSMDemo {
+public class GPXDemo {
 
     public static void main(String[] args) throws DataStoreException {
 
         final Map<String,Serializable> parameters = new HashMap<String,Serializable>();
-        parameters.put("url", OSMDemo.class.getResource("/data/sampleOSM.osm"));
+        parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
 
         final DataStore store = DataStoreFinder.getDataStore(parameters);
 
@@ -25,6 +25,7 @@ public class OSMDemo {
         for(Name name : names){
             System.out.println(store.getFeatureType(name));
         }
+
 
     }
 
