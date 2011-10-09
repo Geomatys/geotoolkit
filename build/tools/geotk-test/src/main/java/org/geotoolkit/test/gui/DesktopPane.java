@@ -27,6 +27,7 @@ import java.awt.Desktop;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
  * The desktop pane where to put the widgets to be tested.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.20
  *
  * @since 3.05
  */
@@ -56,6 +57,12 @@ final strictfp class DesktopPane extends JDesktopPane {
     private static final String SCREENSHOT_DIRECTORY_PREFS = "Screenshots";
 
     /**
+     * The desktop which contain the internal frame for each widget. Will be created only if
+     * the "{@code org.geotoolkit.showWidgetTests}" system property is set to {@code true}.
+     */
+    private static DesktopPane desktop;
+
+    /**
      * The menu for creating new windows.
      */
     private final JMenu newMenu;
@@ -63,7 +70,7 @@ final strictfp class DesktopPane extends JDesktopPane {
     /**
      * A lock used for waiting that the {@linkplain #desktop} has been closed.
      */
-    final CountDownLatch lock;
+    private final CountDownLatch lock;
 
     /**
      * The last active component.
@@ -73,16 +80,86 @@ final strictfp class DesktopPane extends JDesktopPane {
     /**
      * Creates the desktop.
      */
-    DesktopPane() {
+    private DesktopPane() {
         newMenu = new JMenu("New");
         lock = new CountDownLatch(1);
+    }
+
+    /**
+     * If the widgets are to be show, prepares the desktop pane which will contain them.
+     * This method is invoked from JUnit test cases by methods annotated with {@code @BeforeTest}.
+     *
+     * @throws HeadlessException If the current environment does not allow the display of widgets.
+     */
+    static synchronized void prepareDesktop() throws HeadlessException {
+        desktop = new DesktopPane();
+        desktop.createFrame().setVisible(true);
+    }
+
+    /**
+     * If a frame has been created, wait for its disposal.
+     * This method is invoked from JUnit test cases by methods annotated with {@code @AfterTest}.
+     *
+     * @throws InterruptedException If the current thread has been interrupted while
+     *         we were waiting for the frame disposal.
+     */
+    static void waitForFrameDisposal() throws InterruptedException {
+        final DesktopPane desktop;
+        synchronized (SwingTestBase.class) {
+            desktop = DesktopPane.desktop;
+        }
+        if (desktop != null) {
+            desktop.lock.await();
+            synchronized (SwingTestBase.class) {
+                DesktopPane.desktop = null;
+            }
+        }
+    }
+
+    /**
+     * Shows the given component, if the test is allowed to display widgets and
+     * the given component is not null.
+     *
+     * @param  component The component to show, or {@code null} if none.
+     * @return {@code true} if the component has been shown.
+     */
+    static synchronized boolean show(final JComponent component) {
+        boolean added = false;
+        if (desktop != null && component != null) {
+            desktop.show(component, 0, 1);
+            added = true;
+        }
+        return added;
+    }
+
+    /**
+     * Shows the given components, if the test is allowed to display widgets and
+     * the given component is not null.
+     *
+     * @param  testCase The test case for which the component is added.
+     * @param  components The components to show, or {@code null} if none.
+     * @return {@code true} if the component has been shown.
+     */
+    static synchronized boolean show(final SwingTestBase<?> testCase, final JComponent... components) {
+        boolean added = false;
+        if (desktop != null) {
+            desktop.addTestCase(testCase);
+            for (int i=0; i<components.length; i++) {
+                final JComponent component = components[i];
+                if (component != null) {
+                    desktop.show(component, i, components.length);
+                    added = true;
+                }
+            }
+        }
+        return added;
     }
 
     /**
      * Adds a test case to be show in the "New" menu.
      * A {@code null} argument cause the addition of a separator.
      */
-    final void addTestCase(final SwingTestBase<?> testCase) {
+    private void addTestCase(final SwingTestBase<?> testCase) {
         if (testCase != null) {
             newMenu.add(new AbstractAction(getTitle(testCase.testing)) {
                 @Override public void actionPerformed(final ActionEvent event) {
@@ -101,7 +178,7 @@ final strictfp class DesktopPane extends JDesktopPane {
      *
      * @return A new frame in which the desktop will be shown.
      */
-    final JFrame createFrame() {
+    private JFrame createFrame() {
         final JMenuBar menuBar = new JMenuBar();
         menuBar.add(newMenu);
         if (true) {
@@ -230,9 +307,8 @@ final strictfp class DesktopPane extends JDesktopPane {
      * Shows the given component in a frame.
      *
      * @param  component The component to show.
-     * @throws PropertyVetoException Should not happen.
      */
-    final void show(final JComponent component, final int index, final int numTests) throws PropertyVetoException {
+    private void show(final JComponent component, final int index, final int numTests) {
         String title = getTitle(component.getClass());
         if (numTests != 1) {
             title = title + " (" + index + ')';
@@ -264,7 +340,11 @@ final strictfp class DesktopPane extends JDesktopPane {
                           deltaY * (index / numRows) + (deltaY - frame.getHeight()) / 2);
         frame.setVisible(true);
         add(frame);
-        frame.setSelected(true);
+        try {
+            frame.setSelected(true);
+        } catch (PropertyVetoException e) {
+            warning(e); // Should never happen, but is not critical anyway.
+        }
         System.out.println("Showing " + title);
     }
 

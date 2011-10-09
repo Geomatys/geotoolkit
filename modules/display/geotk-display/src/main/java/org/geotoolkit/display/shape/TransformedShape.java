@@ -36,10 +36,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 /**
  * Applies an arbitrary {@link AffineTransform} on a {@link Shape}. A {@code TransformedShape}
  * instance is a <em>view</em> over a shape, i.e. the shape coordinates are transformed on the
- * fly, never copied. When {@linkplain #getPathIterator(AffineTransform) iterating over the
- * shape boundary}, the only performance cost is a {@linkplain #concatenate(AffineTransform)
- * matrix multiplication} applied before the iterator is created - the cost of the iteration
- * itself usually stay unchanged.
+ * fly, never copied.
  * <p>
  * The shape to be transformed is specified by {@link #setOriginalShape(Shape)}. The transform
  * to apply is specified by the inherited {@code AffineTransform}, which can be modified at any
@@ -52,7 +49,14 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *        of the transform by direct access to the <code>AffineTransform</code> methods, but this is
  *        not an example that shoud be replicated.}
  *
- * <b>Example:</b> The {@link Arrow2D} class is unconditionally oriented toward 0° arithmetic.
+ * {@section Performance cost}
+ * When {@linkplain #getPathIterator(AffineTransform) iterating over the shape boundary}, the only
+ * performance cost is a {@linkplain #concatenate(AffineTransform) matrix multiplication} applied
+ * <strong>before</strong> the iterator is created - the cost of the iteration itself usually stay
+ * unchanged.
+ *
+ * {@section Example}
+ * The {@link Arrow2D} class is unconditionally oriented toward 0° arithmetic.
  * In order to draw a field of arrows in arbitrary directions, the code below can be used:
  *
  * {@preformat java
@@ -78,6 +82,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00
+ *
+ * @see ProjectedShape
  *
  * @since 2.0
  * @module

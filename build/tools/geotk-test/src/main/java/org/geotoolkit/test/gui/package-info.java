@@ -17,16 +17,22 @@
  */
 
 /**
- * Tools for Geotk test suites on widgets. The base class provided in this package
- * manage a {@link javax.swing.JDesktopPane} with menu for a few actions like taking
- * a screenshot of the active internal frame.
+ * Tools for Geotk test suites on widgets and Java2D geometries.
+ * <p>
+ * <ul>
+ *   <li>{@link org.geotoolkit.test.gui.SwingTestBase} manages a {@link javax.swing.JDesktopPane}
+ *       with menus for a few actions like taking a screenshot of the active internal frame.</li>
+ *   <li>{@link org.geotoolkit.test.gui.ShapeTestBase} compares the result of {@code contains}
+ *       and {@code intersects} methods with the result of an other shape used as a reference.
+ *       It can also represent the result graphically for debugging purpose.</li>
+ * </ul>
  * <p>
  * By default the tests display nothing; it merely checks that no exception is thrown during
  * widget construction. However if the "{@code org.geotoolkit.showWidgetTests}" system property
  * is set to "{@code true}", then the widgets will be shown as an internal frame in the desktop.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.20
  *
  * @since 3.05
  */

@@ -15,20 +15,18 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display.shape;
+package org.geotoolkit.test.gui;
 
 import java.awt.*;
 import javax.swing.*;
-import static org.geotoolkit.display.shape.ShapeTest.*;
+import static org.geotoolkit.test.gui.ShapeTestBase.*;
 
 
 /**
  * Display a Java2D shape and tests inclusion or intersection of small rectangles.
- * Run from the command line (no argument needed) for testing the appearance of the
- * {@link Arrow2D} shape.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -109,7 +107,7 @@ final strictfp class ShapeViewer extends JPanel {
      * shape, but testing different methods (contains, intersects, etc.). The views are
      * organized on a grid.
      */
-    private static JPanel createPanel(final Shape shape) {
+    static JPanel createPanel(final Shape shape) {
         final JPanel pane = new JPanel(new GridLayout(2,2));
         for (int i=0; i<4; i++) {
             final JPanel inside = new JPanel(new BorderLayout());
@@ -119,20 +117,8 @@ final strictfp class ShapeViewer extends JPanel {
             inside.add(new ShapeViewer(shape, i), BorderLayout.CENTER);
             inside.setBackground(Color.BLACK);
             pane.add(inside);
+            pane.setPreferredSize(new Dimension(2*(TEST_AREA_WIDTH + 10), 2*(TEST_AREA_HEIGHT + 10)));
         }
         return pane;
-    }
-
-    /**
-     * Display the arrow for testing purpose.
-     */
-    public static void main(final String[] args) {
-        final Shape shape  = new Arrow2D(SHAPE_X, SHAPE_Y, SHAPE_WIDTH, SHAPE_HEIGHT);
-        final JPanel panel = createPanel(shape);
-        final JFrame frame = new JFrame("Shape viewer");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.add(panel);
-        frame.setSize(2*(TEST_AREA_WIDTH + 10), 2*(TEST_AREA_HEIGHT + 10));
-        frame.setVisible(true);
     }
 }

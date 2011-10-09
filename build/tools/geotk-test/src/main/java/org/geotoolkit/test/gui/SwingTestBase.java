@@ -23,7 +23,6 @@ import javax.swing.JComponent;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyVetoException;
 
 import org.junit.*;
 
@@ -68,12 +67,6 @@ public abstract strictfp class SwingTestBase<T extends JComponent> {
     public static final String SHOW_PROPERTY_KEY = "org.geotoolkit.test.gui.show";
 
     /**
-     * The desktop which contain the internal frame for each widget. Will be created only if
-     * the "{@code org.geotoolkit.showWidgetTests}" system property is set to {@code true}.
-     */
-    private static DesktopPane desktop;
-
-    /**
      * The type of the widget being tested.
      */
     final Class<T> testing;
@@ -115,10 +108,8 @@ public abstract strictfp class SwingTestBase<T extends JComponent> {
      */
     @BeforeClass
     public static synchronized void prepareDesktop() throws HeadlessException {
-        desktop = null; // Safety in case of failures in previous tests.
-        if (Boolean.getBoolean(SHOW_PROPERTY_KEY)) {
-            desktop = new DesktopPane();
-            desktop.createFrame().setVisible(true);
+        if (isDisplayEnabled()) {
+            DesktopPane.prepareDesktop();
         }
     }
 
@@ -127,8 +118,8 @@ public abstract strictfp class SwingTestBase<T extends JComponent> {
      *
      * @return {@code true} if the display of widgets is enabled.
      */
-    public static synchronized boolean isDisplayEnabled() {
-        return desktop != null;
+    public static boolean isDisplayEnabled() {
+        return Boolean.getBoolean(SHOW_PROPERTY_KEY);
     }
 
     /**
@@ -204,29 +195,15 @@ public abstract strictfp class SwingTestBase<T extends JComponent> {
     }
 
     /**
-     * Show the given component, if the test is allowed to display widgets and
+     * Shows the given components, if the test is allowed to display widgets and
      * the given component is not null.
      *
      * @param  testCase The test case for which the component is added.
      * @param  components The components to show, or {@code null} if none.
      * @return {@code true} if the component has been shown.
-     * @throws PropertyVetoException Should not happen.
      */
-    protected static synchronized boolean show(final SwingTestBase<?> testCase, final JComponent... components)
-            throws PropertyVetoException
-    {
-        boolean added = false;
-        if (desktop != null) {
-            desktop.addTestCase(testCase);
-            for (int i=0; i<components.length; i++) {
-                final JComponent component = components[i];
-                if (component != null) {
-                    desktop.show(component, i, components.length);
-                    added = true;
-                }
-            }
-        }
-        return added;
+    protected static boolean show(final SwingTestBase<?> testCase, final JComponent... components) {
+        return isDisplayEnabled() && DesktopPane.show(testCase, components);
     }
 
     /**
@@ -238,15 +215,8 @@ public abstract strictfp class SwingTestBase<T extends JComponent> {
      */
     @AfterClass
     public static void waitForFrameDisposal() throws InterruptedException {
-        final DesktopPane desktop;
-        synchronized (SwingTestBase.class) {
-            desktop = SwingTestBase.desktop;
-        }
-        if (desktop != null) {
-            desktop.lock.await();
-            synchronized (SwingTestBase.class) {
-                SwingTestBase.desktop = null;
-            }
+        if (isDisplayEnabled()) {
+            DesktopPane.waitForFrameDisposal();
         }
     }
 }
