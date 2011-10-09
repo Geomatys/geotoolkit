@@ -85,7 +85,8 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
     private String finalName;
 
     /**
-     * The name for the <code>oxt</code> file to create.
+     * The name for the <code>oxt</code> file to create, without the "<code>.oxt</code>"
+     * filename extension.
      *
      * @parameter expression="${project.build.finalName}"
      * @required
@@ -93,11 +94,11 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
     private String oxtName;
 
     /**
-     * The name of the Pack200 file, or <code>none</code> for storing plain JAR files.
-     * If a Pack200 file is generated, then the add-in registration class needs to unpack
-     * the file itself before use.
+     * <code>true</code> for using Pack200 compression. If <code>true</code>, then the add-in
+     * registration class needs to unpack the files itself before use. The default value is
+     * <code>false</code>.
      *
-     * @parameter expression="none"
+     * @parameter expression="false"
      */
     private String pack200;
 
@@ -187,8 +188,7 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
          * Copies the dependencies, optionally in a single PACK200 entry.
          */
         Pack200.Packer packer = null;
-        if (!pack200.trim().equalsIgnoreCase("none")) {
-            out.putNextEntry(new ZipEntry(pack200));
+        if (Boolean.parseBoolean(pack200)) {
             packer = Pack200.newPacker();
             final Map<String,String> p = packer.properties();
             p.put(Packer.EFFORT,            "9");           // take more time choosing codings for better compression.
@@ -208,21 +208,21 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
                 scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
             {
                 final File file = artifact.getFile();
-                if (packer != null) {
+                String name = file.getName();
+                if (artifact.getGroupId().startsWith(prefixGroup) && !name.startsWith(prefix)) {
+                    name = prefix + name;
+                }
+                if (packer != null && name.endsWith(".jar")) {
+                    name = name.substring(0, name.length()-3) + "pack";
                     final JarFile jar = new JarFile(file);
+                    out.putNextEntry(new ZipEntry(name));
                     packer.pack(jar, out);
+                    out.closeEntry();
                     jar.close();
                 } else {
-                    String name = file.getName();
-                    if (artifact.getGroupId().startsWith(prefixGroup) && !name.startsWith(prefix)) {
-                        name = prefix + name;
-                    }
                     copy(file, out, name);
                 }
             }
-        }
-        if (packer != null) {
-            out.closeEntry();
         }
         out.close();
     }

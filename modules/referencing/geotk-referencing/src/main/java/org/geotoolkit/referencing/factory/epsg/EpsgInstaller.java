@@ -120,7 +120,8 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
 
     /**
      * Creates a new installer. By default, the scripts will be read from the {@code geotk-epsg.jar}
-     * file and the database is created on the local machine using JavaDB.
+     * file and the target database is determined by the {@linkplain ThreadedEpsgFactory#getDefaultURL()
+     * default URL} (typically a local database using JavaDB).
      */
     public EpsgInstaller() {
     }

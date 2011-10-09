@@ -26,13 +26,12 @@ UNO packager
 *-----------------------------------+-----------------------------------------------------------------------------------------------+
 | <<<myAddinFilename>>>             | The final filename, without the <<<.oxt>>> extension.                                         |
 *-----------------------------------+-----------------------------------------------------------------------------------------------+
-| <<<myproject.pack>>> (<optional>) | The name of the PACK200 file to generate <<inside>> the <<<myAddinFilename>>> file. If this   |
-|                                   | <<<<pack200/>>>> configuration item is not specified, then no PACK200 file will be generated. |
-|                                   | Instead, all <<<.jar>>> files will be stored directly into the <<<.oxt>>> file.               |
+| <<<usePack200>>> (<optional>)     | Whatever to use Pack200 compression rather than plain JAR files for all dependencies.         |
+|                                   | The default value is <<<false>>> (store plain old JAR files).                                 |
 *-----------------------------------+-----------------------------------------------------------------------------------------------+
 
-  Note that if a PACK200 file is generated, this is implementor responsibility to unpack it during
-  the <<<__writeRegistryServiceInfo>>> execution phase.
+  Note that if Pack200 files are generated, then this is implementor responsibility to unpack them
+  inside OpenOffice.org add-in directory during the <<<__writeRegistryServiceInfo>>> execution phase.
 
 +--------------------------------------------------------------------------------------+
   <dependencies>
@@ -63,7 +62,7 @@ UNO packager
         <artifactId>geotk-unopkg</artifactId>
         <configuration>
           <oxtName>myAddinFilename</oxtName>
-          <pack200>myproject.pack</pack200>
+          <pack200>usePack200</pack200>
         </configuration>
         <executions>
           <execution>

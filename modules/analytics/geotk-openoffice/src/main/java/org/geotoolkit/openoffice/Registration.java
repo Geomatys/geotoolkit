@@ -17,14 +17,32 @@
  */
 package org.geotoolkit.openoffice;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.FilenameFilter;
+import java.io.FileOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.jar.Pack200;
+import java.util.jar.JarOutputStream;
+
 import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.comp.loader.FactoryHelper;
 import com.sun.star.registry.XRegistryKey;
 
+import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
+import org.geotoolkit.util.logging.Logging;
+
 
 /**
  * The registration of all formulas provided in this package.
+ *
+ * {@section Implementation note}
+ * No GeoAPI or Geotk classes should appear in method signature. For example no method should
+ * contain {@link org.opengis.util.FactoryException} in their {@code throws} declaration. This
+ * is because those classes can be loaded only after the Pack200 files have been unpacked, which
+ * is the work of this {@code Registration} class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
@@ -32,11 +50,84 @@ import com.sun.star.registry.XRegistryKey;
  * @since 3.09 (derived from 2.2)
  * @module
  */
-public final class Registration {
+public final class Registration implements FilenameFilter {
     /**
-     * Do not allow instantiation of this class.
+     * Do not allow instantiation of this class, except for internal use.
      */
     private Registration() {
+    }
+
+    /**
+     * Returns the directory where the add-in is installed.
+     *
+     * @return The installation directory.
+     * @throws URISyntaxException If the path to the add-in JAR file does not have the expected syntax.
+     */
+    private static File getInstallDirectory() throws URISyntaxException {
+        String path = Registration.class.getResource("Registration.class").toString();
+        int numParents = 4; // Number of calls to File.getParentFile() needed for reaching the root.
+        if (path.startsWith("jar:")) {
+            path = path.substring(4, path.indexOf('!'));
+            numParents = 1; // The file should be the geotk-openoffice.jar file in the root.
+        }
+        File file = new File(new URI(path));
+        while (--numParents >= 0) {
+            file = file.getParentFile();
+        }
+        return file;
+    }
+
+    /**
+     * Ensures that the {@code geotk.pack} files have been uncompressed.
+     *
+     * @throws URISyntaxException If the path to the add-in JAR file does not have the expected syntax.
+     * @throws IOException        If an error occurred while uncompressing the PACK200 file.
+     */
+    private static void ensureInstalled() throws URISyntaxException, IOException {
+        final File directory = getInstallDirectory();
+        final String[] content = directory.list(new Registration());
+        if (content != null && content.length != 0) {
+            final Pack200.Unpacker unpacker = Pack200.newUnpacker();
+            for (final String filename : content) {
+                final File packFile = new File(directory, filename);
+                final File jarFile  = new File(directory, filename.substring(0, filename.length()-4) + "jar");
+                final JarOutputStream out = new JarOutputStream(new FileOutputStream(jarFile));
+                unpacker.unpack(packFile, out);
+                out.close();
+                packFile.delete();
+            }
+            /*
+             * Ensures that the EPSG database is installed. We force the EPSG installation at add-in
+             * installation time rather than the first time a user ask for a referencing operations,
+             * because users may be less surprised by a delay at installation time than at use time.
+             * However if the EPSG database is deleted after the installation, it will be recreated
+             * when first needed.
+             *
+             * Note: do not reach this code before all Pack200 files have been unpacked.
+             * Remainder: no GeoAPI or Geotk classes in any method signature of this class!
+             */
+            try {
+                final EpsgInstaller installer = new EpsgInstaller();
+                if (!installer.exists()) {
+                    installer.call();
+                }
+            } catch (Throwable e) {
+                Logging.unexpectedException(EpsgInstaller.class, "call", e);
+                // Ignore. A new attempt to create the EPSG database will be performed
+                // when first needed, and the user may see the error at that time.
+            }
+        }
+    }
+
+    /**
+     * Filters a directory content in order to retain only the {@code "*.pack"} files.
+     *
+     * @param directory The add-in installation directory.
+     * @param name The name of a file in the given directory.
+     */
+    @Override
+    public boolean accept(final File directory, final String name) {
+        return name.endsWith(".pack");
     }
 
     /**
@@ -47,12 +138,15 @@ public final class Registration {
      * @param   factories      The service manager to be used if needed.
      * @param   registry       The registry key
      * @return  A factory for creating the component.
+     * @throws  URISyntaxException If the path to the add-in JAR file does not have the expected syntax.
+     * @throws  IOException        If an error occurred while uncompressing the PACK200 file.
      */
     public static XSingleServiceFactory __getServiceFactory(
             final String               implementation,
             final XMultiServiceFactory factories,
-            final XRegistryKey         registry)
+            final XRegistryKey         registry) throws URISyntaxException, IOException
     {
+        ensureInstalled();
         if (implementation.equals(org.geotoolkit.openoffice.geoapi.Referencing.class.getName())) {
             return FactoryHelper.getServiceFactory(org.geotoolkit.openoffice.geoapi.Referencing.class,
                     org.geotoolkit.openoffice.geoapi.Referencing.__serviceName, factories, registry);
@@ -72,8 +166,13 @@ public final class Registration {
      *
      * @param  registry     The registry key.
      * @return {@code true} if the operation succeeded.
+     * @throws URISyntaxException If the path to the add-in JAR file does not have the expected syntax.
+     * @throws IOException        If an error occurred while uncompressing the PACK200 file.
      */
-    public static boolean __writeRegistryServiceInfo(final XRegistryKey registry) {
+    public static boolean __writeRegistryServiceInfo(final XRegistryKey registry)
+            throws URISyntaxException, IOException
+    {
+        ensureInstalled();
         return register(org.geotoolkit.openoffice.geoapi.Referencing.class,
                         org.geotoolkit.openoffice.geoapi.Referencing.__serviceName, registry)
             && register(Referencing.class, Referencing.__serviceName, registry)
