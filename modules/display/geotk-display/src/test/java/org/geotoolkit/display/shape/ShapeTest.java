@@ -29,7 +29,7 @@ import org.junit.*;
  * Tests the shape implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -42,6 +42,6 @@ public final strictfp class ShapeTest extends ShapeTestBase {
         final Shape shape = new Arrow2D(SHAPE_X, SHAPE_Y, SHAPE_WIDTH, SHAPE_HEIGHT);
         final Path2D reference = new Path2D.Double(shape);
         testContainsAndIntersectsMethods(reference, shape);
-        show(shape);
+        show(shape, reference, true);
     }
 }

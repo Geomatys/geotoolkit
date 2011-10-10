@@ -26,7 +26,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import net.jcip.annotations.NotThreadSafe;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
@@ -81,13 +83,14 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * "<cite>real world</cite>" units.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @see ProjectedShape
  *
  * @since 2.0
  * @module
  */
+@NotThreadSafe
 public final class TransformedShape extends AffineTransform implements Shape {
     /**
      * For cross-version compatibility.
@@ -136,6 +139,21 @@ public final class TransformedShape extends AffineTransform implements Shape {
      * @param shape The shape to wrap in the new {@code TransformedShape} instance.
      */
     public TransformedShape(final Shape shape) {
+        ensureNonNull("shape", shape);
+        this.shape = shape;
+        initTransientFields();
+    }
+
+    /**
+     * Constructs a {@code TransformedShape} initialized to the given transform and shape.
+     *
+     * @param shape The shape to wrap in the new {@code TransformedShape} instance.
+     * @param transform The initial affine transform.
+     *
+     * @since 3.20
+     */
+    public TransformedShape(final Shape shape, final AffineTransform transform) {
+        super(transform);
         ensureNonNull("shape", shape);
         this.shape = shape;
         initTransientFields();
@@ -200,6 +218,8 @@ public final class TransformedShape extends AffineTransform implements Shape {
     /**
      * Tests if the specified coordinate is inside the boundary of this shape.
      * This method might conservatively return {@code false} if the transform is not invertible.
+     * <p>
+     * The default implementation delegates to {@link #contains(Point2D)}.
      *
      * @param  x The <var>x</var> ordinate of the point to be tested.
      * @param  y The <var>y</var> ordinate of the point to be tested.
@@ -207,9 +227,10 @@ public final class TransformedShape extends AffineTransform implements Shape {
      */
     @Override
     public boolean contains(final double x, final double y) {
-        point.x = x;
-        point.y = y;
-        return contains(point);
+        final Point2D.Double p = point;
+        p.x = x;
+        p.y = y;
+        return contains(p);
     }
 
     /**
@@ -233,6 +254,8 @@ public final class TransformedShape extends AffineTransform implements Shape {
      * Tests if the interior of this shape entirely contains the specified rectangular area.
      * This method might conservatively return {@code false} if the transform is not invertible
      * or if the calculation of {@code originalShape.contains(...)} is too expensive.
+     * <p>
+     * The default implementation delegates to {@link #contains(Rectangle2D)}.
      *
      * @param  x The minimal <var>x</var> ordinate of the rectangle to be tested.
      * @param  y The minimal <var>y</var> ordinate of the rectangle to be tested.
@@ -242,11 +265,12 @@ public final class TransformedShape extends AffineTransform implements Shape {
      */
     @Override
     public boolean contains(final double x, final double y, final double width, final double height) {
-        rectangle.x = x;
-        rectangle.y = y;
-        rectangle.width = width;
-        rectangle.height = height;
-        return contains(rectangle);
+        final Rectangle2D.Double r = rectangle;
+        r.x = x;
+        r.y = y;
+        r.width = width;
+        r.height = height;
+        return contains(r);
     }
 
     /**
@@ -272,6 +296,8 @@ public final class TransformedShape extends AffineTransform implements Shape {
      * Tests if the interior of this shape intersects the interior of a specified rectangular area.
      * This method might conservatively return {@code true} if the transform is not invertible or
      * if the calculation of {@code originalShape.intersects(...)} is too expensive.
+     * <p>
+     * The default implementation delegates to {@link #intersects(Rectangle2D)}.
      *
      * @param  x The minimal <var>x</var> ordinate of the rectangle to be tested.
      * @param  y The minimal <var>y</var> ordinate of the rectangle to be tested.
@@ -281,11 +307,12 @@ public final class TransformedShape extends AffineTransform implements Shape {
      */
     @Override
     public boolean intersects(double x, double y, double width, double height) {
-        rectangle.x = x;
-        rectangle.y = y;
-        rectangle.width = width;
-        rectangle.height = height;
-        return intersects(rectangle);
+        final Rectangle2D.Double r = rectangle;
+        r.x = x;
+        r.y = y;
+        r.width = width;
+        r.height = height;
+        return intersects(r);
     }
 
     /**
@@ -355,6 +382,38 @@ public final class TransformedShape extends AffineTransform implements Shape {
             at.concatenate(this);
         }
         return shape.getPathIterator(at, flatness);
+    }
+
+    /**
+     * Returns a hash code value for this shape.
+     *
+     * @since 3.20
+     */
+    @Override
+    public int hashCode() {
+        int code = super.hashCode() ^ (int) serialVersionUID;
+        if (shape != null) {
+            code ^= shape.hashCode();
+        }
+        return code;
+    }
+
+    /**
+     * Compares this shape with the given object for equality. <strong>Do not compare
+     * {@code TransformedShape} instances with plain {@link AffineTransform} instances</strong>,
+     * because the "<cite>be symmetric</cite>" part of the {@link Object#equals(Object)} contract
+     * can not be enforced.
+     *
+     * @param object The object to compare with this shape.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof TransformedShape && super.equals(object)) {
+            return Utilities.equals(shape, ((TransformedShape) object).shape);
+        }
+        return false;
     }
 
     /**

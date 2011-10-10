@@ -36,6 +36,13 @@ import org.geotoolkit.resources.Errors;
  */
 public final class XMath extends Static {
     /**
+     * The square root of 2, which is {@value}.
+     *
+     * @since 3.20
+     */
+    public static final double SQRT2 = 1.4142135623730951;
+
+    /**
      * Bit mask to isolate the sign bit of a {@code double}.
      */
     private static final long SIGN_BIT_MASK = 0x8000000000000000L;

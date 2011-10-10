@@ -50,6 +50,11 @@ final strictfp class ShapeViewer extends JPanel {
     private final Shape shape;
 
     /**
+     * The shape to use as a reference, or {@code null} if none.
+     */
+    private final Shape reference;
+
+    /**
      * One of {@link #NONE}, {@link #CONTAINS_POINT}, etc.
      */
     private final int method;
@@ -57,9 +62,10 @@ final strictfp class ShapeViewer extends JPanel {
     /**
      * Creates a viewer for the given shape.
      */
-    private ShapeViewer(final Shape shape, final int method) {
-        this.shape  = shape;
-        this.method = method;
+    private ShapeViewer(final Shape shape, final Shape reference, final int method) {
+        this.shape     = shape;
+        this.reference = reference;
+        this.method    = method;
     }
 
     /**
@@ -71,6 +77,10 @@ final strictfp class ShapeViewer extends JPanel {
         final Color oldColor = g.getColor();
         g.setColor(Color.BLUE);
         g.fill(shape);
+        if (reference != null) {
+            g.setColor(Color.YELLOW);
+            g.draw(reference);
+        }
         final Rectangle test = new Rectangle(TEST_SAMPLING_WIDTH, TEST_SAMPLING_HEIGHT);
         for (test.y=0; test.y<TEST_AREA_HEIGHT; test.y+=TEST_INTERVAL_Y) {
             for (test.x=0; test.x<TEST_AREA_WIDTH; test.x+=TEST_INTERVAL_X) {
@@ -106,19 +116,30 @@ final strictfp class ShapeViewer extends JPanel {
      * Creates a panel for the given shape. The panel will contains many view of the same
      * shape, but testing different methods (contains, intersects, etc.). The views are
      * organized on a grid.
+     *
+     * @param shape The shape to show.
+     * @param reference The shape to use as a reference, or {@code null} if none.
+     * @param withSamples {@code true} if the panel should contain sample points for
+     *        {@code contains} and {@code intersects} methods, or {@code false} for
+     *        displaying the shape alone.
      */
-    static JPanel createPanel(final Shape shape) {
-        final JPanel pane = new JPanel(new GridLayout(2,2));
-        for (int i=0; i<4; i++) {
+    static JPanel createPanel(final Shape shape, final Shape reference, final boolean withSamples) {
+        final int numPerRow = withSamples ? 2 : 1;
+        final int numPanels = numPerRow * numPerRow;
+        final JPanel pane = new JPanel(new GridLayout(numPerRow, numPerRow));
+        for (int i=0; i<numPanels; i++) {
             final JPanel inside = new JPanel(new BorderLayout());
             final JLabel label = new JLabel(LABELS[i], JLabel.CENTER);
             label.setForeground(Color.WHITE);
             inside.add(label, BorderLayout.NORTH);
-            inside.add(new ShapeViewer(shape, i), BorderLayout.CENTER);
+            inside.add(new ShapeViewer(shape, reference, i), BorderLayout.CENTER);
             inside.setBackground(Color.BLACK);
             pane.add(inside);
-            pane.setPreferredSize(new Dimension(2*(TEST_AREA_WIDTH + 10), 2*(TEST_AREA_HEIGHT + 10)));
         }
+        Dimension size = new Dimension(TEST_AREA_WIDTH + 10, TEST_AREA_HEIGHT + 10);
+        size.width  *= 2;
+        size.height *= 2;
+        pane.setPreferredSize(size);
         return pane;
     }
 }

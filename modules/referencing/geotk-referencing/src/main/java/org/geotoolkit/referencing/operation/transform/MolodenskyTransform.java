@@ -33,8 +33,8 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
-import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 
@@ -75,7 +75,7 @@ import static org.geotoolkit.util.Utilities.hash;
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -622,11 +622,17 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        final boolean abridged = (type & ABRIDGED_MASK)         != 0;
         final boolean source3D = (type & SOURCE_DIMENSION_MASK) != 0;
-        final double λ = toRadians (point.getOrdinate(0));    // Longitude
-        final double φ = toRadians (point.getOrdinate(1));    // Latitude
-        final double h = source3D ? point.getOrdinate(2) : 0; // Height above the ellipsoid (m)
+        return derivative(
+                toRadians (point.getOrdinate(0)),     // λ: Longitude
+                toRadians (point.getOrdinate(1)),     // φ: Latitude
+                source3D ? point.getOrdinate(2) : 0); // h: Height above the ellipsoid (m)
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     */
+    final Matrix derivative(final double λ, final double φ, final double h) {
         final double cosλ    = cos(λ);
         final double sinλ    = sin(λ);
         final double cosφ    = cos(φ);
@@ -642,23 +648,28 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
         final double Rm      = (1 - e2) / e2sinφ2; // Multiplication by Rn omitted.
         final double dRn3Rm  = 3*Rm*dRn;
 
+        final int srcDim = getSourceDimensions();
+        final int tgtDim = getTargetDimensions();
+        final XMatrix matrix = MatrixFactory.create(tgtDim, srcDim);
+
         // The following are "almost" the derivatives to be returned.
         // Some final operation commons to both kind of formulas will
         // be applied in the call to Matrix3 constructor.
-        final double dXdλ, dXdφ, dXdh,
-                     dYdλ, dYdφ, dYdh,
-                     dZdλ, dZdφ; // 1
-        dZdλ =  cosφ*csλ;
-        if (abridged) {
+        final double dXdλ, dXdφ, dYdλ, dYdφ;
+        if (isAbridged()) {
             final double IRnm = ISIN / (Rn*Rm);
             final double IRnφ = ISIN / (Rn*cosφ);
             dXdλ =  IRnφ *  scλ;
             dXdφ =  IRnφ *  csλ*(tanφ - dRn);
             dYdλ = -IRnm * (csλ*sinφ);
             dYdφ =  IRnm * (scλ*(sinφ*dRn3Rm - cosφ) - dz*(cosφ*dRn3Rm + sinφ) + 2*adf*(1 - sincosφ*dRn3Rm - 2*sinφ2));
-            dZdφ =  cosφ * (dz + 2*adf*sinφ) - sinφ*scλ;
-            dXdh =  0;
-            dYdh =  0;
+            // dXdh = dYdh = 0;
+            if (tgtDim == 3) {
+                final double dZdλ = cosφ*csλ;
+                final double dZdφ = cosφ * (dz + 2*adf*sinφ) - sinφ*scλ;
+                matrix.setElement(2, 0, toRadians(dZdλ));
+                matrix.setElement(2, 1, toRadians(dZdφ));
+            }
         } else {
             final double h_Rn   = h + Rn;
             final double h_Rm   = h + Rm*Rn;
@@ -673,13 +684,24 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
             dYdλ = -IRnm * csλ *  sinφ;
             dYdφ =  IRnm * (scλ*(dRmh*sinφ - cosφ) - dz*(dRmh*cosφ + sinφ) + df_exp*(1 - 2*sinφ2) +
                             df*Rn*sincosφ*(dRn*(2*a_b + sar + e2rd) + e2rd - dRmh*sar));
-            dZdφ =  sinφ * (df*Rn*b_a*(dRn*sinφ + 2*cosφ) - scλ) + dz*cosφ + daa*dRn/Rn;
-            dXdh = -IRnφ * (csλ) / h_Rn;
-            dYdh =  IRnm * (scλ*sinφ - dz*cosφ - df_exp*sincosφ) / h_Rm;
+            if (srcDim == 3) {
+                final double dXdh = -IRnφ * (csλ) / h_Rn;
+                final double dYdh =  IRnm * (scλ*sinφ - dz*cosφ - df_exp*sincosφ) / h_Rm;
+                matrix.setElement(0, 2, dXdh);
+                matrix.setElement(1, 2, dYdh);
+            }
+            if (tgtDim == 3) {
+                final double dZdλ = cosφ*csλ;
+                final double dZdφ = sinφ * (df*Rn*b_a*(dRn*sinφ + 2*cosφ) - scλ) + dz*cosφ + daa*dRn/Rn;
+                matrix.setElement(2, 0, toRadians(dZdλ));
+                matrix.setElement(2, 1, toRadians(dZdφ));
+            }
         }
-        return new Matrix3(1-dXdλ,            dXdφ,   dXdh,
-                             dYdλ,          1+dYdφ,   dYdh,
-                   toRadians(dZdλ), toRadians(dZdφ),     1);
+        matrix.setElement(0, 0, 1 - dXdλ);
+        matrix.setElement(1, 1, 1 + dYdφ);
+        matrix.setElement(0, 1,     dXdφ);
+        matrix.setElement(1, 0,     dYdλ);
+        return matrix;
     }
 
     /**

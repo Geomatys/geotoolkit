@@ -112,10 +112,14 @@ public strictfp class ShapeTestBase {
      * Shows the given shape if widgets viewing is enabled.
      *
      * @param shape The shape to show.
+     * @param reference The shape to use as a reference, or {@code null} if none.
+     * @param withSamples {@code true} if the panel should contain sample points for
+     *        {@code contains} and {@code intersects} methods, or {@code false} for
+     *        displaying the shape alone.
      */
-    protected void show(final Shape shape) {
+    protected void show(final Shape shape, final Shape reference, final boolean withSamples) {
         if (isDisplayEnabled()) {
-            DesktopPane.show(ShapeViewer.createPanel(shape));
+            DesktopPane.show(ShapeViewer.createPanel(shape, reference, withSamples));
         }
     }
 
