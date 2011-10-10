@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 
+import java.util.Map;
 import java.util.Map.Entry;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -37,6 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -49,6 +51,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -56,6 +59,7 @@ import javax.swing.table.TableCellEditor;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
@@ -121,6 +125,31 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         PALETTES.add(new DefaultIntervalPalette(
                 new Color[]{Color.BLUE,Color.WHITE}
                 ));
+        
+        double[] fractions = new double[]{
+            -3000,
+            -1500,
+            -0.1,
+            +0,
+            556,
+            1100,
+            1600,
+            2200,
+            3000};
+        Color[] colors = new Color[]{
+            new Color(9, 9, 145, 255),            
+            new Color(31, 131, 224, 255),
+            new Color(182, 240, 240, 255),
+            new Color(5, 90, 5, 255),
+            new Color(150, 200, 150, 255),
+            new Color(190, 150, 20, 255),
+            new Color(100, 100, 50, 255),
+            new Color(200, 210, 220, 255),
+            new Color(255, 255, 255, 255),
+            };
+        PALETTES.add(new DefaultIntervalPalette(fractions,colors));
+        
+        
     }
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
@@ -137,6 +166,8 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         guiPalette.setRenderer(new PaletteRenderer());
         guiPalette.setSelectedIndex(0);
 
+        guiTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer());
+        guiTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JTextField()));
         guiTable.getColumnModel().getColumn(1).setCellRenderer(new ColorCellRenderer());
         guiTable.getColumnModel().getColumn(1).setCellEditor(new ColorCellEditor());
         guiTable.getColumnModel().getColumn(2).setCellRenderer(new DeleteRenderer());
@@ -318,14 +349,22 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
             model.points.add(SF.interpolationPoint(Float.NaN, SF.literal(new Color(0, 0, 0, 0))));
         }
         
+        boolean mustInterpolation = true;        
         final Palette palette = (Palette) guiPalette.getSelectedItem();
         List<Entry<Double, Color>> steps = palette.getSteps();
+        for(int i=0,n=steps.size();i<n;i++){
+            final double k = steps.get(i).getKey();
+            if(k < -0.01 || k > 1.01){
+                mustInterpolation = false;
+            }
+        }
+        
         if(guiInvert.isSelected()){
             final List<Entry<Double, Color>> inverted = new ArrayList<Entry<Double, Color>>();
             for(int i=0,n=steps.size();i<n;i++){
+                final double k = steps.get(i).getKey();               
                 inverted.add(new SimpleImmutableEntry<Double, Color>(
-                        steps.get(i).getKey(),
-                        steps.get(n-1-i).getValue()));
+                        k, steps.get(n-1-i).getValue()));
             }
             steps = inverted;
         }
@@ -333,17 +372,38 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         try {
             final List<String> names = reader.getCoverageNames();
             
-            for(int i=0,n=names.size();i<n;i++){
-                final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
-                for(MeasurementRange r : ranges){
-                    final double min = r.getMinimum();
-                    final double max = r.getMaximum();                    
-                    for(int s=0,l=steps.size();s<l;s++){
-                        final Entry<Double, Color> step = steps.get(s);
-                        model.points.add(SF.interpolationPoint(
-                                min + (step.getKey()*(max-min)), 
-                                SF.literal(step.getValue())));
+            if(mustInterpolation){
+                for(int i=0,n=names.size();i<n;i++){
+                    final List<MeasurementRange<?>> ranges = reader.getSampleValueRanges(i);
+                    if(ranges != null){
+                        for(MeasurementRange r : ranges){
+                            final double min = r.getMinimum();
+                            final double max = r.getMaximum();                    
+                            for(int s=0,l=steps.size();s<l;s++){
+                                final Entry<Double, Color> step = steps.get(s);
+                                model.points.add(SF.interpolationPoint(
+                                        min + (step.getKey()*(max-min)), 
+                                        SF.literal(step.getValue())));
+                            }
+                        }
+                    }else{
+                        //we explore the image and try to find the min and max
+                        Map<String,Object> an = StatisticOp.analyze(reader);
+                        final double min = (Double)an.get(StatisticOp.MINIMUM);
+                        final double max = (Double)an.get(StatisticOp.MAXIMUM);                
+                        for(int s=0,l=steps.size();s<l;s++){
+                            final Entry<Double, Color> step = steps.get(s);
+                            model.points.add(SF.interpolationPoint(
+                                    min + (step.getKey()*(max-min)), 
+                                    SF.literal(step.getValue())));
+                        }
                     }
+                }
+            }else{
+                for(int s=0,l=steps.size();s<l;s++){
+                    final Entry<Double, Color> step = steps.get(s);
+                    model.points.add(SF.interpolationPoint(
+                            step.getKey(), SF.literal(step.getValue())));
                 }
             }
             

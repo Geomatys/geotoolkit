@@ -24,6 +24,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
@@ -54,20 +55,27 @@ import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
+import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.DefaultInterpolationPoint;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Method;
+import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
+import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -149,15 +157,48 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //we must switch to objectiveCRS for grid coverage
         renderingContext.switchToObjectiveCRS();
 
-        final RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints);
+        RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints);
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(symbol.getJ2DComposite());
             try{
                 g2d.drawRenderedImage(img, (AffineTransform)trs2D);
             }catch(Exception ex){
-                //plenty of errors can happen when painting an image
-                throw new PortrayalException("Could not render image.",ex);
+                    
+                if(ex instanceof ArrayIndexOutOfBoundsException){
+                    //we can recover when it's an inapropriate componentcolormodel
+                    final StackTraceElement[] eles = ex.getStackTrace();
+                    if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
+                        
+                        try{
+                            final Map<String,Object> analyze = StatisticOp.analyze(projectedCoverage.getLayer().getCoverageReader());
+                            final double min = (Double)analyze.get(StatisticOp.MINIMUM);
+                            final double max = (Double)analyze.get(StatisticOp.MAXIMUM);
+                            
+                            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();        
+                            values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                            values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+                            values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+                            final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+                            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+                            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+                            final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
+                            final ImageLayout layout = new ImageLayout().setColorModel(model);
+                            img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
+                            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                        }catch(Exception e){
+                            //plenty of errors can happen when painting an image
+                            monitor.exceptionOccured(e, Level.WARNING);
+                            
+                            //raise the original error
+                            monitor.exceptionOccured(ex, Level.WARNING);
+                        }
+                    }
+                }else{
+                    //plenty of errors can happen when painting an image
+                    monitor.exceptionOccured(ex, Level.WARNING);
+                }
             }
         }else if (trs2D instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) trs2D;
