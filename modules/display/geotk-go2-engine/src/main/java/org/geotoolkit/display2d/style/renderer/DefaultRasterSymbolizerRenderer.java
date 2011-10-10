@@ -153,7 +153,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(symbol.getJ2DComposite());
-            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+            try{
+                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+            }catch(Exception ex){
+                //plenty of errors can happen when painting an image
+                throw new PortrayalException("Could not render image.",ex);
+            }
         }else if (trs2D instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) trs2D;
             final int col = lt.getMatrix().getNumCol();
