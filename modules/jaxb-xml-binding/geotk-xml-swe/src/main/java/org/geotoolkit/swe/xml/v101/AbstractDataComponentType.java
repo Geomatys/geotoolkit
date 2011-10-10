@@ -44,7 +44,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
      * definition of the record.
      */
     @XmlAttribute
-    private URI definition;
+    private String definition;
     
     /**
      * Constructor used by jaxb.
@@ -55,17 +55,17 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         super(component);
         if (component != null) {
             if (component.getDefinition() instanceof String) {
-                this.definition = URI.create((String)component.getDefinition());
+                this.definition = (String)component.getDefinition();
             } else if (component.getDefinition() instanceof URI) {
-                this.definition = (URI) component.getDefinition();
+                this.definition = component.getDefinition().toString();
             }
-            this.fixed      = component.isFixed();
+            this.fixed  = component.isFixed();
         }
     }
 
     public AbstractDataComponentType(final String definition) {
         if (definition != null) {
-            this.definition = URI.create(definition);
+            this.definition = definition;
         }
     }
     
@@ -75,7 +75,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
     public AbstractDataComponentType(final String id, final String definition, final Boolean fixed) {
         super(id);
         if (definition != null) {
-            this.definition = URI.create(definition);
+            this.definition = definition;
         }
         this.fixed      = fixed;
     }
@@ -95,7 +95,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
      * {@inheritDoc}
      */
     @Override
-    public URI getDefinition() {
+    public String getDefinition() {
         return definition;
     }
     
@@ -111,7 +111,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
      * @param definition the definition to set
      */
     public void setDefinition(final String definition) {
-        this.definition = URI.create(definition);
+        this.definition = definition;
     }
     
     /**

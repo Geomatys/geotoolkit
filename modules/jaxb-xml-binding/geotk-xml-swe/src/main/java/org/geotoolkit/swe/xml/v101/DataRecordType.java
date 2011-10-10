@@ -83,4 +83,45 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
         return this.field;
     }
 
+    public void addField(final DataComponentPropertyType field) {
+        if (field != null) {
+            this.field.add(field);
+        }
+    }
+
+    public void addOrderedField(final DataComponentPropertyType field, final int delta) {
+        if (field != null) {
+            if (this.field.isEmpty()) {
+                this.field.add(field);
+            } else {
+                if (delta > this.field.size()) {
+                    throw new IllegalArgumentException("delta must be < field size");
+                }
+                String newId = field.getName();
+                for (int i = delta; i < this.field.size(); i++) {
+                    String currentID = this.field.get(i).getName();
+                    if (newId.compareTo(currentID) < 0) {
+
+                        this.field.add(i, field);
+                        return;
+                    }
+                }
+                this.field.add(field);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean containsField(final String fieldName) {
+        if (field != null) {
+            for (DataComponentPropertyType f : field) {
+                if (f.getName().equals(fieldName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

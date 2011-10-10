@@ -123,6 +123,16 @@ public class DataComponentPropertyType implements DataComponentProperty {
     @XmlTransient
     private static final ObjectFactory sweFactory = new ObjectFactory();
     
+    public static final DataComponentPropertyType LATITUDE_FIELD  = new DataComponentPropertyType("Latitude", null, new QuantityType("urn:ogc:phenomenon:latitude:wgs84", "degree"));
+
+    public static final DataComponentPropertyType LONGITUDE_FIELD = new DataComponentPropertyType("Longitude", null,new QuantityType("urn:ogc:phenomenon:longitude:wgs84", "degree"));
+
+    public static final DataComponentPropertyType FEATURE_FIELD   = new DataComponentPropertyType("FeatureID", null, new Text("urn:ogc:data:feature", null));
+
+    public static final DataComponentPropertyType PRESSION_FIELD  = new DataComponentPropertyType("Pression",  null, new QuantityType("urn:ogc:phenomenon:PRES", "decibar"));
+
+    public static final DataComponentPropertyType TIME_FIELD      = new DataComponentPropertyType("Time",      null, new TimeType("urn:ogc:data:time:iso8601"));
+    
     /**
      * An empty constructor used by JAXB
      */
@@ -170,6 +180,12 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.name      = name;
         this.role      = role;
         this.category  = category;
+    }
+    
+    public DataComponentPropertyType(final String name, final String role, final Text text) {
+        this.name      = name;
+        this.role      = role;
+        this.text      = text;
     }
 
     public DataComponentPropertyType(final DataComponentProperty d) {

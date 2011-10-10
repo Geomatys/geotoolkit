@@ -95,9 +95,15 @@ public class Capabilities implements AbstractCapabilities {
 
     }
 
-    public Capabilities(final DataRecordType dataRecord) {
+    public Capabilities(final AbstractDataRecordType dataRecord) {
         org.geotoolkit.swe.xml.v101.ObjectFactory facto = new org.geotoolkit.swe.xml.v101.ObjectFactory();
-        this.abstractDataRecord = facto.createDataRecord(dataRecord);
+        if (dataRecord instanceof SimpleDataRecord) {
+            abstractDataRecord = facto.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecord)dataRecord));
+        } else if (dataRecord instanceof DataRecord) {
+            abstractDataRecord = facto.createDataRecord(new DataRecordType((DataRecord)dataRecord));
+        } else {
+            System.out.println("UNINPLEMENTED CASE:" + dataRecord);
+        }
     }
 
     public Capabilities(final AbstractCapabilities capa) {
