@@ -146,6 +146,13 @@ public final class Registration implements FilenameFilter {
             final XMultiServiceFactory factories,
             final XRegistryKey         registry) throws URISyntaxException, IOException
     {
+        // First, ensure that HSQL is in the classpath.
+        if (!System.getProperty("java.class.path", "").contains(Configuration.HSQL_JAR)) try {
+            Configuration.setMoreJavaClasspathURLs(factories);
+        } catch (Exception e) {
+            // We can't do anything about that... (I have not yet found how to
+            // create an OpenOffice.org dialog box for reporting errors to user).
+        }
         ensureInstalled();
         if (implementation.equals(org.geotoolkit.openoffice.geoapi.Referencing.class.getName())) {
             return FactoryHelper.getServiceFactory(org.geotoolkit.openoffice.geoapi.Referencing.class,
