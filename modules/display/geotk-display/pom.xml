@@ -48,4 +48,18 @@
       </roles>
     </developer>
   </developers>
+
+  <contributors>
+    <contributor>
+      <name>Rémi Maréchal</name>
+      <email>r.marechal79@laposte.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </contributor>
+  </contributors>
+
 </project>

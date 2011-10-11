@@ -75,7 +75,7 @@ public final strictfp class ProjectedShapeTest extends ShapeTestBase {
      * @throws TransformException If an error occurred while transforming some points.
      */
     @Test
-    public void testLambert() throws FactoryException, TransformException {
+    public void testWithLambert() throws FactoryException, TransformException {
         final ProjectedCRS crs = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
         final Shape source = new Arrow2D(10, -40, 70, 100);
         final Shape reference = createReferenceShape(source, (MathTransform2D) crs.getConversionFromBase().getMathTransform());

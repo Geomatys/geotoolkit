@@ -48,7 +48,7 @@ import static org.geotoolkit.math.XMath.SQRT2;
 @SuppressWarnings("serial")
 final class ProjectedPathIterator extends Point2D.Double implements PathIterator {
     /**
-     * Tolerance factor for determining when to replace curve by straight lines.
+     * Tolerance factor for determining when to replace a curve by a straight line.
      */
     private static final double TOLERANCE = 1E-2;
 
@@ -163,8 +163,8 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                 case SEG_QUADTO:  transform(coords, 2); break;
                 case SEG_CUBICTO: transform(coords, 3); break;
                 case SEG_LINETO: {
-                    final double x0 = x;
-                    final double y0 = y;
+                    final double x1 = x;
+                    final double y1 = y;
                     final double Δλ = coords[0] - λ;
                     final double Δφ = coords[1] - φ;
                     if (derivative == null) {
@@ -172,12 +172,12 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                         y = φ;
                         derivative = projection.derivative(this);
                     }
-                    final Matrix D0 = derivative;
+                    final Matrix D1 = derivative;
                     x = λ = coords[0];
                     y = φ = coords[1];
                     derivative = projection.derivative(this);
                     projection.transform(this, this);
-                    type = segmentTransform(Δλ, Δφ, x0, y0, D0);
+                    type = transformSegment(Δλ, Δφ, x1, y1, D1);
                     int i=0;
                     switch (type) {
                         case SEG_CUBICTO: coords[i++] = ctrlx1; coords[i++] = ctrly1; // Fallthrough
@@ -215,7 +215,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
         // Copy of currentSegment(double[]). Note that this copy contains many implicit casts
         // from 'float' to 'double'. So while the source code looks close to identical to the
         // above method, the compiled code is actually not the same. The part which is really
-        // the same has been factorized out in the segmentTransform(...) method.
+        // the same has been factorized out in the transformSegment(...) method.
         int type = iterator.currentSegment(coords);
         try {
             switch (type) {
@@ -224,8 +224,8 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                 case SEG_QUADTO:  transform(coords, 2); break;
                 case SEG_CUBICTO: transform(coords, 3); break;
                 case SEG_LINETO: {
-                    final double x0 = x;
-                    final double y0 = y;
+                    final double x1 = x;
+                    final double y1 = y;
                     final double Δλ = coords[0] - λ;
                     final double Δφ = coords[1] - φ;
                     if (derivative == null) {
@@ -233,12 +233,12 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                         y = φ;
                         derivative = projection.derivative(this);
                     }
-                    final Matrix D0 = derivative;
+                    final Matrix D1 = derivative;
                     x = λ = coords[0];
                     y = φ = coords[1];
                     derivative = projection.derivative(this);
                     projection.transform(this, this);
-                    type = segmentTransform(Δλ, Δφ, x0, y0, D0);
+                    type = transformSegment(Δλ, Δφ, x1, y1, D1);
                     int i=0;
                     switch (type) {
                         case SEG_CUBICTO: coords[i++] = (float) ctrlx1; coords[i++] = (float) ctrly1; // Fallthrough
@@ -257,84 +257,84 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     }
 
     /**
-     * Transforms a line segment, which may result in a quadratic or cubic curve.
+     * Transforms a line segment from P1 to P2, which may result in a quadratic or cubic curve.
      * <p>
      * <b>Notation:</b>
      * <ul>
      *   <li>The (λ,φ) variable names are ordinates in the source space.</li>
      *   <li>The (x,y) variable names are ordinates in the target space.</li>
-     *   <li>The 0 and 1 suffixes denote the starting and ending points respectively.</li>
+     *   <li>The 1 and 2 suffixes denote the starting and ending points respectively.</li>
      *   <li>The Δ prefix denote the difference between the target and the source points.</li>
      * </ul>
      */
-    private int segmentTransform(
+    private int transformSegment(
             final double Δλ, final double Δφ,
-            final double x0, final double y0, final Matrix D0)
+            final double x1, final double y1, final Matrix D1)
     {
-        final double x1 = x;
-        final double y1 = y;
-        final Matrix D1 = derivative;
+        final double x2 = x;
+        final double y2 = y;
+        final Matrix D2 = derivative;
 
         // Unitary vectors from the matrix at the starting point.
-        double dx0_dλ = D0.getElement(0, 0);
-        double dy0_dλ = D0.getElement(1, 0);
-        double dx0_dφ = D0.getElement(0, 1);
-        double dy0_dφ = D0.getElement(1, 1);
-        double Lλ = hypot(dx0_dλ, dy0_dλ);
-        double Lφ = hypot(dx0_dφ, dy0_dφ);
-        dx0_dλ /= Lλ;
-        dy0_dλ /= Lλ;
-        dx0_dφ /= Lφ;
-        dy0_dφ /= Lφ;
-
-        // Unitary vectors from the matrix at the ending point.
         double dx1_dλ = D1.getElement(0, 0);
         double dy1_dλ = D1.getElement(1, 0);
         double dx1_dφ = D1.getElement(0, 1);
         double dy1_dφ = D1.getElement(1, 1);
-        Lλ = hypot(dx1_dλ, dy1_dλ);
-        Lφ = hypot(dx1_dφ, dy1_dφ);
+        double Lλ = hypot(dx1_dλ, dy1_dλ);
+        double Lφ = hypot(dx1_dφ, dy1_dφ);
         dx1_dλ /= Lλ;
         dy1_dλ /= Lλ;
         dx1_dφ /= Lφ;
         dy1_dφ /= Lφ;
 
-        // (Δx,Δy) is the vector from P0 to P1 in the (x,y) space.
-        final double Δx = (x1 - x0);
-        final double Δy = (y1 - y0);
-        final double L01 = hypot(Δx, Δy);
+        // Unitary vectors from the matrix at the ending point.
+        double dx2_dλ = D2.getElement(0, 0);
+        double dy2_dλ = D2.getElement(1, 0);
+        double dx2_dφ = D2.getElement(0, 1);
+        double dy2_dφ = D2.getElement(1, 1);
+        Lλ = hypot(dx2_dλ, dy2_dλ);
+        Lφ = hypot(dx2_dφ, dy2_dφ);
+        dx2_dλ /= Lλ;
+        dy2_dλ /= Lλ;
+        dx2_dφ /= Lφ;
+        dy2_dφ /= Lφ;
 
-        // (Δx0,Δy0) is the (Δx,Δy) vector that we would have if the derivative was D0 everywhere.
+        // (Δx,Δy) is the vector from P1 to P2 in the (x,y) space.
+        final double Δx = (x2 - x1);
+        final double Δy = (y2 - y1);
+        final double L12 = hypot(Δx, Δy);
+
         // (Δx1,Δy1) is the (Δx,Δy) vector that we would have if the derivative was D1 everywhere.
-        final double Δx0 = (dx0_dλ*Δλ + dx0_dφ*Δφ);
-        final double Δy0 = (dy0_dλ*Δλ + dy0_dφ*Δφ);
+        // (Δx2,Δy2) is the (Δx,Δy) vector that we would have if the derivative was D2 everywhere.
         final double Δx1 = (dx1_dλ*Δλ + dx1_dφ*Δφ);
         final double Δy1 = (dy1_dλ*Δλ + dy1_dφ*Δφ);
-        final double L0  = hypot(Δx0, Δy0);
+        final double Δx2 = (dx2_dλ*Δλ + dx2_dφ*Δφ);
+        final double Δy2 = (dy2_dλ*Δλ + dy2_dφ*Δφ);
         final double L1  = hypot(Δx1, Δy1);
-        final double s0  = (Δx*Δx0 + Δy*Δy0) / (L01*L0);
-        final double s1  = (Δx*Δx1 + Δy*Δy1) / (L01*L1);
-        if (!(abs(s0-s1) > TOLERANCE)) { // Use ! for catching NaN.
-            if (!(abs(s0-1) > TOLERANCE)) {
+        final double L2  = hypot(Δx2, Δy2);
+        final double s1  = (Δx*Δx1 + Δy*Δy1) / (L12*L1);
+        final double s2  = (Δx*Δx2 + Δy*Δy2) / (L12*L2);
+        if (!(abs(s1-s2) > TOLERANCE)) { // Use ! for catching NaN.
+            if (!(abs(s1-1) > TOLERANCE)) {
                 return SEG_LINETO;
             }
-            if (s0 >= SQRT2/2) {
+            if (s1 >= SQRT2/2) {
                 /*
                  * Reference to Thomas W. Sederberg article : COMPUTER AIDED GEOMETRIC DESIGN
                  * Computes α as a weight coefficient of the delta to add to the starting point.
                  */
-                final double α = abs((Δy1*Δx - Δx1*Δy) / (Δy1*Δx0 - Δx1*Δy0));
-                ctrlx2 = x0 + Δx0*α;
-                ctrly2 = y0 + Δy0*α;
+                final double α = abs((Δy2*Δx - Δx2*Δy) / (Δy2*Δx1 - Δx2*Δy1));
+                ctrlx2 = x1 + Δx1*α;
+                ctrly2 = y1 + Δy1*α;
                 return SEG_QUADTO;
             }
         }
-        final double α = L01 / (3 * L0);
-        final double β = L01 / (3 * L1);
-        ctrlx1 = x0 + Δx0*α;
-        ctrly1 = y0 + Δy0*α;
-        ctrlx2 = x1 - Δx1*β;
-        ctrly2 = y1 - Δy1*β;
+        final double α = L12 / (3 * L1);
+        final double β = L12 / (3 * L2);
+        ctrlx1 = x1 + Δx1*α;
+        ctrly1 = y1 + Δy1*α;
+        ctrlx2 = x2 - Δx2*β;
+        ctrly2 = y2 - Δy2*β;
         return SEG_CUBICTO;
     }
 }
