@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.matrix;
 import javax.vecmath.Matrix4d;
 import org.opengis.referencing.operation.Matrix;
 
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
@@ -31,7 +32,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * primarily for supporting datum shifts.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -136,7 +137,7 @@ public class Matrix4 extends Matrix4d implements XMatrix {
     }
 
     /**
-     * Returns the number of colmuns in this matrix, which is always {@value #SIZE}
+     * Returns the number of columns in this matrix, which is always {@value #SIZE}
      * in this implementation.
      */
     @Override
@@ -187,6 +188,19 @@ public class Matrix4 extends Matrix4d implements XMatrix {
             m = new Matrix4(matrix);
         }
         mul(m);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void normalizeColumns() {
+        double m;
+        final double[] v = new double[4];
+        v[0]=m00; v[1]=m10; v[2]=m20; v[3]=m30; m = XMath.magnitude(v); m00 /= m; m10 /= m; m20 /= m; m30 /= m;
+        v[0]=m01; v[1]=m11; v[2]=m21; v[3]=m31; m = XMath.magnitude(v); m01 /= m; m11 /= m; m21 /= m; m31 /= m;
+        v[0]=m02; v[1]=m12; v[2]=m22; v[3]=m32; m = XMath.magnitude(v); m02 /= m; m12 /= m; m22 /= m; m32 /= m;
+        v[0]=m03; v[1]=m13; v[2]=m23; v[3]=m33; m = XMath.magnitude(v); m03 /= m; m13 /= m; m23 /= m; m33 /= m;
     }
 
     /**

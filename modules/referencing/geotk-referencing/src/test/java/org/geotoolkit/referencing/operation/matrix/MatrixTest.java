@@ -30,7 +30,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * Tests {@link MatrixUtilities} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -46,7 +46,7 @@ public final strictfp class MatrixTest {
     private static final double STRICT = 0;
 
     /**
-     * Tests inversion of squares matrix.
+     * Tests inversion of squares matrix on all matrix implementations provided in this package.
      *
      * @throws NoninvertibleTransformException Should never happen.
      */
@@ -101,7 +101,7 @@ public final strictfp class MatrixTest {
     }
 
     /**
-     * Tests matrix multiplication.
+     * Tests matrix multiplication on all matrix implementations provided in this package.
      */
     @Test
     public void testMultiply() {
@@ -130,6 +130,26 @@ public final strictfp class MatrixTest {
                         assertTrue(reference.equals(matrix, TOLERANCE));
                     } while ((affine = !affine) == true);
                 }
+            }
+        }
+    }
+
+    /**
+     * Tests the {@link XMatrix#normalizeColumns()} method on all matrix implementations
+     * provided in this package.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testNormalizeColumns() {
+        final Random generator = new Random(628527304);
+        for (int numRow=1; numRow<=5; numRow++) {
+            for (int numCol=1; numCol<=5; numCol++) {
+                final GeneralMatrix reference = randomMatrix(numRow, numCol, generator, false);
+                final XMatrix specialized = MatrixFactory.create(reference);
+                reference.normalizeColumns();
+                specialized.normalizeColumns();
+                assertTrue(specialized.equals(reference, STRICT));
             }
         }
     }

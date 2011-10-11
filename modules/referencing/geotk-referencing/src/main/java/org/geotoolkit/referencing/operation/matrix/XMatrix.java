@@ -29,12 +29,11 @@ import org.geotoolkit.util.LenientComparable;
  * basically a two dimensional array of numbers. The {@code XMatrix} interface adds
  * {@linkplain #invert inversion} and {@linkplain #multiply multiplication} capabilities
  * among others. It is used as a bridge across various matrix implementations in Java3D
- * ({@link javax.vecmath.Matrix3f}, {@link javax.vecmath.Matrix3d}, {@link javax.vecmath.Matrix4f},
- * {@link javax.vecmath.Matrix4d}, {@link javax.vecmath.GMatrix}).
+ * ({@link javax.vecmath.Matrix3d}, {@link javax.vecmath.Matrix4d}, {@link javax.vecmath.GMatrix}).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.18
+ * @version 3.20
  *
  * @see MatrixFactory#toXMatrix(Matrix)
  *
@@ -103,6 +102,22 @@ public interface XMatrix extends Matrix, LenientComparable, Cloneable {
      * @param matrix The matrix to multiply to this matrix.
      */
     void multiply(Matrix matrix);
+
+    /**
+     * Normalizes all columns in-place. Each columns in this matrix is considered as a vector.
+     * For each column (vector), this method computes the magnitude (vector length) as the square
+     * root of the sum of all square values. Then, all values in the column are divided by that
+     * magnitude.
+     * <p>
+     * This method is useful when the matrix is a
+     * {@linkplain org.opengis.referencing.operation.MathTransform#derivative transform derivative}.
+     * In such matrix, each column is a vector representing the displacement in target space when an
+     * ordinate in the source space is increased by one. Invoking this method turns those vectors
+     * into unitary vectors, which is useful for forming the basis of a new coordinate system.
+     *
+     * @since 3.20
+     */
+    void normalizeColumns();
 
     /**
      * Compares the element values regardless the object class. This is similar to a call to

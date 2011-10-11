@@ -32,7 +32,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * result of {@linkplain org.opengis.referencing.operation.MathTransform1D} derivative computation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -93,7 +93,7 @@ public class Matrix1 implements XMatrix, Serializable {
     }
 
     /**
-     * Returns the number of colmuns in this matrix, which is always {@value #SIZE}
+     * Returns the number of columns in this matrix, which is always {@value #SIZE}
      * in this implementation.
      */
     @Override
@@ -174,7 +174,8 @@ public class Matrix1 implements XMatrix, Serializable {
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the value of this matrix to its transpose.
+     * For a 1&times;1 matrix, this method does nothing.
      */
     @Override
     public final void transpose() {
@@ -201,6 +202,15 @@ public class Matrix1 implements XMatrix, Serializable {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_MATRIX_SIZE));
         }
         m00 *= matrix.getElement(0,0);
+    }
+
+    /**
+     * Normalizes all columns in-place. For a 1&times;1 matrix,
+     * this method just sets unconditionally the {@link #m00} value to 1.
+     */
+    @Override
+    public final void normalizeColumns() {
+        m00 = 1;
     }
 
     /**

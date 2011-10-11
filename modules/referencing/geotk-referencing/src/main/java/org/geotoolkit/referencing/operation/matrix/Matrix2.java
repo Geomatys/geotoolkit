@@ -31,7 +31,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * A matrix of fixed {@value #SIZE}&times;{@value #SIZE} size.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -122,7 +122,7 @@ public class Matrix2 implements XMatrix, Serializable {
     }
 
     /**
-     * Returns the number of colmuns in this matrix, which is always {@value #SIZE}
+     * Returns the number of columns in this matrix, which is always {@value #SIZE}
      * in this implementation.
      */
     @Override
@@ -277,6 +277,16 @@ public class Matrix2 implements XMatrix, Serializable {
         m0=m10; m1=m11;
         m10 = m0*k.m00 + m1*k.m10;
         m11 = m0*k.m01 + m1*k.m11;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void normalizeColumns() {
+        double m;
+        m = Math.hypot(m00, m10); m00 /= m; m10 /= m;
+        m = Math.hypot(m01, m11); m01 /= m; m11 /= m;
     }
 
     /**

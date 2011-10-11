@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.RectangularShape;
 import javax.swing.tree.TreeNode;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.media.jai.iterator.RectIter;
@@ -44,7 +45,7 @@ import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
  * Assertion methods used by the Geotk project in addition of the JUnit and GeoAPI assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.16 (derived from 3.00)
  */
@@ -263,6 +264,27 @@ public strictfp class Assert extends org.opengis.test.Assert {
         assertEquals("shearY",     expected.getShearY(),     actual.getShearY(),     SAMPLE_TOLERANCE);
         assertEquals("translateX", expected.getTranslateX(), actual.getTranslateX(), SAMPLE_TOLERANCE);
         assertEquals("translateY", expected.getTranslateY(), actual.getTranslateY(), SAMPLE_TOLERANCE);
+    }
+
+    /**
+     * Asserts that two rectangles have the same location and the same size.
+     *
+     * @param expected The expected rectangle.
+     * @param actual   The rectangle to compare with the expected one.
+     * @param tolx     The horizontal tolerance threshold on location.
+     * @param toly     The vertical tolerance threshold on location.
+     *
+     * @since 3.20
+     */
+    public static void assertRectangleEquals(final RectangularShape expected, final RectangularShape actual, final double tolx, final double toly) {
+        assertEquals("Min X",    expected.getMinX(),    actual.getMinX(),    tolx);
+        assertEquals("Min Y",    expected.getMinY(),    actual.getMinY(),    toly);
+        assertEquals("Max X",    expected.getMaxX(),    actual.getMaxX(),    tolx);
+        assertEquals("Max Y",    expected.getMaxY(),    actual.getMaxY(),    toly);
+        assertEquals("Center X", expected.getCenterX(), actual.getCenterX(), tolx);
+        assertEquals("Center Y", expected.getCenterY(), actual.getCenterY(), toly);
+        assertEquals("Width",    expected.getWidth(),   actual.getWidth(),   tolx*2);
+        assertEquals("Height",   expected.getHeight(),  actual.getHeight(),  toly*2);
     }
 
     /**

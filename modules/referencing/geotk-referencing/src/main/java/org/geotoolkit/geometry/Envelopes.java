@@ -41,9 +41,12 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 
+import static java.lang.Math.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
@@ -57,7 +60,7 @@ import static org.geotoolkit.internal.InternalUtilities.debugEquals;
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
  * @author Johann Sorel (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see CRS
  *
@@ -629,43 +632,118 @@ public final class Envelopes extends Static {
         double ymin = Double.POSITIVE_INFINITY;
         double xmax = Double.NEGATIVE_INFINITY;
         double ymax = Double.NEGATIVE_INFINITY;
+        /*
+         * Notation (as if we were applying a map projection, but this is not necessarily the case):
+         *   - (λ,φ) are ordinate values before projection.
+         *   - (x,y) are ordinate values after projection.
+         *   - Variables with indice 0 are for the very first point in iteration order.
+         *   - Variables with indice 1 are for the values of the previous iteration.
+         *   - Variables with indice 2 are for the current values in the iteration.
+         *   - P1-P2 form a line segment to be checked for curvature.
+         */
+        double λ0=0, φ0=0, x0=0, y0=0;
+        double λ1=0, φ1=0, x1=0, y1=0;
+        XMatrix D0=null, D1=null, D2=null;
+        boolean disableDerivative = false;
         for (int i=0; i<=8; i++) {
             /*
-             *   (0)────(5)────(1)
-             *    |             |
-             *   (4)    (8)    (7)
-             *    |             |
-             *   (2)────(6)────(3)
+             * Iteration order (center must be last):
              *
-             * (note: center must be last)
+             *   (6)────(5)────(4)
+             *    |             |
+             *   (7)    (8)    (3)
+             *    |             |
+             *   (0)────(1)────(2)
              */
-            point.x = (i & 1) == 0 ? envelope.getMinX() : envelope.getMaxX();
-            point.y = (i & 2) == 0 ? envelope.getMinY() : envelope.getMaxY();
+            double λ2, φ2;
             switch (i) {
-                case 5: // fall through
-                case 6: point.x = envelope.getCenterX(); break;
-                case 8: point.x = envelope.getCenterX(); // fall through
-                case 7: // fall through
-                case 4: point.y = envelope.getCenterY(); break;
+                case 0: case 6: case 7: λ2 = envelope.getMinX();    break;
+                case 1: case 5: case 8: λ2 = envelope.getCenterX(); break;
+                case 2: case 3: case 4: λ2 = envelope.getMaxX();    break;
+                default: throw new AssertionError(i);
             }
-            if (point != transform.transform(point, point)) {
-                throw new UnsupportedImplementationException(transform.getClass());
+            switch (i) {
+                case 0: case 1: case 2: φ2 = envelope.getMinY();    break;
+                case 3: case 7: case 8: φ2 = envelope.getCenterY(); break;
+                case 4: case 5: case 6: φ2 = envelope.getMaxY();    break;
+                default: throw new AssertionError(i);
             }
-            if (point.x < xmin) xmin = point.x;
-            if (point.x > xmax) xmax = point.x;
-            if (point.y < ymin) ymin = point.y;
-            if (point.y > ymax) ymax = point.y;
+            point.x = λ2;
+            point.y = φ2;
+            if (!disableDerivative) try {
+                D1 = D2;
+                if (i != 8) {
+                    D2 = MatrixFactory.toXMatrix(transform.derivative(point));
+                    D2.normalizeColumns();
+                }
+            } catch (TransformException e) {
+                Logging.recoverableException(Envelopes.class, "transform", e);
+                disableDerivative = true;
+                D0 = D1 = D2 = null;
+            }
+            final Point2D target = transform.transform(point, point);
+            double x2 = target.getX();
+            double y2 = target.getY();
+            if (x2 < xmin) xmin = x2;
+            if (x2 > xmax) xmax = x2;
+            if (y2 < ymin) ymin = y2;
+            if (y2 > ymax) ymax = y2;
+            if (i == 0) {
+                λ0=λ2; x0=x2;
+                φ0=φ2; y0=y2;
+                D0=D2;
+            }
+            /*
+             * The following block is a copy of the ProjectedPathIterator.transformSegment(...)
+             * method, simplified for the case where the line segments are either horizontal or
+             * vertical.
+             */
+if (false) // ALL THE BLOCK IS DISABLED FOR NOW
+            if (D1 != null && D2 != null) {
+                if (i == 8) { // Close the iteration with the first point.
+                    λ2=λ0; x2=x0;
+                    φ2=φ0; y2=y0;
+                    D2=D0;
+                }
+                final double Δ;
+                final int dim;
+                switch (i) {
+                    case 1: case 2: case 5: case 6: {assert φ2==φ1; Δ = λ2-λ1; dim = 0; break;} // Horizontal segment
+                    case 3: case 4: case 7: case 8: {assert λ2==λ1; Δ = φ2-φ1; dim = 1; break;} // Vertical segment
+                    default: throw new AssertionError(i);
+                }
+                final double α = hypot(x2-x1, y2-y1) / (3*abs(Δ));
+                for (int j=0; j<2; j++) {
+                    final double Δ1 = Δ*D1.getElement(j, dim);
+                    final double Δ2 = Δ*D2.getElement(j, dim);
+                    double c1, c2;
+                    if (j == 0) {c1=x1; c2=x2;}
+                    else        {c1=y1; c2=y2;}
+                    c1 += Δ1*α;
+                    c2 -= Δ2*α;
+                    if (c1 > c2) {
+                        final double t = c1;
+                        c1 = c2; c2 = t;
+                    }
+                    if (j == 0) {
+                        if (c1 < xmin) xmin = c1;
+                        if (c2 > xmax) xmax = c2;
+                    } else {
+                        if (c1 < ymin) ymin = c1;
+                        if (c2 > ymax) ymax = c2;
+                    }
+                }
+            }
+            λ1=λ2; x1=x2;
+            φ1=φ2; y1=y2;
+            D1=D2;
         }
         if (destination != null) {
             destination.setRect(xmin, ymin, xmax-xmin, ymax-ymin);
         } else {
             destination = XRectangle2D.createFromExtremums(xmin, ymin, xmax, ymax);
         }
-        // Attempt the 'equalsEpsilon' assertion only if source and destination are not same and
-        // if the target envelope is Float or Double (this assertion doesn't work with integers).
-        assert (destination == envelope || !(destination instanceof Rectangle2D.Double ||
-                destination instanceof Rectangle2D.Float)) || XRectangle2D.equalsEpsilon(destination,
-                transform(transform, new Envelope2D(null, envelope)).toRectangle2D()) : destination;
+        System.out.println(destination);
         return destination;
     }
 
@@ -878,9 +956,6 @@ public final class Envelopes extends Static {
         if (warning != null) {
             recoverableException(warning);
         }
-        // Attempt the 'equalsEpsilon' assertion only if source and destination are not same.
-        assert (destination == envelope) || XRectangle2D.equalsEpsilon(destination,
-                transform(operation, new GeneralEnvelope(envelope)).toRectangle2D()) : destination;
         return destination;
     }
 
@@ -996,9 +1071,6 @@ public final class Envelopes extends Static {
             }
             separator = ", ";
         }
-        if (separator == ", ") { // NOSONAR: identity comparison is okay here.
-            buffer.append(')');
-        }
-        return buffer.append(')').toString();
+        return buffer.append("))").toString();
     }
 }

@@ -21,6 +21,7 @@ import javax.vecmath.Matrix3d;
 import java.awt.geom.AffineTransform;
 import org.opengis.referencing.operation.Matrix;
 
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -32,7 +33,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  * better accuracy than {@link GeneralMatrix} for matrix inversion and multiplication.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -138,7 +139,7 @@ public class Matrix3 extends Matrix3d implements XMatrix {
     }
 
     /**
-     * Returns the number of colmuns in this matrix, which is always {@value #SIZE}
+     * Returns the number of columns in this matrix, which is always {@value #SIZE}
      * in this implementation.
      */
     @Override
@@ -202,6 +203,18 @@ public class Matrix3 extends Matrix3d implements XMatrix {
             m = new Matrix3(matrix);
         }
         mul(m);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void normalizeColumns() {
+        double m;
+        final double[] v = new double[3];
+        v[0]=m00; v[1]=m10; v[2]=m20; m = XMath.magnitude(v); m00 /= m; m10 /= m; m20 /= m;
+        v[0]=m01; v[1]=m11; v[2]=m21; m = XMath.magnitude(v); m01 /= m; m11 /= m; m21 /= m;
+        v[0]=m02; v[1]=m12; v[2]=m22; m = XMath.magnitude(v); m02 /= m; m12 /= m; m22 /= m;
     }
 
     /**

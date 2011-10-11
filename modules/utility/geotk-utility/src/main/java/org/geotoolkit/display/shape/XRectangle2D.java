@@ -397,7 +397,11 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
      * @param rect1 The first rectangle to test for equality.
      * @param rect2 The second rectangle to test for equality.
      * @return {@code true} if the rectangles are equal up to the tolerance value.
+     *
+     * @deprecated Use your own comparison method instead, so you can specify different
+     *             tolerance threshold along different axis.
      */
+    @Deprecated
     public static boolean equalsEpsilon(final Rectangle2D rect1, final Rectangle2D rect2) {
         double dx = 0.5 * Math.abs(rect1.getWidth()  + rect2.getWidth());
         double dy = 0.5 * Math.abs(rect1.getHeight() + rect2.getHeight());
@@ -412,6 +416,7 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
     /**
      * Compares the specified numbers with the specified tolerance.
      */
+    @Deprecated
     private static boolean equalsEpsilon(final double v1, final double v2, final double eps) {
         return (Math.abs(v1 - v2) < eps) || (doubleToLongBits(v1) == doubleToLongBits(v2));
     }

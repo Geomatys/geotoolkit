@@ -25,6 +25,9 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+
 import static java.lang.Math.*;
 import static org.geotoolkit.math.XMath.SQRT2;
 
@@ -170,12 +173,12 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                     if (derivative == null) {
                         x = λ;
                         y = φ;
-                        derivative = projection.derivative(this);
+                        derivative();
                     }
                     final Matrix D1 = derivative;
                     x = λ = coords[0];
                     y = φ = coords[1];
-                    derivative = projection.derivative(this);
+                    derivative(); // Must be before the projection.
                     projection.transform(this, this);
                     type = transformSegment(Δλ, Δφ, x1, y1, D1);
                     int i=0;
@@ -231,12 +234,12 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                     if (derivative == null) {
                         x = λ;
                         y = φ;
-                        derivative = projection.derivative(this);
+                        derivative();
                     }
                     final Matrix D1 = derivative;
                     x = λ = coords[0];
                     y = φ = coords[1];
-                    derivative = projection.derivative(this);
+                    derivative(); // Must be before the projection.
                     projection.transform(this, this);
                     type = transformSegment(Δλ, Δφ, x1, y1, D1);
                     int i=0;
@@ -254,6 +257,15 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
             throw ex;
         }
         return type;
+    }
+
+    /**
+     * Computes the normalized derivative at the current position.
+     */
+    private void derivative() throws TransformException {
+        final XMatrix mat = MatrixFactory.toXMatrix(projection.derivative(this));
+        mat.normalizeColumns();
+        derivative = mat;
     }
 
     /**
@@ -275,30 +287,6 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
         final double y2 = y;
         final Matrix D2 = derivative;
 
-        // Unitary vectors from the matrix at the starting point.
-        double dx1_dλ = D1.getElement(0, 0);
-        double dy1_dλ = D1.getElement(1, 0);
-        double dx1_dφ = D1.getElement(0, 1);
-        double dy1_dφ = D1.getElement(1, 1);
-        double Lλ = hypot(dx1_dλ, dy1_dλ);
-        double Lφ = hypot(dx1_dφ, dy1_dφ);
-        dx1_dλ /= Lλ;
-        dy1_dλ /= Lλ;
-        dx1_dφ /= Lφ;
-        dy1_dφ /= Lφ;
-
-        // Unitary vectors from the matrix at the ending point.
-        double dx2_dλ = D2.getElement(0, 0);
-        double dy2_dλ = D2.getElement(1, 0);
-        double dx2_dφ = D2.getElement(0, 1);
-        double dy2_dφ = D2.getElement(1, 1);
-        Lλ = hypot(dx2_dλ, dy2_dλ);
-        Lφ = hypot(dx2_dφ, dy2_dφ);
-        dx2_dλ /= Lλ;
-        dy2_dλ /= Lλ;
-        dx2_dφ /= Lφ;
-        dy2_dφ /= Lφ;
-
         // (Δx,Δy) is the vector from P1 to P2 in the (x,y) space.
         final double Δx = (x2 - x1);
         final double Δy = (y2 - y1);
@@ -306,10 +294,10 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
 
         // (Δx1,Δy1) is the (Δx,Δy) vector that we would have if the derivative was D1 everywhere.
         // (Δx2,Δy2) is the (Δx,Δy) vector that we would have if the derivative was D2 everywhere.
-        final double Δx1 = (dx1_dλ*Δλ + dx1_dφ*Δφ);
-        final double Δy1 = (dy1_dλ*Δλ + dy1_dφ*Δφ);
-        final double Δx2 = (dx2_dλ*Δλ + dx2_dφ*Δφ);
-        final double Δy2 = (dy2_dλ*Δλ + dy2_dφ*Δφ);
+        final double Δx1 = D1.getElement(0,0)*Δλ + D1.getElement(0,1)*Δφ;
+        final double Δy1 = D1.getElement(1,0)*Δλ + D1.getElement(1,1)*Δφ;
+        final double Δx2 = D2.getElement(0,0)*Δλ + D2.getElement(0,1)*Δφ;
+        final double Δy2 = D2.getElement(1,0)*Δλ + D2.getElement(1,1)*Δφ;
         final double L1  = hypot(Δx1, Δy1);
         final double L2  = hypot(Δx2, Δy2);
         final double s1  = (Δx*Δx1 + Δy*Δy1) / (L12*L1);

@@ -37,6 +37,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
@@ -50,7 +51,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.18
+ * @version 3.20
  *
  * @see javax.vecmath.GMatrix
  * @see java.awt.geom.AffineTransform
@@ -473,6 +474,22 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
             m = new GeneralMatrix(matrix);
         }
         mul(m);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void normalizeColumns() {
+        final double[] column = new double[getNumRow()];
+        for (int i=getNumCol(); --i>=0;) {
+            getColumn(i, column);
+            final double m = XMath.magnitude(column);
+            for (int j=0; j<column.length; j++) {
+                column[j] /= m;
+            }
+            setColumn(i, column);
+        }
     }
 
     /**
