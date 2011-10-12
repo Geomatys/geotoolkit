@@ -26,7 +26,7 @@ import org.geotoolkit.util.converter.Classes;
 
 
 /**
- * Serializable rectangle capables to handle infinites values. Instead of using {@code x},
+ * Serializable rectangle capable to handle infinite values. Instead of using {@code x},
  * {@code y}, {@code width} and {@code height} fields, this class uses {@link #xmin},
  * {@link #xmax}, {@link #ymin} and {@link #ymax} fields. This choice provides two benefits:
  * <p>
@@ -111,7 +111,7 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
     /**
      * Creates a rectangle using maximal <var>x</var> and <var>y</var> values
      * rather than width and height. This factory avoid the problem of NaN
-     * values when extremums are infinite numbers.
+     * values when extremum are infinite numbers.
      *
      * @param xmin Minimal <var>x</var> ordinate value.
      * @param ymin Minimal <var>y</var> ordinate value.
@@ -639,6 +639,10 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
 
     /**
      * Returns the {@code String} representation of this {@code Rectangle2D}.
+     * The ordinate order is (<var>x</var><sub>min</sub>, <var>y</var><sub>min</sub>,
+     * <var>x</var><sub>max</sub>, <var>y</var><sub>max</sub>), which is consistent
+     * with the {@link #createFromExtremums(double, double, double, double)} constructor
+     * and with the {@code BBOX} <cite>Well Known Text</cite> (WKT) syntax.
      *
      * @return a {@code String} representing this {@code Rectangle2D}.
      */
@@ -646,8 +650,8 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
     public String toString() {
         return Classes.getShortClassName(this) +
                 "[xmin=" + xmin +
-                " xmax=" + xmax +
                 " ymin=" + ymin +
+                " xmax=" + xmax +
                 " ymax=" + ymax + ']';
     }
 }

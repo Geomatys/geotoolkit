@@ -93,7 +93,7 @@ public final class XMath extends Static {
      * In the special case where only one element is different than zero, this method
      * returns directly the {@linkplain Math#abs(double) absolute value} of that element
      * without computing {@code sqrt(v²)}, in order to avoid rounding error. This special case
-     * has been implemente because this method is often invoked for computing the length of
+     * has been implemented because this method is often invoked for computing the length of
      * {@linkplain org.opengis.coverage.grid.RectifiedGrid#getOffsetVectors() offset vectors},
      * typically aligned with the axes of a {@linkplain org.opengis.referencing.cs.CartesianCS
      * Cartesian coordinate system}.
