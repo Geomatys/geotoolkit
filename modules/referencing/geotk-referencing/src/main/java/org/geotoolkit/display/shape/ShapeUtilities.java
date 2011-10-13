@@ -460,7 +460,7 @@ public final class ShapeUtilities extends Static {
             double x1, double y1, double x2, double y2, final boolean horizontal, Point2D dest)
     {
         final Point2D result = parabolicControlPoint(x0, y0, x1, y1, x2, y2, horizontal);
-        if (dest != null) {
+        if (result != null && dest != null) {
             dest.setLocation(result);
             return dest;
         }

@@ -17,22 +17,11 @@
  */
 package org.geotoolkit.internal.referencing;
 
-import java.io.Serializable;
-
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.io.wkt.Formattable;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.geotoolkit.util.ArgumentChecks;
 
 
 /**
@@ -47,24 +36,18 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * Consequently this object is short-lived and most client code will not suffer from the
  * indirection level that it brings when performing coordinate transformations.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.03
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.2
  * @level hidden
  * @module
  */
-@Decorator(MathTransform.class)
-public final class MathTransformDecorator implements MathTransform, Formattable, Serializable {
+public final class MathTransformDecorator extends MathTransformWrapper {
     /**
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8844242705205498128L;
-
-    /**
-     * The math transform on which to delegate the work.
-     */
-    public final MathTransform transform;
 
     /**
      * The provider for the {@linkplain #transform transform}.
@@ -78,14 +61,9 @@ public final class MathTransformDecorator implements MathTransform, Formattable,
      * @param method The provider, typically as an instance of {@code MathTransformProvider}.
      */
     public MathTransformDecorator(final MathTransform transform, final OperationMethod method) {
-        this.transform = transform;
-        if (transform == null) {
-            throw new NullArgumentException("transform");
-        }
+        super(transform);
         this.method = method;
-        if (method == null) {
-            throw new NullArgumentException("method");
-        }
+        ArgumentChecks.ensureNonNull("method", method);
         if (!equals(transform.getSourceDimensions(), method.getSourceDimensions()) ||
             !equals(transform.getTargetDimensions(), method.getTargetDimensions()))
         {
@@ -101,157 +79,5 @@ public final class MathTransformDecorator implements MathTransform, Formattable,
      */
     private static boolean equals(final int transform, final Integer method) {
         return (method == null) || (transform == method.intValue());
-    }
-
-    /**
-     * Gets the dimension of input points.
-     */
-    @Override
-    public int getSourceDimensions() {
-        return transform.getTargetDimensions();
-    }
-
-    /**
-     * Gets the dimension of output points.
-     */
-    @Override
-    public int getTargetDimensions() {
-        return transform.getSourceDimensions();
-    }
-
-    /**
-     * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}.
-     *
-     * @throws MismatchedDimensionException if {@code ptSrc} or
-     *         {@code ptDst} doesn't have the expected dimension.
-     * @throws TransformException if the point can't be transformed.
-     */
-    @Override
-    public DirectPosition transform(final DirectPosition ptSrc, final DirectPosition ptDst)
-            throws MismatchedDimensionException, TransformException
-    {
-        return transform.transform(ptSrc, ptDst);
-    }
-
-    /**
-     * Transforms many coordinates in a list of ordinal values.
-     */
-    @Override
-    public void transform(final double[] srcPts, final int srcOff,
-                          final double[] dstPts, final int dstOff,
-                          final int numPts) throws TransformException
-    {
-        transform.transform(srcPts, srcOff, dstPts, dstOff, numPts);
-    }
-
-    /**
-     * Transforms many coordinates in a list of ordinal values.
-     */
-    @Override
-    public void transform(final float[] srcPts, final int srcOff,
-                          final float[] dstPts, final int dstOff,
-                          final int numPts) throws TransformException
-    {
-        transform.transform(srcPts, srcOff, dstPts, dstOff, numPts);
-    }
-
-    /**
-     * Transforms many coordinates in a list of ordinal values.
-     */
-    @Override
-    public void transform(final float [] srcPts, final int srcOff,
-                          final double[] dstPts, final int dstOff,
-                          final int numPts) throws TransformException
-    {
-        transform.transform(srcPts, srcOff, dstPts, dstOff, numPts);
-    }
-
-    /**
-     * Transforms many coordinates in a list of ordinal values.
-     */
-    @Override
-    public void transform(final double[] srcPts, final int srcOff,
-                          final float [] dstPts, final int dstOff,
-                          final int numPts) throws TransformException
-    {
-        transform.transform(srcPts, srcOff, dstPts, dstOff, numPts);
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     */
-    @Override
-    public Matrix derivative(final DirectPosition point) throws TransformException {
-        return transform.derivative(point);
-    }
-
-    /**
-     * Returns the inverse of this math transform.
-     */
-    @Override
-    public MathTransform inverse() throws NoninvertibleTransformException {
-        return transform.inverse();
-    }
-
-    /**
-     * Tests whether this transform does not move any points.
-     */
-    @Override
-    public boolean isIdentity() {
-        return transform.isIdentity();
-    }
-
-    /**
-     * Compares the specified object with this math transform for equality.
-     *
-     * @param object The object to compare with this transform.
-     * @return {@code true} if the given object is of the same class and if the wrapped
-     *         transforms are equal.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object != null && object.getClass() == getClass()) {
-            final MathTransformDecorator that = (MathTransformDecorator) object;
-            return Utilities.equals(this.transform, that.transform);
-        }
-        return false;
-    }
-
-    /**
-     * Returns a hash code value for this math transform.
-     */
-    @Override
-    public int hashCode() {
-        return transform.hashCode() ^ (int) serialVersionUID;
-    }
-
-    /**
-     * Returns a <cite>Well Known Text</cite> (WKT) for this transform.
-     *
-     * @throws UnsupportedOperationException If this object can't be formatted as WKT.
-     */
-    @Override
-    public String toWKT() throws UnsupportedOperationException {
-        return transform.toWKT();
-    }
-
-    /**
-     * Returns a string representation for this transform.
-     */
-    @Override
-    public String toString() {
-        return transform.toString();
-    }
-
-    /**
-     * Delegates the WKT formatting to the wrapped math transform. This class is usually used
-     * with Geotk implementations of math transform, so the exception is unlikely to be thrown.
-     */
-    @Override
-    public String formatWKT(final Formatter formatter) {
-        if (transform instanceof Formattable) {
-            return ((Formattable) transform).formatWKT(formatter);
-        }
-        throw new UnformattableObjectException(getClass());
     }
 }

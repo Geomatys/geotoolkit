@@ -25,6 +25,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Conversion;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -34,6 +35,7 @@ import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.referencing.MathTransformWrapper;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.CRS_Test;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -58,6 +60,12 @@ import static org.geotoolkit.test.Assert.*;
 @Depend(CRS_Test.class)
 public final strictfp class EnvelopesTest extends ReferencingTestBase {
     /**
+     * Small tolerance factor when envelopes calculated in different ways are expected
+     * to be almost identical.
+     */
+    private static final double EPS = 1E-10;
+
+    /**
      * Tests the conversions of a rectangle and compares with the conversions of an envelope.
      * This is a relatively simple test case working in the two-dimensional space only, with
      * a coordinate operation of type "conversion" (not a "transformation") and with no need
@@ -80,10 +88,9 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         final Rectangle2D rectλφ   = XRectangle2D.createFromExtremums(-126, -20, -120, 40);
         final Rectangle2D rectXY   = Envelopes.transform(transform,           rectλφ, null);
         final Rectangle2D rectBack = Envelopes.transform(transform.inverse(), rectXY, null);
-if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
         assertRectangleEquals(XRectangle2D.createFromExtremums(
-                160996.52, -2214294.03,
-                839003.48,  4432069.06), rectXY, PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
+                166070.28, -2214294.03,
+                833929.72,  4432069.06), rectXY, PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
         assertEquals(rectXY, Envelopes.transform(conversion, rectλφ, null));
         assertRectangleEquals(rectλφ, rectBack, 1.0, 0.05);
         /*
@@ -96,14 +103,14 @@ if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
         final GeneralEnvelope envelopeXY = Envelopes.transform(transform, envelopeλφ);
         envelopeXY.setCoordinateReferenceSystem(targetCRS);
         assertRectangleEquals(rectXY, envelopeXY.toRectangle2D(), PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
-        assertEquals(envelopeXY, Envelopes.transform(conversion, envelopeλφ));
+        assertTrue(envelopeXY.equals(Envelopes.transform(conversion, envelopeλφ), EPS, true));
 
         final GeneralEnvelope envelopeBack = Envelopes.transform(transform.inverse(), envelopeXY);
         envelopeBack.setCoordinateReferenceSystem(sourceCRS);
         assertRectangleEquals(rectBack, envelopeBack.toRectangle2D(), GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
 
         assertTrue("Transformed envelope should not be smaller than the original one.", envelopeBack.contains(envelopeλφ, true));
-        assertTrue("Final envelope should be only slightly bigger than the original.",  envelopeBack.equals(envelopeλφ, 0.9, false));
+        assertTrue("Final envelope should be only slightly bigger than the original.",  envelopeBack.equals(envelopeλφ, 1.0, false));
     }
 
     /**
@@ -114,9 +121,13 @@ if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
      */
     @Test
     public void testConversionOverPole() throws FactoryException, TransformException {
-        final ProjectedCRS   sourceCRS  = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_POLAR_STEREOGRAPHIC);
-        final Conversion     conversion = inverse(sourceCRS.getConversionFromBase());
-        final MathTransform2D transform = (MathTransform2D) conversion.getMathTransform();
+        final ProjectedCRS    sourceCRS      = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_POLAR_STEREOGRAPHIC);
+        final GeographicCRS   targetCRS      = sourceCRS.getBaseCRS();
+        final Conversion      conversion     = inverse(sourceCRS.getConversionFromBase());
+        final MathTransform2D transform      = (MathTransform2D) conversion.getMathTransform();
+        final MathTransform   transformNo2D  = new MathTransformWrapper(transform);
+        final Conversion      conversionNo2D = new DefaultConversion(conversion, sourceCRS, targetCRS, transformNo2D);
+        assertFalse(conversionNo2D.getMathTransform() instanceof MathTransform2D);
         /*
          * The rectangle to test, which contains the South pole.
          */
@@ -128,15 +139,18 @@ if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
          * Note that is doesn't include the South pole as we would expect.
          */
         Rectangle2D expected = XRectangle2D.createFromExtremums(
-                -178.49352310409273, -88.99136583196398,
-                 137.56220967463082, -40.905775004205864);
+                -179.1730692371806, -88.99136583196396,
+                 137.7672275747935, -40.90577500420587);
         /*
-         * Tests what we actually get.
+         * Tests what we actually get. First, test using the method working on MathTransform.
+         * Next, test again the same transform, but using the API on Envelope objects.   The
+         * 'transformNo2D' wrapper is a trick for preventing the Envelopes class to delegate
+         * the work to the transform(MathTransform2D, ...) method, since we already tested it
+         * just before.
          */
         Rectangle2D actual = Envelopes.transform(transform, rectangle, null);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertEquals("Same transform, using the API on Envelope objects.", actual,
-                Envelopes.transform(transform, new GeneralEnvelope(rectangle)).toRectangle2D());
+        assertRectangleEquals(actual, Envelopes.transform(transformNo2D, new GeneralEnvelope(rectangle)).toRectangle2D(), EPS, EPS);
         /*
          * Using the transform(CoordinateOperation, ...) method,
          * the singularity at South pole is taken in account.
@@ -144,8 +158,7 @@ if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
         expected = XRectangle2D.createFromExtremums(-180, -90, 180, -40.905775004205864);
         actual   = Envelopes.transform(conversion, rectangle, actual);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertEquals("Same transform, using the API on Envelope objects.", actual,
-                Envelopes.transform(conversion, new GeneralEnvelope(rectangle)).toRectangle2D());
+        assertRectangleEquals(actual, Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle)).toRectangle2D(), EPS, EPS);
         /*
          * Another rectangle containing the South pole, but this time the south
          * pole is almost in a corner of the rectangle
@@ -154,8 +167,7 @@ if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
         expected  = XRectangle2D.createFromExtremums(-180, -90, 180, -41.03163170198091);
         actual    = Envelopes.transform(conversion, rectangle, actual);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertEquals("Same transform, using the API on Envelope objects.", actual,
-                Envelopes.transform(conversion, new GeneralEnvelope(rectangle)).toRectangle2D());
+        assertRectangleEquals(actual, Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle)).toRectangle2D(), EPS, EPS);
         /*
          * Another rectangle with the South pole close to the border.
          * This test should execute the step #3 in the transform method code.
@@ -164,8 +176,7 @@ if (false) // FOLLOWING CHECK IS DISABLED FOR NOW
         expected  = XRectangle2D.createFromExtremums(-180, -90, 180, -64.3861643256928);
         actual    = Envelopes.transform(conversion, rectangle, actual);
         assertRectangleEquals(expected, actual, GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
-        assertEquals("Same transform, using the API on Envelope objects.", actual,
-                Envelopes.transform(conversion, new GeneralEnvelope(rectangle)).toRectangle2D());
+        assertRectangleEquals(actual, Envelopes.transform(conversionNo2D, new GeneralEnvelope(rectangle)).toRectangle2D(), EPS, EPS);
     }
 
     /**

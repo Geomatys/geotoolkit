@@ -499,7 +499,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * offset shall be applied. This means that projections that implement this method are performed
      * on a sphere or ellipse having a semi-major axis length of 1.
      * <p>
-     * In <A HREF="http://www.remotesensing.org/proj/">PROJ.4</A>, the same standardization,
+     * In <A HREF="http://trac.osgeo.org/proj/">PROJ.4</A>, the same standardization,
      * described above, is handled by {@code pj_fwd.c}. Therefore when porting projections
      * from PROJ.4, the forward transform equations can be used directly here with minimal
      * change.

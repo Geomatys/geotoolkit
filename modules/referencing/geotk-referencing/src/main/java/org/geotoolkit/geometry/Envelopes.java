@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.geometry;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -38,15 +39,15 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.referencing.operation.transform.DerivableTransform;
+import org.geotoolkit.internal.referencing.DerivableTransformAdapter;
 import org.geotoolkit.resources.Errors;
 
-import static java.lang.Math.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
 import static org.geotoolkit.internal.InternalUtilities.debugEquals;
@@ -170,6 +171,16 @@ public final class Envelopes extends Static {
             throws TransformException
     {
         ensureNonNull("transform", transform);
+        if (envelope == null) {
+            return null;
+        }
+        if (transform instanceof MathTransform2D && envelope.getDimension() == 2) {
+            final XRectangle2D tmp = XRectangle2D.createFromExtremums(
+                    envelope.getMinimum(0), envelope.getMinimum(1),
+                    envelope.getMaximum(0), envelope.getMaximum(1));
+            transform((MathTransform2D) transform, tmp, tmp);
+            return new GeneralEnvelope(tmp);
+        }
         return transform(transform, envelope, null);
     }
 
@@ -183,9 +194,6 @@ public final class Envelopes extends Static {
                                              GeneralDirectPosition targetPt)
             throws TransformException
     {
-        if (envelope == null) {
-            return null;
-        }
         if (transform.isIdentity()) {
             /*
              * Slight optimization: Just copy the envelope. Note that we need to set the CRS
@@ -207,15 +215,23 @@ public final class Envelopes extends Static {
          * Checks argument validity: envelope and math transform dimensions must be consistent.
          */
         final int sourceDim = transform.getSourceDimensions();
+        final int targetDim = transform.getTargetDimensions();
         if (envelope.getDimension() != sourceDim) {
             throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$2,
                       sourceDim, envelope.getDimension()));
         }
-        int coordinateNumber = 0;
-        GeneralEnvelope transformed = null;
         if (targetPt == null) {
-            targetPt = new GeneralDirectPosition(transform.getTargetDimensions());
+            targetPt = new GeneralDirectPosition(targetDim);
         }
+        /*
+         * Storage requirement. The value "3" below is because the following "while" loop
+         * use an index number in base 3 (see the comment inside the loop).
+         */
+        int coordinateIndex = 0;
+        GeneralEnvelope transformed = null;
+        final XMatrix[] derivatives = new XMatrix[(int) Math.round(Math.pow(3, sourceDim))];
+        final double[]  ordinates   = new double[derivatives.length * targetDim];
+        final DerivableTransform dt = DerivableTransformAdapter.wrap(transform);
         /*
          * Before to run the loops, we must initialize the coordinates to the minimal values.
          * This coordinates will be updated in the 'switch' statement inside the 'while' loop.
@@ -228,26 +244,32 @@ public final class Envelopes extends Static {
             /*
              * Transform a point and add the transformed point to the destination envelope.
              * Note that the very last point to be projected must be the envelope center.
+             * There is no need to calculate the derivative for that last point.
              */
-            if (targetPt != transform.transform(sourcePt, targetPt)) {
-                throw new UnsupportedImplementationException(transform.getClass());
+            if (coordinateIndex < derivatives.length - 1) {
+                derivatives[coordinateIndex] = dt.derivateAndTransform(sourcePt, targetPt, null);
+            } else {
+                final DirectPosition p = transform.transform(sourcePt, targetPt);
+                if (p != targetPt) { // Paranoiac check, but should never happen.
+                    targetPt.setLocation(p);
+                }
             }
+            System.arraycopy(targetPt.ordinates, 0, ordinates, coordinateIndex*targetDim, targetDim);
             if (transformed != null) {
                 transformed.add(targetPt);
             } else {
                 transformed = new GeneralEnvelope(targetPt, targetPt);
             }
             /*
-             * Get the next point's coordinates.  The 'coordinateNumber' variable should
-             * be seen as a number in base 3 where the number of digits is equal to the
-             * number of dimensions. For example, a 4-D space would have numbers ranging
-             * from "0000" to "2222" (numbers in base 3). The digits are then translated
-             * into minimal, central or maximal ordinates. The outer loop stops when the
-             * counter roll back to "0000".  Note that 'targetPt' must keep the value of
-             * the last projected point, which must be the envelope center identified by
-             * "2222" in the 4-D case.
+             * Get the next point coordinate. The 'coordinateIndex' variable is an index in base 3
+             * having a number of digits equals to the number of source dimensions.  For example a
+             * 4-D space have indexes ranging from "0000" to "2222" (numbers in base 3). The digits
+             * are then mapped to minimal (0), maximal (1) or central (2) ordinates. The outer loop
+             * stops when the counter roll back to "0000". Note that 'targetPt' must keep the value
+             * of the last projected point, which must be the envelope center identified by "2222"
+             * in the 4-D case.
              */
-            int n = ++coordinateNumber;
+            int n = ++coordinateIndex;
             for (int i=sourceDim; --i>=0;) {
                 switch (n % 3) {
                     case 0:  sourcePt.setOrdinate(i, envelope.getMinimum(i)); n /= 3; break;
@@ -257,6 +279,56 @@ public final class Envelopes extends Static {
                 }
             }
             break;
+        }
+        assert coordinateIndex == derivatives.length : coordinateIndex;
+        /*
+         * At this point we finished to build an envelope from all sampled positions. Now iterate
+         * over all points. For each point, iterate over all line segments from that point to a
+         * neighbor median point.  Use the derivate information for approximating the transform
+         * behavior in that area by a cubic curve. We can then find analytically the curve extremum.
+         *
+         * The same technic is applied in transform(MathTransform, Rectangle2D), except that in
+         * the Rectangle2D case the calculation was bundled right inside the main loop in order
+         * to avoid the need for storage.
+         */
+        for (coordinateIndex=0; coordinateIndex < derivatives.length; coordinateIndex++) {
+            final XMatrix D1 = derivatives[coordinateIndex];
+            if (D1 != null) {
+                int n=coordinateIndex, p=1;
+                for (int i=sourceDim; --i>=0; n/=3, p*=3) {
+                    final int r = n % 3;
+                    if (r != 2) { // Process only if we are not already located on the median along the dimension i.
+                        final int medianIndex = coordinateIndex + p*(2-r);
+                        final XMatrix D2 = derivatives[medianIndex];
+                        if (D2 != null) {
+                            final double xmin = envelope.getMinimum(i);
+                            final double xmax = envelope.getMaximum(i);
+                            final double x2   = envelope.getMedian (i);
+                            final double x1   = (r == 0) ? xmin : xmax;
+                            final int offset1 = targetDim * coordinateIndex;
+                            final int offset2 = targetDim * medianIndex;
+                            for (int j=0; j<targetDim; j++) {
+                                final Line2D.Double extremum = ShapeUtilities.cubicCurveExtremum(
+                                        x1, ordinates[offset1 + j], D1.getElement(j,i),
+                                        x2, ordinates[offset2 + j], D2.getElement(j,i));
+                                boolean isP2 = false;
+                                do { // Executed exactly twice, one for each point.
+                                    final double x = isP2 ? extremum.x2 : extremum.x1;
+                                    if (x > xmin && x < xmax) {
+                                        final double y = isP2 ? extremum.y2 : extremum.y1;
+                                        double ymin = transformed.getMinimum(j);
+                                        double ymax = transformed.getMaximum(j);
+                                        if (y < ymin) ymin = y;
+                                        if (y > ymax) ymax = y;
+                                        transformed.setRange(j, ymin, ymax);
+                                    }
+                                } while ((isP2 = !isP2) == true);
+                            }
+                        }
+                    }
+                }
+                derivatives[coordinateIndex] = null; // Let GC do its job earlier.
+            }
         }
         return transformed;
     }
@@ -628,6 +700,7 @@ public final class Envelopes extends Static {
         if (envelope == null) {
             return null;
         }
+        final DerivableTransform dt = DerivableTransformAdapter.wrap(transform);
         double xmin = Double.POSITIVE_INFINITY;
         double ymin = Double.POSITIVE_INFINITY;
         double xmax = Double.NEGATIVE_INFINITY;
@@ -636,6 +709,7 @@ public final class Envelopes extends Static {
          * Notation (as if we were applying a map projection, but this is not necessarily the case):
          *   - (λ,φ) are ordinate values before projection.
          *   - (x,y) are ordinate values after projection.
+         *   - D[00|01|10|11] are the ∂x/∂λ, ∂x/∂φ, ∂y/∂λ and ∂y/∂φ derivatives respectively.
          *   - Variables with indice 0 are for the very first point in iteration order.
          *   - Variables with indice 1 are for the values of the previous iteration.
          *   - Variables with indice 2 are for the current values in the iteration.
@@ -644,7 +718,6 @@ public final class Envelopes extends Static {
         double λ0=0, φ0=0, x0=0, y0=0;
         double λ1=0, φ1=0, x1=0, y1=0;
         XMatrix D0=null, D1=null, D2=null;
-        boolean disableDerivative = false;
         for (int i=0; i<=8; i++) {
             /*
              * Iteration order (center must be last):
@@ -670,20 +743,20 @@ public final class Envelopes extends Static {
             }
             point.x = λ2;
             point.y = φ2;
-            if (!disableDerivative) try {
+            double x2, y2;
+            if (i != 8) {
+                final XMatrix recycle = D1;
                 D1 = D2;
-                if (i != 8) {
-                    D2 = MatrixFactory.toXMatrix(transform.derivative(point));
-                    D2.normalizeColumns();
-                }
-            } catch (TransformException e) {
-                Logging.recoverableException(Envelopes.class, "transform", e);
-                disableDerivative = true;
-                D0 = D1 = D2 = null;
+                D2 = dt.derivateAndTransform(point, point, recycle);
+                x2 = point.x;
+                y2 = point.y;
+            } else {
+                D1 = D2;
+                D2 = D0; // No need to compute a new derivative.
+                final Point2D target = transform.transform(point, point);
+                x2 = target.getX();
+                y2 = target.getY();
             }
-            final Point2D target = transform.transform(point, point);
-            double x2 = target.getX();
-            double y2 = target.getY();
             if (x2 < xmin) xmin = x2;
             if (x2 > xmax) xmax = x2;
             if (y2 < ymin) ymin = y2;
@@ -694,45 +767,62 @@ public final class Envelopes extends Static {
                 D0=D2;
             }
             /*
-             * The following block is a copy of the ProjectedPathIterator.transformSegment(...)
-             * method, simplified for the case where the line segments are either horizontal or
-             * vertical.
+             * At this point, we expanded the rectangle using the projected points. Now try
+             * to use the information provided by derivatives at those points, if available.
+             * For the following block, notation is:
+             *
+             *   - s  are ordinate values in the source space (λ or φ)
+             *   - t  are ordinate values in the target space (x or y)
+             *
+             * They are not necessarily in the same dimension. For example would could have
+             * s=λ while t=y. This is typically the case when inspecting the top or bottom
+             * line segment of the rectangle.
+             *
+             * The same technic is also applied in the transform(MathTransform, Envelope) method.
+             * The general method is more "elegant", at the cost of more storage requirement.
              */
-if (false) // ALL THE BLOCK IS DISABLED FOR NOW
             if (D1 != null && D2 != null) {
                 if (i == 8) { // Close the iteration with the first point.
                     λ2=λ0; x2=x0;
                     φ2=φ0; y2=y0;
-                    D2=D0;
                 }
-                final double Δ;
-                final int dim;
+                final int srcDim;
+                final double s1, s2; // Ordinate values in source space (before projection)
                 switch (i) {
-                    case 1: case 2: case 5: case 6: {assert φ2==φ1; Δ = λ2-λ1; dim = 0; break;} // Horizontal segment
-                    case 3: case 4: case 7: case 8: {assert λ2==λ1; Δ = φ2-φ1; dim = 1; break;} // Vertical segment
+                    case 1: case 2: case 5: case 6: {assert φ2==φ1; srcDim=0; s1=λ1; s2=λ2; break;} // Horizontal segment
+                    case 3: case 4: case 7: case 8: {assert λ2==λ1; srcDim=1; s1=φ1; s2=φ2; break;} // Vertical segment
                     default: throw new AssertionError(i);
                 }
-                final double α = hypot(x2-x1, y2-y1) / (3*abs(Δ));
-                for (int j=0; j<2; j++) {
-                    final double Δ1 = Δ*D1.getElement(j, dim);
-                    final double Δ2 = Δ*D2.getElement(j, dim);
-                    double c1, c2;
-                    if (j == 0) {c1=x1; c2=x2;}
-                    else        {c1=y1; c2=y2;}
-                    c1 += Δ1*α;
-                    c2 -= Δ2*α;
-                    if (c1 > c2) {
-                        final double t = c1;
-                        c1 = c2; c2 = t;
-                    }
-                    if (j == 0) {
-                        if (c1 < xmin) xmin = c1;
-                        if (c2 > xmax) xmax = c2;
-                    } else {
-                        if (c1 < ymin) ymin = c1;
-                        if (c2 > ymax) ymax = c2;
-                    }
-                }
+                final double min, max;
+                if (s1 < s2) {min=s1; max=s2;}
+                else         {min=s2; max=s1;}
+                int tgtDim = 0;
+                do { // Executed exactly twice, for dimensions 0 and 1 in the projected space.
+                    final Line2D.Double extremum = ShapeUtilities.cubicCurveExtremum(
+                            s1, (tgtDim == 0) ? x1 : y1, D1.getElement(tgtDim, srcDim),
+                            s2, (tgtDim == 0) ? x2 : y2, D2.getElement(tgtDim, srcDim));
+                    /*
+                     * At this point we found the extremum of the projected line segment
+                     * using a cubic curve t = A + Bs + Cs² + Ds³ approximation.  Before
+                     * to add those extremum into the projected bounding box, we need to
+                     * ensure that the source ordinate is inside the the original
+                     * (unprojected) bounding box.
+                     */
+                    boolean isP2 = false;
+                    do { // Executed exactly twice, one for each point.
+                        final double se = isP2 ? extremum.x2 : extremum.x1;
+                        if (se > min && se < max) {
+                            final double te = isP2 ? extremum.y2 : extremum.y1;
+                            if (tgtDim == 0) {
+                                if (te < xmin) xmin = te;
+                                if (te > xmax) xmax = te;
+                            } else {
+                                if (te < ymin) ymin = te;
+                                if (te > ymax) ymax = te;
+                            }
+                        }
+                    } while ((isP2 = !isP2) == true);
+                } while (++tgtDim == 1);
             }
             λ1=λ2; x1=x2;
             φ1=φ2; y1=y2;
@@ -743,7 +833,7 @@ if (false) // ALL THE BLOCK IS DISABLED FOR NOW
         } else {
             destination = XRectangle2D.createFromExtremums(xmin, ymin, xmax, ymax);
         }
-        System.out.println(destination);
+        assert isConsistent(transform, envelope, destination) : destination;
         return destination;
     }
 
@@ -957,6 +1047,44 @@ if (false) // ALL THE BLOCK IS DISABLED FOR NOW
             recoverableException(warning);
         }
         return destination;
+    }
+
+    /**
+     * Re-transform the same rectangle, but using the more general algorithm working on envelopes.
+     * Because the mathematical idea are the same even if the implementations are quite different,
+     * the result should be close to identical (minus rounding error). This method is used for
+     * assertions only.
+     * <p>
+     * Current version does not yet work with {@link CoordinateOperation}, but this may be added
+     * in a future version.
+     *
+     * @param  transform The math transform used, or {@code null} if it was an operation instead.
+     * @param  operation The operation used, or {@code null} if it was a math transform instead.
+     * @param  source    The original rectangle to transform.
+     * @param  target    The transformation result.
+     * @return If the result is the same, minus rounding errors.
+     * @throws TransformException Should not occurs because we are re-projecting the same points.
+     */
+    private static boolean isConsistent(final MathTransform transform,
+            final Rectangle2D source, final Rectangle2D target) throws TransformException
+    {
+        if (target == source) {
+            // Can't perform the check if the destination overwrote the source.
+            return true;
+        }
+        final GeneralEnvelope expected = new GeneralEnvelope(target);
+        final GeneralEnvelope envelope = new GeneralEnvelope(source);
+        final GeneralEnvelope result   = transform(transform, envelope, null);
+        if (target instanceof Rectangle2D.Float) {
+            for (int i=result.getDimension(); --i>=0;) {
+                result.setRange(i, (float) result.getMinimum(i), (float) result.getMaximum(i));
+            }
+        } else if (!(target instanceof Rectangle2D.Double || target instanceof XRectangle2D)) {
+            // If we are not sure that the rectangle has 'float' or 'double' precision,
+            // conservatively returns 'true'.
+            return true;
+        }
+        return expected.equals(result, 1E-9, true);
     }
 
     /**
