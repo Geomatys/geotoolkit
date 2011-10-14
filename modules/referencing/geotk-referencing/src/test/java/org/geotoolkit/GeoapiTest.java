@@ -77,15 +77,6 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  */
 public final strictfp class GeoapiTest extends TestSuite implements ImplementationDetails, FactoryFilter {
     /**
-     * The configuration map, which lists the tests to disable.
-     */
-    private static final Properties CONFIGURATION = new Properties();
-    static {
-        SupportedOperation.unsupported(CONFIGURATION,
-                SupportedOperation.UNOFFICIAL_EPSG_CODES);
-    }
-
-    /**
      * Fix the authority factories to use for testing purpose. We do not rely on the
      * {@code META-INF/services/} discovery mechanism because the same implementation
      * is often used for many services.
@@ -135,7 +126,7 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
      */
     @Override
     public Properties configuration(final Factory... factories) {
-        return CONFIGURATION;
+        return null;
     }
 
     /**

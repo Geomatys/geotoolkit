@@ -516,12 +516,12 @@ public final class ShapeUtilities extends Static {
      * Finds the extremum of the unique cubic curve which fit the two given points and derivatives.
      * First, this method finds the A, B, C and D coefficients for the following equation:
      *
-     * <center><var>y</var> = A + B<var>x</var> + C<var>x</var><sup>2</sup> + D<var>x</var><sup>3</sup></center>
+     * <p><center><var>y</var> = A + B<var>x</var> + C<var>x</var><sup>2</sup> + D<var>x</var><sup>3</sup></center></p>
      *
      * Next, this method finds the extremum by finding the (<var>x</var>,<var>y</var>) values
      * that satisfy the following equation (which is the derivative of the above equation):
      *
-     * <center>B + 2C<var>x</var> + 3D<var>x</var><sup>2</sup> == 0</center>
+     * <p><center>B + 2C<var>x</var> + 3D<var>x</var><sup>2</sup> = 0</center></p>
      *
      * A cubic curve can have two extremum, which are returned in a {@link Line2D} construct in
      * no particular order. The length of the returned line is the distance separating the two

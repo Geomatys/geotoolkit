@@ -833,7 +833,8 @@ public final class Envelopes extends Static {
         } else {
             destination = XRectangle2D.createFromExtremums(xmin, ymin, xmax, ymax);
         }
-        assert isConsistent(transform, envelope, destination) : destination;
+        String message;
+        assert (message = checkConsistency(transform, envelope, destination)) == null : message;
         return destination;
     }
 
@@ -1062,15 +1063,15 @@ public final class Envelopes extends Static {
      * @param  operation The operation used, or {@code null} if it was a math transform instead.
      * @param  source    The original rectangle to transform.
      * @param  target    The transformation result.
-     * @return If the result is the same, minus rounding errors.
+     * @return {@code null} if the result is the same, minus rounding errors.
      * @throws TransformException Should not occurs because we are re-projecting the same points.
      */
-    private static boolean isConsistent(final MathTransform transform,
+    private static String checkConsistency(final MathTransform transform,
             final Rectangle2D source, final Rectangle2D target) throws TransformException
     {
         if (target == source) {
             // Can't perform the check if the destination overwrote the source.
-            return true;
+            return null;
         }
         final GeneralEnvelope expected = new GeneralEnvelope(target);
         final GeneralEnvelope envelope = new GeneralEnvelope(source);
@@ -1082,9 +1083,12 @@ public final class Envelopes extends Static {
         } else if (!(target instanceof Rectangle2D.Double || target instanceof XRectangle2D)) {
             // If we are not sure that the rectangle has 'float' or 'double' precision,
             // conservatively returns 'true'.
-            return true;
+            return null;
         }
-        return expected.equals(result, 1E-9, true);
+        if (expected.equals(result, 1E-9, true)) {
+            return null;
+        }
+        return "Same input, inconsistent outputs:\n" + envelope + '\n' + expected + '\n' + result + '\n';
     }
 
     /**

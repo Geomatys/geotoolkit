@@ -35,12 +35,11 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
 
 
 /**
- * The base class of math transform wrappers. Despite being a concrete class with a public
- * constructor, there is no point to instantiate directly this base class. Instantiate one
- * of the subclasses instead.
+ * The base class of math transform wrappers. Despite being a concrete class, there is no
+ * point to instantiate directly this base class. Instantiate one of the subclasses instead.
  * <p>
- * The only exception for instantiation directly this base class is when we want to hide the
- * fact that a transform implement the {@link org.opengis.referencing.operation.MathTransform2D}
+ * <strong>Do not implement {@code MathTransform2D} in this base class<strong>. This wrapper is
+ * sometime used for hiding the fact that a transform implements the {@code MathTransform2D}
  * interface, typically for testing a different code path in a JUnit test.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -68,7 +67,7 @@ public class MathTransformWrapper implements MathTransform, Formattable, Seriali
      *
      * @param transform The math transform created by provider.
      */
-    public MathTransformWrapper(final MathTransform transform) {
+    protected MathTransformWrapper(final MathTransform transform) {
         ArgumentChecks.ensureNonNull("transform", transform);
         this.transform = transform;
     }
@@ -159,7 +158,7 @@ public class MathTransformWrapper implements MathTransform, Formattable, Seriali
      * Returns the inverse of this math transform.
      */
     @Override
-    public final MathTransform inverse() throws NoninvertibleTransformException {
+    public MathTransform inverse() throws NoninvertibleTransformException {
         return transform.inverse();
     }
 

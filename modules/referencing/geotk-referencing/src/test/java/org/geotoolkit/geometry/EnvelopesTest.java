@@ -25,7 +25,6 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -35,7 +34,6 @@ import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.referencing.MathTransformWrapper;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.CRS_Test;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -43,6 +41,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefaultConversion;
+import org.geotoolkit.referencing.operation.transform.MathTransformNo2D;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -76,10 +75,11 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
      */
     @Test
     public void compareRectangleAndEnvelopeConversions() throws FactoryException, TransformException {
-        final ProjectedCRS    targetCRS  = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_UTM_10N);
-        final GeographicCRS   sourceCRS  = targetCRS.getBaseCRS();
-        final Conversion      conversion = targetCRS.getConversionFromBase();
-        final MathTransform2D transform  = (MathTransform2D) conversion.getMathTransform();
+        final ProjectedCRS      targetCRS     = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_UTM_10N);
+        final GeographicCRS     sourceCRS     = targetCRS.getBaseCRS();
+        final Conversion        conversion    = targetCRS.getConversionFromBase();
+        final MathTransform2D   transform     = (MathTransform2D) conversion.getMathTransform();
+        final MathTransformNo2D transformNo2D = new MathTransformNo2D(transform);
         assertFalse(transform.isIdentity());
         /*
          * Transforms rectangles using MathTransform. Opportunistly check that the
@@ -100,12 +100,12 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         envelopeλφ.setCoordinateReferenceSystem(sourceCRS);
         assertRectangleEquals(rectλφ, envelopeλφ.toRectangle2D(), GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
 
-        final GeneralEnvelope envelopeXY = Envelopes.transform(transform, envelopeλφ);
+        final GeneralEnvelope envelopeXY = Envelopes.transform(transformNo2D, envelopeλφ);
         envelopeXY.setCoordinateReferenceSystem(targetCRS);
         assertRectangleEquals(rectXY, envelopeXY.toRectangle2D(), PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
         assertTrue(envelopeXY.equals(Envelopes.transform(conversion, envelopeλφ), EPS, true));
 
-        final GeneralEnvelope envelopeBack = Envelopes.transform(transform.inverse(), envelopeXY);
+        final GeneralEnvelope envelopeBack = Envelopes.transform(transformNo2D.inverse(), envelopeXY);
         envelopeBack.setCoordinateReferenceSystem(sourceCRS);
         assertRectangleEquals(rectBack, envelopeBack.toRectangle2D(), GEOGRAPHIC_CENTIMETRE, GEOGRAPHIC_CENTIMETRE);
 
@@ -121,12 +121,12 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
      */
     @Test
     public void testConversionOverPole() throws FactoryException, TransformException {
-        final ProjectedCRS    sourceCRS      = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_POLAR_STEREOGRAPHIC);
-        final GeographicCRS   targetCRS      = sourceCRS.getBaseCRS();
-        final Conversion      conversion     = inverse(sourceCRS.getConversionFromBase());
-        final MathTransform2D transform      = (MathTransform2D) conversion.getMathTransform();
-        final MathTransform   transformNo2D  = new MathTransformWrapper(transform);
-        final Conversion      conversionNo2D = new DefaultConversion(conversion, sourceCRS, targetCRS, transformNo2D);
+        final ProjectedCRS      sourceCRS      = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_POLAR_STEREOGRAPHIC);
+        final GeographicCRS     targetCRS      = sourceCRS.getBaseCRS();
+        final Conversion        conversion     = inverse(sourceCRS.getConversionFromBase());
+        final MathTransform2D   transform      = (MathTransform2D) conversion.getMathTransform();
+        final MathTransformNo2D transformNo2D  = new MathTransformNo2D(transform);
+        final Conversion        conversionNo2D = new DefaultConversion(conversion, sourceCRS, targetCRS, transformNo2D);
         assertFalse(conversionNo2D.getMathTransform() instanceof MathTransform2D);
         /*
          * The rectangle to test, which contains the South pole.
