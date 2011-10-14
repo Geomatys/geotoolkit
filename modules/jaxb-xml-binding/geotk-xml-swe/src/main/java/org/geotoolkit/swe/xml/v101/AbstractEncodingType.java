@@ -102,4 +102,10 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
         return false;
     }
     
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName());
+        sb.append("]\n").append("id").append(id).append('\n');
+        return sb.toString();
+    }
 }

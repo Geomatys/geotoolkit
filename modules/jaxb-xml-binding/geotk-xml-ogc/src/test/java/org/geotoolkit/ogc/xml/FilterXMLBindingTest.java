@@ -17,8 +17,10 @@
 package org.geotoolkit.ogc.xml;
 
 // J2SE dependencies
+import org.opengis.filter.sort.SortOrder;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,8 +34,12 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.ObjectFactory;
 import org.geotoolkit.ogc.xml.v110.OverlapsType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.ogc.xml.v110.SortOrderType;
+import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -123,7 +129,28 @@ public class FilterXMLBindingTest {
         LOGGER.log(Level.FINER, "expected: {0}", expResult);
         assertEquals(expResult, result);
 
+        
+        
+        ObjectFactory factory = new ObjectFactory();
+        
+        
+        String[] arr = new String[2];
+        arr[0] = "boby";
+        arr[1] = "DESC";
 
+        SortPropertyType sp = new SortPropertyType(arr[0], SortOrderType.valueOf(arr[1]));
+        SortByType sort = new SortByType(Arrays.asList(sp));
+        
+        JAXBElement<SortByType> jbSort = factory.createSortBy(sort);
+        
+        //marshaller.marshal(jbSort, System.out);
+        
+        sp = new SortPropertyType(arr[0], SortOrder.valueOf(arr[1]));
+        sort = new SortByType(Arrays.asList(sp));
+        
+        jbSort = factory.createSortBy(sort);
+        
+        //marshaller.marshal(jbSort, System.out);
     }
 
     /**

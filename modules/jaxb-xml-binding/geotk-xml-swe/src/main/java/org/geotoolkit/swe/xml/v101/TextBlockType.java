@@ -135,8 +135,8 @@ public class TextBlockType extends AbstractEncodingType implements TextBlock {
      */
     @Override
     public String toString() {
-        return '[' + this.getClass().getSimpleName() + "]:" + super.toString()+ " " + this.blockSeparator 
-                + '|' + this.decimalSeparator + '|' + this.tokenSeparator;
+        return super.toString()+ " " + this.blockSeparator 
+        + '|' + this.decimalSeparator + '|' + this.tokenSeparator;
     }
     
     

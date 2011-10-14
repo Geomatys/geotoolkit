@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -53,6 +56,8 @@ import org.opengis.filter.sort.SortOrder;
 })
 public class SortPropertyType implements SortBy {
 
+    private static final Logger LOGGER = Logging.getLogger(SortByType.class);
+    
     @XmlElement(name = "PropertyName", required = true)
     private PropertyNameType propertyName;
     @XmlElement(name = "SortOrder")
@@ -70,10 +75,13 @@ public class SortPropertyType implements SortBy {
      */
     public SortPropertyType(final String propertyName, final SortOrder sortOrder) {
         this.propertyName = new PropertyNameType(propertyName);
-        if (sortOrder != null && sortOrder.equals(SortOrder.ASCENDING))
+        if (sortOrder != null && sortOrder.equals(SortOrder.ASCENDING)) {
             this.sortOrder = SortOrderType.ASC;
-        else if (sortOrder != null && sortOrder.equals(SortOrder.DESCENDING))
+        } else if (sortOrder != null && sortOrder.equals(SortOrder.DESCENDING)) {
             this.sortOrder = SortOrderType.DESC;
+        } else if (sortOrder != null){
+            LOGGER.log(Level.WARNING, "unexpected SortOrder:{0}.\nexpecting for ASCENDING or DESCENDING", sortOrder);
+        }
     }
     
     /**
