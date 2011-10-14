@@ -30,7 +30,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -54,7 +53,7 @@ import org.geotoolkit.util.logging.Logging;
  * @author Martin Desruisseaux (IRD)
  */
 public abstract class AbstractReferencedGraphic extends AbstractGraphic implements ReferencedGraphic {
-    
+        
     /**
      * An envelope that completly encloses the graphic. Note that there is no guarantee
      * that the returned envelope is the smallest bounding box that encloses the graphic,
@@ -294,7 +293,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                         copy.getCoordinateReferenceSystem(), 
                         candidate.getCoordinateReferenceSystem(), true);
                 final GeneralEnvelope projEnv = CRS.transform(trs,copy);
-                return projEnv.intersects(candidate, true);
+                return intersects(projEnv, candidate);
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, "",ex);
                 //we failed this way, this may happen since reprojection from one
@@ -303,6 +302,8 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                 getLogger().log(Level.WARNING, "",ex);
                 //we failed this way, this may happen since reprojection from one
                 //crs to the other is not always possible.
+            }catch (IllegalStateException ex) {
+                getLogger().log(Level.FINE, "Envelope contained an NaN value, skipping intersect test.");
             }
             
             //We could not reproject the envelope one way, try the other way
@@ -312,7 +313,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                         copy.getCoordinateReferenceSystem(), 
                         true);
                 final GeneralEnvelope projEnv = CRS.transform(trs,candidate);
-                return projEnv.intersects(copy, true);
+                return intersects(projEnv, copy);
             } catch (FactoryException ex) {
                 getLogger().log(Level.WARNING, "",ex);
                 //we failed this way, this may happen since reprojection from one
@@ -321,6 +322,8 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
                 getLogger().log(Level.WARNING, "",ex);
                 //we failed this way, this may happen since reprojection from one
                 //crs to the other is not always possible.
+            }catch (IllegalStateException ex) {
+                getLogger().log(Level.FINE, "Envelope contained an NaN value, skipping intersect test.");
             }
             //every reprojection failed, we assume we can paint the graphic
             //in such an area (the symbolizer renderer should take care of the problem,
@@ -328,6 +331,22 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
             return true;
         }
                
+    }
+    
+    /**
+     * A envelope intersection test which raise an error if an envelope value is NaN
+     */
+    private static boolean intersects(GeneralEnvelope reference, Envelope candidate) throws IllegalStateException{
+        
+        for(int i=0,n=reference.getDimension(); i<n; i++){
+            double min = reference.getMinimum(i);
+            double max = reference.getMaximum(i);
+            if(Double.isNaN(min) || Double.isNaN(max)){
+                throw new IllegalStateException("NaN value in envelope.");
+            }            
+        }
+        
+        return reference.intersects(candidate, true);        
     }
     
     /**
