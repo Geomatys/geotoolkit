@@ -22,16 +22,12 @@ import java.io.IOException;
 import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URISyntaxException;
 import java.util.jar.Pack200;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
-import java.awt.RenderingHints;
-import javax.sql.DataSource;
 
 import com.sun.star.lang.XSingleServiceFactory;
 import com.sun.star.lang.XMultiServiceFactory;
@@ -165,22 +161,7 @@ public final class Registration implements FilenameFilter {
             final XMultiServiceFactory factories,
             final XRegistryKey         registry) throws URISyntaxException, IOException
     {
-        // First, ensure that HSQL is in the classpath.
-        File hsqldb = null;
-        if (!System.getProperty("java.class.path", "").contains(Configuration.HSQL_JAR)) try {
-            hsqldb = Configuration.setMoreJavaClasspathURLs(factories);
-        } catch (Throwable e) {
-            // We can't do anything about that... (I have not yet found how to
-            // create an OpenOffice.org dialog box for reporting errors to user).
-            unexpectedException(Configuration.class, "setMoreJavaClasspathURLs", e);
-        }
         ensureInstalled();
-        if (hsqldb != null) try {
-            setEpsgDataSource(hsqldb);
-        } catch (Throwable e) {
-            // Again, can't do anything about that...
-            unexpectedException(Registration.class, "setEpsgDataSource", e);
-        }
         if (implementation.equals(org.geotoolkit.openoffice.geoapi.Referencing.class.getName())) {
             return FactoryHelper.getServiceFactory(org.geotoolkit.openoffice.geoapi.Referencing.class,
                     org.geotoolkit.openoffice.geoapi.Referencing.__serviceName, factories, registry);
@@ -222,39 +203,5 @@ public final class Registration implements FilenameFilter {
         final String cn = classe.getName();
         return FactoryHelper.writeRegistryServiceInfo(cn, serviceName, registry)
             && FactoryHelper.writeRegistryServiceInfo(cn, Formulas.ADDIN_SERVICE, registry);
-    }
-
-    /**
-     * Forces a {@link DataSource} for the EPSG factory. This method is invoked when the HSQL
-     * driver has not been found on the classpath. In such case, we need to create a URL class
-     * loader in order to get the HSQL driver bundled in the OpenOffice.org distribution.
-     *
-     * @param  hsqldb The {@code hsqldb.jar} file.
-     * @throws Exception To many exceptions for declaring all of them.
-     */
-    static void setEpsgDataSource(final File hsqldb) throws Exception {
-        final String pathToEPSG = (String)
-                Class.forName("org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory")
-                     .getMethod("getDefaultURL", (Class<?>[]) null)
-                     .invoke(null, (Object[]) null);
-        ClassLoader loader = Registration.class.getClassLoader();
-        if (hsqldb != null) {
-            loader = new URLClassLoader(new URL[] {hsqldb.toURI().toURL()}, loader);
-        }
-        Class<?> classe;
-        try {
-            classe = Class.forName("org.hsqldb.jdbc.jdbcDataSource", true, loader); // HSQL 1.8.0.8
-        } catch (ClassNotFoundException e) {
-            classe = Class.forName("org.hsqldb.jdbc.JDBCDataSource", true, loader); // HSQL 2.2.6
-        }
-        final DataSource ds = (DataSource) classe.newInstance();
-        classe.getMethod("setDatabase", String.class).invoke(ds, pathToEPSG);
-        classe.getMethod("setUser", String.class).invoke(ds, "sa");
-        /*
-         * At this point, the data source is configured. Now set the Geotk hints.
-         */
-        classe = Class.forName("org.geotoolkit.factory.Hints");
-        classe.getMethod("putSystemDefault", RenderingHints.Key.class, Object.class)
-              .invoke(null, classe.getField("EPSG_DATA_SOURCE").get(null), ds);
     }
 }
