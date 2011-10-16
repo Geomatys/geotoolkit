@@ -2,50 +2,27 @@
 
 <html>
   <head>
-    <title>Installation d'un composant Geotoolkit.org pour OpenOffice.org 3.1</title>
+    <title>Installation d'un composant Geotoolkit.org pour LibreOffice/OpenOffice.org</title>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
   </head>
   <body>
-    <h1>Installation d'un composant Geotoolkit.org pour OpenOffice.org 3.1</h1>
+    <h1>Installation d'un composant Geotoolkit.org pour LibreOffice/OpenOffice.org</h1>
     <p align="justify">Cette page décrit les outils nécessaires au fonctionnement de l'extension
-    Geotk pour OpenOffice, ainsi que les étapes à suivre pour installer cette extension. La
-    <A HREF="index.html">page d'introduction</A> donne un aperçu des fonctionnalités apportées.
+    Geotk pour <a href="http://www.libreoffice.org">LibreOffice</a> ou <a href="http://fr.openoffice.org">OpenOffice.org</a>,
+    ainsi que les étapes à suivre pour installer cette extension.
+    La <A HREF="index.html">page d'introduction</A> donne un aperçu des fonctionnalités apportées.
     Le <A HREF="referencing.html">guide de l'utilisateur</A> décrit chacune de ces fonctions.<p>
 
-    <table border="1" cellpadding="6" bgcolor="ghostwhite">
-    <tr bgcolor="lightblue">
-      <th nowrap>Composante</th>
-      <th nowrap>Nom du fichier</th>
-      <th nowrap>Taille</th>
-      <th nowrap>Téléchargement</th>
-    </tr>
-    <tr>
-      <td><b><cite>Add-in</cite> Geotk pour OpenOffice</b></td>
-      <td><code>geotk.oxt</code></td>
-      <td align="right">3&nbsp;922 ko</td>
-      <td><a href="http://hudson.geomatys.com/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt">Télécharger</a></td>
-    </tr>
-    <tr>
-      <td><b>Exemple de feuille de calcul</b></td>
-      <td><code>referencing.ods</code></td>
-      <td align="right">27 ko</td>
-      <td><a href="downloads/referencing.ods">Télécharger</a></td>
-    </tr>
-    </table>
-
-    <p>Le reste de cette page présente les sujets suivants:</p>
+    <p>Contenue cette page:</p>
     <ul>
-      <li><a href="#requirements">Pré requis</a></li>
+      <li><a href="#requirements">Pré-requis</a></li>
+      <li><a href="#download">Téléchargement</a></li>
       <li><a href="#install">Installation</a></li>
       <li><a href="#troubleshooting">Résolution de problèmes</a></li>
     </ul>
 
     <p>&nbsp</p>
-    <hr>
-    <p>&nbsp</p>
-    <h2><a name="requirements">Pré requis</a></h2>
-    <p align="justify">Les logiciels suivants doivent être installés au préalable. Tous sont gratuits
-    et l'enregistrement du nom, adresse de courriel, <cite>etc.</cite> ne sont pas obligatoire.</p>
+    <h2><a name="requirements">Pré-requis</a></h2>
     <table border="1" cellpadding="6" bgcolor="ghostwhite">
     <tr bgcolor="lightblue">
       <th nowrap>Logiciel</th>
@@ -57,9 +34,28 @@
     </tr>
     <tr>
       <td nowrap><b>Java Runtime Environment (JRE)</b><br>version 6 ou ultérieure</td>
-      <td nowrap><A HREF="http://java.sun.com/javase/downloads/">http://java.sun.com/javase/downloads/</A></td>
+      <td nowrap><A HREF="http://www.oracle.com/technetwork/java/javase/downloads/">http://www.oracle.com/technetwork/java/javase/downloads/</A></td>
     </table>
 
+    <p>&nbsp</p>
+    <h2><a name="download">Téléchargement</a></h2>
+    <table border="1" cellpadding="6" bgcolor="ghostwhite">
+    <tr bgcolor="lightblue">
+      <th nowrap>Composante</th>
+      <th nowrap>Nom du fichier</th>
+      <th nowrap>Téléchargement</th>
+    </tr>
+    <tr>
+      <td><b><cite>Add-in</cite> Geotk pour OpenOffice</b></td>
+      <td><code>geotk.oxt</code></td>
+      <td><a href="http://hudson.geomatys.com/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt">Télécharger</a></td>
+    </tr>
+    <tr>
+      <td><b>Exemple de feuille de calcul</b></td>
+      <td><code>referencing.ods</code></td>
+      <td><a href="downloads/referencing.ods">Télécharger</a></td>
+    </tr>
+    </table>
 
     <p>&nbsp;</p>
     <h2><a name="install">Installation de l'extension</a></h2>
@@ -116,13 +112,6 @@
     informations sur le déroulement de l'exécution du programme. Les événements de classe
     <code>org.geotoolkit.openoffice</code> contiennent des informations se rapportant plus spécifiquement au
     pont Geotk-OpenOffice. La section <cite>Message</cite> contient quelques détails sur la cause de
-    l'erreur. Si elle est suivit d'une clause <cite>ClassNotFoundError</cite>, il est probable qu'un des
-    <a href="#requirements">pré requis</a> n'a pas été trouvé (par exemple le fichier <code>vecmath.jar</code>).
-    Si la clause est <cite>NoSuchIdentifierException</cite>, alors il est possible que les formules soient utilisées
-    avec des codes EPSG qui n'ont pas été trouvées dans la base de données.</p>
-
-    <p align="justify">Nous sommes conscient que ce fichier paraît assez insipide à lire. Il s'adresse
-    davantage aux développeurs qu'aux utilisateurs. En cas de rapport d'erreur, les informations qu'il
-    contient peuvent aider grandement au déboguage.</p>
+    l'erreur.</p>
   </body>
 </html>
