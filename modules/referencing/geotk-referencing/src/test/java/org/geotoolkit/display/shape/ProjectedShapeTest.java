@@ -18,10 +18,13 @@
 package org.geotoolkit.display.shape;
 
 import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
-
 import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.IllegalPathStateException;
+
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -56,16 +59,16 @@ public final strictfp class ProjectedShapeTest extends ShapeTestBase {
      * the shape in the test viewer. This method also set the {@link #projection} to the resulting
      * concatenated transform.
      */
-    private Shape createReferenceShape(Shape shape, MathTransform2D tr) throws TransformException {
-        shape = tr.createTransformedShape(shape);
-        Rectangle2D bounds = shape.getBounds2D();
+    private Shape createReferenceShape(final Shape shape, MathTransform2D tr) throws TransformException {
+        final Path2D path = transform(shape, tr);
+        Rectangle2D bounds = path.getBounds2D();
         final AffineTransform adjust = AffineTransform.getTranslateInstance(SHAPE_X, SHAPE_Y);
         adjust.scale(2*SHAPE_WIDTH / bounds.getWidth(), 2*SHAPE_HEIGHT / bounds.getHeight());
         adjust.translate(-bounds.getX(), -bounds.getY());
-        shape = adjust.createTransformedShape(shape);
+        path.transform(adjust);
         tr = ConcatenatedTransform.create(tr, (MathTransform2D) ProjectiveTransform.create(adjust));
         projection = tr;
-        return shape;
+        return path;
     }
 
     /**
@@ -89,5 +92,63 @@ public final strictfp class ProjectedShapeTest extends ShapeTestBase {
         final Shape reference = createReferenceShape(path, (MathTransform2D) crs.getConversionFromBase().getMathTransform());
         final Shape target = ProjectedShape.wrap(path, projection);
         show(target, reference, false);
+    }
+
+    /**
+     * Creates a transformed shape by sampling an arbitrary amount of point on each line segment.
+     * This shape is used as a reference for comparison with clever shapes, computed from cubic
+     * approximation or other formulas. This method is not intended to be efficient.
+     *
+     * @param  shape The shape to transform.
+     * @param  mt The math transform to apply on the shape.
+     * @return The transformed shape.
+     */
+    public static Path2D transform(final Shape shape, final MathTransform2D mt) {
+        final double flatness = ShapeUtilities.getFlatness(shape);
+        final Path2D.Double path = new Path2D.Double();
+        final PathIterator it = shape.getPathIterator(null, flatness);
+        final double[] coords = new double[6];
+        double x0=Double.NaN, y0=Double.NaN;
+        try {
+            while (!it.isDone()) {
+                final int code = it.currentSegment(coords);
+                switch (code) {
+                    case PathIterator.SEG_CLOSE: {
+                        path.closePath();
+                        break;
+                    }
+                    case PathIterator.SEG_MOVETO: {
+                        x0 = coords[0];
+                        y0 = coords[1];
+                        mt.transform(coords, 0, coords, 0, 1);
+                        path.moveTo(coords[0], coords[1]);
+                        break;
+                    }
+                    case PathIterator.SEG_LINETO: {
+                        final double x = coords[0];
+                        final double y = coords[1];
+                        double dx = x - x0;
+                        double dy = y - y0;
+                        final int n = Math.max(1, (int) Math.round(Math.hypot(dx, dy) / flatness));
+                        dx /= n;
+                        dy /= n;
+                        for (int i=n; --i>=0;) {
+                            coords[0] = x0 = x - dx*i;
+                            coords[1] = y0 = y - dy*i;
+                            mt.transform(coords, 0, coords, 0, 1);
+                            path.lineTo(coords[0], coords[1]);
+                        }
+                        break;
+                    }
+                    default: throw new AssertionError(code);
+                }
+                it.next();
+            }
+        } catch (TransformException cause) {
+            IllegalPathStateException e = new IllegalPathStateException(cause.toString());
+            e.initCause(cause);
+            throw e;
+        }
+        return path;
     }
 }

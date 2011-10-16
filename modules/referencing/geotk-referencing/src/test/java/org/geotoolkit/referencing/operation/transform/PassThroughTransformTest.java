@@ -72,7 +72,7 @@ public final strictfp class PassThroughTransformTest extends TransformTestBase {
      */
     @After
     public void assertAllTestsEnabled() {
-        assertTrue(getDisabledOperations().isEmpty());
+        assertFalse(getConfiguration().containsValue("false"));
     }
 
     /**

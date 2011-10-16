@@ -133,17 +133,17 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
      * Relaxes the tolerance threshold for some Geotk transforms.
      */
     @Override
-    public ToleranceModifier needsRelaxedTolerance(final MathTransform transform) {
-        return needsRelaxedTolerance(transform, true);
+    public ToleranceModifier tolerance(final MathTransform transform) {
+        return tolerance(transform, true);
     }
 
     /**
-     * Implementation of the public {@link #needsRelaxedTolerance(MathTransform)} with a boolean
+     * Implementation of the public {@link #tolerance(MathTransform)} with a boolean
      * argument indicating if the transform is alone, or part of a concatenated transforms chain.
      * In the later case, we will increase the tolerance for the two ordinate values rather than
      * only the latitude axis, because it is more difficult to know which axis is the latitude.
      */
-    private static ToleranceModifier needsRelaxedTolerance(MathTransform transform, boolean isAlone) {
+    private static ToleranceModifier tolerance(MathTransform transform, boolean isAlone) {
         while (transform instanceof AbstractMathTransform) {
             final IdentifiedObject id = ((AbstractMathTransform) transform).getParameterDescriptors();
             if (id != null) {
@@ -168,7 +168,7 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
             }
             if (transform instanceof ConcatenatedTransform) {
                 final ConcatenatedTransform ct = (ConcatenatedTransform) transform;
-                final ToleranceModifier candidate = needsRelaxedTolerance(ct.transform1, false);
+                final ToleranceModifier candidate = tolerance(ct.transform1, false);
                 if (candidate != null) {
                     return candidate;
                 }
