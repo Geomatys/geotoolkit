@@ -268,8 +268,7 @@ public final class Referencing extends Formulas implements XReferencing {
             if (!text.equals(localized)) try {
                 return angleFormat.parse(localized).degrees();
             } catch (ParseException ignore) {
-                // Ignore; will throw the first exception.
-                // TODO: addSuppress with JDK7.
+                exception.addSuppressed(ignore);
             }
             reportException("getValueAngle", exception, THROW_EXCEPTION);
             return Double.NaN;

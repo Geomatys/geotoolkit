@@ -340,7 +340,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
      * Then concatenate the WKT.
      */
     private String complete(String message) {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final StringWriter buffer = new StringWriter();
         if (messageOnFailure != null) {
             buffer.append(messageOnFailure).append(lineSeparator);

@@ -1356,16 +1356,10 @@ scanNumber: while (++i < length) {
             GeneralEnvelope e = (GeneralEnvelope) super.clone();
             field.set(e, ordinates.clone());
             return e;
-        } catch (CloneNotSupportedException exception) {
-            // Should not happen, since we are cloneable.
-            throw new AssertionError(exception);
-        } catch (NoSuchFieldException exception) {
-            // Should not happen, since the field is known to exist.
-            throw new AssertionError(exception);
-        } catch (IllegalAccessException exception) {
-            // Should not happen, since we made the field accessible.
+        } catch (CloneNotSupportedException | ReflectiveOperationException exception) {
+            // Should not happen, since we are cloneable, the
+            // field is known to exist and we made it accessible.
             throw new AssertionError(exception);
         }
-        // TODO: Use multi-catch with Java 7.
     }
 }

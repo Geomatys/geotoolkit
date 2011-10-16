@@ -475,7 +475,7 @@ public final class Synchronizer {
     private TableWriter createMismatchTable(final String table, final String[] pkColumns)
             throws IOException
     {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         out.write(lineSeparator);
         out.write(table);
         out.write(lineSeparator);

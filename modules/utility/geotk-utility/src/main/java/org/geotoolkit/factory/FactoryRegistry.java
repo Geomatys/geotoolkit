@@ -874,7 +874,7 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     private <T> boolean register(final Iterator<T> factories, final Class<T> category, final StringBuilder message) {
         boolean newServices = false;
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         while (factories.hasNext()) {
             T factory;
             try {

@@ -787,7 +787,7 @@ public abstract class Factory {
         // We used IdentityHashMap above because we don't want to rely on Factory.equals(...)
         done.put(this, name);
         final String tree = format(getImplementationHints(), done);
-        return name + System.getProperty("line.separator", "\n") + tree;
+        return name + System.lineSeparator() + tree;
     }
 
     /**

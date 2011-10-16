@@ -779,7 +779,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * or either {@link GridSampleDimension}.
      */
     final String toString(final Object owner, final InternationalString description) {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final StringBuffer buffer = new StringBuffer(64);
         buffer.append(Classes.getShortClassName(owner)).append('(');
         if (description != null && description != name) {

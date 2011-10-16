@@ -144,19 +144,17 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         final String comments = results.getString(indexOf(query.comments));
         final ViewType viewType;
         final String type = String.valueOf(encoding).toLowerCase();
-        if (type.equals("photographic")) { // TODO: use switch on Strings with Java 7.
-            viewType = ViewType.PHOTOGRAPHIC;
-        } else if (type.equals("geophysics")) {
-            viewType = ViewType.GEOPHYSICS;
-        } else if (type.equals("native")) {
-            viewType = ViewType.NATIVE;
-        } else if (type.equals("packed")) {
-            viewType = ViewType.PACKED;
-        } else {
-            // Following constructor will close the ResultSet.
-            throw new IllegalRecordException(errors().getString(
-                    Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
-                    this, results, encodingIndex, identifier);
+        switch (type) {
+            case "photographic": viewType = ViewType.PHOTOGRAPHIC; break;
+            case "geophysics":   viewType = ViewType.GEOPHYSICS;   break;
+            case "native":       viewType = ViewType.NATIVE;       break;
+            case "packed":       viewType = ViewType.PACKED;       break;
+            default: {
+                // Following constructor will close the ResultSet.
+                throw new IllegalRecordException(errors().getString(
+                        Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
+                        this, results, encodingIndex, identifier);
+            }
         }
         final CategoryEntry entry = getSampleDimensionTable().getSampleDimensions(identifier.toString());
         GridSampleDimension[] sampleDimensions = null;

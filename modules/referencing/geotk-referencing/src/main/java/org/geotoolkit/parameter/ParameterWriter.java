@@ -327,7 +327,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
         final Locale  locale        = this.locale;
         final boolean brief         = this.brief;
         final boolean colorEnabled  = this.colorEnabled;
-        final String  lineSeparator = System.getProperty("line.separator", "\n");
+        final String  lineSeparator = System.lineSeparator();
         final Vocabulary resources  = Vocabulary.getResources(locale);
         new ParameterTableRow(group, locale, null, brief).write(out, colorEnabled, false, lineSeparator);
         out.write(lineSeparator);

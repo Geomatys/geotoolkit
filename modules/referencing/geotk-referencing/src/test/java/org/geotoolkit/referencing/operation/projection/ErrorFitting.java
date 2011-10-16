@@ -214,7 +214,7 @@ final strictfp class ErrorFitting {
      */
     @Override
     public String toString() {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         return "Model: " + model + lineSeparator + "Error statistics: " + lineSeparator + delta;
     }
 }

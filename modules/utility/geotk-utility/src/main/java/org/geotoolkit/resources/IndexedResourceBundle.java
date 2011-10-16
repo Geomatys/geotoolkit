@@ -193,7 +193,7 @@ public class IndexedResourceBundle extends ResourceBundle {
      * @throws IOException if an output operation failed.
      */
     private static void list(final Writer out, final String[] values) throws IOException {
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         for (int i=0; i<values.length; i++) {
             String value = values[i];
             if (value == null) {

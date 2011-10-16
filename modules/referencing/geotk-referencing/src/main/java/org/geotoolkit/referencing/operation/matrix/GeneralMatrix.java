@@ -630,7 +630,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         /*
          * Formats the element values like usual matrix representation (including the brackets).
          */
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final String whiteline = Strings.spaces(numCol*columnWidth + 1);
         StringBuffer buffer = new StringBuffer();
         buffer.append('\u250C').append(whiteline).append('\u2510').append(lineSeparator);

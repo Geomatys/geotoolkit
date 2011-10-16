@@ -262,20 +262,15 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     /**
      * Invoked when the "Ok" or "Cancel" button is pressed, or when a new format is selected,
      * or when a new variable is selected.
-     *
-     * @todo switch(String) with Java 7.
      */
     @Override
     public void actionPerformed(final ActionEvent event) {
         final String action = event.getActionCommand();
-        if (SELECT_FORMAT.equals(action)) {
-            formatSelected();
-        } else if (SELECT_VARIABLES.equals(action)) {
-            variableSelectionChanged();
-        } else if (OK.equals(action)) {
-            confirm();
-        } if (CANCEL.equals(action)) {
-            dispose();
+        switch (action) {
+            case SELECT_FORMAT:     formatSelected();           break;
+            case SELECT_VARIABLES:  variableSelectionChanged(); break;
+            case OK:                confirm();                  break;
+            case CANCEL:            dispose();                  break;
         }
     }
 

@@ -353,7 +353,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         if (!xOut && !yOut) {
             return null;
         }
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final StringBuilder buffer = new StringBuilder(Errors.format(
                 Errors.Keys.OUT_OF_PROJECTION_VALID_AREA_$1, transform.getName()));
         if (xOut) {

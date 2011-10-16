@@ -125,7 +125,7 @@ public final strictfp class ScriptRunner extends ReferencingConsole {
      * @throws IOException If an error occurred while executing the script.
      */
     public static void main(final String[] args) throws IOException {
-        final String lineSeparator = System.getProperty("line.separator", "\r");
+        final String lineSeparator = System.lineSeparator();
         for (int i=0; i<args.length; i++) {
             final String filename = args[i];
             final LineNumberReader in = new LineNumberReader(new FileReader(filename));

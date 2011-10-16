@@ -154,16 +154,12 @@ public strictfp class Assert extends org.opengis.test.Assert {
         final DomComparator comparator;
         try {
             comparator = new DomComparator(expected, actual);
-        } catch (IOException e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             // We don't throw directly those exceptions since failing to parse the XML file can
             // be considered as part of test failures and the JUnit exception for such failures
             // is AssertionError. Having no checked exception in "assert" methods allow us to
             // declare the checked exceptions only for the library code being tested.
             throw new AssertionError(e);
-        } catch (ParserConfigurationException e) {
-            throw new AssertionError(e); // TODO: multi-catch with JDK 7.
-        } catch (SAXException e) {
-            throw new AssertionError(e); // TODO: multi-catch with JDK 7.
         }
         comparator.tolerance = tolerance;
         comparator.ignoreComments = true;

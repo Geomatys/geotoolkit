@@ -1688,7 +1688,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 if (description == null) {
                     description = remarks;
                 } else if (remarks != null) {
-                    description += System.getProperty("line.separator", "\n") + remarks;
+                    description += System.lineSeparator() + remarks;
                 }
                 final AxisName axis = new AxisName(name, description);
                 returnValue = ensureSingleton(axis, returnValue, code);

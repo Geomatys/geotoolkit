@@ -91,7 +91,7 @@ final class TextGroup {
     public String toString() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
         if (localized != null) {
-            final String lineSeparator = System.getProperty("line.separator", "\n");
+            final String lineSeparator = System.lineSeparator();
             for (LocalisedCharacterString string : localized) {
                 buffer.append(lineSeparator).append("  ").append(string);
             }

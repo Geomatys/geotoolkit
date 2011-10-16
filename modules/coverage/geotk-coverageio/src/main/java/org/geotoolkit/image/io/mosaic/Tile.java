@@ -1657,7 +1657,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         table.flush();
         if (remaining < 0) {
             out.write(Vocabulary.format(Vocabulary.Keys.MORE_$1, tiles.size() - maximum));
-            out.write(System.getProperty("line.separator", "\n"));
+            out.write(System.lineSeparator());
         }
     }
 

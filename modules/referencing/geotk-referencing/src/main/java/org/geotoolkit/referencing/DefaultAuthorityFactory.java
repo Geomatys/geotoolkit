@@ -199,7 +199,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
             printer.setAbridged(true);
             final LogRecord record = new LogRecord(level,
                     "CRS.getAuthorityFactory(" + longitudeFirst +") creates:" + // TODO: localize
-                    System.getProperty("line.separator", "\n") + printer);
+                    System.lineSeparator() + printer);
             record.setSourceClassName("org.geotoolkit.referencing.CRS");
             record.setSourceMethodName("getAuthorityFactory");
             record.setLoggerName(logger.getName());

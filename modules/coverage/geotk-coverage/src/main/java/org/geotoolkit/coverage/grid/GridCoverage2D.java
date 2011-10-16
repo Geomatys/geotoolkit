@@ -1080,7 +1080,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder(super.toString());
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         buffer.append("\u2514 Image=").append(Classes.getShortClassName(image)).append('[');
         if (image instanceof OperationNode) {
             buffer.append('"').append(((OperationNode) image).getOperationName()).append('"');

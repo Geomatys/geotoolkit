@@ -451,7 +451,6 @@ final class NetcdfMetadata extends SpatialMetadata {
                     }
                 } else {
                     final String name = attribute.getNodeName();
-                    // TODO: Use switch on String when we will be allowed to use JDK 7.
                     if (NetcdfVariable.VALID_MIN.equals(name) || NetcdfVariable.VALID_MAX.equals(name)) {
                         return DATATYPE_DOUBLE;
                     }

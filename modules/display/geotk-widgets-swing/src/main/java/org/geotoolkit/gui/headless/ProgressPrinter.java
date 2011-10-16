@@ -131,7 +131,7 @@ public class ProgressPrinter extends ProgressController {
     public ProgressPrinter(final PrintWriter out, final int maxLength) {
         this.out = out;
         this.maxLength = maxLength;
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         CR_supported = lineSeparator.equals("\r\n") || lineSeparator.equals("\n");
     }
 

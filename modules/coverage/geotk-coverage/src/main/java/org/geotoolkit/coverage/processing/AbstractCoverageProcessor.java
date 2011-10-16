@@ -273,7 +273,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
             throws OperationNotFoundException, IOException
     {
         final CoverageParameterWriter writer = new CoverageParameterWriter(out);
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         if (names != null) {
             for (int i=0; i<names.length; i++) {
                 final Operation operation = getOperation(names[i]);

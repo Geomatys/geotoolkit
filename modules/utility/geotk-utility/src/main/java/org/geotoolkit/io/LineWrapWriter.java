@@ -71,7 +71,7 @@ public class LineWrapWriter extends FilterWriter {
     /**
      * The line separator.
      */
-    private final String lineSeparator = System.getProperty("line.separator", "\n");
+    private final String lineSeparator = System.lineSeparator();
 
     /**
      * The maximal line length.

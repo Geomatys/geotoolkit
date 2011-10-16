@@ -263,7 +263,7 @@ public class DefaultDataSource implements DataSource {
      *
      * @return the parent Logger for this data source
      */
-//  @Override // Uncomment with JDK7
+    @Override
     public Logger getParentLogger() {
         return LOGGER;
     }

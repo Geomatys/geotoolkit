@@ -505,7 +505,7 @@ public class MetadataAccessor implements WarningProducer {
             }
             if (count != 0) {
                 // Found too many paths.
-                final String lineSeparator = System.getProperty("line.separator", "\n");
+                final String lineSeparator = System.lineSeparator();
                 final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
                         Errors.Keys.AMBIGIOUS_VALUE_$1, type)).append(lineSeparator);
                 for (final String path : paths) {

@@ -1271,7 +1271,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                             sourceRegion.x, sourceRegion.x + sourceRegion.width  - 1,
                             sourceRegion.y, sourceRegion.y + sourceRegion.height - 1,
                             duration / 1E+6, status})
-                        + System.getProperty("line.separator", "\n") + table;
+                        + System.lineSeparator() + table;
                 log("read", new LogRecord(level, message));
             }
         }

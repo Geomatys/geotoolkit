@@ -156,7 +156,7 @@ public class TreeFormat extends Format {
      */
     public TreeFormat() {
         indentation = 4;
-        lineSeparator = System.getProperty("line.separator", "\n");
+        lineSeparator = System.lineSeparator();
     }
 
     /**

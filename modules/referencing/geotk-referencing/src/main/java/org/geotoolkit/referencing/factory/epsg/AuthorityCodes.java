@@ -387,7 +387,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
                 try {
                     finalize();
                 } catch (SQLException e) {
-                    // TODO: use suppressed exceptions with JDK 7.
+                    exception.addSuppressed(e);
                 }
                 unexpectedException(Iterator.class, "next", exception);
             }

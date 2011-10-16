@@ -98,7 +98,7 @@ public final class Exceptions extends Static {
                 if (buffer == null) {
                     done = new HashSet<String>();
                     buffer = new StringBuilder();
-                    lineSeparator = System.getProperty("line.separator", "\n");
+                    lineSeparator = System.lineSeparator();
                     if (header != null && !(header = header.trim()).isEmpty()) {
                         buffer.append(header);
                         done.add(header);

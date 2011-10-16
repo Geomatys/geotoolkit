@@ -547,7 +547,7 @@ public final class Envelopes extends Static {
                     if (warning == null) {
                         warning = exception;
                     } else {
-                        // TODO: addSuppress with JDK7.
+                        warning.addSuppressed(exception);
                     }
                     continue;
                 }
@@ -625,7 +625,7 @@ public final class Envelopes extends Static {
                             if (warning == null) {
                                 warning = exception;
                             } else {
-                                // TODO: addSuppress with JDK7.
+                                warning.addSuppressed(exception);
                             }
                             continue;
                         }
@@ -969,7 +969,7 @@ public final class Envelopes extends Static {
                 if (warning == null) {
                     warning = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    warning.addSuppressed(exception);
                 }
                 continue;
             }
@@ -1035,7 +1035,7 @@ public final class Envelopes extends Static {
                     if (warning == null) {
                         warning = exception;
                     } else {
-                        // TODO: addSuppress with JDK7.
+                        warning.addSuppressed(exception);
                     }
                     continue;
                 }

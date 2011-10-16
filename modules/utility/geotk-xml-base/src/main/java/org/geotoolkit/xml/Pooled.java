@@ -205,34 +205,35 @@ abstract class Pooled {
      */
     public final void setProperty(String name, final Object value) throws PropertyException {
         try {
-            // TODO: Use strings in switch with JDK 7.
-            if (name.equals(XML.CONVERTERS)) {
-                converters = (ObjectConverters) value;
-                return;
-            }
-            if (name.equals(XML.LINKER)) {
-                linker = (ObjectLinker) value;
-                return;
-            }
-            if (name.equals(XML.SCHEMAS)) {
-                schemas = InternalUtilities.subset((Map<?,?>) value, String.class, "gmd");
-                return;
-            }
-            if (name.equals(XML.LOCALE)) {
-                locale = (Locale) value;
-                return;
-            }
-            if (name.equals(XML.TIMEZONE)) {
-                timezone = (TimeZone) value;
-                return;
-            }
-            if (name.equals(XML.STRING_SUBSTITUTES)) {
-                int mask = 0;
-                final String[] substitutes = Strings.split((String) value, ',');
-                if (XArrays.containsIgnoreCase(substitutes, "language")) mask |= SUBSTITUTE_LANGUAGE;
-                if (XArrays.containsIgnoreCase(substitutes, "country"))  mask |= SUBSTITUTE_COUNTRY;
-                bitMasks = mask;
-                return;
+            switch (name) {
+                case XML.CONVERTERS: {
+                    converters = (ObjectConverters) value;
+                    return;
+                }
+                case XML.LINKER: {
+                    linker = (ObjectLinker) value;
+                    return;
+                }
+                case XML.SCHEMAS: {
+                    schemas = InternalUtilities.subset((Map<?,?>) value, String.class, "gmd");
+                    return;
+                }
+                case XML.LOCALE: {
+                    locale = (Locale) value;
+                    return;
+                }
+                case XML.TIMEZONE: {
+                    timezone = (TimeZone) value;
+                    return;
+                }
+                case XML.STRING_SUBSTITUTES: {
+                    int mask = 0;
+                    final String[] substitutes = Strings.split((String) value, ',');
+                    if (XArrays.containsIgnoreCase(substitutes, "language")) mask |= SUBSTITUTE_LANGUAGE;
+                    if (XArrays.containsIgnoreCase(substitutes, "country"))  mask |= SUBSTITUTE_COUNTRY;
+                    bitMasks = mask;
+                    return;
+                }
             }
         } catch (ClassCastException e) {
             throw new PropertyException(Errors.format(Errors.Keys.BAD_PROPERTY_TYPE_$2,
@@ -252,29 +253,26 @@ abstract class Pooled {
      * A method which is common to both {@code Marshaller} and {@code Unmarshaller}.
      */
     public final Object getProperty(final String name) throws PropertyException {
-        // TODO: Use strings in switch with JDK 7.
-        if (name.equals(XML.CONVERTERS)) {
-            return converters;
-        } else if (name.equals(XML.LINKER)) {
-            return linker;
-        } else if (name.equals(XML.SCHEMAS)) {
-            return schemas;
-        } else if (name.equals(XML.LOCALE)) {
-            return locale;
-        } else if (name.equals(XML.TIMEZONE)) {
-            return timezone;
-        } else if (name.equals(XML.STRING_SUBSTITUTES)) {
-            final StringBuilder buffer = new StringBuilder();
-            if ((bitMasks & SUBSTITUTE_LANGUAGE) != 0) buffer.append("language,");
-            if ((bitMasks & SUBSTITUTE_COUNTRY)  != 0) buffer.append("country,");
-            final int length = buffer.length();
-            if (length != 0) {
-                buffer.setLength(length - 1); // Remove the last coma.
-                return buffer.toString();
+        switch (name) {
+            case XML.CONVERTERS: return converters;
+            case XML.LINKER:     return linker;
+            case XML.SCHEMAS:    return schemas;
+            case XML.LOCALE:     return locale;
+            case XML.TIMEZONE:   return timezone;
+            case XML.STRING_SUBSTITUTES: {
+                final StringBuilder buffer = new StringBuilder();
+                if ((bitMasks & SUBSTITUTE_LANGUAGE) != 0) buffer.append("language,");
+                if ((bitMasks & SUBSTITUTE_COUNTRY)  != 0) buffer.append("country,");
+                final int length = buffer.length();
+                if (length != 0) {
+                    buffer.setLength(length - 1); // Remove the last coma.
+                    return buffer.toString();
+                }
+                return null;
             }
-            return null;
-        } else {
-            return getStandardProperty(convertPropertyKey(name));
+            default: {
+                return getStandardProperty(convertPropertyKey(name));
+            }
         }
     }
 

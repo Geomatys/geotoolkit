@@ -745,7 +745,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                 if (failure == null) {
                     failure = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
                 continue;
             }
@@ -798,7 +798,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                 if (failure == null) {
                     failure = exception;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(exception);
                 }
                 continue;
             }

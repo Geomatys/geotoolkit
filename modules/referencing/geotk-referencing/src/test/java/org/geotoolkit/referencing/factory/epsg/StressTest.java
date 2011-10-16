@@ -110,7 +110,7 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
                 if (exception == null) {
                     exception = e;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    exception.addSuppressed(e);
                 }
                 System.err.println(Classes.getShortClassName(e) + " in thread " +
                         thread.id + " for code " + thread.badCode);

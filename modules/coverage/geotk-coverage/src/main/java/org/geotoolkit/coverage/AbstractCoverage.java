@@ -1265,7 +1265,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
             out.write("\"]");
         }
         out.write(']');
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final LineWriter filter = new LineWriter(out, lineSeparator + "\u2502   ");
         final int n = getNumSampleDimensions();
         try {

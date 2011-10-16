@@ -267,20 +267,15 @@ public class AuthorityCodesComboBox extends WindowCreator {
 
     /**
      * Various listeners used by the enclosing class.
-     *
-     * @todo switch(String) when allowed to use Java 7.
      */
     private final class Listeners implements ActionListener {
         @Override public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
-            if (SEARCH.equals(action)) {
-                search(true);
-            } else if (CONFIRM.equals(action)) {
-                search(false);
-            } else if (INFO.equals(action)) {
-                showProperties(true);
-            } else if (SELECT.equals(action)) {
-                selectionChanged();
+            switch (action) {
+                case SEARCH:  search(true);         break;
+                case CONFIRM: search(false);        break;
+                case INFO:    showProperties(true); break;
+                case SELECT:  selectionChanged();   break;
             }
         }
     }

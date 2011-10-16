@@ -280,26 +280,35 @@ public class CoverageList extends JComponent {
         /**
          * Invoked when one of the buttons ("Remove", "Add", etc.) has been pressed.
          * This method delegates to the appropriate method in the enclosing class.
-         *
-         * @todo Use switch(String) with Java 7.
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
-            if (REFRESH.equals(action)) {
-                refresh();
-            } else if (REMOVE.equals(action)) {
-                removeCoverage();
-            } else if (ADD.equals(action)) {
-                showFileChooser();
-            } else if (ImageFileChooser.CANCEL_SELECTION.equals(action)) {
-                setSelectionPanel(TABLE);
-            } else if (ImageFileChooser.APPROVE_SELECTION.equals(action)) {
-                // Must check if the file selection panel is visible, because pressing the 'Enter'
-                // key in the format JComboBox of the NewGridCoverageDetails widget seems to also
-                // fire the event associated with "Ok" button of the JFileChooser.
-                if (FILES.equals(selectionPanelName)) {
-                    addNewCoverage();
+            switch (action) {
+                case REFRESH: {
+                    refresh();
+                    break;
+                }
+                case REMOVE: {
+                    removeCoverage();
+                    break;
+                }
+                case ADD: {
+                    showFileChooser();
+                    break;
+                }
+                case ImageFileChooser.CANCEL_SELECTION: {
+                    setSelectionPanel(TABLE);
+                    break;
+                }
+                case ImageFileChooser.APPROVE_SELECTION: {
+                    // Must check if the file selection panel is visible, because pressing the 'Enter'
+                    // key in the format JComboBox of the NewGridCoverageDetails widget seems to also
+                    // fire the event associated with "Ok" button of the JFileChooser.
+                    if (FILES.equals(selectionPanelName)) {
+                        addNewCoverage();
+                    }
+                    break;
                 }
             }
         }
@@ -436,13 +445,17 @@ public class CoverageList extends JComponent {
         ((CardLayout) selectionPanel.getLayout()).show(selectionPanel, name);
         selectionPanelName = name;
         toolbar.setButtonsEnabled(TABLE.equals(name));
-        // TODO: use switch(String) with Java 7.
-        if (TABLE.equals(name)) {
-            final ListSelectionModel model = table.getSelectionModel();
-            setImageProperties(model.isSelectionEmpty() ? null :
-                    coverages.getCoverageReferenceAt(model.getAnchorSelectionIndex()));
-        } else if (FILES.equals(name)) {
-            properties.setImageLater(fileChooser.getSelectedFile());
+        switch (name) {
+            case TABLE: {
+                final ListSelectionModel model = table.getSelectionModel();
+                setImageProperties(model.isSelectionEmpty() ? null :
+                        coverages.getCoverageReferenceAt(model.getAnchorSelectionIndex()));
+                break;
+            }
+            case FILES: {
+                properties.setImageLater(fileChooser.getSelectedFile());
+                break;
+            }
         }
     }
 

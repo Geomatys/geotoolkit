@@ -317,14 +317,11 @@ final class MetadataProxy<T> implements InvocationHandler {
                 if (arg instanceof Integer) {
                     final int dim = (Integer) arg;
                     if (proxy instanceof GridEnvelope) {
-                        // TODO: Use String in switch with JDK 7.
-                        if (methodName.equals("getLow")) {
-                            return getAttributeAsInteger("low", dim);
-                        } else if (methodName.equals("getHigh")) {
-                            return getAttributeAsInteger("high", dim);
-                        } else if (methodName.equals("getSpan")) {
-                            return getAttributeAsInteger("high", dim) -
-                                   getAttributeAsInteger("low",  dim) + 1;
+                        switch (methodName) {
+                            case "getLow":  return getAttributeAsInteger("low",  dim);
+                            case "getHigh": return getAttributeAsInteger("high", dim);
+                            case "getSpan": return getAttributeAsInteger("high", dim) -
+                                                   getAttributeAsInteger("low",  dim) + 1;
                         }
                     }
                 }

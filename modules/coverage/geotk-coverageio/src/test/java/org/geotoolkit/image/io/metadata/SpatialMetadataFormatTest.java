@@ -485,7 +485,7 @@ public final strictfp class SpatialMetadataFormatTest {
         if (false) {
             final Writer out = new OutputStreamWriter(new FileOutputStream("SpatialMetadataFormat.txt"), "UTF-8");
             out.write(stream);
-            out.write(System.getProperty("line.separator", "\n"));
+            out.write(System.lineSeparator());
             out.write(image);
             out.close();
         }

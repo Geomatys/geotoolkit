@@ -775,7 +775,7 @@ public class TableWriter extends FilterWriter {
      */
     private void flushTo(final Writer out) throws IOException {
         final String columnSeparator = this.separator;
-        final String   lineSeparator = System.getProperty("line.separator", "\n");
+        final String   lineSeparator = System.lineSeparator();
         final Cell[]     currentLine = new Cell[width.length];
         final int          cellCount = cells.size();
         for (int cellIndex=0; cellIndex<cellCount; cellIndex++) {

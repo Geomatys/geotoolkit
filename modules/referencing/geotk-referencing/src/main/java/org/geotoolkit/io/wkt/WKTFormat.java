@@ -535,7 +535,7 @@ public class WKTFormat extends Format {
             throws IOException
     {
         final StringBuilder buffer   = new StringBuilder();
-        final String lineSeparator   = System.getProperty("line.separator", "\n");
+        final String lineSeparator   = System.lineSeparator();
         final Symbols symbols        = getSymbols();
         final char[] openingBrackets = symbols.openingBrackets;
         final char[] closingBrackets = symbols.closingBrackets;

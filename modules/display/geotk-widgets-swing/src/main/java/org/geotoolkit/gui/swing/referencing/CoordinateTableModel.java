@@ -272,7 +272,7 @@ public class CoordinateTableModel extends AbstractTableModel {
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder();
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final String lineSeparator = System.lineSeparator();
         final int size = positions.size();
         for (int i=0; i<size; i++) {
             buffer.append(positions.get(i)).append(lineSeparator);

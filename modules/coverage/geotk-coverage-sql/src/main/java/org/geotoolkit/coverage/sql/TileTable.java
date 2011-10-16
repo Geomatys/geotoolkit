@@ -379,15 +379,9 @@ final class TileTable extends Table implements Comparator<TileManager> {
                     in.close();
                 }
             }
-        } catch (ObjectStreamException e) {
+        } catch (ObjectStreamException | ClassNotFoundException | ClassCastException | SecurityException e) {
             recoverableException(e);
-        } catch (ClassNotFoundException e) {
-            recoverableException(e);
-        } catch (ClassCastException e) {
-            recoverableException(e);
-        } catch (SecurityException e) {
-            recoverableException(e);
-        } // TODO: multi-catch with JDK7.
+        }
         return managers;
     }
 

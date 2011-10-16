@@ -119,22 +119,23 @@ final class NilObjectHandler implements InvocationHandler {
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         final String name = method.getName();
         if (args == null) {
-            // TODO: Strings in switch with JDK 7.
-            if (name.equals("getNilReason")) {
-                return (attribute instanceof NilReason) ? (NilReason) attribute : null;
-            }
-            if (name.equals("getIdentifierMap")) {
-                return (attribute instanceof IdentifierMap) ? (IdentifierMap) attribute : null;
-            }
-            if (name.equals("getIdentifiers")) {
-                return (attribute instanceof IdentifierMapAdapter) ?
-                        ((IdentifierMapAdapter) attribute).identifiers : null;
-            }
-            if (name.equals("toString")) {
-                return getInterface(proxy).getSimpleName() + '[' + attribute + ']';
-            }
-            if (name.equals("hashCode")) {
-                return ~attribute.hashCode();
+            switch (name) {
+                case "getNilReason": {
+                    return (attribute instanceof NilReason) ? (NilReason) attribute : null;
+                }
+                case "getIdentifierMap": {
+                    return (attribute instanceof IdentifierMap) ? (IdentifierMap) attribute : null;
+                }
+                case "getIdentifiers": {
+                    return (attribute instanceof IdentifierMapAdapter) ?
+                            ((IdentifierMapAdapter) attribute).identifiers : null;
+                }
+                case "toString": {
+                    return getInterface(proxy).getSimpleName() + '[' + attribute + ']';
+                }
+                case "hashCode": {
+                    return ~attribute.hashCode();
+                }
             }
             if (name.startsWith("get") || name.startsWith("is")) {
                 return Numbers.valueOfNil(method.getReturnType());

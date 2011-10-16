@@ -89,7 +89,7 @@ final class HelpAction {
     HelpAction(final CommandLine cmd) {
         this.cmd = cmd;
         this.out = cmd.out;
-        lineSeparator = System.getProperty("line.separator", "\n");
+        lineSeparator = System.lineSeparator();
         /*
          * Tries to get the number of columns in the terminal windows. Note: Unix users
          * may need to do "export COLUMNS" in their shell for getting this code to work.
@@ -386,7 +386,7 @@ final class HelpAction {
                 if (failure == null) {
                     failure = e;
                 } else {
-                    // TODO: addSuppress with JDK7.
+                    failure.addSuppressed(e);
                 }
             }
         }

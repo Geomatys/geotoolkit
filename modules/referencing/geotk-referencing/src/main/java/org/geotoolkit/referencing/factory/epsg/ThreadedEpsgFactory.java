@@ -31,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.naming.InitialContext;
 import javax.naming.Name;
+import javax.naming.NamingException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NoInitialContextException;
 import net.jcip.annotations.ThreadSafe;
@@ -456,11 +457,9 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                     source = context.lookup(name);
                 }
                 datasource = (DataSource) source;
-            } catch (NoInitialContextException exception) { // TODO: Multi-catch with Java 7.
+            } catch (NoInitialContextException | NameNotFoundException exception) {
                 throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE), exception);
-            } catch (NameNotFoundException exception) {
-                throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE), exception);
-            } catch (Exception exception) { // Multi-catch: NamingException, ClassCastException
+            } catch (NamingException | ClassCastException exception) {
                 throw new FactoryException(Errors.format(
                         Errors.Keys.CANT_GET_DATASOURCE_$1, hint), exception);
             }
