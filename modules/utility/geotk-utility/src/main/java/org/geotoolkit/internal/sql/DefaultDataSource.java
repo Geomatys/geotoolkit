@@ -257,4 +257,14 @@ public class DefaultDataSource implements DataSource {
     public String toString() {
         return Classes.getShortClassName(this) + "[\"" + url + "\"]";
     }
+
+    /**
+     * Returns the parent logger for this data source.
+     *
+     * @return the parent Logger for this data source
+     */
+//  @Override // Uncomment with JDK7
+    public Logger getParentLogger() {
+        return LOGGER;
+    }
 }

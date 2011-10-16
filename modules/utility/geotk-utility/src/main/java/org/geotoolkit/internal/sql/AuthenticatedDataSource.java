@@ -20,7 +20,9 @@ package org.geotoolkit.internal.sql;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import javax.sql.DataSource;
+import java.util.logging.Logger;
 
 
 /**
@@ -163,5 +165,17 @@ public final class AuthenticatedDataSource implements DataSource {
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
         return wrapped.unwrap(iface);
+    }
+
+    /**
+     * Delegates to the wrapped data source.
+     *
+     * @return the parent Logger for this data source
+     * @throws SQLFeatureNotSupportedException if the data source does not use {@code java.util.logging}.
+     */
+//  @Override // Uncomment with JDK7
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException();
+        //return wrapped.getParentLogger();
     }
 }
