@@ -17,13 +17,9 @@
  */
 package org.geotoolkit.util.logging;
 
-import java.net.URL;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Enumeration;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.Handler;
@@ -350,7 +346,11 @@ public final class Logging extends Static {
      *
      * @see LoggerFactory#COMMONS_LOGGING
      * @see LoggerFactory#LOG4J
+     *
+     * @deprecated The {@code META-INF/services} mechanism should be sufficient. This method
+     *             will be removed in order to reduce the weight of the Geotk library.
      */
+    @Deprecated
     @Configuration
     public void setLoggerFactory(final String className)
             throws ClassNotFoundException, IllegalArgumentException
@@ -372,7 +372,7 @@ public final class Logging extends Static {
             try {
                 final Method method = factoryClass.getMethod("getInstance", (Class<?>[]) null);
                 factory = LoggerFactory.class.cast(method.invoke(null, (Object[]) null));
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 /*
                  * Catching java.lang.Exception is usually bad practice, but there is really a lot
                  * of checked exceptions when using reflection. Unfortunately there is nothing like
@@ -423,50 +423,9 @@ public final class Logging extends Static {
      */
     @Configuration
     public void scanLoggerFactory() {
-        /*
-         * If a factory failed, 'error' will be the failure cause of the first of them.
-         * Note that only expected exceptions are handled that way. If the method fails
-         * because of some bug, those exceptions will be thrown like usual.
-         */
-        Exception error = null;
-        final String filename = "META-INF/services/" + LoggerFactory.class.getName();
-        Enumeration<URL> configs = null;
-        try {
-            configs = Logging.class.getClassLoader().getResources(filename);
-        } catch (IOException e) {
-            error = e;
-        }
-        if (configs != null) {
-search:     while (configs.hasMoreElements()) try {
-                final URL url = configs.nextElement();
-                final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"));
-                try {
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        line = line.trim();
-                        if (!line.isEmpty() && line.charAt(0) != '#') try {
-                            setLoggerFactory(line);
-                            break search;
-                        } catch (ClassNotFoundException e) {
-                            if (error == null) error = e;
-                        } catch (IllegalArgumentException e) {
-                            if (error == null) error = e;
-                        }
-                    }
-                } finally {
-                    in.close();
-                }
-            } catch (IOException e) {
-                if (error == null) error = e;
-            }
-        }
-        /*
-         * If a factory failed, log the cause. Note that we log after setLoggerFactory
-         * has been invoked, so if we have been able to set a new logger, that logger
-         * will be used for this warning.
-         */
-        if (error != null) {
-            unexpectedException(Logging.class, "scanLoggerFactory", error);
+        for (final LoggerFactory<?> factory : ServiceLoader.load(LoggerFactory.class)) {
+            setLoggerFactory(factory);
+            break;
         }
     }
 

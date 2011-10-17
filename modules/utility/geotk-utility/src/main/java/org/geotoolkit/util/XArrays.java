@@ -1250,6 +1250,7 @@ public final class XArrays extends Static {
      *
      * @since 3.07
      */
+    @SafeVarargs
     public static <T> T[] concatenate(final T[]... arrays) {
         T[] result = null;
         if (arrays != null) {
@@ -1279,7 +1280,7 @@ public final class XArrays extends Static {
 
     /**
      * Returns the union of two sorted arrays. The input arrays shall be sorted in strictly
-     * increasing order (for perfomance raison, this is verified only if assertions are enabled).
+     * increasing order (for performance raison, this is verified only if assertions are enabled).
      * The output array is the union of the input arrays without duplicated values, with elements
      * in strictly increasing order.
      *

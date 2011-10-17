@@ -36,7 +36,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * List of elements sorted by a key which is not the element itself.
  * <p>
  * This class is <strong>not</strong> thread-safe. Synchronizations (if wanted) are user's
- * reponsability.
+ * responsibility.
  *
  * @param <K> The type of keys in the sorted list, to be used for sorting.
  * @param <V> The type of elements in the list.
@@ -65,7 +65,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
      * Creates a new, initially empty list.
      */
     public KeySortedList() {
-        map = new TreeMap<K, List<V>>();
+        map = new TreeMap<>();
     }
 
     /**
@@ -107,7 +107,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
     public void add(final K key, final V element) {
         List<V> values = map.get(key);
         if (values == null) {
-            values = new ArrayList<V>();
+            values = new ArrayList<>();
             map.put(key, values);
         }
         values.add(element);
@@ -418,7 +418,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
      * @return A view of the specified initial range of this list.
      */
     public KeySortedList<K,V> headList(final K toKey) {
-        return new KeySortedList<K,V>(map.headMap(toKey));
+        return new KeySortedList<>(map.headMap(toKey));
     }
 
     /**
@@ -430,6 +430,6 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
      * @return A view of the specified final range of this list.
      */
     public KeySortedList<K,V> tailList(final K fromKey) {
-        return new KeySortedList<K,V>(map.tailMap(fromKey));
+        return new KeySortedList<>(map.tailMap(fromKey));
     }
 }

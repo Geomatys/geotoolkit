@@ -858,7 +858,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         } else if (isDate) {
             return (Range) new DateRange((Date) (Comparable) lower, (Date) (Comparable) upper);
         } else {
-            return new Range<T>(elementClass, lower, upper);
+            return new Range<>(elementClass, lower, upper);
         }
     }
 

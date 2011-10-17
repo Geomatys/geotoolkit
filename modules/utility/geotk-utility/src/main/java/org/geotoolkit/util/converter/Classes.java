@@ -260,7 +260,7 @@ public final class Classes extends Static {
      * @since 3.00
      */
     public static <T> Set<Class<? extends T>> getClasses(final Collection<? extends T> objects) {
-        final Set<Class<? extends T>> types = new LinkedHashSet<Class<? extends T>>();
+        final Set<Class<? extends T>> types = new LinkedHashSet<>();
         for (final T object : objects) {
             types.add(getClass(object));
         }
@@ -281,7 +281,7 @@ public final class Classes extends Static {
      * @since 3.01
      */
     public static Set<Class<?>> getAllInterfaces(Class<?> type) {
-        final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+        final Set<Class<?>> interfaces = new LinkedHashSet<>();
         while (type != null) {
             getAllInterfaces(type, interfaces);
             type = type.getSuperclass();

@@ -51,7 +51,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
     /**
      * The temporary files not yet deleted. Keys are the string returned by {@link File#getPath()}.
      */
-    private static final Map<String,TemporaryFile> REFERENCES = new HashMap<String,TemporaryFile>();
+    private static final Map<String,TemporaryFile> REFERENCES = new HashMap<>();
 
     /**
      * Registers a shutdown hook which will delete every files not yet deleted.

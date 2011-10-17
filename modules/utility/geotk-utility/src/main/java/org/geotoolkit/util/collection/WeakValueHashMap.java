@@ -578,7 +578,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                 final Entry[] table = WeakValueHashMap.this.table;
                 for (int i=0; i<table.length; i++) {
                     for (Entry el=table[i]; el!=null; el=el.next) {
-                        final Map.Entry<K,V> entry = new SimpleEntry<K,V>(el);
+                        final Map.Entry<K,V> entry = new SimpleEntry<>(el);
                         if (entry.getValue() != null) {
                             elements[index++] = entry;
                         }

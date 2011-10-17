@@ -804,7 +804,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
 
         /** Creates a new converter for the given code list. */
         static <T extends org.opengis.util.CodeList<T>> CodeList<T> create(final Class<T> targetType) {
-            return new CodeList<T>(targetType);
+            return new CodeList<>(targetType);
         }
 
         private CodeList(final Class<T> targetType) {

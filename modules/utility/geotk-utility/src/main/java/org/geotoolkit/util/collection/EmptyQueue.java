@@ -46,7 +46,7 @@ final class EmptyQueue<E> extends AbstractQueue<E> implements Serializable {
      * This is not parameterized on intend.
      */
     @SuppressWarnings("rawtypes")
-    static final Queue INSTANCE = new EmptyQueue<Object>();
+    static final Queue INSTANCE = new EmptyQueue<>();
 
     /**
      * Do not allow instantiation except for the singleton.

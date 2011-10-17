@@ -44,7 +44,7 @@ public interface TreeNode extends javax.swing.tree.TreeNode {
     /**
      * Returns the children of this node as an {@code Enumeration}.
      *
-     * @return The childrens.
+     * @return The children.
      */
     @Override
     Enumeration<? extends javax.swing.tree.TreeNode> children();

@@ -44,16 +44,14 @@ final class IdentityConverter<T> extends SimpleConverter<T,T> implements Seriali
      *
      * @since 3.02
      */
-    static final IdentityConverter<CharSequence> CHAR_SEQUENCE =
-            new IdentityConverter<CharSequence>(CharSequence.class);
+    static final IdentityConverter<CharSequence> CHAR_SEQUENCE = new IdentityConverter<>(CharSequence.class);
 
     /**
      * An identity converter for {@link String} objects.
      *
      * @since 3.02
      */
-    static final IdentityConverter<String> STRING =
-            new IdentityConverter<String>(String.class);
+    static final IdentityConverter<String> STRING = new IdentityConverter<>(String.class);
 
     /**
      * Returns an identity converter for the given type.
@@ -68,7 +66,7 @@ final class IdentityConverter<T> extends SimpleConverter<T,T> implements Seriali
         if (type == CharSequence.class) {
             return (IdentityConverter<T>) CHAR_SEQUENCE;
         }
-        return new IdentityConverter<T>(type);
+        return new IdentityConverter<>(type);
     }
 
     /**

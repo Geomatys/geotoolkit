@@ -103,7 +103,7 @@ public class NonconvertibleObjectException extends Exception {
      */
     public final List<Exception> allAttempts() {
         if (allAttempts == null) {
-            allAttempts = new LinkedList<Exception>();
+            allAttempts = new LinkedList<>();
             allAttempts.add(this);
         }
         return allAttempts;

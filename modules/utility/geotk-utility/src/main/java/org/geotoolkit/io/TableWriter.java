@@ -167,7 +167,7 @@ public class TableWriter extends FilterWriter {
      * By convention, a {@code null} value or a {@link Cell} object
      * with <code>{@link Cell#text}==null</code> are move to the next line.
      */
-    private final List<Cell> cells = new ArrayList<Cell>();
+    private final List<Cell> cells = new ArrayList<>();
 
     /**
      * Alignment for current and next cells.

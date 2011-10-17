@@ -249,14 +249,14 @@ public class IndexedResourceBundle extends ResourceBundle {
                     }
                     name = name.substring(0, lang) + name.substring(ext);
                 }
-                final DataInputStream input = new DataInputStream(new BufferedInputStream(in));
-                this.values = values = new String[input.readInt()];
-                for (int i=0; i<values.length; i++) {
-                    values[i] = input.readUTF();
-                    if (values[i].isEmpty())
-                        values[i] = null;
+                try (DataInputStream input = new DataInputStream(new BufferedInputStream(in))) {
+                    this.values = values = new String[input.readInt()];
+                    for (int i=0; i<values.length; i++) {
+                        values[i] = input.readUTF();
+                        if (values[i].isEmpty())
+                            values[i] = null;
+                    }
                 }
-                input.close();
                 /*
                  * Now, logs the message. This message is not localized.  Note that
                  * Locale.getDisplayName() may return different string on different
@@ -416,7 +416,7 @@ public class IndexedResourceBundle extends ResourceBundle {
     /**
      * Returns {@code arguments} as an array. If {@code arguments} is already an array, this array
      * or a copy of this array will be returned. If {@code arguments} is not an array, it will be
-     * placed in an array of length 1. In any case, all the array's elements will be checked for
+     * placed in an array of length 1. In any case, all the array elements will be checked for
      * {@link String} objects. Any strings of length greater than {@link #MAX_STRING_LENGTH} will
      * be reduced using the {@link #summarize} method.
      *

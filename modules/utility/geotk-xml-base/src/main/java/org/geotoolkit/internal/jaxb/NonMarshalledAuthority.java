@@ -181,7 +181,7 @@ public final class NonMarshalledAuthority<T> extends SimpleCitation implements I
             for (final T candidate : identifiers) {
                 if (candidate != null && candidate.getAuthority() instanceof NonMarshalledAuthority<?>) {
                     if (filtered == null) {
-                        filtered = new ArrayList<T>(remaining);
+                        filtered = new ArrayList<>(remaining);
                     }
                     filtered.add(candidate);
                 }
@@ -221,7 +221,7 @@ public final class NonMarshalledAuthority<T> extends SimpleCitation implements I
             final Field field = Class.forName("org.geotoolkit.metadata.iso.citation.DefaultCitation").getDeclaredField(name);
             field.setAccessible(true);
             return (IdentifierSpace<?>) field.get(null);
-        } catch (Exception e) { // Too many possible exceptions for enumerating them all.
+        } catch (ReflectiveOperationException e) {
             Logging.unexpectedException(NonMarshalledAuthority.class, "readResolve", e);
         }
         return null;

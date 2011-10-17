@@ -196,6 +196,7 @@ public final class InternalUtilities extends Static {
      *
      * @since 3.17
      */
+    @SafeVarargs
     public static <T> Set<T> nonEmptySet(final T... elements) {
         final Set<T> asSet = XCollections.immutableSet(elements);
         return (asSet != null && asSet.isEmpty()) ? null : asSet;
@@ -217,12 +218,13 @@ public final class InternalUtilities extends Static {
      *
      * @since 3.17
      */
+    @SafeVarargs
     public static <K,V> Map<K,V> subset(final Map<?,?> map, final Class<V> valueType, final K... keys)
             throws ClassCastException
     {
         Map<K,V> copy = null;
         if (map != null) {
-            copy = new HashMap<K,V>(XCollections.hashMapCapacity(Math.min(map.size(), keys.length)));
+            copy = new HashMap<>(XCollections.hashMapCapacity(Math.min(map.size(), keys.length)));
             for (final K key : keys) {
                 final V value = valueType.cast(map.get(key));
                 if (value != null) {

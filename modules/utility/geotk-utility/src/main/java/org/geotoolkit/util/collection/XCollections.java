@@ -154,6 +154,7 @@ public final class XCollections extends Static {
      *
      * @since 3.17
      */
+    @SafeVarargs
     public static <E> Set<E> immutableSet(final E... array) {
         if (array == null) {
             return null;
@@ -161,7 +162,7 @@ public final class XCollections extends Static {
         switch (array.length) {
             case 0:  return Collections.emptySet();
             case 1:  return Collections.singleton(array[0]);
-            default: return Collections.unmodifiableSet(new LinkedHashSet<E>(Arrays.asList(array)));
+            default: return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(array)));
         }
     }
 
@@ -348,23 +349,23 @@ public final class XCollections extends Static {
                 if (type == TreeSet.class) {
                     return (Collection<E>) ((TreeSet<E>) collection).clone();
                 }
-                return new TreeSet<E>(collection);
+                return new TreeSet<>(collection);
             }
             if (type == HashSet.class || type == LinkedHashSet.class) {
                 return (Collection<E>) ((HashSet<E>) collection).clone();
             }
-            return new LinkedHashSet<E>(collection);
+            return new LinkedHashSet<>(collection);
         }
         if (collection instanceof Queue<?>) {
             if (type == LinkedList.class) {
                 return (Collection<E>) ((LinkedList<E>) collection).clone();
             }
-            return new LinkedList<E>(collection);
+            return new LinkedList<>(collection);
         }
         if (type == ArrayList.class) {
             return (Collection<E>) ((ArrayList<E>) collection).clone();
         }
-        return new ArrayList<E>(collection);
+        return new ArrayList<>(collection);
     }
 
     /**
@@ -400,11 +401,11 @@ public final class XCollections extends Static {
             if (type == TreeMap.class) {
                 return (Map<K,V>) ((TreeMap<K,V>) map).clone();
             }
-            return new TreeMap<K,V>(map);
+            return new TreeMap<>(map);
         }
         if (type == HashMap.class || type == LinkedHashMap.class) {
             return (Map<K,V>) ((HashMap<K,V>) map).clone();
         }
-        return new LinkedHashMap<K,V>(map);
+        return new LinkedHashMap<>(map);
     }
 }

@@ -48,9 +48,9 @@ class RemoteService extends UnicastRemoteObject {
     private static final long serialVersionUID = -824997613540569870L;
 
     /**
-     * The name of the maching hosting the RMI registry.
+     * The name of the matching hosting the RMI registry.
      * <ul>
-     *   <li>{@code null}: No server - start the registry outself.</li>
+     *   <li>{@code null}: No server - start the registry ourself.</li>
      *   <li>{@code "localhost"}: Do not start the registry.</li>
      *   <li>Other: Use the registry available on the named server.</li>
      * </ul>

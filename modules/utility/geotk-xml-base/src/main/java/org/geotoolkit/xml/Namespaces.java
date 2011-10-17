@@ -136,7 +136,7 @@ public final class Namespaces extends Static {
      */
     private static final Map<String,String> SPECIFIC_URLS;
     static {
-        final Map<String,String> p = new HashMap<String,String>(40);
+        final Map<String,String> p = new HashMap<>(40);
         p.put("http://www.w3.org/2001/XMLSchema",                         "xsd");
         p.put("http://www.w3.org/2001/XMLSchema-instance",                "xsi");
         p.put("http://www.w3.org/2004/02/skos/core#",                    "skos");

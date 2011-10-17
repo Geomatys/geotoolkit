@@ -57,7 +57,7 @@ public class DefaultDataSource implements DataSource {
      * The driver names of the connection returned by {@code DefaultDataSource}.
      * This is used for logging purpose only.
      */
-    private static final Set<String> DRIVERS = new HashSet<String>();
+    private static final Set<String> DRIVERS = new HashSet<>();
 
     /**
      * The URL to use for connecting to the database.
@@ -181,10 +181,8 @@ public class DefaultDataSource implements DataSource {
         final Dialect dialect = Dialect.forURL(url);
         if (dialect != null) switch (dialect) {
             case HSQL: {
-                try {
-                    final Connection c = getConnection();
+                try (Connection c = getConnection()) {
                     HSQL.shutdown(c);
-                    c.close();
                 } catch (SQLException e) {
                     Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
                 }

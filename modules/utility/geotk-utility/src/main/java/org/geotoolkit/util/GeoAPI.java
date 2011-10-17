@@ -82,7 +82,7 @@ public final class GeoAPI extends Static {
             } catch (Exception e) { // Catch IOException and IllegalArgumentException.
                 throw new BackingStoreException(e);
             }
-            typeForNames = new HashMap<Object,Object>(props);
+            typeForNames = new HashMap<>(props);
         }
         final Object value = typeForNames.get(identifier);
         if (value == null || value instanceof Class<?>) {

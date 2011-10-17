@@ -44,6 +44,9 @@ final class SynchronizedIterator<E> implements Iterator<E> {
      */
     private final Object lock;
 
+    /**
+     * Creates a new iterator.
+     */
     SynchronizedIterator(final Iterator<E> iterator, final Object lock) {
         this.iterator = iterator;
         this.lock = lock;
@@ -60,7 +63,7 @@ final class SynchronizedIterator<E> implements Iterator<E> {
     }
 
     /**
-     * Returns the next element in iteratior order.
+     * Returns the next element in iterator order.
      */
     @Override
     public E next() {

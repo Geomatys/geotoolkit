@@ -84,7 +84,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<Byte> create(final byte minimum, final boolean isMinIncluded,
                                            final byte maximum, final boolean isMaxIncluded)
     {
-        return new NumberRange<Byte>(Byte.class,
+        return new NumberRange<>(Byte.class,
                 Byte.valueOf(minimum), isMinIncluded,
                 Byte.valueOf(maximum), isMaxIncluded);
     }
@@ -116,7 +116,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<Short> create(final short minimum, final boolean isMinIncluded,
                                             final short maximum, final boolean isMaxIncluded)
     {
-        return new NumberRange<Short>(Short.class,
+        return new NumberRange<>(Short.class,
                 Short.valueOf(minimum), isMinIncluded,
                 Short.valueOf(maximum), isMaxIncluded);
     }
@@ -148,7 +148,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<Integer> create(final int minimum, final boolean isMinIncluded,
                                               final int maximum, final boolean isMaxIncluded)
     {
-        return new NumberRange<Integer>(Integer.class,
+        return new NumberRange<>(Integer.class,
                 Integer.valueOf(minimum), isMinIncluded,
                 Integer.valueOf(maximum), isMaxIncluded);
     }
@@ -180,7 +180,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<Long> create(final long minimum, final boolean isMinIncluded,
                                            final long maximum, final boolean isMaxIncluded)
     {
-        return new NumberRange<Long>(Long.class,
+        return new NumberRange<>(Long.class,
                 Long.valueOf(minimum), isMinIncluded,
                 Long.valueOf(maximum), isMaxIncluded);
     }
@@ -212,7 +212,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<Float> create(final float minimum, final boolean isMinIncluded,
                                             final float maximum, final boolean isMaxIncluded)
     {
-        return new NumberRange<Float>(Float.class,
+        return new NumberRange<>(Float.class,
                 valueOf(minimum, Float.NEGATIVE_INFINITY), isMinIncluded,
                 valueOf(maximum, Float.POSITIVE_INFINITY), isMaxIncluded);
     }
@@ -244,7 +244,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<Double> create(final double minimum, final boolean isMinIncluded,
                                              final double maximum, final boolean isMaxIncluded)
     {
-        return new NumberRange<Double>(Double.class,
+        return new NumberRange<>(Double.class,
                 valueOf(minimum, Double.NEGATIVE_INFINITY), isMinIncluded,
                 valueOf(maximum, Double.POSITIVE_INFINITY), isMaxIncluded);
     }
@@ -368,7 +368,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     NumberRange<T> create(final T minValue, final boolean isMinIncluded,
                           final T maxValue, final boolean isMaxIncluded)
     {
-        return new NumberRange<T>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
+        return new NumberRange<>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
     }
 
     /**
@@ -436,7 +436,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
             return (NumberRange<N>) range;
         }
         // The constructor will ensure that the range element class is a subclass of Number.
-        return new NumberRange<N>(range);
+        return new NumberRange<>(range);
     }
 
     /**
@@ -459,7 +459,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
             // Safe because we checked in the line just above.
             return (NumberRange<N>) wrap((Range) range);
         }
-        return new NumberRange<N>(type, range);
+        return new NumberRange<>(type, range);
     }
 
     /**

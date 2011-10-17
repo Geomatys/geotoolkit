@@ -103,7 +103,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
      */
     private synchronized void add(final String label, final Object linkage) throws IllegalStateException {
         if (anchors == null) {
-            anchors = new HashMap<String,Object>();
+            anchors = new HashMap<>();
         }
         final Object old = anchors.put(label, linkage);
         if (old != null) {

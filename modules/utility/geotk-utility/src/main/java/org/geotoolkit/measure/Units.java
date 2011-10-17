@@ -113,7 +113,7 @@ public final class Units extends Static {
     /**
      * A few units commonly used in GIS.
      */
-    private static final Map<Unit<?>,Unit<?>> COMMONS = new HashMap<Unit<?>,Unit<?>>(48);
+    private static final Map<Unit<?>,Unit<?>> COMMONS = new HashMap<>(48);
     static {
         COMMONS.put(PPM, PPM);
         boolean nonSI = false;
@@ -123,7 +123,7 @@ public final class Units extends Static {
                 final Object value;
                 try {
                     value = field.get(null);
-                } catch (Exception e) {
+                } catch (ReflectiveOperationException e) {
                     // Should not happen since we asked only for public static constants.
                     throw new AssertionError(e);
                 }

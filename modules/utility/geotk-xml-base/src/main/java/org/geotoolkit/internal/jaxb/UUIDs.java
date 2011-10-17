@@ -87,14 +87,14 @@ public abstract class UUIDs<T> {
      * Every access to this map must be synchronized on {@code this}.
      */
     @GuardedBy("this")
-    private final Map<T,WeakRef> uuidToObject = new HashMap<T,WeakRef>();
+    private final Map<T,WeakRef> uuidToObject = new HashMap<>();
 
     /**
      * The UUID for existing objects.
      * Every access to this map must be synchronized on {@code this}.
      */
     @GuardedBy("this")
-    private final Map<WeakRef,T> objectToUUID = new HashMap<WeakRef,T>();
+    private final Map<WeakRef,T> objectToUUID = new HashMap<>();
 
     /**
      * Creates a new, initially empty, map of UUIDs.

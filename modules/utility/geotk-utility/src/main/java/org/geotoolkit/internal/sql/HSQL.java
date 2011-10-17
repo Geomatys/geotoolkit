@@ -120,14 +120,15 @@ public final class HSQL {
      */
     public static void setReadOnly(final File path) throws IOException {
         final File file = new File(path.getParentFile(), path.getName() + ".properties");
-        final InputStream propertyIn = new FileInputStream(file);
-        final Properties properties = new Properties();
-        properties.load(propertyIn);
-        propertyIn.close();
+        final Properties properties;
+        try (InputStream propertyIn = new FileInputStream(file)) {
+            properties = new Properties();
+            properties.load(propertyIn);
+        }
         if (!"true".equals(properties.put("readonly", "true"))) {
-            final OutputStream out = new FileOutputStream(file);
-            properties.store(out, "HSQL database configuration");
-            out.close();
+            try (OutputStream out = new FileOutputStream(file)) {
+                properties.store(out, "HSQL database configuration");
+            }
         }
     }
 
@@ -174,8 +175,8 @@ public final class HSQL {
      * @throws SQLException
      */
     public static void shutdown(final Connection connection) throws SQLException {
-        final Statement stmt = connection.createStatement();
-        stmt.execute("SHUTDOWN");
-        stmt.close();
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("SHUTDOWN");
+        }
     }
 }

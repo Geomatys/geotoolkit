@@ -72,6 +72,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      *
      * @param array The array to wrap.
      */
+    @SafeVarargs
     protected UnmodifiableArrayList(final E... array) {
         if (array == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "array"));
@@ -91,8 +92,9 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      *
      * @since 2.5
      */
+    @SafeVarargs
     public static <E> UnmodifiableArrayList<E> wrap(final E... array) {
-        return (array != null) ? new UnmodifiableArrayList<E>(array) : null;
+        return (array != null) ? new UnmodifiableArrayList<>(array) : null;
     }
 
     /**
@@ -117,9 +119,9 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
         }
         if (lower == 0 && upper == array.length) {
-            return new UnmodifiableArrayList<E>(array);
+            return new UnmodifiableArrayList<>(array);
         }
-        return new UnmodifiableArrayList.SubList<E>(array, lower, upper - lower);
+        return new UnmodifiableArrayList.SubList<>(array, lower, upper - lower);
     }
 
     /**
@@ -272,7 +274,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
         if (lower < 0 || upper > size() || lower > upper) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
         }
-        return new SubList<E>(array, lower + lower(), upper - lower);
+        return new SubList<>(array, lower + lower(), upper - lower);
     }
 
     /**

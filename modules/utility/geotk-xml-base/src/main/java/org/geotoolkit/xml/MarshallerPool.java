@@ -120,13 +120,13 @@ public class MarshallerPool {
      * The pool of marshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
-    private final Deque<Marshaller> marshallers = new LinkedList<Marshaller>();
+    private final Deque<Marshaller> marshallers = new LinkedList<>();
 
     /**
      * The pool of unmarshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
-    private final Deque<Unmarshaller> unmarshallers = new LinkedList<Unmarshaller>();
+    private final Deque<Unmarshaller> unmarshallers = new LinkedList<>();
 
     /**
      * Returns the root classes of Geotk objects to be marshalled by default.
@@ -139,7 +139,7 @@ public class MarshallerPool {
      * @return The default set of classes to be bound to the {@code JAXBContext}.
      */
     public static Class<?>[] defaultClassesToBeBound() {
-        final ArrayList<Class<?>> types = new ArrayList<Class<?>>();
+        final ArrayList<Class<?>> types = new ArrayList<>();
         for (final RegisterableTypes t : TYPES) {
             t.getTypes(types);
         }
@@ -239,10 +239,8 @@ public class MarshallerPool {
          */
         try {
             mapper = Class.forName(type).getConstructor(String.class).newInstance(rootNamespace);
-        } catch (Throwable exception) { // NOSONAR (TODO: revisit with Java 7)
-            // There is a lot of checked and unchecked exceptions that may be thrown above,
-            // including NoClassDefFoundError because of our trick using "geotk-provided".
-            // This is why we use such an extrem catch as "Throwable".
+        } catch (ReflectiveOperationException | NoClassDefFoundError exception) {
+            // The NoClassDefFoundError is because of our trick using "geotk-provided".
             throw new JAXBException("Unsupported JAXB implementation.", exception);
         }
     }

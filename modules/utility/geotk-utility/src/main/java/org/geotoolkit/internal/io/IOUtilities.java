@@ -590,30 +590,30 @@ public final class IOUtilities extends Static {
      * @throws IOException If an error occurred while unzipping the entries.
      */
     public static void unzip(final InputStream in, final File target) throws IOException {
-        final ZipInputStream def = new ZipInputStream(in);
-        final byte[] buffer = new byte[4096];
-        ZipEntry entry;
-        while ((entry = def.getNextEntry()) != null) {
-            final File file = new File(target, entry.getName());
-            if (entry.isDirectory()) {
-                if (!file.isDirectory() && !file.mkdir()) {
-                    throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, file));
+        try (ZipInputStream def = new ZipInputStream(in)) {
+            final byte[] buffer = new byte[4096];
+            ZipEntry entry;
+            while ((entry = def.getNextEntry()) != null) {
+                final File file = new File(target, entry.getName());
+                if (entry.isDirectory()) {
+                    if (!file.isDirectory() && !file.mkdir()) {
+                        throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, file));
+                    }
+                    continue;
                 }
-                continue;
+                try (OutputStream out = new FileOutputStream(file)) {
+                    int n;
+                    while ((n = def.read(buffer)) >= 0) {
+                        out.write(buffer, 0, n);
+                    }
+                }
+                final long time = entry.getTime();
+                if (time >= 0) {
+                    file.setLastModified(time);
+                }
+                def.closeEntry();
             }
-            final OutputStream out = new FileOutputStream(file);
-            int n;
-            while ((n = def.read(buffer)) >= 0) {
-                out.write(buffer, 0, n);
-            }
-            out.close();
-            final long time = entry.getTime();
-            if (time >= 0) {
-                file.setLastModified(time);
-            }
-            def.closeEntry();
         }
-        def.close();
     }
 
     /**

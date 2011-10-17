@@ -27,7 +27,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
 
 
-
 /**
  * Utility methods related to JNDI.
  *

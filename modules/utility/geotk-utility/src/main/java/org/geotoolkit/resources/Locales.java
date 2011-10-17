@@ -48,7 +48,7 @@ public final class Locales extends Static {
     private static final Map<Locale,Locale> POOL;
     static {
         final Locale[] locales = Locale.getAvailableLocales();
-        POOL = new HashMap<Locale,Locale>(hashMapCapacity(locales.length));
+        POOL = new HashMap<>(hashMapCapacity(locales.length));
         for (final Locale lc : locales) {
             POOL.put(lc, lc);
         }
@@ -67,7 +67,7 @@ public final class Locales extends Static {
                     }
                 }
             }
-        } catch (Exception exception) {
+        } catch (ReflectiveOperationException exception) {
             /*
              * Not a big deal if this operation fails (this is actually just an
              * optimization for reducing memory usage). Log a warning and continue.

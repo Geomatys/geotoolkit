@@ -77,7 +77,7 @@ final class ValidValues extends ValueRestriction {
     private <T extends Number & Comparable<? super T>> ValidValues(
             final Class<T> type, final int rangeType, final T min, final T max)
     {
-        super(null, new NumberRange<T>(type,
+        super(null, new NumberRange<>(type,
                 min, (rangeType & IIOMetadataFormat.VALUE_RANGE_MIN_INCLUSIVE_MASK) != 0,
                 max, (rangeType & IIOMetadataFormat.VALUE_RANGE_MAX_INCLUSIVE_MASK) != 0), null);
     }

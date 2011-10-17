@@ -67,7 +67,7 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
      */
     public RemoteExecutor(final TaskExecutor master) throws RemoteException {
         super(NAME);
-        slaves = new ArrayList<TaskExecutor>(1);
+        slaves = new ArrayList<>(1);
         this.master = master;
         if (master != null) {
             /*
@@ -108,11 +108,11 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
         /*
          * Now gives the tasks to every slaves.
          */
-        final List<TaskFuture<Output>> futures = new ArrayList<TaskFuture<Output>>(slaves.size());
+        final List<TaskFuture<Output>> futures = new ArrayList<>(slaves.size());
         for (final TaskExecutor slave : slaves) {
             futures.add(slave.submit(task));
         }
-        return new RemoteFuture<Output>(task, futures);
+        return new RemoteFuture<>(task, futures);
     }
 
     /**

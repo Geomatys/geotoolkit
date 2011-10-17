@@ -66,7 +66,7 @@ final class NilObjectHandler implements InvocationHandler {
      * or modify identifiers.
      */
     <T extends Identifier> NilObjectHandler(final Class<T> type, final T[] identifiers) {
-        attribute = IdentifierMapAdapter.create(type, new ArrayList<T>(Arrays.asList(identifiers)));
+        attribute = IdentifierMapAdapter.create(type, new ArrayList<>(Arrays.asList(identifiers)));
     }
 
     /**

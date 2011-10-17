@@ -84,7 +84,7 @@ public class Ranks extends Static {
         @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         final Any<T>[] entries = new Any[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Any<T>(i, source[i]);
+            entries[i] = new Any<>(i, source[i]);
         }
         final int[] ranks = ranks(entries);
         if (target != null) {

@@ -341,10 +341,11 @@ public enum Installation {
     public Properties getDataSource() throws IOException {
         final File file = new File(directory(true), DATASOURCE_FILE);
         if (file.isFile()) {
-            final InputStream in = new FileInputStream(file);
-            final Properties properties = new Properties();
-            properties.load(in);
-            in.close();
+            final Properties properties;
+            try (InputStream in = new FileInputStream(file)) {
+                properties = new Properties();
+                properties.load(in);
+            }
             return properties;
         }
         return null;

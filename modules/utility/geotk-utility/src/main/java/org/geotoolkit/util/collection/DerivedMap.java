@@ -36,7 +36,7 @@ import org.geotoolkit.lang.Decorator;
  * too.
  * <p>
  * This class is <strong>not</strong> thread-safe. Synchronizations (if wanted) are user's
- * reponsability.
+ * responsibility.
  *
  * @param <BK> The type of keys in the backing map.
  * @param <K>  The type of keys in this map.
@@ -291,7 +291,7 @@ public abstract class DerivedMap<BK,K,V> extends AbstractMap<K,V> implements Ser
         @Override
         protected Entry<BK,K,V> baseToDerived(final Map.Entry<BK,V> entry) {
             final K derived = DerivedMap.this.baseToDerived(entry.getKey());
-            return derived!=null ? new Entry<BK,K,V>(entry, derived) : null;
+            return derived!=null ? new Entry<>(entry, derived) : null;
         }
 
         @Override

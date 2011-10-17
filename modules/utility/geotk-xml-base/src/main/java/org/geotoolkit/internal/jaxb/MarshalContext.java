@@ -66,7 +66,7 @@ public final class MarshalContext {
     /**
      * The thread-local context.
      */
-    private static final ThreadLocal<MarshalContext> CURRENT = new ThreadLocal<MarshalContext>();
+    private static final ThreadLocal<MarshalContext> CURRENT = new ThreadLocal<>();
 
     /**
      * The object converters currently in use, or {@code null} for {@link ObjectConverters#DEFAULT}.

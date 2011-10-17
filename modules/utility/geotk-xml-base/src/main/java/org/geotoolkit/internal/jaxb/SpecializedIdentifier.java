@@ -84,11 +84,11 @@ public final class SpecializedIdentifier<T> implements Identifier {
         if (authority instanceof NonMarshalledAuthority) {
             switch (((NonMarshalledAuthority) authority).ordinal) {
                 case NonMarshalledAuthority.ID: {
-                    return new SpecializedIdentifier<String>(IdentifierSpace.ID, code);
+                    return new SpecializedIdentifier<>(IdentifierSpace.ID, code);
                 }
                 case NonMarshalledAuthority.UUID: {
                     try {
-                        return new SpecializedIdentifier<UUID>(IdentifierSpace.UUID, UUID.fromString(code));
+                        return new SpecializedIdentifier<>(IdentifierSpace.UUID, UUID.fromString(code));
                     } catch (IllegalArgumentException e) {
                         parseFailure(e);
                         break;
@@ -102,7 +102,7 @@ public final class SpecializedIdentifier<T> implements Identifier {
                         parseFailure(e);
                         break;
                     }
-                    return new SpecializedIdentifier<URI>(IdentifierSpace.HREF, href);
+                    return new SpecializedIdentifier<>(IdentifierSpace.HREF, href);
                 }
                 case NonMarshalledAuthority.XLINK: {
                     final URI href;
@@ -114,7 +114,7 @@ public final class SpecializedIdentifier<T> implements Identifier {
                     }
                     final XLink xlink = new XLink();
                     xlink.setHRef(href);
-                    return new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, xlink);
+                    return new SpecializedIdentifier<>(IdentifierSpace.XLINK, xlink);
                 }
             }
         }

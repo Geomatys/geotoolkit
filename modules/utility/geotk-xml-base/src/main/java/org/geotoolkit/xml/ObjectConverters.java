@@ -263,11 +263,7 @@ public class ObjectConverters {
     public URL toURL(final URI value) throws MalformedURLException {
         if (value != null) try {
             return value.toURL();
-        } catch (MalformedURLException e) {
-            if (!exceptionOccured(value, URI.class, URL.class, e)) {
-                throw e;
-            }
-        } catch (IllegalArgumentException e) {
+        } catch (MalformedURLException | IllegalArgumentException e) {
             if (!exceptionOccured(value, URI.class, URL.class, e)) {
                 throw e;
             }

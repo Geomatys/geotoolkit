@@ -44,7 +44,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
  * be traversed in their insertion order.
  * <p>
  * This class is <strong>not</strong> thread-safe. Synchronizations (if wanted) are user's
- * reponsability.
+ * responsibility.
  *
  * @param <E> The type of elements in the set.
  *
@@ -109,7 +109,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
      *        (most frequent element first, less frequent last).
      */
     public FrequencySortedSet(final int initialCapacity, final boolean reversed) {
-        count = new LinkedHashMap<E,Integer>(initialCapacity);
+        count = new LinkedHashMap<>(initialCapacity);
         order = reversed ? -1 : +1;
     }
 

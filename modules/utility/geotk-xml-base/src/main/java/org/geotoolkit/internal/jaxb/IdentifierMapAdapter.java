@@ -310,7 +310,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
             }
         }
         if (value != null) {
-            identifiers.add(new SpecializedIdentifier<T>(authority, value));
+            identifiers.add(new SpecializedIdentifier<>(authority, value));
         }
         return old;
     }
@@ -400,7 +400,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
          */
         @Override
         public int size() {
-            final HashMap<Citation,Boolean> done = new HashMap<Citation,Boolean>();
+            final HashMap<Citation,Boolean> done = new HashMap<>();
             for (final Identifier identifier : identifiers) {
                 if (identifier != null) {
                     done.put(identifier.getAuthority(), null);

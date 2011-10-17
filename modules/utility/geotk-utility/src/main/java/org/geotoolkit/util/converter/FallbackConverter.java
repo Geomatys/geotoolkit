@@ -308,7 +308,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
                 return fallback;
             }
         }
-        return new FallbackConverter<S,T>(existing, converter);
+        return new FallbackConverter<>(existing, converter);
     }
 
     /**

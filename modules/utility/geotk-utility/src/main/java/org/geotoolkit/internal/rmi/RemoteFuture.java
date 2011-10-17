@@ -27,7 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 
 
 /**
- * The pending result of a task submited to a {@link RemoteExecutor}.
+ * The pending result of a task submitted to a {@link RemoteExecutor}.
  *
  * @param <Output> The return value of the task.
  *
@@ -81,7 +81,7 @@ final class RemoteFuture<Output> extends UnicastRemoteObject implements TaskFutu
     @Override
     public synchronized Output get() throws RemoteException, ExecutionException, InterruptedException {
         if (output == null) {
-            final List<Output> results = new ArrayList<Output>(futures.size());
+            final List<Output> results = new ArrayList<>(futures.size());
             for (final TaskFuture<Output> future : futures) {
                 results.add(future.get());
             }

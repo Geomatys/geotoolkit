@@ -34,7 +34,7 @@ import org.geotoolkit.util.collection.XCollections;
  * A task which can be given to many processes. The same {@code ShareableTask} instance
  * (or a copy of it through serialization-deserialization) can be given to an arbitrary
  * amount of processes, either on the local machine or on many remote machines. It is the
- * task reponsability to ensure that each process can pickup a unique portion of the task.
+ * task responsibility to ensure that each process can pickup a unique portion of the task.
  * <p>
  * A convenient approach is to extract sub-portions of the task from a thread-safe, remotely
  * available object stream (typically backed by an iterator). The stream or iterator is given
@@ -72,7 +72,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
      */
     protected ShareableTask(final Iterable<Input> input) {
         if (input != null) {
-            stream = new IteratorWrapper<Input>(input.iterator());
+            stream = new IteratorWrapper<>(input.iterator());
         }
     }
 
@@ -146,7 +146,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
         for (final Map<K,V> output : outputs) {
             size += output.size();
         }
-        final Map<K,V> aggregate = new HashMap<K,V>(XCollections.hashMapCapacity(size));
+        final Map<K,V> aggregate = new HashMap<>(XCollections.hashMapCapacity(size));
         for (final Map<K,V> output : outputs) {
             aggregate.putAll(output);
         }
@@ -171,7 +171,7 @@ public abstract class ShareableTask<Input,Output> implements Callable<Output>, S
     private synchronized void writeObject(final ObjectOutputStream out) throws IOException {
         final ObjectStream<Input> stream = this.stream;
         if (stream != null && !(stream instanceof Serializable)) {
-            this.stream = new RemoteStream<Input>(stream);
+            this.stream = new RemoteStream<>(stream);
         }
         out.defaultWriteObject();
     }

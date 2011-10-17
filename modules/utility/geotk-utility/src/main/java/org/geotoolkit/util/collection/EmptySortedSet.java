@@ -48,7 +48,7 @@ final class EmptySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, Se
      * The unique instance of this set.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    static final SortedSet INSTANCE = new EmptySortedSet<Object>();
+    static final SortedSet INSTANCE = new EmptySortedSet<>();
 
     /**
      * Do not allow instantiation except for the unique instance.

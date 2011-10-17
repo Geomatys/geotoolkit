@@ -96,7 +96,7 @@ public final class Exceptions extends Static {
             String message = cause.getLocalizedMessage();
             if (message != null && !(message = message.trim()).isEmpty()) {
                 if (buffer == null) {
-                    done = new HashSet<String>();
+                    done = new HashSet<>();
                     buffer = new StringBuilder();
                     lineSeparator = System.lineSeparator();
                     if (header != null && !(header = header.trim()).isEmpty()) {
@@ -176,8 +176,8 @@ public final class Exceptions extends Static {
          * of this to calculate the necessary space.
          */
         double width = 0, height = 0;
-        final List<GlyphVector> glyphs = new ArrayList<GlyphVector>();
-        final List<Rectangle2D> bounds = new ArrayList<Rectangle2D>();
+        final List<GlyphVector> glyphs = new ArrayList<>();
+        final List<Rectangle2D> bounds = new ArrayList<>();
         final int length = message.length();
         final Font font = graphics.getFont();
         final FontRenderContext context = graphics.getFontRenderContext();

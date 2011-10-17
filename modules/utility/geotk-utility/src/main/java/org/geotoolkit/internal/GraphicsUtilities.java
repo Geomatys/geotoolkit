@@ -18,6 +18,7 @@
 package org.geotoolkit.internal;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.logging.Logging;
@@ -73,7 +74,7 @@ public final class GraphicsUtilities extends Static {
         }
         if (laf != null) try {
             UIManager.setLookAndFeel(laf);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
             Logging.recoverableException(caller, method, e);
         }
     }

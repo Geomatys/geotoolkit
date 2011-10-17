@@ -87,13 +87,13 @@ class ClassPair<S,T> {
                 return null;
             }
         }
-        return new ClassPair<S,T>(source, targetClass);
+        return new ClassPair<>(source, targetClass);
     }
 
     /**
      * Casts the given converter to the source and target classes of this {@code ClassPair}. This
      * method is not public because the checks are performed using assertions only. If this method
-     * was to goes public, the assertions would need to be replaced by inconditional checks.
+     * was to goes public, the assertions would need to be replaced by unconditional checks.
      * <p>
      * This method is used by {@link ConverterRegistry} after fetching a value from a hash
      * map using this {@code ClassPair} as a key. In this context, the cast should never fail

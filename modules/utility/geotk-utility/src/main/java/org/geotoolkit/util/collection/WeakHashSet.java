@@ -139,7 +139,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     private final boolean isArray;
 
     /**
-     * Number of non-nul elements in {@link #table}.
+     * Number of non-null elements in {@link #table}.
      */
     private int count;
 
@@ -159,7 +159,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      * @since 2.5
      */
     public static <E> WeakHashSet<E> newInstance(final Class<E> type) {
-        return new WeakHashSet<E>(type);
+        return new WeakHashSet<>(type);
     }
 
     /**
@@ -178,7 +178,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
 
     /**
      * Sets the {@link #table} array to the specified size. The content of the old array is lost.
-     * The value is returned for convenience (this is actually a paranoic safety for making sure
+     * The value is returned for convenience (this is actually a paranoiac safety for making sure
      * that the caller will really use the new array, in case of synchronization bug).
      *
      * @todo Use the commented line instead if a future Java version supports generic arrays.

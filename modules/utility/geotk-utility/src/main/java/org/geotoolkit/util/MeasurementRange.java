@@ -83,7 +83,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     public static MeasurementRange<Float> create(float minimum, boolean isMinIncluded,
                                                  float maximum, boolean isMaxIncluded, Unit<?> units)
     {
-        return new MeasurementRange<Float>(Float.class,
+        return new MeasurementRange<>(Float.class,
                 Float.valueOf(minimum), isMinIncluded,
                 Float.valueOf(maximum), isMaxIncluded, units);
     }
@@ -113,7 +113,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     public static MeasurementRange<Double> create(double minimum, boolean isMinIncluded,
                                                   double maximum, boolean isMaxIncluded, Unit<?> units)
     {
-        return new MeasurementRange<Double>(Double.class,
+        return new MeasurementRange<>(Double.class,
                 Double.valueOf(minimum), isMinIncluded,
                 Double.valueOf(maximum), isMaxIncluded, units);
     }
@@ -198,7 +198,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     MeasurementRange<T> create(final T minValue, final boolean isMinIncluded,
                                final T maxValue, final boolean isMaxIncluded)
     {
-        return new MeasurementRange<T>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded, units);
+        return new MeasurementRange<>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded, units);
     }
 
     /**
@@ -261,7 +261,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
                         Errors.Keys.INCOMPATIBLE_UNIT_$1, casted.units), e);
             }
         }
-        return new MeasurementRange<N>(type, range, units);
+        return new MeasurementRange<>(type, range, units);
     }
 
     /**
@@ -282,15 +282,15 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
             if (type.equals(elementClass)) {
                 return (MeasurementRange<N>) this;
             } else {
-                return new MeasurementRange<N>(type, this, units);
+                return new MeasurementRange<>(type, this, units);
             }
         }
         if (units == null) {
-            return new MeasurementRange<N>(type, this, targetUnits);
+            return new MeasurementRange<>(type, this, targetUnits);
         }
         final UnitConverter converter = units.getConverterToAny(targetUnits);
         if (converter.equals(UnitConverter.IDENTITY)) {
-            return new MeasurementRange<N>(type, this, targetUnits);
+            return new MeasurementRange<>(type, this, targetUnits);
         }
         boolean isMinIncluded = isMinIncluded();
         boolean isMaxIncluded = isMaxIncluded();
@@ -304,7 +304,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
             isMinIncluded = isMaxIncluded;
             isMaxIncluded = tb;
         }
-        return new MeasurementRange<N>(type,
+        return new MeasurementRange<>(type,
                 cast(minimum, type), isMinIncluded,
                 cast(maximum, type), isMaxIncluded, targetUnits);
     }

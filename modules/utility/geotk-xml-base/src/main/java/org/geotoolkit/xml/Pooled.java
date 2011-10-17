@@ -135,7 +135,7 @@ abstract class Pooled {
      */
     Pooled(final boolean internal) {
         this.internal = internal;
-        initial = new LinkedHashMap<Object, Object>();
+        initial = new LinkedHashMap<>();
     }
 
     /**

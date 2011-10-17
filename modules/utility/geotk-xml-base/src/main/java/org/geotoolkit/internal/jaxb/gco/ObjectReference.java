@@ -121,9 +121,9 @@ final class ObjectReference {
                 // Failed to find an existing metadata instance.
                 // Creates an empty instance with the identifiers.
                 int count = 0;
-                SpecializedIdentifier<?>[] identifiers  = new SpecializedIdentifier<?>[2];
-                if (uuid  != null) identifiers[count++] = new SpecializedIdentifier<UUID> (IdentifierSpace.UUID,  uuid);
-                if (xlink != null) identifiers[count++] = new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, xlink);
+                SpecializedIdentifier<?>[] identifiers  = new SpecializedIdentifier<>[2];
+                if (uuid  != null) identifiers[count++] = new SpecializedIdentifier<>(IdentifierSpace.UUID,  uuid);
+                if (xlink != null) identifiers[count++] = new SpecializedIdentifier<>(IdentifierSpace.XLINK, xlink);
                 identifiers = XArrays.resize(identifiers, count);
                 metadata = linker.newIdentifiedObject(type, identifiers);
             }
@@ -139,8 +139,8 @@ final class ObjectReference {
             }
             if (metadata instanceof IdentifiedObject) {
                 final IdentifierMap map = ((IdentifiedObject) metadata).getIdentifierMap();
-                if (uuid  != null) new SpecializedIdentifier<UUID> (IdentifierSpace.UUID,  uuid) .putInto(map);
-                if (xlink != null) new SpecializedIdentifier<XLink>(IdentifierSpace.XLINK, xlink).putInto(map);
+                if (uuid  != null) new SpecializedIdentifier<>(IdentifierSpace.UUID,  uuid) .putInto(map);
+                if (xlink != null) new SpecializedIdentifier<>(IdentifierSpace.XLINK, xlink).putInto(map);
             }
         }
         return metadata;

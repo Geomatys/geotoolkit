@@ -160,7 +160,7 @@ public class ConverterRegistry {
      * Creates an initially empty set of object converters.
      */
     public ConverterRegistry() {
-        converters = new LinkedHashMap<ClassPair<?,?>, ObjectConverter<?,?>>();
+        converters = new LinkedHashMap<>();
     }
 
     /**
@@ -327,7 +327,7 @@ public class ConverterRegistry {
     public <S,T> ObjectConverter<S,T> converter(final Class<S> source, final Class<T> target)
             throws NonconvertibleObjectException
     {
-        final ClassPair<S,T> key = new ClassPair<S,T>(source, target);
+        final ClassPair<S,T> key = new ClassPair<>(source, target);
         synchronized (converters) {
             ObjectConverter<S,T> converter = key.cast(converters.get(key));
             if (converter != null) {
@@ -438,7 +438,7 @@ public class ConverterRegistry {
         final Set<Class<?>>[] targets = new Set[sources.length];
         for (int i=0; i<sources.length; i++) {
             Class<?> source = sources[i];
-            final Set<Class<?>> types = new LinkedHashSet<Class<?>>();
+            final Set<Class<?>> types = new LinkedHashSet<>();
             while (source != null && base.isAssignableFrom(source)) {
                 types.add(source);
                 source = source.getSuperclass();

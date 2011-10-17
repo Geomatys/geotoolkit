@@ -292,7 +292,7 @@ loop:   for (int i=0; ; i++) {
          * printing in an other console (e.g. using the Unix "tail" command).
          */
         if (handler instanceof ConsoleHandler && X364.isSupported()) {
-            colors = new TreeMap<Level,X364>(COMPARATOR);
+            colors = new TreeMap<>(COMPARATOR);
             final SortedMap<Level,X364> colors = this.colors;
             colors.put(Level.ALL,     X364.BACKGROUND_GRAY);
             colors.put(Level.CONFIG,  X364.BACKGROUND_BLUE);
@@ -408,7 +408,7 @@ loop:   for (int i=0; ; i++) {
         boolean changed = false;
         if (color != null) {
             if (colors == null) {
-                colors = new TreeMap<Level,X364>(COMPARATOR);
+                colors = new TreeMap<>(COMPARATOR);
             }
             changed = (colors.put(level, color) != color);
         } else if (colors != null) {

@@ -115,7 +115,7 @@ public class LoggedFormat<T> extends Format {
      * @return A new format which will delegate parsing to the given format and log failures.
      */
     public static <T> LoggedFormat<T> getInstance(final Format format, final Class<T> type) {
-        return new LoggedFormat<T>(format, type);
+        return new LoggedFormat<>(format, type);
     }
 
     /**
