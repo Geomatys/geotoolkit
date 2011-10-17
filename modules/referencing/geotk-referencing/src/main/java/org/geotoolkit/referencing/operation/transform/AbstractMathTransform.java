@@ -63,11 +63,9 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
 /**
  * Provides a default implementation for most methods required by the {@link MathTransform}
- * interface. {@code AbstractMathTransform} provides a convenient base class from which other
- * transform classes can be easily derived. In addition, {@code AbstractMathTransform} implements
- * methods required by the {@link MathTransform2D} interface, but <strong>does not</strong>
- * implements {@code MathTransform2D}. Subclasses must declare {@code implements MathTransform2D}
- * themselves if they know to map two-dimensional coordinate systems.
+ * interface. {@code AbstractMathTransform} provides a convenient base class from which
+ * transform implementations can be easily derived. It also defines a few additional
+ * Geotk-specific methods for convenience of performance.
  * <p>
  * The simplest way to implement this abstract class is to provide an implementation for the
  * following methods only:
@@ -80,8 +78,14 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * <p>
  * However more performance may be gained by overriding the other {@code transform} method as well.
  *
+ * {@section Two-dimensional transforms}
+ * {@code AbstractMathTransform} implements also the methods required by the {@link MathTransform2D}
+ * interface, but <strong>does not</strong> implements that interface directly. Subclasses must add
+ * the "{@code implements MathTransform2D}" clause themselves, or extend the {@link AbstractMathTransform2D}
+ * base class, if they know to map two-dimensional coordinate systems.
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -101,7 +105,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     /**
      * Maximum amount of {@link TransformException} to catch while transforming a block of
      * {@value #MAXIMUM_BUFFER_SIZE} ordinate values in an array. The default implementation of
-     * {@code transform} methods set untransformable coordinates to {@linkplain Double#NaN NaN}
+     * {@code transform} methods set un-transformable coordinates to {@linkplain Double#NaN NaN}
      * before to let the exception propagate. However if more then {@value} exceptions occur in
      * a block of {@value #MAXIMUM_BUFFER_SIZE} <em>ordinates</em> (not coordinates), then we
      * will give up. We put a limit in order to avoid slowing down the application too much if
@@ -113,7 +117,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * can be set to 0.
      * <p>
      * Having {@code MAXIMUM_BUFFER_SIZE} sets to 512 and {@code MAXIMUM_FAILURES} sets to 32
-     * means that we tolerate about 6.25% of untransformable points.
+     * means that we tolerate about 6.25% of un-transformable points.
      */
     static final int MAXIMUM_FAILURES = 32;
 
@@ -216,8 +220,15 @@ public abstract class AbstractMathTransform extends FormattableObject
 
     /**
      * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}.
-     * The default implementation invokes {@link #transform(double[],int,double[],int)}
-     * using a temporary array of doubles.
+     * The default implementation performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Ensures that the {@linkplain #getSourceDimensions() source} and
+     *       {@linkplain #getTargetDimensions() target dimensions} of this math
+     *       transform are equal to 2.</li>
+     *   <li>Delegates to the protected {@link #transform(double[],int,double[],int)}
+     *       method using a temporary array of doubles.</li>
+     * </ul>
      *
      * @param  ptSrc The coordinate point to be transformed.
      * @param  ptDst The coordinate point that stores the result of transforming {@code ptSrc},
@@ -249,8 +260,15 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}. The default
-     * implementation delegates to {@link #transform(double[],int,double[],int)}.
+     * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}.
+     * The default implementation performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Ensures that the dimension of the given points are consistent with the
+     *       {@linkplain #getSourceDimensions() source} and {@linkplain #getTargetDimensions()
+     *       target dimensions} of this math transform.</li>
+     *   <li>Delegates to the protected {@link #transform(double[],int,double[],int)} method.</li>
+     * </ul>
      *
      * @param  ptSrc the coordinate point to be transformed.
      * @param  ptDst the coordinate point that stores the result of transforming {@code ptSrc},
@@ -354,7 +372,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * Transforms a list of coordinate point ordinal values. This method is provided for
      * efficiently transforming many points. The supplied array of ordinal values will
      * contain packed ordinal values. For example if the source dimension is 3, then the
-     * ordinals will be packed in this order:
+     * ordinates will be packed in this order:
      *
      * <blockquote>
      * (<var>x<sub>0</sub></var>,<var>y<sub>0</sub></var>,<var>z<sub>0</sub></var>,
@@ -373,7 +391,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *               stored in the destination array.
      * @param numPts The number of point objects to be transformed.
      * @throws TransformException if a point can't be transformed. Some implementations will stop
-     *         at the first failure, wile some other implementations will fill the untransformable
+     *         at the first failure, wile some other implementations will fill the un-transformable
      *         points with {@linkplain Double#NaN NaN} values, continue and throw the exception
      *         only at end. Implementations that fall in the later case should set the {@linkplain
      *         TransformException#getLastCompletedTransform last completed transform} to {@code this}.
@@ -485,7 +503,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *               stored in the destination array.
      * @param numPts The number of point objects to be transformed.
      * @throws TransformException if a point can't be transformed. Some implementations will stop
-     *         at the first failure, wile some other implementations will fill the untransformable
+     *         at the first failure, wile some other implementations will fill the un-transformable
      *         points with {@linkplain Double#NaN NaN} values, continue and throw the exception
      *         only at end. Implementations that fall in the later case should set the {@linkplain
      *         TransformException#getLastCompletedTransform last completed transform} to {@code this}.
@@ -613,7 +631,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *               stored in the destination array.
      * @param numPts The number of point objects to be transformed.
      * @throws TransformException if a point can't be transformed. Some implementations will stop
-     *         at the first failure, wile some other implementations will fill the untransformable
+     *         at the first failure, wile some other implementations will fill the un-transformable
      *         points with {@linkplain Double#NaN NaN} values, continue and throw the exception
      *         only at end. Implementations that fall in the later case should set the {@linkplain
      *         TransformException#getLastCompletedTransform last completed transform} to {@code this}.
@@ -681,7 +699,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *               stored in the destination array.
      * @param numPts The number of point objects to be transformed.
      * @throws TransformException if a point can't be transformed. Some implementations will stop
-     *         at the first failure, wile some other implementations will fill the untransformable
+     *         at the first failure, wile some other implementations will fill the un-transformable
      *         points with {@linkplain Double#NaN NaN} values, continue and throw the exception
      *         only at end. Implementations that fall in the later case should set the {@linkplain
      *         TransformException#getLastCompletedTransform last completed transform} to {@code this}.
@@ -940,10 +958,18 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Gets the derivative of this transform at a point. The default implementation ensures that
-     * {@code point} has a valid dimension. Next, if the input dimension is 2, then this method
-     * delegates the work to {@link #derivative(Point2D)}. Otherwise a {@link TransformException}
-     * is thrown.
+     * Gets the derivative of this transform at a point.
+     * The default implementation performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Ensures that the {@code point} dimension is equals to this math transform
+     *       {@linkplain #getSourceDimensions() source dimensions}.</li>
+     *   <li>If the source dimension is 2, delegates to {@link #derivative(Point2D)}.</li>
+     *   <li>Otherwise throws {@link TransformException}.</li>
+     * </ul>
+     * <p>
+     * Consequently this method will always throw an exception, unless at least one of the
+     * two {@code derivative} methods is overridden.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point (never {@code null}).
@@ -972,6 +998,103 @@ public abstract class AbstractMathTransform extends FormattableObject
             }
         }
         throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+    }
+
+    /**
+     * A bundle method for calculating derivative and coordinate transformation in a single step.
+     * The results are stored in the given destination objects if possible. Invoking this method
+     * is equivalent to the following code, except that it may execute faster:
+     *
+     * {@preformat java
+     *     DirectPosition ptSrc = ...;
+     *     DirectPosition ptDst = ...;
+     *     Matrix matrixDst = derivative(ptSrc);
+     *     ptDst = transform(ptSrc, ptDst);
+     * }
+     *
+     * The derivative result is stored in the given {@code matrixDst} instance if possible,
+     * but implementations may ignore that argument and return a new matrix instance. We
+     * allow this flexibility because some implementations use specialized matrix classes.
+     *
+     * {@note This method does not provide any new functionality compared to the standard methods
+     *        provided in the <code>MathTransform</code> interface. However it can be significantly
+     *        faster because many internal calculations are the same for derivatives and coordinate
+     *        transforms. A bundle method like this one can help to reduce redundant calculation.}
+     *
+     * The default implementation delegates to {@link #derivative(DirectPosition)} and
+     * {@link #transform(DirectPosition, DirectPosition)}. Subclasses should provide a
+     * more efficient implementation if possible.
+     *
+     * @param  ptSrc     The coordinate point to transform and where to calculate the derivative.
+     * @param  ptDst     A pre-allocated position where to store the transform result.
+     * @param  matrixDst An optional pre-allocated matrix where to store the derivative result,
+     *                   or {@code null} if this method should create a new instance.
+     * @return The derivative matrix. Note that the return value is not guaranteed to be the
+     *         same instance than {@code matrixDst}.
+     * @throws MismatchedDimensionException if {@code ptSrc} or {@code ptDst} object don't have
+     *         the expected dimension.
+     * @throws TransformException if the point can't be transformed or an error occurred
+     *         while calculating the derivative.
+     *
+     * @see #transform(DirectPosition, DirectPosition)
+     * @see #derivative(DirectPosition)
+     *
+     * @since 3.20
+     */
+    public Matrix derivativeAndTransform(final DirectPosition ptSrc, final DirectPosition ptDst, final Matrix matrixDst)
+            throws MismatchedDimensionException, TransformException
+    {
+        final Matrix derivative = derivative(ptSrc); // Must be before transform.
+        final DirectPosition transformed = transform(ptSrc, ptDst);
+        if (transformed != ptDst) {
+            // Should never happen in compliant implementation, but let be paranoiac.
+            final int dimension = transformed.getDimension();
+            final int ptDstDim = ptDst.getDimension();
+            if (ptDstDim != dimension) {
+                throw new MismatchedDimensionException(mismatchedDimension("ptDst", ptDstDim, dimension));
+            }
+            for (int i=0; i<dimension; i++) {
+                ptDst.setOrdinate(i, transformed.getOrdinate(i));
+            }
+        }
+        return derivative;
+    }
+
+    /**
+     * Same as {@link #derivateAndTransform(DirectPosition, DirectPosition, XMatrix)},
+     * but with two-dimensional points only.
+     * <p>
+     * The default implementation delegates to {@link #derivative(Point2D)} and
+     * {@link #transform(Point2D, Point2D)}. Subclasses should provide a more efficient
+     * implementation if possible.
+     *
+     * @param  ptSrc     The coordinate point to transform and where to calculate the derivative.
+     * @param  ptDst     A pre-allocated position where to store the transform result.
+     * @param  matrixDst An optional pre-allocated matrix where to store the derivative result,
+     *                   or {@code null} if this method should create a new instance itself.
+     * @return The derivative matrix. Note that the returned value is not guaranteed to be the
+     *         same instance than {@code matrixDst}.
+     * @throws MismatchedDimensionException if the {@linkplain #getSourceDimensions() source} and
+     *         {@linkplain #getTargetDimensions() target dimensions} of this math transform are not
+     *         equal to 2.
+     * @throws TransformException if the point can't be transformed or an error occurred
+     *         while calculating the derivative.
+     *
+     * @see #transform(Point2D, Point2D)
+     * @see #derivative(Point2D)
+     *
+     * @since 3.20
+     */
+    public Matrix derivativeAndTransform(final Point2D ptSrc, final Point2D ptDst, final Matrix matrixDst)
+            throws MismatchedDimensionException, TransformException
+    {
+        final Matrix derivative = derivative(ptSrc); // Must be before transform.
+        final Point2D transformed = transform(ptSrc, ptDst);
+        if (transformed != ptDst) {
+            // Should never happen in compliant implementation, but let be paranoiac.
+            ptDst.setLocation(transformed);
+        }
+        return derivative;
     }
 
     /**

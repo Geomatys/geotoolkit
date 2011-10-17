@@ -30,6 +30,7 @@ import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -42,10 +43,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.DerivableTransform;
-import org.geotoolkit.internal.referencing.DerivableTransformAdapter;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -224,36 +223,63 @@ public final class Envelopes extends Static {
             targetPt = new GeneralDirectPosition(targetDim);
         }
         /*
-         * Storage requirement. The value "3" below is because the following "while" loop
-         * use an index number in base 3 (see the comment inside the loop).
+         * Allocates all needed objects. The value '3' below is because the following 'while'
+         * loop uses a 'pointIndex' to be interpreted as a number in base 3 (see the comment
+         * inside the loop).  The coordinate to transform must be initialized to the minimal
+         * ordinate values. This coordinate will be updated in the 'switch' statement inside
+         * the 'while' loop.
          */
-        int pointIndex = 0;
-        GeneralEnvelope transformed = null;
-        final XMatrix[] derivatives = new XMatrix[(int) Math.round(Math.pow(3, sourceDim))];
-        final double[]  ordinates   = new double[derivatives.length * targetDim];
-        final DerivableTransform dt = DerivableTransformAdapter.wrap(transform);
-        /*
-         * Before to run the loops, we must initialize the coordinates to the minimal values.
-         * This coordinates will be updated in the 'switch' statement inside the 'while' loop.
-         */
-        final GeneralDirectPosition sourcePt = new GeneralDirectPosition(sourceDim);
+        int             pointIndex            = 0;
+        boolean         isDerivativeSupported = true;
+        GeneralEnvelope transformed           = null;
+        final Matrix[]  derivatives           = new Matrix[(int) Math.round(Math.pow(3, sourceDim))];
+        final double[]  ordinates             = new double[derivatives.length * targetDim];
+        final GeneralDirectPosition sourcePt  = new GeneralDirectPosition(sourceDim);
         for (int i=sourceDim; --i>=0;) {
             sourcePt.setOrdinate(i, envelope.getMinimum(i));
         }
+        /*
+         * Iterates over every minimal, maximal and median ordinate values (3 points) along each
+         * dimension. The total number of iterations is 3 ^ (number of source dimensions).
+         */
         transformPoint: while (true) {
             /*
-             * Transform a point and add the transformed point to the destination envelope.
+             * Compute the derivative (optional operation). If this operation fails, we will
+             * set a flag to 'false' so we don't try again for all remaining points. We try
+             * to compute the derivative and the transformed point in a single operation if
+             * we can. If we can not, we will compute those two information separately.
+             *
              * Note that the very last point to be projected must be the envelope center.
              * There is no need to calculate the derivative for that last point.
              */
-            if (pointIndex < derivatives.length - 1) {
-                derivatives[pointIndex] = dt.derivateAndTransform(sourcePt, targetPt, null);
-            } else {
+            boolean isPointTransformed = false;
+            if (isDerivativeSupported && pointIndex < derivatives.length-1) try {
+                final Matrix derivative;
+                if (transform instanceof AbstractMathTransform) {
+                    derivative = ((AbstractMathTransform) transform).derivativeAndTransform(sourcePt, targetPt, null);
+                    isPointTransformed = true;
+                } else {
+                    derivative = transform.derivative(sourcePt);
+                }
+                derivatives[pointIndex] = derivative;
+            } catch (TransformException e) {
+                recoverableException(e);
+                isDerivativeSupported = false;
+            }
+            /*
+             * If we have not been able to compute the derivative and the transformed point
+             * in a single step, compute the transformed point now.
+             */
+            if (!isPointTransformed) {
                 final DirectPosition p = transform.transform(sourcePt, targetPt);
                 if (p != targetPt) { // Paranoiac check, but should never happen.
                     targetPt.setLocation(p);
                 }
             }
+            /*
+             * Saves the transform point for future reuse after the enclosing 'while' loop,
+             * and add the transformed point to the destination envelope.
+             */
             System.arraycopy(targetPt.ordinates, 0, ordinates, pointIndex*targetDim, targetDim);
             if (transformed != null) {
                 transformed.add(targetPt);
@@ -293,14 +319,14 @@ public final class Envelopes extends Static {
          */
         boolean targetPtIsOverwritten = false;
         for (pointIndex=0; pointIndex < derivatives.length; pointIndex++) {
-            final XMatrix D1 = derivatives[pointIndex];
+            final Matrix D1 = derivatives[pointIndex];
             if (D1 != null) {
                 int indexBase3=pointIndex, power3=1;
                 for (int i=sourceDim; --i>=0; indexBase3 /= 3, power3 *= 3) {
                     final int digitBase3 = indexBase3 % 3;
                     if (digitBase3 != 2) { // Process only if we are not already located on the median along the dimension i.
                         final int medianIndex = pointIndex + power3*(2-digitBase3);
-                        final XMatrix D2 = derivatives[medianIndex];
+                        final Matrix D2 = derivatives[medianIndex];
                         if (D2 != null) {
                             final double xmin = envelope.getMinimum(i);
                             final double xmax = envelope.getMaximum(i);
@@ -724,7 +750,6 @@ public final class Envelopes extends Static {
         if (envelope == null) {
             return null;
         }
-        final DerivableTransform dt = DerivableTransformAdapter.wrap(transform);
         double xmin = Double.POSITIVE_INFINITY;
         double ymin = Double.POSITIVE_INFINITY;
         double xmax = Double.NEGATIVE_INFINITY;
@@ -739,9 +764,11 @@ public final class Envelopes extends Static {
          *   - Variables with indice 2 are for the current values in the iteration.
          *   - P1-P2 form a line segment to be checked for curvature.
          */
-        double λ0=0, φ0=0, x0=0, y0=0;
-        double λ1=0, φ1=0, x1=0, y1=0;
-        XMatrix D0=null, D1=null, D2=null;
+        double x0=0, y0=0, λ0=0, φ0=0;
+        double x1=0, y1=0, λ1=0, φ1=0;
+        double x2=0, y2=0;
+        Matrix D0=null, D1=null, D2=null;
+        boolean isDerivativeSupported = true;
         for (int i=0; i<=8; i++) {
             /*
              * Iteration order (center must be last):
@@ -767,16 +794,23 @@ public final class Envelopes extends Static {
             }
             point.x = λ2;
             point.y = φ2;
-            double x2, y2;
-            if (i != 8) {
-                final XMatrix recycle = D1;
+            boolean isPointTransformed = false;
+            if (isDerivativeSupported && i != 8) try {
+                final Matrix recycle = D1;
                 D1 = D2;
-                D2 = dt.derivateAndTransform(point, point, recycle);
-                x2 = point.x;
-                y2 = point.y;
-            } else {
-                D1 = D2;
-                D2 = D0; // No need to compute a new derivative.
+                if (transform instanceof AbstractMathTransform) {
+                    D2 = ((AbstractMathTransform) transform).derivativeAndTransform(point, point, recycle);
+                    x2 = point.x;
+                    y2 = point.y;
+                    isPointTransformed = true;
+                } else {
+                    D2 = transform.derivative(point);
+                }
+            } catch (TransformException e) {
+                recoverableException(e);
+                isDerivativeSupported = false;
+            }
+            if (!isPointTransformed) {
                 final Point2D target = transform.transform(point, point);
                 x2 = target.getX();
                 y2 = target.getY();
@@ -785,10 +819,19 @@ public final class Envelopes extends Static {
             if (x2 > xmax) xmax = x2;
             if (y2 < ymin) ymin = y2;
             if (y2 > ymax) ymax = y2;
-            if (i == 0) {
-                λ0=λ2; x0=x2;
-                φ0=φ2; y0=y2;
-                D0=D2;
+            switch (i) {
+                case 0: { // Remember the first point.
+                    λ0=λ2; x0=x2;
+                    φ0=φ2; y0=y2;
+                    D0=D2;
+                    break;
+                }
+                case 8: { // Close the iteration with the first point.
+                    λ2=λ0; x2=x0; // Discard P2 because it is the rectangle center.
+                    φ2=φ0; y2=y0;
+                    D2=D0;
+                    break;
+                }
             }
             /*
              * At this point, we expanded the rectangle using the projected points. Now try
@@ -806,10 +849,6 @@ public final class Envelopes extends Static {
              * The general method is more "elegant", at the cost of more storage requirement.
              */
             if (D1 != null && D2 != null) {
-                if (i == 8) { // Close the iteration with the first point.
-                    λ2=λ0; x2=x0;
-                    φ2=φ0; y2=y0;
-                }
                 final int srcDim;
                 final double s1, s2; // Ordinate values in source space (before projection)
                 switch (i) {
@@ -1115,7 +1154,7 @@ public final class Envelopes extends Static {
      * Invoked when a recoverable exception occurred. Those exceptions must be minor enough
      * that they can be silently ignored in most cases.
      */
-    private static void recoverableException(final Exception exception) {
+    private static void recoverableException(final TransformException exception) {
         Logging.recoverableException(Envelopes.class, "transform", exception);
     }
 

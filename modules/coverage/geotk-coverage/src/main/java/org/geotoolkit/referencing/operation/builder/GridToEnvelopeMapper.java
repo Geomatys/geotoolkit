@@ -576,7 +576,7 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Creates a <cite>Grid to Envelope</cite> (a.k.a. <cite>grid to CRS</cite>) transform using
+     * Creates a <cite>Grid to Envelope</cite> (or <cite>grid to CRS</cite>) transform using
      * the information provided by setter methods. The default implementation returns an instance
      * of {@link LinearTransform}, but subclasses could create more complex transforms.
      *
@@ -632,7 +632,7 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns the <cite>Grid to Envelope</cite> (a.k.a. <cite>grid to CRS</cite>)
+     * Returns the <cite>Grid to Envelope</cite> (or <cite>grid to CRS</cite>)
      * transform as a two-dimensional affine transform.
      *
      * @return The <cite>grid to CRS</cite> transform as a two-dimensional affine transform.
