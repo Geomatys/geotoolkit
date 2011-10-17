@@ -176,11 +176,21 @@ public final class DataBaseModel {
 
             final DatabaseMetaData metadata = cx.getMetaData();
             schemaSet = metadata.getSchemas();
+            
+            boolean hasSchema = false;
             while (schemaSet.next()) {
+                hasSchema = true;
                 final String SchemaName = schemaSet.getString(Schema.TABLE_SCHEM);
                 final SchemaMetaModel schema = analyzeSchema(SchemaName);
                 schemas.put(schema.name, schema);
             }
+            
+            if(!hasSchema){
+                //database might not handle schemas, example : mysql
+                final SchemaMetaModel schema = analyzeSchema(null);
+                schemas.put(null, schema);
+            }
+            
 
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing database model.", e);

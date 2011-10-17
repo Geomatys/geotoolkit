@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>geotk-jdbc</artifactId>
+    <version>3.x-SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit.pending</groupId>
+  <artifactId>geotk-jdbc-mysql</artifactId>
+  <packaging>jar</packaging>
+  <name>Datastore JDBC MySQL</name>
+
+  <description>
+    DataStore for MySQL database.
+  </description>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
+      <organization>Geomatys</organization>
+      <roles>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jdbc-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.16</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jdbc-core</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>
