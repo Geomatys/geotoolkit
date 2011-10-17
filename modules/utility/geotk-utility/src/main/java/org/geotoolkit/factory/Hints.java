@@ -83,8 +83,7 @@ public class Hints extends RenderingHints {
      * A set of system-wide hints to use by default. Only one thread is expected to write
      * (while more are allowed).
      */
-    private static final Map<RenderingHints.Key,Object> GLOBAL =
-            new ConcurrentHashMap<RenderingHints.Key,Object>(8, 0.75f, 1);
+    private static final Map<RenderingHints.Key,Object> GLOBAL = new ConcurrentHashMap<>(8, 0.75f, 1);
 
 
 
@@ -1318,7 +1317,7 @@ public class Hints extends RenderingHints {
          */
         public OptionKey(final String... alternatives) {
             super(String.class);
-            final Set<String> options = new TreeSet<String>(Arrays.asList(alternatives));
+            final Set<String> options = new TreeSet<>(Arrays.asList(alternatives));
             this.wildcard = options.remove("*");
             this.options  = Collections.unmodifiableSet(options);
         }

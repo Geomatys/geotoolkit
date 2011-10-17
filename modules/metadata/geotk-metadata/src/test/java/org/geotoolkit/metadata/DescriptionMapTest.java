@@ -62,7 +62,7 @@ public final strictfp class DescriptionMapTest {
          * Compares the key set.
          */
         final Set<String> keys = descriptions.keySet();
-        final Set<String> expected = new HashSet<String>(Arrays.asList(new String[] {
+        final Set<String> expected = new HashSet<>(Arrays.asList(new String[] {
             "class", "averageAirTemperature", "maxAltitude", "maxRelativeHumidity", "meteorologicalConditions"
         }));
         assertFalse(keys.isEmpty());

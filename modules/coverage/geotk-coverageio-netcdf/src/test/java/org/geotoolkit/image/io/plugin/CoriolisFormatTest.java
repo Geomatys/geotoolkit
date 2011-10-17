@@ -292,7 +292,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
             "            ├───maxValue=“40.0”\n" +
             "            ├───validSampleValues=“[-23000 … 20000]”\n" +
             "            ├───fillSampleValues=“32767.0”\n" +
-            "            ├───scaleFactor=“0.0010”\n" +
+            "            ├───scaleFactor=“0.001”\n" +
             "            ├───offset=“20.0”\n" +
             "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
         reader.dispose();
@@ -324,7 +324,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
             "        │   ├───maxValue=“40.0”\n" +
             "        │   ├───validSampleValues=“[-23000 … 20000]”\n" +
             "        │   ├───fillSampleValues=“32767.0”\n" +
-            "        │   ├───scaleFactor=“0.0010”\n" +
+            "        │   ├───scaleFactor=“0.001”\n" +
             "        │   ├───offset=“20.0”\n" +
             "        │   └───transferFunctionType=“linear”\n" +
             "        └───Dimension\n" +

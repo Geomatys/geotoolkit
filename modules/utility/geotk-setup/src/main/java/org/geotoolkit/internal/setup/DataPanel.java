@@ -360,30 +360,27 @@ final class DataPanel extends JComponent {
         private void unzip(final URL url, final File target) throws IOException {
             final URLConnection connection = url.openConnection();
             final int progressDivisor = connection.getContentLength() / 100;
-            final ZipInputStream in = new ZipInputStream(connection.getInputStream());
             int done = 0;
-            try {
+            try (ZipInputStream in = new ZipInputStream(connection.getInputStream())) {
                 final byte[] buffer = new byte[4096];
                 ZipEntry entry;
                 while ((entry = in.getNextEntry()) != null) {
                     final File file = new File(target, entry.getName());
-                    final OutputStream out = new FileOutputStream(file);
-                    int n;
-                    while ((n = in.read(buffer)) >= 0) {
-                        out.write(buffer, 0, n);
-                        if (progressDivisor > 0) {
-                            setProgress(Math.min(100, (done += n) / progressDivisor));
+                    try (OutputStream out = new FileOutputStream(file)) {
+                        int n;
+                        while ((n = in.read(buffer)) >= 0) {
+                            out.write(buffer, 0, n);
+                            if (progressDivisor > 0) {
+                                setProgress(Math.min(100, (done += n) / progressDivisor));
+                            }
                         }
                     }
-                    out.close();
                     final long time = entry.getTime();
                     if (time >= 0) {
                         file.setLastModified(time);
                     }
                     in.closeEntry();
                 }
-            } finally {
-                in.close();
             }
         }
 

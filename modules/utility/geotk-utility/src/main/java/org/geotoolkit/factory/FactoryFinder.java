@@ -222,7 +222,7 @@ public class FactoryFinder extends Static {
         synchronized (FactoryFinder.class) {
             iterator = getServiceRegistry().getServiceProviders(category, filter, hints, key);
         }
-        return new LazySet<T>(iterator);
+        return new LazySet<>(iterator);
     }
 
     /**

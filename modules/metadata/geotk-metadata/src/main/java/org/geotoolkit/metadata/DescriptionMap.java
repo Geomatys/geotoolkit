@@ -94,17 +94,17 @@ final class DescriptionMap extends MetadataMap<String> implements Localized {
     public boolean isEmpty() {
         if (size < 0) {
             if (getString(classname) != null) {
-                return true;
+                return false;
             }
             final int c = accessor.count();
             for (int i=0; i<c; i++) {
                 if (getString(key(i)) != null) {
-                    return true;
+                    return false;
                 }
             }
             size = 0;
         }
-        return size != 0;
+        return size == 0;
     }
 
     /**
@@ -249,7 +249,7 @@ final class DescriptionMap extends MetadataMap<String> implements Localized {
             }
             final String key = (nextIndex >= 0) ? accessor.name(nextIndex, keyNames) : "class";
             move();
-            return new SimpleEntry<String,String>(key, description);
+            return new SimpleEntry<>(key, description);
         }
     }
 }

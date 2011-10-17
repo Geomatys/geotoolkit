@@ -117,7 +117,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, GEOGRAPHIC_CRS_XML);
-        assertMultilinesEquals(expected, result);
+        assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**
@@ -132,10 +132,8 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         final MarshallerPool pool = new MarshallerPool(DefaultGeographicCRS.class);
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final Object obj;
-        try {
-            final InputStream in = TestData.openStream(this, GEOGRAPHIC_CRS_XML);
+        try (InputStream in = TestData.openStream(this, GEOGRAPHIC_CRS_XML)) {
             obj = unmarshaller.unmarshal(in);
-            in.close();
         } finally {
             pool.release(unmarshaller);
         }
@@ -168,7 +166,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, VERTICAL_CRS_XML);
-        assertMultilinesEquals(expected, result);
+        assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**
@@ -182,9 +180,10 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         final MarshallerPool pool = new MarshallerPool(DefaultMetadata.class);
         final DefaultMetadata expected = createMetadataWithVerticalCRS();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        final InputStream in = TestData.openStream(this, VERTICAL_CRS_XML);
-        final Object obj = unmarshaller.unmarshal(in);
-        in.close();
+        final Object obj;
+        try (InputStream in = TestData.openStream(this, VERTICAL_CRS_XML)) {
+            obj = unmarshaller.unmarshal(in);
+        }
         pool.release(unmarshaller);
         assertTrue(obj instanceof DefaultMetadata);
         final DefaultMetadata result = (DefaultMetadata) obj;
@@ -233,7 +232,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         /*
          * Vertical datum.
          */
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.put(SCOPE_KEY, null);
         properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "D28"));
         final DefaultVerticalDatum datum = new DefaultVerticalDatum(properties, VerticalDatumTypes.ELLIPSOIDAL);
@@ -283,7 +282,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
      * Creates a Geographic CRS for testing purpose.
      */
     private static DefaultGeographicCRS createGeographicCRS() {
-        final Map<String,Object> properties = new HashMap<String, Object>();
+        final Map<String,Object> properties = new HashMap<>();
         /*
          * Build the datum.
          */

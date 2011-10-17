@@ -79,16 +79,17 @@ public final strictfp class DatumMarshallingTest {
     public void testMarshalling() throws JAXBException, IOException {
         final SecondDefiningParameter p = new SecondDefiningParameter(DefaultEllipsoid.SPHERE, false);
         final Marshaller marshaller = pool.acquireMarshaller();
-        final StringWriter writer = new StringWriter();
-        marshaller.marshal(p, writer);
-        pool.release(marshaller);
-        writer.close();
-        final String xml = writer.toString();
-        assertMultilinesEquals(
+        final String xml;
+        try (StringWriter writer = new StringWriter()) {
+            marshaller.marshal(p, writer);
+            pool.release(marshaller);
+            xml = writer.toString();
+        }
+        assertDomEquals(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +
             "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
-            "</gml:SecondDefiningParameter>", xml);
+            "</gml:SecondDefiningParameter>", xml, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**
@@ -104,11 +105,12 @@ public final strictfp class DatumMarshallingTest {
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +
             "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
             "</gml:SecondDefiningParameter>";
-        final StringReader reader = new StringReader(xml);
-        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        final Object object = unmarshaller.unmarshal(reader);
-        pool.release(unmarshaller);
-        reader.close();
+        final Object object;
+        try (StringReader reader = new StringReader(xml)) {
+            final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+            object = unmarshaller.unmarshal(reader);
+            pool.release(unmarshaller);
+        }
         assertTrue(object instanceof SecondDefiningParameter);
         final SecondDefiningParameter sdp = (SecondDefiningParameter) object;
         assertEquals(6371000.0, sdp.measure.value, 0);

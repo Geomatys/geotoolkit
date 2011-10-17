@@ -77,7 +77,7 @@ final class EPSGPanel extends DatabasePanel {
      */
     @Override
     Field[] getFields(final Vocabulary resources) {
-        final JComboBox url = new JComboBox(new String[] {
+        final JComboBox<String> url = new JComboBox<>(new String[] {
             ThreadedEpsgFactory.getDefaultURL(),
             "jdbc:derby:" + System.getProperty("user.home", "").replace(File.separatorChar, '/') + "/Referencing",
             "jdbc:postgresql://host/database",

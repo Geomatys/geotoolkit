@@ -83,7 +83,7 @@ public final class AuthorityFactoryFinder extends FactoryFinder {
          * changes for clearing their cache.
          */
         if (authorityNames == null) {
-            authorityNames = new LinkedHashSet<String>();
+            authorityNames = new LinkedHashSet<>();
             final Hints hints = org.geotoolkit.factory.Factory.EMPTY_HINTS;
 loop:       for (int i=0; ; i++) {
                 final Set<? extends AuthorityFactory> factories;

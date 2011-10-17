@@ -48,9 +48,9 @@ public final strictfp class MonolineFormatterTest extends LocaleDependantTestBas
         final LogRecord record = new LogRecord(Level.INFO, "First line\n  Indented line\nLast line\n");
         final String formatted = formatter.format(record);
         assertMultilinesEquals(
-                "INFO        First line\n" +
-                "              Indented line\n" +
-                "            Last line\n", formatted);
+                "Infos          First line\n" +
+                "                 Indented line\n" +
+                "               Last line\n", formatted);
     }
 
     /**
@@ -67,18 +67,18 @@ public final strictfp class MonolineFormatterTest extends LocaleDependantTestBas
         record.setThrown(exception);
         String formatted = formatter.format(record);
         assertMultilinesEquals(
-                "ATTENTION   An exception occured.\n" +
-                "            Caused by: java.lang.Exception\n" +
-                "                at org.geotoolkit.NonExistent.foo(NonExistent.java:10)\n" +
-                "                at org.junit.WhoKnows.main(WhoKnows.java:20)\n", formatted);
+                "Avertissement  An exception occured.\n" +
+                "               Caused by: java.lang.Exception\n" +
+                "                   at org.geotoolkit.NonExistent.foo(NonExistent.java:10)\n" +
+                "                   at org.junit.WhoKnows.main(WhoKnows.java:20)\n", formatted);
         /*
          * Removed the message and try again.
          */
         record.setMessage(null);
         formatted = formatter.format(record);
         assertMultilinesEquals(
-                "ATTENTION   java.lang.Exception\n" +
-                "                at org.geotoolkit.NonExistent.foo(NonExistent.java:10)\n" +
-                "                at org.junit.WhoKnows.main(WhoKnows.java:20)\n", formatted);
+                "Avertissement  java.lang.Exception\n" +
+                "                   at org.geotoolkit.NonExistent.foo(NonExistent.java:10)\n" +
+                "                   at org.junit.WhoKnows.main(WhoKnows.java:20)\n", formatted);
     }
 }

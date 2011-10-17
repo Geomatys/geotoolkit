@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.io.PrintWriter;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.util.Version;
@@ -122,7 +123,7 @@ final class VersionAction {
                         break;
                     }
                 }
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException | SQLException e) {
                 result = e;
             }
             out.print(header);

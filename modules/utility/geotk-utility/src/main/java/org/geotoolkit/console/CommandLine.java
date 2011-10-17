@@ -666,7 +666,7 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Invoked when the user didn't asked for any action. The default implemention prints
+     * Invoked when the user didn't asked for any action. The default implementation prints
      * a summary of available {@linkplain Action actions} and {@linkplain Option options}.
      * Subclasses can override this method if they want to print different informations.
      *
@@ -677,7 +677,7 @@ public abstract class CommandLine implements Runnable {
         final Descriptions resources = Descriptions.getResources(locale);
         out.println(resources.getString(Descriptions.Keys.COMMAND_USAGE_$1, command));
         final Vocabulary vocabulary = Vocabulary.getResources(locale);
-        final Set<String> options = new TreeSet<String>();
+        final Set<String> options = new TreeSet<>();
         boolean action = true;
         do {
             final Class<? extends Annotation> at = (action) ? Action.class : Option.class;

@@ -92,7 +92,7 @@ final class DatabasePanels extends JComponent implements ActionListener {
         /*
          * Creates the combo box for selecting which one of the above panels to show.
          */
-        final JComboBox databaseChoices = new JComboBox(databaseNames);
+        final JComboBox<String> databaseChoices = new JComboBox<>(databaseNames);
         databaseChoices.addActionListener(this);
         final Box choicePanel = Box.createHorizontalBox();
         choicePanel.add(databaseChoices);

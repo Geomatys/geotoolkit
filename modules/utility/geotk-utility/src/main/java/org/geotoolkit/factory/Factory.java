@@ -206,7 +206,7 @@ public abstract class Factory {
      * Creates a new factory instance.
      */
     protected Factory() {
-        hints = new LinkedHashMap<RenderingHints.Key, Object>();
+        hints = new LinkedHashMap<>();
         unmodifiableHints = Collections.unmodifiableMap(hints);
     }
 
@@ -514,7 +514,7 @@ public abstract class Factory {
                         continue;
                     }
                     if (alreadyDone == null) {
-                        alreadyDone = new HashSet<Factory>();
+                        alreadyDone = new HashSet<>();
                         if (remaining.put(DONE, alreadyDone) != null) {
                             throw new AssertionError(); // Paranoiac check (should never happen).
                         }
@@ -763,7 +763,7 @@ public abstract class Factory {
         }
         if (object != null && object.getClass() == getClass()) {
             final Factory that = (Factory) object;
-            final Set<FactoryComparator> comparators = new HashSet<FactoryComparator>();
+            final Set<FactoryComparator> comparators = new HashSet<>();
             return new FactoryComparator(this, that).compare(comparators);
         }
         return false;
@@ -783,7 +783,7 @@ public abstract class Factory {
     @Override
     public String toString() {
         final String name = format(this);
-        final Map<Factory,String> done = new IdentityHashMap<Factory,String>();
+        final Map<Factory,String> done = new IdentityHashMap<>();
         // We used IdentityHashMap above because we don't want to rely on Factory.equals(...)
         done.put(this, name);
         final String tree = format(getImplementationHints(), done);
