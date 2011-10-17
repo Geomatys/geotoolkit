@@ -36,7 +36,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class MySQLDialect extends AbstractSQLDialect {
 
     public MySQLDialect(final JDBCDataStore dataStore) {
-        super(dataStore);
+        super(dataStore,"`");
         //register the base mapping
         initBaseClassToSqlMappings(classToSqlTypeMappings);
         initBaseSqlTypeNameToClassMappings(sqlTypeNameToClassMappings);
@@ -46,7 +46,7 @@ public class MySQLDialect extends AbstractSQLDialect {
         sqlTypeToSqlTypeNameOverrides.put(Types.VARCHAR, "VARCHAR");
         sqlTypeToSqlTypeNameOverrides.put(Types.BOOLEAN, "BOOL");
     }
-
+    
     @Override
     public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
             final String column, final GeometryFactory factory, final Connection cx)
