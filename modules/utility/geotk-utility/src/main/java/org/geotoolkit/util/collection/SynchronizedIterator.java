@@ -60,7 +60,7 @@ final class SynchronizedIterator<E> implements Iterator<E> {
     }
 
     /**
-     * Returns the next element in iteratior order.
+     * Returns the next element in iterator order.
      */
     @Override
     public E next() {

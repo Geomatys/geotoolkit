@@ -48,7 +48,7 @@ import org.geotoolkit.lang.Debug;
  * equivalent to {@link #severe(String) severe} &hellip; {@link #finest(String) finest}.
  *
  * {@section Restrictions}
- * Because the configuration is expected to be fully controled by the external logging
+ * Because the configuration is expected to be fully controlled by the external logging
  * framework, every configuration methods inherited from {@link Logger} are disabled:
  * <p>
  * <ul>
@@ -67,7 +67,7 @@ import org.geotoolkit.lang.Debug;
  *       for keeping this {@code LoggerAdapter} simple.</li>
  * </ul>
  * <p>
- * Since {@code LoggerAdapter}s do not hold any configuration by themself, it is not strictly
+ * Since {@code LoggerAdapter}s do not hold any configuration by themselves, it is not strictly
  * necessary to {@linkplain java.util.logging.LogManager#addLogger add them to the log manager}.
  * The adapters can be created, garbage-collected and recreated again while preserving their
  * behavior since their configuration is entirely contained in the external logging framework.

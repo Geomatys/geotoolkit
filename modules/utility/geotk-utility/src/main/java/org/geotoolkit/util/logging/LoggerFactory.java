@@ -52,7 +52,10 @@ public abstract class LoggerFactory<L> {
      * @see Logging#setLoggerFactory(String)
      *
      * @since 3.00
+     *
+     * @deprecated Deprecated together with {@link Logging#setLoggerFactory(String)}.
      */
+    @Deprecated
     public static final String COMMONS_LOGGING = "org.geotoolkit.util.logging.CommonsLoggerFactory";
 
     /**
@@ -64,7 +67,10 @@ public abstract class LoggerFactory<L> {
      * @see Logging#setLoggerFactory(String)
      *
      * @since 3.00
+     *
+     * @deprecated Deprecated together with {@link Logging#setLoggerFactory(String)}.
      */
+    @Deprecated
     public static final String LOG4J = "org.geotoolkit.util.logging.Log4JLoggerFactory";
 
     /**

@@ -36,7 +36,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * List of elements sorted by a key which is not the element itself.
  * <p>
  * This class is <strong>not</strong> thread-safe. Synchronizations (if wanted) are user's
- * reponsability.
+ * responsibility.
  *
  * @param <K> The type of keys in the sorted list, to be used for sorting.
  * @param <V> The type of elements in the list.

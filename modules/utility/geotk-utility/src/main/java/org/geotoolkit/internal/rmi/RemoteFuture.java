@@ -27,7 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 
 
 /**
- * The pending result of a task submited to a {@link RemoteExecutor}.
+ * The pending result of a task submitted to a {@link RemoteExecutor}.
  *
  * @param <Output> The return value of the task.
  *

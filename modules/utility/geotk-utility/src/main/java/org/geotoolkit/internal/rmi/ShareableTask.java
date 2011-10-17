@@ -34,7 +34,7 @@ import org.geotoolkit.util.collection.XCollections;
  * A task which can be given to many processes. The same {@code ShareableTask} instance
  * (or a copy of it through serialization-deserialization) can be given to an arbitrary
  * amount of processes, either on the local machine or on many remote machines. It is the
- * task reponsability to ensure that each process can pickup a unique portion of the task.
+ * task responsibility to ensure that each process can pickup a unique portion of the task.
  * <p>
  * A convenient approach is to extract sub-portions of the task from a thread-safe, remotely
  * available object stream (typically backed by an iterator). The stream or iterator is given

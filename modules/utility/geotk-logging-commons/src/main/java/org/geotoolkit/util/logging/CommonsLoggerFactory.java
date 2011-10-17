@@ -24,7 +24,7 @@ import org.apache.commons.logging.impl.Jdk14Logger;
 
 
 /**
- * A factory for loggers that redirect all Java logging events to the Apache's
+ * A factory for loggers that redirect all Java logging events to the Apache
  * <A HREF="http://jakarta.apache.org/commons/logging/">Commons-logging</A> framework.
  *
  * @author Martin Desruisseaux (IRD)
@@ -33,7 +33,7 @@ import org.apache.commons.logging.impl.Jdk14Logger;
  * @since 2.4
  * @module
  */
-final class CommonsLoggerFactory extends LoggerFactory<Log> {
+public class CommonsLoggerFactory extends LoggerFactory<Log> {
     /**
      * The unique instance of this factory.
      */
@@ -42,9 +42,9 @@ final class CommonsLoggerFactory extends LoggerFactory<Log> {
     /**
      * Constructs a default factory.
      *
-     * @throws NoClassDefFoundError if Apache's {@code Log} class was not found on the classpath.
+     * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
      */
-    protected CommonsLoggerFactory() throws NoClassDefFoundError {
+    public CommonsLoggerFactory() throws NoClassDefFoundError {
         super(Log.class);
     }
 
@@ -52,7 +52,7 @@ final class CommonsLoggerFactory extends LoggerFactory<Log> {
      * Returns the unique instance of this factory.
      *
      * @return The unique instance of this factory.
-     * @throws NoClassDefFoundError if Apache's {@code Log} class was not found on the classpath.
+     * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
      */
     public static synchronized CommonsLoggerFactory getInstance() throws NoClassDefFoundError {
         if (factory == null) {

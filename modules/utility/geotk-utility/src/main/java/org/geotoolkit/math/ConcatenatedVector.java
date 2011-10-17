@@ -22,7 +22,7 @@ import org.geotoolkit.util.converter.Numbers;
 
 
 /**
- * A vector wich is the concatenation of two other vectors.
+ * A vector which is the concatenation of two other vectors.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

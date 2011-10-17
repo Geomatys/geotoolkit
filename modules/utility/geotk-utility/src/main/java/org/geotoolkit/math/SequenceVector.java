@@ -40,11 +40,6 @@ final class SequenceVector extends Vector implements Serializable {
     private static final long serialVersionUID = 7980737287789566091L;
 
     /**
-     * Small tolerance number for rounding errors.
-     */
-    private static final double EPS = 1E-9;
-
-    /**
      * The element type, or {@code null} if values are NaN.
      */
     private final Class<? extends Number> type;

@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 
 /**
- * The pending result of a {@linkplain ShareableTask task} submited to
+ * The pending result of a {@linkplain ShareableTask task} submitted to
  * an {@linkplain TaskExecutor executor}. This is similar in spirit to
  * {@link java.util.concurrent.Future}, but the work can be performed
  * on a remote machine.

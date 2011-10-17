@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 
 
 /**
- * A factory for loggers that redirect all Java logging events to the Apache's
+ * A factory for loggers that redirect all Java logging events to the Apache
  * <A HREF="http://logging.apache.org/log4j">Log4J</A> framework.
  *
  * @author Martin Desruisseaux (IRD)
@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * @since 2.4
  * @module
  */
-final class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
+public class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
     /**
      * The unique instance of this factory.
      */
@@ -39,9 +39,9 @@ final class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
     /**
      * Constructs a default factory.
      *
-     * @throws NoClassDefFoundError if Apache's {@code Log} class was not found on the classpath.
+     * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
      */
-    protected Log4JLoggerFactory() throws NoClassDefFoundError {
+    public Log4JLoggerFactory() throws NoClassDefFoundError {
         super(org.apache.log4j.Logger.class);
     }
 
@@ -49,7 +49,7 @@ final class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
      * Returns the unique instance of this factory.
      *
      * @return The unique instance of this factory.
-     * @throws NoClassDefFoundError if Apache's {@code Log} class was not found on the classpath.
+     * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
      */
     public static synchronized Log4JLoggerFactory getInstance() throws NoClassDefFoundError {
         if (factory == null) {

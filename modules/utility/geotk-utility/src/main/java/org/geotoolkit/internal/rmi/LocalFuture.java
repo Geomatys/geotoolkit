@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 
 /**
- * The pending result of a task submited to a {@link LocalExecutor}.
+ * The pending result of a task submitted to a {@link LocalExecutor}.
  *
  * @param <Output> The return value of the task.
  *

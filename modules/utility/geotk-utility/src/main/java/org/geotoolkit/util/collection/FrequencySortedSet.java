@@ -44,7 +44,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
  * be traversed in their insertion order.
  * <p>
  * This class is <strong>not</strong> thread-safe. Synchronizations (if wanted) are user's
- * reponsability.
+ * responsibility.
  *
  * @param <E> The type of elements in the set.
  *
