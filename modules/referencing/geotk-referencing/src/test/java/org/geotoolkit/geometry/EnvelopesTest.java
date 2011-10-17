@@ -19,7 +19,6 @@ package org.geotoolkit.geometry;
 
 import java.awt.geom.Rectangle2D;
 
-import org.geotoolkit.display.shape.ProjectedShapeTest;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -91,9 +90,9 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
         final Rectangle2D rectBack = Envelopes.transform(transform.inverse(), rectXY, null);
         assertRectangleEquals(XRectangle2D.createFromExtremums(
             //  166021.57  -2214294.03   (values from empirical projection of many points)
-                166070.28, -2214294.03,
+                166021.56, -2214294.03,
             //  833978.43   4432069.06   (values from empirical projection of many points)
-                833929.72,  4432069.06), rectXY, PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
+                833978.44,  4432069.06), rectXY, PROJECTED_CENTIMETRE, PROJECTED_CENTIMETRE);
         assertEquals(rectXY, Envelopes.transform(conversion, rectλφ, null));
         assertRectangleEquals(rectλφ, rectBack, 1.0, 0.05);
         /*
@@ -145,9 +144,9 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
          */
         Rectangle2D expected = XRectangle2D.createFromExtremums(
             //  -178.4935231040927  -56.61747883535035
-                -179.1730692371806, -88.99136583196396,
+                -179.8650137390031, -88.99136583196396,
             //   178.8122742080059  -40.90577500420587]
-                 137.7672275747935, -40.90577500420587);
+                 137.9769431693009, -40.90577500420587);
         /*
          * Tests what we actually get. First, test using the method working on MathTransform.
          * Next, test again the same transform, but using the API on Envelope objects.   The

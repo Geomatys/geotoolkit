@@ -178,11 +178,11 @@ public class LocalizationGrid {
     }
 
     /**
-     * Calcule l'indice d'un enregistrement dans la grille.
+     * Computes the index of a record in the grid.
      *
-     * @param  row  Coordonnee x du point.
-     * @param  col  Coordonnee y du point.
-     * @return l'indice de l'enregistrement ou du point dans la matrice.
+     * @param  row  x coordinate of a point.
+     * @param  col  y coordinate of a point.
+     * @return The record index in the grid.
      */
     private int computeOffset(final int col, final int row) {
         if (col < 0 || col >= width) {

@@ -104,9 +104,9 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
 
     /**
      * Constructs a warp transform that approximatively maps the given source coordinates to the
-     * given destination coordinates. The transformation is performed using some polynomial warp
-     * with the degree supplied in argument. The number of points required for each degree of warp
-     * are as follows:
+     * given destination coordinates. The transformation is performed using a polynomial warp
+     * with the degree supplied in argument. The <em>minimal</em> number of points required for
+     * each degree of warp are as follows:
      * <p>
      * <table border="1">
      * <tr align="center" bgcolor="#EEEEFF"><th>Degree of Warp</th><th>Number of Points</th></tr>
