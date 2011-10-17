@@ -666,7 +666,7 @@ public abstract class CommandLine implements Runnable {
     }
 
     /**
-     * Invoked when the user didn't asked for any action. The default implemention prints
+     * Invoked when the user didn't asked for any action. The default implementation prints
      * a summary of available {@linkplain Action actions} and {@linkplain Option options}.
      * Subclasses can override this method if they want to print different informations.
      *

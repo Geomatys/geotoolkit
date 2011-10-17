@@ -117,7 +117,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, GEOGRAPHIC_CRS_XML);
-        assertMultilinesEquals(expected, result);
+        assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**
@@ -168,7 +168,7 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, VERTICAL_CRS_XML);
-        assertMultilinesEquals(expected, result);
+        assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**

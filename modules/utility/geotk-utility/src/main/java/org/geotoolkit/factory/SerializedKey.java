@@ -72,7 +72,7 @@ final class SerializedKey implements Serializable {
     /**
      * On deserialization, replace this proxy by the static constant.
      *
-     * @return The reolved key.
+     * @return The resolved key.
      * @throws ObjectStreamException If the key has not been found. This exception should
      *         not occur is the key is deserialized using the same Geotk version than the
      *         one that serialized the key.

@@ -189,7 +189,7 @@ public class Formatter {
     /**
      * The line separator to use.
      */
-    private final String lineSeparator = System.getProperty("line.separator", "\n");;
+    private final String lineSeparator = System.getProperty("line.separator", "\n");
 
     /**
      * {@code true} if a new line were requested during the execution of
