@@ -19,15 +19,19 @@ package org.geotoolkit.metadata.geotiff;
 import java.util.logging.Level;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import javax.imageio.metadata.IIOMetadata;
 
+import javax.media.jai.WarpAffine;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
+import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
@@ -211,7 +215,20 @@ public final class GeoTiffMetaDataReader {
         //check for pixel scale and tie points /////////////////////////////////
         final double[] pixelScale = readPixelScale();
         final double[] tiePoint = readTiePoint();
-        if(pixelScale != null && tiePoint != null){
+        
+        if(pixelScale == null && tiePoint != null){
+            
+            final LocalizationGrid grid = new LocalizationGrid(2, 2);
+            grid.setLocalizationPoint(0, 0, tiePoint[3], tiePoint[4]);
+            grid.setLocalizationPoint(1, 0, tiePoint[9], tiePoint[10]);
+            grid.setLocalizationPoint(1, 1, tiePoint[15], tiePoint[16]);
+            grid.setLocalizationPoint(0, 1, tiePoint[21], tiePoint[22]);            
+            final AffineTransform gridToCRS = grid.getAffineTransform();
+            gridToCRS.scale(1f/bounds.width, 1f/bounds.height);
+            accesor.setAll(gridToCRS, bounds, cellGeometry, orientation);
+            return;
+            
+        }else if(pixelScale != null && tiePoint != null){
             //TODO the is a third value in the tie point
             final double scaleX         = pixelScale[0];
             final double scaleY         = -pixelScale[1];
