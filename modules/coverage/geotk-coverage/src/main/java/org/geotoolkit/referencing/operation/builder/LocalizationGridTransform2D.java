@@ -33,7 +33,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.transform.GridType;
 import org.geotoolkit.referencing.operation.transform.GridTransform;
@@ -44,6 +43,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -141,11 +141,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        final int dimension = point.getDimension();
-        if (dimension != 2) {
-            throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "point", dimension, 2));
-        }
+        ensureDimensionMatches("point", point, 2);
         final AffineTransform tr = new AffineTransform();
         getAffineTransform(point.getOrdinate(0), point.getOrdinate(1), tr);
         return new Matrix2(tr.getScaleX(), tr.getShearX(),

@@ -143,9 +143,10 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
     /**
      * Constructs a position initialized to the same values than the specified point.
      *
-     * @param point The point to copy.
+     * @param  point The point to copy.
+     * @throws MismatchedDimensionException if this point doesn't have the expected dimension.
      */
-    public DirectPosition2D(final DirectPosition point) {
+    public DirectPosition2D(final DirectPosition point) throws MismatchedDimensionException {
         setLocation(point);
     }
 
@@ -241,7 +242,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * @return The coordinate at the specified dimension.
      * @throws IndexOutOfBoundsException if the specified dimension is out of bounds.
      *
-     * @todo Provides a more detailled error message.
+     * @todo Provides a more detailed error message.
      */
     @Override
     public final double getOrdinate(final int dimension) throws IndexOutOfBoundsException {

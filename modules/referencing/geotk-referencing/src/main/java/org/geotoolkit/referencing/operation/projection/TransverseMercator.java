@@ -51,8 +51,8 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  *
  * This is a cylindrical projection, in which the cylinder has been rotated 90&deg;. Instead of
  * being tangent to the equator (or to an other standard latitude), it is tangent to a central
- * meridian. Deformation are more important as we are going futher from the central meridian.
- * The Transverse Mercator projection is appropriate for region wich have a greater extent
+ * meridian. Deformation are more important as we are going further from the central meridian.
+ * The Transverse Mercator projection is appropriate for region which have a greater extent
  * north-south than east-west.
  * <p>
  * The elliptical equations used here are series approximations, and their accuracy decreases as
@@ -62,10 +62,10 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  * degrees from the central meridian. The spherical equations are not approximations and should
  * always give the correct values.
  * <p>
- * There are a number of versions of the transverse mercator projection including the Universal
+ * There are a number of versions of the Transverse Mercator projection including the Universal
  * (UTM) and Modified (MTM) Transverses Mercator projections. In these cases the earth is divided
  * into zones. For the UTM the zones are 6 degrees wide, numbered from 1 to 60 proceeding east from
- * 180 degrees longitude, and between lats 84 degrees North and 80 degrees South. The central
+ * 180 degrees longitude, and between latitude 84 degrees North and 80 degrees South. The central
  * meridian is taken as the center of the zone and the latitude of origin is the equator. A scale
  * factor of 0.9996 and false easting of 500000 metres is used for all zones and a false northing
  * of 10000000 metres is used for zones in the southern hemisphere.
@@ -243,7 +243,7 @@ public class TransverseMercator extends CassiniOrMercator {
     private final double esp;
 
     /**
-     * Contants used for the forward and inverse transform for the eliptical
+     * Constants used for the forward and inverse transform for the elliptical
      * case of the Transverse Mercator.
      */
     private static final double
@@ -409,15 +409,15 @@ public class TransverseMercator extends CassiniOrMercator {
                                  final double[] dstPts, final int dstOff)
                 throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
-            double b = cos(y) * sin(x);
+            final double λ = rollLongitude(srcPts[srcOff]);
+            final double φ = srcPts[srcOff + 1];
+            final double b = cos(φ) * sin(λ);
             /*
              * Using Snyder's equation for calculating y, instead of the one used in Proj4.
              * Potential problems when y and x = 90 degrees, but behaves ok in tests.
              */
-            y = atan2(tan(y), cos(x));     // Snyder 8-3
-            x = 0.5 * log((1+b) / (1-b));  // Snyder 8-1
+            final double y = atan2(tan(φ), cos(λ));     // Snyder 8-3
+            final double x = 0.5 * log((1+b) / (1-b));  // Snyder 8-1
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;

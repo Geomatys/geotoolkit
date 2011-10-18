@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
+
 
 /**
  * Base class for math transforms that are known to be one-dimensional in all cases.
@@ -90,10 +92,7 @@ public abstract class AbstractMathTransform1D extends AbstractMathTransform impl
         if (point == null) {
             ordinate = Double.NaN;
         } else {
-            final int dimension = point.getDimension();
-            if (dimension != 1) {
-                throw new MismatchedDimensionException(mismatchedDimension("point", dimension, 1));
-            }
+            ensureDimensionMatches("point", point, 1);
             ordinate = point.getOrdinate(0);
         }
         return new Matrix1(derivative(ordinate));

@@ -59,6 +59,7 @@ import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -283,17 +284,11 @@ public abstract class AbstractMathTransform extends FormattableObject
     public DirectPosition transform(final DirectPosition ptSrc, DirectPosition ptDst)
             throws TransformException
     {
-              int  dimPoint = ptSrc.getDimension();
         final int dimSource = getSourceDimensions();
         final int dimTarget = getTargetDimensions();
-        if (dimPoint != dimSource) {
-            throw new MismatchedDimensionException(mismatchedDimension("ptSrc", dimPoint, dimSource));
-        }
+        ensureDimensionMatches("ptSrc", ptSrc, dimSource);
         if (ptDst != null) {
-            dimPoint = ptDst.getDimension();
-            if (dimPoint != dimTarget) {
-                throw new MismatchedDimensionException(mismatchedDimension("ptDst", dimPoint, dimTarget));
-            }
+            ensureDimensionMatches("ptDst", ptDst, dimTarget);
             /*
              * Transforms the coordinates using a temporary 'double[]' buffer,
              * and copies the transformation result in the destination position.
@@ -986,18 +981,21 @@ public abstract class AbstractMathTransform extends FormattableObject
                 return derivative((Point2D) null);
             }
         } else {
-            final int dimPoint = point.getDimension();
-            if (dimPoint != dimSource) {
-                throw new MismatchedDimensionException(mismatchedDimension("point", dimPoint, dimSource));
-            }
+            ensureDimensionMatches("point", point, dimSource);
             if (dimSource == 2) {
-                if (point instanceof Point2D) {
-                    return derivative((Point2D) point);
-                }
-                return derivative(new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1)));
+                return derivative(toPoint2D(point));
             }
         }
         throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+    }
+
+    /**
+     * Returns the given position as a {@link Point2D}. Caller must ensure
+     * that the position is two-dimensional before to invoke this method.
+     */
+    static Point2D toPoint2D(final DirectPosition point) {
+        return (point == null || point instanceof Point2D) ? (Point2D) point :
+                new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1));
     }
 
     /**
@@ -1049,10 +1047,7 @@ public abstract class AbstractMathTransform extends FormattableObject
         if (transformed != ptDst) {
             // Should never happen in compliant implementation, but let be paranoiac.
             final int dimension = transformed.getDimension();
-            final int ptDstDim = ptDst.getDimension();
-            if (ptDstDim != dimension) {
-                throw new MismatchedDimensionException(mismatchedDimension("ptDst", ptDstDim, dimension));
-            }
+            ensureDimensionMatches("ptDst", ptDst, dimension);
             for (int i=0; i<dimension; i++) {
                 ptDst.setOrdinate(i, transformed.getOrdinate(i));
             }
@@ -1061,7 +1056,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Same as {@link #derivateAndTransform(DirectPosition, DirectPosition, XMatrix)},
+     * Same as {@link #derivateAndTransform(DirectPosition, DirectPosition, Matrix)},
      * but with two-dimensional points only.
      * <p>
      * The default implementation delegates to {@link #derivative(Point2D)} and

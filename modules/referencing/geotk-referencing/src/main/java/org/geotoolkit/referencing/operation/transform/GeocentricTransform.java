@@ -57,6 +57,7 @@ import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
 
 
@@ -644,10 +645,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      */
     final Matrix derivative(final DirectPosition point, final boolean hasHeight) {
         final int dimSource = hasHeight ? 3 : 2;
-        final int dimPoint = point.getDimension();
-        if (dimPoint != dimSource) {
-            throw new MismatchedDimensionException(mismatchedDimension("point", dimPoint, dimSource));
-        }
+        ensureDimensionMatches("point", point, dimSource);
         final double λ = toRadians(point.getOrdinate(0));      // Longitude
         final double φ = toRadians(point.getOrdinate(1));      // Latitude
         final double h = hasHeight ? point.getOrdinate(2) : 0; // Height above the ellipsoid (m)
