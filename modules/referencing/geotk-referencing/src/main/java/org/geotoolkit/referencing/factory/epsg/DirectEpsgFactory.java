@@ -1591,7 +1591,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             while (result.next()) {
                 final String epsg    = getString(result, 1, code);
                 final String name    = getString(result, 2, code);
-                final String type    = getString(result, 3, code).trim().toLowerCase();
+                final String type    = getString(result, 3, code).trim().toLowerCase(Locale.US);
                 final String anchor  = result.getString( 4);
                 final String epoch   = result.getString( 5);
                 final String area    = result.getString( 6);
@@ -1832,7 +1832,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             while (result.next()) {
                 final String    epsg = getString(result, 1, code);
                 final String    name = getString(result, 2, code);
-                final String    type = getString(result, 3, code).trim().toLowerCase();
+                final String    type = getString(result, 3, code).trim().toLowerCase(Locale.US);
                 final int  dimension = getInt   (result, 4, code);
                 final String remarks = result.getString( 5);
                 final CoordinateSystemAxis[] axis = createAxesForCoordinateSystem(primaryKey, dimension);
@@ -2511,7 +2511,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             while (result.next()) {
                 final String epsg = getString(result, 1, code);
                 final String name = getString(result, 2, code);
-                final String type = getString(result, 3, code).trim().toLowerCase();
+                final String type = getString(result, 3, code).trim().toLowerCase(Locale.US);
                 final boolean isTransformation = type.equals("transformation");
                 final boolean isConversion     = type.equals("conversion");
                 final boolean isConcatenated   = type.equals("concatenated operation");

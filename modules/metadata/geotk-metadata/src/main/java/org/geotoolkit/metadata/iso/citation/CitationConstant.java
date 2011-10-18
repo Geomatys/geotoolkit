@@ -190,7 +190,7 @@ class CitationConstant extends DefaultCitation {
         }
 
         /**
-         * Returns the contant value that this object replaces.
+         * Returns the constant value that this object replaces.
          *
          * @return The constant value that this object replaces.
          * @throws ObjectStreamException If an error occurred while resolving the class.

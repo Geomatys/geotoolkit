@@ -32,7 +32,7 @@ import org.geotoolkit.internal.sql.StatementEntry;
  * The result of a query for metadata attributes. This object {@linkplain PreparedStatement
  * prepares a statement} once for ever for a given table. When a particular record in this
  * table is fetched, the {@link ResultSet} is automatically constructed. If many attributes
- * are fetched consecutivly for the same record, then the same {@link ResultSet} is reused.
+ * are fetched consecutively for the same record, then the same {@link ResultSet} is reused.
  *
  * {@section Synchronization}
  * This class is <strong>not</strong> thread-safe. Callers must perform their own synchronization

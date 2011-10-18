@@ -244,7 +244,7 @@ public class Query {
     /**
      * Returns the columns for the specified type. For a statement created from the
      * <code>{@linkplain #select(QueryType) select}(type)</code> query, the value returned by
-     * <code>{@linkplain ResultSet#getString(int) ResultSet.getString}(i)</code> correponds to
+     * <code>{@linkplain ResultSet#getString(int) ResultSet.getString}(i)</code> corresponds to
      * the {@linkplain Column column} at index <var>i</var>-1 in the list.
      *
      * @param  type The query type.
@@ -258,7 +258,7 @@ public class Query {
      * Returns the parameters for the specified type. For a statement created from the
      * <code>{@linkplain #select(QueryType) select}(type)</code> query, the parameter set by
      * <code>{@linkplain PreparedStatement#setString(int,String) PreparedStatement.setString}(i, ...)</code>
-     * correponds to the {@linkplain Parameter parameter} at index <var>i</var>-1 in the list.
+     * corresponds to the {@linkplain Parameter parameter} at index <var>i</var>-1 in the list.
      *
      * @param  type The query type.
      * @return An immutable list of parameters.

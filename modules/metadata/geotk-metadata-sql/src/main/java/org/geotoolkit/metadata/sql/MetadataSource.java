@@ -189,7 +189,7 @@ public class MetadataSource {
 
     /**
      * Creates a new metadata source with the same configuration than the given source.
-     * The two souces will share the same data source but will use their own
+     * The two sources will share the same data source but will use their own
      * {@linkplain Connection connection}.
      *
      * @param source The source from which to copy the configuration.

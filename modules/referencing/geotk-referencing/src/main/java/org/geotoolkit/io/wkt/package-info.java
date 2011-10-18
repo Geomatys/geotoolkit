@@ -27,7 +27,7 @@
  *       to format using the GeoTIFF parameter names.</li>
  *   <li>Use curly brackets instead than square ones, as in {@code DATUM("WGS84")} instead than
  *       {@code DATUM["WGS84"]}. This is legal WKT, even if less frequent than square brackets.</li>
- *   <li>Apply syntatic coloring for output on X3.64 terminal</li>
+ *   <li>Apply syntactic coloring for output on X3.64 terminal</li>
  * </ul>
  * <p>
  * Current implementation is primarily targeting parsing and formatting of referencing objects.

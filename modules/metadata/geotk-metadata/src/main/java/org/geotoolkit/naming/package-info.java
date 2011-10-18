@@ -17,7 +17,7 @@
  */
 
 /**
- * Implemention of naming interfaces from {@link org.opengis.util}. Names are <em>immutables</em>.
+ * Implementation of naming interfaces from {@link org.opengis.util}. Names are <em>immutables</em>.
  * They may be {@linkplain org.geotoolkit.naming.AbstractName#toFullyQualifiedName fully qualified}
  * like {@code "org.opengis.util.Record"}, or they may be relative to a
  * {@linkplain org.geotoolkit.naming.AbstractName#scope scope} like {@code "util.Record"} in the
