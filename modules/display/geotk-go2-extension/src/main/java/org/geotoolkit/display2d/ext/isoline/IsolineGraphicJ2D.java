@@ -170,6 +170,12 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }finally {
                 iterator.close();
             }
+            
+            if(coordinates.isEmpty()){
+                //nothing to render
+                return;
+            }
+            
             final CoordinateReferenceSystem crs = collection.getFeatureType().getCoordinateReferenceSystem();
             
             final GeneralEnvelope env = new GeneralEnvelope(crs);
