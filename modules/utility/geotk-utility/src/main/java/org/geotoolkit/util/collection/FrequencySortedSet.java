@@ -39,7 +39,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
  * <p>
  * An optional boolean argument in the constructor allows the construction of set in reversed
  * order (most frequently added elements first, less frequently added last). This is similar
- * but not identical to creating a defaut {@code FrequencySortedSet} and iterating through it
+ * but not identical to creating a default {@code FrequencySortedSet} and iterating through it
  * in reverse order. The difference is that elements added the same amount of time will still
  * be traversed in their insertion order.
  * <p>

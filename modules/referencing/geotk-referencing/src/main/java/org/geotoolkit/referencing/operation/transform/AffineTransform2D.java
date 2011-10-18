@@ -23,7 +23,6 @@ import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.Matrix;
@@ -35,14 +34,14 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.provider.Affine;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.ComparisonMode;
+
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -202,11 +201,7 @@ public class AffineTransform2D extends XAffineTransform
      */
     @Override
     public DirectPosition transform(final DirectPosition ptSrc, DirectPosition ptDst) {
-        int dimension = ptSrc.getDimension();
-        if (dimension != 2) {
-            throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "ptSrc", dimension, 2));
-        }
+        ensureDimensionMatches("ptSrc", ptSrc, 2);
         /*
          * Try to write directly in the destination point if possible. Following
          * code avoid the creation of temporary objects (except if ptDst is null).
@@ -223,11 +218,7 @@ public class AffineTransform2D extends XAffineTransform
                 super.transform(point, point);
                 return point;
             }
-            dimension = ptDst.getDimension();
-            if (dimension != 2) {
-                throw new MismatchedDimensionException(Errors.format(
-                        Errors.Keys.MISMATCHED_DIMENSION_$3, "ptDst", dimension, 2));
-            }
+            ensureDimensionMatches("ptDst", ptDst, 2);
             if (ptDst instanceof Point2D) {
                 final Point2D point = (Point2D) ptDst;
                 point.setLocation(ptSrc.getOrdinate(0), ptSrc.getOrdinate(1));

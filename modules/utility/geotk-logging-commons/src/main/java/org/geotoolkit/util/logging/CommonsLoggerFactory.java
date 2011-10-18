@@ -36,7 +36,10 @@ import org.apache.commons.logging.impl.Jdk14Logger;
 public class CommonsLoggerFactory extends LoggerFactory<Log> {
     /**
      * The unique instance of this factory.
+     *
+     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
      */
+    @Deprecated
     private static CommonsLoggerFactory factory;
 
     /**
@@ -53,7 +56,10 @@ public class CommonsLoggerFactory extends LoggerFactory<Log> {
      *
      * @return The unique instance of this factory.
      * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
+     *
+     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
      */
+    @Deprecated
     public static synchronized CommonsLoggerFactory getInstance() throws NoClassDefFoundError {
         if (factory == null) {
             factory = new CommonsLoggerFactory();

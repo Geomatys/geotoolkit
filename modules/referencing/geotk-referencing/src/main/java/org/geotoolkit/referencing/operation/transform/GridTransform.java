@@ -35,7 +35,6 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -45,6 +44,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -273,11 +273,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        final int c = point.getDimension();
-        if (c != srcDim) {
-            throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "point", c, srcDim));
-        }
+        ensureDimensionMatches("point", point, srcDim);
         /*
          * Following code has similarities with the implementation of transform(...) methods.
          * Same variable names are used on purpose, for making comparisons easier.

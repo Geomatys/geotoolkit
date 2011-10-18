@@ -26,17 +26,16 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 import static org.geotoolkit.util.Utilities.hash;
+import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
 
 
@@ -442,11 +441,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
     public Matrix derivative(final DirectPosition point) throws TransformException {
         final int nSkipped = firstAffectedOrdinate + numTrailingOrdinates;
         final int transDim = subTransform.getSourceDimensions();
-        final int pointDim = point.getDimension();
-        if (pointDim != transDim+nSkipped) {
-            throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$3, "point", pointDim, transDim + nSkipped));
-        }
+        ensureDimensionMatches("point", point, transDim + nSkipped);
         final GeneralDirectPosition subPoint = new GeneralDirectPosition(transDim);
         for (int i=0; i<transDim; i++) {
             subPoint.ordinates[i] = point.getOrdinate(i + firstAffectedOrdinate);

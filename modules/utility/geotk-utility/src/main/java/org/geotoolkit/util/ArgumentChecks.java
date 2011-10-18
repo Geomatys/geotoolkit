@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.util;
 
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.MismatchedDimensionException;
+
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 
@@ -46,7 +49,7 @@ import org.geotoolkit.resources.Errors;
  * in the {@linkplain java.util.Locale#getDefault() default locale} if the check failed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.17
  * @module
@@ -347,6 +350,29 @@ public final class ArgumentChecks extends Static {
         if (!(value >= min && value <= max)) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, min, max));
+        }
+    }
+
+    /**
+     * Ensures that the given direct position has the expected number of dimensions.
+     * This method does nothing if the direct position is null.
+     *
+     * @param  name     The name of the argument to be checked. Used only in case an exception is thrown.
+     * @param  position The direct position to check for its dimension.
+     * @param  expected The expected number of dimensions.
+     * @throws MismatchedDimensionException If the given direct position is non-null and does
+     *         not have the expected number of dimensions.
+     *
+     * @since 3.20
+     */
+    public static void ensureDimensionMatches(final String name, final DirectPosition position, final int expected)
+            throws MismatchedDimensionException
+    {
+        if (position != null) {
+            final int dimension = position.getDimension();
+            if (dimension != expected) {
+                throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3, name, dimension, expected));
+            }
         }
     }
 }
