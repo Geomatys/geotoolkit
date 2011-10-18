@@ -109,7 +109,7 @@ public class MetadataFactory extends Factory {
     public MetadataFactory(final Set<?> factories, final MetadataStandard... standards) {
         if (!isNullOrEmpty(factories)) {
             this.factories = factories.toArray();
-            factoryMethods = new HashMap<Class<?>, FactoryMethod>();
+            factoryMethods = new HashMap<>();
         } else {
             this.factories = null;
             factoryMethods = null;
@@ -121,7 +121,7 @@ public class MetadataFactory extends Factory {
      * Returns the factories declared in {@link FactoryFinder}.
      */
     private static Set<?> factories() {
-        final Set<Object> factories = new LinkedHashSet<Object>();
+        final Set<Object> factories = new LinkedHashSet<>();
         for (int i=0; ; i++) {
             final Set<?> factory;
             switch (i) {
@@ -201,13 +201,12 @@ public class MetadataFactory extends Factory {
                 final Object metadata;
                 try {
                     metadata = impl.newInstance();
+                } catch (RuntimeException e) {
+                    throw e;
                 } catch (Exception e) {
                     /*
                      * We catch all Exceptions because Class.newInstance() propagates all of them,
                      * including the checked ones (it bypass the compile-time exception checking).
-                     * Note that even if we used Constructor.newInstance(null) instead, we would
-                     * still catch all exceptions because the later declares too many checked
-                     * exceptions without common parent class.
                      */
                     if (failure == null || failure instanceof InstantiationException) {
                         failure = e;

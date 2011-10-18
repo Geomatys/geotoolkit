@@ -236,8 +236,7 @@ public class ReferencingParser extends MathTransformParser {
          * Gets the map of axis directions.
          */
         final AxisDirection[] values = AxisDirection.values();
-        Map<String,AxisDirection> directions =
-                new HashMap<String,AxisDirection>(hashMapCapacity(values.length));
+        Map<String,AxisDirection> directions = new HashMap<>(hashMapCapacity(values.length));
         final Locale locale = symbols.locale;
         for (int i=0; i<values.length; i++) {
             directions.put(values[i].name().trim().toUpperCase(locale), values[i]);
@@ -451,7 +450,7 @@ public class ReferencingParser extends MathTransformParser {
         if (element == null && !isRoot) {
             return singletonMap(IdentifiedObject.NAME_KEY, (Object) name);
         }
-        Map<String,Object> properties = new HashMap<String,Object>(4);
+        Map<String,Object> properties = new HashMap<>(4);
         properties.put(IdentifiedObject.NAME_KEY, name);
         if (element != null) {
             final String auth = element.pullString("name");
@@ -790,7 +789,7 @@ public class ReferencingParser extends MathTransformParser {
         element.close();
         if (toWGS84 != null) {
             if (!(properties instanceof HashMap<?,?>)) {
-                properties = new HashMap<String,Object>(properties);
+                properties = new HashMap<>(properties);
             }
             properties.put(BURSA_WOLF_KEY, toWGS84);
         }
@@ -877,7 +876,7 @@ public class ReferencingParser extends MathTransformParser {
         EngineeringDatum    datum = parseLocalDatum(element);
         Unit<Length>   linearUnit = parseUnit(element, METRE);
         CoordinateSystemAxis axis = parseAxis(element, linearUnit, true);
-        List<CoordinateSystemAxis> list = new ArrayList<CoordinateSystemAxis>();
+        List<CoordinateSystemAxis> list = new ArrayList<>();
         do {
             list.add(axis);
             axis = parseAxis(element, linearUnit, false);
@@ -1120,9 +1119,7 @@ public class ReferencingParser extends MathTransformParser {
                     method, toBase.inverse());
             final CoordinateSystem cs = new AbstractCS(properties, axis);
             return crsFactory.createDerivedCRS(properties, base, conversion, cs);
-        } catch (FactoryException exception) {
-            throw element.parseFailed(exception, null);
-        } catch (NoninvertibleTransformException exception) {
+        } catch (FactoryException | NoninvertibleTransformException exception) {
             throw element.parseFailed(exception, null);
         }
     }

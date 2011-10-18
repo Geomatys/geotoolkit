@@ -324,7 +324,7 @@ public final class Parameters extends Static {
              * is not, then the error message will be formatted at the end of this method.
              */
             if (value instanceof ParameterValueGroup) {
-                final Map<GeneralParameterDescriptor,Integer> count = new HashMap<GeneralParameterDescriptor,Integer>();
+                final Map<GeneralParameterDescriptor,Integer> count = new HashMap<>();
                 final ParameterDescriptorGroup group = (ParameterDescriptorGroup) descriptor;
                 for (final GeneralParameterValue element : ((ParameterValueGroup) value).values()) {
                     final String name = getName(element.getDescriptor(), group);
@@ -669,7 +669,7 @@ public final class Parameters extends Static {
     public static List<GeneralParameterValue> search(final GeneralParameterValue parameter,
             final String name, int maxDepth)
     {
-        final List<GeneralParameterValue> list = new ArrayList<GeneralParameterValue>();
+        final List<GeneralParameterValue> list = new ArrayList<>();
         search(parameter, name, maxDepth, list);
         return list;
     }

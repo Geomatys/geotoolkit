@@ -227,9 +227,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
                 final int row = Integer.parseInt(name.substring(prefix.length(), split));
                 final int col = Integer.parseInt(name.substring(split+1));
                 return descriptor(row, col, numRow, numCol);
-            } catch (NumberFormatException exception) {
-                cause = exception;
-            } catch (IndexOutOfBoundsException exception) {
+            } catch (NumberFormatException | IndexOutOfBoundsException exception) {
                 cause = exception;
             }
         }
@@ -299,7 +297,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
          * is no need to synchronize since it is not a big deal if the same parameter is
          * constructed twice.
          */
-        param = new DefaultParameterDescriptor<Double>(
+        param = new DefaultParameterDescriptor<>(
                 Collections.singletonMap(NAME_KEY, prefix + row + separator + column),
                 Double.class, null, (row == column) ? 1.0 : 0.0,
                 null, null, Unit.ONE, true);
@@ -392,9 +390,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
                         final int col = Integer.parseInt(name.substring(split+1));
                         matrix.setElement(row, col, ((ParameterValue<?>) param).doubleValue());
                         continue;
-                    } catch (NumberFormatException exception) {
-                        cause = exception;
-                    } catch (IndexOutOfBoundsException exception) {
+                    } catch (NumberFormatException | IndexOutOfBoundsException exception) {
                         cause = exception;
                     }
                 }

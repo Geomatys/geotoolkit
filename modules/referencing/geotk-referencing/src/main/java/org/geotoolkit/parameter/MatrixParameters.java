@@ -203,9 +203,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
                 final int row = Integer.parseInt(name.substring(prefix.length(), split));
                 final int col = Integer.parseInt(name.substring(split + 1));
                 return parameter(row, col);
-            } catch (NumberFormatException exception) {
-                cause = exception;
-            } catch (IndexOutOfBoundsException exception) {
+            } catch (NumberFormatException | IndexOutOfBoundsException exception) {
                 cause = exception;
             }
         }
@@ -229,8 +227,8 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
      * Returns the value in this group for a matrix element at the specified index.
      * Row and column index are 0 based.
      *
-     * @param  row    The row indice.
-     * @param  column The column indice
+     * @param  row    The row index.
+     * @param  column The column index.
      * @return The parameter value for the specified matrix element (never {@code null}).
      * @throws IndexOutOfBoundsException if {@code row} or {@code column} is out of bounds.
      */
@@ -243,8 +241,8 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
     /**
      * Implementation of {@link #parameter(int,int)}.
      *
-     * @param  row    The row indice.
-     * @param  column The column indice
+     * @param  row    The row index.
+     * @param  column The column index.
      * @param  numRow The maximum number of rows.
      * @param  numCol The maximum number of columns.
      * @return The parameter value for the specified matrix element.

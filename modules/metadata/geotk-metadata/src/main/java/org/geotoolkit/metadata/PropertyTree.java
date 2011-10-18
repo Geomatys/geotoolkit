@@ -193,7 +193,7 @@ final class PropertyTree {
             final Collection<? super T> addTo, final PropertyAccessor accessor) throws ParseException
     {
         int duplicated = 0;
-        final Set<String> done = new HashSet<String>();
+        final Set<String> done = new HashSet<>();
         final int childCount = node.getChildCount();
         for (int i=0; i<childCount; i++) {
             final TreeNode child = node.getChildAt(i);
@@ -327,7 +327,13 @@ final class PropertyTree {
     private static <T> T newInstance(final Class<? extends T> type) throws ParseException {
         try {
             return type.newInstance();
-        } catch (Exception cause) { // InstantiationException & IllegalAccessException
+        } catch (RuntimeException cause) {
+            throw cause;
+        } catch (Exception cause) {
+            /*
+             * We catch all Exceptions because Class.newInstance() propagates all of them,
+             * including the checked ones (it bypass the compile-time exception checking).
+             */
             ParseException exception = new ParseException(Errors.format(
                     Errors.Keys.CANT_CREATE_FROM_TEXT_$1, type), 0);
             exception.initCause(cause);

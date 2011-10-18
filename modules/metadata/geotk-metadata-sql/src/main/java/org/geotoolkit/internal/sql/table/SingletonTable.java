@@ -84,7 +84,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     protected SingletonTable(final Query query, final Parameter... pkParam) {
         super(query);
         this.pkParam = pkParam.clone();
-        cache = new Cache<Comparable<?>,E>();
+        cache = new Cache<>();
     }
 
     /**
@@ -292,21 +292,21 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                         final LocalCache.Stmt ce = getStatement(lc, QueryType.SELECT);
                         final PreparedStatement statement = ce.statement;
                         setPrimaryKeyParameter(statement, identifier);
-                        final ResultSet results = statement.executeQuery();
-                        while (results.next()) {
-                            final E candidate = createEntryCatchSQL(lc, results, identifier);
+                        try (ResultSet results = statement.executeQuery()) {
+                            while (results.next()) {
+                                final E candidate = createEntryCatchSQL(lc, results, identifier);
+                                if (entry == null) {
+                                    entry = candidate;
+                                } else if (!entry.equals(candidate)) {
+                                    // The ResultSet will be closed by the constructor below.
+                                    throw new DuplicatedRecordException(this, results, getPrimaryKeyColumn(), identifier);
+                                }
+                            }
                             if (entry == null) {
-                                entry = candidate;
-                            } else if (!entry.equals(candidate)) {
                                 // The ResultSet will be closed by the constructor below.
-                                throw new DuplicatedRecordException(this, results, getPrimaryKeyColumn(), identifier);
+                                throw new NoSuchRecordException(this, results, getPrimaryKeyColumn(), identifier);
                             }
                         }
-                        if (entry == null) {
-                            // The ResultSet will be closed by the constructor below.
-                            throw new NoSuchRecordException(this, results, getPrimaryKeyColumn(), identifier);
-                        }
-                        results.close();
                         release(lc, ce);
                     }
                 }
@@ -324,44 +324,44 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @throws SQLException if an error occurred will reading from the database.
      */
     public Set<E> getEntries() throws SQLException {
-        final Set<E> entries = new LinkedHashSet<E>();
+        final Set<E> entries = new LinkedHashSet<>();
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final int[] pkIndices = getPrimaryKeyColumns();
             final int pkIndex = getPrimaryKeyColumn(pkIndices);
-            final ResultSet results = ce.statement.executeQuery();
-            Boolean isNumeric = null;
-            while (results.next()) {
-                Comparable<?> identifier = createIdentifier(results, pkIndices);
-                if (identifier == null) {
-                    if (isNumeric == null) {
-                        isNumeric = isNumeric(results, pkIndex);
-                    }
-                    if (isNumeric) {
-                        identifier = results.getInt(pkIndex);
-                    } else {
-                        identifier = results.getString(pkIndex);
-                    }
-                }
-                E entry = cache.peek(identifier);
-                if (entry == null) {
-                    final Cache.Handler<E> handler = cache.lock(identifier);
-                    try {
-                        entry = handler.peek();
-                        if (entry == null) {
-                            entry = createEntryCatchSQL(lc, results, identifier);
+            try (ResultSet results = ce.statement.executeQuery()) {
+                Boolean isNumeric = null;
+                while (results.next()) {
+                    Comparable<?> identifier = createIdentifier(results, pkIndices);
+                    if (identifier == null) {
+                        if (isNumeric == null) {
+                            isNumeric = isNumeric(results, pkIndex);
                         }
-                    } finally {
-                        handler.putAndUnlock(entry);
+                        if (isNumeric) {
+                            identifier = results.getInt(pkIndex);
+                        } else {
+                            identifier = results.getString(pkIndex);
+                        }
                     }
-                }
-                if (!entries.add(entry)) {
-                    // The ResultSet will be closed by the constructor below.
-                    throw new DuplicatedRecordException(this, results, pkIndex, identifier);
+                    E entry = cache.peek(identifier);
+                    if (entry == null) {
+                        final Cache.Handler<E> handler = cache.lock(identifier);
+                        try {
+                            entry = handler.peek();
+                            if (entry == null) {
+                                entry = createEntryCatchSQL(lc, results, identifier);
+                            }
+                        } finally {
+                            handler.putAndUnlock(entry);
+                        }
+                    }
+                    if (!entries.add(entry)) {
+                        // The ResultSet will be closed by the constructor below.
+                        throw new DuplicatedRecordException(this, results, pkIndex, identifier);
+                    }
                 }
             }
-            results.close();
             release(lc, ce);
         }
         return entries;
@@ -375,16 +375,16 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @throws SQLException if an error occurred will reading from the database.
      */
     public Set<String> getIdentifiers() throws SQLException {
-        final Set<String> identifiers = new LinkedHashSet<String>();
+        final Set<String> identifiers = new LinkedHashSet<>();
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST_ID);
-            final ResultSet results = ce.statement.executeQuery();
-            final int index = getPrimaryKeyColumn();
-            while (results.next()) {
-                identifiers.add(results.getString(index));
+            try (ResultSet results = ce.statement.executeQuery()) {
+                final int index = getPrimaryKeyColumn();
+                while (results.next()) {
+                    identifiers.add(results.getString(index));
+                }
             }
-            results.close();
             release(lc, ce);
         }
         return identifiers;
@@ -411,9 +411,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.EXISTS);
             final PreparedStatement statement = ce.statement;
             setPrimaryKeyParameter(statement, identifier);
-            final ResultSet results = statement.executeQuery();
-            hasNext = results.next();
-            results.close();
+            try (ResultSet results = statement.executeQuery()) {
+                hasNext = results.next();
+            }
             release(lc, ce);
         }
         return hasNext;

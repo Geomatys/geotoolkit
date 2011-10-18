@@ -100,13 +100,13 @@ final class Directions extends Static {
              * among the standard set of names, replacing space by underscore.
              */
             String modified = name.replace('-', '_');
-            if (modified != name) {
+            if (modified != name) { // NOSONAR: really identity comparison
                 name = modified;
                 candidate = find(directions, modified);
             }
             if (candidate == null) {
                 modified = name.replace(' ', '_');
-                if (modified != name) {
+                if (modified != name) { // NOSONAR: really identity comparison
                     candidate = find(directions, modified);
                 }
             }

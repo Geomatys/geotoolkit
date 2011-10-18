@@ -147,7 +147,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      */
     public AnsiDialectEpsgFactory(final Hints userHints, final Connection connection) {
         super(userHints, connection);
-        toANSI = new LinkedHashMap<String,String>();
+        toANSI = new LinkedHashMap<>();
         for (int i=0; i<ACCESS_TO_ANSI.length; i++) {
             toANSI.put(ACCESS_TO_ANSI[i], ACCESS_TO_ANSI[++i]);
         }
@@ -201,15 +201,15 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
         final String quote = metadata.getIdentifierQuoteString();
         for (int i=SENTINAL.length; --i>=0;) {
             final String table = SENTINAL[i];
-            final ResultSet result = metadata.getTables(null, schema, table, null);
-            if (!result.next()) {
-                result.close();
-                continue;
+            final String found;
+            try (ResultSet result = metadata.getTables(null, schema, table, null)) {
+                if (!result.next()) {
+                    continue;
+                }
+                found = result.getString("TABLE_SCHEM");
             }
-            final String schema = result.getString("TABLE_SCHEM");
-            result.close();
-            if (schema != null && !schema.equals(this.schema)) {
-                setSchema(schema, quote, !table.startsWith(TABLE_PREFIX));
+            if (found != null && !found.equals(schema)) {
+                setSchema(found, quote, !table.startsWith(TABLE_PREFIX));
             }
             if (i == 0) {
                 useOriginalTableNames(quote);

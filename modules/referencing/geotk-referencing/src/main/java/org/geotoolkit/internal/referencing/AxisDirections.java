@@ -47,8 +47,7 @@ public final class AxisDirections extends Static {
     /**
      * For each direction, the opposite direction.
      */
-    private static final Map<AxisDirection,AxisDirection> opposites =
-            new HashMap<AxisDirection,AxisDirection>(35);
+    private static final Map<AxisDirection,AxisDirection> opposites = new HashMap<>(35);
     static {
         opposites.put(OTHER, OTHER);
         final AxisDirection[] dir = {

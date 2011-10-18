@@ -167,11 +167,11 @@ final class Properties extends AbstractMap<String,Object> {
     @Override
     public Set<Entry<String,Object>> entrySet() {
         if (entries == null) {
-            entries = new HashSet<Entry<String,Object>>(hashMapCapacity(KEYS.length));
+            entries = new HashSet<>(hashMapCapacity(KEYS.length));
             for (int i=0; i<KEYS.length; i++) {
                 final Object value = get(i);
                 if (value != null) {
-                    entries.add(new SimpleEntry<String,Object>(KEYS[i], value));
+                    entries.add(new SimpleEntry<>(KEYS[i], value));
                 }
             }
             entries = Collections.unmodifiableSet(entries);

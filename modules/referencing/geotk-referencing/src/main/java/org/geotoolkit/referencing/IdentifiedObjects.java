@@ -181,7 +181,7 @@ public final class IdentifiedObjects extends Static {
      * @return An view of the identified object as a mutable map.
      */
     public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
-        final Map<String,Object> properties = new HashMap<String,Object>(getProperties(info));
+        final Map<String,Object> properties = new HashMap<>(getProperties(info));
         properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));
         properties.remove(IDENTIFIERS_KEY);
         return properties;

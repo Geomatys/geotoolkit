@@ -270,7 +270,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 // since we don't need anymore synchronization or type checking.
                 collection = UnmodifiableArrayList.wrap(array);
                 if (isSet) {
-                    collection = Collections.unmodifiableSet(new LinkedHashSet<Object>(collection));
+                    collection = Collections.unmodifiableSet(new LinkedHashSet<>(collection));
                 } else {
                     // Conservatively assumes a List if we are not sure to have a Set,
                     // since the list is less destructive (no removal of duplicated).
@@ -419,7 +419,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 if (target != null) {
                     target.clear();
                 } else {
-                    target = new MutableList<E>(elementType, source.size());
+                    target = new MutableList<>(elementType, source.size());
                 }
                 target.addAll(source);
             }
@@ -470,7 +470,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 if (target != null) {
                     target.clear();
                 } else {
-                    target = new MutableSet<E>(elementType, source.size());
+                    target = new MutableSet<>(elementType, source.size());
                 }
                 target.addAll(source);
             }
@@ -536,9 +536,9 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 } else {
                     final int capacity = source.size();
                     if (useSet(elementType)) {
-                        target = new MutableSet<E>(elementType, capacity);
+                        target = new MutableSet<>(elementType, capacity);
                     } else {
-                        target = new MutableList<E>(elementType, capacity);
+                        target = new MutableList<>(elementType, capacity);
                     }
                 }
                 target.addAll(source);
@@ -582,7 +582,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
             return null;
         }
         if (isModifiable()) {
-            return new MutableList<E>(elementType);
+            return new MutableList<>(elementType);
         }
         return Collections.emptyList();
     }
@@ -615,7 +615,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
             return null;
         }
         if (isModifiable()) {
-            return new MutableSet<E>(elementType);
+            return new MutableSet<>(elementType);
         }
         return Collections.emptySet();
     }
@@ -661,13 +661,13 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         final boolean isModifiable = isModifiable();
         if (useSet(elementType)) {
             if (isModifiable) {
-                return new MutableSet<E>(elementType);
+                return new MutableSet<>(elementType);
             } else {
                 return Collections.emptySet();
             }
         } else {
             if (isModifiable) {
-                return new MutableList<E>(elementType);
+                return new MutableList<>(elementType);
             } else {
                 return Collections.emptyList();
             }

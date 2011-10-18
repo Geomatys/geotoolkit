@@ -92,7 +92,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * This is used for the creation of default ellipsoid constants.
      */
     private static Map<String,?> properties(final String name, final int code, final Object alias) {
-        final Map<String,Object> map = new HashMap<String,Object>(4);
+        final Map<String,Object> map = new HashMap<>(4);
         map.put(NAME_KEY, name);
         map.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, String.valueOf(code)));
         if (alias != null) {

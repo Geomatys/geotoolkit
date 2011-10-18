@@ -88,12 +88,12 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * The authority for International Standard Book Number.
      */
-    static final IdentifierSpace<String> ISBN = new NonMarshalledAuthority<String>("ISBN", NonMarshalledAuthority.ISBN);
+    static final IdentifierSpace<String> ISBN = new NonMarshalledAuthority<>("ISBN", NonMarshalledAuthority.ISBN);
 
     /**
      * The authority for International Standard Serial Number.
      */
-    static final IdentifierSpace<String> ISSN = new NonMarshalledAuthority<String>("ISSN", NonMarshalledAuthority.ISSN);
+    static final IdentifierSpace<String> ISSN = new NonMarshalledAuthority<>("ISSN", NonMarshalledAuthority.ISSN);
 
     /**
      * Name by which the cited resource is known.

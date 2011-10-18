@@ -270,7 +270,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
             separator = DEFAULT_SEPARATOR_STRING;
         }
         final int s = separator.length();
-        final List<String> names = new ArrayList<String>();
+        final List<String> names = new ArrayList<>();
         int lower = 0;
         final String string = name.toString();
         while (true) {

@@ -87,7 +87,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * Some frequently used {@link Double} values. As of Java 6, those values don't
      * seem to be cached by {@link Double#valueOf} like JDK does for integers.
      */
-    private static final Map<Double,Double> CACHE = new HashMap<Double,Double>(13);
+    private static final Map<Double,Double> CACHE = new HashMap<>(13);
     static {
         cache(   0.0);
         cache(   1.0);
@@ -278,7 +278,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             }
         }
         if (validValues != null) {
-            final Set<T> valids = new HashSet<T>(Math.max(XCollections.hashMapCapacity(validValues.length), 8));
+            final Set<T> valids = new HashSet<>(Math.max(XCollections.hashMapCapacity(validValues.length), 8));
             for (int i=0; i<validValues.length; i++) {
                 final T value = cached(validValues[i]);
                 ensureCanCast("validValues", valueClass, value);
@@ -324,7 +324,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     public static DefaultParameterDescriptor<Integer> create(final Map<String,?> properties,
             final int defaultValue, final int minimum, final int maximum, final boolean required)
     {
-        return new DefaultParameterDescriptor<Integer>(properties,
+        return new DefaultParameterDescriptor<>(properties,
                  Integer.class, null, Integer.valueOf(defaultValue),
                  (minimum == Integer.MIN_VALUE) ? null : Integer.valueOf(minimum),
                  (maximum == Integer.MAX_VALUE) ? null : Integer.valueOf(maximum), null, required);
@@ -366,7 +366,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             final double defaultValue, final double minimum, final double maximum,
             final Unit<?> unit, final boolean required)
     {
-        return new DefaultParameterDescriptor<Double>(properties, Double.class, null,
+        return new DefaultParameterDescriptor<>(properties, Double.class, null,
                 Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
                 minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
                 maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
@@ -384,7 +384,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                 final T[] tmp = (T[]) valueClass.getMethod("values",
                         (Class<?>[]) null).invoke(null, (Object[]) null);
                 codeList = tmp;
-            } catch (Exception exception) {
+            } catch (ReflectiveOperationException exception) {
                 // No code list defined. Not a problem; we will just
                 // not provide any set of code to check against.
             }
@@ -401,7 +401,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         if (remarks == null ){
             properties = Collections.singletonMap(NAME_KEY, (CharSequence) name);
         } else {
-            properties = new HashMap<String,CharSequence>(4);
+            properties = new HashMap<>(4);
             properties.put(NAME_KEY,    name);
             properties.put(REMARKS_KEY, remarks);
         }
@@ -435,7 +435,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         if (valueClass == Double.class && unit == null) {
             return (ParameterValue<T>) new FloatParameter((ParameterDescriptor<Double>) this);
         }
-        return new Parameter<T>(this);
+        return new Parameter<>(this);
     }
 
     /**

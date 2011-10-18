@@ -127,7 +127,7 @@ final class NameMap extends MetadataMap<String> {
                 throw new NoSuchElementException();
             }
             next++;
-            return new SimpleEntry<String,String>(pa.name(n, keyNames), pa.name(n, valueNames));
+            return new SimpleEntry<>(pa.name(n, keyNames), pa.name(n, valueNames));
         }
     }
 }

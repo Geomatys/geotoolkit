@@ -454,7 +454,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     Collection<? super AuthorityFactory> dependencies() {
         // Need a modifiable list, because some subclasses
         // will add more elements to that list.
-        final List<Object> dep = new ArrayList<Object>(2);
+        final List<Object> dep = new ArrayList<>(2);
         Object factory;
         try {
             factory = getAuthorityFactory(null);

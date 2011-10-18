@@ -108,7 +108,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
         if (userType != null) {
             hints.put(Hints.CRS_AUTHORITY_FACTORY, userType);
         }
-        final List<CRSAuthorityFactory> factories = new ArrayList<CRSAuthorityFactory>(
+        final List<CRSAuthorityFactory> factories = new ArrayList<>(
                 AuthorityFactoryFinder.getCRSAuthorityFactories(hints));
         /*
          * Do not invoke FactoryRegistry.getServiceProviders() (which returns an Iterator over
@@ -231,7 +231,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * amount of class loading when using {@link CRS} for other purpose than CRS decoding.
      */
     static Set<String> getSupportedCodes(final String authority) {
-        final Set<String> result = new LinkedHashSet<String>(AUTHORITY_LESS);
+        final Set<String> result = new LinkedHashSet<>(AUTHORITY_LESS);
         for (final CRSAuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(null)) {
             if (Citations.identifierMatches(factory.getAuthority(), authority)) {
                 final Set<String> codes;
@@ -260,7 +260,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
      * amount of class loading when using {@link CRS} for other purpose than CRS decoding.
      */
     static Set<String> getSupportedAuthorities(final boolean returnAliases) {
-        final Set<String> result = new LinkedHashSet<String>();
+        final Set<String> result = new LinkedHashSet<>();
         for (final CRSAuthorityFactory factory : AuthorityFactoryFinder.getCRSAuthorityFactories(null)) {
             for (final Identifier id : factory.getAuthority().getIdentifiers()) {
                 result.add(id.getCode());

@@ -64,7 +64,7 @@ public abstract class ProxyForMetadata {
         } catch (ClassNotFoundException exception) {
             throw new UnsupportedOperationException(Errors.format(
                     Errors.Keys.MISSING_MODULE_$1, "geotk-referencing"), exception);
-        } catch (Exception exception) {
+        } catch (ReflectiveOperationException exception) {
             // Should never happen if we didn't broke our helper class.
             throw new AssertionError(exception);
         }

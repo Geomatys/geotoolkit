@@ -110,7 +110,7 @@ final class PropertyAccessor {
      * Getters shared between many instances of this class. Two different implementations
      * may share the same getters but different setters.
      */
-    private static final Map<Class<?>, Method[]> SHARED_GETTERS = new HashMap<Class<?>, Method[]>();
+    private static final Map<Class<?>, Method[]> SHARED_GETTERS = new HashMap<>();
 
     /**
      * Additional getter to declare in every list of getter methods that do not already provide
@@ -239,7 +239,7 @@ final class PropertyAccessor {
         /*
          * Compute all information derived from getters: setters, property names, value types.
          */
-        mapping = new HashMap<String,Integer>(XCollections.hashMapCapacity(allCount));
+        mapping = new HashMap<>(XCollections.hashMapCapacity(allCount));
         names   = new String[allCount];
         elementTypes = new Class<?>[allCount];
         Method[] setters = null;
@@ -370,7 +370,7 @@ final class PropertyAccessor {
                  * Gets every interfaces from the supplied package in declaration order,
                  * including the ones declared in the super-class.
                  */
-                final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+                final Set<Class<?>> interfaces = new LinkedHashSet<>();
                 do {
                     getInterfaces(type, interfacePackage, interfaces);
                     type = type.getSuperclass();

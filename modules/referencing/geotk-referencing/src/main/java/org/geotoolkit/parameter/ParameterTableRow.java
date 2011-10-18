@@ -91,7 +91,7 @@ final class ParameterTableRow {
          * Creates a collection which will contain the identifier and all aliases
          * found for the given IdentifiedObject. We begin with the primary name.
          */
-        identifiers = new LinkedHashMap<String,Set<Object>>();
+        identifiers = new LinkedHashMap<>();
         final Identifier identifier = object.getName();
         addIdentifier(getAuthority(identifier), identifier.getCode()); // Really want .getCode()
         if (!brief) {
@@ -135,7 +135,7 @@ final class ParameterTableRow {
     private void addIdentifier(final String authority, final Object identifier) {
         Set<Object> ids = identifiers.get(authority);
         if (ids == null) {
-            ids = new LinkedHashSet<Object>(8);
+            ids = new LinkedHashSet<>(8);
             identifiers.put(authority, ids);
         }
         ids.add(identifier);
@@ -151,7 +151,7 @@ final class ParameterTableRow {
         final List<Object> values;
         if (!asList) {
             asList = true;
-            values = new ArrayList<Object>(4);
+            values = new ArrayList<>(4);
             values.add(value);
             value = values;
         } else {

@@ -180,7 +180,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
         if (authorities != authorityNames) {
             authorityNames = authorities;
             final Hints hints = getHints();
-            final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>(getUserFactories());
+            final Set<AuthorityFactory> factories = new LinkedHashSet<>(getUserFactories());
             final Set<String> names = getAuthorityNames(factories);
 typeLoop:   for (int i=0; ; i++) {
                 final Set<? extends AuthorityFactory> c;
@@ -298,7 +298,7 @@ typeLoop:   for (int i=0; ; i++) {
         private Set<AuthorityFactory> fromFactoryRegistry() {
             final MultiAuthoritiesFactory factory = (MultiAuthoritiesFactory) this.factory;
             final Class<? extends AuthorityFactory> type = getFactoryType();
-            final Set<AuthorityFactory> factories = new LinkedHashSet<AuthorityFactory>();
+            final Set<AuthorityFactory> factories = new LinkedHashSet<>();
             for (final String authority : AuthorityFactoryFinder.getAuthorityNames()) {
                 factory.fromFactoryRegistry(authority, type, factories);
             }

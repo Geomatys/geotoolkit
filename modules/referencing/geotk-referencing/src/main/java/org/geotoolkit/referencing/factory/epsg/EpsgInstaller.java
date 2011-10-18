@@ -332,9 +332,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             } finally {
                 connection.close();
             }
-        } catch (IOException e) {
-            failure = e;
-        } catch (SQLTransientException e) {
+        } catch (IOException | SQLTransientException e) {
             failure = e;
         } catch (SQLException e) {
             /*
@@ -378,9 +376,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                     shutdown(connection, databaseURL);
                 }
             }
-        } catch (SQLException e) {
-            failure = e;
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             failure = e;
         }
         String message = failure.getLocalizedMessage();

@@ -293,7 +293,7 @@ public final class CRS extends Static {
     public static Version getVersion(final String authority) throws FactoryRegistryException {
         ensureNonNull("authority", authority);
         Object candidate = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
-        final Set<Factory> guard = new HashSet<Factory>();
+        final Set<Factory> guard = new HashSet<>();
         while (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
             if (!guard.add(factory)) {

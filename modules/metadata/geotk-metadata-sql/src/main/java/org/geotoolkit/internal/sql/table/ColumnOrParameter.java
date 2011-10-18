@@ -174,7 +174,7 @@ search: for (final QueryType type : types) {
             throw new IllegalArgumentException(function);
         }
         if (functions == null) {
-            functions = new EnumMap<QueryType,String>(QueryType.class);
+            functions = new EnumMap<>(QueryType.class);
         }
         for (final QueryType type : types) {
             functions.put(type, function);

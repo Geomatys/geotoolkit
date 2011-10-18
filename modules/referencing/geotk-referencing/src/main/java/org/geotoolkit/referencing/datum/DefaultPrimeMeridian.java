@@ -71,7 +71,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      */
     public static final DefaultPrimeMeridian GREENWICH;
     static {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY, "Greenwich");
         properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "8901"));
         GREENWICH = new DefaultPrimeMeridian(properties, 0, NonSI.DEGREE_ANGLE);

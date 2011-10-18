@@ -84,7 +84,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
      * Values are initially projection names, to be replaced by the actual CRS when first
      * created.
      */
-    private final Map<String,Object> crsMap = new TreeMap<String,Object>();
+    private final Map<String,Object> crsMap = new TreeMap<>();
 
     /**
      * The authority codes, as an unmodifiable view over the keys in the {@link #crsMap}.
@@ -156,7 +156,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
          * Following code is currently for IGNF:MILLER only.
          */
         // Creates the datum
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(DefaultGeodeticDatum.NAME_KEY, new NamedIdentifier(Citations.OGC, "GRS80"));
         final DefaultGeodeticDatum datum = new DefaultGeodeticDatum(properties, DefaultEllipsoid.GRS80);
 

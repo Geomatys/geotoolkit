@@ -125,7 +125,7 @@ public abstract class DirectAuthorityFactory extends AbstractAuthorityFactory {
     final Collection<? super AuthorityFactory> dependencies() {
         final ReferencingFactoryContainer factories = this.factories;
         if (factories != null) {
-            final Set<Object> dependencies = new LinkedHashSet<Object>(8);
+            final Set<Object> dependencies = new LinkedHashSet<>(8);
             dependencies.add(factories.getCRSFactory());
             dependencies.add(factories.getCSFactory());
             dependencies.add(factories.getDatumFactory());

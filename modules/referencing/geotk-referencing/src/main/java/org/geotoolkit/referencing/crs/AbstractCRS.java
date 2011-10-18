@@ -123,7 +123,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * even if their names were formatted in different locales.
      */
     static Map<String,?> name(final int key) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         final InternationalString name = Vocabulary.formatInternational(key);
         properties.put(NAME_KEY,  name.toString());
         properties.put(ALIAS_KEY, name);

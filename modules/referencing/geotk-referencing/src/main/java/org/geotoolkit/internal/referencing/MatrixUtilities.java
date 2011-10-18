@@ -399,9 +399,7 @@ search:     for (int j=numRow; --j>=0;) {
             try {
                 m.invert();
                 matrix = m;
-            } catch (SingularMatrixException exception) {
-                failure = exception;
-            } catch (MismatchedSizeException exception) {
+            } catch (SingularMatrixException | MismatchedSizeException exception) {
                 // This exception is thrown if the matrix is not square.
                 failure = exception;
             }

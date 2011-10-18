@@ -87,8 +87,7 @@ public final class PixelTranslation extends Static implements Serializable {
     /**
      * The offset for various pixel orientations. Keys must be upper-case names.
      */
-    private static final Map<PixelOrientation, PixelTranslation> ORIENTATIONS =
-            new HashMap<PixelOrientation, PixelTranslation>(12);
+    private static final Map<PixelOrientation, PixelTranslation> ORIENTATIONS = new HashMap<>(12);
     static {
         new PixelTranslation(CENTER,       0.0,  0.0);
         new PixelTranslation(UPPER_LEFT,  -0.5, -0.5);

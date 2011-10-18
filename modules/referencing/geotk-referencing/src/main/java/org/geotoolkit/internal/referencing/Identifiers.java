@@ -313,7 +313,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
                 Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
                 minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
                 maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
-        this.identifiers = new LinkedHashMap<String,NamedIdentifier>(hashMapCapacity(identifiers.length));
+        this.identifiers = new LinkedHashMap<>(hashMapCapacity(identifiers.length));
         for (final NamedIdentifier id : identifiers) {
             if (this.identifiers.put(id.getCode(), id) != null) {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, id));
@@ -371,7 +371,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
     private ParameterDescriptor<Double> select(final boolean required, Double defaultValue,
             final String... names)
     {
-        final Map<Citation,Boolean> authorities = new HashMap<Citation,Boolean>();
+        final Map<Citation,Boolean> authorities = new HashMap<>();
         NamedIdentifier[] selected = new NamedIdentifier[identifiers.size()];
         selected = identifiers.values().toArray(selected);
         final boolean[] idUsed = new boolean[selected.length];
@@ -443,7 +443,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         if (required && (defaultValue == null || defaultValue.isNaN())) {
             defaultValue = Double.valueOf(0);
         }
-        return new DefaultParameterDescriptor<Double>(toMap(selected), Double.class, null,
+        return new DefaultParameterDescriptor<>(toMap(selected), Double.class, null,
                 defaultValue, getMinimumValue(), getMaximumValue(), getUnit(), required);
     }
 
@@ -585,7 +585,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }
         id    = XArrays.resize(id,    idCount);
         alias = XArrays.resize(alias, aliasCount);
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY,        identifiers[0]);
         properties.put(IDENTIFIERS_KEY, id);
         properties.put(ALIAS_KEY,       alias);

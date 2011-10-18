@@ -245,17 +245,15 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      */
     private int count(final boolean first) {
         int count = 0;
-        try {
-            final Statement stmt = connection.createStatement();
-            final ResultSet results = stmt.executeQuery(sqlAll);
+        try (Statement stmt = connection.createStatement();
+             ResultSet results = stmt.executeQuery(sqlAll))
+        {
             while (results.next()) {
                 if (isAcceptable(results)) {
                     count++;
                     if (first) break;
                 }
             }
-            results.close();
-            stmt.close();
         } catch (SQLException exception) {
             unexpectedException(first ? "isEmpty" : "size", exception);
         }
@@ -305,7 +303,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      * database.
      */
     protected Object writeReplace() throws ObjectStreamException {
-        return new LinkedHashSet<String>(this);
+        return new LinkedHashSet<>(this);
     }
 
     /**
@@ -405,10 +403,10 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
         protected void finalize() throws SQLException {
             next = null;
             if (results != null) {
-                final Statement owner = results.getStatement();
-                results.close();
-                results = null;
-                owner.close();
+                try (Statement owner = results.getStatement()) {
+                    results.close();
+                    results = null;
+                }
             }
         }
     }

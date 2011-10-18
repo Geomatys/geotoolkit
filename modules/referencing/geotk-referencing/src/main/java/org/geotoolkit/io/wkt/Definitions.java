@@ -90,7 +90,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
      */
     public Definitions(final Format parser) {
         this.parser = parser;
-        definitions = new TreeMap<String,Parsed>();
+        definitions = new TreeMap<>();
     }
 
     /**
@@ -560,7 +560,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
         @Override
         public Entry<String,String> next() {
             final Entry<String,Parsed> next = iterator.next();
-            return new SimpleEntry<String, String>(next.getKey(), next.getValue().asString);
+            return new SimpleEntry<>(next.getKey(), next.getValue().asString);
         }
 
         /** Deletes the last returned entry. */

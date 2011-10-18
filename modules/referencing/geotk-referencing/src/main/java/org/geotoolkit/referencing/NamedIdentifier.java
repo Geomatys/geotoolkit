@@ -80,8 +80,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
     /**
      * A pool of {@link NameSpace} values for given {@link InternationalString}.
      */
-    private static final Map<CharSequence,NameSpace> SCOPES =
-            new WeakValueHashMap<CharSequence,NameSpace>();
+    private static final Map<CharSequence,NameSpace> SCOPES = new WeakValueHashMap<>();
 
     /**
      * The factory for creating new generic names.

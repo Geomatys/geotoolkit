@@ -130,8 +130,8 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      */
     public static Parameter<Integer> create(final String name, final int value) {
         final ParameterDescriptor<Integer> descriptor =
-                new DefaultParameterDescriptor<Integer>(name, Integer.class, null, null);
-        final Parameter<Integer> parameter = new Parameter<Integer>(descriptor);
+                new DefaultParameterDescriptor<>(name, Integer.class, null, null);
+        final Parameter<Integer> parameter = new Parameter<>(descriptor);
         parameter.value = value;
         return parameter;
     }
@@ -165,7 +165,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         }
         final ParameterDescriptor<Double> descriptor = DefaultParameterDescriptor.create(
                 name, Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, unit);
-        final Parameter<Double> parameter = new Parameter<Double>(descriptor);
+        final Parameter<Double> parameter = new Parameter<>(descriptor);
         parameter.value = value;
         parameter.unit  = unit;
         return parameter;
@@ -188,8 +188,8 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     public static <T extends CodeList<T>> Parameter<T> create(
             final String name, final Class<T> type, final T value)
     {
-        final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<T>(name, null, type, null, true);
-        final Parameter<T> parameter = new Parameter<T>(descriptor);
+        final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<>(name, null, type, null, true);
+        final Parameter<T> parameter = new Parameter<>(descriptor);
         parameter.value = value;
         return parameter;
     }

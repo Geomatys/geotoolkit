@@ -125,13 +125,13 @@ public class Colors implements Serializable {
      * Creates a new, initially empty, set of colors.
      */
     public Colors() {
-        map = new EnumMap<Element,X364>(Element.class);
+        map = new EnumMap<>(Element.class);
     }
 
     /**
-     * Sets the color of the given syntatic element.
+     * Sets the color of the given syntactic element.
      *
-     * @param key   The syntatic element for which to set the color.
+     * @param key   The syntactic element for which to set the color.
      * @param color The color to give to the specified element.
      */
     public void set(final Element key, final X364 color) {
@@ -139,9 +139,9 @@ public class Colors implements Serializable {
     }
 
     /**
-     * Returns the color for the given syntatic element.
+     * Returns the color for the given syntactic element.
      *
-     * @param key The syntatic element for which to get the color.
+     * @param key The syntactic element for which to get the color.
      * @return The color of the specified element, or {@code null} if none.
      */
     public X364 get(final Element key) {

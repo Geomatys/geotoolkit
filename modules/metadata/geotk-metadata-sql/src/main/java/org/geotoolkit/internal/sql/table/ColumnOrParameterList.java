@@ -82,6 +82,6 @@ final class ColumnOrParameterList<E extends ColumnOrParameter> extends AbstractS
      */
     @Override
     public ListIterator<E> listIterator(final int index) {
-        return new ColumnOrParameterIterator<E>(type, elements, index);
+        return new ColumnOrParameterIterator<>(type, elements, index);
     }
 }

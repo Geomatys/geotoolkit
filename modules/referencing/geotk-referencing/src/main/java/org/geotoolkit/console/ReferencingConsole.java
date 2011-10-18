@@ -315,11 +315,8 @@ public class ReferencingConsole extends InteractiveConsole {
                         if (value != null) {
                             throw unexpectedArgument(Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1, "load");
                         }
-                        final BufferedReader in = new BufferedReader(new FileReader(key1));
-                        try {
+                        try (BufferedReader in = new BufferedReader(new FileReader(key1))) {
                             loadDefinitions(in);
-                        } finally {
-                            in.close();
                         }
                         return;
                     }

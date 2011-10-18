@@ -390,7 +390,7 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
             field.setAccessible(true);
             field.set(e, ordinates.clone());
             return e;
-        } catch (Exception exception) { // Too many exception here to catch all of them.
+        } catch (ReflectiveOperationException | CloneNotSupportedException exception) {
             // Should not happen, since we are cloneable.
             // Should not happen, since the "ordinates" field exists.
             // etc...

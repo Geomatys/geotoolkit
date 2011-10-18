@@ -131,7 +131,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
      */
     public ReferencingObjectFactory(final Hints hints) {
         pool = WeakHashSet.newInstance(IdentifiedObject.class);
-        parser = new ThreadLocal<ReferencingParser>();
+        parser = new ThreadLocal<>();
         if (!XCollections.isNullOrEmpty(hints)) {
             /*
              * Creates the dependencies (MathTransform factory, WKT parser...) now because
@@ -1019,7 +1019,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
                 if (!properties.containsKey(DefaultProjectedCRS.CONVERSION_TYPE_KEY)) {
                     method = mtFactory.getLastMethodUsed();
                     if (method instanceof MathTransformProvider) {
-                        final Map<String,Object> copy = new HashMap<String,Object>(properties);
+                        final Map<String,Object> copy = new HashMap<>(properties);
                         copy.put(DefaultProjectedCRS.CONVERSION_TYPE_KEY,
                                 ((MathTransformProvider) method).getOperationType());
                         properties = copy;

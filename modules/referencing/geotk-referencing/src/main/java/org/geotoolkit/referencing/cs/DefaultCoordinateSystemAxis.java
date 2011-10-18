@@ -585,8 +585,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * name is for. The actual axis instance doesn't matter (the algorithm using this map should
      * work for any axis instance); it is just a way to differentiate latitude and longitude.
      */
-    private static final Map<String,CoordinateSystemAxis> ALIASES =
-            new HashMap<String,CoordinateSystemAxis>(12);
+    private static final Map<String,CoordinateSystemAxis> ALIASES = new HashMap<>(12);
     static {
         ALIASES.put("lat",                GEODETIC_LATITUDE);
         ALIASES.put("latitude",           GEODETIC_LATITUDE);
@@ -841,7 +840,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
     private static Map<String,Object> toMap(final CharSequence name) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         if (name != null) {
             if (name instanceof InternationalString) {
                 // The "null" locale argument is required for getting the unlocalized version.

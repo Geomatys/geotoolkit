@@ -110,7 +110,7 @@ public class DefaultRecordType implements RecordType, Serializable {
     {
         this.parent = parent;
         this.name = name;
-        memberTypes = XCollections.unmodifiableMap(new LinkedHashMap<MemberName,Type>(members));
+        memberTypes = XCollections.unmodifiableMap(new LinkedHashMap<>(members));
     }
 
     /**

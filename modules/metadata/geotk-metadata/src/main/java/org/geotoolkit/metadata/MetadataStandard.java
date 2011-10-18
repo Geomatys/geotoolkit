@@ -160,7 +160,7 @@ public final class MetadataStandard {
     /**
      * Accessors for the specified implementations.
      */
-    private final Map<Class<?>,PropertyAccessor> accessors = new HashMap<Class<?>,PropertyAccessor>();
+    private final Map<Class<?>,PropertyAccessor> accessors = new HashMap<>();
 
     /**
      * Implementations for a given interface, or {@code null} if none.
@@ -212,7 +212,7 @@ public final class MetadataStandard {
             if (!implementationPackage.endsWith(".")) {
                 implementationPackage += '.';
             }
-            implementations = new HashMap<Class<?>,Class<?>>();
+            implementations = new HashMap<>();
             if (prefix == null) {
                 throw new NullArgumentException();
             }

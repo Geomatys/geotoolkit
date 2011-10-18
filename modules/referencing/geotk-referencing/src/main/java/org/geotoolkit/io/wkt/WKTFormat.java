@@ -112,7 +112,7 @@ public class WKTFormat extends Format {
      */
     private static final Map<String,Class<?>> TYPES;
     static {
-        final Map<String,Class<?>> map = new LinkedHashMap<String,Class<?>>(25);
+        final Map<String,Class<?>> map = new LinkedHashMap<>(25);
         map.put(        "GEOGCS",        GeographicCRS.class);
         map.put(        "PROJCS",         ProjectedCRS.class);
         map.put(        "GEOCCS",        GeocentricCRS.class);

@@ -373,7 +373,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
          * Get a copy of the components list and iterate in reverse order,
          * because we may remove elements from that list while iterating.
          */
-        final List<SingleCRS> components = new ArrayList<SingleCRS>(DefaultCompoundCRS.getSingleCRS(crs));
+        final List<SingleCRS> components = new ArrayList<>(DefaultCompoundCRS.getSingleCRS(crs));
         final int count = components.size();
         for (int i=count; --i>=0;) {
             final SingleCRS component = components.get(i);
@@ -516,9 +516,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             } else {
                 return AbstractCS.swapAndScaleAxis(sourceCS, targetCS);
             }
-        } catch (IllegalArgumentException e) {
-            failure = e;
-        } catch (ConversionException e) {
+        } catch (IllegalArgumentException | ConversionException e) {
             failure = e;
         }
         throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName()), failure);

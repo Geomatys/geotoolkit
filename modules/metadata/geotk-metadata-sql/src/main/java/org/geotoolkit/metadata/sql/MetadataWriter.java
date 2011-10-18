@@ -224,7 +224,7 @@ public class MetadataWriter extends MetadataSource {
          * against concurrent changes in the metadata object. This protection is needed
          * because we need to perform multiple passes on the same metadata.
          */
-        final Map<String,Object> asMap = new LinkedHashMap<String,Object>();
+        final Map<String,Object> asMap = new LinkedHashMap<>();
         for (final Map.Entry<String,Object> entry : asMap(metadata).entrySet()) {
             asMap.put(entry.getKey(), extractFromCollection(entry.getValue()));
         }
@@ -299,7 +299,7 @@ public class MetadataWriter extends MetadataSource {
                     // if INDEX_INHERITANCE_SUPPORTED is assumed true and removed.
                     if (INDEX_INHERITANCE_SUPPORTED || table.equals(addTo)) {
                         if (foreigners == null) {
-                            foreigners = new LinkedHashMap<String,Class<?>>();
+                            foreigners = new LinkedHashMap<>();
                         }
                         if (foreigners.put(column, rt) != null) {
                             throw new AssertionError(column); // Should never happen.
@@ -486,11 +486,13 @@ public class MetadataWriter extends MetadataSource {
             columns.add(CODE_COLUMN);
         }
         final String identifier = code.name();
-        final ResultSet rs = stmt.executeQuery(buffer.clear().append("SELECT ").append(CODE_COLUMN)
+        final String query = buffer.clear().append("SELECT ").append(CODE_COLUMN)
                 .append(" FROM ").appendIdentifier(schema, table).append(" WHERE ")
-                .append(CODE_COLUMN).appendCondition(identifier).toString());
-        final boolean exists = rs.next();
-        rs.close();
+                .append(CODE_COLUMN).appendCondition(identifier).toString();
+        final boolean exists;
+        try (ResultSet rs = stmt.executeQuery(query)) {
+            exists = rs.next();
+        }
         if (!exists) {
             final String sql = buffer.clear().append("INSERT INTO ").appendIdentifier(schema, table)
                     .append(" (").append(CODE_COLUMN).append(") VALUES (").appendValue(identifier)

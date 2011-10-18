@@ -230,7 +230,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     {
         super(userHints, maxStrongReferences);
         ensureNotSmaller("maxBackingStores", maxBackingStores, 1);
-        stores = new LinkedList<Store>();
+        stores = new LinkedList<>();
         remainingBackingStores = maxBackingStores;
     }
 

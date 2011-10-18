@@ -366,8 +366,7 @@ header: for (int i=0; ; i++) {
         int authorityLength = 0;
         final Collection<?> elements = (values != null) ? values.values() : group.descriptors();
         final Map<GeneralParameterDescriptor,ParameterTableRow> descriptorValues =
-                new LinkedHashMap<GeneralParameterDescriptor,ParameterTableRow>(
-                hashMapCapacity(elements.size()));
+                new LinkedHashMap<>(hashMapCapacity(elements.size()));
         List<Object> deferredGroups = null; // To be created only if needed (it is usually not).
         for (final Object element : elements) {
             final GeneralParameterValue parameter;
@@ -381,7 +380,7 @@ header: for (int i=0; ; i++) {
             }
             if (descriptor instanceof ParameterDescriptorGroup) {
                 if (deferredGroups == null) {
-                    deferredGroups = new ArrayList<Object>();
+                    deferredGroups = new ArrayList<>();
                 }
                 deferredGroups.add(element);
                 continue;
@@ -543,9 +542,9 @@ header: for (int i=0; ; i++) {
          * localized strings in the map right now because they could conflict with the
          * scope of some alias to be processed below.
          */
-        final Map<Object,Integer> header = new LinkedHashMap<Object,Integer>();
-        final List<String[]>        rows = new ArrayList<String[]>();
-        final List<String>     epsgNames = new ArrayList<String>();
+        final Map<Object,Integer> header = new LinkedHashMap<>();
+        final List<String[]>        rows = new ArrayList<>();
+        final List<String>     epsgNames = new ArrayList<>();
         final Locale              locale = getLocale();
         final Set<String>         scopes = getAuthorities();
         final Vocabulary       resources = Vocabulary.getResources(locale);
@@ -757,7 +756,7 @@ header: for (int i=0; ; i++) {
     public void setAuthorities(String... authorities) {
         Set<String> copy = null;
         if (authorities != null) {
-            copy = Collections.unmodifiableSet(new LinkedHashSet<String>(Arrays.asList(authorities)));
+            copy = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(authorities)));
         }
         synchronized (lock) {
             scopes = copy;

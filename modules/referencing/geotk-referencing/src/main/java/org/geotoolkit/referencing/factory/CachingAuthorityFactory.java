@@ -131,8 +131,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * Every access to this pool must be synchronized on {@code findPool}.
      */
     @GuardedBy("self")
-    private final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> findPool =
-            new WeakHashMap<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>>();
+    private final Map<IdentifiedObject, Map<ComparisonMode,IdentifiedObject>> findPool = new WeakHashMap<>();
 
     /**
      * Constructs an instance wrapping the specified factory with a default number
@@ -168,7 +167,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         }
         backingStore = factory;
         ensureNotSmaller("maxStrongReferences", maxStrongReferences, 0);
-        cache = new Cache<Object,Object>(20, maxStrongReferences, false);
+        cache = new Cache<>(20, maxStrongReferences, false);
         final Map<RenderingHints.Key, Object> hints = this.hints;
         if (factory instanceof DatumAuthorityFactory) {
             hints.put(Hints.DATUM_AUTHORITY_FACTORY, factory);
@@ -197,7 +196,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     CachingAuthorityFactory(final Hints userHints, final int maxStrongReferences) {
         super(userHints);
         ensureNotSmaller("maxStrongReferences", maxStrongReferences, 0);
-        cache = new Cache<Object,Object>(20, maxStrongReferences, false);
+        cache = new Cache<>(20, maxStrongReferences, false);
         backingStore = null;
     }
 
@@ -1208,7 +1207,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 synchronized (pool) {
                     Map<ComparisonMode,IdentifiedObject> byMode = pool.get(object);
                     if (byMode == null) {
-                        byMode = new EnumMap<ComparisonMode,IdentifiedObject>(ComparisonMode.class);
+                        byMode = new EnumMap<>(ComparisonMode.class);
                         pool.put(object, byMode);
                     }
                     byMode.put(mode, (candidate == null) ? NilReferencingObject.INSTANCE : candidate);

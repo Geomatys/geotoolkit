@@ -190,7 +190,7 @@ class CitationConstant extends DefaultCitation {
         }
 
         /**
-         * Returns the contant value that this object replaces.
+         * Returns the constant value that this object replaces.
          *
          * @return The constant value that this object replaces.
          * @throws ObjectStreamException If an error occurred while resolving the class.
@@ -198,9 +198,7 @@ class CitationConstant extends DefaultCitation {
         protected Object readResolve() throws ObjectStreamException {
             try {
                 return getContainer().getField(name).get(null);
-            } catch (NoSuchFieldException e) {
-                throw new InvalidObjectException(e.toString());
-            } catch (IllegalAccessException e) {
+            } catch (ReflectiveOperationException e) {
                 throw new InvalidObjectException(e.toString());
             }
         }

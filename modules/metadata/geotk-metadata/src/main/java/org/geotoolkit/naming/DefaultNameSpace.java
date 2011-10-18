@@ -163,7 +163,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      * Initializes the transient fields.
      */
     private void init() {
-        childs = new WeakValueHashMap<String,Object>();
+        childs = new WeakValueHashMap<>();
     }
 
     /**

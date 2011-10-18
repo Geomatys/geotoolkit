@@ -182,7 +182,7 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
                     }
                 }
                 if (!skip) {
-                    next = new SimpleEntry<String,ValueRestriction>(accessor.name(index, keyNames), restriction);
+                    next = new SimpleEntry<>(accessor.name(index, keyNames), restriction);
                     hasNext = true;
                     return true;
                 }

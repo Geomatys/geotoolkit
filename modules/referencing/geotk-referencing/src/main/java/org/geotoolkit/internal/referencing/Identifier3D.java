@@ -115,7 +115,7 @@ public final class Identifier3D extends DefaultReferenceIdentifier {
      * @return The properties with the given horizontal CRS injected in the name identifier.
      */
     public static Map<String,?> addHorizontalCRS(Map<String,?> properties, final SingleCRS horizontalCRS) {
-        final Map<String,Object> copy = new HashMap<String,Object>(properties);
+        final Map<String,Object> copy = new HashMap<>(properties);
         final ReferenceIdentifier id = (ReferenceIdentifier) copy.get(NAME_KEY);
         copy.put(NAME_KEY, new Identifier3D(id, horizontalCRS));
         return copy;

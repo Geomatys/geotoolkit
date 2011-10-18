@@ -327,7 +327,7 @@ public final class Citations extends Static {
      */
     public static final IdentifierSpace<Integer> EPSG;
     static {
-        final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<Integer>(
+        final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<>(
                 DefaultResponsibleParty.EPSG, "EPSG", "EPSG");
         c.setAlternateTitle("EPSG");
         c.setPresentationForm(PresentationForm.TABLE_DIGITAL);
@@ -361,7 +361,7 @@ public final class Citations extends Static {
      */
     public static final IdentifierSpace<String> AUTO;
     static { // Sanity check ensure that all @see tags are actually available in the metadata
-        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<>(
                 "Automatic Projections", "AUTO", "AUTO");
         /*
          * Do not put "WMS 1.1.1" and "OGC 01-068r3" as alternative titles. They are alternative
@@ -404,7 +404,7 @@ public final class Citations extends Static {
      */
     public static final IdentifierSpace<String> AUTO2;
     static {
-        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<>(
                 "Automatic Projections", "AUTO2", "AUTO2");
         /*
          * Do not put "WMS 1.3.0" and "OGC 04-024" as alternative titles. They are alternative
@@ -434,7 +434,7 @@ public final class Citations extends Static {
      */
     public static final IdentifierSpace<String> CRS;
     static {
-        final CitationConstant.Authority<String> c = new CitationConstant.Authority<String>(
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<>(
                 "Web Map Service CRS", "CRS", "CRS");
         c.getIdentifiers().add(new DefaultIdentifier("OGC"));
         c.setCitedResponsibleParties(AUTO2.getCitedResponsibleParties());
@@ -452,7 +452,7 @@ public final class Citations extends Static {
      */
     public static final IdentifierSpace<URI> URN_OGC;
     static {
-        final CitationConstant.Authority<URI> c = new CitationConstant.Authority<URI>(
+        final CitationConstant.Authority<URI> c = new CitationConstant.Authority<>(
                 "URN in OGC namespace", "URN_OGC", "urn:ogc:def");
         c.getIdentifiers().add(new DefaultIdentifier("urn:x-ogc:def"));
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.OGC));
@@ -470,7 +470,7 @@ public final class Citations extends Static {
      */
     public static final IdentifierSpace<URI> HTTP_OGC;
     static {
-        final CitationConstant.Authority<URI> c = new CitationConstant.Authority<URI>(
+        final CitationConstant.Authority<URI> c = new CitationConstant.Authority<>(
                 "URL in OGC namespace", "HTTP_OGC", "http://www.opengis.net");
         c.setCitedResponsibleParties(singleton(DefaultResponsibleParty.OGC));
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);

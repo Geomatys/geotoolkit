@@ -236,7 +236,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
         out.println();
         final Set<String> wktCodes   = this.      getAuthorityCodes(IdentifiedObject.class);
         final Set<String> sqlCodes   = sqlFactory.getAuthorityCodes(IdentifiedObject.class);
-        final Set<String> duplicated = new TreeSet<String>();
+        final Set<String> duplicated = new TreeSet<>();
         for (String code : wktCodes) {
             code = code.trim();
             if (sqlCodes.contains(code)) {
@@ -281,7 +281,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
      */
     public Set<String> reportInstantiationFailures(final PrintWriter out) throws FactoryException {
         final Set<String> codes = getAuthorityCodes(CoordinateReferenceSystem.class);
-        final Map<String,String> failures = new TreeMap<String,String>();
+        final Map<String,String> failures = new TreeMap<>();
         for (final String code : codes) {
             try {
                 createCoordinateReferenceSystem(code);

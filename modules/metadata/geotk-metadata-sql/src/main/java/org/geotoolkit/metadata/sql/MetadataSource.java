@@ -177,9 +177,9 @@ public class MetadataSource {
         ensureNonNull("dataSource", dataSource);
         this.standard = standard;
         this.schema = schema;
-        statements  = new StatementPool<Object,StatementEntry>(10, dataSource);
-        tables      = new HashMap<String, Set<String>>();
-        cache       = new WeakValueHashMap<CacheKey,Object>();
+        statements  = new StatementPool<>(10, dataSource);
+        tables      = new HashMap<>();
+        cache       = new WeakValueHashMap<>();
         converters  = ConverterRegistry.system();
         loader      = getClass().getClassLoader();
         synchronized (statements) {
@@ -189,7 +189,7 @@ public class MetadataSource {
 
     /**
      * Creates a new metadata source with the same configuration than the given source.
-     * The two souces will share the same data source but will use their own
+     * The two sources will share the same data source but will use their own
      * {@linkplain Connection connection}.
      *
      * @param source The source from which to copy the configuration.
@@ -201,9 +201,9 @@ public class MetadataSource {
         converters = source.converters;
         loader     = source.loader;
         buffer     = new SQLBuilder(source.buffer);
-        tables     = new HashMap<String, Set<String>>();
-        cache      = new WeakValueHashMap<CacheKey,Object>();
-        statements = new StatementPool<Object,StatementEntry>(source.statements);
+        tables     = new HashMap<>();
+        cache      = new WeakValueHashMap<>();
+        statements = new StatementPool<>(source.statements);
     }
 
     /**
@@ -300,9 +300,9 @@ public class MetadataSource {
                 final String table = getTableName(standard.getInterface(metadata.getClass()));
                 final Map<String,Object> asMap = asMap(metadata);
                 synchronized (statements) {
-                    final Statement stmt = statements.connection().createStatement();
-                    identifier = search(table, null, asMap, stmt, buffer);
-                    stmt.close();
+                    try (Statement stmt = statements.connection().createStatement()) {
+                        identifier = search(table, null, asMap, stmt, buffer);
+                    }
                 }
             }
         }
@@ -384,22 +384,22 @@ public class MetadataSource {
          * be retained but a warning will be logged.
          */
         String identifier = null;
-        final ResultSet rs = stmt.executeQuery(buffer.toString());
-        while (rs.next()) {
-            final String candidate = rs.getString(1);
-            if (candidate != null) {
-                if (identifier == null) {
-                    identifier = candidate;
-                } else if (!identifier.equals(candidate)) {
-                    final LogRecord record = Errors.getResources(null).getLogRecord(
-                            Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, candidate);
-                    record.setSourceClassName(getClass().getCanonicalName());
-                    record.setSourceMethodName("search");
-                    Logging.log(MetadataSource.class, record);
+        try (ResultSet rs = stmt.executeQuery(buffer.toString())) {
+            while (rs.next()) {
+                final String candidate = rs.getString(1);
+                if (candidate != null) {
+                    if (identifier == null) {
+                        identifier = candidate;
+                    } else if (!identifier.equals(candidate)) {
+                        final LogRecord record = Errors.getResources(null).getLogRecord(
+                                Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, candidate);
+                        record.setSourceClassName(getClass().getCanonicalName());
+                        record.setSourceMethodName("search");
+                        Logging.log(MetadataSource.class, record);
+                    }
                 }
             }
         }
-        rs.close();
         return identifier;
     }
 
@@ -417,7 +417,7 @@ public class MetadataSource {
         assert Thread.holdsLock(statements);
         Set<String> columns = tables.get(table);
         if (columns == null) {
-            columns = new HashSet<String>();
+            columns = new HashSet<>();
             /*
              * Note: a null schema in the DatabaseMetadata. getColumns(...) call means "do not
              * take schema in account" - it does not mean "no schema" (the later is specified
@@ -425,14 +425,14 @@ public class MetadataSource {
              * a schema in a SELECT statement, then the actual schema used depends on the search
              * path set in the database environment variables.
              */
-            final ResultSet rs = statements.connection().getMetaData().getColumns(null, schema, table, null);
-            while (rs.next()) {
-                if (!columns.add(rs.getString("COLUMN_NAME"))) {
-                    // Paranoiac check, but should never happen.
-                    throw new SQLNonTransientException(table);
+            try (ResultSet rs = statements.connection().getMetaData().getColumns(null, schema, table, null)) {
+                while (rs.next()) {
+                    if (!columns.add(rs.getString("COLUMN_NAME"))) {
+                        // Paranoiac check, but should never happen.
+                        throw new SQLNonTransientException(table);
+                    }
                 }
             }
-            rs.close();
             tables.put(table, columns);
         }
         return columns;
@@ -558,9 +558,9 @@ public class MetadataSource {
             if (isCollection) {
                 Collection<Object> collection = Arrays.asList(values);
                 if (SortedSet.class.isAssignableFrom(valueType)) {
-                    collection = new TreeSet<Object>(collection);
+                    collection = new TreeSet<>(collection);
                 } else if (Set.class.isAssignableFrom(valueType)) {
-                    collection = new LinkedHashSet<Object>(collection);
+                    collection = new LinkedHashSet<>(collection);
                 }
                 value = collection;
             }

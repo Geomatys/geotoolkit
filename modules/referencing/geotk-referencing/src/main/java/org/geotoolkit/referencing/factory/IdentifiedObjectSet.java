@@ -96,7 +96,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * The map of object codes (keys), and the actual identified objects (values) when it has
      * been created. Each entry has a null value until the corresponding object is created.
      */
-    private final Map<String,T> objects = new LinkedHashMap<String,T>();
+    private final Map<String,T> objects = new LinkedHashMap<>();
 
     /**
      * The authority factory given at construction time.
@@ -325,7 +325,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @see #addAuthorityCode
      */
     public void setAuthorityCodes(final String[] codes) {
-        final Map<String,T> copy = new HashMap<String,T>(objects);
+        final Map<String,T> copy = new HashMap<>(objects);
         objects.clear();
         for (final String code : codes) {
             objects.put(code, copy.get(code));
@@ -423,7 +423,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * @throws ObjectStreamException If this set can not be serialized.
      */
     protected Object writeReplace() throws ObjectStreamException {
-        return new LinkedHashSet<T>(this);
+        return new LinkedHashSet<>(this);
     }
 
     /**
