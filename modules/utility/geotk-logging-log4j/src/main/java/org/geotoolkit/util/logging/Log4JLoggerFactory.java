@@ -33,7 +33,10 @@ import java.util.logging.Logger;
 public class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
     /**
      * The unique instance of this factory.
+     *
+     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
      */
+    @Deprecated
     private static Log4JLoggerFactory factory;
 
     /**
@@ -50,7 +53,10 @@ public class Log4JLoggerFactory extends LoggerFactory<org.apache.log4j.Logger> {
      *
      * @return The unique instance of this factory.
      * @throws NoClassDefFoundError if Apache {@code Log} class was not found on the classpath.
+     *
+     * @deprecated Replaced by the {@code META-INF/services} discovery mechanism.
      */
+    @Deprecated
     public static synchronized Log4JLoggerFactory getInstance() throws NoClassDefFoundError {
         if (factory == null) {
             factory = new Log4JLoggerFactory();

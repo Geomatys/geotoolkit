@@ -117,7 +117,8 @@ public final class Logging extends Static {
     private Logging[] children = EMPTY;
 
     /**
-     * The factory for creating loggers.
+     * The factory for creating loggers, or {@code null} if none. If {@code null}
+     * (the default), then the standard Java logging framework will be used.
      *
      * @see #setLoggerFactory
      */
@@ -304,8 +305,11 @@ public final class Logging extends Static {
      * Sets a new logger factory for this {@code Logging} instance and every children. The
      * specified factory will be used by <code>{@linkplain #getLogger(String) getLogger}(name)</code>
      * when {@code name} is this {@code Logging} name or one of its children.
+     * <p>
+     * If the factory is set to {@code null} (the default), then the standard Logging framework
+     * will be used.
      *
-     * @param factory The new logger factory.
+     * @param factory The new logger factory, or {@code null} if none.
      */
     @Configuration
     public void setLoggerFactory(final LoggerFactory<?> factory) {
@@ -423,10 +427,15 @@ public final class Logging extends Static {
      */
     @Configuration
     public void scanLoggerFactory() {
-        for (final LoggerFactory<?> factory : ServiceLoader.load(LoggerFactory.class)) {
-            setLoggerFactory(factory);
-            break;
+        LoggerFactory<?> factory = null;
+        for (final LoggerFactory<?> found : ServiceLoader.load(LoggerFactory.class)) {
+            if (factory == null) {
+                factory = found;
+            } else {
+                factory = new DualLoggerFactory(factory, found);
+            }
         }
+        setLoggerFactory(factory);
     }
 
     /**
