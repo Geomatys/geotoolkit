@@ -118,8 +118,8 @@ public class CassiniSoldner extends CassiniOrMercator {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -134,6 +134,7 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double c      = (cosφ*cosφ) * excentricitySquared / (1 - excentricitySquared);
         dstPts[dstOff  ] = λcosφ*(1 - λcosφ2*tanφ2*(C1 - (8 - tanφ2 + 8*c)*λcosφ2*C2)) / rn;
         dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + tanφ*λcosφ2*(0.5 + (5 - tanφ2 + 6*c)*λcosφ2*C3) / rn;
+        return null;
     }
 
     /**
@@ -200,8 +201,8 @@ public class CassiniSoldner extends CassiniOrMercator {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             final double λ = rollLongitude(srcPts[srcOff]);
@@ -211,6 +212,7 @@ public class CassiniSoldner extends CassiniOrMercator {
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
+            return null;
         }
 
         /**
@@ -224,7 +226,7 @@ public class CassiniSoldner extends CassiniOrMercator {
         {
             final double λ = srcPts[srcOff];
             if (abs(λ) < ASSERTION_DOMAIN) {
-                super.transform(srcPts, srcOff, dstPts, dstOff);
+                super.transform(srcPts, srcOff, dstPts, dstOff, false);
                 return Assertions.checkTransform(dstPts, dstOff, x, y, 1E-4);
             } else {
                 return true;

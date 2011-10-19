@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Set;
 import java.util.Random;
 import java.util.HashSet;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
@@ -101,14 +102,15 @@ final strictfp class RandomFailureTransform extends PseudoTransform {
      * @throws TransformException Throws randomly at the frequency given at construction time.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException
     {
-        super.transform(srcPts, srcOff, dstPts, dstOff);
+        super.transform(srcPts, srcOff, dstPts, dstOff, false);
         final int index = ordinal++;
         if (random.nextInt(denominator) == 0) {
             assertTrue("Clash in coordinate ordinal.", failures.add(index));
             throw new TransformException("Random exception for testing purpose.");
         }
+        return null;
     }
 }

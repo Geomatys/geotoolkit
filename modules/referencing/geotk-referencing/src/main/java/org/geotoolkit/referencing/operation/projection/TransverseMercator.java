@@ -297,8 +297,8 @@ public class TransverseMercator extends CassiniOrMercator {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -322,6 +322,7 @@ public class TransverseMercator extends CassiniOrMercator {
             FC4 * als * (5 - t + n*(9 + 4*n) +
             FC6 * als * (61 + t * (t - 58) + n*(270 - 330*t) +
             FC8 * als * (1385 + t * (t*(543 - t) - 3111)))));
+        return null;
     }
 
     /**
@@ -405,8 +406,8 @@ public class TransverseMercator extends CassiniOrMercator {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             final double λ = rollLongitude(srcPts[srcOff]);
@@ -421,6 +422,7 @@ public class TransverseMercator extends CassiniOrMercator {
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
+            return null;
         }
 
         /**
@@ -434,7 +436,7 @@ public class TransverseMercator extends CassiniOrMercator {
         {
             final double λ = srcPts[srcOff];
             if (abs(λ) < ASSERTION_DOMAIN) {
-                super.transform(srcPts, srcOff, dstPts, dstOff);
+                super.transform(srcPts, srcOff, dstPts, dstOff, false);
                 return Assertions.checkTransform(dstPts, dstOff, x, y);
             } else {
                 return true;

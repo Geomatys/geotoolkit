@@ -300,8 +300,9 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * Transforms a single coordinate point.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
+    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
+        return null;
     }
 
     /**

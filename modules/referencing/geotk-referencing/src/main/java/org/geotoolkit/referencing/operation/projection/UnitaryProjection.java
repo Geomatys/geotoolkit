@@ -38,6 +38,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -78,13 +79,13 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * computations are performed for a sphere having a semi-major axis of 1. More specifically:
  *
  * <ul>
- *   <li><p>On input, the {@link #transform(double[],int,double[],int) transform} method expects
+ *   <li><p>On input, the {@link #transform(double[],int,double[],int,boolean) transform} method expects
  *   (<var>longitude</var>, <var>latitude</var>) angles in <strong>radians</strong>. Longitudes
  *   have the {@linkplain Parameters#centralMeridian central meridian} removed before the transform
  *   method is invoked. The conversion from degrees to radians and the longitude rotation are applied
  *   by the {@linkplain Parameters#normalize(boolean) normalize} affine transform.</p></li>
  *
- *   <li><p>On output, the {@link #transform(double[],int,double[],int) transform} method returns
+ *   <li><p>On output, the {@link #transform(double[],int,double[],int,boolean) transform} method returns
  *   (<var>easting</var>, <var>northing</var>) values on a sphere or ellipse having a semi-major
  *   axis length of 1. The multiplication by the scale factor and the false easting/northing offsets
  *   are applied by the {@link Parameters#normalize(boolean) denormalize} affine transform.</p></li>
@@ -408,7 +409,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * are typically, but not always, &plusmn;&pi; radians. This method returns <var>x</var>
      * unchanged if no longitude rolling should be applied.
      * <p>
-     * This method should be invoked before the {@linkplain #transform(double[],int,double[],int)
+     * This method should be invoked before the {@linkplain #transform(double[],int,double[],int,boolean)
      * forward transform} begin its calculation.
      *
      * @param  x The longitude to roll.
@@ -450,8 +451,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
     /**
      * Converts a list of coordinate point ordinal values. The default implementation invokes
-     * {@link #transform(double[],int,double[],int)} in a loop. If a geographic coordinate is
-     * outside the range of valid values, a warning may be logged. Whatever this check is done
+     * {@link #transform(double[],int,double[],int,boolean)} in a loop. If a geographic coordinate
+     * is outside the range of valid values, a warning may be logged. Whatever this check is done
      * or not depends on factors like whatever warnings have been previously logged, for which
      * projections, and if the user invoked {@link #resetWarnings}.
      *
@@ -515,7 +516,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * @throws ProjectionException if the point can't be converted.
      */
     @Override
-    protected abstract void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    public abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws ProjectionException;
 
     /**
@@ -588,16 +589,16 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
          * Inverse transforms the specified {@code srcPts} and stores the result in {@code dstPts}.
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             inverseTransform(srcPts, srcOff, dstPts, dstOff);
             if (verifyCoordinateRanges()) {
                 logWarning(verifyGeographicRanges(this, srcPts[srcOff], srcPts[srcOff+1]));
             }
-            assert Assertions.checkReciprocal(UnitaryProjection.this, false,
-                    srcPts, srcOff, dstPts, dstOff, 1);
+            assert Assertions.checkReciprocal(UnitaryProjection.this, false, srcPts, srcOff, dstPts, dstOff, 1);
+            return null;
         }
     }
 

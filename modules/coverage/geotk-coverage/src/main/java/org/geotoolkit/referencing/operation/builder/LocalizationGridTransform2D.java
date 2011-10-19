@@ -475,11 +475,12 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
          * @throws TransformException if a point can't be transformed.
          */
         @Override
-        public void transform(final double[] srcPts, int srcOff,
-                              final double[] dstPts, int dstOff)
+        public Matrix transform(final double[] srcPts, int srcOff,
+                                final double[] dstPts, int dstOff, boolean derivate)
                 throws TransformException
         {
             transform(srcPts, srcOff, dstPts, dstOff, 1);
+            return null;
         }
 
         /**

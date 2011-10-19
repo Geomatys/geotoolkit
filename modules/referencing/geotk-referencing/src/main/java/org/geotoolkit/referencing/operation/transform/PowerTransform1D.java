@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
@@ -117,8 +118,9 @@ final class PowerTransform1D extends AbstractMathTransform1D implements Serializ
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
+    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
         dstPts[dstOff] = Math.pow(srcPts[srcOff], power);
+        return null;
     }
 
     /**

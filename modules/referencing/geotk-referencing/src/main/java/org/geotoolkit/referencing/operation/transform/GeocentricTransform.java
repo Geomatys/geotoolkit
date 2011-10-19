@@ -360,8 +360,9 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      * coordinates (x, y, z) according to the current ellipsoid parameters.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
+    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
         transform(srcPts, srcOff, dstPts, dstOff, 1, hasHeight);
+        return null;
     }
 
     /**
@@ -794,10 +795,11 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
          * Inverse transform a single points.
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
         {
             inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, 1, hasHeight, false);
+            return null;
         }
 
         /**

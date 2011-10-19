@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import net.jcip.annotations.Immutable;
+import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -56,10 +57,11 @@ final class IdentityTransform1D extends LinearTransform1D {
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
     {
         dstPts[dstOff] = srcPts[srcOff];
+        return null;
     }
 
     /**

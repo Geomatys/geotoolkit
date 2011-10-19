@@ -141,7 +141,7 @@
  * (or sphere) having a semi-major axis of 1.
  * <p>
  * In other words, the
- * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection#transform(double[],int,double[],int)
+ * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection#transform(double[],int,double[],int,boolean)
  * transform} method of the middle step works typically on longitude and latitude values in <strong>radians</strong>
  * relative to the central meridian (not necessarily Greenwich). Its results are typically (<var>x</var>, <var>y</var>)
  * coordinates having ({@linkplain org.opengis.referencing.cs.AxisDirection#EAST East},

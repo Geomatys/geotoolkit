@@ -288,10 +288,11 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate)
             throws TransformException
     {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
+        return null;
     }
 
     /**

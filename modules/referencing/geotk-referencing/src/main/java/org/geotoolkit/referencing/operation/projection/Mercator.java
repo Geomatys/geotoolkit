@@ -226,8 +226,8 @@ public class Mercator extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         double x = srcPts[srcOff];
@@ -247,6 +247,7 @@ public class Mercator extends UnitaryProjection {
             dstPts[dstOff + 1] = y;
         }
         dstPts[dstOff] = rollLongitude(x);
+        return null;
     }
 
     /**
@@ -381,8 +382,8 @@ public class Mercator extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             double x = rollLongitude(srcPts[srcOff]);
@@ -402,6 +403,7 @@ public class Mercator extends UnitaryProjection {
                 dstPts[dstOff + 1] = y;
             }
             dstPts[dstOff] = x;
+            return null;
         }
 
         /**
@@ -448,7 +450,7 @@ public class Mercator extends UnitaryProjection {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
+            super.transform(srcPts, srcOff, dstPts, dstOff, false);
             return Assertions.checkTransform(dstPts, dstOff, x, y);
         }
 

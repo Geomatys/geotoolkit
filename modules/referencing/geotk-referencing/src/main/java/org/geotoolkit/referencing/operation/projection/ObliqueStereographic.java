@@ -125,8 +125,8 @@ public class ObliqueStereographic extends Stereographic {
      * {@inheritDoc}
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         double λ = rollLongitude(srcPts[srcOff]);
@@ -142,6 +142,7 @@ public class ObliqueStereographic extends Stereographic {
          * We can not compare easily with the calculation performed by the superclass
          * because the (de)normalize affine transforms are not set in the same way.
          */
+        return null;
     }
 
     /**

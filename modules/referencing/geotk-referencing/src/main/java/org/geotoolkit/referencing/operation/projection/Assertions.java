@@ -158,7 +158,7 @@ final class Assertions extends Static {
                                                    expected[dstOff++]);
                 } else {
                     // Computes Cartesian distance.
-                    transform.transform(srcPts, srcOff, buffer, 0);
+                    transform.transform(srcPts, srcOff, buffer, 0, false);
                     longitude = srcPts[srcOff++];
                     latitude  = srcPts[srcOff++];
                     distance  = Math.hypot(expected[dstOff++] - buffer[0],

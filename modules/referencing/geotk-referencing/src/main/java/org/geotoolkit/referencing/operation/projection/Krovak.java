@@ -207,8 +207,8 @@ public class Krovak extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double Δv   = srcPts[srcOff];
@@ -224,6 +224,7 @@ public class Krovak extends UnitaryProjection {
         // x and y are reverted.
         dstPts[dstOff  ] = sin(ε) / ρ;
         dstPts[dstOff+1] = cos(ε) / ρ;
+        return null;
     }
 
     /**

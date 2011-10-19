@@ -131,7 +131,7 @@ public abstract strictfp class ProjectionTestBase extends TransformTestBase {
     final double transform(final double phi) throws ProjectionException {
         final double[] coordinate = new double[2];
         coordinate[1] = phi;
-        ((UnitaryProjection) transform).transform(coordinate, 0, coordinate, 0);
+        ((UnitaryProjection) transform).transform(coordinate, 0, coordinate, 0, false);
         final double y = coordinate[1];
         if (!Double.isNaN(y) && !Double.isInfinite(y)) {
             assertEquals(0, coordinate[0], tolerance);

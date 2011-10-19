@@ -22,6 +22,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.math.Complex;
@@ -141,8 +142,8 @@ public class NewZealandMapGrid extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double dphi = srcPts[srcOff + 1];
@@ -163,6 +164,7 @@ public class NewZealandMapGrid extends UnitaryProjection {
         }
         dstPts[dstOff  ] = z.imag;
         dstPts[dstOff+1] = z.real;
+        return null;
     }
 
     /**

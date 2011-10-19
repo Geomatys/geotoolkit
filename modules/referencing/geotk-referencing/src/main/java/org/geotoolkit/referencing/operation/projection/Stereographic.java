@@ -281,8 +281,8 @@ public class Stereographic extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -297,6 +297,7 @@ public class Stereographic extends UnitaryProjection {
         /*
          * The multiplication by (k0 / cosχ1) is performed by the "denormalize" affine transform.
          */
+        return null;
     }
 
     /**
@@ -388,8 +389,8 @@ public class Stereographic extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             final double λ = rollLongitude(srcPts[srcOff]);
@@ -403,6 +404,7 @@ public class Stereographic extends UnitaryProjection {
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;
+            return null;
         }
 
         /**
@@ -414,7 +416,7 @@ public class Stereographic extends UnitaryProjection {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
+            super.transform(srcPts, srcOff, dstPts, dstOff, false);
             return Assertions.checkTransform(dstPts, dstOff, x, y);
         }
 

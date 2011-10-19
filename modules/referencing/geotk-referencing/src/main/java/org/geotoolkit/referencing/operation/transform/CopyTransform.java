@@ -179,8 +179,9 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Transforms a single coordinate point.
      */
     @Override
-    protected final void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
+    public final Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
+        return null;
     }
 
     /**

@@ -74,7 +74,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
  * <ul>
  *   <li>{@link #getSourceDimensions()}</li>
  *   <li>{@link #getTargetDimensions()}</li>
- *   <li>{@link #transform(double[],int,double[],int)}</li>
+ *   <li>{@link #transform(double[],int,double[],int,boolean)}</li>
  * </ul>
  * <p>
  * However more performance may be gained by overriding the other {@code transform} method as well.
@@ -227,7 +227,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *   <li>Ensures that the {@linkplain #getSourceDimensions() source} and
      *       {@linkplain #getTargetDimensions() target dimensions} of this math
      *       transform are equal to 2.</li>
-     *   <li>Delegates to the protected {@link #transform(double[],int,double[],int)}
+     *   <li>Delegates to the {@link #transform(double[],int,double[],int,boolean)}
      *       method using a temporary array of doubles.</li>
      * </ul>
      *
@@ -251,7 +251,7 @@ public abstract class AbstractMathTransform extends FormattableObject
             throw new MismatchedDimensionException(mismatchedDimension("ptDst", 2, dim));
         }
         final double[] ord = new double[] {ptSrc.getX(), ptSrc.getY()};
-        transform(ord, 0, ord, 0);
+        transform(ord, 0, ord, 0, false);
         if (ptDst != null) {
             ptDst.setLocation(ord[0], ord[1]);
             return ptDst;
@@ -268,7 +268,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *   <li>Ensures that the dimension of the given points are consistent with the
      *       {@linkplain #getSourceDimensions() source} and {@linkplain #getTargetDimensions()
      *       target dimensions} of this math transform.</li>
-     *   <li>Delegates to the protected {@link #transform(double[],int,double[],int)} method.</li>
+     *   <li>Delegates to the {@link #transform(double[],int,double[],int,boolean)} method.</li>
      * </ul>
      *
      * @param  ptSrc the coordinate point to be transformed.
@@ -302,7 +302,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                     array[i] = ptSrc.getOrdinate(i);
                 }
             }
-            transform(array, 0, array, 0);
+            transform(array, 0, array, 0, false);
             for (int i=0; i<dimTarget; i++) {
                 ptDst.setOrdinate(i, array[i]);
             }
@@ -322,7 +322,7 @@ public abstract class AbstractMathTransform extends FormattableObject
             } else {
                 source = ptSrc.getCoordinate();
             }
-            transform(source, 0, destination.ordinates, 0);
+            transform(source, 0, destination.ordinates, 0, false);
             ptDst = destination;
         }
         return ptDst;
@@ -333,7 +333,9 @@ public abstract class AbstractMathTransform extends FormattableObject
      * equivalent to invoking the following:
      *
      * <blockquote><code>{@linkplain #transform(double[],int,double[],int,int)
-     * transform}(srcPts, srcOff, dstPts, dstOff, <b>1</b>)</code></blockquote>
+     * transform}(srcPts, srcOff, dstPts, dstOff, <b>1</b>);<br>
+     * return derivate ? {@linkplain #derivative(DirectPosition) derivative}(<var>coordinate
+     * before transform</var>) : null;</code></blockquote>
      *
      * However this method is easier to implement for {@code AbstractMathTransform} subclasses.
      * The default {@link #transform(double[],int,double[],int,int)} method implementation will
@@ -344,23 +346,26 @@ public abstract class AbstractMathTransform extends FormattableObject
      * ordinate values before to start writing the transformed ordinates in the destination
      * array.
      *
-     * {@note This method has protected access rather than public in the hope to encourage users
-     *        to invoke the bulk methods with a number of points greater than 1, which is usually
-     *        faster than invoking repeatidly this method. In addition this method may skip some
-     *        verifications that are performed by the public methods. This is the case of Geotk
-     *        implementation of map projections.}
+     * {@note Users are encouraged to invoke the bulk methods with a number of points greater
+     *        than 1 when possible, which is usually faster than invoking repeatidly this method.}
      *
-     * @param srcPts The array containing the source point coordinates.
+     * @param srcPts The array containing the source point coordinates (can not be {@code null}).
      * @param srcOff The offset to the point to be transformed in the source array.
      * @param dstPts the array into which the transformed point coordinate are returned.
-     *               May be the same than {@code srcPts}.
+     *               May be the same than {@code srcPts}. May be {@code null} if only the
+     *               derivative matrix is desired.
      * @param dstOff The offset to the location of the transformed point that is
      *               stored in the destination array.
-     * @throws TransformException If the point can't be transformed.
+     * @param derivate {@code true} for computing the derivative, or {@code false} if not needed.
+     * @return The matrix of the transform derivative at the given source position, or {@code null}
+     *         if the {@code derivate} argument is {@code false} or if this transform does not
+     *         support derivative calculation.
+     * @throws TransformException If the point can't be transformed or if a problem occurred while
+     *         calculating the derivative.
      *
-     * @since 3.00
+     * @since 3.20 (derived from 3.00)
      */
-    protected abstract void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    public abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException;
 
     /**
@@ -374,9 +379,9 @@ public abstract class AbstractMathTransform extends FormattableObject
      *  <var>x<sub>1</sub></var>,<var>y<sub>1</sub></var>,<var>z<sub>1</sub></var> ...).
      * </blockquote>
      *
-     * The default implementation invokes {@link #transform(double[],int,double[],int)} in a loop,
-     * using an {@linkplain IterationStrategy iteration strategy} determined from the arguments for
-     * iterating over the points.
+     * The default implementation invokes {@link #transform(double[],int,double[],int,boolean)}
+     * in a loop, using an {@linkplain IterationStrategy iteration strategy} determined from the
+     * arguments for iterating over the points.
      *
      * @param srcPts The array containing the source point coordinates.
      * @param srcOff The offset to the first point to be transformed in the source array.
@@ -440,7 +445,7 @@ public abstract class AbstractMathTransform extends FormattableObject
         int blockStart   = 0;
         do {
             try {
-                transform(srcPts, srcOff, dstPts, dstOff);
+                transform(srcPts, srcOff, dstPts, dstOff, false);
             } catch (TransformException exception) {
                 /*
                  * If an exception occurred, let it propagate if we reached the maximum amount

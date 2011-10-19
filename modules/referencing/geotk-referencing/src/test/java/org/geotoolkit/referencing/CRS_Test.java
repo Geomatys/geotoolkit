@@ -24,6 +24,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.OperationNotFoundException;
@@ -359,8 +360,9 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
         final class TestTransform extends AbstractMathTransform {
             @Override public int getSourceDimensions() {return 2;}
             @Override public int getTargetDimensions() {return 2;}
-            @Override protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
+            @Override public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
                 at.transform(srcPts, srcOff, dstPts, dstOff, 1);
+                return null;
             }
         }
         final TestTransform tr = new TestTransform();

@@ -256,8 +256,8 @@ public class AlbersEqualArea extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -273,6 +273,7 @@ public class AlbersEqualArea extends UnitaryProjection {
         ρ = sqrt(ρ);
         dstPts[dstOff]     = ρ * sin(λ);
         dstPts[dstOff + 1] = ρ * cos(λ);
+        return null;
     }
 
     /**
@@ -357,8 +358,8 @@ public class AlbersEqualArea extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             double x = rollLongitude(srcPts[srcOff]);
@@ -378,6 +379,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]     = x;
             dstPts[dstOff + 1] = y;
+            return null;
         }
 
         /**
@@ -389,7 +391,7 @@ public class AlbersEqualArea extends UnitaryProjection {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
+            super.transform(srcPts, srcOff, dstPts, dstOff, false);
             return Assertions.checkTransform(dstPts, dstOff, x, y);
         }
 

@@ -22,6 +22,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
@@ -212,8 +213,9 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
+    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
         dstPts[dstOff] = scale * Math.pow(base, srcPts[srcOff]);
+        return null;
     }
 
     /**

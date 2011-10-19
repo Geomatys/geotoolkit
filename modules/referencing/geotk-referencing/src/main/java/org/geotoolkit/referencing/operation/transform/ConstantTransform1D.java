@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import net.jcip.annotations.Immutable;
+import org.opengis.referencing.operation.Matrix;
 
 
 /**
@@ -61,10 +62,11 @@ final class ConstantTransform1D extends LinearTransform1D {
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(final double[] srcPts, int srcOff,
-                             final double[] dstPts, int dstOff)
+    public Matrix transform(final double[] srcPts, int srcOff,
+                            final double[] dstPts, int dstOff, boolean derivate)
     {
         dstPts[dstOff] = offset;
+        return null;
     }
 
     /**

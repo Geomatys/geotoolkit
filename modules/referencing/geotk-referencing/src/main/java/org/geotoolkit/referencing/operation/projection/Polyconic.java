@@ -117,7 +117,7 @@ public class Polyconic extends CassiniOrMercator {
      * (may occur if assertions are enabled).
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -137,11 +137,12 @@ public class Polyconic extends CassiniOrMercator {
          */
         if (Double.isInfinite(msfn)) {
             dstPts[dstOff] = λ;
-            return;
+        } else {
+            final double λsinφ = λ*sinφ;
+            dstPts[dstOff+1] = msfn*(1 - cos(λsinφ)) + mlfn(φ, sinφ, cosφ);
+            dstPts[dstOff  ] = msfn * sin(λsinφ);
         }
-        final double λsinφ = λ*sinφ;
-        dstPts[dstOff+1] = msfn*(1 - cos(λsinφ)) + mlfn(φ, sinφ, cosφ);
-        dstPts[dstOff  ] = msfn * sin(λsinφ);
+        return null;
     }
 
     /**
@@ -243,8 +244,8 @@ public class Polyconic extends CassiniOrMercator {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             final double λ = rollLongitude(srcPts[srcOff]);
@@ -256,6 +257,7 @@ public class Polyconic extends CassiniOrMercator {
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
+            return null;
         }
 
         /**
@@ -267,7 +269,7 @@ public class Polyconic extends CassiniOrMercator {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
+            super.transform(srcPts, srcOff, dstPts, dstOff, false);
             return Assertions.checkTransform(dstPts, dstOff, x, y);
         }
 

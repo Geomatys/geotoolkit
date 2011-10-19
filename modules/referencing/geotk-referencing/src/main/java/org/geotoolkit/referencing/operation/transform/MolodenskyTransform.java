@@ -437,10 +437,11 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
      * Transforms a single coordinate point.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff,
-                             double[] dstPts, int dstOff)
+    public Matrix transform(double[] srcPts, int srcOff,
+                            double[] dstPts, int dstOff, boolean derivate)
     {
         transform(null, srcPts, srcOff, null, dstPts, dstOff, 1, srcPts == dstPts);
+        return null;
     }
 
     /**

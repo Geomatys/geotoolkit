@@ -202,10 +202,11 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
     {
         System.arraycopy(srcPts, srcOff, dstPts, dstOff, dimension);
+        return null;
     }
 
     /**

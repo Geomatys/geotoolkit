@@ -71,10 +71,11 @@ public abstract class AbstractMathTransform1D extends AbstractMathTransform impl
      * {@link #transform(double)}. Subclasses may override this method for performance reason.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate)
             throws TransformException
     {
         dstPts[dstOff] = transform(srcPts[srcOff]);
+        return null;
     }
 
     /**

@@ -203,8 +203,8 @@ public class Orthographic extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
@@ -235,6 +235,7 @@ public class Orthographic extends UnitaryProjection {
         }
         dstPts[dstOff  ] = cosφ * sin(λ);
         dstPts[dstOff+1] = y;
+        return null;
     }
 
     /**

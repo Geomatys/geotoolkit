@@ -68,8 +68,9 @@ final strictfp class PrivateTransform2D extends AbstractMathTransform implements
      * Transforms a single coordinate.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) throws TransformException {
+    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) throws TransformException {
         tr.transform(srcPts, srcOff, dstPts, dstOff, 1);
+        return null;
     }
 
     /**

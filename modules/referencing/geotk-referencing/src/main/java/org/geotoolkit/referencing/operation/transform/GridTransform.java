@@ -321,8 +321,8 @@ public class GridTransform extends AbstractMathTransform implements Serializable
      * @param  dstOff  Index where to store the first ordinate.
      */
     @Override
-    protected void transform(final double[] srcPts, int srcOff,
-                             final double[] dstPts, int dstOff)
+    public Matrix transform(final double[] srcPts, int srcOff,
+                            final double[] dstPts, int dstOff, boolean derivate)
     {
         /*
          * Following code is a copy-and-paste of:
@@ -371,6 +371,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
             }
             dstPts[dstOff++] = value;
         }
+        return null;
     }
 
     /**

@@ -170,8 +170,8 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
          * @throws TransformException If there is no convergence.
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws TransformException
         {
             double xi, yi;
@@ -180,13 +180,13 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
             dstPts[dstOff+1] = yi = y = srcPts[srcOff+1];
             int i = MAXIMUM_ITERATIONS;
             do {
-                GridTransform2D.this.transform(dstPts, dstOff, dstPts, dstOff);
+                GridTransform2D.this.transform(dstPts, dstOff, dstPts, dstOff, false);
                 final double dx = dstPts[dstOff  ] - x;
                 final double dy = dstPts[dstOff+1] - y;
                 dstPts[dstOff  ] = (xi -= dx);
                 dstPts[dstOff+1] = (yi -= dy);
                 if (Math.abs(dx) <= ITERATION_TOLERANCE && Math.abs(dy) <= ITERATION_TOLERANCE) {
-                    return;
+                    return null;
                 }
             } while (--i >= 0);
             throw new TransformException(Errors.format(Errors.Keys.NO_CONVERGENCE));

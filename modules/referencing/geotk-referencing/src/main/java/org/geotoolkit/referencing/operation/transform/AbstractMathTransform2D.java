@@ -81,7 +81,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
 
     /**
      * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}.
-     * The default implementation invokes {@link #transform(double[],int,double[],int)}
+     * The default implementation invokes {@link #transform(double[],int,double[],int,boolean)}
      * using a temporary array of doubles.
      *
      * {@note This method performs the same work than the method in the parent class, but
@@ -100,7 +100,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
     @Override
     public Point2D transform(final Point2D ptSrc, final Point2D ptDst) throws TransformException {
         final double[] ord = new double[] {ptSrc.getX(), ptSrc.getY()};
-        transform(ord, 0, ord, 0);
+        transform(ord, 0, ord, 0, false);
         if (ptDst != null) {
             ptDst.setLocation(ord[0], ord[1]);
             return ptDst;

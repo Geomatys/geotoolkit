@@ -22,6 +22,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
@@ -234,8 +235,9 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
+    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
         dstPts[dstOff] = Math.log(srcPts[srcOff]) / lnBase + offset;
+        return null;
     }
 
     /**
@@ -325,8 +327,9 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
 
         /** {@inheritDoc} */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
+        public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
             dstPts[dstOff] = Math.log10(srcPts[srcOff]) + offset;
+            return null;
         }
 
         /** {@inheritDoc} */

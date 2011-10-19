@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import net.jcip.annotations.ThreadSafe;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -81,10 +82,10 @@ public abstract class VerticalTransform extends AbstractMathTransform {
      *
      * @throws TransformException If the point can't be transformed.
      *
-     * @since 3.00
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException
     {
         final double x = srcPts[srcOff++];
@@ -93,6 +94,7 @@ public abstract class VerticalTransform extends AbstractMathTransform {
         dstPts[dstOff++] = x;
         dstPts[dstOff++] = y;
         dstPts[dstOff++] = z + heightOffset(x,y,z);
+        return null;
     }
 
     /**

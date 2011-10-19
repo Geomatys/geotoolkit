@@ -645,11 +645,12 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @throws TransformException If {@link #transform1} or {@link #transform2} failed.
      */
     @Override
-    protected void transform(final double[] srcPts, int srcOff,
-                             final double[] dstPts, int dstOff)
+    public Matrix transform(final double[] srcPts, int srcOff,
+                            final double[] dstPts, int dstOff, boolean derivate)
             throws TransformException
     {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
+        return null;
     }
 
     /**

@@ -281,8 +281,8 @@ public class LambertConformal extends UnitaryProjection {
      * on a unit sphere).
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
         /*
@@ -304,6 +304,7 @@ public class LambertConformal extends UnitaryProjection {
         final double λ = rollLongitude(srcPts[srcOff]);
         dstPts[dstOff]     = ρ * sin(λ);
         dstPts[dstOff + 1] = ρ * cos(λ);
+        return null;
     }
 
     /**
@@ -397,8 +398,8 @@ public class LambertConformal extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
             double y = srcPts[srcOff + 1];
@@ -417,6 +418,7 @@ public class LambertConformal extends UnitaryProjection {
             assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff  ] = x;
             dstPts[dstOff+1] = y;
+            return null;
         }
 
         /**
@@ -428,7 +430,7 @@ public class LambertConformal extends UnitaryProjection {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
+            super.transform(srcPts, srcOff, dstPts, dstOff, false);
             return Assertions.checkTransform(dstPts, dstOff, x, y);
         }
 
