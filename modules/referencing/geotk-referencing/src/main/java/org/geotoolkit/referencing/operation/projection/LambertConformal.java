@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -92,7 +91,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 1.0
  * @module
@@ -279,10 +278,12 @@ public class LambertConformal extends UnitaryProjection {
      * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
      * (units in radians) and stores the result in {@code dstPts} (linear distance
      * on a unit sphere).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, boolean derivate)
+                            final double[] dstPts, final int dstOff, final boolean derivate)
             throws ProjectionException
     {
         /*
@@ -291,20 +292,42 @@ public class LambertConformal extends UnitaryProjection {
          * and the linear operations applied after the last non-linear one moved to the
          * "denormalize" affine transform.
          */
-        final double φ = srcPts[srcOff + 1];
+        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double φ    = srcPts[srcOff + 1];
+        final double a    = abs(φ);
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        final double sinφ;
         final double ρ; // Snyder p. 108
-        final double a = abs(φ);
         if (a < PI/2) {
-            ρ = pow(tsfn(φ, sin(φ)), n);
+            sinφ = sin(φ);
+            ρ = pow(tsfn(φ, sinφ), n);
         } else if (a < PI/2 + ANGLE_TOLERANCE) {
+            sinφ = 1;
             ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
         } else {
-            ρ = NaN;
+            ρ = sinφ = NaN;
         }
-        final double λ = rollLongitude(srcPts[srcOff]);
-        dstPts[dstOff]     = ρ * sin(λ);
-        dstPts[dstOff + 1] = ρ * cos(λ);
-        return null;
+        final double x = ρ * sinλ;
+        final double y = ρ * cosλ;
+        if (dstPts != null) {
+            dstPts[dstOff]   = x;
+            dstPts[dstOff+1] = y;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double dρ; // Snyder p. 108
+        if (sinφ != 1) {
+            dρ = n * dtsfn_dφ(φ, sinφ, cos(φ)) * ρ;
+        } else {
+            dρ = ρ;
+        }
+        return new Matrix2(y, dρ*sinλ,   // ∂x/∂λ , ∂x/∂φ
+                          -x, dρ*cosλ);  // ∂y/∂λ , ∂y/∂φ
     }
 
     /**
@@ -399,39 +422,43 @@ public class LambertConformal extends UnitaryProjection {
          */
         @Override
         public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, boolean derivate)
+                                final double[] dstPts, final int dstOff, final boolean derivate)
                 throws ProjectionException
         {
-            double y = srcPts[srcOff + 1];
+            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double φ    = srcPts[srcOff+1];
+            final double a    = abs(φ);
+            final double sinλ = sin(λ);
+            final double cosλ = cos(λ);
             final double ρ;
-            final double a = abs(y);
             if (a < PI/2) {
-                ρ = pow(tan(PI/4 + 0.5*y), -n);
+                ρ = pow(tan(PI/4 + 0.5*φ), -n);
             } else if (a < PI/2 + ANGLE_TOLERANCE) {
-                ρ = (y*n <= 0) ? POSITIVE_INFINITY : 0;
+                ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
             } else {
                 ρ = NaN;
             }
-            double x = rollLongitude(srcPts[srcOff]);
-            y = ρ * cos(x);
-            x = ρ * sin(x);
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff  ] = x;
-            dstPts[dstOff+1] = y;
-            return null;
-        }
-
-        /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff, false);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
+            final double x = ρ * sinλ;
+            final double y = ρ * cosλ;
+            Matrix derivative = null;
+            if (derivate) {
+                final double dρ;
+                if (a < PI/2) {
+                    dρ = -n*ρ/cos(φ);
+                } else {
+                    dρ = NaN;
+                }
+                derivative = new Matrix2(y, dρ*sinλ,   // ∂x/∂λ , ∂x/∂φ
+                                        -x, dρ*cosλ);  // ∂y/∂λ , ∂y/∂φ
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -464,70 +491,6 @@ public class LambertConformal extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.14
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ    = rollLongitude(point.getX());
-            final double φ    = point.getY();
-            final double sinλ = sin(λ);
-            final double cosλ = cos(λ);
-            final double ρ, dρ;
-            final double a = abs(φ);
-            if (a < PI/2) {
-                ρ  = pow(tan(PI/4 + 0.5*φ), -n);
-                dρ = -n*ρ/cos(φ);
-            } else if (a < PI/2 + ANGLE_TOLERANCE) {
-                dρ = ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
-            } else {
-                dρ = ρ = NaN;
-            }
-            final Matrix derivative = new Matrix2(
-                    ρ  *  cosλ,    // ∂x/∂λ
-                    dρ *  sinλ,    // ∂x/∂φ
-                    ρ  * -sinλ,    // ∂y/∂λ
-                    dρ *  cosλ);   // ∂y/∂φ
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.19
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ = sin(φ);
-        final double sinλ = sin(λ);
-        final double cosλ = cos(λ);
-        final double ρ, dρ_dφ; // Snyder p. 108
-        final double a = abs(φ);
-        if (a < PI/2) {
-            ρ = pow(tsfn(φ, sinφ), n);
-            dρ_dφ = n * dtsfn_dφ(φ, sinφ, cos(φ)) * ρ;
-        } else if (a < PI/2 + ANGLE_TOLERANCE) {
-            dρ_dφ = ρ = (φ*n <= 0) ? POSITIVE_INFINITY : 0;
-        } else {
-            dρ_dφ = ρ = NaN;
-        }
-        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,
-                          -sinλ * ρ, dρ_dφ * cosλ);
     }
 
     /**

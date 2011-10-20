@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
  * transformations are usually backed by some ellipsoid-dependent database.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.3
  * @module
@@ -88,12 +88,14 @@ public abstract class VerticalTransform extends AbstractMathTransform {
     public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException
     {
-        final double x = srcPts[srcOff++];
-        final double y = srcPts[srcOff++];
-        final double z = srcPts[srcOff++];
-        dstPts[dstOff++] = x;
-        dstPts[dstOff++] = y;
-        dstPts[dstOff++] = z + heightOffset(x,y,z);
+        if (dstPts != null) {
+            final double x = srcPts[srcOff++];
+            final double y = srcPts[srcOff++];
+            final double z = srcPts[srcOff++];
+            dstPts[dstOff++] = x;
+            dstPts[dstOff++] = y;
+            dstPts[dstOff++] = z + heightOffset(x,y,z);
+        }
         return null;
     }
 

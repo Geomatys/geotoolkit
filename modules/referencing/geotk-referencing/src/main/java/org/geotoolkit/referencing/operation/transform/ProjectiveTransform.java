@@ -95,7 +95,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see javax.media.jai.PerspectiveTransform
  * @see java.awt.geom.AffineTransform
@@ -297,12 +297,15 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     }
 
     /**
-     * Transforms a single coordinate point.
+     * Transforms a single coordinate point and optionally returns the derivative.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, final boolean derivate) {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
-        return null;
+        return derivate ? derivative((DirectPosition) null) : null;
     }
 
     /**
@@ -518,6 +521,8 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     /**
      * Gets the derivative of this transform at a point.
      * For a matrix transform, the derivative is the same everywhere.
+     *
+     * @param point Ignored (can be {@code null}).
      */
     @Override
     public Matrix derivative(final Point2D point) {
@@ -527,6 +532,8 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     /**
      * Gets the derivative of this transform at a point.
      * For a matrix transform, the derivative is the same everywhere.
+     *
+     * @param point Ignored (can be {@code null}).
      */
     @Override
     public Matrix derivative(final DirectPosition point) {

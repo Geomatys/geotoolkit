@@ -139,7 +139,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Gets the dimension of input points.
      */
     @Override
-    public final int getSourceDimensions() {
+    public int getSourceDimensions() {
         return srcDim;
     }
 
@@ -147,7 +147,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Gets the dimension of output points.
      */
     @Override
-    public final int getTargetDimensions() {
+    public int getTargetDimensions() {
         return indices.length;
     }
 
@@ -155,7 +155,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Tests whether this transform does not move any points.
      */
     @Override
-    public final boolean isIdentity() {
+    public boolean isIdentity() {
         if (srcDim != indices.length) {
             return false;
         }
@@ -171,24 +171,27 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Tests whether this transform does not move any points by using the provided tolerance.
      */
     @Override
-    public final boolean isIdentity(double tolerance) {
+    public boolean isIdentity(double tolerance) {
         return isIdentity();
     }
 
     /**
-     * Transforms a single coordinate point.
+     * Transforms a single coordinate point and optionally returns the derivative.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public final Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, final boolean derivate) {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
-        return null;
+        return derivate ? derivative((DirectPosition) null) : null;
     }
 
     /**
      * Transforms an array of floating point coordinates by this matrix.
      */
     @Override
-    public final void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+    public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
         final int srcDim, dstDim;
         final int[] indices = this.indices;
         int srcInc = srcDim = this.srcDim;
@@ -238,7 +241,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Transforms an array of floating point coordinates by this matrix.
      */
     @Override
-    public final void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+    public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
         final int srcDim, dstDim;
         final int[] indices = this.indices;
         int srcInc = srcDim = this.srcDim;
@@ -288,7 +291,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Transforms an array of floating point coordinates by this matrix.
      */
     @Override
-    public final void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+    public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
         final int[] indices = this.indices;
         final int srcDim = this.srcDim;
         final int dstDim = indices.length;
@@ -304,7 +307,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Transforms an array of floating point coordinates by this matrix.
      */
     @Override
-    public final void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+    public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
         final int[] indices = this.indices;
         final int srcDim = this.srcDim;
         final int dstDim = indices.length;
@@ -320,7 +323,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Returns the parameter descriptors for this math transform.
      */
     @Override
-    public final ParameterDescriptorGroup getParameterDescriptors() {
+    public ParameterDescriptorGroup getParameterDescriptors() {
         return Affine.PARAMETERS;
     }
 
@@ -328,7 +331,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Returns the matrix elements as a group of parameters values.
      */
     @Override
-    public final ParameterValueGroup getParameterValues() {
+    public ParameterValueGroup getParameterValues() {
         return ProjectiveTransform.getParameterValues(getMatrix());
     }
 
@@ -336,7 +339,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Returns the matrix.
      */
     @Override
-    public final Matrix getMatrix() {
+    public Matrix getMatrix() {
         final int dstDim = indices.length;
         final GeneralMatrix matrix = new GeneralMatrix(dstDim+1, srcDim+1);
         for (int j=0; j<dstDim; j++) {
@@ -354,9 +357,11 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     /**
      * Gets the derivative of this transform at a point.
      * For a matrix transform, the derivative is the same everywhere.
+     *
+     * @param point Ignored (can be {@code null}).
      */
     @Override
-    public final Matrix derivative(final DirectPosition point) {
+    public Matrix derivative(final DirectPosition point) {
         final GeneralMatrix matrix = new GeneralMatrix(indices.length, srcDim);
         for (int j=0; j<indices.length; j++) {
             matrix.setElement(j, j, 0);
@@ -368,9 +373,11 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     /**
      * Gets the derivative of this transform at a point.
      * For a matrix transform, the derivative is the same everywhere.
+     *
+     * @param point Ignored (can be {@code null}).
      */
     @Override
-    public final Matrix derivative(final Point2D point) {
+    public Matrix derivative(final Point2D point) {
         return derivative((DirectPosition) null);
     }
 
@@ -441,7 +448,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * {@inheritDoc}
      */
     @Override
-    public final boolean equals(final Object object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) { // Slight optimization
             return true;
         }

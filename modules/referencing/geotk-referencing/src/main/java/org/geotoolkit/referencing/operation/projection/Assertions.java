@@ -198,19 +198,21 @@ final class Assertions extends Static {
      * @return Always {@code true} if the {@code tolerance} value is valid.
      * @throws ProjectionException if the comparison failed.
      */
-    static boolean checkTransform(final double[] expected, int offset,
+    static boolean checkTransform(final double[] expected, final int offset,
             final double x, final double y, final double tolerance)
             throws ProjectionException
     {
-        compare("x", expected[offset++], x, tolerance);
-        compare("y", expected[offset++], y, tolerance); // NOSONAR: offset incremeted as a matter of principle.
+        if (expected != null) {
+            compare("x", expected[offset  ], x, tolerance);
+            compare("y", expected[offset+1], y, tolerance);
+        }
         return tolerance < POSITIVE_INFINITY;
     }
 
     /**
      * Default version of {@link #checkTransform(double,double,double[],int)}.
      */
-    static boolean checkTransform(double[] expected, int offset, double x, double y)
+    static boolean checkTransform(final double[] expected, final int offset, final double x, final double y)
             throws ProjectionException
     {
         return checkTransform(expected, offset, x, y, FORWARD_TOLERANCE);
@@ -245,7 +247,7 @@ final class Assertions extends Static {
     /**
      * Default version of {@link #checkInverseTransform(double,double,double[],int,double)}.
      */
-    static boolean checkInverseTransform(double[] expected, int offset, double λ, double φ)
+    static boolean checkInverseTransform(final double[] expected, final int offset, final double λ, final double φ)
             throws ProjectionException
     {
         return checkInverseTransform(expected, offset, λ, φ, INVERSE_TOLERANCE);
@@ -261,10 +263,12 @@ final class Assertions extends Static {
     static boolean checkDerivative(final Matrix spherical, final Matrix ellipsoidal)
             throws ProjectionException
     {
-        compare("m00", spherical.getElement(0,0), ellipsoidal.getElement(0,0), DERIVATIVE_TOLERANCE);
-        compare("m01", spherical.getElement(0,1), ellipsoidal.getElement(0,1), DERIVATIVE_TOLERANCE);
-        compare("m10", spherical.getElement(1,0), ellipsoidal.getElement(1,0), DERIVATIVE_TOLERANCE);
-        compare("m11", spherical.getElement(1,1), ellipsoidal.getElement(1,1), DERIVATIVE_TOLERANCE);
+        if (spherical != null || ellipsoidal != null) { // NullPointerException is ok if only one is null.
+            compare("m00", spherical.getElement(0,0), ellipsoidal.getElement(0,0), DERIVATIVE_TOLERANCE);
+            compare("m01", spherical.getElement(0,1), ellipsoidal.getElement(0,1), DERIVATIVE_TOLERANCE);
+            compare("m10", spherical.getElement(1,0), ellipsoidal.getElement(1,0), DERIVATIVE_TOLERANCE);
+            compare("m11", spherical.getElement(1,1), ellipsoidal.getElement(1,1), DERIVATIVE_TOLERANCE);
+        }
         return true;
     }
 
@@ -282,7 +286,8 @@ final class Assertions extends Static {
     private static void compare(final String variable, double expected, double actual, final double tolerance)
             throws ProjectionException
     {
-        if (abs(expected - actual) > tolerance) {
+        final double delta = abs(expected - actual);
+        if (delta > tolerance) {
             if (variable.charAt(0) == 'l') {
                 actual   = toDegrees(actual);
                 expected = toDegrees(expected);
@@ -304,7 +309,9 @@ final class Assertions extends Static {
                     return;
                 }
             }
-            throw new ProjectionError(Errors.format(Errors.Keys.TEST_FAILURE_$3, variable, expected, actual));
+            throw new ProjectionError(Errors.format(Errors.Keys.TEST_FAILURE_$3, variable,
+                    String.valueOf(expected), String.valueOf(actual)) + // Force full precision.
+                    "(Δ" + variable + '=' + delta + " ε=" + tolerance + ')');
         }
     }
 }

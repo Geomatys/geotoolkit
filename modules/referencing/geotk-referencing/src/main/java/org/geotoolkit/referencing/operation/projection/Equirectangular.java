@@ -27,6 +27,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
 
@@ -182,10 +183,12 @@ public class Equirectangular extends UnitaryProjection {
                             final double[] dstPts, final int dstOff, boolean derivate)
             throws ProjectionException
     {
-        final double λ = srcPts[srcOff + 1]; // Must be before writing x.
-        dstPts[dstOff] = rollLongitude(srcPts[srcOff]);
-        dstPts[dstOff + 1] = λ;
-        return null;
+        if (dstPts != null) {
+            final double λ = srcPts[srcOff + 1]; // Must be before writing x.
+            dstPts[dstOff] = rollLongitude(srcPts[srcOff]);
+            dstPts[dstOff + 1] = λ;
+        }
+        return derivate ? new Matrix2() : null;
     }
 
     /**

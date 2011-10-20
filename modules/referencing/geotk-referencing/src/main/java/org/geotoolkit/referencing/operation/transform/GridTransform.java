@@ -33,18 +33,15 @@ import java.io.InvalidObjectException;
 import java.io.NotSerializableException;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -87,7 +84,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simon Reynard (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -269,60 +266,24 @@ public class GridTransform extends AbstractMathTransform implements Serializable
     }
 
     /**
-     * Gets an estimation of the derivative of this transform at a point.
-     */
-    @Override
-    public Matrix derivative(final DirectPosition point) {
-        ensureDimensionMatches("point", point, srcDim);
-        /*
-         * Following code has similarities with the implementation of transform(...) methods.
-         * Same variable names are used on purpose, for making comparisons easier.
-         */
-        final double xi = point.getOrdinate(0);
-        final double yi = point.getOrdinate(1);
-        final int col = Math.max(Math.min((int) xi, width -2), 0);
-        final int row = Math.max(Math.min((int) yi, height-2), 0);
-        final int offset00 = col + row*width;
-        final int offset01 = offset00 + width; // Une ligne plus bas
-        final int offset10 = offset00 + 1;     // Une colonne à droite
-        final int offset11 = offset01 + 1;     // Une colonne à droite, une ligne plus bas
-        final double dx = xi - col;
-        final double dy = yi - row;
-        final int dstDim = grid.getNumBanks();
-        final XMatrix matrix = MatrixFactory.create(dstDim, srcDim);
-        for (int j=0; j<dstDim; j++) {
-            final double v00 = (grid.getElemDouble(j, offset00));
-            final double v01 = (grid.getElemDouble(j, offset01));
-            final double v10 = (grid.getElemDouble(j, offset10));
-            final double v11 = (grid.getElemDouble(j, offset11));
-            double x = (v10 - v00); x += ((v11 - v01) - x) * dy;
-            double y = (v01 - v00); y += ((v11 - v10) - y) * dx;
-            switch (type) {
-                case NTv2:
-                case NADCON: {
-                    x /= -3600;
-                    y /= +3600;
-                    break;
-                }
-            }
-            matrix.setElement(j, 0, x);
-            matrix.setElement(j, 1, y);
-        }
-        return matrix;
-    }
-
-    /**
      * Transforms a source coordinate into target coordinate. The transformation will
      * involve bilinear interpolations if the source ordinates are not integer values.
+     * This method can also estimate the derivative at the location of the transformed
+     * points.
      *
      * @param  srcPts  The source coordinate.
      * @param  srcOff  Index of the first valid ordinate in the {@code srcPts} array.
-     * @param  dstPts  Where to store the target coordinate.
+     * @param  dstPts  Where to store the target coordinate, or {@code null}.
      * @param  dstOff  Index where to store the first ordinate.
+     * @param derivate {@code true} for computing the derivative, or {@code false} if not needed.
+     * @return The matrix of the transform derivative at the given source position, or {@code null}
+     *         if the {@code derivate} argument is {@code false}.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, int srcOff,
-                            final double[] dstPts, int dstOff, boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, int dstOff, final boolean derivate)
     {
         /*
          * Following code is a copy-and-paste of:
@@ -332,9 +293,11 @@ public class GridTransform extends AbstractMathTransform implements Serializable
          * with the loop over many points and the management of overlapping array removeds,
          * since they are managed by the caller. This code is copied because this method is
          * invoked often during inverse transformations.
+         *
+         * In addition, derivative calculation has been in-lined.
          */
-        final double x = srcPts[srcOff++];
-        final double y = srcPts[srcOff++]; // NOSONAR: index incremented for safety, but not used.
+        final double x = srcPts[srcOff  ];
+        final double y = srcPts[srcOff+1];
         final double xi = (x - xOrigin) * scaleX;
         final double yi = (y - yOrigin) * scaleY;
         final int col = Math.max(Math.min((int) xi, width  - 2), 0);
@@ -346,32 +309,51 @@ public class GridTransform extends AbstractMathTransform implements Serializable
         final double dx = xi - col;
         final double dy = yi - row;
         final int dstDim = grid.getNumBanks();
+        final Matrix derivative = derivate ? MatrixFactory.create(dstDim, srcDim) : null;
         for (int j=0; j<dstDim; j++) {
             final double v00 = (grid.getElemDouble(j, offset00));
             final double v01 = (grid.getElemDouble(j, offset01));
-            final double v0  = (grid.getElemDouble(j, offset10) - v00) * dx + v00;
-            final double v1  = (grid.getElemDouble(j, offset11) - v01) * dx + v01;
-            double value = v0 + (v1-v0) * dy;
-            switch (type) {
-                case OFFSET: {
-                    switch (j) {
-                        case 0: value += x; break;
-                        case 1: value += y; break;
+            final double v10 = (grid.getElemDouble(j, offset10));
+            final double v11 = (grid.getElemDouble(j, offset11));
+            if (derivative != null) {
+                double dxj = (v10 - v00); dxj += ((v11 - v01) - dxj) * dy;
+                double dyj = (v01 - v00); dyj += ((v11 - v10) - dyj) * dx;
+                switch (type) {
+                    case NTv2:
+                    case NADCON: {
+                        dxj /= -3600;
+                        dyj /= +3600;
+                        break;
                     }
-                    break;
                 }
-                case NTv2:
-                case NADCON: {
-                    switch (j) {
-                        case 0: value = x - value/3600; break;
-                        case 1: value = y + value/3600; break;
-                    }
-                    break;
-                }
+                derivative.setElement(j, 0, dxj);
+                derivative.setElement(j, 1, dyj);
             }
-            dstPts[dstOff++] = value;
+            if (dstPts != null) {
+                final double v0  = (v10 - v00) * dx + v00;
+                final double v1  = (v11 - v01) * dx + v01;
+                double value = v0 + (v1-v0) * dy;
+                switch (type) {
+                    case OFFSET: {
+                        switch (j) {
+                            case 0: value += x; break;
+                            case 1: value += y; break;
+                        }
+                        break;
+                    }
+                    case NTv2:
+                    case NADCON: {
+                        switch (j) {
+                            case 0: value = x - value/3600; break;
+                            case 1: value = y + value/3600; break;
+                        }
+                        break;
+                    }
+                }
+                dstPts[dstOff++] = value;
+            }
         }
-        return null;
+        return derivative;
     }
 
     /**

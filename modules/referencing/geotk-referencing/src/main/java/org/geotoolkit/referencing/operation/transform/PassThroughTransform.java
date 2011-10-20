@@ -31,6 +31,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.internal.referencing.DirectPositionWrapper;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
@@ -47,7 +48,7 @@ import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
  * meters without affecting the latitude and longitude values.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see DimensionFilter
  *
@@ -286,13 +287,22 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * Transforms a single coordinate in a list of ordinal values.
      *
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, final boolean derivate)
             throws TransformException
     {
-        transform(srcPts, srcOff, dstPts, dstOff, 1);
-        return null;
+        Matrix derivative = null;
+        if (derivate) {
+            derivative = derivative(new DirectPositionWrapper(srcPts, srcOff, getSourceDimensions()));
+        }
+        if (dstPts != null) {
+            transform(srcPts, srcOff, dstPts, dstOff, 1);
+        }
+        return derivative;
     }
 
     /**

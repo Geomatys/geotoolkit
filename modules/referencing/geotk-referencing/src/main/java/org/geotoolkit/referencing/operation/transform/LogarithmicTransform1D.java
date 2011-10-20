@@ -30,6 +30,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
+import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Logarithmic.*;
@@ -57,7 +58,7 @@ import static org.geotoolkit.referencing.operation.provider.Logarithmic.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see ExponentialTransform1D
  * @see LinearTransform1D
@@ -233,11 +234,16 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
-        dstPts[dstOff] = Math.log(srcPts[srcOff]) / lnBase + offset;
-        return null;
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, final boolean derivate)
+    {
+        final double ordinate = srcPts[srcOff];
+        dstPts[dstOff] = Math.log(ordinate) / lnBase + offset;
+        return derivate ? new Matrix1(derivative(ordinate)) : null;
     }
 
     /**
@@ -327,9 +333,12 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
 
         /** {@inheritDoc} */
         @Override
-        public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
-            dstPts[dstOff] = Math.log10(srcPts[srcOff]) + offset;
-            return null;
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff, final boolean derivate)
+        {
+            final double ordinate = srcPts[srcOff];
+            dstPts[dstOff] = Math.log10(ordinate) + offset;
+            return derivate ? new Matrix1(derivative(ordinate)) : null;
         }
 
         /** {@inheritDoc} */

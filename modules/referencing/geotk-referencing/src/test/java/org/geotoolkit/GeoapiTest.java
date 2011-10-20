@@ -35,7 +35,6 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
-import org.opengis.test.SupportedOperation;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.FactoryFilter;
 import org.opengis.test.TestSuite;

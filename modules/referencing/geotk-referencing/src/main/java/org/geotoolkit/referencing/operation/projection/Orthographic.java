@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -65,7 +64,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -201,6 +200,8 @@ public class Orthographic extends UnitaryProjection {
      * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
      * (units in radians) and stores the result in {@code dstPts} (linear distance
      * on a unit sphere).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
@@ -211,6 +212,7 @@ public class Orthographic extends UnitaryProjection {
         final double φ = srcPts[srcOff + 1];
         final double cosφ = cos(φ);
         final double cosλ = cos(λ);
+        final double sinλ = sin(λ);
         final double threshold, y;
         switch (type) {
             default: { // Oblique
@@ -233,9 +235,38 @@ public class Orthographic extends UnitaryProjection {
         if (threshold < -EPSILON) {
             throw new ProjectionException(Errors.Keys.POINT_OUTSIDE_HEMISPHERE);
         }
-        dstPts[dstOff  ] = cosφ * sin(λ);
-        dstPts[dstOff+1] = y;
-        return null;
+        if (dstPts != null) {
+            dstPts[dstOff  ] = cosφ * sinλ;
+            dstPts[dstOff+1] = y;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double m00, m01, m10, m11;
+        final double sinφ = sin(φ);
+        m00 =  cosφ * cosλ;
+        m01 = -sinφ * sinλ;
+        switch (type) {
+            default: { // Oblique
+                m10 = sinφ0 * cosφ * sinλ;
+                m11 = cosφ0 * cosφ + sinφ0*cosλ*sinφ;
+                break;
+            }
+            case 0: { // Equatorial
+                m10 = 0;
+                m11 = cosφ;
+                break;
+            }
+            case 1: { // Polar (South case, applicable to North because of (de)normalize transforms)
+                m10 = -cosφ * sinλ;
+                m11 = -sinφ * cosλ;
+                break;
+            }
+        }
+        return new Matrix2(m00, m01, m10, m11);
     }
 
     /**
@@ -297,46 +328,5 @@ public class Orthographic extends UnitaryProjection {
             // All other fields are derived from the latitude of origin.
         }
         return false;
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.18
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinλ = sin(λ);
-        final double cosλ = cos(λ);
-        final double sinφ = sin(φ);
-        final double cosφ = cos(φ);
-        final double m00, m01, m10, m11;
-
-        m00 =  cosφ * cosλ;
-        m01 = -sinφ * sinλ;
-        switch (type) {
-            default: { // Oblique
-                m10 = sinφ0 * cosφ * sinλ;
-                m11 = cosφ0 * cosφ + sinφ0*cosλ*sinφ;
-                break;
-            }
-            case 0: { // Equatorial
-                m10 = 0;
-                m11 = cosφ;
-                break;
-            }
-            case 1: { // Polar (South case, applicable to North because of (de)normalize transforms)
-                m10 = -cosφ * sinλ;
-                m11 = -sinφ * cosλ;
-                break;
-            }
-        }
-        return new Matrix2(m00, m01, m10, m11);
     }
 }

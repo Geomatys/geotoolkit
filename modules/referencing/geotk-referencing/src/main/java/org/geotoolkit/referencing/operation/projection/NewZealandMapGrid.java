@@ -50,7 +50,7 @@ import static java.lang.Math.*;
  *
  * @author Justin Deoliveira (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -140,30 +140,34 @@ public class NewZealandMapGrid extends UnitaryProjection {
      * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
      * (units in radians) and stores the result in {@code dstPts} (linear distance
      * on a unit sphere).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, boolean derivate)
+                            final double[] dstPts, final int dstOff, final boolean derivate)
             throws ProjectionException
     {
-        final double dphi = srcPts[srcOff + 1];
-        double dphi_pow_i = dphi;
-        double dpsi       = 0;
-        for (int i=0; i<TPSI.length; i++) {
-            dpsi += (TPSI[i] * dphi_pow_i);
-            dphi_pow_i *= dphi;
+        if (dstPts != null) {
+            final double dphi = srcPts[srcOff + 1];
+            double dphi_pow_i = dphi;
+            double dpsi       = 0;
+            for (int i=0; i<TPSI.length; i++) {
+                dpsi += (TPSI[i] * dphi_pow_i);
+                dphi_pow_i *= dphi;
+            }
+            // See implementation note in class javadoc.
+            final Complex theta = new Complex(dpsi, rollLongitude(srcPts[srcOff]));
+            final Complex power = new Complex(theta);
+            final Complex z     = new Complex();
+            z.multiply(A[0], power);
+            for (int i=1; i<A.length; i++) {
+                power.multiply(power, theta);
+                z.addMultiply(z, A[i], power);
+            }
+            dstPts[dstOff  ] = z.imag;
+            dstPts[dstOff+1] = z.real;
         }
-        // See implementation note in class javadoc.
-        final Complex theta = new Complex(dpsi, rollLongitude(srcPts[srcOff]));
-        final Complex power = new Complex(theta);
-        final Complex z     = new Complex();
-        z.multiply(A[0], power);
-        for (int i=1; i<A.length; i++) {
-            power.multiply(power, theta);
-            z.addMultiply(z, A[i], power);
-        }
-        dstPts[dstOff  ] = z.imag;
-        dstPts[dstOff+1] = z.real;
         return null;
     }
 

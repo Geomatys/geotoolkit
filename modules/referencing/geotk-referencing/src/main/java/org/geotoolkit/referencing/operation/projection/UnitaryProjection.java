@@ -51,6 +51,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
@@ -110,7 +111,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
@@ -514,6 +515,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * @param dstOff The offset of the location of the converted point that is
      *               stored in the destination array.
      * @throws ProjectionException if the point can't be converted.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
@@ -587,17 +590,25 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
         /**
          * Inverse transforms the specified {@code srcPts} and stores the result in {@code dstPts}.
+         *
+         * @since 3.20 (derived from 3.00)
          */
         @Override
         public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, boolean derivate)
-                throws ProjectionException
+                                final double[] dstPts, final int dstOff, final boolean derivate)
+                throws TransformException
         {
             inverseTransform(srcPts, srcOff, dstPts, dstOff);
             if (verifyCoordinateRanges()) {
                 logWarning(verifyGeographicRanges(this, srcPts[srcOff], srcPts[srcOff+1]));
             }
             assert Assertions.checkReciprocal(UnitaryProjection.this, false, srcPts, srcOff, dstPts, dstOff, 1);
+            if (derivate) {
+                final Matrix derivative = UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true);
+                if (derivative != null) {
+                    return MatrixUtilities.invert(derivative);
+                }
+            }
             return null;
         }
     }

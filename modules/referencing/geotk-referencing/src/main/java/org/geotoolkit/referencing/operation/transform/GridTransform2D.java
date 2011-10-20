@@ -18,14 +18,12 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.DataBuffer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -33,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.internal.referencing.DirectPositionWrapper;
 
 
 /**
@@ -45,7 +43,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -86,20 +84,6 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$3, "grid", n, 2));
         }
-    }
-
-    /**
-     * Gets an estimation of the derivative of this transform at a point.
-     */
-    @Override
-    public Matrix derivative(final Point2D point) {
-        final DirectPosition position;
-        if (point instanceof DirectPosition) {
-            position = (DirectPosition) point;
-        } else {
-            position = new DirectPosition2D(point);
-        }
-        return derivative(position);
     }
 
     /**
@@ -148,7 +132,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
 
         /**
          * Difference allowed in iterative computations. This is half the value
-         * used in the NGS fortran code (so all tests pass).
+         * used in the NGS Fortran code (so all tests pass).
          */
         private static final double ITERATION_TOLERANCE = 5E-10;
 
@@ -168,12 +152,21 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
          * Transforms a single coordinate point in an array.
          *
          * @throws TransformException If there is no convergence.
+         *
+         * @since 3.20 (derived from 3.00)
          */
         @Override
         public Matrix transform(final double[] srcPts, final int srcOff,
                                 final double[] dstPts, final int dstOff, boolean derivate)
                 throws TransformException
         {
+            Matrix derivative = null;
+            if (derivate) {
+                derivative = derivative(new DirectPositionWrapper(srcPts, srcOff, getSourceDimensions()));
+            }
+            if (dstPts == null) {
+                return derivative;
+            }
             double xi, yi;
             final double x, y;
             dstPts[dstOff  ] = xi = x = srcPts[srcOff  ];
@@ -186,7 +179,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
                 dstPts[dstOff  ] = (xi -= dx);
                 dstPts[dstOff+1] = (yi -= dy);
                 if (Math.abs(dx) <= ITERATION_TOLERANCE && Math.abs(dy) <= ITERATION_TOLERANCE) {
-                    return null;
+                    return derivative;
                 }
             } while (--i >= 0);
             throw new TransformException(Errors.format(Errors.Keys.NO_CONVERGENCE));

@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import net.jcip.annotations.Immutable;
 import org.opengis.referencing.operation.Matrix;
+import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 
 /**
@@ -29,7 +30,7 @@ import org.opengis.referencing.operation.Matrix;
  * However, this specialized {@code ConstantTransform1D} class is faster.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -60,13 +61,17 @@ final class ConstantTransform1D extends LinearTransform1D {
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, int srcOff,
                             final double[] dstPts, int dstOff, boolean derivate)
     {
-        dstPts[dstOff] = offset;
-        return null;
+        if (dstPts != null) {
+            dstPts[dstOff] = offset;
+        }
+        return derivate ? new Matrix1(0) : null;
     }
 
     /**

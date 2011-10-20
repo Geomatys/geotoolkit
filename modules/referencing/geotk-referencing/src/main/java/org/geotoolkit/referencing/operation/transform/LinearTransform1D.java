@@ -223,13 +223,17 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
                             final double[] dstPts, final int dstOff, boolean derivate)
     {
-        dstPts[dstOff] = offset + scale*srcPts[srcOff];
-        return null;
+        if (dstPts != null) {
+            dstPts[dstOff] = offset + scale*srcPts[srcOff];
+        }
+        return derivate ? new Matrix1(scale) : null;
     }
 
     /**

@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -39,7 +40,7 @@ import static org.geotoolkit.util.Utilities.hash;
  * improve the {@link #concatenate(MathTransform, boolean)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.17
  * @module
@@ -116,11 +117,18 @@ final class PowerTransform1D extends AbstractMathTransform1D implements Serializ
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
-        dstPts[dstOff] = Math.pow(srcPts[srcOff], power);
-        return null;
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, final boolean derivate)
+    {
+        final double ordinate = srcPts[srcOff];
+        if (dstPts != null) {
+            dstPts[dstOff] = Math.pow(ordinate, power);
+        }
+        return derivate ? new Matrix1(derivative(ordinate)) : null;
     }
 
     /**

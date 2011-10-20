@@ -391,10 +391,14 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
     /**
      * Transforms a single source coordinate (usually pixel indices) into destination coordinate
      * (usually "real world" coordinates).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
-        transform(srcPts, srcOff, dstPts, dstOff, 1);
+        if (dstPts != null) {
+            transform(srcPts, srcOff, dstPts, dstOff, 1);
+        }
         return null;
     }
 

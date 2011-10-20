@@ -17,12 +17,9 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -85,14 +82,6 @@ final class MolodenskyTransform2D extends MolodenskyTransform implements MathTra
      */
     MolodenskyTransform2D(final MolodenskyTransform direct, final int type) {
         super(direct, type);
-    }
-
-    /**
-     * Computes the derivative at the given position.
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws TransformException {
-        return derivative(point.getX(), point.getY(), 0);
     }
 
     /**

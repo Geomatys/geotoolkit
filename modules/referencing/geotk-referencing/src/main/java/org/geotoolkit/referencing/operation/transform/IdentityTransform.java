@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * optimizations.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -200,13 +200,17 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
                             final double[] dstPts, final int dstOff, boolean derivate)
     {
-        System.arraycopy(srcPts, srcOff, dstPts, dstOff, dimension);
-        return null;
+        if (dstPts != null) {
+            System.arraycopy(srcPts, srcOff, dstPts, dstOff, dimension);
+        }
+        return derivate ? derivative((DirectPosition) null) : null;
     }
 
     /**

@@ -30,6 +30,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
+import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Exponential.*;
@@ -64,7 +65,7 @@ import static org.geotoolkit.referencing.operation.provider.Exponential.*;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see LogarithmicTransform1D
  * @see LinearTransform1D
@@ -211,11 +212,18 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate) {
-        dstPts[dstOff] = scale * Math.pow(base, srcPts[srcOff]);
-        return null;
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff, final boolean derivate)
+    {
+        final double ordinate = srcPts[srcOff];
+        if (dstPts != null) {
+            dstPts[dstOff] = scale * Math.pow(base, ordinate);
+        }
+        return derivate ? new Matrix1(derivative(ordinate)) : null;
     }
 
     /**

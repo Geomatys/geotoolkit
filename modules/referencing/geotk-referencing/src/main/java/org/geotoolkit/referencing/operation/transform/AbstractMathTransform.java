@@ -937,10 +937,20 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Gets the derivative of this transform at a point. The default implementation always
-     * throw an exception. Subclasses that implement the {@link MathTransform2D} interface
-     * should override this method. Other subclasses should override
-     * {@link #derivative(DirectPosition)} instead.
+     * Gets the derivative of this transform at a point.
+     * The default implementation performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Ensure that this math transform {@linkplain #getSourceDimensions() source dimensions}
+     *       is equals to 2. Note that the {@linkplain #getTargetDimensions() target dimensions}
+     *       can be anything, not necessarily 2 (so this transform doesn't need to implement the
+     *       {@link MathTransform2D} interface).</li>
+     *   <li>Copy the coordinate in a temporary array and pass that array to the
+     *       {@link #transform(double[], int, double[], int, boolean)} method,
+     *       with the {@code derivate} boolean argument set to {@code true}.</li>
+     *   <li>If the later method returned a non-null matrix, returns that matrix.
+     *       Otherwise throws {@link TransformException}.</li>
+     * </ul>
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.
@@ -954,7 +964,12 @@ public abstract class AbstractMathTransform extends FormattableObject
         if (dimSource != 2) {
             throw new MismatchedDimensionException(mismatchedDimension("point", 2, dimSource));
         }
-        throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+        final double[] coordinate = new double[] {point.getX(), point.getY()};
+        final Matrix derivative = transform(coordinate, 0, null, 0, true);
+        if (derivative == null) {
+            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+        }
+        return derivative;
     }
 
     /**
@@ -962,14 +977,14 @@ public abstract class AbstractMathTransform extends FormattableObject
      * The default implementation performs the following steps:
      * <p>
      * <ul>
-     *   <li>Ensures that the {@code point} dimension is equals to this math transform
+     *   <li>Ensure that the {@code point} dimension is equals to this math transform
      *       {@linkplain #getSourceDimensions() source dimensions}.</li>
-     *   <li>If the source dimension is 2, delegates to {@link #derivative(Point2D)}.</li>
-     *   <li>Otherwise throws {@link TransformException}.</li>
+     *   <li>Copy the coordinate in a temporary array and pass that array to the
+     *       {@link #transform(double[], int, double[], int, boolean)} method,
+     *       with the {@code derivate} boolean argument set to {@code true}.</li>
+     *   <li>If the later method returned a non-null matrix, returns that matrix.
+     *       Otherwise throws {@link TransformException}.</li>
      * </ul>
-     * <p>
-     * Consequently this method will always throw an exception, unless at least one of the
-     * two {@code derivative} methods is overridden.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point (never {@code null}).
@@ -981,26 +996,15 @@ public abstract class AbstractMathTransform extends FormattableObject
     @Override
     public Matrix derivative(final DirectPosition point) throws TransformException {
         final int dimSource = getSourceDimensions();
-        if (point == null) {
-            if (dimSource == 2) {
-                return derivative((Point2D) null);
-            }
-        } else {
-            ensureDimensionMatches("point", point, dimSource);
-            if (dimSource == 2) {
-                return derivative(toPoint2D(point));
-            }
+        final double[] coordinate = point.getCoordinate();
+        if (coordinate.length != dimSource) {
+            throw new MismatchedDimensionException(mismatchedDimension("point", coordinate.length, dimSource));
         }
-        throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
-    }
-
-    /**
-     * Returns the given position as a {@link Point2D}. Caller must ensure
-     * that the position is two-dimensional before to invoke this method.
-     */
-    static Point2D toPoint2D(final DirectPosition point) {
-        return (point == null || point instanceof Point2D) ? (Point2D) point :
-                new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1));
+        final Matrix derivative = transform(coordinate, 0, null, 0, true);
+        if (derivative == null) {
+            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+        }
+        return derivative;
     }
 
     /**

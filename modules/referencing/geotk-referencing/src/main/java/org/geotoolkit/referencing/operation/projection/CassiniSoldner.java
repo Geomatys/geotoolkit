@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -56,7 +55,7 @@ import static java.lang.Math.*;
  * @author Mauro Bartolomeoli
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -116,6 +115,8 @@ public class CassiniSoldner extends CassiniOrMercator {
      * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
      * (units in radians) and stores the result in {@code dstPts} (linear distance
      * on a unit sphere).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
@@ -127,14 +128,36 @@ public class CassiniSoldner extends CassiniOrMercator {
         final double sinφ   = sin(φ);
         final double cosφ   = cos(φ);
         final double tanφ   = sinφ / cosφ;
+        final double sinφ2  = sinφ*sinφ;
+        final double cosφ2  = cosφ*cosφ;
         final double tanφ2  = tanφ * tanφ;
         final double λcosφ  = λ * cosφ;
         final double λcosφ2 = λcosφ * λcosφ;
-        final double rn     = sqrt(1 - excentricitySquared * (sinφ*sinφ));
-        final double c      = (cosφ*cosφ) * excentricitySquared / (1 - excentricitySquared);
-        dstPts[dstOff  ] = λcosφ*(1 - λcosφ2*tanφ2*(C1 - (8 - tanφ2 + 8*c)*λcosφ2*C2)) / rn;
-        dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + tanφ*λcosφ2*(0.5 + (5 - tanφ2 + 6*c)*λcosφ2*C3) / rn;
-        return null;
+        final double rn2    = 1 - excentricitySquared * sinφ2;
+        final double rn     = sqrt(rn2);
+        final double c      = cosφ2 * excentricitySquared / (1 - excentricitySquared);
+        if (dstPts != null) {
+            dstPts[dstOff  ] = λcosφ*(1 - λcosφ2*tanφ2*(C1 - (8 - tanφ2 + 8*c)*λcosφ2*C2)) / rn;
+            dstPts[dstOff+1] = mlfn(φ, sinφ, cosφ) + tanφ*λcosφ2*(0.5 + (5 - tanφ2 + 6*c)*λcosφ2*C3) / rn;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double sincosφ = sinφ*cosφ;
+        final double λ2sinφ2 = λ*λ * sinφ2;
+        final double λ2cosφ2 = λ*λ * cosφ2;
+        final double en2     = excentricitySquared / rn2;
+        final double a = (-C2 * (8*(c + 1) - tanφ2)) * λ2cosφ2;
+        final double b = ( C3 * (6* c + 5  - tanφ2)) * λ2cosφ2 + 0.5;
+        final double D = ( C1 + a*(1 - tanφ2*(1 - C2*cosφ*(8*c + 1/cosφ2)))) * λ2cosφ2;
+        return new Matrix2(
+                  (cosφ/rn) * (1 - λ2sinφ2*(5*a + 3*C1)),
+                (λ*sinφ/rn) * (1 - λ2sinφ2*(  a +   C1)) * (en2*cosφ2 - 2*D - 1),
+             (λ*sincosφ/rn) * (4*b - 1),
+               (λ2cosφ2/rn) * (b*(en2*sinφ2 - 2*tanφ2 + 1/cosφ2) - C3*λ2sinφ2*(24*c + 12)) + dmlfn_dφ(sinφ2, cosφ2));
     }
 
     /**
@@ -205,32 +228,35 @@ public class CassiniSoldner extends CassiniOrMercator {
                                 final double[] dstPts, final int dstOff, boolean derivate)
                 throws ProjectionException
         {
-            final double λ = rollLongitude(srcPts[srcOff]);
-            final double φ = srcPts[srcOff + 1];
-            final double x = asin (cos(φ) * sin(λ));
-            final double y = atan2(tan(φ) , cos(λ));
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
-            dstPts[dstOff+1] = y;
-            return null;
-        }
-
-        /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            final double λ = srcPts[srcOff];
-            if (abs(λ) < ASSERTION_DOMAIN) {
-                super.transform(srcPts, srcOff, dstPts, dstOff, false);
-                return Assertions.checkTransform(dstPts, dstOff, x, y, 1E-4);
-            } else {
-                return true;
+            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double φ    = srcPts[srcOff + 1];
+            final double sinλ = sin(λ);
+            final double cosλ = cos(λ);
+            final double sinφ = sin(φ);
+            final double cosφ = cos(φ);
+            final double tanφ = sinφ / cosφ;
+            final double x    = asin (cosφ * sinλ);
+            final double y    = atan2(tanφ , cosλ);
+            Matrix derivative = null;
+            if (derivate) {
+                final double mλφ  = hypot(cosλ, tanφ);
+                final double mλφp = mλφ + cosλ;
+                final double dyd  = (mλφp*mλφp + tanφ*tanφ)*cosφ / 2;
+                final double dxd  = sqrt(1 - (cosφ*cosφ) * (sinλ*sinλ));
+                derivative = new Matrix2(
+                         cosλ *                  (cosφ / dxd),    // ∂x/∂λ
+                        -sinλ *                  (sinφ / dxd),    // ∂x/∂φ
+                         sinλ * (1 + cosλ/mλφ) * (sinφ / dyd),    // ∂y/∂λ
+                        (mλφp - tanφ*tanφ/mλφ) / (cosφ * dyd));   // ∂y/∂φ
             }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y, 1E-4); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -266,73 +292,5 @@ public class CassiniSoldner extends CassiniOrMercator {
                 return true;
             }
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.19
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ = rollLongitude(point.getX());
-            final double φ = point.getY();
-            final double sinφ  = sin(φ);
-            final double sinλ  = sin(λ);
-            final double cosφ  = cos(φ);
-            final double cosλ  = cos(λ);
-            final double tanφ  = sinφ / cosφ;
-            final double mλφ   = hypot(cosλ, tanφ);
-            final double mλφp  = mλφ + cosλ;
-            final double dyd   = (mλφp*mλφp + tanφ*tanφ)*cosφ / 2;
-            final double dxd   = sqrt(1 - (cosφ*cosφ) * (sinλ*sinλ));
-            final Matrix derivative = new Matrix2(
-                     cosλ *                  (cosφ / dxd),    // ∂x/∂λ
-                    -sinλ *                  (sinφ / dxd),    // ∂x/∂φ
-                     sinλ * (1 + cosλ/mλφ) * (sinφ / dyd),    // ∂y/∂λ
-                    (mλφp - tanφ*tanφ/mλφ) / (cosφ * dyd));   // ∂y/∂φ
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.19
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ    = sin(φ);
-        final double cosφ    = cos(φ);
-        final double tanφ    = sinφ / cosφ;
-        final double sinφ2   = sinφ*sinφ;
-        final double cosφ2   = cosφ*cosφ;
-        final double tanφ2   = tanφ*tanφ;
-        final double sincosφ = sinφ*cosφ;
-        final double λ2sinφ2 = λ*λ * sinφ2;
-        final double λ2cosφ2 = λ*λ * cosφ2;
-        final double c       = cosφ2 * excentricitySquared / (1 - excentricitySquared);
-              double rn      = 1 - excentricitySquared * sinφ2;
-        final double en2     = excentricitySquared / rn;
-        rn = sqrt(rn);
-
-        final double a = (-C2 * (8*(c + 1) - tanφ2)) * λ2cosφ2;
-        final double b = ( C3 * (6* c + 5  - tanφ2)) * λ2cosφ2 + 0.5;
-        final double D = ( C1 + a*(1 - tanφ2*(1 - C2*cosφ*(8*c + 1/cosφ2)))) * λ2cosφ2;
-        return new Matrix2(
-                  (cosφ/rn) * (1 - λ2sinφ2*(5*a + 3*C1)),
-                (λ*sinφ/rn) * (1 - λ2sinφ2*(  a +   C1)) * (en2*cosφ2 - 2*D - 1),
-             (λ*sincosφ/rn) * (4*b - 1),
-               (λ2cosφ2/rn) * (b*(en2*sinφ2 - 2*tanφ2 + 1/cosφ2) - C3*λ2sinφ2*(24*c + 12)) + dmlfn_dφ(sinφ2, cosφ2));
     }
 }

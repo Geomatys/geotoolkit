@@ -134,6 +134,15 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
     }
 
     /**
+     * Returns the given position as a {@link Point2D}. Caller must ensure
+     * that the position is two-dimensional before to invoke this method.
+     */
+    private static Point2D toPoint2D(final DirectPosition point) {
+        return (point == null || point instanceof Point2D) ? (Point2D) point :
+                new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1));
+    }
+
+    /**
      * Returns the inverse transform of this object. The default implementation
      * returns {@code this} if this transform is an identity transform, and throws
      * a {@link NoninvertibleTransformException} otherwise. Subclasses should override
