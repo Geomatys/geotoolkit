@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -47,6 +48,7 @@ import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer.IndexDirectoryFilter;
+import org.geotoolkit.util.FileUtilities;
 
 
 /**
@@ -85,7 +87,12 @@ public class AbstractIndexSearcher extends IndexLucene {
     /**
      * A list of metadata ID ordered by DocID.
      */
-    private  List<String> identifiers;
+    private List<String> identifiers;
+    
+    /**
+     * A list of numeric fields names.
+     */
+    private Map<String, Character> numericFields;
     
     /**
      * Build a new index searcher.
@@ -117,7 +124,18 @@ public class AbstractIndexSearcher extends IndexLucene {
             }
             if (currentIndexDirectory != null && currentIndexDirectory.exists()) {
                 setFileDirectory(currentIndexDirectory);
-            } else {
+                try {
+                    this.numericFields          = new HashMap<String, Character>();
+                    final File numericFieldFile = new File(currentIndexDirectory, "numericFields.properties");
+                    final Properties prop       = FileUtilities.getPropertiesFromFile(numericFieldFile);
+                    for (String fieldName : prop.stringPropertyNames()) {
+                        this.numericFields.put(fieldName, ((String)prop.get(fieldName)).charAt(0));
+                    }
+                    
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, "IO exception while reading numericFields file", ex);
+                }
+             } else {
                 throw new IndexingException("The index searcher can't find a index directory.");
             }
             isCacheEnabled        = true;
@@ -272,7 +290,7 @@ public class AbstractIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
-            final QueryParser parser = new QueryParser(Version.LUCENE_34, field, analyzer);
+            final QueryParser parser = new ExtendedQueryParser(Version.LUCENE_34, field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
 
             // we enable the leading wildcard mode if the first character of the query is a '*'
