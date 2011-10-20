@@ -47,7 +47,7 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.remov
 
 /**
  * Wraps {@linkplain AllAuthoritiesFactory all factories} in a {@code "urn:ogc:def"}
- * name space. An exemple of complete URN is {@code "urn:ogc:def:crs:EPSG:6.8:4326"}.
+ * name space. An example of complete URN is {@code "urn:ogc:def:crs:EPSG:6.8:4326"}.
  * <p>
  * Users don't need to create an instance of this class, since one is automatically
  * registered for use in {@link org.opengis.referencing.ReferencingFactoryFinder}.

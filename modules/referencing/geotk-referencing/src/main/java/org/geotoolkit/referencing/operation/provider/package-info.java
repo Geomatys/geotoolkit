@@ -25,7 +25,7 @@
  * Providers instantiate objects from the {@linkplain org.geotoolkit.referencing.operation.transform
  * transform} or {@linkplain org.geotoolkit.referencing.operation.projection projection} packages
  * from a set of parameter values. The above packages contain the actual formulas transforming
- * the coordinates. Providers never contain such formulas themself.
+ * the coordinates. Providers never contain such formulas themselves.
  * <p>
  * Providers are registered in the following file, which may appears in any JAR file. See
  * the {@linkplain org.geotoolkit.factory factory} package for more information about how to

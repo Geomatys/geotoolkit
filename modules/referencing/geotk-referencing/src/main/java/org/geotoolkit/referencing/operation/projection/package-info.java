@@ -163,7 +163,7 @@
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see org.geotoolkit.referencing.operation.provider
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>

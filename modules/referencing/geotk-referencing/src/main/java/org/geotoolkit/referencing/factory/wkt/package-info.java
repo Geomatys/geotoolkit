@@ -40,7 +40,7 @@
  * registered is {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory}, which
  * is defined in another package. For all other classes, users shall either instantiate and
  * use a class directly, or create a subclass and
- * <a href="../../../factory/package-summary.html#package_description">register</a> it themself.
+ * <a href="../../../factory/package-summary.html#package_description">register</a> it themselves.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)

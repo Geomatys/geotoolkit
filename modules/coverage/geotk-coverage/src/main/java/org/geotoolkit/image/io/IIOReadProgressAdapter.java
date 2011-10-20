@@ -46,7 +46,7 @@ public class IIOReadProgressAdapter implements IIOReadProgressListener {
     }
 
     /**
-     * Reports that a sequence of read operationshas completed.
+     * Reports that a sequence of read operations has completed.
      */
     @Override
     public void sequenceComplete(ImageReader source) {

@@ -126,7 +126,7 @@ final class NTv2Loader extends GridLoader {
      * The latitude/longitude Shift and Precision (optional).
      */
     private float[] latitudeShift, longitudeShift, latitudePrecision, longitudePrecision;
-    
+
     /**
      * The buffer, created from the {@link #longitudeShift} and {@link #latitudeShift}
      * when first needed.
@@ -338,7 +338,7 @@ final class NTv2Loader extends GridLoader {
      * Returns the double value for the given key, or thrown an exception if the
      * value is not found.
      */
-    private final double getDouble(final String key) throws ContentFormatException {
+    private double getDouble(final String key) throws ContentFormatException {
         final Comparable<?> value = header.get(key);
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
@@ -350,7 +350,7 @@ final class NTv2Loader extends GridLoader {
      * Returns the integer value for the given key, or thrown an exception if the
      * value is not found.
      */
-    private final int getInteger(final String key) throws ContentFormatException {
+    private int getInteger(final String key) throws ContentFormatException {
         final Comparable<?> value = header.get(key);
         if (value instanceof Number) {
             return ((Number) value).intValue();

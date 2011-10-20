@@ -29,7 +29,7 @@ import org.geotoolkit.util.Cloneable;
  * affine transformations in a 2D space.
  * <p>
  * This class both extends the <cite>Java2D</cite> {@link AffineTransform} class and implements
- * the {@link Matrix} interface. It allows interoperbility for code that need to pass the same
+ * the {@link Matrix} interface. It allows inter-operability for code that need to pass the same
  * matrix to both <cite>Java2D</cite> API and more generic API working with coordinates of
  * arbitrary dimension.
  *

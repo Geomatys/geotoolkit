@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
  *     throws TransformException
  * }
  *
- * clause, i.e. in order to hide the factory step into a more general transformation processus
+ * clause, i.e. in order to hide the factory step into a more general transformation process
  * from the API point of view.
  *
  * @author Martin Desruisseaux (IRD)
