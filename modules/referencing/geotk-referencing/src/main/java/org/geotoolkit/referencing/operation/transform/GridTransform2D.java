@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.referencing.DirectPositionWrapper;
+import org.geotoolkit.internal.referencing.DirectPositionView;
 
 
 /**
@@ -149,20 +149,21 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
         }
 
         /**
-         * Transforms a single coordinate point in an array.
+         * Transforms a single coordinate in a list of ordinal values, and optionally returns
+         * the derivative at that location.
          *
          * @throws TransformException If there is no convergence.
          *
          * @since 3.20 (derived from 3.00)
          */
         @Override
-        public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, boolean derivate)
-                throws TransformException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws TransformException
         {
             Matrix derivative = null;
             if (derivate) {
-                derivative = derivative(new DirectPositionWrapper(srcPts, srcOff, getSourceDimensions()));
+                derivative = derivative(new DirectPositionView(srcPts, srcOff, getSourceDimensions()));
             }
             if (dstPts == null) {
                 return derivative;

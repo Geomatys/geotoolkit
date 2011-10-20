@@ -282,8 +282,9 @@ public class GridTransform extends AbstractMathTransform implements Serializable
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, int dstOff, final boolean derivate)
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts,       int dstOff,
+                               final boolean derivate)
     {
         /*
          * Following code is a copy-and-paste of:

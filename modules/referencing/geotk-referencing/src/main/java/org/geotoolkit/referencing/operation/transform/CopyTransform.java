@@ -176,13 +176,16 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     }
 
     /**
-     * Transforms a single coordinate point and optionally returns the derivative.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate) {
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
+    {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
         return derivate ? derivative((DirectPosition) null) : null;
     }

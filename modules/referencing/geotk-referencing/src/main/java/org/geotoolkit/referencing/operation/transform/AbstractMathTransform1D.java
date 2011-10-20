@@ -67,14 +67,17 @@ public abstract class AbstractMathTransform1D extends AbstractMathTransform impl
     }
 
     /**
-     * Transforms a single point in the given array. The default implementation delegates to
-     * {@link #transform(double)}. Subclasses may override this method for performance reason.
+     * Transforms a single point in the given array and opportunistically computes its derivative
+     * if requested. The default implementation delegates to {@link #transform(double)} and
+     * potentially to {@link #derivative(double)}. Subclasses may override this method for
+     * performance reason.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff, boolean derivate)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
         final double ordinate = srcPts[srcOff];
         if (dstPts != null) {

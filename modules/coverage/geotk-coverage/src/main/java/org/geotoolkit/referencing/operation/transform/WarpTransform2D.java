@@ -395,7 +395,10 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
+    {
         if (dstPts != null) {
             transform(srcPts, srcOff, dstPts, dstOff, 1);
         }

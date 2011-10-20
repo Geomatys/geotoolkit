@@ -91,8 +91,9 @@ strictfp class PseudoTransform extends AbstractMathTransform {
      *         but can occur in method overridden in subclasses.
      */
     @Override
-    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
         System.arraycopy(srcPts, srcOff, buffer, 0, sourceDimension);
         for (int i=0; i<targetDimension; i++) {

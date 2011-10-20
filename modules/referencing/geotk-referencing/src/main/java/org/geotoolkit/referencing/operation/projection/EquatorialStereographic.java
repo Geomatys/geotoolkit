@@ -69,9 +69,9 @@ public class EquatorialStereographic extends Stereographic {
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, boolean derivate)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
         final double λ    = rollLongitude(srcPts[srcOff]);
         final double φ    = srcPts[srcOff + 1];
@@ -156,9 +156,9 @@ public class EquatorialStereographic extends Stereographic {
          * {@inheritDoc}
          */
         @Override
-        public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, boolean derivate)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
             final double λ        = rollLongitude(srcPts[srcOff]);
             final double φ        = srcPts[srcOff + 1];

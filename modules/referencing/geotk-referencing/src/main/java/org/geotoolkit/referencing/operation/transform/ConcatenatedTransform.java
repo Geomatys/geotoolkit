@@ -640,16 +640,17 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Transforms a single coordinates in a list of ordinal values.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
      *
      * @throws TransformException If {@link #transform1} or {@link #transform2} failed.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
         assert isValid();
         final int bufferDim = transform2.getSourceDimensions();

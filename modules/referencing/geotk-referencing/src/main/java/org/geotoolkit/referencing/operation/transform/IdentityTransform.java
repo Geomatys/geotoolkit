@@ -25,8 +25,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
@@ -178,34 +178,27 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      */
     @Override
     public DirectPosition transform(final DirectPosition ptSrc, final DirectPosition ptDst) {
-        String name;
-        int check;
-        if ((check = ptSrc.getDimension()) != dimension) {
-            name = "ptSrc";
-        } else {
-            if (ptDst == null) {
-                return new GeneralDirectPosition(ptSrc);
-            }
-            if ((check = ptDst.getDimension()) != dimension) {
-                name = "ptDst";
-            } else {
-                for (int i=0; i<dimension; i++) {
-                    ptDst.setOrdinate(i, ptSrc.getOrdinate(i));
-                }
-                return ptDst;
-            }
+        ArgumentChecks.ensureDimensionMatches("ptSrc", ptSrc, dimension);
+        if (ptDst == null) {
+            return new GeneralDirectPosition(ptSrc);
         }
-        throw new MismatchedDimensionException(mismatchedDimension(name, check, dimension));
+        ArgumentChecks.ensureDimensionMatches("ptDst", ptDst, dimension);
+        for (int i=0; i<dimension; i++) {
+            ptDst.setOrdinate(i, ptSrc.getOrdinate(i));
+        }
+        return ptDst;
     }
 
     /**
-     * Transforms a single coordinate in a list of ordinal values.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, boolean derivate)
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
     {
         if (dstPts != null) {
             System.arraycopy(srcPts, srcOff, dstPts, dstOff, dimension);

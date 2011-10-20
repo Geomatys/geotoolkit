@@ -20,13 +20,11 @@ package org.geotoolkit.referencing.operation.transform;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -113,22 +111,6 @@ final class PowerTransform1D extends AbstractMathTransform1D implements Serializ
     @Override
     public double transform(final double value) {
         return Math.pow(value, power);
-    }
-
-    /**
-     * Transforms a single coordinate in a list of ordinal values.
-     *
-     * @since 3.20 (derived from 3.00)
-     */
-    @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate)
-    {
-        final double ordinate = srcPts[srcOff];
-        if (dstPts != null) {
-            dstPts[dstOff] = Math.pow(ordinate, power);
-        }
-        return derivate ? new Matrix1(derivative(ordinate)) : null;
     }
 
     /**

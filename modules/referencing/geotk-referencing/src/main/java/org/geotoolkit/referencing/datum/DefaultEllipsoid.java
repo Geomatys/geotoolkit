@@ -35,7 +35,7 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.Ellipsoid;
 
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.gco.Measure;
 import org.geotoolkit.measure.Units;
@@ -694,8 +694,8 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         // Other cases: no solution for this algorithm.
         final CoordinateFormat format = new CoordinateFormat();
         throw new ArithmeticException(Errors.format(Errors.Keys.NO_CONVERGENCE_$2,
-                  format.format(new GeneralDirectPosition(toDegrees(x1), toDegrees(y1))),
-                  format.format(new GeneralDirectPosition(toDegrees(x2), toDegrees(y2)))));
+                  format.format(new DirectPosition2D(toDegrees(x1), toDegrees(y1))),
+                  format.format(new DirectPosition2D(toDegrees(x2), toDegrees(y2)))));
     }
 
     /**

@@ -297,13 +297,16 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     }
 
     /**
-     * Transforms a single coordinate point and optionally returns the derivative.
+     * Converts a single coordinate point in a list of ordinal values,
+     * and optionally computes the derivative at that location.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate) {
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
+    {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
         return derivate ? derivative((DirectPosition) null) : null;
     }

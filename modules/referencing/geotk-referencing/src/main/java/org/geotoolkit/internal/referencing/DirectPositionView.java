@@ -24,9 +24,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * A direct position wrapping an array without performing any copy.
- * This class shall be used for temporary objects only (it is not
- * serializable for this reason).
+ * A read-only direct position wrapping an array without performing any copy.
+ * This class shall be used for temporary objects only (it is not serializable for this reason).
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -34,14 +33,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @since 3.20
  * @module
  */
-public final class DirectPositionWrapper implements DirectPosition {
+public final class DirectPositionView implements DirectPosition {
     /**
      * The ordinate values.
      */
     private final double[] ordinates;
 
     /**
-     * The first value index in the ordinates array.
+     * The index of the first value in the {@linkplain #ordinates} array.
      */
     private final int offset;
 
@@ -57,7 +56,7 @@ public final class DirectPositionWrapper implements DirectPosition {
      * @param offset    The first value index in the ordinates array.
      * @param dimension The number of valid ordinate values.
      */
-    public DirectPositionWrapper(final double[] ordinates, final int offset, final int dimension) {
+    public DirectPositionView(final double[] ordinates, final int offset, final int dimension) {
         this.ordinates = ordinates;
         this.offset    = offset;
         this.dimension = dimension;

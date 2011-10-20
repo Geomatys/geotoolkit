@@ -102,8 +102,9 @@ final strictfp class RandomFailureTransform extends PseudoTransform {
      * @throws TransformException Throws randomly at the frequency given at construction time.
      */
     @Override
-    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
         super.transform(srcPts, srcOff, dstPts, dstOff, false);
         final int index = ordinal++;

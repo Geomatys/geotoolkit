@@ -78,23 +78,25 @@ public abstract class VerticalTransform extends AbstractMathTransform {
             throws TransformException;
 
     /**
-     * Transforms a single coordinate point ordinal values.
+     * Transforms a single coordinate point in a list of ordinal values,
+     * and optionally computes the derivative at that location.
      *
      * @throws TransformException If the point can't be transformed.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
         if (dstPts != null) {
-            final double x = srcPts[srcOff++];
-            final double y = srcPts[srcOff++];
-            final double z = srcPts[srcOff++];
-            dstPts[dstOff++] = x;
-            dstPts[dstOff++] = y;
-            dstPts[dstOff++] = z + heightOffset(x,y,z);
+            final double x = srcPts[srcOff  ];
+            final double y = srcPts[srcOff+1];
+            final double z = srcPts[srcOff+2];
+            dstPts[dstOff  ] = x;
+            dstPts[dstOff+1] = y;
+            dstPts[dstOff+2] = z + heightOffset(x,y,z);
         }
         return null;
     }

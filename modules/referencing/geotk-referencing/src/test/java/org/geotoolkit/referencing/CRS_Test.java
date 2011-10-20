@@ -360,7 +360,11 @@ public final strictfp class CRS_Test extends ReferencingTestBase {
         final class TestTransform extends AbstractMathTransform {
             @Override public int getSourceDimensions() {return 2;}
             @Override public int getTargetDimensions() {return 2;}
-            @Override public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
+            @Override protected Matrix transform(
+                    final double[] srcPts, final int srcOff,
+                    final double[] dstPts, final int dstOff,
+                    final boolean derivate)
+            {
                 at.transform(srcPts, srcOff, dstPts, dstOff, 1);
                 return null;
             }

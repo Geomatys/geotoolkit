@@ -275,16 +275,16 @@ public class LambertConformal extends UnitaryProjection {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
         /*
          * NOTE: If some equation terms seem missing, this is because the linear operations
@@ -421,9 +421,9 @@ public class LambertConformal extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, final boolean derivate)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
             final double λ    = rollLongitude(srcPts[srcOff]);
             final double φ    = srcPts[srcOff+1];

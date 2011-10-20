@@ -436,13 +436,15 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Transforms a single coordinate point.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate)
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
     {
         Matrix derivative = null;
         if (derivate) {

@@ -22,7 +22,6 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
@@ -30,7 +29,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.referencing.operation.matrix.Matrix1;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Logarithmic.*;
@@ -233,20 +231,6 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
     }
 
     /**
-     * Transforms a single coordinate in a list of ordinal values.
-     *
-     * @since 3.20 (derived from 3.00)
-     */
-    @Override
-    public Matrix transform(final double[] srcPts, final int srcOff,
-                            final double[] dstPts, final int dstOff, final boolean derivate)
-    {
-        final double ordinate = srcPts[srcOff];
-        dstPts[dstOff] = Math.log(ordinate) / lnBase + offset;
-        return derivate ? new Matrix1(derivative(ordinate)) : null;
-    }
-
-    /**
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
@@ -329,16 +313,6 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
         @Override
         public double transform(final double value) {
             return Math.log10(value) + offset;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, final boolean derivate)
-        {
-            final double ordinate = srcPts[srcOff];
-            dstPts[dstOff] = Math.log10(ordinate) + offset;
-            return derivate ? new Matrix1(derivative(ordinate)) : null;
         }
 
         /** {@inheritDoc} */

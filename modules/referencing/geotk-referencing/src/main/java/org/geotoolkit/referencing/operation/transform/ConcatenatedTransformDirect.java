@@ -77,8 +77,9 @@ class ConcatenatedTransformDirect extends ConcatenatedTransform {
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
-            throws TransformException
+    public void transform(final double[] srcPts, final int srcOff,
+                          final double[] dstPts, final int dstOff,
+                          final int numPts) throws TransformException
     {
         assert isValid();
         transform1.transform(srcPts, srcOff, dstPts, dstOff, numPts);
@@ -89,8 +90,9 @@ class ConcatenatedTransformDirect extends ConcatenatedTransform {
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
-            throws TransformException
+    public void transform(final float[]  srcPts, final int srcOff,
+                          final double[] dstPts, final int dstOff,
+                          final int numPts) throws TransformException
     {
         assert isValid();
         transform1.transform(srcPts, srcOff, dstPts, dstOff, numPts);

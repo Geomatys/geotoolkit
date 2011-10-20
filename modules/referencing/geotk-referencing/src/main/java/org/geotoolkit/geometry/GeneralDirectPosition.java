@@ -103,61 +103,20 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
      *
      * @param ordinates The ordinate values to copy.
      */
-    public GeneralDirectPosition(final double[] ordinates) {
+    public GeneralDirectPosition(final double... ordinates) {
         this.ordinates = ordinates.clone();
     }
 
     /**
-     * Constructs a 2D position from the specified ordinates. Despite their name, the
-     * (<var>x</var>,<var>y</var>) ordinates don't need to be oriented toward
-     * ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}).
-     * See the {@link DirectPosition2D} javadoc for details.
-     *
-     * @param x The first ordinate value.
-     * @param y The second ordinate value.
-     */
-    public GeneralDirectPosition(final double x, final double y) {
-        ordinates = new double[] {x,y};
-    }
-
-    /**
-     * Constructs a 3D position from the specified ordinates. Despite their name, the
-     * (<var>x</var>,<var>y</var>,<var>z</var>) ordinates don't need to be oriented toward
-     * ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North},
-     * {@linkplain AxisDirection#UP Up}).
-     *
-     * @param x The first ordinate value.
-     * @param y The second ordinate value.
-     * @param z The third ordinate value.
-     */
-    public GeneralDirectPosition(final double x, final double y, final double z) {
-        ordinates = new double[] {x,y,z};
-    }
-
-    /**
-     * Constructs a 4D position from the specified ordinates. Despite their name, the
-     * (<var>x</var>,<var>y</var>,<var>z</var>,<var>t</var>) ordinates don't need to be oriented
-     * toward ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North},
-     * {@linkplain AxisDirection#UP Up}, {@linkplain AxisDirection#FUTURE Future}).
-     *
-     * @param x The first  ordinate value.
-     * @param y The second ordinate value.
-     * @param z The third  ordinate value.
-     * @param t The fourth ordinate value.
-     *
-     * @since 3.16
-     */
-    public GeneralDirectPosition(final double x, final double y, final double z, final double t) {
-        ordinates = new double[] {x,y,z,t};
-    }
-
-    /**
      * Constructs a position from the specified {@link Point2D}.
+     * Despite their name, the (<var>x</var>,<var>y</var>) ordinates don't need to be oriented
+     * toward ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}).
+     * See the {@link DirectPosition2D} javadoc for details.
      *
      * @param point The position to copy.
      */
     public GeneralDirectPosition(final Point2D point) {
-        this(point.getX(), point.getY());
+        ordinates = new double[] {point.getX(), point.getY()};
     }
 
     /**

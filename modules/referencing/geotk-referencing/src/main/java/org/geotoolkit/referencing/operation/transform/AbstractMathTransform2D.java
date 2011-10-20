@@ -23,11 +23,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.ThreadSafe;
 
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -40,7 +37,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
@@ -107,39 +103,6 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
         } else {
             return new Point2D.Double(ord[0], ord[1]);
         }
-    }
-
-    /**
-     * Delegates to the {@link #derivativeAndTransform(Point2D, Point2D, Matrix)
-     * derivativeAndTransform(Point2D, Point2D, Matrix)} method. This delegation
-     * is done on the assumption that methods working with {@link Point2D} objects
-     * are more efficient for the {@link MathTransform2D} case. Subclasses usually
-     * don't need to override this method.
-     *
-     * @since 3.20
-     */
-    @Override
-    public Matrix derivativeAndTransform(final DirectPosition ptSrc, final DirectPosition ptDst,
-            Matrix matrixDst) throws MismatchedDimensionException, TransformException
-    {
-        ensureDimensionMatches("ptSrc", ptSrc, 2);
-        ensureDimensionMatches("ptDst", ptDst, 2);
-        final Point2D tmp = toPoint2D(ptDst);
-        matrixDst = derivativeAndTransform(toPoint2D(ptSrc), tmp, matrixDst);
-        if (ptDst != tmp) {
-            ptDst.setOrdinate(0, tmp.getX());
-            ptDst.setOrdinate(1, tmp.getY());
-        }
-        return matrixDst;
-    }
-
-    /**
-     * Returns the given position as a {@link Point2D}. Caller must ensure
-     * that the position is two-dimensional before to invoke this method.
-     */
-    private static Point2D toPoint2D(final DirectPosition point) {
-        return (point == null || point instanceof Point2D) ? (Point2D) point :
-                new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1));
     }
 
     /**

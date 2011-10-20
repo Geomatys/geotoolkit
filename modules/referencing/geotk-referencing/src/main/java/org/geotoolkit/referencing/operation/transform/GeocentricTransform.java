@@ -46,6 +46,7 @@ import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -53,10 +54,10 @@ import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
+import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
 
 
@@ -181,8 +182,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
         b2  = b * b;
         e2  = (a2 - b2) / a2;
         ep2 = (a2 - b2) / b2;
-        checkArgument("a", a, Double.MAX_VALUE);
-        checkArgument("b", b, a);
+        ArgumentChecks.ensureBetween("a", 0, Double.MAX_VALUE, a);
+        ArgumentChecks.ensureBetween("b", 0, a, b);
     }
 
     /**
@@ -248,23 +249,6 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Checks an argument value. The argument must be greater
-     * than 0 and finite, otherwise an exception is thrown.
-     *
-     * @param name  The argument name.
-     * @param value The argument value.
-     * @param max   The maximal legal argument value.
-     */
-    private static void checkArgument(final String name, final double value, final double max)
-            throws IllegalArgumentException
-    {
-        if (!(value >= 0 && value <= max)) {
-            // Use '!' in order to trap NaN
-            throw new IllegalArgumentException(illegalArgument(name, value));
-        }
-    }
-
-    /**
      * Returns the parameter descriptors for this math transform.
      */
     @Override
@@ -321,7 +305,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
             throws IllegalArgumentException
     {
         if (!target3D) {
-            throw new IllegalArgumentException(illegalArgument("target3D", target3D));
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "target3D", target3D));
         }
         if (source3D == hasHeight) {
             return this;
@@ -355,13 +340,16 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Converts geodetic coordinates (longitude, latitude, height) to geocentric
-     * coordinates (x, y, z) according to the current ellipsoid parameters.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
      *
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    public Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate) {
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
+    {
         Matrix derivative = null;
         if (derivate) {
             derivative = derivative(
@@ -377,8 +365,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Converts geodetic coordinates (longitude, latitude, height) to geocentric
-     * coordinates (x, y, z) according to the current ellipsoid parameters.
+     * Converts the (<var>&lambda;</var>,<var>&phi;</var>, <var>h</var>) geodetic coordinates
+     * to (<var>x</var>, <var>y</var>, <var>z</var>) geocentric coordinates.
      */
     @Override
     public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
@@ -437,8 +425,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Converts geodetic coordinates (longitude, latitude, height) to geocentric
-     * coordinates (x, y, z) according to the current ellipsoid parameters.
+     * Converts the (<var>&lambda;</var>,<var>&phi;</var>, <var>h</var>) geodetic coordinates
+     * to (<var>x</var>, <var>y</var>, <var>z</var>) geocentric coordinates.
      */
     @Override
     public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
@@ -484,8 +472,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Converts geodetic coordinates (longitude, latitude, height) to geocentric
-     * coordinates (x, y, z) according to the current ellipsoid parameters.
+     * Converts the (<var>&lambda;</var>,<var>&phi;</var>, <var>h</var>) geodetic coordinates
+     * to (<var>x</var>, <var>y</var>, <var>z</var>) geocentric coordinates.
      */
     @Override
     public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
@@ -506,8 +494,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Converts geodetic coordinates (longitude, latitude, height) to geocentric
-     * coordinates (x, y, z) according to the current ellipsoid parameters.
+     * Converts the (<var>&lambda;</var>,<var>&phi;</var>, <var>h</var>) geodetic coordinates
+     * to (<var>x</var>, <var>y</var>, <var>z</var>) geocentric coordinates.
      */
     @Override
     public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
@@ -648,7 +636,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        ensureDimensionMatches("point", point, hasHeight ? 3 : 2);
+        ArgumentChecks.ensureDimensionMatches("point", point, hasHeight ? 3 : 2);
         return derivative(toRadians  (point.getOrdinate(0)),
                           toRadians  (point.getOrdinate(1)),
                           hasHeight ? point.getOrdinate(2) : 0,
@@ -775,7 +763,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
                 throws IllegalArgumentException
         {
             if (!source3D) {
-                throw new IllegalArgumentException(illegalArgument("source3D", source3D));
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "source3D", source3D));
             }
             if (target3D == hasHeight) {
                 return this;
@@ -802,11 +791,13 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
         }
 
         /**
-         * Inverse transform a single points.
+         * Inverse transforms a single coordinate in a list of ordinal values, and optionally
+         * returns the derivative at that location.
          */
         @Override
-        public Matrix transform(final double[] srcPts, final int srcOff,
-                                final double[] dstPts, final int dstOff, boolean derivate)
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate)
         {
             inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, 1, hasHeight, false);
             return null;
