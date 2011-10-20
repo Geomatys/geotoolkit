@@ -200,11 +200,8 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
             Point2D geoCoord = transform(index, null);
             geoCoord = tr.inverseTransform(geoCoord, geoCoord);
             return geoCoord.distance(index);
-        } catch (TransformException exception) {
-            // Should not happen
-            throw new AssertionError(exception);
-        } catch (NoninvertibleTransformException exception) {
-            // Not impossible. What should we do? Open question...
+        } catch (TransformException | NoninvertibleTransformException exception) {
+            // TransformException should not happen, but NoninvertibleTransformException is not so sure...
             throw new AssertionError(exception);
         }
     }

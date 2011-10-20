@@ -244,8 +244,7 @@ public class LayerCoverageReader extends GridCoverageReader {
             } catch (SQLException e) {
                 throw new CoverageStoreException(e);
             }
-            final FrequencySortedSet<List<GridSampleDimension>> sd =
-                    new FrequencySortedSet<List<GridSampleDimension>>(true);
+            final FrequencySortedSet<List<GridSampleDimension>> sd = new FrequencySortedSet<>(true);
             final int[] count = series.frequencies();
             int i = 0;
             for (final SeriesEntry entry : series) {

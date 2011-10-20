@@ -53,7 +53,7 @@ public final class IconFactory {
     /**
      * The icons already loaded.
      */
-    private final Map<String,Icon> icons = new HashMap<String,Icon>();
+    private final Map<String,Icon> icons = new HashMap<>();
 
     /**
      * Do not allows instantiation of this class.

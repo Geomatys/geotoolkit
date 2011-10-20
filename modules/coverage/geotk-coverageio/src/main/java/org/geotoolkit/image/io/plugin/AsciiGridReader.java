@@ -354,7 +354,7 @@ public class AsciiGridReader extends TextImageReader {
     private Map<String,String> readHeader() throws IOException {
         final ReadableByteChannel channel = getChannel();
         final StringBuilder       stbuff  = new StringBuilder();
-        final Map<String,String>  header  = new HashMap<String,String>();
+        final Map<String,String>  header  = new HashMap<>();
         ByteBuffer buffer = this.buffer;
         if (buffer == null) {
             this.buffer = buffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
@@ -783,13 +783,11 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         try {
             buffer.clear().limit(0);
             final ImageInputStream in = new ChannelImageInputStream(Channels.newChannel(binaryStream), buffer);
-            final RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
-                    new long[1], new Dimension[] {new Dimension(width, height)});
-            try {
+            try (RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
+                   new long[1], new Dimension[] {new Dimension(width, height)}))
+            {
                 binaryReader.setInput(rawStream, true, true);
                 image = binaryReader.read(imageIndex, param);
-            } finally {
-                rawStream.close();
             }
         } finally {
             binaryStream.close();

@@ -615,8 +615,8 @@ public final class NewGridCoverageReference {
         bestFormat = candidate;
         format = candidate.getIdentifier();
         this.sampleDimensions = (candidate.sampleDimensions != null) ?
-            new ArrayList<GridSampleDimension>(candidate.sampleDimensions) :
-            new ArrayList<GridSampleDimension>();
+                new ArrayList<>(candidate.sampleDimensions) :
+                new ArrayList<GridSampleDimension>();
     }
 
     /**

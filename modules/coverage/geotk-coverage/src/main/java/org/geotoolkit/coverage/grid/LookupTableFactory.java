@@ -45,8 +45,7 @@ final class LookupTableFactory extends Static {
     /**
      * The pool of {@link LookupTableJAI} objects already created.
      */
-    private static final Map<LookupTableFactory,LookupTableJAI> pool =
-            new WeakValueHashMap<LookupTableFactory,LookupTableJAI>();
+    private static final Map<LookupTableFactory,LookupTableJAI> pool = new WeakValueHashMap<>();
 
     /**
      * The source data type. Should be one of {@link DataBuffer} constants.

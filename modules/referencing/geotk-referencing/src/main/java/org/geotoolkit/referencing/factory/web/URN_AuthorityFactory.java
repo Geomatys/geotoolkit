@@ -47,7 +47,7 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.remov
 
 /**
  * Wraps {@linkplain AllAuthoritiesFactory all factories} in a {@code "urn:ogc:def"}
- * name space. An exemple of complete URN is {@code "urn:ogc:def:crs:EPSG:6.8:4326"}.
+ * name space. An example of complete URN is {@code "urn:ogc:def:crs:EPSG:6.8:4326"}.
  * <p>
  * Users don't need to create an instance of this class, since one is automatically
  * registered for use in {@link org.opengis.referencing.ReferencingFactoryFinder}.
@@ -76,7 +76,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
      * The authority factories by versions. Factories will be created by
      * {@link #createVersionedFactory} when first needed.
      */
-    private final SortedMap<Version, AuthorityFactory> byVersions = new TreeMap<Version, AuthorityFactory>();
+    private final SortedMap<Version, AuthorityFactory> byVersions = new TreeMap<>();
 
     /**
      * The last code processed, or {@code null} if none.

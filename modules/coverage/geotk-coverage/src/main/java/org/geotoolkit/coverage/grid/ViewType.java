@@ -39,7 +39,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
  * <p>
  * Different views are sometime synonymous for a given coverage. For example the
  * {@linkplain #NATIVE native} and {@linkplain #RENDERED rendered} views are identical
- * when the coverage values are unsigned 8 or 16 bits integers, but distincts if the native
+ * when the coverage values are unsigned 8 or 16 bits integers, but distinct if the native
  * values are 32 bits integers. This is because in the later case, the 32 bits integer values
  * can not be processed directly by an {@linkplain IndexColorModel index color model}.
  *

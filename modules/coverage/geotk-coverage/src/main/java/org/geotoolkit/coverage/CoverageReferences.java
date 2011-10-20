@@ -78,7 +78,7 @@ public class CoverageReferences {
     /**
      * The map of coverages references. Keys and values are the same instances.
      */
-    private final ConcurrentMap<Ref,Ref> pool = new ConcurrentHashMap<Ref,Ref>();
+    private final ConcurrentMap<Ref,Ref> pool = new ConcurrentHashMap<>();
 
     /**
      * Creates a new coverage cache. This method is given protected access for subclassing

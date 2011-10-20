@@ -491,7 +491,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @since 3.00
      */
     public final List<MathTransform> getSteps() {
-        final List<MathTransform> transforms = new ArrayList<MathTransform>(5);
+        final List<MathTransform> transforms = new ArrayList<>(5);
         getSteps(transforms);
         return transforms;
     }
@@ -504,7 +504,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * instances of {@link MathTransform}.
      */
     private List<Object> getPseudoSteps() {
-        final List<Object> transforms = new ArrayList<Object>();
+        final List<Object> transforms = new ArrayList<>();
         getSteps(transforms);
         /*
          * Pre-process the transforms before to format. Some steps may be

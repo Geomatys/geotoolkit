@@ -45,7 +45,7 @@ public final strictfp class ScriptRunnerTest {
          * The list of files that we pretended to read.
          * We use a set to ensure that no file are given twice.
          */
-        private final Set<String> files = new LinkedHashSet<String>();
+        private final Set<String> files = new LinkedHashSet<>();
 
         /**
          * Creates a dummy runner.

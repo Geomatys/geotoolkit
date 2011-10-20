@@ -185,7 +185,7 @@ public final class DiscreteReferencingFactory extends Static {
         if (crs instanceof VerticalCRS)   return new DiscreteCRS.Vertical  ((VerticalCRS)   crs, ordinates);
         if (crs instanceof TemporalCRS)   return new DiscreteCRS.Temporal  ((TemporalCRS)   crs, ordinates);
         if (crs instanceof CompoundCRS)   return DiscreteCompoundCRS.create((CompoundCRS)   crs, ordinates);
-        return new DiscreteCRS<CoordinateReferenceSystem>(crs, new DiscreteCS(crs.getCoordinateSystem(), ordinates));
+        return new DiscreteCRS<>(crs, new DiscreteCS(crs.getCoordinateSystem(), ordinates));
     }
 
     /**

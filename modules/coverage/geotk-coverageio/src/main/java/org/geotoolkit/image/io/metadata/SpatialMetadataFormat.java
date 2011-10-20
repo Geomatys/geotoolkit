@@ -351,12 +351,12 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * The metadata standards represented by this format. The most
      * common standard is {@link MetadataStandard#ISO_19115 ISO_19115}.
      */
-    private final Map<String,MetadataStandard> standards = new HashMap<String,MetadataStandard>();
+    private final Map<String,MetadataStandard> standards = new HashMap<>();
 
     /**
      * The mapping from method names to attribute or child element names for a given element.
      */
-    private final Map<String, Map<String,String>> namesMapping = new HashMap<String, Map<String,String>>();
+    private final Map<String, Map<String,String>> namesMapping = new HashMap<>();
 
     /**
      * The last value returned by {@link #getDescriptions}, cached on the assumption
@@ -496,7 +496,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             final String elementName, final String parentName, final boolean mandatory,
             final Map<Class<?>,Class<?>> substitution, final Set<Class<?>> incomplete)
     {
-        final Set<Class<?>> exclude = new HashSet<Class<?>>();
+        final Set<Class<?>> exclude = new HashSet<>();
         if (substitution != null) {
             for (final Map.Entry<Class<?>,Class<?>> entry : substitution.entrySet()) {
                 if (entry.getValue() == null) {
@@ -865,7 +865,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         ensureNonNull("elementName", elementName);
         Map<String, String> map = namesMapping.get(parentName);
         if (map == null) {
-            map = new HashMap<String, String>();
+            map = new HashMap<>();
             namesMapping.put(parentName, map);
         }
         final String old = map.put(methodName, elementName);

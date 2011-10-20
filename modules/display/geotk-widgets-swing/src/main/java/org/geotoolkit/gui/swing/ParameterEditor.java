@@ -103,7 +103,7 @@ public class ParameterEditor extends JComponent {
     /**
      * The set of {@linkplain Component component} editors created up to date.
      */
-    private final Map<String,Component> editors = new HashMap<String,Component>();
+    private final Map<String,Component> editors = new HashMap<>();
 
     /**
      * The properties panel for parameters. The content for this panel

@@ -44,6 +44,8 @@ import javax.swing.ListCellRenderer;
  *     });
  * }
  *
+ * @param <E> The type of elements in the combo box.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
  *
@@ -51,7 +53,7 @@ import javax.swing.ListCellRenderer;
  * @module
  */
 @SuppressWarnings("serial")
-public final class ComboBoxRenderer extends JSeparator implements ListCellRenderer {
+public final class ComboBoxRenderer<E> extends JSeparator implements ListCellRenderer<E> {
     /**
      * The string to use as a separator.
      */
@@ -60,24 +62,25 @@ public final class ComboBoxRenderer extends JSeparator implements ListCellRender
     /**
      * The original cell renderer.
      */
-    private final ListCellRenderer original;
+    private final ListCellRenderer<? super E> original;
 
     /**
      * Creates a new renderer.
      *
      * @param original The original cell renderer.
      */
-    private ComboBoxRenderer(final ListCellRenderer original) {
+    private ComboBoxRenderer(final ListCellRenderer<? super E> original) {
         this.original = original;
     }
 
     /**
      * Installs a {@code ComboBoxRenderer} on the given combo box.
      *
+     * @param <E> The type of elements in the combo box.
      * @param box The combo box on which to install a renderer.
      */
-    public static void install(final JComboBox box) {
-        box.setRenderer(new ComboBoxRenderer(box.getRenderer()));
+    public static <E> void install(final JComboBox<E> box) {
+        box.setRenderer(new ComboBoxRenderer<>(box.getRenderer()));
     }
 
     /**
@@ -91,7 +94,7 @@ public final class ComboBoxRenderer extends JSeparator implements ListCellRender
      * @return A component whose {@code paint()} method will render the specified value.
      */
     @Override
-    public Component getListCellRendererComponent(final JList list, final Object value,
+    public Component getListCellRendererComponent(final JList<? extends E> list, final E value,
             final int index, final boolean isSelected, final boolean cellHasFocus)
     {
         if (value == SEPARATOR) {

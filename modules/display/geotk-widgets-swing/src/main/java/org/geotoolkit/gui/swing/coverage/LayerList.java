@@ -154,7 +154,7 @@ public class LayerList extends WindowCreator {
     /**
      * The widget which display the list of selected layers.
      */
-    private final JList layerList;
+    private final JList<String> layerList;
 
     /**
      * The button for removing a layer or showing the available coverages.
@@ -248,8 +248,8 @@ public class LayerList extends WindowCreator {
         /*
          * List of layers.
          */
-        layers = new ArrayListModel<String>();
-        layerList = new JList(layers);
+        layers = new ArrayListModel<>();
+        layerList = new JList<>(layers);
         layerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setLayerNames(database.getLayers());
         layerList.addListSelectionListener(listeners);
@@ -258,11 +258,11 @@ public class LayerList extends WindowCreator {
         /*
          * List of available elevations.
          */
-        elevations = new ArrayListModel<String>();
-        final JList elevationList = new JList(elevations);
+        elevations = new ArrayListModel<>();
+        final JList<String> elevationList = new JList<>(elevations);
         elevationList.setLayoutOrientation(JList.VERTICAL_WRAP);
         elevationList.setVisibleRowCount(0); // Will be calculated from the list height.
-        final ListCellRenderer renderer = elevationList.getCellRenderer();
+        final ListCellRenderer<? super String> renderer = elevationList.getCellRenderer();
         if (renderer instanceof JLabel) {
             ((JLabel) renderer).setHorizontalAlignment(JLabel.RIGHT);
         }
@@ -437,16 +437,12 @@ public class LayerList extends WindowCreator {
         @Override
         public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
-            if (ADD.equals(action)) {
-                addNewLayer();
-            } else if (REMOVE.equals(action)) {
-                removeLayer();
-            } else if (COVERAGES.equals(action)) {
-                showCoverages();
-            } else if (REFRESH.equals(action)) {
-                refresh(true);
-            } else if (BUSY.equals(action)) {
-                setBusy(true);
+            switch (action) {
+                case ADD:       addNewLayer();   break;
+                case REMOVE:    removeLayer();   break;
+                case COVERAGES: showCoverages(); break;
+                case REFRESH:   refresh(true);   break;
+                case BUSY:      setBusy(true);   break;
             }
         }
     }
@@ -646,7 +642,7 @@ public class LayerList extends WindowCreator {
      * @return The currently selected layer, or {@code null}.
      */
     public String getSelectedLayer() {
-        return (String) layerList.getSelectedValue();
+        return layerList.getSelectedValue();
     }
 
     /**
@@ -734,7 +730,7 @@ public class LayerList extends WindowCreator {
                     }
                     final FieldPosition pos = new FieldPosition(0);
                     final StringBuffer buffer = new StringBuffer();
-                    final List<String> fz = new ArrayList<String>(z.size());
+                    final List<String> fz = new ArrayList<>(z.size());
                     synchronized (heightFormat) {
                         heightFormat.setMinimumFractionDigits(numDigits);
                         heightFormat.setMaximumFractionDigits(numDigits);

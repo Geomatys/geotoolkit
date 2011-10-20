@@ -47,7 +47,7 @@ import org.geotoolkit.internal.swing.FastComboBox;
  * @module
  */
 @SuppressWarnings("serial") // Actually not serializable because AuthorityCode is not.
-final class AuthorityCodeList extends AbstractListModel implements FastComboBox.Model {
+final class AuthorityCodeList extends AbstractListModel<AuthorityCode> implements FastComboBox.Model<AuthorityCode> {
     /**
      * The authority codes as {@link AuthorityCode} objects.
      */
@@ -90,6 +90,7 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
      * @param factory The factory to use for fetching the codes.
      * @param type Base classes of CRS objects to extract.
      */
+    @SafeVarargs
     public AuthorityCodeList(final Locale locale, final AuthorityFactory factory,
             final Class<? extends IdentifiedObject>... types)
     {

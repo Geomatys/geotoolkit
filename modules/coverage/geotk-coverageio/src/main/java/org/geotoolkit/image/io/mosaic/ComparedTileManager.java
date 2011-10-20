@@ -100,7 +100,7 @@ final class ComparedTileManager extends TileManager {
      * Implementation helper for {@link #equal}.
      */
     private static boolean equals(TileManager manager, Collection<Tile> c1, Collection<Tile> c2) {
-        final Set<Tile> remainding = new LinkedHashSet<Tile>(c1);
+        final Set<Tile> remainding = new LinkedHashSet<>(c1);
         /*
          * Following loop is equivalent to remainding.removeAll(c2), but we do not want to invoke
          * the later because the default AbstractSet.removeAll(Collection) implementation invokes

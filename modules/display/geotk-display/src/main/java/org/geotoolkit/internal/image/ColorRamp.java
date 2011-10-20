@@ -297,7 +297,7 @@ public class ColorRamp implements Serializable {
      * @return The old and new colors, or {@code null} if there is no change.
      */
     public final Color[][] setColors(final Color... colors) {
-        final Map<Integer,Color> share = new HashMap<Integer,Color>();
+        final Map<Integer,Color> share = new HashMap<>();
         int[] ARGB = null;
         if (colors != null) {
             ARGB = new int[colors.length];
@@ -337,7 +337,7 @@ public class ColorRamp implements Serializable {
             return null;
         }
         if (share == null) {
-            share = new HashMap<Integer,Color>();
+            share = new HashMap<>();
         }
         return new Color[][] {getColors(oldColors, share), getColors(newColors, share)};
     }
@@ -452,7 +452,7 @@ public class ColorRamp implements Serializable {
                 graduation = createGraduation(this.graduation, band, min, max);
             }
         }
-        return new AbstractMap.SimpleEntry<Graduation,Color[]>(graduation, colors);
+        return new AbstractMap.SimpleEntry<>(graduation, colors);
     }
 
     /**

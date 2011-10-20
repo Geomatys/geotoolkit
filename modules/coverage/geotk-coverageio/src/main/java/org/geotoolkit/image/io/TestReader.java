@@ -295,7 +295,7 @@ scan:   while (lower < readAheadLimit) {
                 while (++stop < length && Character.isJavaIdentifierPart(keyword.charAt(stop)));
                 keyword = keyword.substring(0, stop);
                 if (keywords == null) {
-                    keywords = new HashSet<String>();
+                    keywords = new HashSet<>();
                 }
                 final Locale locale = getDataLocale();
                 keyword = (locale != null) ? keyword.toUpperCase(locale) : keyword.toUpperCase();

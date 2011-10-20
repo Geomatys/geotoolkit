@@ -98,7 +98,7 @@ final class ViewsManager {
      * @param coverage The coverage that created this {@code ViewsManager}.
      */
     private ViewsManager(final GridCoverage2D coverage) {
-        views = new EnumMap<ViewType,GridCoverage2D>(ViewType.class);
+        views = new EnumMap<>(ViewType.class);
         boolean geophysics   = true; // 'true' only if all bands are geophysics.
         boolean photographic = true; // 'true' only if no band have category.
         final int numBands = coverage.getNumSampleDimensions();
@@ -165,7 +165,7 @@ scan:   for (int i=0; i<numBands; i++) {
                     final Collection<GridCoverage> more = source.getSources();
                     if (!isNullOrEmpty(more)) {
                         if (next == null) {
-                            next = new LinkedHashSet<GridCoverage>(more);
+                            next = new LinkedHashSet<>(more);
                         } else {
                             next.addAll(more);
                         }

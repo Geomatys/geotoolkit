@@ -199,7 +199,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
          * a URL to a resource) in the directory supplied by the user, if any.
          */
         String path = filename; // Will be used for formatting a "File not found" message if needed.
-        final List<URL> definitionFiles = new ArrayList<URL>(4);
+        final List<URL> definitionFiles = new ArrayList<>(4);
         if (directory != null) try {
             final File file = new File(directory, filename);
             path = file.getPath();
@@ -299,9 +299,9 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
                     currentFile.clear();
                 }
             }
-            final InputStream in = url.openStream();
-            currentFile.load(in);
-            in.close();
+            try (InputStream in = url.openStream()) {
+                currentFile.load(in);
+            }
             if (!currentFile.isEmpty()) {
                 // Note: the 'authorities' array length is never 0 (checked by the constructor).
                 final String authority = String.valueOf(Citations.getIdentifier(authorities[0]));

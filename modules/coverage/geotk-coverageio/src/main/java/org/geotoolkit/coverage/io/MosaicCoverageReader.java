@@ -174,10 +174,10 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         try {
             manager = builder.writeFromInput(input, params);
             if (policy == TileWritingPolicy.OVERWRITE) {
-                final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized));
-                out.writeObject(manager);
-                out.writeObject(crs);
-                out.close();
+                try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized))) {
+                    out.writeObject(manager);
+                    out.writeObject(crs);
+                }
             }
         } catch (IOException e) {
             throw new CoverageStoreException(e);

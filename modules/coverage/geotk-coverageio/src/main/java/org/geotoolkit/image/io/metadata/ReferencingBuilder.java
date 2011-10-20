@@ -256,13 +256,10 @@ public class ReferencingBuilder {
         Exception failure;
         try {
             return getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
-        } catch (FactoryException e) {
-            failure = e;
-        } catch (NoSuchElementException e) {
-            // Throws by MetadataAccessor if an element is absents and IIOMetadata is read only.
-            failure = e;
-        } catch (NullArgumentException e) {
-            // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
+        } catch (FactoryException       |
+                 NoSuchElementException | // Throws by MetadataAccessor if an element is absents and IIOMetadata is read only.
+                 NullArgumentException e) // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
+        {
             failure = e;
         }
         accessor.warning(null, getClass(), "getOptionalCRS", failure);
@@ -876,7 +873,7 @@ public class ReferencingBuilder {
                 if (name.isEmpty()) {
                     name = authority;
                 } else if (!authority.isEmpty()) {
-                    final Map<String,Object> properties = new HashMap<String,Object>(6);
+                    final Map<String,Object> properties = new HashMap<>(6);
                     properties.put(ReferenceIdentifier.CODESPACE_KEY, authority);
                     properties.put(ReferenceIdentifier.CODE_KEY, name);
                     final ReferenceIdentifier id = new DefaultReferenceIdentifier(properties);

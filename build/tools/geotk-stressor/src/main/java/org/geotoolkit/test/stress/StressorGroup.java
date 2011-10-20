@@ -109,7 +109,7 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
     public StressorGroup(final long duration, final PrintWriter out, final PrintWriter err) {
         this.threadGroup = new ThreadGroup(Threads.GEOTOOLKIT, "Stressors");
         this.threadCount = new AtomicInteger();
-        this.stressors   = new ArrayList<S>();
+        this.stressors   = new ArrayList<>();
         this.executor    = Executors.newCachedThreadPool(this);
         this.duration    = duration;
         this.out         = out;

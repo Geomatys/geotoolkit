@@ -184,7 +184,7 @@ final class FormatEntry extends DefaultEntry {
      * @return Possible alternatives to the given image format.
      */
     static String[] getImageFormats(final String imageFormat) {
-        final Set<String> names = new HashSet<String>();
+        final Set<String> names = new HashSet<>();
         for (final Iterator<ImageReaderSpi> it = IIORegistry.getDefaultInstance()
                 .getServiceProviders(ImageReaderSpi.class, false); it.hasNext();)
         {

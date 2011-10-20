@@ -39,7 +39,7 @@ public final strictfp class FrequencySortedSetTest {
     public void testSimple() {
         boolean reverse = false;
         do {
-            final FrequencySortedSet<Integer> set = new FrequencySortedSet<Integer>(reverse);
+            final FrequencySortedSet<Integer> set = new FrequencySortedSet<>(reverse);
             assertFalse(set.add(12, 0));
             assertTrue (set.add(18, 11));
             assertEquals(Collections.singleton(18), set);
@@ -52,7 +52,7 @@ public final strictfp class FrequencySortedSetTest {
      */
     @Test
     public void testTwoElements() {
-        final FrequencySortedSet<Integer> set = new FrequencySortedSet<Integer>(true);
+        final FrequencySortedSet<Integer> set = new FrequencySortedSet<>(true);
         for (int i=0; i<10; i++) {
             if ((i % 3) == 0) {
                 set.add(11);

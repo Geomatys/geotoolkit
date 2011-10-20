@@ -44,11 +44,11 @@ import javax.swing.ListCellRenderer;
  * @module
  */
 @SuppressWarnings("serial")
-final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer {
+final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer<AuthorityCode> {
     /**
      * The original renderer.
      */
-    private final ListCellRenderer renderer;
+    private final ListCellRenderer<Object> renderer;
 
     /**
      * The component which display the name.
@@ -72,7 +72,7 @@ final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer {
      *
      * @param original The original renderer.
      */
-    AuthorityCodeRenderer(final ListCellRenderer renderer) {
+    AuthorityCodeRenderer(final ListCellRenderer<Object> renderer) {
         super(new BorderLayout());
         this.renderer = renderer;
         code = new JLabel("00000000", JLabel.TRAILING);
@@ -89,10 +89,10 @@ final class AuthorityCodeRenderer extends JPanel implements ListCellRenderer {
      * order to avoid invoking this method for computing the preferred size.
      */
     @Override
-    public Component getListCellRendererComponent(final JList list, final Object value,
-            final int index, final boolean isSelected, final boolean cellHasFocus)
+    public Component getListCellRendererComponent(final JList<? extends AuthorityCode> list,
+            final AuthorityCode value, final int index, final boolean isSelected, final boolean cellHasFocus)
     {
-        selected = (AuthorityCode) value;
+        selected = value;
         final String id = (selected != null) ? selected.code : null;
         final Component c = renderer.getListCellRendererComponent(list, id, index, isSelected, cellHasFocus);
         if (c != name) { // Does not occur in typical Swing implementations, but checked anyway for safety.

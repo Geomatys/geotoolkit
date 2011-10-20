@@ -205,9 +205,9 @@ public class CoverageReadWriteStressor extends Stressor {
                 if (!file.isFile() || !file.getName().endsWith(".serialized")) {
                     file = new File(file, TileManager.SERIALIZED_FILENAME);
                     LOGGER.log(Level.INFO, "Saving {0}", file);
-                    final ObjectOutputStream bs = new ObjectOutputStream(new FileOutputStream(file));
-                    bs.writeObject(input);
-                    bs.close();
+                    try (ObjectOutputStream bs = new ObjectOutputStream(new FileOutputStream(file))) {
+                        bs.writeObject(input);
+                    }
                 }
             } catch (IOException e) {
                 throw new CoverageStoreException(e);
@@ -233,12 +233,10 @@ public class CoverageReadWriteStressor extends Stressor {
             final String variant = formatName.substring(s).toLowerCase();
             formatName = formatName.substring(0, s);
             final boolean useNative;
-            if (variant.equals("(native)")) {
-                useNative = true;
-            } else if (variant.equals("(standard)")) {
-                useNative = false;
-            } else {
-                throw new IllegalArgumentException("Unrecognized format variant: " + variant);
+            switch (variant) {
+                case "(native)":   useNative = true;  break;
+                case "(standard)": useNative = false; break;
+                default: throw new IllegalArgumentException("Unrecognized format variant: " + variant);
             }
             Registry.setNativeCodecAllowed(formatName, ImageReaderSpi.class, useNative);
             Registry.setNativeCodecAllowed(formatName, ImageWriterSpi.class, useNative);
@@ -312,14 +310,15 @@ public class CoverageReadWriteStressor extends Stressor {
              * We will skip this step if there is no visual check.
              */
             if (viewer != null) {
-                final ImageInputStream in = ImageIO.createImageInputStream(out.getInputStream());
-                if (imageReader == null) {
-                    imageReader = XImageIO.getReaderByFormatName(outputFormat, null, Boolean.TRUE, Boolean.TRUE);
+                final RenderedImage image;
+                try (ImageInputStream in = ImageIO.createImageInputStream(out.getInputStream())) {
+                    if (imageReader == null) {
+                        imageReader = XImageIO.getReaderByFormatName(outputFormat, null, Boolean.TRUE, Boolean.TRUE);
+                    }
+                    imageReader.setInput(in);
+                    image = imageReader.read(0);
+                    imageReader.reset();
                 }
-                imageReader.setInput(in);
-                final RenderedImage image = imageReader.read(0);
-                imageReader.reset();
-                in.close();
                 return image;
             }
         } else if (outputCRS != null) {

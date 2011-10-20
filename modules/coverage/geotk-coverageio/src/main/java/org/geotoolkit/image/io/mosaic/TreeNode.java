@@ -465,7 +465,7 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
      * The returned collection is a copy that can be modified without altering the tree.
      */
     public final Collection<Tile> containedIn(final Rectangle roi) {
-        final List<Tile> tiles = new LinkedList<Tile>();
+        final List<Tile> tiles = new LinkedList<>();
         containedIn(roi, tiles);
         return tiles;
     }
@@ -506,7 +506,7 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
      * The returned collection is a copy that can be modified without altering the tree.
      */
     public final Collection<Tile> intersecting(final Rectangle roi) {
-        final List<Tile> tiles = new LinkedList<Tile>();
+        final List<Tile> tiles = new LinkedList<>();
         intersecting(roi, tiles);
         return tiles;
     }

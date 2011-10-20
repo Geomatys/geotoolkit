@@ -87,7 +87,7 @@ public final strictfp class TreesTest {
     public void testObjectToSwing() {
         final Object object = new Object[] {
             Arrays.asList("Node #1", "Node #2"),
-            new AbstractMap.SimpleEntry<String,String>("Node #3", "Dummy")
+            new AbstractMap.SimpleEntry<>("Node #3", "Dummy")
         };
         final MutableTreeNode root = Trees.objectToSwing(object);
         assertMultilinesEquals(

@@ -293,9 +293,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         try {
             return AbstractCS.swapAndScaleAxis(sourceCS,targetCS);
-        } catch (IllegalArgumentException exception) {
-            throw new OperationNotFoundException(getErrorMessage(sourceCS, targetCS), exception);
-        } catch (ConversionException exception) {
+        } catch (IllegalArgumentException | ConversionException exception) {
             throw new OperationNotFoundException(getErrorMessage(sourceCS, targetCS), exception);
         }
         // No attempt to catch ClassCastException since such
@@ -316,7 +314,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     private static Map<String,Object> getProperties(final ReferenceIdentifier name) {
         final Map<String,Object> properties;
         if ((name == DATUM_SHIFT) || (name == ELLIPSOID_SHIFT)) {
-            properties = new HashMap<String,Object>(4);
+            properties = new HashMap<>(4);
             properties.put(NAME_KEY, name);
             properties.put(COORDINATE_OPERATION_ACCURACY_KEY, new PositionalAccuracy[] {
                       name == DATUM_SHIFT ? DATUM_SHIFT_APPLIED : DATUM_SHIFT_OMITTED
@@ -627,7 +625,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         final Map<String,Object> properties = IdentifiedObjects.getProperties(operation, null);
         properties.putAll(getTemporaryName(targetCRS, sourceCRS));
         if (operation instanceof ConcatenatedOperation) {
-            final LinkedList<CoordinateOperation> inverted = new LinkedList<CoordinateOperation>();
+            final LinkedList<CoordinateOperation> inverted = new LinkedList<>();
             for (final CoordinateOperation op : ((ConcatenatedOperation) operation).getOperations()) {
                 inverted.addFirst(inverse(op));
             }
@@ -730,7 +728,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * @param source The CRS to base name on, or {@code null} if none.
      */
     static Map<String,Object> getTemporaryName(final IdentifiedObject source) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY, new TemporaryIdentifier(source.getName()));
         properties.put(IdentifiedObject.REMARKS_KEY, formatInternational(
                 Vocabulary.Keys.DERIVED_FROM_$1, getClassName(source)));

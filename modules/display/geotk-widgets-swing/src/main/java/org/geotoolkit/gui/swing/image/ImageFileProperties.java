@@ -123,7 +123,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     /**
      * The warnings.
      */
-    private final DefaultListModel warnings;
+    private final DefaultListModel<Object> warnings;
 
     /**
      * The index of the warning tab. Used in order to change the enabled
@@ -169,9 +169,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         super(metadata);
         this.metadata = metadata;
         warningsTab = tabs.getTabCount();
-        warnings = new DefaultListModel();
+        warnings = new DefaultListModel<>();
         final Vocabulary resources = Vocabulary.getResources(getLocale());
-        final JComponent list = new JScrollPane(new JList(warnings));
+        final JComponent list = new JScrollPane(new JList<>(warnings));
         list.setOpaque(false);
         tabs.addTab(resources.getString(Vocabulary.Keys.WARNING), list);
         tabs.setEnabledAt(warningsTab, false);
@@ -256,7 +256,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * @since 3.07
      */
     public void setImage(final ImageReader reader, final int imageIndex) throws IOException {
-        final AtomicReference<Worker> ref = new AtomicReference<Worker>();
+        final AtomicReference<Worker> ref = new AtomicReference<>();
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
                 ref.set(worker);
@@ -273,7 +273,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         final List<String> imageNames = (reader instanceof NamedImageStore) ?
                 ((NamedImageStore) reader).getImageNames() : null;
         final IIOMetadata streamMetadata = reader.getStreamMetadata();
-        final List<IIOMetadata> imageMetadata = new ArrayList<IIOMetadata>();
+        final List<IIOMetadata> imageMetadata = new ArrayList<>();
         for (int i=0; i<imageIndex; i++) {
             if (isCancelled(worker)) return;
             imageMetadata.add(reader.getImageMetadata(i));
@@ -657,7 +657,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         protected void done() {
             if (worker == this) try {
                 get();
-            } catch (final Exception e) {
+            } catch (final InterruptedException | ExecutionException e) {
                 Throwable cause = e;
                 if (e instanceof ExecutionException) {
                     cause = e.getCause();

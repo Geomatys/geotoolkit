@@ -297,7 +297,7 @@ public class AsciiGridWriter extends TextImageWriter {
         /*
          * Write the header.
          */
-        final Map<String,String> header = new LinkedHashMap<String,String>(8);
+        final Map<String,String> header = new LinkedHashMap<>(8);
         header.put("NCOLS", String.valueOf(size.width ));
         header.put("NROWS", String.valueOf(size.height));
         final SpatialMetadata metadata = convertImageMetadata(image.getMetadata(), null, parameters);

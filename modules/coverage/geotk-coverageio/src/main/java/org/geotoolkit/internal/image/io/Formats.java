@@ -126,7 +126,7 @@ public final class Formats extends Static {
          * loop below. For every loop execution after the first one, we will use that
          * list instead of the IIORegistry iterator.
          */
-        final List<ImageReaderSpi> providers = new LinkedList<ImageReaderSpi>();
+        final List<ImageReaderSpi> providers = new LinkedList<>();
         boolean useProvidersList = false;
         /*
          * The state of this method (whatever we have found a reader, or failed).

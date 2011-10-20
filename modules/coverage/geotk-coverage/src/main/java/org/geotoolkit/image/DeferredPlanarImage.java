@@ -212,7 +212,7 @@ public final class DeferredPlanarImage extends PlanarImage
      *       ("Relax constraint on placement of this()/super() call in constructors").
      */
     private static Vector<RenderedImage> toVector(final RenderedImage image) {
-        final Vector<RenderedImage> vector = new Vector<RenderedImage>(1);
+        final Vector<RenderedImage> vector = new Vector<>(1);
         vector.add(image);
         return vector;
     }
@@ -344,7 +344,7 @@ public final class DeferredPlanarImage extends PlanarImage
         }
         final Entry entry = new Entry(sampleModel, fill, box);
         if (buffers == null) {
-            buffers = new WeakValueHashMap<Entry,DataBuffer>();
+            buffers = new WeakValueHashMap<>();
         }
         DataBuffer buffer = buffers.get(entry);
         if (buffer != null) {

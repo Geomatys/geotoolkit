@@ -80,7 +80,7 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
      * The available choices of colors. Shall contain instances of {@link ColorPalette}
      * or {@link Color}. Other types (especially {@link String}) will be ignored.
      */
-    private final ComboBoxModel choices;
+    private final ComboBoxModel<?> choices;
 
     /**
      * Creates a new list for the given factory.
@@ -89,7 +89,7 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
      * @param factory The factory to use for fetching color palettes from their name.
      * @param locale  The locale to use for formatting error messages and graduation labels.
      */
-    public PaletteCellRenderer(final ComboBoxModel choices, final PaletteFactory factory, final Locale locale) {
+    public PaletteCellRenderer(final ComboBoxModel<?> choices, final PaletteFactory factory, final Locale locale) {
         this.choices = choices;
         this.factory = factory;
         painter = new ColorRamp();
@@ -146,7 +146,7 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
      * @return Always {@code this}.
      */
     @Override
-    public Component getListCellRendererComponent(final JList list, final Object value,
+    public Component getListCellRendererComponent(final JList<?> list, final Object value,
             final int index, final boolean isSelected, final boolean cellHasFocus)
     {
         configure(list, value, isSelected);
@@ -180,7 +180,7 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
                 background = component.getBackground();
                 foreground = component.getForeground();
             } else if (component instanceof JList) {
-                final JList list = (JList) component;
+                final JList<?> list = (JList<?>) component;
                 background = list.getSelectionBackground();
                 foreground = list.getSelectionForeground();
             } else {

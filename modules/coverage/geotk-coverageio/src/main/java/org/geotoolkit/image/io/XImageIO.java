@@ -305,7 +305,7 @@ public final class XImageIO extends Static {
             // given type was a legal type, it should have succeed above.
             if (codeAllowedType(spi.getInputTypes(), input.getClass(), ImageInputStream.class) == 2) {
                 if (usingImageInputStream == null) {
-                    usingImageInputStream = new ArrayList<ImageReaderSpi>(2);
+                    usingImageInputStream = new ArrayList<>(2);
                 }
                 usingImageInputStream.add(spi);
             }
@@ -777,7 +777,7 @@ public final class XImageIO extends Static {
     public static String[] getFormatNamesByMimeType(final String mime, final boolean read, final boolean write) {
         ensureNonNull("mime", mime);
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        final FrequencySortedSet<String> formats = new FrequencySortedSet<String>(true);
+        final FrequencySortedSet<String> formats = new FrequencySortedSet<>(true);
         if (read != write) {
             /*
              * Caller asked for read support, or write support, but not both.
@@ -796,8 +796,8 @@ public final class XImageIO extends Static {
              * Caller asked for read and write support.
              * Computes the intersection of both sets.
              */
-            final List<String> readers = new ArrayList<String>();
-            final List<String> writers = new ArrayList<String>();
+            final List<String> readers = new ArrayList<>();
+            final List<String> writers = new ArrayList<>();
             getFormatNamesByMimeType(registry, mime, ImageReaderSpi.class, readers);
             getFormatNamesByMimeType(registry, mime, ImageWriterSpi.class, writers);
             // First, add all formats in order to compute their frequencies.

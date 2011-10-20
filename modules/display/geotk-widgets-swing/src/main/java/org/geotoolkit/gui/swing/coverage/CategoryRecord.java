@@ -164,7 +164,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      *        this list is already available from the {@link SampleDimensionPanel} GUI.
      */
     CategoryRecord(Category category, final Locale locale,
-            PaletteFactory paletteFactory, ComboBoxModel palettes)
+            PaletteFactory paletteFactory, ComboBoxModel<ColorPalette> palettes)
     {
         this.category = category = category.geophysics(false);
         final InternationalString name = category.getName();
@@ -301,7 +301,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             if (min != null && min <= 0) min = 1;
             if (max != null && max <= 0) max = min;
         }
-        return new NumberRange<Integer>(Integer.class, min, max);
+        return new NumberRange<>(Integer.class, min, max);
     }
 
     /**
@@ -326,7 +326,7 @@ public class CategoryRecord implements Cloneable, Serializable {
             if (min != null && min <= 0) min = Double.MIN_VALUE;
             if (max != null && max <= 0) max = min;
         }
-        return new NumberRange<Double>(Double.class, min, max);
+        return new NumberRange<>(Double.class, min, max);
     }
 
     /**

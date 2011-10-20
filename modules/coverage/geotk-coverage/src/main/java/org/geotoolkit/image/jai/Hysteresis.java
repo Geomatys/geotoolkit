@@ -37,9 +37,9 @@ import javax.media.jai.iterator.RandomIterFactory;
  * it is replaced by the pad value. If a pixel value is between <var>low</var> and <var>high</var>,
  * then this pixel is called "indeterminate". Its value is keep unchanged only if this pixel
  * is either a neighbor of a pixel having a value equals or higher than <var>high</var>, or a
- * neighbor of an other indeterminated pixel which has been determined close to a pixel having
+ * neighbor of an other indeterminate pixel which has been determined close to a pixel having
  * a value equals or higher than <var>high</var> in a previous iteration. This search is performed
- * in an iterative maner until there is no more indeterminated pixels having satisfying neighbor.
+ * in an iterative manner until there is no more indeterminate pixels having satisfying neighbor.
  *
  * @author Lionel Flahaut (IRD)
  * @author Martin Desruisseaux (IRD)

@@ -100,7 +100,7 @@ public class IIOMetadataPanel extends JComponent {
      * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} and
      * {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}.
      */
-    private final DefaultComboBoxModel formatChoices;
+    private final DefaultComboBoxModel<Object> formatChoices;
 
     /**
      * The properties of the currently selected metadata node.
@@ -132,8 +132,8 @@ public class IIOMetadataPanel extends JComponent {
         /*
          * Add the control button on top of the metadata table.
          */
-        formatChoices = new DefaultComboBoxModel();
-        final JComboBox formats = new JComboBox(formatChoices);
+        formatChoices = new DefaultComboBoxModel<>();
+        final JComboBox<Object> formats = new JComboBox<>(formatChoices);
         ComboBoxRenderer.install(formats);
         formats.setName("Formats");
         if (true) {
@@ -235,7 +235,7 @@ public class IIOMetadataPanel extends JComponent {
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
-            final JComboBox choices = (JComboBox) event.getSource();
+            final JComboBox<?> choices = (JComboBox<?>) event.getSource();
             final IIOMetadataChoice oldFormat = selectedFormat;
             final Object selected = choices.getSelectedItem();
             if (!(selected instanceof IIOMetadataChoice)) {
@@ -384,9 +384,8 @@ public class IIOMetadataPanel extends JComponent {
      * @param image  The image metadata for each image in a file.
      */
     public void addMetadata(final IIOMetadata stream, final IIOMetadata... image) {
-        final Map<IIOMetadata,Integer> imageIndex = new IdentityHashMap<IIOMetadata,Integer>();
-        final Map<String, List<IIOMetadata>> metadataForNames =
-                new LinkedHashMap<String, List<IIOMetadata>>();
+        final Map<IIOMetadata,Integer> imageIndex = new IdentityHashMap<>();
+        final Map<String, List<IIOMetadata>> metadataForNames = new LinkedHashMap<>();
         addFormatNames(stream, metadataForNames);
         imageIndex.put(stream, -1);
         if (image != null) {
@@ -448,7 +447,7 @@ public class IIOMetadataPanel extends JComponent {
             for (final String formatName : formatNames) {
                 List<IIOMetadata> list = metadataForNames.get(formatName);
                 if (list == null) {
-                    list = new ArrayList<IIOMetadata>();
+                    list = new ArrayList<>();
                     metadataForNames.put(formatName, list);
                 }
                 list.add(metadata);

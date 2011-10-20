@@ -195,7 +195,7 @@ final strictfp class DesktopPane extends JDesktopPane {
                             try {
                                 UIManager.setLookAndFeel(cn);
                                 SwingUtilities.updateComponentTreeUI(DesktopPane.this);
-                            } catch (Exception e) {
+                            } catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
                                 warning(e);
                             }
                         }
@@ -367,7 +367,7 @@ final strictfp class DesktopPane extends JDesktopPane {
                     '[' + size.width + " \u00D7 " + size.height + ']';
         }
         final JInternalFrame frame = new JInternalFrame("Windows", true, true, true, true);
-        frame.add(new JScrollPane(new JList(titles)));
+        frame.add(new JScrollPane(new JList<>(titles)));
         frame.pack();
         frame.setVisible(true);
         add(frame);

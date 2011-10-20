@@ -368,7 +368,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
      */
     @Override
     public ParameterValueGroup getParameterValues() {
-        final ParameterValue<Integer> dim = new Parameter<Integer>(Molodensky.DIM);
+        final ParameterValue<Integer> dim = new Parameter<>(Molodensky.DIM);
         dim.setValue(getSourceDimensions());
         return new ParameterGroup(getParameterDescriptors(),
                    dim,

@@ -52,7 +52,7 @@ public class CoverageFileProperties extends ImageFileProperties {
      * {@code null} if none. Note that this field is typically read and written from
      * a background thread.
      */
-    private final AtomicReference<Adapter> imageReader = new AtomicReference<Adapter>();
+    private final AtomicReference<Adapter> imageReader = new AtomicReference<>();
 
     /**
      * The adapter used for wrapping {@link GridCoverageReader} as an {@link ImageReader}.

@@ -55,7 +55,7 @@ public final strictfp class CacheTest extends TestBase {
         final Integer  key2 = 2;
         final String value1 = "value 1";
 
-        final Cache<Integer,String> cache = new Cache<Integer,String>();
+        final Cache<Integer,String> cache = new Cache<>();
         assertNull(cache.peek(key1));
         assertTrue(cache.isEmpty());
 
@@ -66,7 +66,7 @@ public final strictfp class CacheTest extends TestBase {
         assertNull(cache.peek(key2));
         assertEquals(1, cache.size());
         assertEquals(Collections.singleton(key1), cache.keySet());
-        assertEquals(Collections.singleton(new SimpleEntry<Integer,String>(key1, value1)), cache.entrySet());
+        assertEquals(Collections.singleton(new SimpleEntry<>(key1, value1)), cache.entrySet());
     }
 
     /**
@@ -80,7 +80,7 @@ public final strictfp class CacheTest extends TestBase {
         final String value1 = "value 1";
         final Integer  key2 = 2;
         final String value2 = "value 2";
-        final Cache<Integer,String> cache = new Cache<Integer,String>();
+        final Cache<Integer,String> cache = new Cache<>();
         final AtomicInteger failures = new AtomicInteger();
         final class ReaderThread extends Thread {
             volatile String value;
@@ -138,9 +138,9 @@ public final strictfp class CacheTest extends TestBase {
          * Checks the content of the collection.
          */
         assertEquals(2, cache.size());
-        final Set<Map.Entry<Integer,String>> entries = new HashSet<Map.Entry<Integer,String>>(4);
-        assertTrue(entries.add(new SimpleEntry<Integer,String>(key1, value1)));
-        assertTrue(entries.add(new SimpleEntry<Integer,String>(key2, value2)));
+        final Set<Map.Entry<Integer,String>> entries = new HashSet<>(4);
+        assertTrue(entries.add(new SimpleEntry<>(key1, value1)));
+        assertTrue(entries.add(new SimpleEntry<>(key2, value2)));
         assertEquals(entries, cache.entrySet());
         assertEquals(value1, cache.remove(key1)); assertFalse(cache.isEmpty());
         assertEquals(value2, cache.remove(key2)); assertTrue (cache.isEmpty());
@@ -155,7 +155,7 @@ public final strictfp class CacheTest extends TestBase {
     @Test
     public void stress() throws InterruptedException {
         final int count = 10000;
-        final Cache<Integer,Integer> cache = new Cache<Integer,Integer>();
+        final Cache<Integer,Integer> cache = new Cache<>();
         final AtomicInteger failures = new AtomicInteger();
         final class WriterThread extends Thread {
             int hit;

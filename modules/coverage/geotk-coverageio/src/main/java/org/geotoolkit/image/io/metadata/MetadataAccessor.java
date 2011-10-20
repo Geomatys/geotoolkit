@@ -495,7 +495,7 @@ public class MetadataAccessor implements WarningProducer {
              * If the caller asked for a node associated to a user object of the
              * given type, get the path to that node. We expect a single path.
              */
-            final List<String> paths = new ArrayList<String>(4);
+            final List<String> paths = new ArrayList<>(4);
             listPaths(format, type, root.getNodeName(), new StringBuilder(), paths);
             final int count = paths.size();
             if (count == 1) {
@@ -541,7 +541,7 @@ public class MetadataAccessor implements WarningProducer {
          * Fetch the parent node and ensure that we got a singleton. If there is more nodes than
          * expected, log a warning and pickup the first one. If there is no node, create a new one.
          */
-        final List<Node> childs = new ArrayList<Node>(4);
+        final List<Node> childs = new ArrayList<>(4);
         if (parentPath != null) {
             listChilds(root, parentPath, 0, childs, true);
             final int count = childs.size();
@@ -687,7 +687,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public static List<String> listPaths(final IIOMetadataFormat format, final Class<?> objectClass) {
         ensureNonNull("type",   objectClass);
         ensureNonNull("format", format);
-        final List<String> paths = new ArrayList<String>(4);
+        final List<String> paths = new ArrayList<>(4);
         listPaths(format, objectClass, format.getRootName(), new StringBuilder(), paths);
         return paths;
     }
@@ -1432,9 +1432,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         }
         final Collection<Object> values;
         if (unique) {
-            values = new LinkedHashSet<Object>();
+            values = new LinkedHashSet<>();
         } else {
-            values = new ArrayList<Object>();
+            values = new ArrayList<>();
         }
         final Class<?> wrapperType = Numbers.primitiveToWrapper(type);
         final StringTokenizer tokens = new StringTokenizer(sequence);

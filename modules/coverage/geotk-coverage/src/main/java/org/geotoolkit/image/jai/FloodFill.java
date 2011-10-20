@@ -90,7 +90,7 @@ public abstract class FloodFill extends OpImage {
     public FloodFill(final RenderedImage source, final ImageLayout layout,
             final Map<?,?> configuration, double[][] oldValues, double[] newValues)
     {
-        super(new Vector<RenderedImage>(Collections.singleton(source)), layout, configuration, false);
+        super(new Vector<>(Collections.singleton(source)), layout, configuration, false);
         final int numBands = source.getSampleModel().getNumBands();
         this.newValues = newValues = newValues.clone();
         this.oldValues = oldValues = oldValues.clone();
@@ -150,7 +150,7 @@ public abstract class FloodFill extends OpImage {
          * will depend on the transfer type.
          */
         final int transferType = image.getSampleModel().getTransferType();
-        final Set<SampleValues> oldSamples = new HashSet<SampleValues>(XCollections.hashMapCapacity(oldValues.length));
+        final Set<SampleValues> oldSamples = new HashSet<>(XCollections.hashMapCapacity(oldValues.length));
         for (final double[] samples : oldValues) {
             oldSamples.add(SampleValues.getInstance(transferType, samples));
         }

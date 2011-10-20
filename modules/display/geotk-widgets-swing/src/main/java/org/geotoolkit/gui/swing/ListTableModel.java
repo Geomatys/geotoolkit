@@ -83,7 +83,7 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
      */
     protected ListTableModel(final Class<E> type) {
         this.type = type;
-        elements = new ArrayList<E>();
+        elements = new ArrayList<>();
     }
 
     /**
@@ -321,7 +321,7 @@ public abstract class ListTableModel<E> extends AbstractTableModel {
     public int removeDuplicates() throws UnsupportedOperationException {
         int count = 0;
         final int[] indices = new int[elements.size()];
-        final Map<E,Integer> previous = new HashMap<E,Integer>();
+        final Map<E,Integer> previous = new HashMap<>();
         final ListIterator<E> it = elements.listIterator();
         while (it.hasNext()) {
             E element = it.next();

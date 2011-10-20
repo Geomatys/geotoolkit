@@ -319,7 +319,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
                         final DefaultResolution resolution = new DefaultResolution();
                         resolution.setDistance(m.doubleValue()); // TODO: take unit in account.
                         if (resolutions == null) {
-                            resolutions = new LinkedHashSet<Resolution>();
+                            resolutions = new LinkedHashSet<>();
                         }
                         resolutions.add(resolution);
                     }

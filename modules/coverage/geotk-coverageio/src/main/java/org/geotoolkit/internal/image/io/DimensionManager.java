@@ -152,7 +152,7 @@ public final class DimensionManager extends DimensionSet {
                 throw new IllegalArgumentException(errors().getString(Errors.Keys.EMPTY_ARRAY));
             }
             if (bandNames == null) {
-                bandNames = new HashMap<Integer,List<String>>();
+                bandNames = new HashMap<>();
             }
             names = names.clone();
             ensureNonNull(names);

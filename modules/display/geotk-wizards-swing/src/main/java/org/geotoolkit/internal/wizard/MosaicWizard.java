@@ -121,95 +121,105 @@ public final class MosaicWizard extends AbstractWizard {
     @SuppressWarnings("rawtypes")
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
         JComponent component;
-        if (id.equals(SELECT)) {
+        switch (id) {
             // -------------------------------------------------------------------
             //     Panel 1:  Select source tiles
             // -------------------------------------------------------------------
-            final class Chooser extends MosaicChooser implements ChangeListener {
-                Chooser() {
-                    addChangeListener(this);
-                    stateChanged(null); // Force the call to controller.setProblem("..."),
-                }
-
-                private static final long serialVersionUID = -6696539336904269650L;
-                @Override public void stateChanged(final ChangeEvent event) {
-                    final TileManager[] tiles = getSelectedTiles();
-                    final String problem;
-                    switch (tiles.length) {
-                        case 0:  problem = Wizards.format(Wizards.Keys.NO_SELECTED_TILES); break;
-                        case 1:  problem = null; break; // We can process
-                        default: problem = Wizards.format(Wizards.Keys.INVALID_MOSAIC_LAYOUT); break;
+            case SELECT: {
+                final class Chooser extends MosaicChooser implements ChangeListener {
+                    Chooser() {
+                        addChangeListener(this);
+                        stateChanged(null); // Force the call to controller.setProblem("..."),
                     }
-                    controller.setProblem(problem);
+
+                    private static final long serialVersionUID = -6696539336904269650L;
+                    @Override public void stateChanged(final ChangeEvent event) {
+                        final TileManager[] tiles = getSelectedTiles();
+                        final String problem;
+                        switch (tiles.length) {
+                            case 0:  problem = Wizards.format(Wizards.Keys.NO_SELECTED_TILES); break;
+                            case 1:  problem = null; break; // We can process
+                            default: problem = Wizards.format(Wizards.Keys.INVALID_MOSAIC_LAYOUT); break;
+                        }
+                        controller.setProblem(problem);
+                    }
                 }
+                component = new Chooser();
+                addSetting(settings, SELECT, component);
+                break;
             }
-            component = new Chooser();
-            addSetting(settings, SELECT, component);
-        } else if (id.equals(LAYOUT)) {
             // -------------------------------------------------------------------
             //     Panel 2:  Define pyramid tiling
             // -------------------------------------------------------------------
-            @SuppressWarnings("serial")
-            final class Editor extends MosaicBuilderEditor {
-                Editor() {
-                }
+            case LAYOUT: {
+                @SuppressWarnings("serial")
+                final class Editor extends MosaicBuilderEditor {
+                    Editor() {
+                    }
 
-                Editor(final TileManager... input) throws IOException {
-                    super(input);
-                }
+                    Editor(final TileManager... input) throws IOException {
+                        super(input);
+                    }
 
-                /** Invoked when the values in the form changed. */
-                @Override protected void plotEfficiency(final long delay) {
-                    controller.setProblem(Wizards.format(Wizards.Keys.CALCULATION_PROGESSING));
-                    super.plotEfficiency(delay);
-                }
+                    /** Invoked when the values in the form changed. */
+                    @Override protected void plotEfficiency(final long delay) {
+                        controller.setProblem(Wizards.format(Wizards.Keys.CALCULATION_PROGESSING));
+                        super.plotEfficiency(delay);
+                    }
 
-                /** Invoked on success. */
-                @Override public void done(final TileManager output) {
-                    super.done(output);
-                    controller.setProblem(null);
-                }
+                    /** Invoked on success. */
+                    @Override public void done(final TileManager output) {
+                        super.done(output);
+                        controller.setProblem(null);
+                    }
 
-                /** Invoked on failure - can't move to the next step. */
-                @Override public void failed(final Throwable exception) {
-                    super.failed(exception);
-                    controller.setProblem(exception.getLocalizedMessage());
+                    /** Invoked on failure - can't move to the next step. */
+                    @Override public void failed(final Throwable exception) {
+                        super.failed(exception);
+                        controller.setProblem(exception.getLocalizedMessage());
+                    }
                 }
+                final MosaicChooser chooser = (MosaicChooser) settings.get(SELECT);
+                try {
+                    component = new Editor(chooser.getSelectedTiles());
+                } catch (IOException exception) {
+                    component = new Editor();
+                    controller.setProblem(exception.toString());
+                }
+                addSetting(settings, LAYOUT, component);
+                break;
             }
-            final MosaicChooser chooser = (MosaicChooser) settings.get(SELECT);
-            try {
-                component = new Editor(chooser.getSelectedTiles());
-            } catch (IOException exception) {
-                component = new Editor();
-                controller.setProblem(exception.toString());
-            }
-            addSetting(settings, LAYOUT, component);
-        } else if (id.equals(COLORS)) {
             // -------------------------------------------------------------------
             //     Panel 3:  Remove opaque border
             // -------------------------------------------------------------------
-            component = new MultiColorChooser();
-            addSetting(settings, COLORS, component);
-        } else if (id.equals(CONFIRM)) {
+            case COLORS: {
+                component = new MultiColorChooser();
+                addSetting(settings, COLORS, component);
+                break;
+            }
             // -------------------------------------------------------------------
             //     Panel 4:  Confirm
             // -------------------------------------------------------------------
-            final LoggingPanel logging = new LoggingPanel("org.geotoolkit.image.io.mosaic");
-            logging.setColumnVisible(LoggingPanel.Column.LOGGER, false);
-            logging.setColumnVisible(LoggingPanel.Column.CLASS,  false);
-            logging.setColumnVisible(LoggingPanel.Column.METHOD, false);
-            logging.setColumnVisible(LoggingPanel.Column.LEVEL,  false);
-            logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
-            final JXLabel label = new JXLabel(Wizards.format(Wizards.Keys.ENOUGH_INFORMATION));
-            label.setLineWrap(true);
-            final JPanel panel = new JPanel(new BorderLayout());
-            panel.add(logging, BorderLayout.CENTER);
-            panel.add(label, BorderLayout.SOUTH);
-            component = panel;
-            addSetting(settings, CONFIRM, logging);
-            addSetting(settings, CONFIRM_LABEL, label);
-        } else {
-            throw new IllegalArgumentException(id); // Should never happen.
+            case CONFIRM: {
+                final LoggingPanel logging = new LoggingPanel("org.geotoolkit.image.io.mosaic");
+                logging.setColumnVisible(LoggingPanel.Column.LOGGER, false);
+                logging.setColumnVisible(LoggingPanel.Column.CLASS,  false);
+                logging.setColumnVisible(LoggingPanel.Column.METHOD, false);
+                logging.setColumnVisible(LoggingPanel.Column.LEVEL,  false);
+                logging.getHandler().setLevel(Level.FINE); // The level used by MosaicImageWriter.
+                final JXLabel label = new JXLabel(Wizards.format(Wizards.Keys.ENOUGH_INFORMATION));
+                label.setLineWrap(true);
+                final JPanel panel = new JPanel(new BorderLayout());
+                panel.add(logging, BorderLayout.CENTER);
+                panel.add(label, BorderLayout.SOUTH);
+                component = panel;
+                addSetting(settings, CONFIRM, logging);
+                addSetting(settings, CONFIRM_LABEL, label);
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException(id); // Should never happen.
+            }
         }
         component.setPreferredSize(SIZE);
         component.setBorder(BorderFactory.createEmptyBorder(6, 15, 9, 15));
@@ -229,19 +239,24 @@ public final class MosaicWizard extends AbstractWizard {
     protected void recycleExistingPanel(final String id, final WizardController controller,
             final Map settings, final JComponent panel)
     {
-        if (id.equals(SELECT)) {
-            inputChanged = true;
-        } else if (id.equals(LAYOUT)) {
-            if (inputChanged) {
-                inputChanged = false;
-                final MosaicChooser chooser = (MosaicChooser) settings.get(SELECT);
-                final MosaicBuilderEditor editor = (MosaicBuilderEditor) panel;
-                try {
-                    editor.initializeForTiles(chooser.getSelectedTiles());
-                } catch (IOException exception) {
-                    controller.setProblem(exception.toString());
-                    return;
+        switch (id) {
+            case SELECT: {
+                inputChanged = true;
+                break;
+            }
+            case LAYOUT: {
+                if (inputChanged) {
+                    inputChanged = false;
+                    final MosaicChooser chooser = (MosaicChooser) settings.get(SELECT);
+                    final MosaicBuilderEditor editor = (MosaicBuilderEditor) panel;
+                    try {
+                        editor.initializeForTiles(chooser.getSelectedTiles());
+                    } catch (IOException exception) {
+                        controller.setProblem(exception.toString());
+                        return;
+                    }
                 }
+                break;
             }
         }
         controller.setProblem(null);

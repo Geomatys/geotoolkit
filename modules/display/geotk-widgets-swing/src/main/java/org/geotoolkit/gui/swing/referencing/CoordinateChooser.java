@@ -149,7 +149,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * Liste de choix dans laquelle l'utilisateur
      * choisira le fuseau horaire de ses dates.
      */
-    private final JComboBox timezone;
+    private final JComboBox<String> timezone;
 
     /**
      * Dates de début et de fin de la plage de temps demandée par l'utilisateur.
@@ -288,7 +288,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
 
         final String[] timezones = TimeZone.getAvailableIDs();
         Arrays.sort(timezones);
-        timezone = new JComboBox(timezones);
+        timezone = new JComboBox<>(timezones);
         timezone.setSelectedItem(dateFormat.getTimeZone().getID());
 
         final JLabel labelSize1 = new JLabel(resources.getLabel(Vocabulary.Keys.SIZE_IN_MINUTES));

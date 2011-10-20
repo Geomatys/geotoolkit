@@ -167,7 +167,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
     public DefaultMathTransformFactory() {
         registry  = new FactoryRegistry(MathTransformProvider.class);
         pool      = WeakHashSet.newInstance(MathTransform.class);
-        variables = new ThreadLocal<Variables>();
+        variables = new ThreadLocal<>();
     }
 
     /**
@@ -453,11 +453,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         try {
             swap1 = AbstractCS.swapAndScaleAxis(sourceCS, AbstractCS.standard(sourceCS));
             swap3 = AbstractCS.swapAndScaleAxis(AbstractCS.standard(derivedCS), derivedCS);
-        } catch (IllegalArgumentException cause) {
-            // User-specified axis don't match.
-            throw new FactoryException(cause);
-        } catch (ConversionException cause) {
-            // A Unit conversion is non-linear.
+        } catch (IllegalArgumentException | ConversionException cause) {
             throw new FactoryException(cause);
         }
         /*
@@ -531,14 +527,12 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             try {
                 parameters = provider.ensureValidValues(parameters);
                 transform  = provider.createMathTransform(parameters);
-            } catch (IllegalArgumentException exception) {
+            } catch (IllegalArgumentException | IllegalStateException exception) {
                 /*
                  * Catch only exceptions which may be the result of improper parameter
                  * usage (e.g. a value out of range). Do not catch exception caused by
                  * programming errors (e.g. null pointer exception).
                  */
-                throw new FactoryException(exception);
-            } catch (IllegalStateException exception) {
                 throw new FactoryException(exception);
             }
             if (transform instanceof MathTransformDecorator) {

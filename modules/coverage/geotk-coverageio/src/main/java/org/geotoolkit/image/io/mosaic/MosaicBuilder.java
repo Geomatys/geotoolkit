@@ -716,7 +716,7 @@ public class MosaicBuilder implements LogProducer {
             tiles  = null;
             levels = new OverviewLevel[subsamplings.length];
         } else {
-            tiles  = new ArrayList<Tile>();
+            tiles  = new ArrayList<>();
             levels = null;
         }
         final Rectangle absoluteBounds = new Rectangle();

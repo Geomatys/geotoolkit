@@ -238,7 +238,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     break;
                 }
                 default: {
-                    providers = new HashSet<ImageReaderSpi>(managers[0].getImageReaderSpis());
+                    providers = new HashSet<>(managers[0].getImageReaderSpis());
                     for (int i=1; i<numImages; i++) {
                         providers.addAll(managers[i].getImageReaderSpis());
                     }
@@ -337,7 +337,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     @Override
     public Locale[] getAvailableLocales() {
         if (availableLocales == null) {
-            final Set<Locale> locales = new LinkedHashSet<Locale>();
+            final Set<Locale> locales = new LinkedHashSet<>();
             for (final ImageReader reader : readers.getTileReaders()) {
                 final Locale[] additional = reader.getAvailableLocales();
                 if (additional != null) {
@@ -698,7 +698,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      */
     private ImageTypeSpecifier getRawImageType(final Collection<Tile> tiles) throws IOException {
         // Gets the list of every raw image types, with the most frequent type first.
-        final Set<ImageTypeSpecifier> rawTypes = new FrequencySortedSet<ImageTypeSpecifier>(true);
+        final Set<ImageTypeSpecifier> rawTypes = new FrequencySortedSet<>(true);
         final Set<ImageTypeSpecifier> allowed = getImageTypes(tiles, rawTypes);
         rawTypes.retainAll(allowed);
         boolean transparent = true;
@@ -741,7 +741,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             throws IOException
     {
         int pass = 0;
-        final Map<ImageTypeSpecifier,Integer> types = new LinkedHashMap<ImageTypeSpecifier,Integer>();
+        final Map<ImageTypeSpecifier,Integer> types = new LinkedHashMap<>();
         for (final Tile tile : tiles) {
             final ImageReader reader = getTileReader(tile);
             final int imageIndex = tile.getImageIndex();
@@ -836,7 +836,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     private static Iterator<ImageTypeSpecifier> containsAll(
             final Collection<ImageTypeSpecifier> expected, final Iterator<ImageTypeSpecifier> types)
     {
-        final List<ImageTypeSpecifier> asList = new ArrayList<ImageTypeSpecifier>(expected.size());
+        final List<ImageTypeSpecifier> asList = new ArrayList<>(expected.size());
         while (types.hasNext()) {
             final ImageTypeSpecifier type = types.next();
             if (type != null) { // See the comment above about broken ImageReader implementations.

@@ -118,7 +118,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         if (addToElement == null) {
             addToElement = getRootName();
         }
-        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(48);
+        final Map<Class<?>,Class<?>> substitution = new HashMap<>(48);
         /*
          * Metadata excluded because they are redundant with standard API.
          */
@@ -222,7 +222,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         if (addToElement == null) {
             addToElement = getRootName();
         }
-        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(20);
+        final Map<Class<?>,Class<?>> substitution = new HashMap<>(20);
         substitution.put(Citation.class,       String.class);   // MD_ImageDescription.xxxCode
         substitution.put(RecordType.class,     null);           // MD_CoverageDescription.attributeDescription
         substitution.put(RangeDimension.class, Band.class);     // MD_CoverageDescription.dimension
@@ -281,7 +281,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         if (addToElement == null) {
             addToElement = getRootName();
         }
-        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(20);
+        final Map<Class<?>,Class<?>> substitution = new HashMap<>(20);
         /*
          * Metadata excluded in order to keep the CRS node relatively simple.
          */
@@ -298,7 +298,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
          */
         substitution.put(Datum.class, GeodeticDatum.class);
         MetadataStandard standard = MetadataStandard.ISO_19111;
-        final Set<Class<?>> incomplete = new HashSet<Class<?>>(4);
+        final Set<Class<?>> incomplete = new HashSet<>(4);
         incomplete.add(CoordinateReferenceSystem.class);
         incomplete.add(CoordinateSystem.class);
         incomplete.add(GeodeticDatum.class);

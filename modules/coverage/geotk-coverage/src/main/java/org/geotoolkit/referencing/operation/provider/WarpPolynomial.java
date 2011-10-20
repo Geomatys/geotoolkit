@@ -70,14 +70,14 @@ public class WarpPolynomial extends MathTransformProvider {
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getXCoeffs xCoeffs}" parameter value.
      */
-    public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<float[]>(
+    public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<>(
             "xCoeffs", float[].class, null, null);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getYCoeffs yCoeffs}" parameter value.
      */
-    public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<float[]>(
+    public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<>(
             "yCoeffs", float[].class, null, null);
 
     /**
@@ -106,10 +106,10 @@ public class WarpPolynomial extends MathTransformProvider {
     static {
         final Float ONE = 1f;
         final Class<Float> type = Float.class;
-        PRE_SCALE_X  = new DefaultParameterDescriptor<Float>( "preScaleX", null, type, ONE, false);
-        PRE_SCALE_Y  = new DefaultParameterDescriptor<Float>( "preScaleY", null, type, ONE, false);
-        POST_SCALE_X = new DefaultParameterDescriptor<Float>("postScaleX", null, type, ONE, false);
-        POST_SCALE_Y = new DefaultParameterDescriptor<Float>("postScaleY", null, type, ONE, false);
+        PRE_SCALE_X  = new DefaultParameterDescriptor<>( "preScaleX", null, type, ONE, false);
+        PRE_SCALE_Y  = new DefaultParameterDescriptor<>( "preScaleY", null, type, ONE, false);
+        POST_SCALE_X = new DefaultParameterDescriptor<>("postScaleX", null, type, ONE, false);
+        POST_SCALE_Y = new DefaultParameterDescriptor<>("postScaleY", null, type, ONE, false);
     }
 
     /**

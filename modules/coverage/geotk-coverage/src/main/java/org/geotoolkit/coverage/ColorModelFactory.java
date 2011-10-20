@@ -59,13 +59,12 @@ final class ColorModelFactory extends Static {
      *       than necessary. We want to share existing instances without preventing the
      *       garbage collector to collect them.</li>
      *   <li>{@link #getColorModel()} is reasonably fast if invoked only occasionally, so it
-     *       is not worth consuming 256 kb for saving the few milliseconds requirying for
+     *       is not worth consuming 256 kb for saving the few milliseconds requiring for
      *       building a new color model. Client code should retains their own reference to a
      *       {@link ColorModel} if they plan to reuse it often in a short period of time.</li>
      * </ul>
      */
-    private static final Map<ColorModelFactory,ColorModel> colors =
-            new WeakValueHashMap<ColorModelFactory,ColorModel>();
+    private static final Map<ColorModelFactory,ColorModel> colors = new WeakValueHashMap<>();
 
     /**
      * The list of categories for the construction of a single instance of a {@link ColorModel}.

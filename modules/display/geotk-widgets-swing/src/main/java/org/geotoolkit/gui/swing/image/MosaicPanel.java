@@ -122,7 +122,7 @@ final class MosaicPanel extends ZoomPane {
         } else {
             final Collection<Tile> asList = Arrays.asList(tiles);
             if (selected == null) {
-                selected = new HashSet<Tile>(asList);
+                selected = new HashSet<>(asList);
             } else {
                 selected.clear();
                 selected.addAll(asList);

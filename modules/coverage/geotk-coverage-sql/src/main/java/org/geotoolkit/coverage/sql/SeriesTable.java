@@ -182,7 +182,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      */
     public Map<Integer,SeriesEntry> getEntriesMap() throws SQLException {
         final Set<SeriesEntry> entries = getEntries();
-        final Map<Integer,SeriesEntry> map = new HashMap<Integer,SeriesEntry>(XCollections.hashMapCapacity(entries.size()));
+        final Map<Integer,SeriesEntry> map = new HashMap<>(XCollections.hashMapCapacity(entries.size()));
         for (final SeriesEntry entry : entries) {
             final Integer identifier = entry.getIdentifier();
             if (map.put(identifier, entry) != null) {
@@ -218,29 +218,29 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
             final int pnIndex = indexOf(query.pathname);
             final int exIndex = indexOf(query.extension);
             final int ftIndex = indexOf(query.format);
-            final ResultSet results = statement.executeQuery();
-            while (results.next()) {
-                final int nextID = results.getInt(idIndex);
-                String value = results.getString(pnIndex);
-                if (value == null || !comparePaths(value, path)) {
-                    continue;
+            try (ResultSet results = statement.executeQuery()) {
+                while (results.next()) {
+                    final int nextID = results.getInt(idIndex);
+                    String value = results.getString(pnIndex);
+                    if (value == null || !comparePaths(value, path)) {
+                        continue;
+                    }
+                    value = results.getString(exIndex);
+                    if (value == null || !value.equals(extension)) {
+                        continue;
+                    }
+                    value = results.getString(ftIndex);
+                    if (value == null || !value.equals(format)) {
+                        continue;
+                    }
+                    if (id != null && id.intValue() != nextID) {
+                        // Could happen if there is insufficient conditions in the WHERE clause.
+                        log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_$1, id));
+                        continue;
+                    }
+                    id = nextID;
                 }
-                value = results.getString(exIndex);
-                if (value == null || !value.equals(extension)) {
-                    continue;
-                }
-                value = results.getString(ftIndex);
-                if (value == null || !value.equals(format)) {
-                    continue;
-                }
-                if (id != null && id.intValue() != nextID) {
-                    // Could happen if there is insufficient conditions in the WHERE clause.
-                    log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_$1, id));
-                    continue;
-                }
-                id = nextID;
             }
-            results.close();
             release(lc, ce);
         }
         return id;
@@ -278,16 +278,13 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                     statement.setString(indexOf(query.extension), extension);
                     statement.setString(indexOf(query.format),    format);
                     success = updateSingleton(statement);
-                    /*
-                     * Get the identifier of the entry that we just generated.
-                     */
-                    final ResultSet keys = statement.getGeneratedKeys();
-                    while (keys.next()) {
-                        id = keys.getInt(query.identifier.name);
-                        if (!keys.wasNull()) break;
-                        id = null; // Should never reach this point, but I'm paranoiac.
+                    try (ResultSet keys = statement.getGeneratedKeys()) {
+                        while (keys.next()) {
+                            id = keys.getInt(query.identifier.name);
+                            if (!keys.wasNull()) break;
+                            id = null; // Should never reach this point, but I'm paranoiac.
+                        }
                     }
-                    keys.close();
                     release(lc, ce);
                 }
             } finally {

@@ -310,7 +310,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
                 final int ns = getSeries().size();
                 final Color color = DEFAULT_COLORS.get((ns/2) % DEFAULT_COLORS.size());
                 final Color trans = new Color(color.getRGB() & 0x20FFFFFF, true);
-                final Map<String,Object> properties = new HashMap<String,Object>(4);
+                final Map<String,Object> properties = new HashMap<>(4);
                 properties.put("Name", name);
                 properties.put("Paint", trans);
                 properties.put("Fill", Boolean.TRUE);

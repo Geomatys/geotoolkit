@@ -131,9 +131,9 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
             if (length != 0) {
                 final Set<String> childNames;
                 if (element.childs != null) {
-                    childNames = new LinkedHashSet<String>(Arrays.asList(element.childs));
+                    childNames = new LinkedHashSet<>(Arrays.asList(element.childs));
                 } else {
-                    childNames = new LinkedHashSet<String>(XCollections.hashMapCapacity(length));
+                    childNames = new LinkedHashSet<>(XCollections.hashMapCapacity(length));
                 }
                 for (int i=0; i<length; i++) {
                     childNames.add(addNode(childs.item(i)));
@@ -152,7 +152,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
      */
     private synchronized Element getElement(final String elementName) throws IllegalArgumentException {
         if (elements == null) {
-            elements = new LinkedHashMap<String, Element>();
+            elements = new LinkedHashMap<>();
             addNode(getDataRootNode());
         }
         final Element element = elements.get(elementName);

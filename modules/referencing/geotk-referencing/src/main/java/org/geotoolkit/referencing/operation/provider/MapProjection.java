@@ -113,7 +113,7 @@ public abstract class MapProjection extends MathTransformProvider {
      *
      * @since 3.00
      */
-    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<Boolean>(
+    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<>(
             Citations.GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
 
     /**

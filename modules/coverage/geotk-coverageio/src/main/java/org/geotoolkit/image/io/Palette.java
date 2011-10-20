@@ -195,14 +195,14 @@ public abstract class Palette {
             final ColorModel candidate = colors.get();
             if (candidate != null) {
                 final ImageTypeSpecifier its = new ImageTypeSpecifier(candidate, samples);
-                specifier = new WeakReference<ImageTypeSpecifier>(its);
+                specifier = new WeakReference<>(its);
                 return its;
             }
         }
         final ImageTypeSpecifier its = createImageTypeSpecifier();
         samples   = its.getSampleModel();
         colors    = new PaletteDisposer(this, its.getColorModel());
-        specifier = new WeakReference<ImageTypeSpecifier>(its);
+        specifier = new WeakReference<>(its);
         return its;
     }
 

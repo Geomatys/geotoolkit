@@ -120,7 +120,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
     /**
      * The target file format for writing tiles.
      */
-    private final JComboBox formatChoices;
+    private final JComboBox<ImageFormatEntry> formatChoices;
 
     /**
      * The output directory.

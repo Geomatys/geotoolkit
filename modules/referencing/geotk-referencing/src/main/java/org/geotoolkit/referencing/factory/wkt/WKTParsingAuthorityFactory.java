@@ -320,7 +320,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             return codes;
         }
         if (filteredCodes == null) {
-            filteredCodes = new HashMap<Class<? extends IdentifiedObject>, Set<String>>();
+            filteredCodes = new HashMap<>();
         }
         Set<String> filtered = filteredCodes.get(type);
         if (filtered == null) {
@@ -709,7 +709,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
                     }
                     identifiers[i + offset] = new NamedIdentifier(authority, ci);
                 }
-                properties = new HashMap<String,Object>(properties);
+                properties = new HashMap<>(properties);
                 properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers);
             }
             return super.alterProperties(properties);

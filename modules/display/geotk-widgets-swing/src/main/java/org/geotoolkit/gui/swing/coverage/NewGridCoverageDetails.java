@@ -106,7 +106,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      * The format (editable). Contains many {@link String} elements for each existing format
      * names, and a single {@link InternationalString} element for the "New format" choice.
      */
-    private final JComboBox format;
+    private final JComboBox<CharSequence> format;
 
     /**
      * The currently selected format. Used only in order to avoid querying the database
@@ -183,7 +183,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         final Vocabulary resources = Vocabulary.getResources(locale);
         newFormat     = new SimpleInternationalString("<html><i>" + resources .getString(Vocabulary.Keys.NEW_FORMAT) + "</i></html>");
         filename      = new JTextField();
-        format        = new JComboBox();
+        format        = new JComboBox<>();
         formatNote    = new JLabel();
         isGeophysics  = new JCheckBox(guires.getString(Widgets.Keys.RASTER_IS_GEOPHYSICS));
         horizontalCRS = new AuthorityCodesComboBox(crsFactory, GeographicCRS.class, ProjectedCRS.class);
@@ -423,7 +423,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                 selectedFormat    = null; // Must be before the change of format choices.
                 try {
                     final String[] alternatives = newReference.getAlternativeFormats();
-                    final DefaultComboBoxModel model = new DefaultComboBoxModel(alternatives);
+                    final DefaultComboBoxModel<CharSequence> model = new DefaultComboBoxModel<CharSequence>(alternatives);
                     if (!XArrays.contains(alternatives, newReference.format)) {
                         /*
                          * InternationalString is used as a sentinal value meaning "New Format",
@@ -504,11 +504,9 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                 }
                 reference.sampleDimensions.addAll(bands);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ParseException e) {
             // Do not weakup the sleeping thread.
             // User will need to make an other selection.
-            return;
-        } catch (ParseException e) {
             return;
         }
         /*

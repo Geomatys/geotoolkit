@@ -206,7 +206,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         final Class<?> type = range.getElementClass();
         if (Numbers.isInteger(type)) {
             if (!range.isMaxIncluded() || !range.isMinIncluded() || type != Integer.class) {
-                range = new NumberRange<Integer>(Integer.class,
+                range = new NumberRange<>(Integer.class,
                         (int) Math.floor(range.getMinimum(true)), true,
                         (int) Math.ceil (range.getMaximum(true)), true);
             }

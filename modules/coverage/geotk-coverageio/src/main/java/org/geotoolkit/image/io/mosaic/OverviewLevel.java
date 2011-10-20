@@ -68,7 +68,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     /**
      * The input types for which we will try to find a pattern.
      */
-    private static final Set<Class<?>> INPUT_TYPES = new HashSet<Class<?>>(8);
+    private static final Set<Class<?>> INPUT_TYPES = new HashSet<>(8);
     static {
         INPUT_TYPES.add(String.class);
         INPUT_TYPES.add(File  .class);
@@ -223,7 +223,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         assert subsampling.equals(tile.getSubsampling()) : subsampling;
         xSubsampling = subsampling.width;
         ySubsampling = subsampling.height;
-        tiles = new ArrayList<Tile>();
+        tiles = new ArrayList<>();
         tiles.add(tile);
     }
 
@@ -300,13 +300,13 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          */
         formatter = new FilenameFormatter();
         final Rectangle size = new Rectangle(xOffset, yOffset, dx, dy);
-        final Map<Tile,List<Tile>> models = new HashMap<Tile,List<Tile>>();
+        final Map<Tile,List<Tile>> models = new HashMap<>();
         for (final Tile tile : tiles) {
             final String input = inputPattern(tile);
             final Tile model = (input != null) ? new Tile(tile, input, size) : null;
             List<Tile> similar = models.get(model);
             if (similar == null) {
-                similar = new ArrayList<Tile>();
+                similar = new ArrayList<>();
                 models.put(model, similar);
             }
             similar.add(tile);

@@ -687,7 +687,7 @@ public class CoverageStack extends AbstractCoverage {
                     final CoordinateReferenceSystem candidate = envelope.getCoordinateReferenceSystem();
                     if (candidate != null) {
                         if (frequency == null) {
-                            frequency = new FrequencySortedSet<CoordinateReferenceSystem>(true);
+                            frequency = new FrequencySortedSet<>(true);
                         }
                         frequency.add(candidate);
                     }

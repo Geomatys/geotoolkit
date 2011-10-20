@@ -106,13 +106,13 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * when first needed, and cached because each value is typically fetched twice (once for
      * image width, and once for image height).
      */
-    private final Map<Integer,Dimension> imageSizes = new HashMap<Integer,Dimension>();
+    private final Map<Integer,Dimension> imageSizes = new HashMap<>();
 
     /**
      * The image types at various image indices. Values are computed from the sample
      * dimensions when first needed.
      */
-    private final Map<Integer,ImageTypeSpecifier> imageTypes = new HashMap<Integer,ImageTypeSpecifier>();
+    private final Map<Integer,ImageTypeSpecifier> imageTypes = new HashMap<>();
 
     /**
      * Creates a new adapter for the given coverage reader.

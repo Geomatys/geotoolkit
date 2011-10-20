@@ -67,7 +67,7 @@ public final class ColorModels<T extends ColorModel> extends Static {
      * @return A unique (shared) instance of the given color model.
      */
     public static <T extends ColorModel> T unique(T cm) {
-        ColorModels<T> c = new ColorModels<T>(cm);
+        ColorModels<T> c = new ColorModels<>(cm);
         c = POOL.unique(c);
         return c.cm;
     }

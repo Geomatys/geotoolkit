@@ -128,7 +128,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
          * sizes compared to the expected values.
          */
         long sumWidth = 0, sumHeight = 0;
-        final Map<Rectangle,List<Tile>> byRegions = new HashMap<Rectangle,List<Tile>>();
+        final Map<Rectangle,List<Tile>> byRegions = new HashMap<>();
         for (final Tile tile : tiles) {
             final Rectangle tileRegion = tile.getAbsoluteRegion();
             sumWidth  += tileRegion.width;
@@ -142,7 +142,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
             }
             List<Tile> list = byRegions.get(tileRegion);
             if (list == null) {
-                list = new ArrayList<Tile>();
+                list = new ArrayList<>();
                 byRegions.put(tileRegion, list);
             }
             list.add(tile);
@@ -179,7 +179,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
          */
         sortedByY = (tiles.length * (long)region.height / sumHeight >=
                      tiles.length * (long)region.width  / sumWidth);
-        final Map<Rectangle,Tile[]> byAbsoluteRegion = new IdentityHashMap<Rectangle,Tile[]>(
+        final Map<Rectangle,Tile[]> byAbsoluteRegion = new IdentityHashMap<>(
                 XCollections.hashMapCapacity(numRegions));
         for (i=0; i<numRegions; i++) {
             byAbsoluteRegion.put(tileRegions[i], tilesByRegion[i]);
@@ -256,7 +256,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
     @Override
     final synchronized Dimension getTileSize() {
         if (tileSize == null) {
-            final FrequencySortedSet<Dimension> sizes = new FrequencySortedSet<Dimension>(true);
+            final FrequencySortedSet<Dimension> sizes = new FrequencySortedSet<>(true);
             for (final Rectangle region : tileRegions) {
                 sizes.add(region.getSize());
             }
@@ -339,7 +339,7 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
          * The resolution effectively used will be stored in the 'newResolution' object.
          */
         Dimension newSubsampling = subsampling;
-        final List<Tile> result = new ArrayList<Tile>();
+        final List<Tile> result = new ArrayList<>();
         for (int i=0; i<intersectCount; i++) {
             final Tile[] tiles = intersect[i];
             for (int j=startAt[i]; j<tiles.length; j++) {

@@ -90,7 +90,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     TileCopier(final Collection<Tile> tiles, final BufferedImageOp filter) {
         super(tiles);
         this.filter = filter;
-        temporaryFiles = new HashMap<Tile,RawFile>();
+        temporaryFiles = new HashMap<>();
     }
 
     /**
@@ -128,9 +128,8 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     @Override
     public Map<Tile,RawFile> call() throws IOException {
         final ObjectStream<Tile> tiles = inputs();
-        final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes =
-                new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
-        final Map<Dimension,Dimension> sharedSizes = new HashMap<Dimension,Dimension>();
+        final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes = new HashMap<>();
+        final Map<Dimension,Dimension> sharedSizes = new HashMap<>();
         final ImageWriter writer = getTemporaryTileWriter();
         final File directory = RMI.getSharedTemporaryDirectory();
         ImageTypeSpecifier sourceType = null;
@@ -194,15 +193,14 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             /*
              * Writes the temporary file.
              */
-            final RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            final FileChannel channel = raf.getChannel();
-            final FileChannelImageOutputStream stream = new FileChannelImageOutputStream(channel);
-            writer.setOutput(stream);
-            writer.write(image);
-            writer.setOutput(null);
-            stream.close();
-            channel.close();
-            raf.close();
+            try (RandomAccessFile raf = new RandomAccessFile(file, "rw");
+                 FileChannel channel = raf.getChannel();
+                 FileChannelImageOutputStream stream = new FileChannelImageOutputStream(channel))
+            {
+                writer.setOutput(stream);
+                writer.write(image);
+                writer.setOutput(null);
+            }
         }
         writer.dispose();
         tiles.close();

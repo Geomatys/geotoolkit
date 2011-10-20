@@ -93,9 +93,9 @@ public final class Registration implements FilenameFilter {
             for (final String filename : content) {
                 final File packFile = new File(directory, filename);
                 final File jarFile  = new File(directory, filename.substring(0, filename.length()-4) + "jar");
-                final JarOutputStream out = new JarOutputStream(new FileOutputStream(jarFile));
-                unpacker.unpack(packFile, out);
-                out.close();
+                try (JarOutputStream out = new JarOutputStream(new FileOutputStream(jarFile))) {
+                    unpacker.unpack(packFile, out);
+                }
                 packFile.delete();
             }
             /*

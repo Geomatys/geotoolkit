@@ -351,7 +351,7 @@ public class NetcdfImageReader extends FileImageReader implements
             final List<Aggregation.Dataset> components = aggregation.getDatasets();
             if (components != null) {
                 if (addTo == null) {
-                    addTo = new ArrayList<URI>(components.size());
+                    addTo = new ArrayList<>(components.size());
                 }
                 for (final Aggregation.Dataset component : components) {
                     if (abortRequested()) {
@@ -743,7 +743,7 @@ public class NetcdfImageReader extends FileImageReader implements
      */
     final Map<String,GDALGridMapping> getGridMapping() {
         if (gridMapping == null) {
-            gridMapping = new HashMap<String,GDALGridMapping>();
+            gridMapping = new HashMap<>();
         }
         return gridMapping;
     }

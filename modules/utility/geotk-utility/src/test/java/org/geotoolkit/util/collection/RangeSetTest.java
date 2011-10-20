@@ -48,7 +48,7 @@ public final strictfp class RangeSetTest {
      */
     @Test
     public void testRangeRemoval() {
-        final RangeSet<Double> ranges = new RangeSet<Double>(Double.class);
+        final RangeSet<Double> ranges = new RangeSet<>(Double.class);
         assertEquals(NumberRange.class, ranges.getElementType());
         assertEquals(Double.TYPE, ranges.getArrayElementType());
         assertEquals(0, ranges.size());
@@ -59,7 +59,7 @@ public final strictfp class RangeSetTest {
         ranges.remove(8.0, 12.0);
         assertEquals(1, ranges.size());
 
-        final RangeSet<Double> expected = new RangeSet<Double>(Double.class);
+        final RangeSet<Double> expected = new RangeSet<>(Double.class);
         expected.add(12.0, 22.0);
         assertEquals("Lower removal", expected, ranges);
 
@@ -146,7 +146,7 @@ public final strictfp class RangeSetTest {
      */
     @Test
     public void testIntegers() {
-        final RangeSet<Integer> ranges = new RangeSet<Integer>(Integer.class);
+        final RangeSet<Integer> ranges = new RangeSet<>(Integer.class);
         assertEquals(NumberRange.class, ranges.getElementType());
         assertEquals(Integer.TYPE, ranges.getArrayElementType());
         assertTrue(ranges.isEmpty());
@@ -194,7 +194,7 @@ public final strictfp class RangeSetTest {
      */
     @Test
     public void testDates() {
-        final RangeSet<Date> ranges = new RangeSet<Date>(Date.class);
+        final RangeSet<Date> ranges = new RangeSet<>(Date.class);
         assertEquals(DateRange.class, ranges.getElementType());
         assertEquals(Long.TYPE, ranges.getArrayElementType());
         assertTrue(ranges.isEmpty());
@@ -222,25 +222,25 @@ public final strictfp class RangeSetTest {
      */
     @Test
     public void testStrings() {
-        final RangeSet<String> ranges = new RangeSet<String>(String.class);
+        final RangeSet<String> ranges = new RangeSet<>(String.class);
         assertEquals(Range.class, ranges.getElementType());
         assertEquals(String.class, ranges.getArrayElementType());
         assertTrue(ranges.isEmpty());
 
         ranges.add("FAA", "FBB");
         assertEquals(1, ranges.size());
-        assertTrue(ranges.contains(new Range<String>(String.class, "FAA", "FBB")));
+        assertTrue(ranges.contains(new Range<>(String.class, "FAA", "FBB")));
 
         ranges.add("FAZ", "FCC");
         assertEquals(1, ranges.size());
-        assertTrue(ranges.contains(new Range<String>(String.class, "FAA", "FCC")));
+        assertTrue(ranges.contains(new Range<>(String.class, "FAA", "FCC")));
 
         ranges.add("GAA", "GBB");
         assertEquals(2, ranges.size());
 
         final Iterator<Range<String>> it = ranges.iterator();
-        assertEquals(new Range<String>(String.class, "FAA", "FCC"), it.next());
-        assertEquals(new Range<String>(String.class, "GAA", "GBB"), it.next());
+        assertEquals(new Range<>(String.class, "FAA", "FCC"), it.next());
+        assertEquals(new Range<>(String.class, "GAA", "GBB"), it.next());
         assertFalse(it.hasNext());
     }
 
@@ -249,7 +249,7 @@ public final strictfp class RangeSetTest {
      */
     @Test
     public void testSerialization() {
-        final RangeSet<Double> ranges = new RangeSet<Double>(Double.class);
+        final RangeSet<Double> ranges = new RangeSet<>(Double.class);
         ranges.add(12.0, 12.5);
         ranges.add(18.0, 18.5);
         ranges.add(19.0, 20.0);
@@ -268,7 +268,7 @@ public final strictfp class RangeSetTest {
         final Random r = new Random(5638743);
         for (int p=0; p<10; p++) {
             final long start = System.nanoTime();
-            final RangeSet<Integer> set = new RangeSet<Integer>(Integer.class);
+            final RangeSet<Integer> set = new RangeSet<>(Integer.class);
             for (int i=0; i<100000; i++) {
                 final int lower = r.nextInt(1000000) - 500;
                 final int upper = lower + r.nextInt(100) + 1;

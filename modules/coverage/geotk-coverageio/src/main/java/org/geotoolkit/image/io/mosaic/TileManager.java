@@ -152,7 +152,7 @@ public abstract class TileManager implements Serializable {
         if (geometry != null) {
             throw new IllegalStateException();
         }
-        final Map<Dimension,AffineTransform> shared = new HashMap<Dimension,AffineTransform>();
+        final Map<Dimension,AffineTransform> shared = new HashMap<>();
         AffineTransform at = new XAffineTransform(gridToCRS);
         shared.put(new Dimension(1,1), at);
         geometry = new ImageGeometry(getRegion(), at);
@@ -255,8 +255,7 @@ public abstract class TileManager implements Serializable {
      */
     public synchronized Set<ImageReaderSpi> getImageReaderSpis() throws IOException {
         if (providers == null) {
-            final FrequencySortedSet<ImageReaderSpi> providers =
-                    new FrequencySortedSet<ImageReaderSpi>(4, true);
+            final FrequencySortedSet<ImageReaderSpi> providers = new FrequencySortedSet<>(4, true);
             final Collection<Tile> tiles = getInternalTiles();
             int[] frequencies = null;
             if (tiles instanceof FrequencySortedSet<?>) {
@@ -420,9 +419,7 @@ public abstract class TileManager implements Serializable {
                 }
                 Tile.dispose(reader);
                 reader = null;
-            } catch (IOException exception) {
-                message = exception.toString();
-            } catch (RuntimeException exception) {
+            } catch (IOException | RuntimeException exception) {
                 message = exception.toString();
             }
             if (message != null) {

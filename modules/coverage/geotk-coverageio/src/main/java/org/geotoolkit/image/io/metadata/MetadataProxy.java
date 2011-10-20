@@ -160,7 +160,7 @@ final class MetadataProxy<T> implements InvocationHandler {
      */
     static <T> T newProxyInstance(final Class<T> type, final MetadataAccessor accessor) {
         return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
-                new Class<?>[] {type}, new MetadataProxy<T>(type, accessor)));
+                new Class<?>[] {type}, new MetadataProxy<>(type, accessor)));
     }
 
     /**
@@ -170,7 +170,7 @@ final class MetadataProxy<T> implements InvocationHandler {
     final T newProxyInstance(final int index) {
         final Class<T> type = interfaceType;
         return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
-                new Class<?>[] {type}, new MetadataProxy<T>(this, index)));
+                new Class<?>[] {type}, new MetadataProxy<>(this, index)));
     }
 
     /**
@@ -444,7 +444,7 @@ final class MetadataProxy<T> implements InvocationHandler {
              * IIOMetadataFormat may specify restrictions.
              */
             if (childs == null) {
-                childs = new HashMap<String, Object>();
+                childs = new HashMap<>();
             }
             List<?> list = (List<?>) childs.get(methodName);
             if (list == null) {
@@ -493,7 +493,7 @@ final class MetadataProxy<T> implements InvocationHandler {
          * A new proxy will be created for the nested child.
          */
         if (childs == null) {
-            childs = new HashMap<String, Object>();
+            childs = new HashMap<>();
         }
         Object child = childs.get(methodName);
         if (child == null) {

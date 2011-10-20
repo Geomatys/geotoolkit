@@ -30,12 +30,12 @@
  * Some transforms are backed by a grid of data. This is the case for example of the
  * {@linkplain org.geotoolkit.referencing.operation.transform.NadconTransform NADCON transform},
  * which implements a datum shift for the United States. The data may need to be downloaded
- * separatly. To download the data, see the
+ * separately. To download the data, see the
  * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module.
  *
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @see org.geotoolkit.referencing.operation.provider
  *

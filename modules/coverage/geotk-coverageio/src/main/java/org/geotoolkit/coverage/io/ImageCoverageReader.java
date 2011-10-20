@@ -135,7 +135,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     private static final Set<String> METADATA_NODES;
     static {
-        final Set<String> s = new HashSet<String>(25);
+        final Set<String> s = new HashSet<>(25);
                                                 // geotk-coverageio
                                                 // ├───ImageDescription
         s.add("Dimensions");                    // │   ├───Dimensions
@@ -639,7 +639,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     private static <T> Map.Entry<Map<Integer,T>,T> setCached(T value, Map<Integer,T> cache, final int index) {
         if (value != null) {
             if (cache == null) {
-                cache = new HashMap<Integer,T>();
+                cache = new HashMap<>();
             }
             for (final T current : cache.values()) {
                 if (current.equals(value)) {
@@ -649,7 +649,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             cache.put(index, value);
         }
-        return new HashMap.SimpleEntry<Map<Integer,T>,T>(cache, value);
+        return new HashMap.SimpleEntry<>(cache, value);
     }
 
     /**

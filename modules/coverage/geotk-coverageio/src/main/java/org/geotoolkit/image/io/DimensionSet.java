@@ -213,8 +213,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     private Set<DimensionIdentification> dimensions() {
         if (dimensions == null) {
             if (identifiersMap != null) {
-                dimensions = Collections.unmodifiableSet(
-                        new LinkedHashSet<DimensionIdentification>(identifiersMap.values()));
+                dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(identifiersMap.values()));
             } else {
                 dimensions = Collections.emptySet();
             }
@@ -434,7 +433,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
             throws IllegalArgumentException
     {
         if (identifiersMap == null) {
-            identifiersMap = new LinkedHashMap<Object,DimensionIdentification>();
+            identifiersMap = new LinkedHashMap<>();
         }
         final DimensionIdentification old = identifiersMap.put(identifier, dimension);
         if (old != null && !old.equals(dimension)) {
@@ -493,7 +492,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                 if (source != null) {
                     final Integer index = source.getSliceIndex();
                     if (found == null) {
-                        found = new LinkedHashMap<Integer,Object>(4);
+                        found = new LinkedHashMap<>(4);
                     }
                     final Object old = found.put(index, id);
                     if (old != null) {
@@ -549,7 +548,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                 final DimensionIdentification slice = identifiersMap.get(id);
                 if (slice != null) {
                     if (found == null) {
-                        found = new LinkedHashMap<DimensionIdentification,Object>(4);
+                        found = new LinkedHashMap<>(4);
                     }
                     final Object old = found.put(slice, id);
                     if (old != null) {

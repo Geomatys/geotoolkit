@@ -224,7 +224,7 @@ final class SpatialRefSysEntry {
                 if (verticalCRS != null) {
                     String name = headCRS.getName().getCode();
                     name = name + " + " + verticalCRS.getName().getCode();
-                    final Map<String,Object> copy = new HashMap<String,Object>(properties);
+                    final Map<String,Object> copy = new HashMap<>(properties);
                     copy.put(CoordinateReferenceSystem.NAME_KEY, name);
                     properties = copy;
                 }
@@ -263,9 +263,7 @@ final class SpatialRefSysEntry {
                 try {
                     matrix = AbstractCS.swapAndScaleAxis(sourceCRS.getCoordinateSystem(),
                                                          targetCRS.getCoordinateSystem());
-                } catch (ConversionException ignore) {
-                    throw e;
-                } catch (IllegalArgumentException ignore) {
+                } catch (ConversionException | IllegalArgumentException ignore) {
                     throw e;
                 }
                 tr = database.getMathTransformFactory().createAffineTransform(matrix);

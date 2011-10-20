@@ -296,7 +296,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             // Consider MIN|MAX_VALUE as unbounded.
             if (min == Integer.MIN_VALUE) min = null;
             if (max == Integer.MAX_VALUE) max = null;
-            occurrences = new NumberRange<Integer>(Integer.class, min, max);
+            occurrences = new NumberRange<>(Integer.class, min, max);
         }
         return occurrences;
     }

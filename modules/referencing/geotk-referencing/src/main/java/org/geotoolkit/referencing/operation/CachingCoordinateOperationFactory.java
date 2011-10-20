@@ -142,7 +142,7 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
      * be different for the same ({@code sourceCRS}, {@code targetCRS}) pair depending of
      * hint values like {@link Hints#LENIENT_DATUM_SHIFT}.
      */
-    private final Cache<CRSPair, CoordinateOperation> cache = new Cache<CRSPair, CoordinateOperation>();
+    private final Cache<CRSPair, CoordinateOperation> cache = new Cache<>();
 
     /**
      * Creates a buffered factory wrapping the {@linkplain AuthorityBackedFactory default one}.

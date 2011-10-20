@@ -76,7 +76,7 @@ final class SampleDimensionPalette extends Palette {
     /**
      * Workaround for passing the bands argument to {@code FACTORY.getPalette(...)}.
      */
-    static final ThreadLocal<GridSampleDimension[]> BANDS = new ThreadLocal<GridSampleDimension[]>();
+    static final ThreadLocal<GridSampleDimension[]> BANDS = new ThreadLocal<>();
 
     /**
      * The sample dimension to use for creating the color model.

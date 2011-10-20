@@ -80,7 +80,7 @@ public class CoordinateTableModel extends AbstractTableModel {
     /**
      * The direct positions to display in the table.
      */
-    private final List<DirectPosition> positions = new ArrayList<DirectPosition>();
+    private final List<DirectPosition> positions = new ArrayList<>();
 
     /**
      * An unmodifiable view of the positions list. This is the view returned by public accessors.

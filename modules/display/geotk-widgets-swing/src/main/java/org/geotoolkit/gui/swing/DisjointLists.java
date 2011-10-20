@@ -66,7 +66,7 @@ public class DisjointLists extends JComponent implements Dialog {
      * their own list of index of visibles elements.
      */
     @SuppressWarnings("serial")
-    private static final class Model extends AbstractListModel {
+    private static final class Model extends AbstractListModel<Object> {
         /**
          * The list of elements shared by both lists. Not all elements in this list will be
          * displayed. The index of elements to shown are enumerated in the {@link #visibles}
@@ -265,7 +265,7 @@ public class DisjointLists extends JComponent implements Dialog {
         /**
          * The source and target lists.
          */
-        private final JList source, target;
+        private final JList<Object> source, target;
 
         /**
          * {@code true} if we should move all items on action.
@@ -275,7 +275,7 @@ public class DisjointLists extends JComponent implements Dialog {
         /**
          * Constructs a new "move" action.
          */
-        public Action(final JList source, final JList target, final boolean all) {
+        public Action(final JList<Object> source, final JList<Object> target, final boolean all) {
             this.source = source;
             this.target = target;
             this.all    = all;
@@ -286,8 +286,8 @@ public class DisjointLists extends JComponent implements Dialog {
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
-            final Model source = (Model)this.source.getModel();
-            final Model target = (Model)this.target.getModel();
+            final Model source = (Model) this.source.getModel();
+            final Model target = (Model) this.target.getModel();
             if (all) {
                 target.move(source, 0, source.getSize());
                 return;
@@ -301,12 +301,12 @@ public class DisjointLists extends JComponent implements Dialog {
      * The list on the left side. This is the list that contains
      * the element selectable by the user.
      */
-    private final JList left;
+    private final JList<Object> left;
 
     /**
      * The list on the right side. This list is initially empty.
      */
-    private final JList right;
+    private final JList<Object> right;
 
     /**
      * {@code true} if elements should be automatically sorted.
@@ -321,9 +321,9 @@ public class DisjointLists extends JComponent implements Dialog {
         /*
          * Setup lists
          */
-        final List<Object> choices = new ArrayList<Object>();
-        left  = new JList(new Model(choices));
-        right = new JList(new Model(choices));
+        final List<Object> choices = new ArrayList<>();
+        left  = new JList<>(new Model(choices));
+        right = new JList<>(new Model(choices));
         final JScrollPane  leftPane = new JScrollPane( left);
         final JScrollPane rightPane = new JScrollPane(right);
         final Dimension size = new Dimension(160, 200);
@@ -397,7 +397,7 @@ public class DisjointLists extends JComponent implements Dialog {
         if (autoSort != this.autoSort) {
             this.autoSort = autoSort;
             if (autoSort) {
-                final List<Object> elements = new ArrayList<Object>(((Model) left.getModel()).choices);
+                final List<Object> elements = new ArrayList<>(((Model) left.getModel()).choices);
                 clear();
                 addElements(elements);
             }
@@ -441,7 +441,7 @@ public class DisjointLists extends JComponent implements Dialog {
         } catch (IllegalComponentStateException e) {
             locale = getDefaultLocale();
         }
-        final List<Object> list = new ArrayList<Object>(items.length);
+        final List<Object> list = new ArrayList<>(items.length);
         for (int i=0; i<items.length; i++) {
             Object candidate = items[i];
             if (!(candidate instanceof String)) {

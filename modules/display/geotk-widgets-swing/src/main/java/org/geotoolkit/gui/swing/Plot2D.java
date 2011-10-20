@@ -129,7 +129,7 @@ public class Plot2D extends ZoomPane {
      * @see #addXAxis
      * @see #addSeries
      */
-    private final List<Axis2D> xAxes = new ArrayList<Axis2D>(3);
+    private final List<Axis2D> xAxes = new ArrayList<>(3);
 
     /**
      * The set of <var>y</var> axes. There is usually only one axis, but more axes are allowed.
@@ -139,7 +139,7 @@ public class Plot2D extends ZoomPane {
      * @see #addYAxis
      * @see #addSeries
      */
-    private final List<Axis2D> yAxes = new ArrayList<Axis2D>(3);
+    private final List<Axis2D> yAxes = new ArrayList<>(3);
 
     /**
      * The set of series to plot. Keys are {@link Series} objects while values are {@code Entry}
@@ -147,7 +147,7 @@ public class Plot2D extends ZoomPane {
      *
      * @see #addSeries
      */
-    private final Map<Series,Entry> series = new LinkedHashMap<Series,Entry>();
+    private final Map<Series,Entry> series = new LinkedHashMap<>();
 
     /**
      * Immutable version of {@code series} to be returned by {@link #getSeries}.
@@ -349,7 +349,7 @@ public class Plot2D extends ZoomPane {
      * Creates a properties map for the given arguments.
      */
     private static Map<String,Object> properties(final String name, final Paint color) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put("Name", name);
         properties.put("Paint", color);
         return properties;
@@ -602,7 +602,7 @@ public class Plot2D extends ZoomPane {
          * same Axis2D instance should never be used for both axes. Note however that a plain HashMap
          * would not work because X and Y axis could be equal in the sense of Axis2D.equals(Object).
          */
-        final Map<Axis2D,Rectangle2D> unions = new IdentityHashMap<Axis2D,Rectangle2D>();
+        final Map<Axis2D,Rectangle2D> unions = new IdentityHashMap<>();
         for (final Map.Entry<Series,Entry> e : series.entrySet()) {
             final Rectangle2D bounds = e.getKey().bounds();
             final Entry entry = e.getValue();

@@ -33,7 +33,7 @@
  * }
  *
  * If the operation to apply is unknown at compile time, or if the operation is not listed in the
- * {@code Operations} convenience class, then the generic way to invoke an operation is decribed
+ * {@code Operations} convenience class, then the generic way to invoke an operation is described
  * in the {@linkplain org.geotoolkit.coverage.processing.operation operation package}.
  *
  *
@@ -63,10 +63,10 @@
  * operation to be implemented as a <cite>Java Advanced Imaging</cite> (JAI) operation working
  * on {@link java.awt.image.RenderedImage}. Because {@code GridCoverage2D} are basically wrappers
  * around {@code RenderedImage}, it is often good design to implement the coverage operation as a
- * wrapper around the corresponding JAI operation. However such wrapper neeeds to perform some
+ * wrapper around the corresponding JAI operation. However such wrapper needs to perform some
  * pre-processing and post-processing tasks that are relative to the geographic nature of the
  * operation. For example calculating the sum of sample values of two images usually requires
- * that those images are first projected in the same Coordinate Refence System (CRS). The
+ * that those images are first projected in the same Coordinate Reference System (CRS). The
  * {@code OperationJAI} class is designed for handling those common pre- and post-processing.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

@@ -642,7 +642,7 @@ public class MetadataHelper implements Localized {
          */
         boolean allGeophysics = true;
         InternationalString untitled = null; // To be created only if needed.
-        final List<Category> categories = new ArrayList<Category>();
+        final List<Category> categories = new ArrayList<>();
         final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
         boolean hasSampleDimensions = false;
         for (int i=0; i<bands.length; i++) {

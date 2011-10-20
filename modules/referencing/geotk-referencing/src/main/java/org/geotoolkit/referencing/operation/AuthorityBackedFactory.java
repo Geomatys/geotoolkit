@@ -95,7 +95,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     /**
      * Used as a guard against infinite recursivity.
      */
-    private final ThreadLocal<Boolean> processing = new ThreadLocal<Boolean>();
+    private final ThreadLocal<Boolean> processing = new ThreadLocal<>();
 
     /**
      * Creates a new factory backed by a default EPSG authority factory.

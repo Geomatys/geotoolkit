@@ -104,7 +104,7 @@ final class GridTileManager extends TileManager {
     protected GridTileManager(final Tile[] tiles) throws IOException, IllegalArgumentException {
         ensureNonNull("tiles", tiles);
         Tile[] modifiedOrder = tiles; // May be modified later.
-        final Map<Dimension,OverviewLevel> levelsBySubsampling = new HashMap<Dimension,OverviewLevel>();
+        final Map<Dimension,OverviewLevel> levelsBySubsampling = new HashMap<>();
         for (int i=0; i<modifiedOrder.length; i++) {
             Tile tile = modifiedOrder[i];
             Dimension subsampling = tile.getSubsampling();
@@ -195,7 +195,7 @@ final class GridTileManager extends TileManager {
      */
     @Override
     final Collection<Tile> getInternalTiles() {
-        final FrequencySortedSet<Tile> tiles = new FrequencySortedSet<Tile>();
+        final FrequencySortedSet<Tile> tiles = new FrequencySortedSet<>();
             for (OverviewLevel level=root; level!=null; level=level.getFinerLevel()) {
             level.getInternalTiles(tiles);
         }
@@ -256,7 +256,7 @@ final class GridTileManager extends TileManager {
              * be lower if the region to read is small enough so that reading smaller tiles
              * compensate the cost of applying a higher subsampling.
              */
-            final ArrayList<Tile> tiles = new ArrayList<Tile>();
+            final ArrayList<Tile> tiles = new ArrayList<>();
             level.getTiles(tiles, region, subsampling, Long.MAX_VALUE);
             // TODO: The search in finer levels is not yet implemented.
             subsampling.setSize(doable);

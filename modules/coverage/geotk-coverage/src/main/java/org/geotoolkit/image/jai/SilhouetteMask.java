@@ -165,7 +165,7 @@ public class SilhouetteMask extends UntiledOpImage {
         final int[] ones = new int[dest.getNumBands()];
         Arrays.fill(ones, -1);
         final int transferType = source.getTransferType();
-        final Set<SampleValues> background = new HashSet<SampleValues>();
+        final Set<SampleValues> background = new HashSet<>();
         for (final double[] samples : this.background) {
             background.add(SampleValues.getInstance(transferType, samples));
         }

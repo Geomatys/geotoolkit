@@ -20,7 +20,7 @@
  * A set of <A HREF="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</A>
  * operations. All operations defined here work on J2SE's {@linkplain java.awt.image.RenderedImage
  * rendered images}; there is no OpenGIS's {@linkplain org.opengis.coverage.grid.GridCoverage grid
- * coverage} depencencies here. Examples.
+ * coverage} dependencies here. Examples.
 * <p>
  * <table align="center" cellpadding="15" border="1">
  * <tr><th>Operation</th><th>Input</th><th>output</th></tr>

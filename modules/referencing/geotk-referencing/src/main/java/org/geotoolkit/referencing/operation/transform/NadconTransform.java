@@ -42,7 +42,7 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  *
  * {@section Description}
  *
- * NADCON is a two dimentional datum shift method, created by the National Geodetic Survey (NGS),
+ * NADCON is a two dimensional datum shift method, created by the National Geodetic Survey (NGS),
  * that uses interpolated values from two grid shift files. This method is used to transform NAD27
  * (EPSG:4267) datum coordinates (and some others) to NAD83 (EPSG:4269) within the United States.
  * <p>
@@ -86,9 +86,9 @@ import static org.geotoolkit.referencing.operation.provider.NADCON.*;
  *       Application of Minimum-Curvature-Derived Surfaces in the Transformation of
  *       Positional Data From the North American Datum of 1927 to the North
  *       American Datum of 1983</a> - NOAA TM.</li>
- *   <li>{@code ndcon210.for} - NGS fortran source code for NADCON conversions. See the
+ *   <li>{@code ndcon210.for} - NGS Fortran source code for NADCON conversions. See the
  *       following subroutines: TRANSF, TO83, FGRID, INTRP, COEFF and SURF</li>
- *   <li>{@code nadgrd.for} - NGS fortran source code to export/import binary and text grid
+ *   <li>{@code nadgrd.for} - NGS Fortran source code to export/import binary and text grid
  *       formats</li>
  *   <li>EPSG Geodesy Parameters database</li>
  * </ul>

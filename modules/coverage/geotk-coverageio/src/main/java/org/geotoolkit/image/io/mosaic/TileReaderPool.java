@@ -76,8 +76,8 @@ final class TileReaderPool {
      * Creates a new, initially empty, cache.
      */
     TileReaderPool() {
-        readers = new HashMap<ImageReaderSpi,ImageReader>();
-        readerInputs = new IdentityHashMap<ImageReader,Object>();
+        readers = new HashMap<>();
+        readerInputs = new IdentityHashMap<>();
         providers = Collections.unmodifiableSet(readers.keySet());
     }
 

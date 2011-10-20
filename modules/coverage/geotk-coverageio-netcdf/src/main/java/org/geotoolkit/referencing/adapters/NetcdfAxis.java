@@ -280,7 +280,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
                 if (timeAxis != null) {
                     ranges[i] = new DateRange((Date) c1, true, (Date) c2, maxInclusive);
                 } else {
-                    ranges[i] = new NumberRange<Double>(Double.class, (Double) c1, true, (Double) c2, maxInclusive);
+                    ranges[i] = new NumberRange<>(Double.class, (Double) c1, true, (Double) c2, maxInclusive);
                 }
             }
             this.ranges = ranges; // Only on success.

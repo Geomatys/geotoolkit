@@ -61,7 +61,7 @@ public final class TypeMap extends Static {
      */
     private static final TypeMap[] MAP = new TypeMap[SampleDimensionType.values().length];
     static {
-        final Map<Number,Number> pool = new HashMap<Number,Number>(32);
+        final Map<Number,Number> pool = new HashMap<>(32);
         final Float  M1 = -Float .MAX_VALUE;
         final Float  P1 =  Float .MAX_VALUE;
         final Double M2 = -Double.MAX_VALUE;

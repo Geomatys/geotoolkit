@@ -353,7 +353,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
             final Field  paramField  = ImagingParameters.class.getField("parameters");
             paramField.setAccessible(true); // Will work only with J2SE 1.5 or above.
             paramField.set(copy, cloneMethod.invoke(parameters, (Object[]) null));
-        } catch (Exception exception) {
+        } catch (ReflectiveOperationException exception) {
             // TODO: localize.
             throw new UnsupportedOperationException("Clone not supported.", exception);
         }

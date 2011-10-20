@@ -388,20 +388,20 @@ public strictfp class Assert extends org.opengis.test.Assert {
         final Object deserialized;
         try {
             final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            final ObjectOutputStream out = new ObjectOutputStream(buffer);
-            out.writeObject(object);
-            out.close();
+            try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
+                out.writeObject(object);
+            }
             /*
              * Now reads the object we just serialized.
              */
             final byte[] data = buffer.toByteArray();
-            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
-            try {
-                deserialized = in.readObject();
-            } catch (ClassNotFoundException e) {
-                throw new AssertionError(e);
+            try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data))) {
+                try {
+                    deserialized = in.readObject();
+                } catch (ClassNotFoundException e) {
+                    throw new AssertionError(e);
+                }
             }
-            in.close();
         } catch (IOException e) {
             throw new AssertionError(e);
         }

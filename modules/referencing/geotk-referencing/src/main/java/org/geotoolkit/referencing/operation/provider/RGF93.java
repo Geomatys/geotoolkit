@@ -56,7 +56,7 @@ public class RGF93 extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>Geocentric translation file</cite>
      * parameter value. The default value is {@code "gr3df97a.txt"}.
      */
-    public static final ParameterDescriptor<String> TRANSLATION_FILE = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> TRANSLATION_FILE = new DefaultParameterDescriptor<>(
             "Geocentric translation file", String.class, null, "gr3df97a.txt");
 
     /**

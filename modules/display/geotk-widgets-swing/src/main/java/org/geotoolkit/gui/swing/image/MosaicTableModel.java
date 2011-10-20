@@ -302,7 +302,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             progress.setTask(Vocabulary.formatInternational(Vocabulary.Keys.LOADING_HEADERS));
             progress.started();
         }
-        final List<Tile> toAdd = new ArrayList<Tile>(files.length);
+        final List<Tile> toAdd = new ArrayList<>(files.length);
         Class<? extends Exception> lastFailureType = null;
         DefaultTableModel failures = null;
         for (int i=0; i<files.length; i++) {

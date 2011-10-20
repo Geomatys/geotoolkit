@@ -153,7 +153,7 @@ public class ColorMap implements Serializable {
         final String name = unlocalized(category);
         if (colors != null) {
             if (colorMap == null) {
-                colorMap = new HashMap<String,Object>();
+                colorMap = new HashMap<>();
             }
             colorMap.put(name, colors);
         } else if (colorMap != null) {
@@ -305,7 +305,7 @@ public class ColorMap implements Serializable {
         final String name = unlocalized(category);
         if (range != null) {
             if (colorRanges == null) {
-                colorRanges = new HashMap<String,NumberRange<?>>();
+                colorRanges = new HashMap<>();
             }
             colorRanges.put(name, range);
         } else if (colorRanges != null) {
@@ -585,7 +585,7 @@ public class ColorMap implements Serializable {
         final Set<String> names;
         if (colorMap != null) {
             if (colorRanges != null) {
-                names = new HashSet<String>(colorMap.keySet());
+                names = new HashSet<>(colorMap.keySet());
                 names.addAll(colorRanges.keySet());
             } else {
                 names = colorMap.keySet();

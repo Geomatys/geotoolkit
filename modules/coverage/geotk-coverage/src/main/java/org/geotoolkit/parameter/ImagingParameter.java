@@ -66,7 +66,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
     public static <T> ImagingParameter<T> create(final ParameterDescriptor<T> descriptor,
                                                  final ParameterList parameters)
     {
-        return new ImagingParameter<T>(descriptor, parameters);
+        return new ImagingParameter<>(descriptor, parameters);
     }
 
     /**
@@ -362,7 +362,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
      */
     @Override
     public Parameter<T> clone() {
-        final Parameter<T> parameter = new Parameter<T>(getDescriptor());
+        final Parameter<T> parameter = new Parameter<>(getDescriptor());
         parameter.setValue(getValue());
         return parameter;
     }

@@ -334,7 +334,7 @@ public class DimensionIdentification implements WarningProducer {
                     return (Integer) key;
                 }
                 if (identifiers == null) {
-                    identifiers = new HashSet<Object>(8);
+                    identifiers = new HashSet<>(8);
                 }
                 identifiers.add(key);
             }
@@ -359,7 +359,7 @@ public class DimensionIdentification implements WarningProducer {
                 }
                 if (identifiers.contains(property)) {
                     if (found == null) {
-                        found = new LinkedHashMap<Integer,Object>(4);
+                        found = new LinkedHashMap<>(4);
                     }
                     final Object old = found.put(position, property);
                     if (old != null) {

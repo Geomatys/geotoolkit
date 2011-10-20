@@ -439,7 +439,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
                 }
                 coverage = read(param, listeners);
                 if (coverage != null) {
-                    cached = new SoftReference<GridCoverage2D>(coverage);
+                    cached = new SoftReference<>(coverage);
                 }
             }
         }

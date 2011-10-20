@@ -41,7 +41,7 @@ class GridLoader {
      * The cache of grids loaded so far. Keys are instances of the exact {@code GridLoader} class,
      * which values are instances of subclasses. Grids are retained by soft references only.
      */
-    private static final Cache<GridLoader,GridLoader> CACHE = new Cache<GridLoader,GridLoader>(4, 0, true);
+    private static final Cache<GridLoader,GridLoader> CACHE = new Cache<>(4, 0, true);
 
     /**
      * The type of the grid loader. This is not necessarily the same than

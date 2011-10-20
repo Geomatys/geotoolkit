@@ -118,7 +118,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
         if (parameters == null) {
             throw new NullArgumentException("parameters");
         }
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         properties.put(NAME_KEY,        parameters.getName());
         properties.put(IDENTIFIERS_KEY, parameters.getIdentifiers().toArray(EMPTY_IDENTIFIER_ARRAY));
         properties.put(ALIAS_KEY,       parameters.getAlias()      .toArray(EMPTY_ALIAS_ARRAY));

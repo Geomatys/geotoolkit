@@ -120,7 +120,7 @@ public class CoverageList extends JComponent {
      *
      * @since 3.15
      */
-    private JList variableChooser;
+    private JList<String> variableChooser;
 
     /**
      * The table which list all coverages.
@@ -507,7 +507,7 @@ public class CoverageList extends JComponent {
      */
     final void showVariableChooser(final String[] images, final boolean multiSelectionAllowed) {
         if (variableChooser == null) {
-            variableChooser = new JList();
+            variableChooser = new JList<>();
             final Vocabulary resources = Vocabulary.getResources(getLocale());
             final JButton ok     = new JButton(resources.getString(Vocabulary.Keys.OK));
             final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
@@ -546,10 +546,9 @@ public class CoverageList extends JComponent {
      *
      * @since 3.15
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
     final List<String> getSelectedVariables() {
         setSelectionPanel(BUZY);
-        return (List) Arrays.asList(variableChooser.getSelectedValues());
+        return variableChooser.getSelectedValuesList();
     }
 
     /**

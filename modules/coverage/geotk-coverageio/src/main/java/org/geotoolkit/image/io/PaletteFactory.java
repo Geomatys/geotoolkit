@@ -215,7 +215,7 @@ public class PaletteFactory {
      * holds a reference to a color model - this is necessary in order to prevent multiple creation
      * of the same {@link IndexColorModel}. The references are cleaned by {@link PaletteDisposer}.
      */
-    final Set<Palette> protectedPalettes = new HashSet<Palette>();
+    final Set<Palette> protectedPalettes = new HashSet<>();
 
     /**
      * Gets the default palette factory. The returned factory can provide the palettes listed in
@@ -259,7 +259,7 @@ public class PaletteFactory {
      * @since 2.4
      */
     public static synchronized void scanForPlugins(final ClassLoader loader) {
-        final Set<Class<? extends PaletteFactory>> existings = new HashSet<Class<? extends PaletteFactory>>();
+        final Set<Class<? extends PaletteFactory>> existings = new HashSet<>();
         for (PaletteFactory p=getDefault(); p!=null; p=p.fallback) {
             existings.add(p.getClass());
         }
@@ -526,7 +526,7 @@ public class PaletteFactory {
      *         is unable to fetch this information.
      */
     public Set<String> getAvailableNames() {
-        final Set<String> names = new LinkedHashSet<String>();
+        final Set<String> names = new LinkedHashSet<>();
         return getAvailableNames(names) ? names : null;
     }
 
@@ -702,7 +702,7 @@ public class PaletteFactory {
     private Color[] getColors(final LineNumberReader input, final String name) throws IOException {
         int[] values = null;
         final LineFormat reader = (locale!=null) ? new LineFormat(locale) : new LineFormat();
-        final List<Color> colors = new ArrayList<Color>();
+        final List<Color> colors = new ArrayList<>();
         String line; while ((line=input.readLine()) != null) try {
             line = line.trim();
             if (line.isEmpty())            continue;
@@ -773,12 +773,12 @@ public class PaletteFactory {
         } catch (NumberFormatException e) {
             return null;
         } else {
-            final LineNumberReader reader = getPaletteReader(name);
-            if (reader == null) {
-                return (fallback != null) ? fallback.getColors(name) : null;
+            try (LineNumberReader reader = getPaletteReader(name)) {
+                if (reader == null) {
+                    return (fallback != null) ? fallback.getColors(name) : null;
+                }
+                colors = getColors(reader, name);
             }
-            colors = getColors(reader, name);
-            reader.close();
         }
         return colors;
     }

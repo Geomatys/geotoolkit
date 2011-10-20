@@ -42,7 +42,7 @@ public final strictfp class WeakHashSetTest {
         final Random random = new Random();
         for (int pass=0; pass<20; pass++) {
             final WeakHashSet<Integer> weakSet = WeakHashSet.newInstance(Integer.class);
-            final HashSet<Integer> strongSet = new HashSet<Integer>();
+            final HashSet<Integer> strongSet = new HashSet<>();
             for (int i=0; i<1000; i++) {
                 final Integer value = random.nextInt(500);
                 if (random.nextBoolean()) {
@@ -83,7 +83,7 @@ public final strictfp class WeakHashSetTest {
         final Random random = new Random();
         for (int pass=0; pass<2; pass++) {
             final WeakHashSet<Integer> weakSet = WeakHashSet.newInstance(Integer.class);
-            final HashSet<Integer> strongSet = new HashSet<Integer>();
+            final HashSet<Integer> strongSet = new HashSet<>();
             for (int i=0; i<500; i++) {
                 final Integer value = new Integer(random.nextInt(500)); // Really need new instances
                 if (random.nextBoolean()) {

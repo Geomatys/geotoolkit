@@ -82,7 +82,7 @@ public class FormatChooser extends JComponent implements Dialog {
      * and values are {@code String[][]} with arrays in the following order: number
      * patterns, date patterns and angle patterns.
      */
-    private static final Map<Locale,String[][]> PATTERNS = new HashMap<Locale,String[][]>();
+    private static final Map<Locale,String[][]> PATTERNS = new HashMap<>();
 
     /**
      * A set of default pattern for {@link AngleFormat}.
@@ -112,7 +112,7 @@ public class FormatChooser extends JComponent implements Dialog {
     /**
      * The panel in which to edit the pattern.
      */
-    private final JComboBox choices = new JComboBox();
+    private final JComboBox<String> choices = new JComboBox<>();
 
     /**
      * The preview text. This is the {@code value} formated using {@code format}.
@@ -130,7 +130,7 @@ public class FormatChooser extends JComponent implements Dialog {
         setLayout(new GridBagLayout());
         final String[] patterns = getPatterns(format);
         if (patterns != null) {
-            final MutableComboBoxModel model = (MutableComboBoxModel) choices.getModel();
+            final MutableComboBoxModel<String> model = (MutableComboBoxModel<String>) choices.getModel();
             for (int i=0; i<patterns.length; i++) {
                 model.addElement(patterns[i]);
             }
@@ -194,7 +194,7 @@ public class FormatChooser extends JComponent implements Dialog {
      * Note: this method is costly and should be invoked only once for a given locale.
      */
     private static String[] getNumberPatterns(final Locale locale) {
-        final Set<String> patterns = new LinkedHashSet<String>();
+        final Set<String> patterns = new LinkedHashSet<>();
         int type = 0;
   fill: while (true) {
             final int digits;
@@ -230,7 +230,7 @@ public class FormatChooser extends JComponent implements Dialog {
             SimpleDateFormat.LONG,
             SimpleDateFormat.FULL
         };
-        final Set<String> patterns = new LinkedHashSet<String>();
+        final Set<String> patterns = new LinkedHashSet<>();
         for (int i=0; i<codes.length; i++) {
             for (int j=-1; j<codes.length; j++) {
                 final DateFormat format;
@@ -434,7 +434,7 @@ public class FormatChooser extends JComponent implements Dialog {
             return false;
         }
         if (add) {
-            final DefaultComboBoxModel model = (DefaultComboBoxModel) choices.getModel();
+            final DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) choices.getModel();
             pattern = choices.getSelectedItem().toString();
             final int index = model.getIndexOf(pattern);
             if (index > 0) {

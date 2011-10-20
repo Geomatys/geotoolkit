@@ -438,7 +438,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             final GridCoverageTable table = pool.acquire();
             table.envelope.clear();
             table.setLayerEntry(this);
-            count = new FrequencySortedSet<SeriesEntry>(true);
+            count = new FrequencySortedSet<>(true);
             for (final SeriesEntry series : seriesMap.values()) {
                 final Map<Integer,Integer> countMap = table.count(series, false);
                 for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
@@ -464,7 +464,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             table.envelope.clear();
             table.setLayerEntry(this);
             final GridGeometryTable geometries = table.getGridGeometryTable();
-            count = new FrequencySortedSet<GridGeometryEntry>(true);
+            count = new FrequencySortedSet<>(true);
             for (final SeriesEntry series : allSeries) {
                 final Map<Integer,Integer> countMap = table.count(series, true);
                 for (final Map.Entry<Integer,Integer> e : countMap.entrySet()) {
@@ -529,7 +529,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             }
             available = XCollections.emptySortedSet();
             if (count != null) {
-                final Set<Double> all = new HashSet<Double>();
+                final Set<Double> all = new HashSet<>();
                 for (final GridGeometryEntry entry : count) {
                     final double[] ordinates = entry.getVerticalOrdinates();
                     if (ordinates != null) {
@@ -763,7 +763,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             throw new CoverageStoreException(e);
         }
         final int[] count = series.frequencies();
-        final FrequencySortedSet<String> names = new FrequencySortedSet<String>(true);
+        final FrequencySortedSet<String> names = new FrequencySortedSet<>(true);
         int i = 0;
         for (final SeriesEntry entry : series) {
             names.add(entry.format.imageFormat, count[i++]);
@@ -783,7 +783,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             throw new CoverageStoreException(e);
         }
         final int[] count = series.frequencies();
-        final FrequencySortedSet<File> directories = new FrequencySortedSet<File>(true);
+        final FrequencySortedSet<File> directories = new FrequencySortedSet<>(true);
         int i = 0;
         for (final SeriesEntry entry : series) {
             if (entry.protocol.equalsIgnoreCase(SeriesEntry.FILE_PROTOCOL)) {
@@ -817,7 +817,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                 return XCollections.emptySortedSet();
             }
             final int[] count = extents.frequencies();
-            final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>(true);
+            final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<>(true);
             int i = 0;
             for (final GridGeometryEntry entry : extents) {
                 GeneralGridGeometry gg = entry.spatialGeometry;
@@ -1034,11 +1034,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             table.setLayerEntry(this);
             table.addEntries(files, getCoverageDatabase(), controller);
             table.release();
-        } catch (SQLException exception) { // TODO: multi-catch
-            throw new CoverageStoreException(exception);
-        } catch (IOException exception) {
-            throw new CoverageStoreException(exception);
-        } catch (FactoryException exception) {
+        } catch (SQLException | IOException | FactoryException exception) {
             throw new CoverageStoreException(exception);
         }
     }
@@ -1075,7 +1071,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             getAvailableTimes();
             getEnvelope(null, null);
             getTypicalResolution();
-        } catch (Exception e) {
+        } catch (SQLException | CoverageStoreException e) {
             final InvalidObjectException ex = new InvalidObjectException(e.getLocalizedMessage());
             ex.initCause(e);
             throw ex;

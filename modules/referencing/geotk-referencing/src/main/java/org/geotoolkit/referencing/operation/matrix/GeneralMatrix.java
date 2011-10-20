@@ -541,11 +541,8 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      * @since 2.2
      */
     public static GeneralMatrix load(final File file) throws IOException {
-        final BufferedReader in = new BufferedReader(new FileReader(file));
-        try {
+        try (BufferedReader in = new BufferedReader(new FileReader(file))) {
             return load(in, Locale.US);
-        } finally {
-            in.close();
         }
     }
 

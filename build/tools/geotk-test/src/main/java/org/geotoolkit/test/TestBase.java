@@ -99,7 +99,7 @@ public abstract strictfp class TestBase {
         try {
             final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
             logging.getMethod(method, argTypes).invoke(logging.getField("GEOTOOLKIT").get(null), argValues);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             System.err.println(e);
         }
     }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.concurrent.ExecutionException;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -111,7 +112,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * The list of CRS objects. The elements in this combo box are instances of
      * {@link AuthorityCode}, and the list model is {@link #codeList}.
      */
-    private final JComboBox codeComboBox;
+    private final JComboBox<AuthorityCode> codeComboBox;
 
     /**
      * The text field for searching item.
@@ -178,7 +179,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
     private static Collection<CRSAuthorityFactory> filter(
             final Collection<? extends CRSAuthorityFactory> factories, final String authority)
     {
-        final List<CRSAuthorityFactory> filtered = new ArrayList<CRSAuthorityFactory>();
+        final List<CRSAuthorityFactory> filtered = new ArrayList<>();
         for (final CRSAuthorityFactory factory : factories) {
             if (Citations.identifierMatches(factory.getAuthority(), authority)) {
                 filtered.add(factory);
@@ -203,6 +204,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * @param  factory The authority factory responsible for creating objects from a list of codes.
      * @param  types The types of CRS object to includes in the list.
      */
+    @SafeVarargs
     public AuthorityCodesComboBox(final AuthorityFactory factory,
             final Class<? extends CoordinateReferenceSystem>... types)
     {
@@ -215,13 +217,14 @@ public class AuthorityCodesComboBox extends WindowCreator {
         cards        = new CardLayout();
         searchOrList = new JPanel(cards);
         codeList     = new AuthorityCodeList(locale, factory, types);
-        codeComboBox = new FastComboBox(codeList);
+        codeComboBox = new FastComboBox<>(codeList);
         searchField  = new JTextField();
         searchField .setActionCommand(CONFIRM);
         searchField .addActionListener(listeners);
         codeComboBox.setActionCommand(SELECT);
         codeComboBox.addActionListener(listeners);
-        final ListCellRenderer renderer = codeComboBox.getRenderer();
+        @SuppressWarnings("unchecked")
+        final ListCellRenderer<Object> renderer = (ListCellRenderer) codeComboBox.getRenderer();
         if (renderer instanceof JLabel) { // This is the case of typical Swing implementations.
             codeComboBox.setRenderer(new AuthorityCodeRenderer(renderer));
         }
@@ -349,13 +352,13 @@ public class AuthorityCodesComboBox extends WindowCreator {
         if (code == null) {
             codeComboBox.setSelectedItem(null);
         } else {
-            final ComboBoxModel model = codeComboBox.getModel();
+            final ComboBoxModel<AuthorityCode> model = codeComboBox.getModel();
             if (model instanceof AuthorityCodeList) {
                 ((AuthorityCodeList) model).setSelectedCode(code);
             } else {
                 final int size = model.getSize();
                 for (int i=0; i<size; i++) {
-                    final AuthorityCode c = (AuthorityCode) model.getElementAt(i);
+                    final AuthorityCode c = model.getElementAt(i);
                     if (code.equals(c.code)) {
                         model.setSelectedItem(c);
                         break;
@@ -426,7 +429,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
                 IdentifiedObject item = null;
                 try {
                     item = get();
-                } catch (Exception e) {
+                } catch (InterruptedException | ExecutionException e) {
                     message = e.toString();
                 }
                 if (title == null) {
@@ -525,10 +528,10 @@ public class AuthorityCodesComboBox extends WindowCreator {
         showSearchField.setEnabled(false);
         codeComboBox.setEnabled(false);
         final String words = keywords;
-        new SwingWorker<ComboBoxModel,Object>() {
-            @Override protected ComboBoxModel doInBackground() {
+        new SwingWorker<ComboBoxModel<AuthorityCode>, Object>() {
+            @Override protected ComboBoxModel<AuthorityCode> doInBackground() {
                 Matcher matcher = null;
-                final DefaultComboBoxModel filtered = new DefaultComboBoxModel();
+                final DefaultComboBoxModel<AuthorityCode> filtered = new DefaultComboBoxModel<>();
                 final int size = codeList.getSize();
                 for (int i=0; i<size; i++) {
                     final AuthorityCode code = codeList.getElementAt(i);
@@ -557,10 +560,10 @@ public class AuthorityCodesComboBox extends WindowCreator {
             @Override protected void done() {
                 showSearchField.setEnabled(true);
                 codeComboBox.setEnabled(true);
-                ComboBoxModel model;
+                ComboBoxModel<AuthorityCode> model;
                 try {
                     model = get();
-                } catch (Exception e) {
+                } catch (InterruptedException | ExecutionException e) {
                     getWindowHandler().showError(AuthorityCodesComboBox.this, new JLabel(e.toString()), null);
                     return;
                 }

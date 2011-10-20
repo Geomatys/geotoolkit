@@ -47,8 +47,8 @@ public final strictfp class WeakValueHashMapTest {
     public void testStrongReferences() {
         final Random random = new Random();
         for (int pass=0; pass<4; pass++) {
-            final WeakValueHashMap<Integer,Integer> weakMap = new WeakValueHashMap<Integer,Integer>();
-            final HashMap<Integer,Integer> strongMap = new HashMap<Integer,Integer>();
+            final WeakValueHashMap<Integer,Integer> weakMap = new WeakValueHashMap<>();
+            final HashMap<Integer,Integer> strongMap = new HashMap<>();
             for (int i=0; i<SAMPLE_SIZE; i++) {
                 final Integer key   = random.nextInt(SAMPLE_SIZE);
                 final Integer value = random.nextInt(SAMPLE_SIZE);
@@ -78,8 +78,8 @@ public final strictfp class WeakValueHashMapTest {
     public void testWeakReferences() throws InterruptedException {
         final Random random = new Random();
         for (int pass=0; pass<2; pass++) {
-            final WeakValueHashMap<Integer,Integer> weakMap = new WeakValueHashMap<Integer,Integer>();
-            final HashMap<Integer,Integer> strongMap = new HashMap<Integer,Integer>();
+            final WeakValueHashMap<Integer,Integer> weakMap = new WeakValueHashMap<>();
+            final HashMap<Integer,Integer> strongMap = new HashMap<>();
             for (int i=0; i<SAMPLE_SIZE; i++) {
                 // We really want new instances here.
                 final Integer key   = new Integer(random.nextInt(SAMPLE_SIZE));

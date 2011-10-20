@@ -298,7 +298,7 @@ public class CoverageTableModel extends AbstractTableModel {
         for (GridCoverageReference entry : oldEntries) {
             if (entry instanceof CoverageProxy) {
                 if (proxies == null) {
-                    proxies = new HashMap<GridCoverageReference,CoverageProxy>();
+                    proxies = new HashMap<>();
                 }
                 final CoverageProxy proxy = (CoverageProxy) entry;
                 final CoverageProxy old = proxies.put(proxy.reference, proxy);
@@ -417,7 +417,7 @@ public class CoverageTableModel extends AbstractTableModel {
          * Get the indices (in the names array) of each name. A name
          * can have more than one index if it appears many time.
          */
-        final Map<String,int[]> map = new HashMap<String,int[]>(XCollections.hashMapCapacity(names.length));
+        final Map<String,int[]> map = new HashMap<>(XCollections.hashMapCapacity(names.length));
         for (int i=0; i<names.length; i++) {
             int[] index = map.put(names[i], new int[]{i});
             if (index != null) {
@@ -461,7 +461,7 @@ public class CoverageTableModel extends AbstractTableModel {
      */
     public void remove(final int... rows) {
         final Set<GridCoverageReference> toRemoveSet;
-        toRemoveSet = new HashSet<GridCoverageReference>(XCollections.hashMapCapacity(rows.length));
+        toRemoveSet = new HashSet<>(XCollections.hashMapCapacity(rows.length));
         for (int i=0; i<rows.length; i++) {
             toRemoveSet.add(unwrap(entries[rows[i]]));
         }
@@ -476,7 +476,7 @@ public class CoverageTableModel extends AbstractTableModel {
      */
     public void remove(final GridCoverageReference... toRemove) {
         final Set<GridCoverageReference> toRemoveSet;
-        toRemoveSet = new HashSet<GridCoverageReference>(XCollections.hashMapCapacity(toRemove.length));
+        toRemoveSet = new HashSet<>(XCollections.hashMapCapacity(toRemove.length));
         for (int i=0; i<toRemove.length; i++) {
             toRemoveSet.add(unwrap(toRemove[i]));
         }
@@ -897,7 +897,7 @@ public class CoverageTableModel extends AbstractTableModel {
         /**
          * List of coverage references to check for existence.
          */
-        private final LinkedList<CoverageProxy> list = new LinkedList<CoverageProxy>();
+        private final LinkedList<CoverageProxy> list = new LinkedList<>();
 
         /**
          * Only {@link FileChecker} is allowed to instantiate this class.

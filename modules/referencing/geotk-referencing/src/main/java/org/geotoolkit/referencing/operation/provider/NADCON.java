@@ -72,14 +72,14 @@ public class NADCON extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>Latitude difference file</cite>
      * parameter value. The default value is {@code "conus.las"}.
      */
-    public static final ParameterDescriptor<String> LAT_DIFF_FILE = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> LAT_DIFF_FILE = new DefaultParameterDescriptor<>(
             "Latitude difference file", String.class, null, "conus.las");
 
     /**
      * The operation parameter descriptor for the <cite>Longitude difference file</cite>
      * parameter value. The default value is {@code "conus.los"}.
      */
-    public static final ParameterDescriptor<String> LONG_DIFF_FILE = new DefaultParameterDescriptor<String>(
+    public static final ParameterDescriptor<String> LONG_DIFF_FILE = new DefaultParameterDescriptor<>(
             "Longitude difference file", String.class, null, "conus.los");
 
     /**
