@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import net.jcip.annotations.ThreadSafe;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -29,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
  * transformations are usually backed by some ellipsoid-dependent database.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.3
  * @module
@@ -77,22 +78,27 @@ public abstract class VerticalTransform extends AbstractMathTransform {
             throws TransformException;
 
     /**
-     * Transforms a single coordinate point ordinal values.
+     * Transforms a single coordinate point in a list of ordinal values,
+     * and optionally computes the derivative at that location.
      *
      * @throws TransformException If the point can't be transformed.
      *
-     * @since 3.00
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
-        final double x = srcPts[srcOff++];
-        final double y = srcPts[srcOff++];
-        final double z = srcPts[srcOff++];
-        dstPts[dstOff++] = x;
-        dstPts[dstOff++] = y;
-        dstPts[dstOff++] = z + heightOffset(x,y,z);
+        if (dstPts != null) {
+            final double x = srcPts[srcOff  ];
+            final double y = srcPts[srcOff+1];
+            final double z = srcPts[srcOff+2];
+            dstPts[dstOff  ] = x;
+            dstPts[dstOff+1] = y;
+            dstPts[dstOff+2] = z + heightOffset(x,y,z);
+        }
+        return null;
     }
 
     /**

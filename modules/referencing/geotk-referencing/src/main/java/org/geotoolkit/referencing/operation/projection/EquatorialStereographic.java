@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
@@ -39,7 +38,7 @@ import static java.lang.Math.*;
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see PolarStereographic
  * @see ObliqueStereographic
@@ -66,38 +65,53 @@ public class EquatorialStereographic extends Stereographic {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        double x = rollLongitude(srcPts[srcOff]);
-        double y = srcPts[srcOff + 1];
-        final double χ = 2*atan(ssfn(y, sin(y))) - PI/2;
-        final double cosχ = cos(χ);
-        final double A = 1 + cosχ * cos(x);    // typo in (12-29)
-        x = (cosχ * sin(x)) / A;
-        y = sin(χ) / A;
+        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double φ    = srcPts[srcOff + 1];
+        final double sinφ = sin(φ);
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        final double ssfn = ssfn(φ, sinφ);
         /*
          * The multiplication by k0 is performed by the "denormalize" affine transform.
          */
-        assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-        dstPts[dstOff]   = x;
-        dstPts[dstOff+1] = y;
-    }
-
-    /**
-     * Computes using oblique formulas and compare with the
-     * result from equatorial formulas. Used in assertions only.
-     */
-    private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                   final double[] dstPts, final int dstOff,
-                                   final double x, final double y)
-            throws ProjectionException
-    {
-        super.transform(srcPts, srcOff, dstPts, dstOff);
-        return Assertions.checkTransform(dstPts, dstOff, x, y);
+        if (dstPts != null) {
+            final double χ    = 2*atan(ssfn) - PI/2;
+            final double cosχ = cos(χ);
+            final double A    = 1 + cosχ*cosλ;    // typo in (12-29)
+            final double x    = (cosχ * sinλ) / A;
+            final double y    = sin(χ) / A;
+            assert super.transform(srcPts, srcOff, dstPts, dstOff, false) == null
+                && Assertions.checkTransform(dstPts, dstOff, x, y);
+            dstPts[dstOff]   = x;
+            dstPts[dstOff+1] = y;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double A        = (1 + ssfn*ssfn);
+        final double dχ_dφ    = 2*dssfn_dφ(φ, sinφ, cos(φ))*ssfn / A;
+        final double sinχ     = (ssfn*ssfn - 1) / A;
+        final double cosχ     = 2*ssfn / A;
+        final double cosχcosλ = cosχ*cosλ;
+        final double cosχsinλ = cosχ*sinλ;
+        final double sinχcosλ = sinχ*cosλ;
+        final double F = 1 + cosχcosλ;
+        return new Matrix2(
+                (cosχsinλ*cosχsinλ/F + cosχcosλ)        / F,
+                (sinχcosλ*cosχsinλ/F - sinχ*sinλ)*dχ_dφ / F,
+                 cosχsinλ*sinχ / (F*F),
+                (sinχcosλ*sinχ/F + cosχ)*dχ_dφ / F);
     }
 
     /**
@@ -142,33 +156,38 @@ public class EquatorialStereographic extends Stereographic {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
-            final double cosφ = cos(y);
-            final double f = 1 + cosφ * cos(x); // Inverse of (21-14)
-            x = cosφ * sin(x) / f;   // (21-2)
-            y = sin(y)        / f;   // (21-13)
-
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
-            dstPts[dstOff+1] = y;
-        }
-
-        /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
+            final double λ        = rollLongitude(srcPts[srcOff]);
+            final double φ        = srcPts[srcOff + 1];
+            final double sinφ     = sin(φ);
+            final double sinλ     = sin(λ);
+            final double cosφ     = cos(φ);
+            final double cosλ     = cos(λ);
+            final double cosφcosλ = cosφ*cosλ;
+            final double cosφsinλ = cosφ*sinλ;
+            final double F        = 1 + cosφcosλ;   // Inverse of (21-14)
+            final double x        = cosφsinλ / F;   // (21-2)
+            final double y        = sinφ     / F;   // (21-13)
+            Matrix derivative = null;
+            if (derivate) {
+                final double sinφcosλ = sinφ*cosλ;
+                derivative = new Matrix2(
+                        (cosφsinλ*cosφsinλ/F + cosφcosλ)  / F,
+                        (sinφcosλ*cosφsinλ/F - sinφ*sinλ) / F,
+                         cosφsinλ*sinφ / (F*F),
+                        (sinφcosλ*sinφ/F + cosφ) / F);
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -211,67 +230,5 @@ public class EquatorialStereographic extends Stereographic {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.18
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ = rollLongitude(point.getX());
-            final double φ = point.getY();
-            final double sinφ = sin(φ);
-            final double sinλ = sin(λ);
-            final double cosφ = cos(φ);
-            final double cosλ = cos(λ);
-            final double cosφcosλ = cosφ*cosλ;
-            final double cosφsinλ = cosφ*sinλ;
-            final double sinφcosλ = sinφ*cosλ;
-            final double F = 1 + cosφcosλ;
-            final Matrix derivative = new Matrix2(
-                    (cosφsinλ*cosφsinλ/F + cosφcosλ)  / F,
-                    (sinφcosλ*cosφsinλ/F - sinφ*sinλ) / F,
-                     cosφsinλ*sinφ / (F*F),
-                    (sinφcosλ*sinφ/F + cosφ) / F);
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.18
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ     = sin(φ);
-        final double sinλ     = sin(λ);
-        final double cosλ     = cos(λ);
-        final double ssfn     = ssfn(φ, sinφ);
-        final double A        = (1 + ssfn*ssfn);
-        final double dχ_dφ    = 2*dssfn_dφ(φ, sinφ, cos(φ))*ssfn / A;
-        final double sinχ     = (ssfn*ssfn - 1) / A;
-        final double cosχ     = 2*ssfn / A;
-        final double cosχcosλ = cosχ*cosλ;
-        final double cosχsinλ = cosχ*sinλ;
-        final double sinχcosλ = sinχ*cosλ;
-        final double F = 1 + cosχcosλ;
-        return new Matrix2(
-                (cosχsinλ*cosχsinλ/F + cosχcosλ)        / F,
-                (sinχcosλ*cosχsinλ/F - sinχ*sinλ)*dχ_dφ / F,
-                 cosχsinλ*sinχ / (F*F),
-                (sinχcosλ*sinχ/F + cosχ)*dχ_dφ / F);
     }
 }

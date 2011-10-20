@@ -222,17 +222,26 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
     }
 
     /**
-     * Transforms a single coordinate in a list of ordinal values.
+     * Transforms a single point in the given array and opportunistically computes its derivative
+     * if requested. The default implementation computes all those values from the {@link #scale}
+     * and {@link #offset} coefficients.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
     {
-        dstPts[dstOff] = offset + scale*srcPts[srcOff];
+        if (dstPts != null) {
+            dstPts[dstOff] = offset + scale*srcPts[srcOff];
+        }
+        return derivate ? new Matrix1(scale) : null;
     }
 
     /**
-     * Transforms many coordinates in a list of ordinal values.
+     * Transforms many coordinates in a list of ordinal values. The default implementation
+     * computes the values from the {@link #scale} and {@link #offset} coefficients.
      */
     @Override
     public void transform(final double[] srcPts, int srcOff,
@@ -252,7 +261,9 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
     }
 
     /**
-     * Transforms many coordinates in a list of ordinal values.
+     * Transforms many coordinates in a list of ordinal values. The default implementation
+     * computes the values from the {@link #scale} and {@link #offset} coefficients using
+     * the {@code double} precision, then casts the result to the {@code float} type.
      */
     @Override
     public void transform(final float[] srcPts, int srcOff,
@@ -272,7 +283,9 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
     }
 
     /**
-     * Transforms many coordinates in a list of ordinal values.
+     * Transforms many coordinates in a list of ordinal values. The default implementation
+     * computes the values from the {@link #scale} and {@link #offset} coefficients using
+     * the {@code double} precision, then casts the result to the {@code float} type.
      */
     @Override
     public void transform(final double[] srcPts, int srcOff,
@@ -284,7 +297,8 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
     }
 
     /**
-     * Transforms many coordinates in a list of ordinal values.
+     * Transforms many coordinates in a list of ordinal values. The default implementation
+     * computes the values from the {@link #scale} and {@link #offset} coefficients.
      */
     @Override
     public void transform(final float [] srcPts, int srcOff,

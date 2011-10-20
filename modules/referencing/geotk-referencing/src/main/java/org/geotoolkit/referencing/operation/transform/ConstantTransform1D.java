@@ -28,7 +28,7 @@ import net.jcip.annotations.Immutable;
  * However, this specialized {@code ConstantTransform1D} class is faster.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -55,16 +55,6 @@ final class ConstantTransform1D extends LinearTransform1D {
     @Override
     public double transform(double value) {
         return offset;
-    }
-
-    /**
-     * Transforms a single coordinate in a list of ordinal values.
-     */
-    @Override
-    protected void transform(final double[] srcPts, int srcOff,
-                             final double[] dstPts, int dstOff)
-    {
-        dstPts[dstOff] = offset;
     }
 
     /**

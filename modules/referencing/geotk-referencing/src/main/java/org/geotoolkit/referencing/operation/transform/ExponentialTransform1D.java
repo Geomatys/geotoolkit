@@ -63,7 +63,7 @@ import static org.geotoolkit.referencing.operation.provider.Exponential.*;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see LogarithmicTransform1D
  * @see LinearTransform1D
@@ -206,14 +206,6 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
     @Override
     public double transform(final double value) {
         return scale * Math.pow(base, value);
-    }
-
-    /**
-     * Transforms a single coordinate in a list of ordinal values.
-     */
-    @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
-        dstPts[dstOff] = scale * Math.pow(base, srcPts[srcOff]);
     }
 
     /**

@@ -22,10 +22,12 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
 
@@ -172,18 +174,21 @@ public class Equirectangular extends UnitaryProjection {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        final double λ = srcPts[srcOff + 1]; // Must be before writing x.
-        dstPts[dstOff] = rollLongitude(srcPts[srcOff]);
-        dstPts[dstOff + 1] = λ;
+        if (dstPts != null) {
+            final double λ = srcPts[srcOff + 1]; // Must be before writing x.
+            dstPts[dstOff] = rollLongitude(srcPts[srcOff]);
+            dstPts[dstOff + 1] = λ;
+        }
+        return derivate ? new Matrix2() : null;
     }
 
     /**

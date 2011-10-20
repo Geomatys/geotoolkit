@@ -32,6 +32,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
@@ -390,10 +391,18 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
     /**
      * Transforms a single source coordinate (usually pixel indices) into destination coordinate
      * (usually "real world" coordinates).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
-        transform(srcPts, srcOff, dstPts, dstOff, 1);
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
+    {
+        if (dstPts != null) {
+            transform(srcPts, srcOff, dstPts, dstOff, 1);
+        }
+        return null;
     }
 
     /**

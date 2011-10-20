@@ -29,8 +29,10 @@ import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
@@ -47,7 +49,7 @@ import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
  * meters without affecting the latitude and longitude values.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see DimensionFilter
  *
@@ -98,14 +100,8 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
                                    final MathTransform subTransform,
                                    final int numTrailingOrdinates)
     {
-        if (firstAffectedOrdinate < 0) {
-            throw new IllegalArgumentException(illegalArgument(
-                    "firstAffectedOrdinate", firstAffectedOrdinate));
-        }
-        if (numTrailingOrdinates < 0) {
-            throw new IllegalArgumentException(illegalArgument(
-                    "numTrailingOrdinates", numTrailingOrdinates));
-        }
+        ArgumentChecks.ensurePositive("firstAffectedOrdinate", firstAffectedOrdinate);
+        ArgumentChecks.ensurePositive("numTrailingOrdinates",  numTrailingOrdinates);
         if (subTransform instanceof PassThroughTransform) {
             final PassThroughTransform passThrough = (PassThroughTransform) subTransform;
             this.firstAffectedOrdinate = passThrough.firstAffectedOrdinate + firstAffectedOrdinate;
@@ -139,14 +135,8 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
                                        final MathTransform subTransform,
                                        final int numTrailingOrdinates)
     {
-        if (firstAffectedOrdinate < 0) {
-            throw new IllegalArgumentException(illegalArgument(
-                    "firstAffectedOrdinate", firstAffectedOrdinate));
-        }
-        if (numTrailingOrdinates < 0) {
-            throw new IllegalArgumentException(illegalArgument(
-                    "numTrailingOrdinates", numTrailingOrdinates));
-        }
+        ArgumentChecks.ensurePositive("firstAffectedOrdinate", firstAffectedOrdinate);
+        ArgumentChecks.ensurePositive("numTrailingOrdinates",  numTrailingOrdinates);
         if (firstAffectedOrdinate == 0 && numTrailingOrdinates == 0) {
             return subTransform;
         }
@@ -283,15 +273,26 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
     }
 
     /**
-     * Transforms a single coordinate in a list of ordinal values.
+     * Transforms a single coordinate in a list of ordinal values, and opportunistically
+     * computes the transform derivative if requested.
      *
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
-        transform(srcPts, srcOff, dstPts, dstOff, 1);
+        Matrix derivative = null;
+        if (derivate) {
+            derivative = derivative(new DirectPositionView(srcPts, srcOff, getSourceDimensions()));
+        }
+        if (dstPts != null) {
+            transform(srcPts, srcOff, dstPts, dstOff, 1);
+        }
+        return derivative;
     }
 
     /**

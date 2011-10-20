@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -89,7 +88,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Rueben Schulz (UBC)
  * @author Simon Reynard (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see TransverseMercator
  * @see ObliqueMercator
@@ -221,32 +220,50 @@ public class Mercator extends UnitaryProjection {
     // parameter are significant to a unitary Mercator projection.
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        double x = srcPts[srcOff];
-        double y = srcPts[srcOff + 1];
+        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double φ    = srcPts[srcOff + 1];
+        final double sinφ = sin(φ);
         // Projection of zero is zero. However the formulas below have a slight rounding error
         // which produce values close to 1E-10, so we will avoid them when y=0. In addition of
         // avoiding rounding error, this also preserve the sign (positive vs negative zero).
-        if (y != 0) {
+        final double y;
+        if (sinφ == 0) {
+            y = φ;
+        } else {
             // See the javadoc of the Spherical inner class for a note
             // about why we perform explicit checks for the pole cases.
-            final double a = abs(y);
+            final double a = abs(φ);
             if (a < PI/2) {
-                y = -log(tsfn(y, sin(y)));
+                y = -log(tsfn(φ, sinφ));
             } else {
-                y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, φ);
             }
-            dstPts[dstOff + 1] = y;
         }
-        dstPts[dstOff] = rollLongitude(x);
+        if (dstPts != null) {
+            dstPts[dstOff]   = λ;
+            dstPts[dstOff+1] = y;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double cosφ  = cos(φ);
+        final double esinφ = sinφ * excentricity;
+        final double t     = (1 - sinφ) / cosφ;
+        return new Matrix2(1, 0, 0, 0.5*(t + 1/t) - excentricitySquared*cosφ / (1 - esinφ*esinφ));
     }
 
     /**
@@ -381,27 +398,39 @@ public class Mercator extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
+            final double λ = rollLongitude(srcPts[srcOff]);
+            final double φ = srcPts[srcOff + 1];
             // Projection of zero is zero. However the formulas below have a slight rounding error
             // which produce values close to 1E-10, so we will avoid them when y=0. In addition of
             // avoiding rounding error, this also preserve the sign (positive vs negative zero).
-            if (y != 0) {
+            final double y;
+            if (φ == 0) {
+                y = φ;
+            } else {
                 // See class javadoc for a note about explicit check for poles.
-                final double a = abs(y);
+                final double a = abs(φ);
                 if (a < PI/2) {
-                    y = log(tan(PI/4 + 0.5*y));
+                    y = log(tan(PI/4 + 0.5*φ));
                 } else {
-                    y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                    y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, φ);
                 }
-                assert pseudo || checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-                dstPts[dstOff + 1] = y;
             }
-            dstPts[dstOff] = x;
+            Matrix derivative = null;
+            if (derivate) {
+                derivative = new Matrix2(1, 0, 0, 1/cos(φ));
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert pseudo || (Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, λ, y)); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = λ;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -440,19 +469,6 @@ public class Mercator extends UnitaryProjection {
         }
 
         /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
-        }
-
-        /**
          * {@inheritDoc}
          */
         @Override
@@ -480,41 +496,6 @@ public class Mercator extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.12
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final Matrix derivative = new Matrix2(1, 0, 0, 1/cos(point.getY()));
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.18
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double φ = point.getY();
-        final double sinφ = sin(φ);
-        final double cosφ = cos(φ);
-        final double esinφ = sinφ * excentricity;
-        final double t = (1 - sinφ) / cosφ;
-        return new Matrix2(1, 0, 0, 0.5*(t + 1/t) - excentricitySquared*cosφ / (1 - esinφ*esinφ));
     }
 
     /**

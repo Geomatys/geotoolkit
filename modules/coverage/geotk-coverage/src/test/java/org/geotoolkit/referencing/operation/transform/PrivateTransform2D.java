@@ -17,12 +17,14 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.geotoolkit.internal.referencing.MathTransformWrapper;
 
 
 /**
@@ -35,41 +37,29 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
  *
  * @since 3.15
  */
-final strictfp class PrivateTransform2D extends AbstractMathTransform implements MathTransform2D {
-    /**
-     * The wrapped transform.
-     */
-    private final MathTransform2D tr;
-
+@SuppressWarnings("serial")
+final strictfp class PrivateTransform2D extends MathTransformWrapper implements MathTransform2D {
     /**
      * Wraps the given transform.
      */
-    PrivateTransform2D(final MathTransform2D tr) {
-        this.tr = tr;
-    }
-
-    /**
-     * Returns the number of source dimensions (should be 2).
-     */
-    @Override
-    public int getSourceDimensions() {
-        return tr.getSourceDimensions();
-    }
-
-    /**
-     * Returns the number of target dimensions (should be 2).
-     */
-    @Override
-    public int getTargetDimensions() {
-        return tr.getTargetDimensions();
+    PrivateTransform2D(final MathTransform2D transform) {
+        super(transform);
     }
 
     /**
      * Transforms a single coordinate.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) throws TransformException {
-        tr.transform(srcPts, srcOff, dstPts, dstOff, 1);
+    public Point2D transform(final Point2D ptSrc, final Point2D ptDst) throws TransformException {
+        return ((MathTransform2D) transform).transform(ptSrc, ptDst);
+    }
+
+    /**
+     * Transforms a shape.
+     */
+    @Override
+    public Shape createTransformedShape(final Shape shape) throws TransformException {
+        return ((MathTransform2D) transform).createTransformedShape(shape);
     }
 
     /**
@@ -77,7 +67,7 @@ final strictfp class PrivateTransform2D extends AbstractMathTransform implements
      */
     @Override
     public Matrix derivative(final Point2D point) throws TransformException {
-        return tr.derivative(point);
+        return ((MathTransform2D) transform).derivative(point);
     }
 
     /**
@@ -85,6 +75,6 @@ final strictfp class PrivateTransform2D extends AbstractMathTransform implements
      */
     @Override
     public MathTransform2D inverse() throws NoninvertibleTransformException {
-        return new PrivateTransform2D(tr.inverse());
+        return new PrivateTransform2D((MathTransform2D) super.inverse());
     }
 }

@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
@@ -64,7 +63,7 @@ import static java.lang.Math.*;
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.11
  * @module
@@ -109,22 +108,26 @@ public class Polyconic extends CassiniOrMercator {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
      * <p>
-     * <b>Note:</b> This method produces NaN at poles in the spherical cases
+     * <b>Note:</b> This method produces {@link Double#NaN} at poles in the spherical cases
      * (may occur if assertions are enabled).
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
-        final double φ = srcPts[srcOff + 1];
-        final double sinφ = sin(φ);
-        final double cosφ = cos(φ);
-        final double msfn = msfn(sinφ, cosφ) / sinφ;
+        final double λ     = rollLongitude(srcPts[srcOff]);
+        final double φ     = srcPts[srcOff + 1];
+        final double sinφ  = sin(φ);
+        final double cosφ  = cos(φ);
+        final double msfn  = msfn(sinφ, cosφ);
+        final double msfnd = msfn / sinφ;
         /*
          * If y == 0, then we have (1/0) == infinity. Then we would have below
          * y = 0 + infinity * (1 - 1)  ==  infinity * zero  ==  indetermination.
@@ -135,13 +138,34 @@ public class Polyconic extends CassiniOrMercator {
          * In Geotk, we try to avoid threshold as much as possible in order to have
          * more continuous function.
          */
-        if (Double.isInfinite(msfn)) {
-            dstPts[dstOff] = λ;
-            return;
+        if (dstPts != null) {
+            if (Double.isInfinite(msfnd)) {
+                dstPts[dstOff] = λ;
+            } else {
+                final double λsinφ = λ*sinφ;
+                dstPts[dstOff+1] = msfnd*(1 - cos(λsinφ)) + mlfn(φ, sinφ, cosφ);
+                dstPts[dstOff  ] = msfnd * sin(λsinφ);
+            }
         }
-        final double λsinφ = λ*sinφ;
-        dstPts[dstOff+1] = msfn*(1 - cos(λsinφ)) + mlfn(φ, sinφ, cosφ);
-        dstPts[dstOff  ] = msfn * sin(λsinφ);
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        if (Double.isInfinite(msfnd)) {
+            // Returns an identity transform for consistency
+            // with the case implemented in transform(...).
+            return new Matrix2();
+        }
+        final double dmsdφ = dmsfn_dφ(sinφ, cosφ, msfn) - cosφ/sinφ;
+        final double X2    = λ*sinφ;
+        final double sinX2 = sin(X2);
+        final double cosX2 = cos(X2);
+        final double dX2dφ = λ*cosφ;
+        return new Matrix2(
+                msfn * cosX2,  msfnd * (dX2dφ*cosX2 + dmsdφ*(  sinX2)),
+                msfn * sinX2,  msfnd * (dX2dφ*sinX2 + dmsdφ*(1-cosX2)) + dmlfn_dφ(sinφ*sinφ, cosφ*cosφ));
     }
 
     /**
@@ -243,32 +267,38 @@ public class Polyconic extends CassiniOrMercator {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
-            final double λ = rollLongitude(srcPts[srcOff]);
-            final double φ = srcPts[srcOff + 1];
-            final double E = λ * sin(φ);
-            final double cot = 1 / tan(φ);
-            final double x = sin(E) * cot;
-            final double y = φ - phi0 + cot * (1 - cos(E));
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff  ] = x;
-            dstPts[dstOff+1] = y;
-        }
-
-        /**
-         * Computes using ellipsoidal formulas and compares with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
+            final double λ    = rollLongitude(srcPts[srcOff]);
+            final double φ    = srcPts[srcOff + 1];
+            final double sinφ = sin(φ);
+            final double cotφ = 1 / tan(φ);
+            final double E    = λ * sinφ;
+            final double sinE = sin(E);
+            final double cosE = cos(E);
+            final double x    = sinE * cotφ;
+            final double y    = φ - phi0 + cotφ * (1 - cosE);
+            Matrix derivative = null;
+            if (derivate) {
+                final double cosφ  = cos(φ);
+                final double sin2φ = sinφ * sinφ;
+                final double cot2φ = cotφ * cotφ;
+                derivative = new Matrix2(
+                        cosφ  * (cosE),                            // ∂x/∂λ
+                        cot2φ * (cosE*E - sinE) - sinE,            // ∂x/∂φ
+                        cosφ  * (sinE),                            // ∂y/∂λ
+                        cot2φ * (sinE*E) + (cosE - 1)/sin2φ + 1);  // ∂y/∂φ
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -318,67 +348,6 @@ public class Polyconic extends CassiniOrMercator {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.19
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ     = rollLongitude(point.getX());
-            final double φ     = point.getY();
-            final double sinφ  = sin(φ);
-            final double cosφ  = cos(φ);
-            final double sin2φ = sinφ * sinφ;
-            final double cot2φ = (cosφ*cosφ) / sin2φ;
-            final double E     = λ*sinφ;
-            final double cosE  = cos(E);
-            final double sinE  = sin(E);
-            final Matrix derivative = new Matrix2(
-                    cosφ  * (cosE),                            // ∂x/∂λ
-                    cot2φ * (cosE*E - sinE) - sinE,            // ∂x/∂φ
-                    cosφ  * (sinE),                            // ∂y/∂λ
-                    cot2φ * (sinE*E) + (cosE - 1)/sin2φ + 1);  // ∂y/∂φ
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.19
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ     = rollLongitude(point.getX());
-        final double φ     = point.getY();
-        final double sinφ  = sin(φ);
-        final double cosφ  = cos(φ);
-        final double msfn  = msfn(sinφ, cosφ);
-        final double msfnd = msfn / sinφ;
-        if (Double.isInfinite(msfnd)) {
-            // Returns an identity transform for consistency
-            // with the case implemented in transform(...).
-            return new Matrix2();
-        }
-        final double dmsdφ = dmsfn_dφ(sinφ, cosφ, msfn) - cosφ/sinφ;
-        final double X2    = λ*sinφ;
-        final double sinX2 = sin(X2);
-        final double cosX2 = cos(X2);
-        final double dX2dφ = λ*cosφ;
-        return new Matrix2(
-                msfn * cosX2,  msfnd * (dX2dφ*cosX2 + dmsdφ*(  sinX2)),
-                msfn * sinX2,  msfnd * (dX2dφ*sinX2 + dmsdφ*(1-cosX2)) + dmlfn_dφ(sinφ*sinφ, cosφ*cosφ));
     }
 
     /**

@@ -38,7 +38,7 @@ import static org.geotoolkit.util.Utilities.hash;
  * improve the {@link #concatenate(MathTransform, boolean)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.17
  * @module
@@ -111,14 +111,6 @@ final class PowerTransform1D extends AbstractMathTransform1D implements Serializ
     @Override
     public double transform(final double value) {
         return Math.pow(value, power);
-    }
-
-    /**
-     * Transforms a single coordinate in a list of ordinal values.
-     */
-    @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
-        dstPts[dstOff] = Math.pow(srcPts[srcOff], power);
     }
 
     /**

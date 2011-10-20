@@ -28,12 +28,10 @@ import java.util.Arrays;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.transform.GridType;
 import org.geotoolkit.referencing.operation.transform.GridTransform;
 import org.geotoolkit.referencing.operation.transform.IterationStrategy;
@@ -43,7 +41,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
 /**
@@ -54,7 +51,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -137,34 +134,11 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
     }
 
     /**
-     * Gets the derivative of this transform at a point.
-     */
-    @Override
-    public Matrix derivative(final DirectPosition point) {
-        ensureDimensionMatches("point", point, 2);
-        final AffineTransform tr = new AffineTransform();
-        getAffineTransform(point.getOrdinate(0), point.getOrdinate(1), tr);
-        return new Matrix2(tr.getScaleX(), tr.getShearX(),
-                           tr.getShearY(), tr.getScaleY());
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     */
-    @Override
-    public Matrix derivative(final Point2D point) {
-        final AffineTransform tr = new AffineTransform();
-        getAffineTransform(point.getX(), point.getY(), tr);
-        return new Matrix2(tr.getScaleX(), tr.getShearX(),
-                           tr.getShearY(), tr.getScaleY());
-    }
-
-    /**
-     * Retourne une approximation de la transformation affine à la position indiquée.
+     * Returns an estimation of the affine transform at the given position.
      *
-     * @param  col  Coordonnee <var>x</var> du point.
-     * @param  row  Coordonnee <var>y</var> du point.
-     * @param dest  Matrice dans laquelle écrire la transformation affine.
+     * @param  col  The <var>x</var> ordinate value where to evaluate.
+     * @param  row  The <var>y</var> ordinate value where to evaluate.
+     * @param dest  The affine transform where to write the result.
      */
     private void getAffineTransform(double x, double y, final AffineTransform dest) {
         int col = (int) x;
@@ -475,11 +449,12 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
          * @throws TransformException if a point can't be transformed.
          */
         @Override
-        public void transform(final double[] srcPts, int srcOff,
-                              final double[] dstPts, int dstOff)
-                throws TransformException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws TransformException
         {
             transform(srcPts, srcOff, dstPts, dstOff, 1);
+            return null;
         }
 
         /**

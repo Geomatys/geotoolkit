@@ -58,7 +58,7 @@ import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
  * Concatenated transforms are serializable if all their step transforms are serializables.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
  *
@@ -640,16 +640,33 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Transforms a single coordinates in a list of ordinal values.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
      *
      * @throws TransformException If {@link #transform1} or {@link #transform2} failed.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, int srcOff,
-                             final double[] dstPts, int dstOff)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
-        transform(srcPts, srcOff, dstPts, dstOff, 1);
+        assert isValid();
+        final int bufferDim = transform2.getSourceDimensions();
+        final int targetDim = transform2.getTargetDimensions();
+        final double[] buffer;
+        final int offset;
+        if (bufferDim > targetDim) {
+            buffer = new double[bufferDim];
+            offset = 0;
+        } else {
+            buffer = dstPts;
+            offset = dstOff;
+        }
+        final Matrix matrix1 = MathTransforms.derivativeAndTransform(transform1, srcPts, srcOff, buffer, offset, derivate);
+        final Matrix matrix2 = MathTransforms.derivativeAndTransform(transform2, buffer, offset, dstPts, dstOff, derivate);
+        return (matrix1 != null && matrix2 != null) ? multiply(matrix2, matrix1) : null;
     }
 
     /**

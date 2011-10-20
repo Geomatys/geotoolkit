@@ -22,7 +22,6 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.util.Collection;
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -161,7 +160,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see Mercator
  * @see TransverseMercator
@@ -538,41 +537,74 @@ public class ObliqueMercator extends UnitaryProjection {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
         final double φ = srcPts[srcOff + 1];
-        double x;
-        double y = φ;
+        final double x, y;
+        Matrix derivative = null;
         if (abs(abs(φ) - PI/2) > ANGLE_TOLERANCE) {
-            double Q = E / pow(tsfn(φ, sin(φ)), B);
-            double t = 1 / Q;
-            double S = 0.5 * (Q - t);
-            double V = sin(B * λ);
-            double U = (S * singamma0 - V * cosgamma0) / (0.5 * (Q + t));
+            final double sinφ = sin(φ);
+            final double Q    = E / pow(tsfn(φ, sinφ), B);
+            final double iQ   = 1 / Q;
+            final double S    = 0.5 * (Q - iQ);
+            final double Sp   = 0.5 * (Q + iQ);
+            final double V    = sin(B * λ);
+            final double U    = (S*singamma0 - V*cosgamma0) / Sp;
             if (abs(abs(U) - 1) < EPSILON) {
                 throw new ProjectionException(Errors.Keys.INFINITE_VALUE_$1, "v");
             }
-            t = cos(B * λ);
-            if (abs(t) < FINER_EPSILON) {
-                  y = λ * (B*B);
+            final double dV_dλ = cos(B * λ);
+            if (abs(dV_dλ) < FINER_EPSILON) {
+                y = λ * (B*B);
             } else {
-                  y = atan2((S * cosgamma0 + V * singamma0), t);
+                y = atan2((S * cosgamma0 + V * singamma0), dV_dλ);
             }
-              x = 0.5 * log((1 - U) / (1 + U));
+            x = 0.5 * log((1-U) / (1+U));
+            if (derivate) {
+                final double m10, m11;
+                final double dQ_dφ = -B * Q * dtsfn_dφ(φ, sinφ, cos(φ));
+                final double dU_dλ = -B * (cosgamma0 / Sp) * dV_dλ;
+                final double dU_dφ = dQ_dφ * (singamma0 + (singamma0 + U)/(Q*Q) - U) / (2*Sp);
+                if (abs(dV_dλ) < FINER_EPSILON) {
+                    m10 = B*B; // y = λ * (B*B);
+                    m11 = 0;
+                } else {
+                    final double dS_dφ = 0.5*dQ_dφ * (1 + 1/(Q*Q));
+                    final double M = (S*cosgamma0 + V*singamma0);
+                    final double L = hypot(dV_dλ, M);
+                    final double P = L + dV_dλ;
+                    final double D = (P*P + M*M);
+                    m10 = 2 * B * (dV_dλ * (singamma0*P + (V - singamma0*M) * M/L) + V*M) / D; // Y = atan2(M, T)
+                    m11 = 2 * cosgamma0 * dS_dφ * (P - M*M/L) / D;
+                }
+                final double R = U*U - 1;
+                derivative = new Matrix2(
+                        dU_dλ / R,  // x = 0.5 * log((1-U) / (1+U))
+                        dU_dφ / R,
+                        m10, m11);
+            }
         } else {
-              x = (φ > 0 ? v_pole_n : v_pole_s);
-            // y is unchanged.
+            x = (φ > 0 ? v_pole_n : v_pole_s);
+            y = φ;
+            if (derivate) {
+                derivative = new Matrix2(0, 0, 0, 1);
+            }
         }
-        dstPts[dstOff]     = x;
-        dstPts[dstOff + 1] = y;
+        if (dstPts != null) {
+            dstPts[dstOff]   = x;
+            dstPts[dstOff+1] = y;
+        }
+        return derivative;
     }
 
     /**
@@ -601,56 +633,6 @@ public class ObliqueMercator extends UnitaryProjection {
         }
         dstPts[dstOff  ] = unrollLongitude(λ);
         dstPts[dstOff+1] = φ;
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ = sin(φ);
-        final double m00, m01, m10, m11;
-        if (abs(abs(φ) - PI/2) > ANGLE_TOLERANCE) {
-            final double Q     =  E / pow(tsfn(φ, sinφ), B);
-            final double dQ_dφ = -B * Q * dtsfn_dφ(φ, sinφ, cos(φ));
-            final double S     = 0.5 * (Q - 1/Q);
-            final double Sp    = 0.5 * (Q + 1/Q);
-            final double dS_dφ = 0.5 * dQ_dφ * (1 + 1/(Q*Q));
-            final double V     = sin(B * λ);
-            final double dV_dλ = cos(B * λ);
-            final double U     = (S*singamma0 - V*cosgamma0) / Sp;
-            final double dU_dλ = (-cosgamma0 / Sp) * dV_dλ * B;
-            final double dU_dφ = dQ_dφ * (singamma0 + (singamma0 + U)/(Q*Q) - U) / (2*Sp);
-            if (abs(abs(U) - 1) < EPSILON) {
-                throw new ProjectionException(Errors.Keys.INFINITE_VALUE_$1, "v");
-            }
-            if (abs(dV_dλ) < FINER_EPSILON) {
-                m10 = B*B; // Y = λ * (B*B);
-                m11 = 0;
-            } else {
-                final double M = (S*cosgamma0 + V*singamma0);
-                final double L = hypot(dV_dλ, M);
-                final double P = L + dV_dλ;
-                final double D = (P*P + M*M);
-                m10 = 2 * B * (dV_dλ * (singamma0*P + (V - singamma0*M) * M/L) + V*M) / D; // Y = atan2(M, T)
-                m11 = 2 * cosgamma0 * dS_dφ * (P - M*M/L) / D;
-            }
-            final double R = U*U - 1;
-            m00 = dU_dλ / R; // X = 0.5 * log((1-U) / (1+U))
-            m01 = dU_dφ / R;
-        } else {
-            //X = (φ > 0 ? v_pole_n : v_pole_s);
-            m00 = m01 = m10 = 0;
-            m11 = 1;
-            // y is unchanged.
-        }
-        return new Matrix2(m00, m01, m10, m11);
     }
 
     /**

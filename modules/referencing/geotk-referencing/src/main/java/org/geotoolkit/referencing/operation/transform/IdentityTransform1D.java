@@ -53,16 +53,6 @@ final class IdentityTransform1D extends LinearTransform1D {
     }
 
     /**
-     * Transforms a single coordinate in a list of ordinal values.
-     */
-    @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-    {
-        dstPts[dstOff] = srcPts[srcOff];
-    }
-
-    /**
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override

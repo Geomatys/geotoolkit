@@ -37,7 +37,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
  * class, however doing so may simplify their implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.17
  * @module
@@ -67,14 +67,23 @@ public abstract class AbstractMathTransform1D extends AbstractMathTransform impl
     }
 
     /**
-     * Transforms a single point in the given array. The default implementation delegates to
-     * {@link #transform(double)}. Subclasses may override this method for performance reason.
+     * Transforms a single point in the given array and opportunistically computes its derivative
+     * if requested. The default implementation delegates to {@link #transform(double)} and
+     * potentially to {@link #derivative(double)}. Subclasses may override this method for
+     * performance reason.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
-        dstPts[dstOff] = transform(srcPts[srcOff]);
+        final double ordinate = srcPts[srcOff];
+        if (dstPts != null) {
+            dstPts[dstOff] = transform(ordinate);
+        }
+        return derivate ? new Matrix1(derivative(ordinate)) : null;
     }
 
     /**

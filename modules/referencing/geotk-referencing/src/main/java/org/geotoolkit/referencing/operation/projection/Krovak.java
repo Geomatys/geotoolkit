@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -92,7 +91,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Jan Jezek (HSRS)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -111,7 +110,7 @@ public class Krovak extends UnitaryProjection {
     private static final double ITERATION_TOLERANCE = 1E-11;
 
     /**
-     * Sinus and cosinus of the azimuth. The azimuth is measured at the centre line passing
+     * Sinus and cosine of the azimuth. The azimuth is measured at the centre line passing
      * through the centre of the projection, and is equal to the co-latitude of the cone
      * axis at point of intersection with the ellipsoid.
      */
@@ -202,28 +201,60 @@ public class Krovak extends UnitaryProjection {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
+     *
+     * @since 3.20 (derived from 3.00)
      */
-    @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        final double Δv   = srcPts[srcOff];
-        final double φ    = srcPts[srcOff+1];
-        final double esp  = excentricity * sin(φ);
-        final double gfi  = pow(((1 - esp) / (1 + esp)), hae);
-        final double U    = 2 * (atan(pow(tan(φ/2 + PI/4), alfa) / k1 * gfi) - PI/4);
-        final double cosU = cos(U);
-        final double S    = asin(cosAzim*sin(U) + sinAzim*cosU*cos(Δv));
-        final double ε    = n * asin(cosU * sin(Δv) / cos(S));
-        final double ρ    = pow(tan(S/2 + PI/4), n);
-
-        // x and y are reverted.
-        dstPts[dstOff  ] = sin(ε) / ρ;
-        dstPts[dstOff+1] = cos(ε) / ρ;
+        final double Δv    = srcPts[srcOff];
+        final double φ     = srcPts[srcOff+1];
+        final double sinΔv = sin(Δv);
+        final double cosΔv = cos(Δv);
+        final double esinφ = excentricity * sin(φ);
+        final double tan1  = tan(φ/2 + PI/4);
+        final double gφ    = pow((1-esinφ) / (1+esinφ), hae);
+        final double V     = pow(tan1, alfa) / k1 * gφ;
+        final double U     = 2 * (atan(V) - PI/4);
+        final double sinU  = sin(U);
+        final double cosU  = cos(U);
+        final double sinS  = cosAzim*sinU + sinAzim*cosU*cosΔv;
+        final double cosS  = sqrt(1 - sinS*sinS);
+        final double S     = asin(sinS);
+        final double Ɛt    = cosU*sinΔv / cosS;
+        final double Ɛ     = n * asin(Ɛt);
+        final double cosƐ  = cos(Ɛ);
+        final double sinƐ  = sin(Ɛ);
+        final double tan2  = tan(S/2 + PI/4);
+        final double ρ     = pow(tan2, n);
+        if (dstPts != null) {
+            // x and y are reverted.
+            dstPts[dstOff  ] = sinƐ / ρ;
+            dstPts[dstOff+1] = cosƐ / ρ;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double dgφ    = excentricitySquared*cos(φ) / (1 - esinφ*esinφ);
+        final double dU_dφ  = alfa * (1/tan1 + tan1 - 2*dgφ) / (1/V + V);
+        final double dS_dλ  = (-sinAzim*cosU*sinΔv) / cosS;
+        final double dS_dφ  = (-sinAzim*sinU*cosΔv + cosAzim*cosU)*dU_dφ / cosS;
+        final double t      = n / (cosS*cosS*sqrt(1 - Ɛt*Ɛt));
+        final double dƐ_dλ  = cosU  * t * (dS_dλ*sinΔv*sinS +       cosΔv*cosS);
+        final double dƐ_dφ  = sinΔv * t * (dS_dφ*sinS*cosU - dU_dφ*sinU*cosS);
+        final double m      = (-n/2) * (1/tan2 + tan2);
+        return new Matrix2(
+                (m*dS_dλ * sinƐ + dƐ_dλ * cosƐ) / ρ,
+                (m*dS_dφ * sinƐ + dƐ_dφ * cosƐ) / ρ,
+                (m*dS_dλ * cosƐ - dƐ_dλ * sinƐ) / ρ,
+                (m*dS_dφ * cosƐ - dƐ_dφ * sinƐ) / ρ);
     }
 
     /**
@@ -261,51 +292,6 @@ public class Krovak extends UnitaryProjection {
         }
         dstPts[dstOff  ] = Δv;
         dstPts[dstOff+1] = φ;
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.19
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ   = sin(φ);
-        final double sinλ   = sin(λ);
-        final double cosλ   = cos(λ);
-        final double tan1   = tan(φ/2 + PI/4);
-        final double esinφ  = excentricity * sinφ;
-        final double dgφ    = excentricitySquared*cos(φ) / (1 - esinφ*esinφ);
-        final double V      = pow(tan1, alfa) * pow((1-esinφ) / (1+esinφ), hae) / k1;
-        final double U      = 2 * (atan(V) - PI/4);
-        final double cosU   = cos(U);
-        final double sinU   = sin(U);
-        final double sinS   = cosAzim*sinU + sinAzim*cosU*cosλ;
-        final double cosS   = sqrt(1 - sinS*sinS);
-        final double dU_dφ  = alfa * (1/tan1 + tan1 - 2*dgφ) / (1/V + V);
-        final double dS_dλ  = (-sinAzim*cosU*sinλ) / cosS;
-        final double dS_dφ  = (-sinAzim*sinU*cosλ + cosAzim*cosU)*dU_dφ / cosS;
-        final double Ɛt     = cosU*sinλ / cosS;
-        final double Ɛ      = n * asin(Ɛt);
-        final double cosƐ   = cos(Ɛ);
-        final double sinƐ   = sin(Ɛ);
-        final double t      = n / (cosS*cosS*sqrt(1 - Ɛt*Ɛt));
-        final double dƐ_dλ  = cosU * t * (dS_dλ*sinλ*sinS +       cosλ*cosS);
-        final double dƐ_dφ  = sinλ * t * (dS_dφ*sinS*cosU - dU_dφ*sinU*cosS);
-        final double tan2   = tan(asin(sinS)/2 + PI/4);
-        final double ρ      = pow(tan2, n);
-        final double m      = (-n/2) * (1/tan2 + tan2);
-        return new Matrix2(
-                (m*dS_dλ * sinƐ + dƐ_dλ * cosƐ) / ρ,
-                (m*dS_dφ * sinƐ + dƐ_dφ * cosƐ) / ρ,
-                (m*dS_dλ * cosƐ - dƐ_dλ * sinƐ) / ρ,
-                (m*dS_dφ * cosƐ - dƐ_dφ * sinƐ) / ρ);
     }
 
     /**

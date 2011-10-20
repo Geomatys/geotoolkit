@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -77,7 +76,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see <A HREF="http://srmwww.gov.bc.ca/gis/bceprojection.html">British Columbia Albers Standard Projection</A>
  *
@@ -251,18 +250,23 @@ public class AlbersEqualArea extends UnitaryProjection {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
         final double φ = srcPts[srcOff + 1];
-        double ρ = c - n * qsfn(sin(φ));
+        final double cosλ = cos(λ);
+        final double sinλ = sin(λ);
+        final double sinφ = sin(φ);
+        double ρ = c - n * qsfn(sinφ);
         if (ρ < 0.0) {
             if (ρ > -EPSILON) {
                 ρ = 0.0;
@@ -271,8 +275,21 @@ public class AlbersEqualArea extends UnitaryProjection {
             }
         }
         ρ = sqrt(ρ);
-        dstPts[dstOff]     = ρ * sin(λ);
-        dstPts[dstOff + 1] = ρ * cos(λ);
+        if (dstPts != null) {
+            dstPts[dstOff]     = ρ * sinλ;
+            dstPts[dstOff + 1] = ρ * cosλ;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        double esinφ2 = excentricity * sinφ;
+        esinφ2 *= esinφ2;
+        final double dρ_dφ = -0.5 * n*dqsfn_dφ(sinφ, cos(φ)) / ρ;
+        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // ∂x/∂λ, ∂x/∂φ
+                          -sinλ * ρ, dρ_dφ * cosλ); // ∂y/∂λ, ∂y/∂φ
     }
 
     /**
@@ -357,13 +374,16 @@ public class AlbersEqualArea extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
-            double ρ = c - n*2 * sin(y);
+            final double λ = rollLongitude(srcPts[srcOff]);
+            final double φ = srcPts[srcOff + 1];
+            final double cosλ = cos(λ);
+            final double sinλ = sin(λ);
+            final double sinφ = sin(φ);
+            double ρ = c - n*2 * sinφ;
             if (ρ < 0.0) {
                 if (ρ > -EPSILON) {
                     ρ = 0.0;
@@ -372,25 +392,23 @@ public class AlbersEqualArea extends UnitaryProjection {
                 }
             }
             ρ = sqrt(ρ);
-            y = ρ * cos(x);
-            x = ρ * sin(x);
-
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]     = x;
-            dstPts[dstOff + 1] = y;
-        }
-
-        /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
+            final double y = ρ * cosλ;
+            final double x = ρ * sinλ;
+            Matrix derivative = null;
+            if (derivate) {
+                final double dρ_dφ = -n*cos(φ) / ρ;
+                derivative = new Matrix2(
+                        cosλ * ρ, dρ_dφ * sinλ,    // ∂x/∂λ , ∂x/∂φ
+                       -sinλ * ρ, dρ_dφ * cosλ);   // ∂y/∂λ , ∂y/∂φ
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -432,74 +450,6 @@ public class AlbersEqualArea extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.18
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ = rollLongitude(point.getX());
-            final double φ = point.getY();
-            final double cosλ = cos(λ);
-            final double sinλ = sin(λ);
-            final double cosφ = cos(φ);
-            final double sinφ = sin(φ);
-            double ρ = c - n*2 * sinφ;
-            if (ρ < 0.0) {
-                if (ρ > -EPSILON) {
-                    ρ = 0.0;
-                } else {
-                    throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
-                }
-            }
-            ρ = sqrt(ρ);
-            final double dρ_dφ = -n*cosφ / ρ;
-            final Matrix derivative = new Matrix2(
-                    cosλ * ρ, dρ_dφ * sinλ,    // ∂x/∂λ, ∂x/∂φ
-                   -sinλ * ρ, dρ_dφ * cosλ);   // ∂y/∂λ, ∂y/∂φ
-
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     * The current implementation is derived from the ellipsoidal formulas.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.18
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double cosλ = cos(λ);
-        final double sinλ = sin(λ);
-        final double sinφ = sin(φ);
-        double ρ = c - n * qsfn(sinφ);
-        if (ρ < 0.0) {
-            if (ρ > -EPSILON) {
-                ρ = 0;
-            } else {
-                throw new ProjectionException(Errors.Keys.TOLERANCE_ERROR);
-            }
-        }
-        ρ = sqrt(ρ);
-        double esinφ2 = excentricity * sinφ;
-        esinφ2 *= esinφ2;
-        final double dρ_dφ = -0.5 * n*dqsfn_dφ(sinφ, cos(φ)) / ρ;
-        return new Matrix2(cosλ * ρ, dρ_dφ * sinλ,  // ∂x/∂λ, ∂x/∂φ
-                          -sinλ * ρ, dρ_dφ * cosλ); // ∂y/∂λ, ∂y/∂φ
     }
 
     /**

@@ -1098,6 +1098,21 @@ scanNumber: while (++i < length) {
     }
 
     /**
+     * Adds to this envelope a point of the given array.
+     *
+     * @param  array The array which contains the ordinate values.
+     * @param  offset Index of the first valid ordinate value in the given array.
+     */
+    final void add(final double[] array, final int offset) {
+        final int dim = ordinates.length >>> 1;
+        for (int i=0; i<dim; i++) {
+            final double value = array[offset + i];
+            if (value < ordinates[i    ]) ordinates[i    ] = value;
+            if (value > ordinates[i+dim]) ordinates[i+dim] = value;
+        }
+    }
+
+    /**
      * Adds a point to this envelope. The resulting envelope is the smallest envelope that
      * contains both the original envelope and the specified point. After adding a point,
      * a call to {@link #contains} with the added point as an argument will return {@code true},

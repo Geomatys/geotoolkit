@@ -122,7 +122,7 @@ final strictfp class ErrorFitting {
         normalize.transform(buffer, 0, buffer, 0, 1);
         x[0] = buffer[0];
         y[0] = buffer[1];
-        projection.transform(buffer, 0, buffer, 0);
+        projection.transform(buffer, 0, buffer, 0, false);
         projection.inverseTransform(buffer, 0, buffer, 0);
         z[0] = hypot(buffer[0]-x[0], buffer[1]-y[0]);
         x[0] *= x[0];
@@ -163,7 +163,7 @@ final strictfp class ErrorFitting {
                     final double lambda = buffer[0];
                     final double phi    = buffer[1];
                     try {
-                        projection.transform(buffer, 0, buffer, 0);
+                        projection.transform(buffer, 0, buffer, 0, false);
                         projection.inverseTransform(buffer, 0, buffer, 0);
                     } catch (ProjectionException e) {
                         System.out.flush();

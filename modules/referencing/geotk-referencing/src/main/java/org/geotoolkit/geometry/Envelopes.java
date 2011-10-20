@@ -44,7 +44,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -185,12 +185,15 @@ public final class Envelopes extends Static {
 
     /**
      * Implementation of {@link #transform(MathTransform, Envelope)} with the opportunity to
-     * save the projected center coordinate. If {@code targetPt} is non-null, then this method
-     * will set it to the center of the source envelope projected to the target CRS.
+     * save the projected center coordinate.
+     *
+     * @param targetPt After this method call, the center of the source envelope projected to
+     *        the target CRS. The length of this array must be the number of target dimensions.
+     *        May be {@code null} if this information is not needed.
      */
-    private static GeneralEnvelope transform(final MathTransform   transform,
-                                             final Envelope        envelope,
-                                             GeneralDirectPosition targetPt)
+    private static GeneralEnvelope transform(final MathTransform transform,
+                                             final Envelope      envelope,
+                                             final double[]      targetPt)
             throws TransformException
     {
         if (transform.isIdentity()) {
@@ -205,7 +208,7 @@ public final class Envelopes extends Static {
             transformed.setCoordinateReferenceSystem(null);
             if (targetPt != null) {
                 for (int i=envelope.getDimension(); --i>=0;) {
-                    targetPt.setOrdinate(i, transformed.getMedian(i));
+                    targetPt[i] = transformed.getMedian(i);
                 }
             }
             return transformed;
@@ -219,9 +222,6 @@ public final class Envelopes extends Static {
             throw new MismatchedDimensionException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$2,
                       sourceDim, envelope.getDimension()));
         }
-        if (targetPt == null) {
-            targetPt = new GeneralDirectPosition(targetDim);
-        }
         /*
          * Allocates all needed objects. The value '3' below is because the following 'while'
          * loop uses a 'pointIndex' to be interpreted as a number in base 3 (see the comment
@@ -234,9 +234,9 @@ public final class Envelopes extends Static {
         GeneralEnvelope transformed           = null;
         final Matrix[]  derivatives           = new Matrix[(int) Math.round(Math.pow(3, sourceDim))];
         final double[]  ordinates             = new double[derivatives.length * targetDim];
-        final GeneralDirectPosition sourcePt  = new GeneralDirectPosition(sourceDim);
+        final double[]  sourcePt              = new double[sourceDim];
         for (int i=sourceDim; --i>=0;) {
-            sourcePt.setOrdinate(i, envelope.getMinimum(i));
+            sourcePt[i] = envelope.getMinimum(i);
         }
         /*
          * Iterates over every minimal, maximal and median ordinate values (3 points) along each
@@ -250,41 +250,33 @@ public final class Envelopes extends Static {
              * we can. If we can not, we will compute those two information separately.
              *
              * Note that the very last point to be projected must be the envelope center.
-             * There is no need to calculate the derivative for that last point.
+             * There is usually no need to calculate the derivative for that last point,
+             * but we let it does anyway for safety.
              */
-            boolean isPointTransformed = false;
-            if (isDerivativeSupported && pointIndex < derivatives.length-1) try {
-                final Matrix derivative;
-                if (transform instanceof AbstractMathTransform) {
-                    derivative = ((AbstractMathTransform) transform).derivativeAndTransform(sourcePt, targetPt, null);
-                    isPointTransformed = true;
-                } else {
-                    derivative = transform.derivative(sourcePt);
-                }
-                derivatives[pointIndex] = derivative;
+            final int offset = pointIndex * targetDim;
+            try {
+                derivatives[pointIndex] = MathTransforms.derivativeAndTransform(transform,
+                        sourcePt, 0, ordinates, offset, isDerivativeSupported);
             } catch (TransformException e) {
-                recoverableException(e);
-                isDerivativeSupported = false;
-            }
-            /*
-             * If we have not been able to compute the derivative and the transformed point
-             * in a single step, compute the transformed point now.
-             */
-            if (!isPointTransformed) {
-                final DirectPosition p = transform.transform(sourcePt, targetPt);
-                if (p != targetPt) { // Paranoiac check, but should never happen.
-                    targetPt.setLocation(p);
+                if (!isDerivativeSupported) {
+                    throw e; // Derivative were already disabled, so something went wrong.
                 }
+                isDerivativeSupported = false;
+                transform.transform(sourcePt, 0, ordinates, offset, 1);
+                recoverableException(e); // Log only if the above call was successful.
             }
             /*
-             * Saves the transform point for future reuse after the enclosing 'while' loop,
-             * and add the transformed point to the destination envelope.
+             * The transformed point has been savec for future reuse after the enclosing
+             * 'while' loop. Now add the transformed point to the destination envelope.
              */
-            System.arraycopy(targetPt.ordinates, 0, ordinates, pointIndex*targetDim, targetDim);
-            if (transformed != null) {
-                transformed.add(targetPt);
+            if (transformed == null) {
+                transformed = new GeneralEnvelope(targetDim);
+                for (int i=0; i<targetDim; i++) {
+                    final double value = ordinates[offset + i];
+                    transformed.setRange(i, value, value);
+                }
             } else {
-                transformed = new GeneralEnvelope(targetPt, targetPt);
+                transformed.add(ordinates, offset);
             }
             /*
              * Get the next point coordinate. The 'coordinateIndex' variable is an index in base 3
@@ -298,9 +290,9 @@ public final class Envelopes extends Static {
             int indexBase3 = ++pointIndex;
             for (int dim=sourceDim; --dim>=0; indexBase3 /= 3) {
                 switch (indexBase3 % 3) {
-                    case 0:  sourcePt.setOrdinate(dim, envelope.getMinimum(dim)); break; // Continue the loop.
-                    case 1:  sourcePt.setOrdinate(dim, envelope.getMaximum(dim)); continue transformPoint;
-                    case 2:  sourcePt.setOrdinate(dim, envelope.getMedian (dim)); continue transformPoint;
+                    case 0:  sourcePt[dim] = envelope.getMinimum(dim); break; // Continue the loop.
+                    case 1:  sourcePt[dim] = envelope.getMaximum(dim); continue transformPoint;
+                    case 2:  sourcePt[dim] = envelope.getMedian (dim); continue transformPoint;
                     default: throw new AssertionError(indexBase3); // Should never happen
                 }
             }
@@ -317,7 +309,7 @@ public final class Envelopes extends Static {
          * the Rectangle2D case the calculation was bundled right inside the main loop in order
          * to avoid the need for storage.
          */
-        boolean targetPtIsOverwritten = false;
+        double[] temporary = targetPt;
         for (pointIndex=0; pointIndex < derivatives.length; pointIndex++) {
             final Matrix D1 = derivatives[pointIndex];
             if (D1 != null) {
@@ -363,10 +355,13 @@ public final class Envelopes extends Static {
                                                     case 2:  ordinate = envelope.getMedian (dim); break;
                                                     default: throw new AssertionError(ib3); // Should never happen
                                                 }
-                                                sourcePt.setOrdinate(dim, ordinate);
+                                                sourcePt[dim] = ordinate;
                                             }
-                                            transformed.add(transform.transform(sourcePt, targetPt));
-                                            targetPtIsOverwritten = true;
+                                            if (temporary == null) {
+                                                temporary = new double[targetDim];
+                                            }
+                                            transform.transform(sourcePt, 0, temporary, 0, 1);
+                                            transformed.add(temporary, 0);
                                         }
                                     }
                                 } while ((isP2 = !isP2) == true);
@@ -377,8 +372,9 @@ public final class Envelopes extends Static {
                 derivatives[pointIndex] = null; // Let GC do its job earlier.
             }
         }
-        if (targetPtIsOverwritten) { // Check if we need to restore the center point value.
-            System.arraycopy(ordinates, ordinates.length - targetDim, targetPt.ordinates, 0, targetDim);
+        if (targetPt != null) {
+            // Copy the coordinate of the center point.
+            System.arraycopy(ordinates, ordinates.length - targetDim, targetPt, 0, targetDim);
         }
         return transformed;
     }
@@ -436,7 +432,7 @@ public final class Envelopes extends Static {
             }
         }
         MathTransform mt = operation.getMathTransform();
-        final GeneralDirectPosition centerPt = new GeneralDirectPosition(mt.getTargetDimensions());
+        final double[] centerPt = new double[mt.getTargetDimensions()];
         final GeneralEnvelope transformed = transform(mt, envelope, centerPt);
         /*
          * If the source envelope crosses the expected range of valid coordinates, also projects
@@ -579,7 +575,7 @@ public final class Envelopes extends Static {
                     }
                     targetPt = new GeneralDirectPosition(mt.getSourceDimensions());
                     for (int j=0; j<dimension; j++) {
-                        targetPt.setOrdinate(j, centerPt.getOrdinate(j));
+                        targetPt.setOrdinate(j, centerPt[j]);
                     }
                     // TODO: avoid the hack below if we provide a contains(DirectPosition)
                     //       method in the GeoAPI org.opengis.geometry.Envelope interface.
@@ -617,7 +613,7 @@ public final class Envelopes extends Static {
             }
             // Restore 'targetPt' to its initial state, which is equals to 'centerPt'.
             if (targetPt != null) {
-                targetPt.setOrdinate(i, centerPt.getOrdinate(i));
+                targetPt.setOrdinate(i, centerPt[i]);
             }
         }
         /*
@@ -683,9 +679,9 @@ public final class Envelopes extends Static {
                             transformed.add(targetPt);
                         }
                     }
-                    targetPt.setOrdinate(axisIndex, centerPt.getOrdinate(axisIndex));
+                    targetPt.setOrdinate(axisIndex, centerPt[axisIndex]);
                 }
-                targetPt.setOrdinate(wrapAroundDimension, centerPt.getOrdinate(wrapAroundDimension));
+                targetPt.setOrdinate(wrapAroundDimension, centerPt[wrapAroundDimension]);
             }
         }
         if (warning != null) {
@@ -732,7 +728,7 @@ public final class Envelopes extends Static {
             // Common case implemented in a more efficient way (less points to transform).
             return XAffineTransform.transform((AffineTransform) transform, envelope, destination);
         }
-        return transform(transform, envelope, destination, new Point2D.Double());
+        return transform(transform, envelope, destination, new double[2]);
     }
 
     /**
@@ -744,7 +740,7 @@ public final class Envelopes extends Static {
     private static Rectangle2D transform(final MathTransform2D transform,
                                          final Rectangle2D     envelope,
                                                Rectangle2D     destination,
-                                         final Point2D.Double  point)
+                                         final double[]        point)
             throws TransformException
     {
         if (envelope == null) {
@@ -792,29 +788,23 @@ public final class Envelopes extends Static {
                 case 4: case 5: case 6: φ2 = envelope.getMaxY();    break;
                 default: throw new AssertionError(i);
             }
-            point.x = λ2;
-            point.y = φ2;
-            boolean isPointTransformed = false;
-            if (isDerivativeSupported && i != 8) try {
-                final Matrix recycle = D1;
+            point[0] = λ2;
+            point[1] = φ2;
+            try {
                 D1 = D2;
-                if (transform instanceof AbstractMathTransform) {
-                    D2 = ((AbstractMathTransform) transform).derivativeAndTransform(point, point, recycle);
-                    x2 = point.x;
-                    y2 = point.y;
-                    isPointTransformed = true;
-                } else {
-                    D2 = transform.derivative(point);
-                }
+                D2 = MathTransforms.derivativeAndTransform(transform, point, 0, point, 0, isDerivativeSupported && i != 8);
             } catch (TransformException e) {
-                recoverableException(e);
-                isDerivativeSupported = false;
+                if (!isDerivativeSupported) {
+                    throw e; // Derivative were already disabled, so something went wrong.
+                }
+                isDerivativeSupported = false; D2 = null;
+                point[0] = λ2;
+                point[1] = φ2;
+                transform.transform(point, 0, point, 0, 1);
+                recoverableException(e); // Log only if the above call was successful.
             }
-            if (!isPointTransformed) {
-                final Point2D target = transform.transform(point, point);
-                x2 = target.getX();
-                y2 = target.getY();
-            }
+            x2 = point[0];
+            y2 = point[1];
             if (x2 < xmin) xmin = x2;
             if (x2 > xmax) xmax = x2;
             if (y2 < ymin) ymin = y2;
@@ -886,24 +876,24 @@ public final class Envelopes extends Static {
                                  * extremum. Our tests show that the correction can be as much as 50
                                  * metres.
                                  */
-                                final double oldX = point.x;
-                                final double oldY = point.y;
+                                final double oldX = point[0];
+                                final double oldY = point[1];
                                 if (srcDim == 0) {
-                                    point.x = se;
-                                    point.y = φ1; // == φ2 since we have an horizontal segment.
+                                    point[0] = se;
+                                    point[1] = φ1; // == φ2 since we have an horizontal segment.
                                 } else {
-                                    point.x = λ1; // == λ2 since we have a vertical segment.
-                                    point.y = se;
+                                    point[0] = λ1; // == λ2 since we have a vertical segment.
+                                    point[1] = se;
                                 }
-                                final Point2D target = transform.transform(point, point);
-                                final double x = target.getX();
-                                final double y = target.getY();
+                                transform.transform(point, 0, point, 0, 1);
+                                final double x = point[0];
+                                final double y = point[1];
                                 if (x < xmin) xmin = x;
                                 if (x > xmax) xmax = x;
                                 if (y < ymin) ymin = y;
                                 if (y > ymax) ymax = y;
-                                point.x = oldX;
-                                point.y = oldY;
+                                point[0] = oldX;
+                                point[1] = oldY;
                             }
                         }
                     } while ((isP2 = !isP2) == true);
@@ -970,7 +960,7 @@ public final class Envelopes extends Static {
             throw new MismatchedDimensionException(Errors.format(Errors.Keys.NO_TRANSFORM2D_AVAILABLE));
         }
         MathTransform2D mt = (MathTransform2D) transform;
-        final Point2D.Double center = new Point2D.Double();
+        final double[] center = new double[2];
         destination = transform(mt, envelope, destination, center);
         /*
          * If the source envelope crosses the expected range of valid coordinates, also projects
@@ -1052,8 +1042,8 @@ public final class Envelopes extends Static {
                 targetPt = new Point2D.Double();
             }
             switch (dimension) {
-                case 0: targetPt.setLocation(extremum, center.y); break;
-                case 1: targetPt.setLocation(center.x, extremum); break;
+                case 0: targetPt.setLocation(extremum,  center[1]); break;
+                case 1: targetPt.setLocation(center[0], extremum ); break;
                 default: throw new AssertionError(border);
             }
             try {

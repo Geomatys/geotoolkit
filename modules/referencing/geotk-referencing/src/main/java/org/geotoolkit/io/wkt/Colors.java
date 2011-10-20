@@ -55,7 +55,7 @@ public class Colors implements Serializable {
     }
 
     /**
-     * Keys for syntatic elements to be colorized.
+     * Keys for syntactic elements to be colorized.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.00

@@ -74,7 +74,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
  * <ul>
  *   <li>{@link #getSourceDimensions()}</li>
  *   <li>{@link #getTargetDimensions()}</li>
- *   <li>{@link #transform(double[],int,double[],int)}</li>
+ *   <li>{@link #transform(double[],int,double[],int,boolean)}</li>
  * </ul>
  * <p>
  * However more performance may be gained by overriding the other {@code transform} method as well.
@@ -199,16 +199,6 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Constructs an error message for the {@link IllegalArgumentException}.
-     *
-     * @param argument The argument name.
-     * @param value    The illegal value.
-     */
-    static String illegalArgument(final String argument, final Object value) {
-        return Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, argument, value);
-    }
-
-    /**
      * Constructs an error message for the {@link MismatchedDimensionException}.
      *
      * @param argument  The argument name with the wrong number of dimensions.
@@ -227,7 +217,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *   <li>Ensures that the {@linkplain #getSourceDimensions() source} and
      *       {@linkplain #getTargetDimensions() target dimensions} of this math
      *       transform are equal to 2.</li>
-     *   <li>Delegates to the protected {@link #transform(double[],int,double[],int)}
+     *   <li>Delegates to the {@link #transform(double[],int,double[],int,boolean)}
      *       method using a temporary array of doubles.</li>
      * </ul>
      *
@@ -251,7 +241,7 @@ public abstract class AbstractMathTransform extends FormattableObject
             throw new MismatchedDimensionException(mismatchedDimension("ptDst", 2, dim));
         }
         final double[] ord = new double[] {ptSrc.getX(), ptSrc.getY()};
-        transform(ord, 0, ord, 0);
+        transform(ord, 0, ord, 0, false);
         if (ptDst != null) {
             ptDst.setLocation(ord[0], ord[1]);
             return ptDst;
@@ -268,7 +258,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *   <li>Ensures that the dimension of the given points are consistent with the
      *       {@linkplain #getSourceDimensions() source} and {@linkplain #getTargetDimensions()
      *       target dimensions} of this math transform.</li>
-     *   <li>Delegates to the protected {@link #transform(double[],int,double[],int)} method.</li>
+     *   <li>Delegates to the {@link #transform(double[],int,double[],int,boolean)} method.</li>
      * </ul>
      *
      * @param  ptSrc the coordinate point to be transformed.
@@ -302,7 +292,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                     array[i] = ptSrc.getOrdinate(i);
                 }
             }
-            transform(array, 0, array, 0);
+            transform(array, 0, array, 0, false);
             for (int i=0; i<dimTarget; i++) {
                 ptDst.setOrdinate(i, array[i]);
             }
@@ -322,45 +312,71 @@ public abstract class AbstractMathTransform extends FormattableObject
             } else {
                 source = ptSrc.getCoordinate();
             }
-            transform(source, 0, destination.ordinates, 0);
+            transform(source, 0, destination.ordinates, 0, false);
             ptDst = destination;
         }
         return ptDst;
     }
 
     /**
-     * Transforms a single coordinate point in an array. Invoking this method is conceptually
-     * equivalent to invoking the following:
+     * Transforms a single coordinate point in an array, and optionally computes the transform
+     * derivative at that location. Invoking this method is conceptually equivalent to running
+     * the following:
      *
-     * <blockquote><code>{@linkplain #transform(double[],int,double[],int,int)
-     * transform}(srcPts, srcOff, dstPts, dstOff, <b>1</b>)</code></blockquote>
+     * {@preformat java
+     *     double[] p = Arrays.copyOfRange(srcPts, srcOff, srcOff + getSourceDimensions());
+     *     transform(srcPts, srcOff, dstPts, dstOff, 1);  // May overwrite srcPts.
+     *     Matrix d = null;
+     *     if (derivate) {
+     *         d = derivative(new GeneralDirectPosition(p));
+     *     }
+     * }
      *
-     * However this method is easier to implement for {@code AbstractMathTransform} subclasses.
-     * The default {@link #transform(double[],int,double[],int,int)} method implementation will
-     * invoke this method in a loop, taking care of the {@linkplain IterationStrategy iteration
-     * strategy} depending on the argument value.
+     * However this method provides two advantages:
      * <p>
+     * <ul>
+     *   <li>It is usually easier to implement for {@code AbstractMathTransform} subclasses.
+     *   The default {@link #transform(double[],int,double[],int,int)} method implementation
+     *   will invoke this method in a loop, taking care of the {@linkplain IterationStrategy
+     *   iteration strategy} depending on the argument value.</li>
+     *
+     *   <li>When both the transformed point and its derivative are needed, this method may be
+     *   significantly faster than invoking the {@code transform} and {@code derivative} methods
+     *   separately because many internal calculations are the same. Computing those two information
+     *   in a single step can help to reduce redundant calculation.</li>
+     * </ul>
+     *
+     * {@section Implementation note}
      * The source and destination may overlap. Consequently, implementors must read all source
-     * ordinate values before to start writing the transformed ordinates in the destination
-     * array.
+     * ordinate values before to start writing the transformed ordinates in the destination array.
+     * <p>
+     * This method is protected in order to encourage users to invoke the bulk methods with a
+     * number of points greater than 1 when possible. The bulk methods are usually faster than
+     * invoking repeatedly this method. Users who really want the transform and the derivative
+     * together should invoke the {@link MathTransforms#derivativeAndTransform(MathTransform,
+     * double[], int, double[], int, boolean) MathTransforms.derivativeAndTransform} static
+     * method.
      *
-     * {@note This method has protected access rather than public in the hope to encourage users
-     *        to invoke the bulk methods with a number of points greater than 1, which is usually
-     *        faster than invoking repeatidly this method. In addition this method may skip some
-     *        verifications that are performed by the public methods. This is the case of Geotk
-     *        implementation of map projections.}
-     *
-     * @param srcPts The array containing the source point coordinates.
+     * @param srcPts The array containing the source coordinate (can not be {@code null}).
      * @param srcOff The offset to the point to be transformed in the source array.
-     * @param dstPts the array into which the transformed point coordinate are returned.
-     *               May be the same than {@code srcPts}.
+     * @param dstPts the array into which the transformed coordinate is returned.
+     *               May be the same than {@code srcPts}. May be {@code null} if
+     *               only the derivative matrix is desired.
      * @param dstOff The offset to the location of the transformed point that is
      *               stored in the destination array.
-     * @throws TransformException If the point can't be transformed.
+     * @param derivate {@code true} for computing the derivative, or {@code false} if not needed.
+     * @return The matrix of the transform derivative at the given source position, or {@code null}
+     *         if the {@code derivate} argument is {@code false} or if this transform does not
+     *         support derivative calculation.
+     * @throws TransformException If the point can't be transformed or if a problem occurred while
+     *         calculating the derivative.
      *
-     * @since 3.00
+     * @see #transform(DirectPosition, DirectPosition)
+     * @see #derivative(DirectPosition)
+     *
+     * @since 3.20 (derived from 3.00)
      */
-    protected abstract void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException;
 
     /**
@@ -374,9 +390,9 @@ public abstract class AbstractMathTransform extends FormattableObject
      *  <var>x<sub>1</sub></var>,<var>y<sub>1</sub></var>,<var>z<sub>1</sub></var> ...).
      * </blockquote>
      *
-     * The default implementation invokes {@link #transform(double[],int,double[],int)} in a loop,
-     * using an {@linkplain IterationStrategy iteration strategy} determined from the arguments for
-     * iterating over the points.
+     * The default implementation invokes {@link #transform(double[],int,double[],int,boolean)}
+     * in a loop, using an {@linkplain IterationStrategy iteration strategy} determined from the
+     * arguments for iterating over the points.
      *
      * @param srcPts The array containing the source point coordinates.
      * @param srcOff The offset to the first point to be transformed in the source array.
@@ -440,7 +456,7 @@ public abstract class AbstractMathTransform extends FormattableObject
         int blockStart   = 0;
         do {
             try {
-                transform(srcPts, srcOff, dstPts, dstOff);
+                transform(srcPts, srcOff, dstPts, dstOff, false);
             } catch (TransformException exception) {
                 /*
                  * If an exception occurred, let it propagate if we reached the maximum amount
@@ -932,10 +948,20 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Gets the derivative of this transform at a point. The default implementation always
-     * throw an exception. Subclasses that implement the {@link MathTransform2D} interface
-     * should override this method. Other subclasses should override
-     * {@link #derivative(DirectPosition)} instead.
+     * Gets the derivative of this transform at a point.
+     * The default implementation performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Ensure that this math transform {@linkplain #getSourceDimensions() source dimensions}
+     *       is equals to 2. Note that the {@linkplain #getTargetDimensions() target dimensions}
+     *       can be anything, not necessarily 2 (so this transform doesn't need to implement the
+     *       {@link MathTransform2D} interface).</li>
+     *   <li>Copy the coordinate in a temporary array and pass that array to the
+     *       {@link #transform(double[], int, double[], int, boolean)} method,
+     *       with the {@code derivate} boolean argument set to {@code true}.</li>
+     *   <li>If the later method returned a non-null matrix, returns that matrix.
+     *       Otherwise throws {@link TransformException}.</li>
+     * </ul>
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point as a 2&times;2 matrix.
@@ -949,7 +975,12 @@ public abstract class AbstractMathTransform extends FormattableObject
         if (dimSource != 2) {
             throw new MismatchedDimensionException(mismatchedDimension("point", 2, dimSource));
         }
-        throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+        final double[] coordinate = new double[] {point.getX(), point.getY()};
+        final Matrix derivative = transform(coordinate, 0, null, 0, true);
+        if (derivative == null) {
+            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+        }
+        return derivative;
     }
 
     /**
@@ -957,14 +988,14 @@ public abstract class AbstractMathTransform extends FormattableObject
      * The default implementation performs the following steps:
      * <p>
      * <ul>
-     *   <li>Ensures that the {@code point} dimension is equals to this math transform
+     *   <li>Ensure that the {@code point} dimension is equals to this math transform
      *       {@linkplain #getSourceDimensions() source dimensions}.</li>
-     *   <li>If the source dimension is 2, delegates to {@link #derivative(Point2D)}.</li>
-     *   <li>Otherwise throws {@link TransformException}.</li>
+     *   <li>Copy the coordinate in a temporary array and pass that array to the
+     *       {@link #transform(double[], int, double[], int, boolean)} method,
+     *       with the {@code derivate} boolean argument set to {@code true}.</li>
+     *   <li>If the later method returned a non-null matrix, returns that matrix.
+     *       Otherwise throws {@link TransformException}.</li>
      * </ul>
-     * <p>
-     * Consequently this method will always throw an exception, unless at least one of the
-     * two {@code derivative} methods is overridden.
      *
      * @param  point The coordinate point where to evaluate the derivative.
      * @return The derivative at the specified point (never {@code null}).
@@ -976,118 +1007,13 @@ public abstract class AbstractMathTransform extends FormattableObject
     @Override
     public Matrix derivative(final DirectPosition point) throws TransformException {
         final int dimSource = getSourceDimensions();
-        if (point == null) {
-            if (dimSource == 2) {
-                return derivative((Point2D) null);
-            }
-        } else {
-            ensureDimensionMatches("point", point, dimSource);
-            if (dimSource == 2) {
-                return derivative(toPoint2D(point));
-            }
+        final double[] coordinate = point.getCoordinate();
+        if (coordinate.length != dimSource) {
+            throw new MismatchedDimensionException(mismatchedDimension("point", coordinate.length, dimSource));
         }
-        throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
-    }
-
-    /**
-     * Returns the given position as a {@link Point2D}. Caller must ensure
-     * that the position is two-dimensional before to invoke this method.
-     */
-    static Point2D toPoint2D(final DirectPosition point) {
-        return (point == null || point instanceof Point2D) ? (Point2D) point :
-                new Point2D.Double(point.getOrdinate(0), point.getOrdinate(1));
-    }
-
-    /**
-     * A bundle method for calculating derivative and coordinate transformation in a single step.
-     * The results are stored in the given destination objects if possible. Invoking this method
-     * is equivalent to the following code, except that it may execute faster:
-     *
-     * {@preformat java
-     *     DirectPosition ptSrc = ...;
-     *     DirectPosition ptDst = ...;
-     *     Matrix matrixDst = derivative(ptSrc);
-     *     ptDst = transform(ptSrc, ptDst);
-     * }
-     *
-     * The derivative result is stored in the given {@code matrixDst} instance if possible,
-     * but implementations may ignore that argument and return a new matrix instance. We
-     * allow this flexibility because some implementations use specialized matrix classes.
-     *
-     * {@note This method does not provide any new functionality compared to the standard methods
-     *        provided in the <code>MathTransform</code> interface. However it can be significantly
-     *        faster because many internal calculations are the same for derivatives and coordinate
-     *        transforms. A bundle method like this one can help to reduce redundant calculation.}
-     *
-     * The default implementation delegates to {@link #derivative(DirectPosition)} and
-     * {@link #transform(DirectPosition, DirectPosition)}. Subclasses should provide a
-     * more efficient implementation if possible.
-     *
-     * @param  ptSrc     The coordinate point to transform and where to calculate the derivative.
-     * @param  ptDst     A pre-allocated position where to store the transform result.
-     * @param  matrixDst An optional pre-allocated matrix where to store the derivative result,
-     *                   or {@code null} if this method should create a new instance.
-     * @return The derivative matrix. Note that the return value is not guaranteed to be the
-     *         same instance than {@code matrixDst}.
-     * @throws MismatchedDimensionException if {@code ptSrc} or {@code ptDst} object don't have
-     *         the expected dimension.
-     * @throws TransformException if the point can't be transformed or an error occurred
-     *         while calculating the derivative.
-     *
-     * @see #transform(DirectPosition, DirectPosition)
-     * @see #derivative(DirectPosition)
-     *
-     * @since 3.20
-     */
-    public Matrix derivativeAndTransform(final DirectPosition ptSrc, final DirectPosition ptDst, final Matrix matrixDst)
-            throws MismatchedDimensionException, TransformException
-    {
-        final Matrix derivative = derivative(ptSrc); // Must be before transform.
-        final DirectPosition transformed = transform(ptSrc, ptDst);
-        if (transformed != ptDst) {
-            // Should never happen in compliant implementation, but let be paranoiac.
-            final int dimension = transformed.getDimension();
-            ensureDimensionMatches("ptDst", ptDst, dimension);
-            for (int i=0; i<dimension; i++) {
-                ptDst.setOrdinate(i, transformed.getOrdinate(i));
-            }
-        }
-        return derivative;
-    }
-
-    /**
-     * Same as {@link #derivateAndTransform(DirectPosition, DirectPosition, Matrix)},
-     * but with two-dimensional points only.
-     * <p>
-     * The default implementation delegates to {@link #derivative(Point2D)} and
-     * {@link #transform(Point2D, Point2D)}. Subclasses should provide a more efficient
-     * implementation if possible.
-     *
-     * @param  ptSrc     The coordinate point to transform and where to calculate the derivative.
-     * @param  ptDst     A pre-allocated position where to store the transform result.
-     * @param  matrixDst An optional pre-allocated matrix where to store the derivative result,
-     *                   or {@code null} if this method should create a new instance itself.
-     * @return The derivative matrix. Note that the returned value is not guaranteed to be the
-     *         same instance than {@code matrixDst}.
-     * @throws MismatchedDimensionException if the {@linkplain #getSourceDimensions() source} and
-     *         {@linkplain #getTargetDimensions() target dimensions} of this math transform are not
-     *         equal to 2.
-     * @throws TransformException if the point can't be transformed or an error occurred
-     *         while calculating the derivative.
-     *
-     * @see #transform(Point2D, Point2D)
-     * @see #derivative(Point2D)
-     *
-     * @since 3.20
-     */
-    public Matrix derivativeAndTransform(final Point2D ptSrc, final Point2D ptDst, final Matrix matrixDst)
-            throws MismatchedDimensionException, TransformException
-    {
-        final Matrix derivative = derivative(ptSrc); // Must be before transform.
-        final Point2D transformed = transform(ptSrc, ptDst);
-        if (transformed != ptDst) {
-            // Should never happen in compliant implementation, but let be paranoiac.
-            ptDst.setLocation(transformed);
+        final Matrix derivative = transform(coordinate, 0, null, 0, true);
+        if (derivative == null) {
+            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
         }
         return derivative;
     }

@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import java.io.Serializable;
+import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
@@ -38,6 +39,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 
+import org.geotoolkit.util.ArgumentChecks;
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
 
@@ -434,13 +436,28 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Transforms a single coordinate point.
+     * Transforms a single coordinate in a list of ordinal values, and optionally returns
+     * the derivative at that location.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff,
-                             double[] dstPts, int dstOff)
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate)
     {
-        transform(null, srcPts, srcOff, null, dstPts, dstOff, 1, srcPts == dstPts);
+        Matrix derivative = null;
+        if (derivate) {
+            final boolean source3D = (type & SOURCE_DIMENSION_MASK) != 0;
+            derivative = derivative(
+                    toRadians (srcPts[srcOff  ]),     // λ: Longitude
+                    toRadians (srcPts[srcOff+1]),     // φ: Latitude
+                    source3D ? srcPts[srcOff+2] : 0); // h: Height above the ellipsoid (m)
+        }
+        if (dstPts != null) {
+            transform(null, srcPts, srcOff, null, dstPts, dstOff, 1, srcPts == dstPts);
+        }
+        return derivative;
     }
 
     /**
@@ -618,11 +635,12 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Gets the derivative of this transform at a point.
+     * Computes the derivative at the given position.
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
         final boolean source3D = (type & SOURCE_DIMENSION_MASK) != 0;
+        ArgumentChecks.ensureDimensionMatches("point", point, source3D ? 3 : 2);
         return derivative(
                 toRadians (point.getOrdinate(0)),     // λ: Longitude
                 toRadians (point.getOrdinate(1)),     // φ: Latitude
@@ -630,9 +648,17 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
+     * Computes the derivative at the given position, assuming a height of zero.
+     */
+    @Override
+    public Matrix derivative(final Point2D point) {
+        return derivative(point.getX(), point.getY(), 0);
+    }
+
+    /**
      * Gets the derivative of this transform at a point.
      */
-    final Matrix derivative(final double λ, final double φ, final double h) {
+    private Matrix derivative(final double λ, final double φ, final double h) {
         final double cosλ    = cos(λ);
         final double sinλ    = sin(λ);
         final double cosφ    = cos(φ);

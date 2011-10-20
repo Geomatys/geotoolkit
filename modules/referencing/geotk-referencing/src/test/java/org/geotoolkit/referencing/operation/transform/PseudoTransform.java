@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 import static java.lang.StrictMath.*;
 
@@ -90,8 +91,9 @@ strictfp class PseudoTransform extends AbstractMathTransform {
      *         but can occur in method overridden in subclasses.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
-            throws TransformException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws TransformException
     {
         System.arraycopy(srcPts, srcOff, buffer, 0, sourceDimension);
         for (int i=0; i<targetDimension; i++) {
@@ -99,5 +101,6 @@ strictfp class PseudoTransform extends AbstractMathTransform {
             v += (i+1)*1000 + round(v * 1000);
             dstPts[dstOff + i] = v;
         }
+        return null;
     }
 }

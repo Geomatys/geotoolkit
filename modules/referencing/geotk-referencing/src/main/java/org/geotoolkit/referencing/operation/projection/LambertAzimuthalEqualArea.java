@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -59,7 +58,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  * @author Beate Stollberg
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -250,14 +249,16 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
     }
 
     /**
-     * Transforms the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinates
-     * (units in radians) and stores the result in {@code dstPts} (linear distance
-     * on a unit sphere).
+     * Converts the specified (<var>&lambda;</var>,<var>&phi;</var>) coordinate (units in radians)
+     * and stores the result in {@code dstPts} (linear distance on a unit sphere). In addition,
+     * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
         final double λ = rollLongitude(srcPts[srcOff]);
         final double φ = srcPts[srcOff + 1];
@@ -265,7 +266,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
         final double sinλ = sin(λ);
         final double sinφ = sin(φ);
         final double q = qsfn(sinφ);
-        final double c;
+        final double b,c;
         double x, y;
         if (!pole) {
             final double sinb = q / qp;
@@ -283,7 +284,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                 // Proj4 had (xmf, ymf) terms here, but xmf simplifies to (rq * 1/rq) == 1
                 // (see the comments in the constructor) and ymf simplify to rq² = 0.5*qp.
             }
-            final double b = sqrt(2/c);
+            b = sqrt(2/c);
             x *= b;
             y *= b;
         } else {
@@ -300,7 +301,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
              * exept for the sign of c (which doesn't matter), so only South case needs to be here.
              */
             c = φ - PI/2;
-            final double b = sqrt(qp + q);
+            b = sqrt(qp + q);
             /*
              * Proj4 tested for (qp + q) > 0, but this can be negative only if the given
              * latitude is greater (in absolute value) than 90°. By removing this check,
@@ -319,8 +320,45 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
              */
             x = y = NaN;
         }
-        dstPts[dstOff]     = x;
-        dstPts[dstOff + 1] = y;
+        if (dstPts != null) {
+            dstPts[dstOff]   = x;
+            dstPts[dstOff+1] = y;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double cosφ  = cos(φ);
+        final double dq_dφ = dqsfn_dφ(sinφ, cosφ);
+        if (pole) {
+            final double db_dφ = 0.5 * dq_dφ / b;
+            return new Matrix2(y, db_dφ*sinλ,
+                              -x, db_dφ*cosλ);
+        }
+        final double sinb      = q / qp;
+        final double dsinb_dφ  = dq_dφ / qp;
+        final double cosb      = sqrt(1.0 - sinb*sinb);
+        final double dcosb_dφ  = -dsinb_dφ * (sinb/cosb);
+        final double sinλcosb  = sinλ *  cosb;
+        final double cosλcosb  = cosλ *  cosb;
+        final double cosλdcosb = cosλ * dcosb_dφ;
+        /*
+         * In equatorial case, sinb1=0 and cosb1=1. We could do a special case
+         * with the simplification, but the result is not that much simpler.
+         */
+        final double T     =    cosb1*sinb - sinb1*cosλcosb;
+        final double dT_dλ =    sinb1*sinλcosb;
+        final double db_dλ =    cosb1*sinλcosb / (2*c);
+        final double dT_dφ =   (cosb1*dsinb_dφ - sinb1*cosλdcosb);
+        final double db_dφ =  -(sinb1*dsinb_dφ + cosb1*cosλdcosb) / (2*c);
+        final double f     =    2*rq / sqrt(2*c);
+        return new Matrix2(
+                f * (cosλ     + db_dλ*sinλ)*cosb,
+                f * (dcosb_dφ + db_dφ*cosb)*sinλ,
+                f * (dT_dλ    + db_dλ*T),
+                f * (dT_dφ    + db_dφ*T));
     }
 
     /**
@@ -421,12 +459,13 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
             final double λ    = rollLongitude(srcPts[srcOff]);
             final double φ    = srcPts[srcOff + 1];
+            final double sinλ = sin(λ);
             final double cosλ = cos(λ);
             double x,y;
             if (!pole) {
@@ -459,7 +498,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                         x = y = NaN;
                     }
                 }
-                x *= cosφ * sin(λ);
+                x *= cosφ * sinλ;
             } else if (abs(φ - PI/2) >= EPSILON) {
                 /*
                  * Polar projection (North and South cases).
@@ -467,7 +506,7 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  * and the sign of y will be reversed after this block by the affine transforms.
                  */
                 y = 2 * cos(PI/4 - 0.5*φ);
-                x = y * sin(λ);
+                x = y * sinλ;
                 y *= cosλ;
             } else {
                 /*
@@ -478,22 +517,43 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                  */
                 x = y = NaN;
             }
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]     = x;
-            dstPts[dstOff + 1] = y;
-        }
+            Matrix derivative = null;
+            if (derivate) {
+                final double m00, m01, m10, m11;
+                if (pole) {
+                    final double U = 2 * cos(PI/4 - 0.5*φ);
+                    final double dU_dφ = sin(PI/4 - 0.5*φ);
+                    m00 =  cosλ * U;
+                    m10 = -sinλ * U;
+                    m01 =  sinλ * dU_dφ;
+                    m11 =  cosλ * dU_dφ;
+                } else {
+                    final double sinφ = sin(φ);
+                    final double cosφ = cos(φ);
+                    final double cosφcosλ = cosφ * cosλ;
+                    final double cosφsinλ = cosφ * sinλ;
+                    final double sinφcosλ = sinφ * cosλ;
+                    double b = 1 + sinb1*sinφ + cosb1*cosφcosλ;
+                    final double S = sqrt(2 / b);
+                    b *= b*S;
+                    final double dS_dλ = (cosb1*cosφsinλ) / b;
+                    final double dS_dφ = (cosb1*sinφcosλ - sinb1*cosφ) / b;
 
-        /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
+                    m00 = dS_dλ * cosφsinλ + cosφcosλ*S;
+                    m01 = dS_dφ * cosφsinλ - sinφ*sinλ*S;
+                    m10 = cosb1 *  dS_dλ*sinφ           - sinb1*(dS_dλ*cosφcosλ - cosφsinλ*S);
+                    m11 = cosb1 * (dS_dφ*sinφ + cosφ*S) - sinb1*(dS_dφ*cosφcosλ - sinφcosλ*S);
+                }
+                derivative = new Matrix2(m00, m01, m10, m11);
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -549,101 +609,6 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.18
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ = rollLongitude(point.getX());
-            final double φ = point.getY();
-            final double sinφ = sin(φ);
-            final double sinλ = sin(λ);
-            final double cosφ = cos(φ);
-            final double cosλ = cos(λ);
-            final double m00, m01, m10, m11;
-            if (pole) {
-                final double U = 2 * cos(PI/4 - 0.5*φ);
-                final double dU_dφ = sin(PI/4 - 0.5*φ);
-                m00 =  cosλ * U;
-                m10 = -sinλ * U;
-                m01 =  sinλ * dU_dφ;
-                m11 =  cosλ * dU_dφ;
-            } else {
-                final double cosφcosλ = cosφ * cosλ;
-                final double cosφsinλ = cosφ * sinλ;
-                final double sinφcosλ = sinφ * cosλ;
-                double b = 1 + sinb1*sinφ + cosb1*cosφcosλ;
-                final double S = sqrt(2 / b);
-                b *= b*S;
-                final double dS_dλ = (cosb1*cosφsinλ) / b;
-                final double dS_dφ = (cosb1*sinφcosλ - sinb1*cosφ) / b;
-
-                m00 = dS_dλ * cosφsinλ + cosφcosλ*S;
-                m01 = dS_dφ * cosφsinλ - sinφ*sinλ*S;
-                m10 = cosb1 *  dS_dλ*sinφ           - sinb1*(dS_dλ*cosφcosλ - cosφsinλ*S);
-                m11 = cosb1 * (dS_dφ*sinφ + cosφ*S) - sinb1*(dS_dφ*cosφcosλ - sinφcosλ*S);
-            }
-            final Matrix derivative = new Matrix2(m00, m01, m10, m11);
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.18
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ  = sin(φ);
-        final double cosφ  = cos(φ);
-        final double sinλ  = sin(λ);
-        final double cosλ  = cos(λ);
-        final double q     = qsfn(sinφ);
-        final double dq_dφ = dqsfn_dφ(sinφ, cosφ);
-        if (pole) {
-            final double b = sqrt(qp + q);
-            final double db_dφ = 0.5 * dq_dφ / b;
-            return new Matrix2(cosλ*b, db_dφ*sinλ,
-                              -sinλ*b, db_dφ*cosλ);
-        }
-        final double sinb      = q / qp;
-        final double dsinb_dφ  = dq_dφ / qp;
-        final double cosb      = sqrt(1.0 - sinb*sinb);
-        final double dcosb_dφ  = -dsinb_dφ * (sinb/cosb);
-        final double sinλcosb  = sinλ *  cosb;
-        final double cosλcosb  = cosλ *  cosb;
-        final double cosλdcosb = cosλ * dcosb_dφ;
-        /*
-         * In equatorial case, sinb1=0 and cosb1=1. We could do a special case
-         * with the simplification, but the result is not that much simpler.
-         */
-        final double c     = 2*(sinb1*sinb + cosb1*cosλcosb + 1);
-        final double T     =    cosb1*sinb - sinb1*cosλcosb;
-        final double dT_dλ =    sinb1*sinλcosb;
-        final double db_dλ =    cosb1*sinλcosb / c;
-        final double dT_dφ =   (cosb1*dsinb_dφ - sinb1*cosλdcosb);
-        final double db_dφ =  -(sinb1*dsinb_dφ + cosb1*cosλdcosb) / c;
-        final double f     =    2*rq / sqrt(c);
-        return new Matrix2(
-                f * (cosλ     + db_dλ*sinλ)*cosb,
-                f * (dcosb_dφ + db_dφ*cosb)*sinλ,
-                f * (dT_dλ    + db_dλ*T),
-                f * (dT_dφ    + db_dφ*T));
     }
 
     /**

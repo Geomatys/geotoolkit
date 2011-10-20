@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -47,7 +46,7 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see EquatorialStereographic
  * @see ObliqueStereographic
@@ -225,17 +224,35 @@ public class PolarStereographic extends Stereographic {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        final double λ = rollLongitude(srcPts[srcOff]);
-        final double φ = srcPts[srcOff + 1];
-        final double ρ = tsfn(φ, sin(φ));
-        dstPts[dstOff  ] = ρ * sin(λ);
-        dstPts[dstOff+1] = ρ * cos(λ);
+        final double λ    = rollLongitude(srcPts[srcOff]);
+        final double φ    = srcPts[srcOff + 1];
+        final double sinφ = sin(φ);
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        final double ρ    = tsfn(φ, sinφ);
+        final double x    = ρ * sinλ;
+        final double y    = ρ * cosλ;
+        if (dstPts != null) {
+            dstPts[dstOff]   = x;
+            dstPts[dstOff+1] = y;
+        }
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double dρ = ρ * dtsfn_dφ(φ, sinφ, cos(φ));
+        return new Matrix2(y, dρ*sinλ,   // ∂x/∂λ , ∂x/∂φ
+                          -x, dρ*cosλ);  // ∂y/∂λ , ∂y/∂φ
     }
 
     /**
@@ -318,31 +335,31 @@ public class PolarStereographic extends Stereographic {
          * {@inheritDoc}
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws ProjectionException
         {
-            double x = rollLongitude(srcPts[srcOff]);
-            double y = srcPts[srcOff + 1];
-            final double f = cos(y) / (1+sin(y)); // == tan (pi/4 - φ/2)
-            y = f * cos(x); // (21-6)
-            x = f * sin(x); // (21-5)
-            assert checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
-            dstPts[dstOff]   = x;
-            dstPts[dstOff+1] = y;
-        }
-
-        /**
-         * Computes using ellipsoidal formulas and compare with the
-         * result from spherical formulas. Used in assertions only.
-         */
-        private boolean checkTransform(final double[] srcPts, final int srcOff,
-                                       final double[] dstPts, final int dstOff,
-                                       final double x, final double y)
-                throws ProjectionException
-        {
-            super.transform(srcPts, srcOff, dstPts, dstOff);
-            return Assertions.checkTransform(dstPts, dstOff, x, y);
+            final double λ     = rollLongitude(srcPts[srcOff]);
+            final double φ     = srcPts[srcOff + 1];
+            final double sinλ  = sin(λ);
+            final double cosλ  = cos(λ);
+            final double sinφp = sin(φ) + 1;
+            final double F     = cos(φ) / sinφp; // == tan (pi/4 - phi/2)
+            final double x     = F * sinλ; // (21-5)
+            final double y     = F * cosλ; // (21-6)
+            Matrix derivative = null;
+            if (derivate) {
+                derivative = new Matrix2(y, -sinλ / sinφp,   // ∂x/∂λ , ∂x/∂φ
+                                        -x, -cosλ / sinφp);  // ∂y/∂λ , ∂y/∂φ
+            }
+            // Following part is common to all spherical projections: verify, store and return.
+            assert Assertions.checkDerivative(derivative, super.transform(srcPts, srcOff, dstPts, dstOff, derivate))
+                && Assertions.checkTransform(dstPts, dstOff, x, y); // dstPts = result from ellipsoidal formulas.
+            if (dstPts != null) {
+                dstPts[dstOff  ] = x;
+                dstPts[dstOff+1] = y;
+            }
+            return derivative;
         }
 
         /**
@@ -375,60 +392,7 @@ public class PolarStereographic extends Stereographic {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-
-        /**
-         * Gets the derivative of this transform at a point.
-         *
-         * @param  point The coordinate point where to evaluate the derivative.
-         * @return The derivative at the specified point as a 2&times;2 matrix.
-         * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-         *
-         * @since 3.19
-         */
-        @Override
-        public Matrix derivative(final Point2D point) throws ProjectionException {
-            final double λ = rollLongitude(point.getX());
-            final double φ = point.getY();
-            final double sinφp = sin(φ) + 1;
-            final double sinλ  = sin(λ);
-            final double cosλ  = cos(λ);
-            final double F     = cos(φ) / sinφp; // == tan (pi/4 - phi/2)
-            final Matrix derivative = new Matrix2(
-                     cosλ * F,        // ∂x/∂λ
-                    -sinλ / sinφp,    // ∂x/∂φ
-                    -sinλ * F,        // ∂y/∂λ
-                    -cosλ / sinφp);   // ∂y/∂φ
-            assert Assertions.checkDerivative(derivative, super.derivative(point));
-            return derivative;
-        }
     }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     *
-     * @since 3.19
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinφ  = sin(φ);
-        final double sinλ  = sin(λ);
-        final double cosλ  = cos(λ);
-        final double ρ     = tsfn(φ, sinφ);
-        final double dρ_dφ = dtsfn_dφ(φ, sinφ,cos(φ))*ρ;
-        return new Matrix2(
-                 cosλ*ρ,       // ∂x/∂λ
-                 sinλ*dρ_dφ,   // ∂x/∂φ
-                -sinλ*ρ,       // ∂y/∂λ
-                 cosλ*dρ_dφ);  // ∂y/∂φ
-    }
-
-
 
     /**
      * Overrides {@link PolarStereographic} to use the a series for the {@link #inverseTransform

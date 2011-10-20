@@ -23,11 +23,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.ThreadSafe;
 
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -40,7 +37,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 
-import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
@@ -81,7 +77,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
 
     /**
      * Transforms the specified {@code ptSrc} and stores the result in {@code ptDst}.
-     * The default implementation invokes {@link #transform(double[],int,double[],int)}
+     * The default implementation invokes {@link #transform(double[],int,double[],int,boolean)}
      * using a temporary array of doubles.
      *
      * {@note This method performs the same work than the method in the parent class, but
@@ -100,37 +96,13 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
     @Override
     public Point2D transform(final Point2D ptSrc, final Point2D ptDst) throws TransformException {
         final double[] ord = new double[] {ptSrc.getX(), ptSrc.getY()};
-        transform(ord, 0, ord, 0);
+        transform(ord, 0, ord, 0, false);
         if (ptDst != null) {
             ptDst.setLocation(ord[0], ord[1]);
             return ptDst;
         } else {
             return new Point2D.Double(ord[0], ord[1]);
         }
-    }
-
-    /**
-     * Delegates to the {@link #derivativeAndTransform(Point2D, Point2D, Matrix)
-     * derivativeAndTransform(Point2D, Point2D, Matrix)} method. This delegation
-     * is done on the assumption that methods working with {@link Point2D} objects
-     * are more efficient for the {@link MathTransform2D} case. Subclasses usually
-     * don't need to override this method.
-     *
-     * @since 3.20
-     */
-    @Override
-    public Matrix derivativeAndTransform(final DirectPosition ptSrc, final DirectPosition ptDst,
-            Matrix matrixDst) throws MismatchedDimensionException, TransformException
-    {
-        ensureDimensionMatches("ptSrc", ptSrc, 2);
-        ensureDimensionMatches("ptDst", ptDst, 2);
-        final Point2D tmp = toPoint2D(ptDst);
-        matrixDst = derivativeAndTransform(toPoint2D(ptSrc), tmp, matrixDst);
-        if (ptDst != tmp) {
-            ptDst.setOrdinate(0, tmp.getX());
-            ptDst.setOrdinate(1, tmp.getY());
-        }
-        return matrixDst;
     }
 
     /**

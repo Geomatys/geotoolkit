@@ -48,7 +48,6 @@ import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -466,7 +465,7 @@ public class GeodeticCalculator {
      * of {@link CoordinateFormat}.
      */
     private static String format(final Format cf, final double longitude, final double latitude) {
-        return cf.format(new GeneralDirectPosition(toDegrees(longitude), toDegrees(latitude)));
+        return cf.format(new DirectPosition2D(toDegrees(longitude), toDegrees(latitude)));
     }
 
 

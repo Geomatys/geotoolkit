@@ -25,8 +25,8 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.math.XMath.SQRT2;
@@ -53,7 +53,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     /**
      * Tolerance factor for determining when to replace a curve by a straight line.
      */
-    private static final double TOLERANCE = 1E-2;
+    private static final double TOLERANCE = 1E-5;
 
     /**
      * The original path iterator.
@@ -67,6 +67,12 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
      * affine transform given to the {@code getPathIterator(...)} method.
      */
     private final MathTransform2D projection;
+
+    /**
+     * A temporary buffer used when the {@link #currentSegment(float[])} method is invoked.
+     * Note that this is the case when the shape is drawn with Java2D.
+     */
+    private final double[] buffer;
 
     /**
      * The original ordinate values of the last iteration step, before transformation.
@@ -91,6 +97,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     ProjectedPathIterator(final PathIterator iterator, final MathTransform2D projection) {
         this.iterator   = iterator;
         this.projection = projection;
+        this.buffer     = new double[2];
     }
 
     /**
@@ -144,7 +151,10 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
         final int i1 = i0 + 1;
         x = λ = coords[i0];
         y = φ = coords[i1];
-        projection.transform(this, this);
+        final Point2D p = projection.transform(this, this);
+        if (p != this) { // paranoiac check (should never happen)
+            setLocation(p);
+        }
         coords[i0] = (float) x;
         coords[i1] = (float) y;
         derivative = null;
@@ -170,16 +180,15 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                     final double y1 = y;
                     final double Δλ = coords[0] - λ;
                     final double Δφ = coords[1] - φ;
-                    if (derivative == null) {
+                    Matrix D1 = derivative;
+                    if (D1 == null) {
                         x = λ;
                         y = φ;
-                        derivative();
+                        D1 = projection.derivative(this);
                     }
-                    final Matrix D1 = derivative;
-                    x = λ = coords[0];
-                    y = φ = coords[1];
-                    derivative(); // Must be before the projection.
-                    projection.transform(this, this);
+                    λ = coords[0];
+                    φ = coords[1];
+                    derivativeAndTransform(coords);
                     type = transformSegment(Δλ, Δφ, x1, y1, D1);
                     int i=0;
                     switch (type) {
@@ -231,16 +240,15 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
                     final double y1 = y;
                     final double Δλ = coords[0] - λ;
                     final double Δφ = coords[1] - φ;
-                    if (derivative == null) {
+                    Matrix D1 = derivative;
+                    if (D1 == null) {
                         x = λ;
                         y = φ;
-                        derivative();
+                        D1 = projection.derivative(this);
                     }
-                    final Matrix D1 = derivative;
-                    x = λ = coords[0];
-                    y = φ = coords[1];
-                    derivative(); // Must be before the projection.
-                    projection.transform(this, this);
+                    buffer[0] = λ = coords[0];
+                    buffer[1] = φ = coords[1];
+                    derivativeAndTransform(buffer);
                     type = transformSegment(Δλ, Δφ, x1, y1, D1);
                     int i=0;
                     switch (type) {
@@ -260,12 +268,17 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     }
 
     /**
-     * Computes the normalized derivative at the current position.
+     * Computes the normalized derivative at the given position and transforms that position.
+     * The transformed position (if any) is stored in the ({@linkplain #x},{@linkplain #y})
+     * fields. This method tries to perform the two operations in a single step if possible.
      */
-    private void derivative() throws TransformException {
-        final XMatrix mat = MatrixFactory.toXMatrix(projection.derivative(this));
-        mat.normalizeColumns();
-        derivative = mat;
+    private void derivativeAndTransform(final double[] coords) throws TransformException {
+        derivative = MathTransforms.derivativeAndTransform(projection, coords, 0, coords, 0, true);
+        if (derivative == null) {
+            throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
+        }
+        x = coords[0];
+        y = coords[1];
     }
 
     /**
@@ -302,27 +315,27 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
         final double L2  = hypot(Δx2, Δy2);
         final double s1  = (Δx*Δx1 + Δy*Δy1) / (L12*L1);
         final double s2  = (Δx*Δx2 + Δy*Δy2) / (L12*L2);
-        if (!(abs(s1-s2) > TOLERANCE)) { // Use ! for catching NaN.
-            if (!(abs(s1-1) > TOLERANCE)) {
-                return SEG_LINETO;
-            }
-            if (s1 >= SQRT2/2) {
-                /*
-                 * Reference to Thomas W. Sederberg article : COMPUTER AIDED GEOMETRIC DESIGN
-                 * Computes α as a weight coefficient of the delta to add to the starting point.
-                 */
-                final double α = abs((Δy2*Δx - Δx2*Δy) / (Δy2*Δx1 - Δx2*Δy1));
-                ctrlx2 = x1 + Δx1*α;
-                ctrly2 = y1 + Δy1*α;
-                return SEG_QUADTO;
-            }
+
+        // Collinearity between two derivatives vectors and the segment.
+        if (!(abs(abs(s1)-1) > TOLERANCE) && !(abs(abs(s2)-1) > TOLERANCE)) { // Use ! for catching NaN.
+            return SEG_LINETO;
         }
-        final double α = L12 / (3 * L1);
-        final double β = L12 / (3 * L2);
-        ctrlx1 = x1 + Δx1*α;
-        ctrly1 = y1 + Δy1*α;
-        ctrlx2 = x2 - Δx2*β;
-        ctrly2 = y2 - Δy2*β;
+
+        // Segment projection form circle bow, can be replaced by quadratique curve.
+        if (s1 >= SQRT2/2 && abs(s1-s2) <= TOLERANCE) {
+            /*
+             * Reference to Thomas W. Sederberg article : COMPUTER AIDED GEOMETRIC DESIGN
+             * Computes α as a weight coefficient of the delta to add to the starting point.
+             */
+            final double α = abs((Δy2*Δx - Δx2*Δy) / (Δy2*Δx1 - Δx2*Δy1));
+            ctrlx2 = x1 + Δx1*α;
+            ctrly2 = y1 + Δy1*α;
+            return SEG_QUADTO;
+        }
+        ctrlx1 = x1 + Δx1/3;
+        ctrly1 = y1 + Δy1/3;
+        ctrlx2 = x2 - Δx2/3;
+        ctrly2 = y2 - Δy2/3;
         return SEG_CUBICTO;
     }
 }

@@ -38,6 +38,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -50,6 +51,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
@@ -78,13 +80,13 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * computations are performed for a sphere having a semi-major axis of 1. More specifically:
  *
  * <ul>
- *   <li><p>On input, the {@link #transform(double[],int,double[],int) transform} method expects
+ *   <li><p>On input, the {@link #transform(double[],int,double[],int,boolean) transform} method expects
  *   (<var>longitude</var>, <var>latitude</var>) angles in <strong>radians</strong>. Longitudes
  *   have the {@linkplain Parameters#centralMeridian central meridian} removed before the transform
  *   method is invoked. The conversion from degrees to radians and the longitude rotation are applied
  *   by the {@linkplain Parameters#normalize(boolean) normalize} affine transform.</p></li>
  *
- *   <li><p>On output, the {@link #transform(double[],int,double[],int) transform} method returns
+ *   <li><p>On output, the {@link #transform(double[],int,double[],int,boolean) transform} method returns
  *   (<var>easting</var>, <var>northing</var>) values on a sphere or ellipse having a semi-major
  *   axis length of 1. The multiplication by the scale factor and the false easting/northing offsets
  *   are applied by the {@link Parameters#normalize(boolean) denormalize} affine transform.</p></li>
@@ -109,7 +111,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
@@ -408,7 +410,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * are typically, but not always, &plusmn;&pi; radians. This method returns <var>x</var>
      * unchanged if no longitude rolling should be applied.
      * <p>
-     * This method should be invoked before the {@linkplain #transform(double[],int,double[],int)
+     * This method should be invoked before the {@linkplain #transform(double[],int,double[],int,boolean)
      * forward transform} begin its calculation.
      *
      * @param  x The longitude to roll.
@@ -450,8 +452,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
     /**
      * Converts a list of coordinate point ordinal values. The default implementation invokes
-     * {@link #transform(double[],int,double[],int)} in a loop. If a geographic coordinate is
-     * outside the range of valid values, a warning may be logged. Whatever this check is done
+     * {@link #transform(double[],int,double[],int,boolean)} in a loop. If a geographic coordinate
+     * is outside the range of valid values, a warning may be logged. Whatever this check is done
      * or not depends on factors like whatever warnings have been previously logged, for which
      * projections, and if the user invoked {@link #resetWarnings}.
      *
@@ -485,12 +487,16 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
     /**
      * Converts the coordinate in {@code srcPts} at the given offset and stores the result
-     * in {@code dstPts} at the given offset. The input ordinates are (<var>longitude</var>,
-     * <var>latitude</var>) angles in radians, usually (but not always) in the range [-&pi;..&pi;]
-     * and [-&pi;/2..&pi;/2] respectively. However values outside those ranges are accepted on the
-     * assumption that most implementations use those values only in trigonometric functions like
-     * {@linkplain Math#sin sin} and {@linkplain Math#cos cos}. If this assumption is not applicable
-     * to a particular subclass, then it is implementor's responsibility to check the range.
+     * in {@code dstPts} at the given offset. In addition, opportunistically computes the
+     * transform derivative if requested.
+     * <p>
+     * The input ordinates are (<var>&lambda;</var>,<var>&phi;</var>) (the variable names for
+     * <var>longitude</var> and <var>latitude</var> respectively) angles in radians, usually
+     * (but not always) in the range [-&pi;..&pi;] and [-&pi;/2..&pi;/2] respectively. However
+     * values outside those ranges are accepted on the assumption that most implementations use
+     * those values only in trigonometric functions like {@linkplain Math#sin sin} and
+     * {@linkplain Math#cos cos}. If this assumption is not applicable to a particular subclass,
+     * then it is implementor's responsibility to check the range.
      * <p>
      * Input coordinate shall have the {@linkplain Parameters#centralMeridian central meridian}
      * removed from the longitude before this method is invoked. After this method is invoked,
@@ -507,15 +513,21 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * @param srcPts The array containing the source point coordinate, as (<var>longitude</var>,
      *               <var>latitude</var>) angles in <strong>radians</strong>.
      * @param srcOff The offset of the point to be converted in the source array.
-     * @param dstPts the array into which the converted point coordinate is returned (may be
-     *               the same than {@code srcPts}). Ordinates will be in a dimensionless unit,
-     *               as a linear distance on a unit sphere or ellipse.
+     * @param dstPts The array into which the converted point coordinate is returned (may be
+     *               the same than {@code srcPts}). Ordinates will be expressed in a dimensionless
+     *               unit, as a linear distance on a unit sphere or ellipse.
      * @param dstOff The offset of the location of the converted point that is
      *               stored in the destination array.
+     * @param  derivate {@code true} for computing the derivative, or {@code false} if not needed.
+     * @return The matrix of the projection derivative at the given source position, or {@code null}
+     *         if the {@code derivate} argument is {@code false} or if this map projection does not
+     *         support derivative calculation.
      * @throws ProjectionException if the point can't be converted.
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected abstract void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws ProjectionException;
 
     /**
@@ -586,18 +598,28 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
         /**
          * Inverse transforms the specified {@code srcPts} and stores the result in {@code dstPts}.
+         * If the derivative has been requested, then this method will delegates the derivative
+         * calculation to the enclosing class and inverts the resulting matrix.
+         *
+         * @since 3.20 (derived from 3.00)
          */
         @Override
-        protected void transform(final double[] srcPts, final int srcOff,
-                                 final double[] dstPts, final int dstOff)
-                throws ProjectionException
+        protected Matrix transform(final double[] srcPts, final int srcOff,
+                                   final double[] dstPts, final int dstOff,
+                                   final boolean derivate) throws TransformException
         {
             inverseTransform(srcPts, srcOff, dstPts, dstOff);
             if (verifyCoordinateRanges()) {
                 logWarning(verifyGeographicRanges(this, srcPts[srcOff], srcPts[srcOff+1]));
             }
-            assert Assertions.checkReciprocal(UnitaryProjection.this, false,
-                    srcPts, srcOff, dstPts, dstOff, 1);
+            assert Assertions.checkReciprocal(UnitaryProjection.this, false, srcPts, srcOff, dstPts, dstOff, 1);
+            if (derivate) {
+                final Matrix derivative = UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true);
+                if (derivative != null) {
+                    return MatrixUtilities.invert(derivative);
+                }
+            }
+            return null;
         }
     }
 

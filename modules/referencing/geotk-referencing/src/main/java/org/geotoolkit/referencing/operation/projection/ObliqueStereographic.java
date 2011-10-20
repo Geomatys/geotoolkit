@@ -21,7 +21,6 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import java.awt.geom.Point2D;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
@@ -63,7 +62,7 @@ import static java.lang.Math.*;
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see PolarStereographic
  * @see EquatorialStereographic
@@ -123,25 +122,58 @@ public class ObliqueStereographic extends Stereographic {
 
     /**
      * {@inheritDoc}
+     *
+     * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected void transform(final double[] srcPts, final int srcOff,
-                             final double[] dstPts, final int dstOff)
-            throws ProjectionException
+    protected Matrix transform(final double[] srcPts, final int srcOff,
+                               final double[] dstPts, final int dstOff,
+                               final boolean derivate) throws ProjectionException
     {
-        double λ = rollLongitude(srcPts[srcOff]);
-        double φ = srcPts[srcOff + 1];
-        φ = 2 * atan(K * pow(tan(0.5*φ + PI/4), C) * srat(excentricity * sin(φ), ratexp)) - PI/2;
-        final double sinc = sin(φ);
-        final double cosc = cos(φ);
-        final double cosl = cos(λ);
-        final double k = 1 + sinc0*sinc + cosc0*cosc*cosl;
-        dstPts[dstOff] = cosc * sin(λ) / k;
-        dstPts[dstOff+1] = (cosc0*sinc - sinc0*cosc*cosl) / k;
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        if (dstPts != null) {
+            final double c = 2 * atan(K * pow(tan(0.5*φ + PI/4), C) * srat(excentricity * sin(φ), ratexp)) - PI/2;
+            final double sinc = sin(c);
+            final double cosc = cos(c);
+            final double k = 1 + sinc0*sinc + cosc0*cosc*cosλ;
+            dstPts[dstOff] = cosc * sinλ / k;
+            dstPts[dstOff+1] = (cosc0*sinc - sinc0*cosc*cosλ) / k;
+        }
         /*
          * We can not compare easily with the calculation performed by the superclass
          * because the (de)normalize affine transforms are not set in the same way.
          */
+        if (!derivate) {
+            return null;
+        }
+        //
+        // End of map projection. Now compute the derivative.
+        //
+        final double sinE     = sin(0.5*φ + PI/4);
+        final double cosE     = cos(0.5*φ + PI/4);
+        final double esinφ    = excentricity*sin(φ);
+        final double ecosφ    = excentricity*cos(φ);
+        final double T        = pow(sinE/cosE, C);
+        final double dT_dφ    = 0.5*C/(sinE*cosE);
+        final double sratKT   = K*T*srat(esinφ, ratexp);
+        final double si       = sratKT + 1/sratKT;
+        final double di       = sratKT - 1/sratKT;
+        final double di_sinc0 = di * sinc0;
+        final double di_cosc0 = di * cosc0;
+        final double dU_dφ    = 2*(dT_dφ + dsrat_dφ(esinφ, ecosφ, ratexp)) / si;
+        final double k        = di_sinc0 + 2*cosλ*cosc0 + si;
+        final double r        = di_cosc0 - 2*cosλ*sinc0;
+        final double dkφ      = 2*sinc0 - cosλ*di_cosc0;
+        final double drφ      = 2*cosc0 + cosλ*di_sinc0;
+        final double k2       = k*k;
+        return new Matrix2(
+                2*(cosλ*(si + di_sinc0) + 2*cosc0) / k2,
+                -dU_dφ*sinλ*(di*k + dkφ*2)         / k2,
+                2*sinλ*(sinc0*k + cosc0*r)         / k2,
+                dU_dφ*(drφ*k - dkφ*r)              / k2);
     }
 
     /**
@@ -191,43 +223,6 @@ public class ObliqueStereographic extends Stereographic {
          * We can not compare easily with the calculation performed by the superclass
          * because the (de)normalize affine transforms are not set in the same way.
          */
-    }
-
-    /**
-     * Gets the derivative of this transform at a point.
-     *
-     * @param  point The coordinate point where to evaluate the derivative.
-     * @return The derivative at the specified point as a 2&times;2 matrix.
-     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
-     */
-    @Override
-    public Matrix derivative(final Point2D point) throws ProjectionException {
-        final double λ = rollLongitude(point.getX());
-        final double φ = point.getY();
-        final double sinλ     = sin(λ);
-        final double cosλ     = cos(λ);
-        final double sinE     = sin(0.5*φ + PI/4);
-        final double cosE     = cos(0.5*φ + PI/4);
-        final double esinφ    = excentricity*sin(φ);
-        final double ecosφ    = excentricity*cos(φ);
-        final double T        = pow(sinE/cosE, C);
-        final double dT_dφ    = 0.5*C/(sinE*cosE);
-        final double sratKT   = K*T*srat(esinφ, ratexp);
-        final double si       = sratKT + 1/sratKT;
-        final double di       = sratKT - 1/sratKT;
-        final double di_sinc0 = di * sinc0;
-        final double di_cosc0 = di * cosc0;
-        final double dU_dφ    = 2*(dT_dφ + dsrat_dφ(esinφ, ecosφ, ratexp)) / si;
-        final double k        = di_sinc0 + 2*cosλ*cosc0 + si;
-        final double r        = di_cosc0 - 2*cosλ*sinc0;
-        final double dkφ      = 2*sinc0 - cosλ*di_cosc0;
-        final double drφ      = 2*cosc0 + cosλ*di_sinc0;
-        final double k2       = k*k;
-        return new Matrix2(
-                2*(cosλ*(si + di_sinc0) + 2*cosc0) / k2,
-                -dU_dφ*sinλ*(di*k + dkφ*2)         / k2,
-                2*sinλ*(sinc0*k + cosc0*r)         / k2,
-                dU_dφ*(drφ*k - dkφ*r)              / k2);
     }
 
     /**

@@ -56,7 +56,7 @@ import static org.geotoolkit.referencing.operation.provider.Logarithmic.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see ExponentialTransform1D
  * @see LinearTransform1D
@@ -231,14 +231,6 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
     }
 
     /**
-     * Transforms a single coordinate in a list of ordinal values.
-     */
-    @Override
-    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
-        dstPts[dstOff] = Math.log(srcPts[srcOff]) / lnBase + offset;
-    }
-
-    /**
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
@@ -321,12 +313,6 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
         @Override
         public double transform(final double value) {
             return Math.log10(value) + offset;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
-            dstPts[dstOff] = Math.log10(srcPts[srcOff]) + offset;
         }
 
         /** {@inheritDoc} */
