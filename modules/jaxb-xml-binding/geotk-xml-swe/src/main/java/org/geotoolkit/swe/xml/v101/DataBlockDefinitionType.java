@@ -127,7 +127,7 @@ import org.geotoolkit.util.Utilities;
      * @param components liste de composant data record.
      * @param encoding encodage des données.
      */
-    public DataBlockDefinitionType(final String id, final List<AbstractDataComponentType> components,
+    public DataBlockDefinitionType(final String id, final Collection<? extends AbstractDataComponentType> components,
             final AbstractEncodingType encoding) {
         this.id         = id;
         this.components = new ArrayList<JAXBElement< ? extends AbstractDataComponentType>>();
