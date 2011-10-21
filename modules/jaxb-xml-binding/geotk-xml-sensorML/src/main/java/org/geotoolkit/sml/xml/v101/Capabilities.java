@@ -301,7 +301,7 @@ public class Capabilities implements AbstractCapabilities {
     
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[Characteristics]").append("\n");
+        StringBuilder sb = new StringBuilder("[Capabilities]").append("\n");
         if (abstractDataRecord != null) {
             sb.append("abstract dataRecord: ").append(abstractDataRecord.getValue()).append('\n');
         }

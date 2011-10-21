@@ -20,7 +20,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.Component;
-
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for ComponentType complex type.
@@ -71,5 +72,37 @@ public class ComponentType extends AbstractComponentType implements Component {
      */
     public void setMethod(final MethodPropertyType method) {
         this.method = method;
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof ComponentType && super.equals(object, mode)) {
+            final ComponentType that = (ComponentType) object;
+            return Utilities.equals(this.method,     that.method);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.method != null ? this.method.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (method != null) {
+            s.append("method:").append(method).append('\n');
+        }
+        return s.toString();
     }
 }

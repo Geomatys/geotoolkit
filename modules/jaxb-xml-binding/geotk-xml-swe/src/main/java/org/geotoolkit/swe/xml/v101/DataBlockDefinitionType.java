@@ -223,13 +223,20 @@ import org.geotoolkit.util.Utilities;
         }
         
         final DataBlockDefinitionType that = (DataBlockDefinitionType) object;
-        if (this.components.size() != that.components.size())
-            return false;
+        if (this.components != null && that.components != null) {
+            if (this.components.size() != that.components.size()) {
+                return false;
+            }
         
-        final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i  = this.components.iterator();
-        final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i2 = that.components.iterator();
-        while (i.hasNext() && i2.hasNext()) {
-            if (!Utilities.equals(i.next().getValue(), i2.next().getValue())) return false;
+            final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i  = this.components.iterator();
+            final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i2 = that.components.iterator();
+            while (i.hasNext() && i2.hasNext()) {
+                if (!Utilities.equals(i.next().getValue(), i2.next().getValue())) return false;
+            }
+        } else {
+            if (this.components != null || that.components != null) {
+                return false;
+            }
         }
         return Utilities.equals(this.id,         that.id) &&
                Utilities.equals(this.encoding,   that.encoding) ;
@@ -254,8 +261,10 @@ import org.geotoolkit.util.Utilities;
     private void appendTo(final StringBuilder buffer, String margin, final String lineSeparator) {
         buffer.append("components: ").append(lineSeparator);
         margin += "  ";
-        for (final JAXBElement<? extends AbstractDataComponentType> a : components) {
-            buffer.append(margin).append(a.getValue().toString()).append(lineSeparator);
+        if (components != null) {
+            for (final JAXBElement<? extends AbstractDataComponentType> a : components) {
+                buffer.append(margin).append(a.getValue()).append(lineSeparator);
+            }
         }
     }
     

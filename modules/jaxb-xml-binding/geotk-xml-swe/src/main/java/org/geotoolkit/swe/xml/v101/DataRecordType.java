@@ -23,7 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
-
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 
 /**
  * <p>Java class for DataRecordType complex type.
@@ -123,5 +124,44 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
             }
         }
         return false;
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DataRecordType && super.equals(object, mode)) {
+            final DataRecordType that = (DataRecordType) object;
+            return Utilities.equals(this.field, that.field);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + super.hashCode();
+        hash = 53 * hash + (this.field != null ? this.field.hashCode() : 0);
+        return hash;
+    }
+
+    
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+       
+        if (field != null) {
+            s.append("fields:\n");
+            for (DataComponentPropertyType f : field) {
+                s.append(f).append('\n');
+            }
+        }
+        
+        return s.toString();
     }
 }

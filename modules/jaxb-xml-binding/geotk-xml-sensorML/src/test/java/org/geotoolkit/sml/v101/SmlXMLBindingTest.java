@@ -349,25 +349,62 @@ public class SmlXMLBindingTest {
         for (int i = 0 ; i < system.getComponents().getComponentList().getComponent().size(); i++) {
             ComponentPropertyType expCP = system.getComponents().getComponentList().getComponent().get(i);
             ComponentPropertyType resCP = resultProcess.getComponents().getComponentList().getComponent().get(i);
-            assertEquals(expCP.getAbstractProcess().getBoundedBy(), resCP.getAbstractProcess().getBoundedBy());
-            assertEquals(expCP.getAbstractProcess().getDocumentation(), resCP.getAbstractProcess().getDocumentation());
-            assertEquals(expCP.getAbstractProcess().getDescription(), resCP.getAbstractProcess().getDescription());
-            assertEquals(expCP.getAbstractProcess().getHistory(), resCP.getAbstractProcess().getHistory());
-            assertEquals(expCP.getAbstractProcess().getId(), resCP.getAbstractProcess().getId());
-            assertEquals(expCP.getAbstractProcess().getIdentification(), resCP.getAbstractProcess().getIdentification());
-            assertEquals(expCP.getAbstractProcess().getKeywords(), resCP.getAbstractProcess().getKeywords());
-            assertEquals(expCP.getAbstractProcess().getLegalConstraint(), resCP.getAbstractProcess().getLegalConstraint());
-            assertEquals(expCP.getAbstractProcess().getLocation(), resCP.getAbstractProcess().getLocation());
-            assertEquals(expCP.getAbstractProcess().getContact(), resCP.getAbstractProcess().getContact());
-            assertEquals(expCP.getAbstractProcess().getName(), resCP.getAbstractProcess().getName());
-            assertEquals(expCP.getAbstractProcess().getParameterName(), resCP.getAbstractProcess().getParameterName());
-            assertEquals(expCP.getAbstractProcess().getSecurityConstraint(), resCP.getAbstractProcess().getSecurityConstraint());
-            assertEquals(expCP.getAbstractProcess().getSrsName(), resCP.getAbstractProcess().getSrsName());
-            assertEquals(expCP.getAbstractProcess().getValidTime(), resCP.getAbstractProcess().getValidTime());
-            assertEquals(expCP.getAbstractProcess().getClassification(), resCP.getAbstractProcess().getClassification());
-            assertEquals(expCP.getAbstractProcess().getCharacteristics(), resCP.getAbstractProcess().getCharacteristics());
-            assertEquals(expCP.getAbstractProcess().getCapabilities(), resCP.getAbstractProcess().getCapabilities());
-            assertEquals(expCP.getAbstractProcess(), resCP.getAbstractProcess());
+            ComponentType expCPprocess = (ComponentType) expCP.getAbstractProcess();
+            ComponentType resCPprocess = (ComponentType) resCP.getAbstractProcess();
+            assertEquals(expCPprocess.getBoundedBy(), resCPprocess.getBoundedBy());
+            assertEquals(expCPprocess.getCapabilities(), resCPprocess.getCapabilities());
+            assertEquals(expCPprocess.getCharacteristics(), resCPprocess.getCharacteristics());
+            assertEquals(expCPprocess.getClassification(), resCPprocess.getClassification());
+            assertEquals(expCPprocess.getContact(), resCPprocess.getContact());
+            assertEquals(expCPprocess.getDescription(), resCPprocess.getDescription());
+            assertEquals(expCPprocess.getDescriptionReference(), resCPprocess.getDescriptionReference());
+            assertEquals(expCPprocess.getDocumentation(), resCPprocess.getDocumentation());
+            assertEquals(expCPprocess.getHistory(), resCPprocess.getHistory());
+            assertEquals(expCPprocess.getId(), resCPprocess.getId());
+            assertEquals(expCPprocess.getIdentification(), resCPprocess.getIdentification());
+            assertEquals(expCPprocess.getIdentifier(), resCPprocess.getIdentifier());
+            assertEquals(expCPprocess.getInputs(), resCPprocess.getInputs());
+            assertEquals(expCPprocess.getInterfaces(), resCPprocess.getInterfaces());
+            assertEquals(expCPprocess.getKeywords(), resCPprocess.getKeywords());
+            assertEquals(expCPprocess.getLegalConstraint(), resCPprocess.getLegalConstraint());
+            assertEquals(expCPprocess.getLocation(), resCPprocess.getLocation());
+            assertEquals(expCPprocess.getName(), resCPprocess.getName());
+            assertEquals(expCPprocess.getOutputs(), resCPprocess.getOutputs());
+            if (expCPprocess.getParameters() != null) {
+                for (int j = 0; j< expCPprocess.getParameters().getParameterList().getParameter().size(); j++) {
+                    final DataComponentPropertyType expParam = expCPprocess.getParameters().getParameterList().getParameter().get(j);
+                    final DataComponentPropertyType resParam = resCPprocess.getParameters().getParameterList().getParameter().get(j);
+                    if (expParam.getAbstractRecord() instanceof DataRecordType) {
+                        DataRecordType expRecord = (DataRecordType) expParam.getAbstractRecord();
+                        DataRecordType resRecord = (DataRecordType) resParam.getAbstractRecord();
+                        for (int k = 0; k< expRecord.getField().size(); k++) {
+                             DataComponentPropertyType expField = expRecord.getField().get(k);
+                             DataComponentPropertyType resField = resRecord.getField().get(k);
+                             assertEquals(expField.getQuantityRange(), resField.getQuantityRange());
+                             assertEquals(expField, resField);
+                        }
+                        assertEquals(expRecord.getField(), resRecord.getField());
+                        assertEquals(expRecord, resRecord);
+                    }
+                    assertEquals(expParam.getAbstractRecord(), resParam.getAbstractRecord());
+                    assertEquals(expParam, resParam);
+                    
+                }
+                assertEquals(expCPprocess.getParameters().getParameterList().getParameter(), resCPprocess.getParameters().getParameterList().getParameter());
+                assertEquals(expCPprocess.getParameters().getParameterList(), resCPprocess.getParameters().getParameterList());
+            }
+            assertEquals(expCPprocess.getParameters(), resCPprocess.getParameters());
+            assertEquals(expCPprocess.getParameterName(), resCPprocess.getParameterName());
+            assertEquals(expCPprocess.getPosition(), resCPprocess.getPosition());
+            assertEquals(expCPprocess.getSMLLocation(), resCPprocess.getSMLLocation());
+            assertEquals(expCPprocess.getSecurityConstraint(), resCPprocess.getSecurityConstraint());
+            assertEquals(expCPprocess.getSrsName(), resCPprocess.getSrsName());
+            assertEquals(expCPprocess.getValidTime(), resCPprocess.getValidTime());
+            assertEquals(expCPprocess.getMethod(), resCPprocess.getMethod());
+            assertEquals(expCPprocess.getTemporalReferenceFrame(), resCPprocess.getTemporalReferenceFrame());
+            assertEquals(expCPprocess.getTimePosition(), resCPprocess.getTimePosition());
+            
+            assertEquals(expCPprocess, resCPprocess);
             assertEquals(expCP, resCP);
         }
         assertEquals(resultProcess.getComponents().getComponentList().getComponent(), system.getComponents().getComponentList().getComponent());
@@ -598,18 +635,26 @@ public class SmlXMLBindingTest {
         fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
         fields.add(DataComponentPropertyType.TIME_FIELD);
         final DataRecordType posRecord = new DataRecordType(null, fields);
-        final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
+        final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList(posRecord), TextBlockType.DEFAULT_ENCODING);
         final DataDefinition dataDefinition = new DataDefinition(definition);
         final org.geotoolkit.sml.xml.v101.Values trajValues = new org.geotoolkit.sml.xml.v101.Values();
         final DataSourceType datasource = new DataSourceType(dataDefinition, trajValues, null);
         final Position pos  = new Position(null, datasource);
+        
         system.setPosition(pos);
+        DataSourceType expds = (DataSourceType) pos.getAbstractProcess();
+        DataSourceType resds = (DataSourceType) system.getPosition().getAbstractProcess();
+        assertEquals(expds.getDataDefinition(), resds.getDataDefinition());
+        assertEquals(expds, resds);
+        assertEquals(pos.getAbstractProcess(), system.getPosition().getAbstractProcess());
+        assertEquals(pos.getPosition(), system.getPosition().getPosition());
+        assertEquals(pos, system.getPosition());
         final SensorML sml =  new SensorML("1.0.1", Arrays.asList(new SensorML.Member(system)));
         Marshaller m = SensorMLMarshallerPool.getInstance().acquireMarshaller();
         ObjectFactory factory = new ObjectFactory();
         //m.marshal(factory.createPosition(pos), System.out);
         //m.marshal(factory.createSystem(system), System.out);
-       // m.marshal(sml, System.out);
+        //m.marshal(sml, System.out);
         SensorMLMarshallerPool.getInstance().release(m);
     }
 }

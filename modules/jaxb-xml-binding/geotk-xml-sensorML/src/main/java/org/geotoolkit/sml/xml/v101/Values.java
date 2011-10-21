@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sml.xml.AbstractValues;
 import org.w3c.dom.Element;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -84,6 +86,51 @@ public class Values implements AbstractValues {
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Values) {
+            final Values that = (Values) object;
+            return Utilities.equals(this.any,          that.any)   &&
+                   Utilities.equals(this.otherAttributes,    that.otherAttributes) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + (this.any != null ? this.any.hashCode() : 0);
+        hash = 11 * hash + (this.otherAttributes != null? this.otherAttributes.hashCode() : 0);
+        return hash;
+    }
+    
+    /**
+     * Retourne une representation de l'objet (debug).
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[Values]\n");
+        if (any != null) {
+            sb.append("any:\n");
+            for (Element e : any) {
+                sb.append(e).append('\n');
+            }
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (Entry<QName,String> entry : otherAttributes.entrySet()) {
+                sb.append(entry.getKey()).append(" = ").append(entry.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }
 

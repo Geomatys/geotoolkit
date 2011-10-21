@@ -23,9 +23,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
+
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+
 /**
  *
  * @version $Id:

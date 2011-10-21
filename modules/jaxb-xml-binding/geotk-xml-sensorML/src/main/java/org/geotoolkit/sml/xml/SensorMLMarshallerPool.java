@@ -31,8 +31,10 @@ public class SensorMLMarshallerPool {
     static {
         try {
             instance = new MarshallerPool("org.geotoolkit.sml.xml.v101:" +
-                                        "org.geotoolkit.sml.xml.v100:"  +
-                                        "org.geotoolkit.internal.jaxb.geometry");
+                                          "org.geotoolkit.sml.xml.v100:"  +
+                                          "org.geotoolkit.swe.xml.v100:"  +
+                                          "org.geotoolkit.swe.xml.v101:"  +
+                                          "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
             Logger.getLogger(SensorMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

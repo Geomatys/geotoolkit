@@ -214,7 +214,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
 
             return Utilities.equals(this.axisID,           that.axisID)         &&
                    Utilities.equals(this.constraint,       that.constraint)     &&
-                   Utilities.equals(this.quality,          that.quality)        &&
+                   Utilities.equals(this.getQuality(),     that.getQuality())        &&
                    Utilities.equals(this.referenceFrame,   that.referenceFrame) &&
                    Utilities.equals(this.uom,              that.uom)            &&
                    Utilities.equals(this.value,            that.value);
@@ -232,5 +232,30 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         hash = 53 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
         hash = 53 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
         return hash;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+       
+        if (uom != null) {
+            s.append(" uom = ").append(uom).append('\n');
+        }
+        if (axisID != null) {
+            s.append(" axisID = ").append(uom).append('\n');
+        }
+        if (referenceFrame != null) {
+            s.append(" referenceFrame = ").append(referenceFrame).append('\n');
+        }
+        if (value != null) {
+            s.append(" value = ").append(value).append('\n');
+        }
+        if (quality != null) {
+            s.append(" quality = ").append(quality).append('\n');
+        }
+        if (constraint != null) {
+            s.append(" constraint = ").append(uom).append('\n');
+        }
+        return s.toString();
     }
 }

@@ -151,4 +151,20 @@ public class SweXMLBindingTest {
         
         //marshaller.marshal(factory.createDataBlockDefinition(definition), System.out);
     }
+    
+    @Test
+    public void cloneDataBlockDefinitionTest() throws Exception {
+        final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        fields.add(DataComponentPropertyType.LATITUDE_FIELD);
+        fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
+        fields.add(DataComponentPropertyType.TIME_FIELD);
+        final DataRecordType posRecord = new DataRecordType(null, fields);
+        final DataBlockDefinitionType expResult = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
+        
+        final DataBlockDefinitionType result = new DataBlockDefinitionType(expResult);
+        
+        assertEquals(expResult.getEncoding(), result.getEncoding());
+        assertEquals(expResult, result);
+        
+    }
 }

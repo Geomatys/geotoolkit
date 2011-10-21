@@ -229,4 +229,28 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         hash = 17 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
         return hash;
     }
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (interfaces != null) {
+            s.append("interfaces:").append(interfaces).append('\n');
+        }
+        if (location != null) {
+            s.append("location:").append(location).append('\n');
+        }
+        if (position != null) {
+            s.append("position:").append(position).append('\n');
+        }
+        if (spatialReferenceFrame != null) {
+            s.append("spatialReferenceFrame:").append(spatialReferenceFrame).append('\n');
+        }
+        if (temporalReferenceFrame != null) {
+            s.append("temporalReferenceFrame:").append(temporalReferenceFrame).append('\n');
+        }
+        if (timePosition != null) {
+            s.append("timePosition:").append(timePosition).append('\n');
+        }
+        return s.toString();
+    }
+    
 }

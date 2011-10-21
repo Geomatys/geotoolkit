@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -47,7 +48,10 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Decribe the data encoding.
      */
-    @XmlElementRef(name = "Encoding", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
+    @XmlElementRefs({
+        @XmlElementRef(name = "Encoding", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class),
+        @XmlElementRef(name = "TextBlock", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
+    })
     private JAXBElement<? extends AbstractEncodingType> encoding;
     
     @XmlTransient
@@ -95,17 +99,18 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             this.title        = enc.getTitle();
             this.type         = enc.getType();
             if (enc.getEncoding() != null) {
-                if (enc.getEncoding() instanceof AbstractBinaryBlock)
-                throw new IllegalArgumentException("Binnary block are not handled");
-            
-            } else if (enc.getEncoding() instanceof MultiplexedStreamFormat){
-                this.encoding = sweFactory.createMultiplexedStreamFormat(new MultiplexedStreamFormatType((MultiplexedStreamFormat)enc.getEncoding()));
-            
-            } else if (enc.getEncoding() instanceof TextBlock) {
-                this.encoding = sweFactory.createTextBlock(new TextBlockType((TextBlock)enc.getEncoding()));
-            
-            } else if (enc.getEncoding() instanceof XmlBlock) {
-                this.encoding = sweFactory.createXMLBlock(new XMLBlockType((XmlBlock)enc.getEncoding()));
+                if (enc.getEncoding() instanceof AbstractBinaryBlock) {
+                    throw new IllegalArgumentException("Binnary block are not handled");
+
+                } else if (enc.getEncoding() instanceof MultiplexedStreamFormat) {
+                    this.encoding = sweFactory.createMultiplexedStreamFormat(new MultiplexedStreamFormatType((MultiplexedStreamFormat) enc.getEncoding()));
+
+                } else if (enc.getEncoding() instanceof TextBlock) {
+                    this.encoding = sweFactory.createTextBlock(new TextBlockType((TextBlock) enc.getEncoding()));
+
+                } else if (enc.getEncoding() instanceof XmlBlock) {
+                    this.encoding = sweFactory.createXMLBlock(new XMLBlockType((XmlBlock) enc.getEncoding()));
+                }
             }
         }
     }

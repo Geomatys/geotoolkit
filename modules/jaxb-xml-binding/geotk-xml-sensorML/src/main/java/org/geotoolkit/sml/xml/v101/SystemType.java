@@ -153,4 +153,18 @@ public class SystemType extends AbstractComponentType implements System {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (components != null) {
+            s.append("components:").append(components).append('\n');
+        }
+        if (positions != null) {
+            s.append("positions:").append(positions).append('\n');
+        }
+        if (connections != null) {
+            s.append("connections:").append(connections).append('\n');
+        }
+        return s.toString();
+    }
 }

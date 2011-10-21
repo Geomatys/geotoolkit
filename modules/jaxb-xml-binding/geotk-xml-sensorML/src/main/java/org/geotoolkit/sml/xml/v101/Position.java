@@ -119,21 +119,21 @@ public class Position implements AbstractPosition {
             this.show    = pos.getShow();
             this.title   = pos.getTitle();
             this.type    = pos.getType();
-            if (pos.getAbstractProcess() != null) {
+            final AbstractProcess aProcess = pos.getAbstractProcess();
+            if (aProcess != null) {
                 final ObjectFactory facto = new ObjectFactory();
-                final AbstractProcess aProcess = pos.getAbstractProcess();
-                if (aProcess instanceof AbstractDataSource) {
-                    this.process = facto.createDataSource(new DataSourceType( (AbstractDataSource) aProcess));
-                } else if (aProcess instanceof AbstractProcessModel) {
-                    this.process = facto.createProcessModel(new ProcessModelType( (AbstractProcessModel) aProcess));
-                } else if (aProcess instanceof AbstractProcessChain) {
-                    this.process = facto.createProcessChain(new ProcessChainType( (AbstractProcessChain) aProcess));
-                } else if (aProcess instanceof System) {
+                if (aProcess instanceof System) {
                     this.process = facto.createSystem(new SystemType((System)aProcess));
                 } else if (aProcess instanceof Component) {
                     this.process = facto.createComponent(new ComponentType((Component) aProcess));
                 } else if (aProcess instanceof ComponentArray) {
                     this.process = facto.createComponentArray(new ComponentArrayType((ComponentArray) aProcess));
+                } if (aProcess instanceof AbstractDataSource) {
+                    this.process = facto.createDataSource(new DataSourceType( (AbstractDataSource) aProcess));
+                } else if (aProcess instanceof AbstractProcessModel) {
+                    this.process = facto.createProcessModel(new ProcessModelType( (AbstractProcessModel) aProcess));
+                } else if (aProcess instanceof AbstractProcessChain) {
+                    this.process = facto.createProcessChain(new ProcessChainType( (AbstractProcessChain) aProcess));
                 } else {
                     throw new IllegalArgumentException("unexepected process type:" + aProcess);
                 }
@@ -535,6 +535,42 @@ public class Position implements AbstractPosition {
         hash = 59 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 59 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[Position]").append("\n");
+        if (position != null) {
+            sb.append("position: ").append(position).append('\n');
+        }
+        if (process != null) {
+            sb.append("process: ").append(process.getValue()).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
     }
 
 }

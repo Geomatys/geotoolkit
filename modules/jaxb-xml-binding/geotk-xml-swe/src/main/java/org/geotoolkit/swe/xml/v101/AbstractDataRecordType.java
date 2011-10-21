@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml.v101;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.util.ComparisonMode;
 
 /**
  *
@@ -66,4 +67,14 @@ public class AbstractDataRecordType extends AbstractDataComponentType implements
         super(record);
     }
     
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractDataRecordType && super.equals(object, mode)) {
+            return true;
+        }
+        return false;
+    }
 }
