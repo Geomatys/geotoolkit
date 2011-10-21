@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sml.xml.AbstractValues;
 import org.w3c.dom.Element;
@@ -52,8 +53,13 @@ import org.w3c.dom.Element;
 })
 public class Values implements AbstractValues {
 
-    @XmlAnyElement
-    private List<Element> any;
+   /*@XmlAnyElement
+    private List<Element> any; we need direct String value. TODO see how to handle both any xml and String value
+     */
+    
+    @XmlValue
+    private String any;
+    
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -72,13 +78,13 @@ public class Values implements AbstractValues {
      * Gets the value of the any property.
      *
      */
-    public List<Element> getAny() {
-        if (any == null) {
-            any = new ArrayList<Element>();
-        }
+    public String getAny() {
         return this.any;
     }
 
+    public void setAny(final String any) {
+        this.any = any;
+    }
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      */

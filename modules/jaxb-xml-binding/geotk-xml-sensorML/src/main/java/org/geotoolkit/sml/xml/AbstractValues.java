@@ -29,7 +29,8 @@ import org.w3c.dom.Element;
  */
 public interface AbstractValues {
 
-    List<Element> getAny();
+    //List<Element> getAny();
+    String getAny();
 
     Map<QName, String> getOtherAttributes();
 }

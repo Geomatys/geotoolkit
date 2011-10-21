@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sml.xml.AbstractValues;
 import org.w3c.dom.Element;
@@ -48,13 +49,15 @@ import org.geotoolkit.util.Utilities;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "any"
-})
 public class Values implements AbstractValues {
 
-    @XmlAnyElement
-    private List<Element> any;
+    /*@XmlAnyElement
+    private List<Element> any; we need direct String value. TODO see how to handle both any xml and String value
+     */
+    
+    @XmlValue
+    private String any;
+    
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
@@ -72,11 +75,12 @@ public class Values implements AbstractValues {
      * Gets the value of the any property.
      *
      */
-    public List<Element> getAny() {
-        if (any == null) {
-            any = new ArrayList<Element>();
-        }
+    public String getAny() {
         return this.any;
+    }
+    
+    public void setAny(final String any) {
+        this.any = any;
     }
 
     /**
@@ -119,10 +123,8 @@ public class Values implements AbstractValues {
     public String toString() {
         final StringBuilder sb = new StringBuilder("[Values]\n");
         if (any != null) {
-            sb.append("any:\n");
-            for (Element e : any) {
-                sb.append(e).append('\n');
-            }
+            sb.append("any=").append(any).append('\n');
+            
         }
         if (otherAttributes != null) {
             sb.append("otherAttributes:\n");

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.v101;
 
+import org.w3c.dom.Element;
 import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 //constellation
+import javax.imageio.metadata.IIOMetadataNode;
 import org.geotoolkit.sml.xml.v101.Classifier;
 import org.geotoolkit.sml.xml.v101.DataSourceType;
 import org.geotoolkit.sml.xml.v101.DataDefinition;
@@ -638,6 +640,7 @@ public class SmlXMLBindingTest {
         final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList(posRecord), TextBlockType.DEFAULT_ENCODING);
         final DataDefinition dataDefinition = new DataDefinition(definition);
         final org.geotoolkit.sml.xml.v101.Values trajValues = new org.geotoolkit.sml.xml.v101.Values();
+        trajValues.setAny("test");
         final DataSourceType datasource = new DataSourceType(dataDefinition, trajValues, null);
         final Position pos  = new Position(null, datasource);
         
