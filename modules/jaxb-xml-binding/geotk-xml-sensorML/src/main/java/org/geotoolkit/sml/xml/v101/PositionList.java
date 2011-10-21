@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractPosition;
 import org.geotoolkit.sml.xml.AbstractPositionList;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -146,5 +147,51 @@ public class PositionList implements AbstractPositionList {
      */
     public void setId(final String value) {
         this.id = value;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[PositionList]").append("\n");
+        if (id != null) {
+            sb.append("id: ").append(id).append('\n');
+        }
+        if (position != null) {
+            sb.append("position:\n ");
+            for (Position p : position) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (timePosition != null) {
+            sb.append("timePosition: ").append(timePosition).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof PositionList) {
+            final PositionList that = (PositionList) object;
+            
+            return Utilities.equals(this.id,           that.id)       &&
+                   Utilities.equals(this.position,     that.position)       &&
+                   Utilities.equals(this.timePosition, that.timePosition);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 13 * hash + (this.position != null ? this.position.hashCode() : 0);
+        hash = 13 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
+        return hash;
     }
 }
