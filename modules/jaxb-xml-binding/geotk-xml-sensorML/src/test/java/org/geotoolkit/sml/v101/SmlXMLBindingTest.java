@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sml.v101;
 
-import org.geotoolkit.sml.xml.v101.ObjectFactory;
+import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
@@ -26,9 +26,13 @@ import java.util.List;
 
 //constellation
 import org.geotoolkit.sml.xml.v101.Classifier;
-
+import org.geotoolkit.sml.xml.v101.DataSourceType;
+import org.geotoolkit.sml.xml.v101.DataDefinition;
+import org.geotoolkit.sml.xml.v101.ObjectFactory;
 import org.geotoolkit.sml.xml.v101.IdentifierList;
 import org.geotoolkit.sml.xml.v101.Identifier;
+import org.geotoolkit.swe.xml.v101.TextBlockType;
+import org.geotoolkit.swe.xml.v101.DataBlockDefinitionType;
 import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
 import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
@@ -57,23 +61,21 @@ import org.geotoolkit.sml.xml.v101.Phone;
 import org.geotoolkit.sml.xml.v101.Identification;
 import org.geotoolkit.sml.xml.v101.Inputs;
 import org.geotoolkit.sml.xml.v101.Interface;
-import org.geotoolkit.sml.xml.v101.InterfaceDefinition;
 import org.geotoolkit.sml.xml.v101.Interfaces;
 import org.geotoolkit.sml.xml.v101.InterfaceList;
 import org.geotoolkit.sml.xml.v101.IoComponentPropertyType;
 import org.geotoolkit.sml.xml.v101.Keywords;
 import org.geotoolkit.sml.xml.v101.KeywordList;
-import org.geotoolkit.sml.xml.v101.LayerPropertyType;
 import org.geotoolkit.sml.xml.v101.MethodPropertyType;
 import org.geotoolkit.sml.xml.v101.OnlineResource;
 import org.geotoolkit.sml.xml.v101.Outputs;
 import org.geotoolkit.sml.xml.v101.Parameters;
 import org.geotoolkit.sml.xml.v101.ParameterList;
+import org.geotoolkit.sml.xml.v101.Position;
 import org.geotoolkit.sml.xml.v101.ResponsibleParty;
 import org.geotoolkit.sml.xml.v101.SensorML;
 import org.geotoolkit.sml.xml.v101.SystemType;
 import org.geotoolkit.sml.xml.v101.Term;
-import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.QuantityRange;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -396,7 +398,7 @@ public class SmlXMLBindingTest {
      * @throws java.lang.Exception
      */
     @Test
-    public void SystemMarshallMarshalingTest() throws Exception {
+    public void SystemMarshalingTest() throws Exception {
 
         SensorML.Member member = new SensorML.Member();
 
@@ -585,6 +587,29 @@ public class SmlXMLBindingTest {
 
         assertEquals(expResult, result);
 
+        SensorMLMarshallerPool.getInstance().release(m);
+    }
+    
+    @Test
+    public void DataSourceMarshalingTest() throws Exception {
+        final SystemType system = new SystemType();
+        final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        fields.add(DataComponentPropertyType.LATITUDE_FIELD);
+        fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
+        fields.add(DataComponentPropertyType.TIME_FIELD);
+        final DataRecordType posRecord = new DataRecordType(null, fields);
+        final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
+        final DataDefinition dataDefinition = new DataDefinition(definition);
+        final org.geotoolkit.sml.xml.v101.Values trajValues = new org.geotoolkit.sml.xml.v101.Values();
+        final DataSourceType datasource = new DataSourceType(dataDefinition, trajValues, null);
+        final Position pos  = new Position(null, datasource);
+        system.setPosition(pos);
+        final SensorML sml =  new SensorML("1.0.1", Arrays.asList(new SensorML.Member(system)));
+        Marshaller m = SensorMLMarshallerPool.getInstance().acquireMarshaller();
+        ObjectFactory factory = new ObjectFactory();
+        //m.marshal(factory.createPosition(pos), System.out);
+        //m.marshal(factory.createSystem(system), System.out);
+       // m.marshal(sml, System.out);
         SensorMLMarshallerPool.getInstance().release(m);
     }
 }

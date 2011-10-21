@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDerivableComponent;
 import org.geotoolkit.sml.xml.AbstractLocation;
 import org.geotoolkit.sml.xml.AbstractPosition;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -193,5 +195,38 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
      */
     public void setInterfaces(final Interfaces interfaces) {
         this.interfaces = interfaces;
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof AbstractDerivableComponentType && super.equals(object, mode)) {
+            final AbstractDerivableComponentType that = (AbstractDerivableComponentType) object;
+            return Utilities.equals(this.interfaces,             that.interfaces)            &&
+                   Utilities.equals(this.location,               that.location)              &&
+                   Utilities.equals(this.position,               that.position)              &&
+                   Utilities.equals(this.spatialReferenceFrame,  that.spatialReferenceFrame) &&
+                   Utilities.equals(this.temporalReferenceFrame, that.temporalReferenceFrame)&&
+                   Utilities.equals(this.timePosition,           that.timePosition);
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.interfaces != null ? this.interfaces.hashCode() : 0);
+        hash = 17 * hash + (this.location != null ? this.location.hashCode() : 0);
+        hash = 17 * hash + (this.position != null ? this.position.hashCode() : 0);
+        hash = 17 * hash + (this.spatialReferenceFrame != null ? this.spatialReferenceFrame.hashCode() : 0);
+        hash = 17 * hash + (this.temporalReferenceFrame != null ? this.temporalReferenceFrame.hashCode() : 0);
+        hash = 17 * hash + (this.timePosition != null ? this.timePosition.hashCode() : 0);
+        return hash;
     }
 }

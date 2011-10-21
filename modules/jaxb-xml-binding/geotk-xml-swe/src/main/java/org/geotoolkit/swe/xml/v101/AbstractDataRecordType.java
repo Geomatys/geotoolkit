@@ -26,8 +26,18 @@ import org.geotoolkit.swe.xml.AbstractDataRecord;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlSeeAlso({SimpleDataRecordType.class})
+
 @XmlType(name="AbstractDataRecord")
+@XmlSeeAlso({
+    DataRecordType.class,
+    EnvelopeType.class,
+    AbstractConditionalType.class,
+    SimpleDataRecordType.class,
+    ConditionalValueType.class,
+    VectorType.class,
+    PositionType.class,
+    AbstractVectorType.class,
+    GeoLocationArea.class})
 public class AbstractDataRecordType extends AbstractDataComponentType implements AbstractDataRecord {
     
     /**

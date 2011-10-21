@@ -82,6 +82,10 @@ public class DataDefinition implements AbstractDataDefinition {
     public DataDefinition() {
 
     }
+    
+    public DataDefinition(final DataBlockDefinitionType dataBlockDefinition) {
+        this.dataBlockDefinition = dataBlockDefinition;
+    }
 
     public DataDefinition(final AbstractDataDefinition ddef) {
         if (ddef != null) {

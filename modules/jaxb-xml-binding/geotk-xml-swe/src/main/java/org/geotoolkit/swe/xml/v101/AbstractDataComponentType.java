@@ -32,7 +32,9 @@ import org.geotoolkit.util.ComparisonMode;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlSeeAlso({AbstractDataRecordType.class, TimeType.class, BooleanType.class, QuantityType.class, Text.class})
+@XmlSeeAlso({AbstractDataRecordType.class,AbstractDataArrayType.class, TimeType.class, BooleanType.class, 
+             QuantityRange.class, QuantityType.class, Text.class, Count.class, Category.class, TimeRange.class, 
+             CountRange.class, ObservableProperty.class})
 @XmlType(name="AbstractDataComponent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AbstractDataComponentType extends AbstractGMLType implements AbstractDataComponent {

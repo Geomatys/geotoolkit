@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.swe;
 
+import org.geotoolkit.swe.xml.v101.AbstractDataComponentType;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.StringWriter;
 import java.util.Arrays;
 import javax.xml.bind.JAXBException;
@@ -25,8 +28,12 @@ import org.geotoolkit.swe.xml.v101.DataArrayType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TextBlockType;
+import org.geotoolkit.swe.xml.v101.DataBlockDefinitionType;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
+import org.geotoolkit.swe.xml.v101.DataComponentPropertyType;
 
 //Junit dependencies
+import org.geotoolkit.swe.xml.v101.ObjectFactory;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -131,5 +138,17 @@ public class SweXMLBindingTest {
                     "</swe:DataArray>" + '\n';
 
         assertEquals(expResult, result);
+        
+    
+        ObjectFactory factory = new ObjectFactory();
+        
+        final List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        fields.add(DataComponentPropertyType.LATITUDE_FIELD);
+        fields.add(DataComponentPropertyType.LONGITUDE_FIELD);
+        fields.add(DataComponentPropertyType.TIME_FIELD);
+        final DataRecordType posRecord = new DataRecordType(null, fields);
+        final DataBlockDefinitionType definition = new DataBlockDefinitionType(null, Arrays.asList((AbstractDataComponentType)posRecord), TextBlockType.DEFAULT_ENCODING);
+        
+        //marshaller.marshal(factory.createDataBlockDefinition(definition), System.out);
     }
 }

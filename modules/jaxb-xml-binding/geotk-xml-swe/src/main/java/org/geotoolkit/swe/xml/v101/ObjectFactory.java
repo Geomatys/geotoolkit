@@ -629,7 +629,7 @@ public class ObjectFactory {
     public JAXBElement<DataStreamDefinitionType> createDataStreamDefinition(final DataStreamDefinitionType value) {
         return new JAXBElement<DataStreamDefinitionType>(_DataStreamDefinition_QNAME, DataStreamDefinitionType.class, null, value);
     }
-
+    
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MultiplexedStreamFormatType }{@code >}}
      *
@@ -889,11 +889,9 @@ public class ObjectFactory {
      *
      * Create an instance of {@link JAXBElement }{@code <}{@link DataBlockDefinitionType }{@code >}}
      *
-
+     */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "DataBlockDefinition")
     public JAXBElement<DataBlockDefinitionType> createDataBlockDefinition(DataBlockDefinitionType value) {
         return new JAXBElement<DataBlockDefinitionType>(_DataBlockDefinition_QNAME, DataBlockDefinitionType.class, null, value);
     }
-     */
-
 }

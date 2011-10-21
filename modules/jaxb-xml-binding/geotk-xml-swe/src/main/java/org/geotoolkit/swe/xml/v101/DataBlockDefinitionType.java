@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -56,7 +58,8 @@ import org.geotoolkit.util.Utilities;
     /**
      * Liste de composant Data record.
      */
-    private Collection<? extends AbstractDataComponentType> components;
+    @XmlElementRef(name = "AbstractDataComponent", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
+    private List<JAXBElement<? extends AbstractDataComponentType>> components;
     
     /**
      * Decrit l'encodage des données.
@@ -75,12 +78,42 @@ import org.geotoolkit.util.Utilities;
                 this.encoding = new AbstractEncodingPropertyType(db.getEncoding());
             }
             if (db.getComponents() != null) {
-                List<AbstractDataComponentType> tmp = new ArrayList<AbstractDataComponentType>();
+                final ObjectFactory factory = new ObjectFactory();
+                this.components = new ArrayList<JAXBElement< ? extends AbstractDataComponentType>>();
                 for (AbstractDataComponent c : db.getComponents()) {
-                    // TODO disociate types
-                    tmp.add(new AbstractDataComponentType(c));
+                    if (c instanceof BooleanType) {
+                        this.components.add(factory.createBoolean(new BooleanType((BooleanType)c)));
+                    } else if (c instanceof ConditionalValueType) {
+                        this.components.add(factory.createConditionalValue(new ConditionalValueType((ConditionalValueType)c)));
+                    } else if (c instanceof DataArrayType) {
+                        this.components.add(factory.createDataArray(new DataArrayType((DataArrayType)c)));
+                    } else if (c instanceof DataRecordType) {
+                        this.components.add(factory.createDataRecord(new DataRecordType((DataRecordType)c)));
+                    } else if (c instanceof EnvelopeType) {
+                        this.components.add(factory.createEnvelope(new EnvelopeType((EnvelopeType)c)));
+                    } else if (c instanceof GeoLocationArea) {
+                        this.components.add(factory.createGeoLocationArea(new GeoLocationArea((GeoLocationArea)c)));
+                    } else if (c instanceof PositionType) {
+                        this.components.add(factory.createPosition(new PositionType((PositionType)c)));
+                    } else if (c instanceof QuantityType) {
+                        this.components.add(factory.createQuantity(new QuantityType((QuantityType)c)));
+                    } else if (c instanceof SimpleDataRecordType) {
+                        this.components.add(factory.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecordType)c)));
+                    } else if (c instanceof SquareMatrixType) {
+                        this.components.add(factory.createSquareMatrix(new SquareMatrixType((SquareMatrixType)c)));
+                    } else if (c instanceof TimeType) {
+                        this.components.add(factory.createTime(new TimeType((TimeType)c)));
+                    } else if (c instanceof VectorType) {
+                        this.components.add(factory.createVector(new VectorType((VectorType)c)));
+                    } else if (c instanceof AbstractDataRecordType) {
+                        this.components.add(factory.createAbstractDataRecord(new AbstractDataRecordType((AbstractDataRecordType)c)));
+                    } else if (c instanceof AbstractDataComponentType) {
+                        this.components.add(factory.createAbstractDataComponent(new AbstractDataComponentType((AbstractDataComponentType)c)));
+                    } else {
+                        throw new IllegalArgumentException("unexpected type for component:" + c.getClass().getName());
+                    }
+                    
                 }
-                this.components = tmp;
             }
         }
     }
@@ -94,10 +127,47 @@ import org.geotoolkit.util.Utilities;
      * @param components liste de composant data record.
      * @param encoding encodage des données.
      */
-    public DataBlockDefinitionType(final String id, final Collection<? extends AbstractDataComponentType> components,
+    public DataBlockDefinitionType(final String id, final List<AbstractDataComponentType> components,
             final AbstractEncodingType encoding) {
         this.id         = id;
-        this.components = components;
+        this.components = new ArrayList<JAXBElement< ? extends AbstractDataComponentType>>();
+        final ObjectFactory factory = new ObjectFactory();
+        for (AbstractDataComponent c : components) {
+            if (c instanceof BooleanType) {
+                this.components.add(factory.createBoolean((BooleanType) c));
+            } else if (c instanceof ConditionalValueType) {
+                this.components.add(factory.createConditionalValue((ConditionalValueType) c));
+            } else if (c instanceof DataArrayType) {
+                this.components.add(factory.createDataArray((DataArrayType) c));
+            } else if (c instanceof DataRecordType) {
+                this.components.add(factory.createDataRecord((DataRecordType) c));
+            } else if (c instanceof EnvelopeType) {
+                this.components.add(factory.createEnvelope((EnvelopeType) c));
+            } else if (c instanceof GeoLocationArea) {
+                this.components.add(factory.createGeoLocationArea((GeoLocationArea) c));
+            } else if (c instanceof PositionType) {
+                this.components.add(factory.createPosition((PositionType) c));
+            } else if (c instanceof QuantityType) {
+                this.components.add(factory.createQuantity((QuantityType) c));
+            } else if (c instanceof SimpleDataRecordType) {
+                this.components.add(factory.createSimpleDataRecord((SimpleDataRecordType) c));
+            } else if (c instanceof SquareMatrixType) {
+                this.components.add(factory.createSquareMatrix((SquareMatrixType) c));
+            } else if (c instanceof TimeType) {
+                this.components.add(factory.createTime((TimeType) c));
+            } else if (c instanceof VectorType) {
+                this.components.add(factory.createVector((VectorType) c));
+            } else if (c instanceof AbstractDataArrayType) {
+                this.components.add(factory.createAbstractDataArray((AbstractDataArrayType) c));
+            } else if (c instanceof AbstractDataRecordType) {
+                this.components.add(factory.createAbstractDataRecord((AbstractDataRecordType) c));
+            } else if (c instanceof AbstractDataComponentType) {
+                this.components.add(factory.createAbstractDataComponent((AbstractDataComponentType) c));
+            } else {
+                throw new IllegalArgumentException("unexpected type for component:" + c.getClass().getName());
+            }
+
+        }
         this.encoding   = new AbstractEncodingPropertyType(encoding);
     }
     
@@ -120,7 +190,12 @@ import org.geotoolkit.util.Utilities;
      * {@inheritDoc}
      */
     public Collection<? extends AbstractDataComponentType> getComponents() {
-        return components;
+        final List<AbstractDataComponentType> r = new ArrayList<AbstractDataComponentType>();
+        for (JAXBElement<? extends AbstractDataComponentType> jb : components) {
+            r.add((AbstractDataComponentType)jb.getValue());
+        }
+        final List<? extends AbstractDataComponentType> response = r;
+        return response;
     }
     
     /**
@@ -151,10 +226,10 @@ import org.geotoolkit.util.Utilities;
         if (this.components.size() != that.components.size())
             return false;
         
-        Iterator<? extends AbstractDataComponentType> i  = this.components.iterator();
-        Iterator<? extends AbstractDataComponentType> i2 = that.components.iterator();
+        final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i  = this.components.iterator();
+        final Iterator<? extends JAXBElement<? extends AbstractDataComponentType>> i2 = that.components.iterator();
         while (i.hasNext() && i2.hasNext()) {
-            if (!Utilities.equals(i.next(), i2.next())) return false;
+            if (!Utilities.equals(i.next().getValue(), i2.next().getValue())) return false;
         }
         return Utilities.equals(this.id,         that.id) &&
                Utilities.equals(this.encoding,   that.encoding) ;
@@ -179,8 +254,8 @@ import org.geotoolkit.util.Utilities;
     private void appendTo(final StringBuilder buffer, String margin, final String lineSeparator) {
         buffer.append("components: ").append(lineSeparator);
         margin += "  ";
-        for (final AbstractDataComponentType a : components) {
-            buffer.append(margin).append(a.toString()).append(lineSeparator);
+        for (final JAXBElement<? extends AbstractDataComponentType> a : components) {
+            buffer.append(margin).append(a.getValue().toString()).append(lineSeparator);
         }
     }
     

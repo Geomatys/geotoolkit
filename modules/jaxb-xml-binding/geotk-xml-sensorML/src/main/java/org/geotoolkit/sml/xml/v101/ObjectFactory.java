@@ -52,6 +52,7 @@ public class ObjectFactory {
     private static final QName _DataSource_QNAME     = new QName("http://www.opengis.net/sensorML/1.0.1", "DataSource");
     private static final QName _Component_QNAME      = new QName("http://www.opengis.net/sensorML/1.0.1", "Component");
     private static final QName _Schematron_QNAME     = new QName("http://www.opengis.net/sensorML/1.0.1", "schematron");
+    private static final QName _Position_QNAME       = new QName("http://www.opengis.net/sensorML/1.0.1", "Position");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.sensorml._1_0
@@ -918,6 +919,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0.1", name = "schematron", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0.1", substitutionHeadName = "ruleLanguage")
     public JAXBElement<Schematron> createSchematron(final Schematron value) {
         return new JAXBElement<Schematron>(_Schematron_QNAME, Schematron.class, null, value);
+    }
+    
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link Schematron }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0.1", name = "Position", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0.1")
+    public JAXBElement<Position> createPosition(final Position value) {
+        return new JAXBElement<Position>(_Position_QNAME, Position.class, null, value);
     }
 
 }

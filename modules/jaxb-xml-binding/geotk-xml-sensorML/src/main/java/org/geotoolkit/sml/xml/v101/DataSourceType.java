@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDataSource;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -90,6 +92,12 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     public DataSourceType() {
 
+    }
+    
+    public DataSourceType(final DataDefinition dataDefinition, final Values values, final ObservationReference observationReference) {
+        this.dataDefinition = dataDefinition;
+        this.observationReference = observationReference;
+        this.values = values;
     }
 
     public DataSourceType(final AbstractDataSource ds) {
@@ -177,5 +185,47 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
      */
     public void setObservationReference(final ObservationReference value) {
         this.observationReference = value;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (dataDefinition != null) {
+            sb.append("dataDefinition:").append(dataDefinition).append('\n');
+        }
+        if (observationReference != null) {
+            sb.append("observationReference:").append(observationReference).append('\n');
+        }
+        if (values != null) {
+            sb.append("values:").append(values).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof DataSourceType && super.equals(object, mode)) {
+            final DataSourceType that = (DataSourceType) object;
+            return Utilities.equals(this.dataDefinition,    that.dataDefinition)       &&
+                   Utilities.equals(this.observationReference, that.observationReference)    &&
+                   Utilities.equals(this.values,  that.values);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.dataDefinition != null ? this.dataDefinition.hashCode() : 0);
+        hash = 17 * hash + (this.observationReference != null ? this.observationReference.hashCode() : 0);
+        hash = 17 * hash + (this.values != null ? this.values.hashCode() : 0);
+        return hash;
     }
 }

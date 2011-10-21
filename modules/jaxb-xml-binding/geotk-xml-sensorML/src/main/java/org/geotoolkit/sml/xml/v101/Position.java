@@ -120,8 +120,8 @@ public class Position implements AbstractPosition {
             this.title   = pos.getTitle();
             this.type    = pos.getType();
             if (pos.getAbstractProcess() != null) {
-                ObjectFactory facto = new ObjectFactory();
-                AbstractProcess aProcess = pos.getAbstractProcess();
+                final ObjectFactory facto = new ObjectFactory();
+                final AbstractProcess aProcess = pos.getAbstractProcess();
                 if (aProcess instanceof AbstractDataSource) {
                     this.process = facto.createDataSource(new DataSourceType( (AbstractDataSource) aProcess));
                 } else if (aProcess instanceof AbstractProcessModel) {
@@ -155,6 +155,26 @@ public class Position implements AbstractPosition {
     public Position(final String name, final PositionType position) {
         this.name = name;
         this.position = position;
+    }
+    
+    public Position(final String name, final AbstractProcessType process) {
+        this.name = name;
+        final ObjectFactory facto = new ObjectFactory();
+        if (process instanceof DataSourceType) {
+            this.process = facto.createDataSource((DataSourceType) process);
+        } else if (process instanceof ProcessModelType) {
+            this.process = facto.createProcessModel((ProcessModelType) process);
+        } else if (process instanceof ProcessChainType) {
+            this.process = facto.createProcessChain((ProcessChainType) process);
+        } else if (process instanceof SystemType) {
+            this.process = facto.createSystem((SystemType)process);
+        } else if (process instanceof ComponentType) {
+            this.process = facto.createComponent((ComponentType) process);
+        } else if (process instanceof ComponentArrayType) {
+            this.process = facto.createComponentArray((ComponentArrayType) process);
+        } else {
+            throw new IllegalArgumentException("unexepected process type:" + process);
+        }
     }
     
     /**
