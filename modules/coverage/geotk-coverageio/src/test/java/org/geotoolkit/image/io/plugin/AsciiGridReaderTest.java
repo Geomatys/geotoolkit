@@ -199,47 +199,48 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
         regionString = regionString.substring(regionString.indexOf('['));
         System.out.println("Comparing the values in region " + regionString);
 
+        int x=0, y=0;
         final long timestamp = System.currentTimeMillis();
-        final BufferedReader reader = new BufferedReader(new FileReader(input));
-        for (int i=1; i<=headerLineCount; i++) {
-            System.out.println("Header " + i + ": " + reader.readLine());
-        }
-        final StringBuilder buffer = new StringBuilder();
-        int c, x=0, y=0, errorCount=0;
-        while ((c = reader.read()) >= 0) {
-            if (c > ' ') {
-                buffer.append((char) c);
-            } else if (buffer.length() != 0) {
-                final float value  = Float.parseFloat(buffer.toString());
-                if (region.contains(x, y)) {
-                    int tx = x - region.x;
-                    int ty = y - region.y;
-                    if ((tx % xSubsampling) == 0 && (ty % ySubsampling) == 0) {
-                        tx /= xSubsampling;
-                        ty /= ySubsampling;
-                        final float stored = raster.getSampleFloat(tx, ty, 0);
-                        // Test only 'stored' for NaN because the values that we read from the
-                        // file may be pad values like -9999, and we don't handle them in this
-                        // simple test method.
-                        if (value != stored && !Float.isNaN(stored)) {
-                            System.out.println("Expected " + value + " but found " + stored +
-                                    " at coordinate (" + x + ',' + y + ") in the file," +
-                                    " which is (" + tx + ',' + ty + " in the raster.");
-                            if (++errorCount >= 100) {
-                                System.out.println("Too many errors.");
-                                break;
+        try (BufferedReader reader = new BufferedReader(new FileReader(input))) {
+            for (int i=1; i<=headerLineCount; i++) {
+                System.out.println("Header " + i + ": " + reader.readLine());
+            }
+            final StringBuilder buffer = new StringBuilder();
+            int c, errorCount=0;
+            while ((c = reader.read()) >= 0) {
+                if (c > ' ') {
+                    buffer.append((char) c);
+                } else if (buffer.length() != 0) {
+                    final float value  = Float.parseFloat(buffer.toString());
+                    if (region.contains(x, y)) {
+                        int tx = x - region.x;
+                        int ty = y - region.y;
+                        if ((tx % xSubsampling) == 0 && (ty % ySubsampling) == 0) {
+                            tx /= xSubsampling;
+                            ty /= ySubsampling;
+                            final float stored = raster.getSampleFloat(tx, ty, 0);
+                            // Test only 'stored' for NaN because the values that we read from the
+                            // file may be pad values like -9999, and we don't handle them in this
+                            // simple test method.
+                            if (value != stored && !Float.isNaN(stored)) {
+                                System.out.println("Expected " + value + " but found " + stored +
+                                        " at coordinate (" + x + ',' + y + ") in the file," +
+                                        " which is (" + tx + ',' + ty + " in the raster.");
+                                if (++errorCount >= 100) {
+                                    System.out.println("Too many errors.");
+                                    break;
+                                }
                             }
                         }
                     }
+                    if (++x == width) {
+                        x = 0;
+                        y++;
+                    }
+                    buffer.setLength(0);
                 }
-                if (++x == width) {
-                    x = 0;
-                    y++;
-                }
-                buffer.setLength(0);
             }
         }
-        reader.close();
         System.out.println("Coordinate of the next pixel to read, if it existed: (" + x + ',' + y + ')');
         System.out.println("Ellapsed time: " + (System.currentTimeMillis() - timestamp) / 1000f + " seconds.");
     }

@@ -282,11 +282,11 @@ public final strictfp class MosaicReadWriteTest extends ImageTestBase {
         for (final String filename : files) {
             final File file = new File(targetDirectory, filename);
             assertTrue(filename, file.isFile());
-            final ImageInputStream in = ImageIO.createImageInputStream(file);
-            assertNotNull("File not found", in);
-            reader.setInput(in);
-            image = reader.read(0);
-            in.close();
+            try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
+                assertNotNull("File not found", in);
+                reader.setInput(in);
+                image = reader.read(0);
+            }
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
             assertCurrentChecksumEquals(filename, checksums[i++]);

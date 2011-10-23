@@ -188,7 +188,7 @@ public final strictfp class ISOTest extends TestBase {
     public void testDependencies() {
         assertNull(getImplementation(Number.class));
         assertSame(DefaultMetadata.class, getImplementation(Metadata.class));
-        final Set<Class<?>> done = new HashSet<Class<?>>();
+        final Set<Class<?>> done = new HashSet<>();
         for (int i=0; i<TEST.length; i++) {
             final Class<?> type = TEST[i];
             final Class<?> impl = getImplementation(type);
@@ -217,7 +217,7 @@ public final strictfp class ISOTest extends TestBase {
             if (isImplemented) try {
                 dummyInstance = accessor.implementation.getConstructor((Class<?>[]) null).
                         newInstance((Object[]) null);
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 fail(e.toString());
                 return;
             } else {

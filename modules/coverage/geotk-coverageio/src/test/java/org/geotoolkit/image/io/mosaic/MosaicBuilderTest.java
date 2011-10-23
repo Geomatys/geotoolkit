@@ -93,14 +93,13 @@ public final strictfp class MosaicBuilderTest extends MosaicTestBase {
 
         // Tests serialization
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final ObjectOutputStream out = new ObjectOutputStream(buffer);
-        out.writeObject(tileManager);
-        out.close();
-
-        final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
-        final TileManager serialized = (TileManager) in.readObject();
-        in.close();
-
+        try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
+            out.writeObject(tileManager);
+        }
+        final TileManager serialized;
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+            serialized = (TileManager) in.readObject();
+        }
         assertNotSame(tileManager, serialized);
         assertEquals(tileManager, serialized);
         assertEquals(tileManager.getImageReaderSpis(), serialized.getImageReaderSpis());

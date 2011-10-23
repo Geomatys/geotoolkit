@@ -70,7 +70,7 @@ public final strictfp class RestrictionMapTest {
         assertEquals("bitsPerValue", entry.getKey());
         ValueRestriction restriction = entry.getValue();
         assertNull("The band is not expected to violate the obligation.", restriction.obligation);
-        assertEquals(new NumberRange<Integer>(Integer.class, 1, null), restriction.range);
+        assertEquals(new NumberRange<>(Integer.class, 1, null), restriction.range);
         assertFalse("Expected exactly one violated restriction.", it.hasNext());
         /*
          * Reset the record to a valid value.
@@ -94,7 +94,7 @@ public final strictfp class RestrictionMapTest {
         record.setMaxRelativeHumidity(50.0);
         assertEquals("Missing mandatory values should be reported as violations.", 2, map.size());
         final ValueRestriction mandatory = ValueRestriction.create(Obligation.MANDATORY, null, null);
-        final Map<String,ValueRestriction> expected = new HashMap<String,ValueRestriction>();
+        final Map<String,ValueRestriction> expected = new HashMap<>();
         assertNull(expected.put("meteorologicalConditions", mandatory));
         assertNull(expected.put("maxAltitude", mandatory));
         assertEquals(expected, map);
@@ -128,7 +128,7 @@ public final strictfp class RestrictionMapTest {
         /*
          * Creates the map of expected values.
          */
-        final Map<String,ValueRestriction> expected = new HashMap<String,ValueRestriction>();
+        final Map<String,ValueRestriction> expected = new HashMap<>();
         assertNull(expected.put("averageAirTemperature",
                 ValueRestriction.create(Obligation.MANDATORY, null, null)));
         assertNull(expected.put("maxRelativeHumidity",

@@ -75,10 +75,10 @@ public final strictfp class XMLBindingsTest {
      */
     @Test
     public void unmarshallingTest() throws JAXBException, IOException {
-        final InputStream in = TestData.openStream(this, RESOURCE_FILE);
-        final DefaultMetadata result = (DefaultMetadata) XML.unmarshal(in);
-        in.close();
-
+        final DefaultMetadata result;
+        try (InputStream in = TestData.openStream(this, RESOURCE_FILE)) {
+            result = (DefaultMetadata) XML.unmarshal(in);
+        }
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
 

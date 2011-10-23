@@ -238,10 +238,10 @@ final strictfp class TreeTileManagerViewer extends JPanel implements TreeSelecti
      * @throws ClassNotFoundException If the serialized stream contains an unknown class.
      */
     public static void main(final String[] args) throws IOException, ClassNotFoundException {
-        final ObjectInputStream in = new ObjectInputStream(
-                new BufferedInputStream(new FileInputStream(args[0])));
-        final Object tiles = in.readObject();
-        in.close();
+        final Object tiles;
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
+            tiles = in.readObject();
+        }
         final TreeTileManager manager;
         if (tiles instanceof ComparedTileManager) {
             final ComparedTileManager cm = (ComparedTileManager) tiles;

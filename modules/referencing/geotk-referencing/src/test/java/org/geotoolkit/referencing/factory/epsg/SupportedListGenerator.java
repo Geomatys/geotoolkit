@@ -172,7 +172,7 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
     public static void main(final String[] args) throws Exception {
         int numValids = 0, numYX = 0;
         Locale.setDefault(LOCALE);
-        final List<SupportedListGenerator> list = new ArrayList<SupportedListGenerator>();
+        final List<SupportedListGenerator> list = new ArrayList<>();
         final CRSAuthorityFactory factory = CRS.getAuthorityFactory(false);
         final CRSAuthorityFactory xyOrder = CRS.getAuthorityFactory(true);
         for (final String code : factory.getAuthorityCodes(CoordinateReferenceSystem.class)) {

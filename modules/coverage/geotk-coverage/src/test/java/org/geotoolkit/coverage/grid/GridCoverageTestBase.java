@@ -202,12 +202,9 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
          * But we want to test the default GridCoverage2D encoding.
          */
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final ObjectOutputStream out = new ObjectOutputStream(buffer);
-        try {
+        try (ObjectOutputStream out = new ObjectOutputStream(buffer)) {
             out.writeObject(coverage.view(ViewType.PACKED));
             out.writeObject(coverage.view(ViewType.GEOPHYSICS));
-        } finally {
-            out.close();
         }
         final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         GridCoverage2D read;

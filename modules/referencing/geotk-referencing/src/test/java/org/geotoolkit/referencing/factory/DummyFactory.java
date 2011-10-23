@@ -53,7 +53,7 @@ final strictfp class DummyFactory extends AbstractAuthorityFactory {
          * All dummy factories created by this threaded factory,
          * including any factories having been disposed.
          */
-        private final Queue<DummyFactory> factories = new ConcurrentLinkedQueue<DummyFactory>();
+        private final Queue<DummyFactory> factories = new ConcurrentLinkedQueue<>();
 
         /**
          * Creates a new threaded factory.
@@ -78,7 +78,7 @@ final strictfp class DummyFactory extends AbstractAuthorityFactory {
          * to allows comparisons with {@link List#equals}.
          */
         final synchronized List<DummyFactory> factories() {
-            return new ArrayList<DummyFactory>(factories);
+            return new ArrayList<>(factories);
         }
     }
 

@@ -145,7 +145,7 @@ public strictfp enum SampleImage {
         final long c = Commons.checksum(image);
         for (final long expected : checksum) {
             if (c == expected) {
-                cache = new SoftReference<BufferedImage>(image);
+                cache = new SoftReference<>(image);
                 return image;
             }
         }

@@ -73,7 +73,7 @@ public final strictfp class CitationsTest {
      */
     @Test
     public void testSerialization() throws IllegalAccessException {
-        final Set<Object> constants = new HashSet<Object>();
+        final Set<Object> constants = new HashSet<>();
         for (final Field field : Citations.class.getFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 assertTrue(constants.add(field.get(null)));

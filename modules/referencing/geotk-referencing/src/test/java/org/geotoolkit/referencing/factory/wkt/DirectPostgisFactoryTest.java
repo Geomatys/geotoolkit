@@ -65,9 +65,9 @@ public final strictfp class DirectPostgisFactoryTest {
         final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
         assumeTrue(pf.isFile()); // The test will be skipped if the above resource is not found.
         final Properties properties = new Properties();
-        final BufferedInputStream in = new BufferedInputStream(new FileInputStream(pf));
-        properties.load(in);
-        in.close();
+        try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(pf))) {
+            properties.load(in);
+        }
         final PGSimpleDataSource ds = new PGSimpleDataSource();
         ds.setServerName  (properties.getProperty("server"));
         ds.setDatabaseName(properties.getProperty("database"));

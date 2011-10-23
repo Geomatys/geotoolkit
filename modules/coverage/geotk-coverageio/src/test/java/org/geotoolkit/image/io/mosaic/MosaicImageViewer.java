@@ -149,9 +149,9 @@ public final strictfp class MosaicImageViewer extends JPanel implements ChangeLi
                 repaint();
             }
         });
-        final InputStream stop = ClassLoader.getSystemResourceAsStream("toolbarButtonGraphics/general/Stop24.gif");
-        empty = ImageIO.read(stop);
-        stop.close();
+        try (InputStream stop = ClassLoader.getSystemResourceAsStream("toolbarButtonGraphics/general/Stop24.gif")) {
+            empty = ImageIO.read(stop);
+        }
     }
 
     /**
@@ -381,10 +381,10 @@ public final strictfp class MosaicImageViewer extends JPanel implements ChangeLi
      */
     public static void main(final String[] args) throws IOException, ClassNotFoundException {
         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(Level.FINE);
-        final ObjectInputStream in = new ObjectInputStream(
-                new BufferedInputStream(new FileInputStream(args[0])));
-        final Object tiles = in.readObject();
-        in.close();
+        final Object tiles;
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(args[0])))) {
+            tiles = in.readObject();
+        }
         final TileManager manager;
         if (tiles instanceof TileManager) {
             manager = (TileManager) tiles;

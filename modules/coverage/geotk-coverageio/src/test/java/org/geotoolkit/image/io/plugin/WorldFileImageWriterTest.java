@@ -192,15 +192,12 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
             /*
              * If the output is a stream, then the standard writer should be selected.
              */
-            final ImageOutputStream out = ImageIO.createImageOutputStream(file);
-            try {
+            try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 writer = XImageIO.getWriterByFormatName("png", out, image);
                 assertFalse(writer instanceof WorldFileImageWriter);
                 // Don't botter to write the image. The purpose of
                 // this test is not to test the JDK PNG ImageWriter.
                 writer.dispose();
-            } finally {
-                out.close();
             }
         } finally {
             WorldFileImageWriter.Spi.unregisterDefaults(null);

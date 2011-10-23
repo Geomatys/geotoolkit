@@ -178,7 +178,7 @@ public final strictfp class PropertyAccessorTest {
         assertTrue(value instanceof Collection<?>);
         assertEquals(1, ((Collection<?>) value).size());
 
-        final Collection<Object> expected = new ArrayList<Object>();
+        final Collection<Object> expected = new ArrayList<>();
         assertTrue(expected.add(new SimpleInternationalString("An other title")));
         assertTrue(expected.add(new SimpleInternationalString("Yet an other title")));
         assertEquals(expected, (Collection<?>) accessor.get(index, citation));
@@ -240,7 +240,7 @@ public final strictfp class PropertyAccessorTest {
         hashCode = accessor.hashCode(citation);
         assertEquals("Metadata with a single String value.", editionDate.hashCode(), hashCode);
 
-        final Set<Object> set = new HashSet<Object>();
+        final Set<Object> set = new HashSet<>();
         assertEquals("By Set.hashCode() contract.", 0, set.hashCode());
         assertTrue(set.add(editionDate));
         assertEquals("Expected Metadata.hashCode() == Set.hashCode().", set.hashCode(), hashCode);
@@ -254,7 +254,7 @@ public final strictfp class PropertyAccessorTest {
         assertEquals("CitationsImpl.hashCode() should delegate.", hashCode, citation.hashCode());
 
         final Collection<Object> values = citation.asMap().values();
-        assertEquals(hashCode, new HashSet<Object>(values).hashCode());
+        assertEquals(hashCode, new HashSet<>(values).hashCode());
         assertTrue(values.containsAll(set));
         assertTrue(set.containsAll(values));
     }

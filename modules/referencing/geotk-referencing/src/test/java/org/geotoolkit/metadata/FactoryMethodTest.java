@@ -70,7 +70,7 @@ public final strictfp class FactoryMethodTest {
     public void testCreate() throws FactoryException {
         final Object[] crsFactory = FactoryFinder.getCRSFactories(null).toArray();
         final FactoryMethod fm = FactoryMethod.find(VerticalCRS.class, crsFactory);
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         assertNull(properties.put("datum", GEOIDAL));
         assertNull(properties.put("cs",    GRAVITY_RELATED_HEIGHT));
         assertNull(properties.put("name", "Geoidal height"));

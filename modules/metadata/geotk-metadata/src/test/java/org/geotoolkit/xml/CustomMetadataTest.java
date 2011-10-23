@@ -104,14 +104,14 @@ public final strictfp class CustomMetadataTest extends TestBase {
         final DataIdentification identification = new DataIdentification() {
             @Override public InternationalString getAbstract() {
                 NameFactory factory = FactoryFinder.getNameFactory(null);
-                Map<Locale, String> names = new HashMap<Locale, String>();
+                Map<Locale, String> names = new HashMap<>();
                 names.put(Locale.ENGLISH, "Description");
                 return factory.createInternationalString(names);
             }
 
             @Override public InternationalString getEnvironmentDescription() {
                 NameFactory factory = FactoryFinder.getNameFactory(null);
-                Map<Locale, String> names = new HashMap<Locale, String>();
+                Map<Locale, String> names = new HashMap<>();
                 names.put(Locale.ENGLISH, "Environment");
                 return factory.createInternationalString(names);
             }

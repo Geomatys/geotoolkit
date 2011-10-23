@@ -62,7 +62,7 @@ public final strictfp class MetadataFactoryTest {
      */
     @Test
     public void testCreate() throws FactoryException {
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         assertNull(properties.put("title", "Undercurrent"));
         assertNull(properties.put("ISBN", "9782505004509"));
         assertNull(properties.put("presentationForm", "Document hardcopy"));

@@ -195,8 +195,8 @@ public final strictfp class MetadataAccessorTest {
          * We don't consider elements order.
          */
         paths = MetadataAccessor.listPaths(SpatialMetadataFormat.IMAGE, Identifier.class);
-        assertEquals(new HashSet<String>(Arrays.asList("ImageDescription/ImageQualityCode",
-                "ImageDescription/ProcessingLevelCode")), new HashSet<String>(paths));
+        assertEquals(new HashSet<>(Arrays.asList("ImageDescription/ImageQualityCode",
+                "ImageDescription/ProcessingLevelCode")), new HashSet<>(paths));
         /*
          * More tricky case: 'Instrument' is the type of elements in a collection.
          * But we want the path to the whole collection.

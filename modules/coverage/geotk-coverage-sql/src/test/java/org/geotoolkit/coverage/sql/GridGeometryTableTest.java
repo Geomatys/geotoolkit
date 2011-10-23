@@ -123,7 +123,7 @@ public final strictfp class GridGeometryTableTest extends CatalogTestBase {
         assertNotNull("Expected an array of depths.", depths);
         assertEquals("Test the second depth.", 10, depths[1], 0.0);
         assertEquals("Test finding depth index.", 9, entry.indexOfNearestAltitude(100));
-        final SortedSet<Number> ds = new TreeSet<Number>();
+        final SortedSet<Number> ds = new TreeSet<>();
         for (final double depth : depths) {
             assertTrue(ds.add(depth));
         }

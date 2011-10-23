@@ -253,7 +253,7 @@ public final strictfp class TreeNodeTest extends MosaicTestBase {
      * Copies the given collection into a set.
      */
     private static Set<Tile> toSet(final Collection<Tile> tiles) {
-        final Set<Tile> asSet = new LinkedHashSet<Tile>(tiles);
+        final Set<Tile> asSet = new LinkedHashSet<>(tiles);
         assertEquals(tiles.size(), asSet.size());
         return asSet;
     }
@@ -262,7 +262,7 @@ public final strictfp class TreeNodeTest extends MosaicTestBase {
      * Returns the tiles intersecting the given region.
      */
     private static Set<Tile> intersecting(final Tile[] tiles, final Rectangle region) throws IOException {
-        final Set<Tile> interest = new LinkedHashSet<Tile>();
+        final Set<Tile> interest = new LinkedHashSet<>();
         for (final Tile tile : tiles) {
             if (region.intersects(tile.getAbsoluteRegion())) {
                 assertTrue(interest.add(tile));
@@ -275,7 +275,7 @@ public final strictfp class TreeNodeTest extends MosaicTestBase {
      * Returns the tiles entirely contained in the given region.
      */
     private static Set<Tile> containedIn(final Tile[] tiles, final Rectangle region) throws IOException {
-        final Set<Tile> interest = new LinkedHashSet<Tile>();
+        final Set<Tile> interest = new LinkedHashSet<>();
         for (final Tile tile : tiles) {
             if (region.contains(tile.getAbsoluteRegion())) {
                 assertTrue(interest.add(tile));

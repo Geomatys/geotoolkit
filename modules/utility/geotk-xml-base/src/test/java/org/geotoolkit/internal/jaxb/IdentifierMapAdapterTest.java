@@ -82,7 +82,7 @@ public strictfp class IdentifierMapAdapterTest extends TestBase {
      */
     @Test
     public void testGetAndPut() {
-        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        final List<Identifier> identifiers = new ArrayList<>();
         final Map<Citation,String> map = create(identifiers);
         assertTrue(map.isEmpty());
         assertEquals(0, map.size());
@@ -146,7 +146,7 @@ public strictfp class IdentifierMapAdapterTest extends TestBase {
      */
     @Test
     public void testPutSpecialized() {
-        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        final List<Identifier> identifiers = new ArrayList<>();
         final IdentifierMap map = create(identifiers);
         final String myID = "myID";
         final java.util.UUID myUUID = java.util.UUID.fromString("a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
@@ -170,7 +170,7 @@ public strictfp class IdentifierMapAdapterTest extends TestBase {
      */
     @Test
     public void testGetSpecialized() {
-        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        final List<Identifier> identifiers = new ArrayList<>();
         final IdentifierMap map = create(identifiers);
         map.put(ID,   "myID");
         map.put(UUID, "a1eb6e53-93db-4942-84a6-d9e7fb9db2c7");
@@ -191,7 +191,7 @@ public strictfp class IdentifierMapAdapterTest extends TestBase {
      */
     @Test
     public void testDuplicatedAuthorities() {
-        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        final List<Identifier> identifiers = new ArrayList<>();
         identifiers.add(new IdentifierMapEntry(ID,   "myID1"));
         identifiers.add(new IdentifierMapEntry(UUID, "myUUID"));
         identifiers.add(new IdentifierMapEntry(ID,   "myID2"));
@@ -225,7 +225,7 @@ public strictfp class IdentifierMapAdapterTest extends TestBase {
         assertSame(UUID, assertSerializable(UUID));
         assertSame(HREF, assertSerializable(HREF));
 
-        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        final List<Identifier> identifiers = new ArrayList<>();
         final Map<Citation,String> map = create(identifiers);
         identifiers.add(new IdentifierMapEntry(ID,   "myID"));
         identifiers.add(new IdentifierMapEntry(UUID, "myUUID"));

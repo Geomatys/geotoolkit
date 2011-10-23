@@ -175,15 +175,12 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
             /*
              * If the input is a stream, then the standard reader should be selected.
              */
-            final ImageInputStream in = ImageIO.createImageInputStream(file);
-            try {
+            try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
                 reader = XImageIO.getReaderByFormatName("matrix", in, true, true);
                 assertTrue(reader instanceof TextMatrixImageReader);
                 // Don't botter to read the image. The purpose of
                 // this test is not to test the Matrix ImageReader.
                 reader.dispose();
-            } finally {
-                in.close();
             }
         } finally {
             Locale.setDefault(locale);

@@ -134,7 +134,7 @@ public final strictfp class ImagingParametersTest {
          * The parameter descriptor for the subsampling.
          */
         final ParameterDescriptor<Double> SPATIAL_SUBSAMPLING_X =
-                new DefaultParameterDescriptor<Double>(Citations.OGC, "xPeriod",
+                new DefaultParameterDescriptor<>(Citations.OGC, "xPeriod",
                     Double.class,    // Value class (mandatory)
                     null,            // Array of valid values
                     null,            // Default value
@@ -149,7 +149,7 @@ public final strictfp class ImagingParametersTest {
                         .getDescriptor(RenderedRegistryMode.MODE_NAME, "Extrema");
 
         // Gets the ImagingParameterDescriptors to replace xPeriod
-        final List<ParameterDescriptor<?>> replacingDescriptors = new ArrayList<ParameterDescriptor<?>>(1);
+        final List<ParameterDescriptor<?>> replacingDescriptors = new ArrayList<>(1);
         replacingDescriptors.add(SPATIAL_SUBSAMPLING_X);
         final ImagingParameterDescriptors ripd =
                 new ImagingParameterDescriptors(operation, replacingDescriptors);

@@ -112,19 +112,19 @@ public final strictfp class MetadataStandardTest {
         assertTrue(identifiers instanceof Collection<?>);
         assertTrue(PropertyAccessorTest.containsEPSG(identifiers));
 
-        final Map<String,Object> copy = new HashMap<String,Object>(map);
+        final Map<String,Object> copy = new HashMap<>(map);
         assertEquals(map, copy);
 
         // Note: AbstractCollection do not defines hashCode(); we have to wraps in a HashSet.
         final int hashCode = citation.hashCode();
-        assertEquals("hashCode() should be as in a Set.", hashCode, new HashSet<Object>(map .values()).hashCode());
-        assertEquals("hashCode() should be as in a Set.", hashCode, new HashSet<Object>(copy.values()).hashCode());
+        assertEquals("hashCode() should be as in a Set.", hashCode, new HashSet<>(map .values()).hashCode());
+        assertEquals("hashCode() should be as in a Set.", hashCode, new HashSet<>(copy.values()).hashCode());
 
         map.remove("identifiers");
         final int newHashCode = citation.hashCode();
         assertFalse(map.equals(copy));
         assertFalse(hashCode == newHashCode);
-        assertEquals(newHashCode, new HashSet<Object>(map.values()).hashCode());
+        assertEquals(newHashCode, new HashSet<>(map.values()).hashCode());
     }
 
     /**

@@ -125,7 +125,7 @@ final strictfp class ClientThread extends Thread {
      * {@link #testGeographicToRandom()}.
      */
     static Map<Integer, Point2D.Double> createEmptyResultMap() {
-        return new HashMap<Integer, Point2D.Double>(XCollections.hashMapCapacity(CODES.length));
+        return new HashMap<>(XCollections.hashMapCapacity(CODES.length));
     }
 
     /**

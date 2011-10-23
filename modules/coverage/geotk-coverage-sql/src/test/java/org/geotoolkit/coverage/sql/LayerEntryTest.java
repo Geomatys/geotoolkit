@@ -225,7 +225,7 @@ public final strictfp class LayerEntryTest extends CatalogTestBase {
         assertFalse(sub.containsAll(times));
 
         assertEquals("Testing UnmodifiableArraySortedSet using TreeSet as a reference",
-                sub, new TreeSet<Date>(times).subSet(SUB_START_TIME, SUB_END_TIME));
+                sub, new TreeSet<>(times).subSet(SUB_START_TIME, SUB_END_TIME));
     }
 
     /**

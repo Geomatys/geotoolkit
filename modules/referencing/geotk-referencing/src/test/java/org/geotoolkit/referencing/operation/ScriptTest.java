@@ -63,10 +63,11 @@ public final strictfp class ScriptTest extends ReferencingTestBase {
      * @throws Exception If a test failed.
      */
     private void runScript(final String filename) throws Exception {
-        final LineNumberReader in = TestData.openReader(DefaultMathTransformFactoryTest.class, filename);
-        final ScriptRunner test = new ScriptRunner(in);
-        test.run();
-        in.close();
+        final ScriptRunner test;
+        try (LineNumberReader in = TestData.openReader(DefaultMathTransformFactoryTest.class, filename)) {
+            test = new ScriptRunner(in);
+            test.run();
+        }
         if (out != null) {
             out.println(filename);
             test.printStatistics(out);

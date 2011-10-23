@@ -46,8 +46,7 @@ public abstract strictfp class EpsgFactoryTestBase extends ReferencingTestBase {
      * if we failed, or {@code null} if we didn't tried yet. This is used in order to avoid
      * asking for the connection again.
      */
-    private static final Map<Class<? extends AbstractAuthorityFactory>, Boolean> status =
-            new HashMap<Class<? extends AbstractAuthorityFactory>, Boolean>();
+    private static final Map<Class<? extends AbstractAuthorityFactory>, Boolean> status = new HashMap<>();
 
     /**
      * The class of the factory being tested.

@@ -57,7 +57,7 @@ public final strictfp class IdentifierGeneratorTest {
     @Test
     public void testSequence() throws SQLException {
         final DefaultDataSource ds = new DefaultDataSource("jdbc:derby:memory:Test;create=true");
-        final StatementPool<String,StatementEntry> pool = new StatementPool<String,StatementEntry>(1, ds);
+        final StatementPool<String,StatementEntry> pool = new StatementPool<>(1, ds);
         synchronized (pool) {
             try {
                 generator = new IdentifierGenerator.Simple(pool, "ID");

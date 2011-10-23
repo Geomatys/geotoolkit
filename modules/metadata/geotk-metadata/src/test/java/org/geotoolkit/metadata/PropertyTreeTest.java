@@ -167,7 +167,7 @@ public final strictfp class PropertyTreeTest {
         assertEquals(5, root.getChildCount());
         TreeNode node = (TreeNode) root.getChildAt(2);
         assertEquals("Cited Responsible Parties", node.toString());
-        final Collection<ResponsibleParty> authors = new ArrayList<ResponsibleParty>();
+        final Collection<ResponsibleParty> authors = new ArrayList<>();
         authors.add(author);
         authors.add(duplicated);
         assertEquals(authors, node.getUserObject());

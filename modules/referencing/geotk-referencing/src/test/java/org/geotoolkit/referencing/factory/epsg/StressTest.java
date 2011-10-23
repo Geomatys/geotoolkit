@@ -158,15 +158,15 @@ public final strictfp class StressTest extends EpsgFactoryTestBase {
                         ", " + maxTime;
                 final File file = new File(System.getProperty("user.home"), "epsg-stress.csv");
                 final boolean created = file.createNewFile();
-                final BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
-                if (created) {
-                    bw.write("THREADS, MAX_WORKERS, ITERATIONS_PER_THREAD, " +
-                            "AVG_TIME, TOTAL_TIME, TOTAL_RUNS, THROUGHPUT, MIN_TIME, MAX_TIME");
+                try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
+                    if (created) {
+                        bw.write("THREADS, MAX_WORKERS, ITERATIONS_PER_THREAD, " +
+                                "AVG_TIME, TOTAL_TIME, TOTAL_RUNS, THROUGHPUT, MIN_TIME, MAX_TIME");
+                        bw.newLine();
+                    }
+                    bw.write(content);
                     bw.newLine();
                 }
-                bw.write(content);
-                bw.newLine();
-                bw.close();
             }
         }
         /*

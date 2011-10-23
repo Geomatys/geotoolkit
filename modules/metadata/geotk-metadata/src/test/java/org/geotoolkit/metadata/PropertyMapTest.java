@@ -107,7 +107,7 @@ public final strictfp class PropertyMapTest {
         assertEquals("9782505004509", map.get("ISBN"));
         assertEquals(Collections.singletonList(author), map.get("citedResponsibleParties"));
 
-        final Map<String,Object> expected = new HashMap<String,Object>();
+        final Map<String,Object> expected = new HashMap<>();
         assertNull(expected.put("title", title));
         assertNull(expected.put("ISBN", "9782505004509"));
         assertNull(expected.put("citedResponsibleParties", Collections.singletonList(author)));

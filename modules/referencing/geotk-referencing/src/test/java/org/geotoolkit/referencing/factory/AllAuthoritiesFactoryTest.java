@@ -208,10 +208,10 @@ public final strictfp class AllAuthoritiesFactoryTest extends ReferencingTestBas
             assumeTrue(isEpsgFactoryAvailable());
             if (!foundSQL) {
                 final StringWriter buffer = new StringWriter();
-                final PrintWriter printer = new PrintWriter(buffer);
-                printer.println("Expected a SQL exception, but found the following stack trace:");
-                e.printStackTrace(printer);
-                printer.close();
+                try (PrintWriter printer = new PrintWriter(buffer)) {
+                    printer.println("Expected a SQL exception, but found the following stack trace:");
+                    e.printStackTrace(printer);
+                }
                 fail(buffer.toString());
             }
         }

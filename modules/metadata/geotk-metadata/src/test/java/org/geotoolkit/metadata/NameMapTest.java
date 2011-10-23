@@ -47,7 +47,7 @@ public final strictfp class NameMapTest {
      */
     @Test
     public void testSentence() {
-        final Map<String,String> map, expected = new HashMap<String,String>();
+        final Map<String,String> map, expected = new HashMap<>();
         map = MetadataStandard.ISO_19115.asNameMap(EnvironmentalRecord.class, SENTENCE, JAVABEANS_PROPERTY);
         assertNull(expected.put("averageAirTemperature",    "Average air temperature"));
         assertNull(expected.put("maxAltitude",              "Max altitude"));

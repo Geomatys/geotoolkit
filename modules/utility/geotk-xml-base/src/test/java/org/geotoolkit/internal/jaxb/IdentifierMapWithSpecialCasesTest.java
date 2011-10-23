@@ -93,7 +93,7 @@ public final strictfp class IdentifierMapWithSpecialCasesTest extends Identifier
      */
     @Test
     public void testSpecialCases() {
-        final List<Identifier> identifiers = new ArrayList<Identifier>();
+        final List<Identifier> identifiers = new ArrayList<>();
         final IdentifierMap map = create(identifiers);
         map.put(IdentifierSpace.HREF, "myHREF");
         assertEquals("myHREF", map.get(IdentifierSpace.HREF));

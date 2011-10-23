@@ -87,41 +87,41 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
     public void testWrite() throws IOException {
         final IIOImage image = createImage(false);
         final TextMatrixImageWriter writer = createImageWriter();
-        final StringWriter out = new StringWriter();
-        writer.setOutput(out);
-        writer.write(image);
-        assertMultilinesEquals(
-            "   0.00   0.01   0.02   0.03   0.04   0.05   0.06   0.07\n" +
-            "   0.10   0.11   0.12   0.13   0.14   0.15   0.16   0.17\n" +
-            "   0.20   0.21   0.22   0.23   0.24   0.25   0.26   0.27\n" +
-            "   0.30   0.31   0.32   0.33   0.34   0.35   0.36   0.37\n" +
-            "   0.40   0.41   0.42   0.43   0.44   0.45   0.46   0.47\n" +
-            "  88.50  88.51  88.52  88.53  88.54  88.55  88.56  88.57\n" +
-            "  88.60  88.61  88.62  88.63  88.64  88.65  88.66  88.67\n" +
-            "  88.70  88.71  88.72  88.73  88.74  88.75  88.76  88.77\n" +
-            "  88.80  88.81  88.82  88.83  88.84  88.85  88.86  88.87\n" +
-            "  88.90  88.91  88.92  88.93  88.94  88.95  88.96  88.97\n", out.toString());
-        /*
-         * Writes the same image, but only a sub-area of it. Note that the columns are more
-         * narrow by one character since we have one less digit (all numbers are smaller than 10).
-         */
-        final ImageWriteParam param = writer.getDefaultWriteParam();
-        param.setSourceRegion(new Rectangle(2, 1, 4, 3));
-        out.getBuffer().setLength(0);
-        writer.write(null, image, param);
-        assertMultilinesEquals(
-            "   0.12  0.13  0.14  0.15\n" +
-            "   0.22  0.23  0.24  0.25\n" +
-            "   0.32  0.33  0.34  0.35\n", out.toString());
-        /*
-         * Adds a subsampling of (2,3).
-         */
-        param.setSourceSubsampling(2, 3, 0, 1);
-        out.getBuffer().setLength(0);
-        writer.write(null, image, param);
-        assertMultilinesEquals(
-            "   0.22  0.24\n", out.toString());
-        out.close();
+        try (StringWriter out = new StringWriter()) {
+            writer.setOutput(out);
+            writer.write(image);
+            assertMultilinesEquals(
+                "   0.00   0.01   0.02   0.03   0.04   0.05   0.06   0.07\n" +
+                "   0.10   0.11   0.12   0.13   0.14   0.15   0.16   0.17\n" +
+                "   0.20   0.21   0.22   0.23   0.24   0.25   0.26   0.27\n" +
+                "   0.30   0.31   0.32   0.33   0.34   0.35   0.36   0.37\n" +
+                "   0.40   0.41   0.42   0.43   0.44   0.45   0.46   0.47\n" +
+                "  88.50  88.51  88.52  88.53  88.54  88.55  88.56  88.57\n" +
+                "  88.60  88.61  88.62  88.63  88.64  88.65  88.66  88.67\n" +
+                "  88.70  88.71  88.72  88.73  88.74  88.75  88.76  88.77\n" +
+                "  88.80  88.81  88.82  88.83  88.84  88.85  88.86  88.87\n" +
+                "  88.90  88.91  88.92  88.93  88.94  88.95  88.96  88.97\n", out.toString());
+            /*
+             * Writes the same image, but only a sub-area of it. Note that the columns are more
+             * narrow by one character since we have one less digit (all numbers are smaller than 10).
+             */
+            final ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setSourceRegion(new Rectangle(2, 1, 4, 3));
+            out.getBuffer().setLength(0);
+            writer.write(null, image, param);
+            assertMultilinesEquals(
+                "   0.12  0.13  0.14  0.15\n" +
+                "   0.22  0.23  0.24  0.25\n" +
+                "   0.32  0.33  0.34  0.35\n", out.toString());
+            /*
+             * Adds a subsampling of (2,3).
+             */
+            param.setSourceSubsampling(2, 3, 0, 1);
+            out.getBuffer().setLength(0);
+            writer.write(null, image, param);
+            assertMultilinesEquals(
+                "   0.22  0.24\n", out.toString());
+        }
         writer.dispose();
     }
 

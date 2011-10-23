@@ -111,12 +111,12 @@ public final class Compiler {
         if (file.exists()) {
             throw new IOException("File already exists.");
         }
-        final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-        for (int i=0; i<cnmGeopCoef.length; i++) {
-            out.writeDouble(cnmGeopCoef[i]);
-            out.writeDouble(snmGeopCoef[i]);
+        try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+            for (int i=0; i<cnmGeopCoef.length; i++) {
+                out.writeDouble(cnmGeopCoef[i]);
+                out.writeDouble(snmGeopCoef[i]);
+            }
         }
-        out.close();
     }
 
     /**

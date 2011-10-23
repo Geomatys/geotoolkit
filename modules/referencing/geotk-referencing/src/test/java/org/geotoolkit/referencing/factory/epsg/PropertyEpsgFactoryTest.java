@@ -120,7 +120,7 @@ public final strictfp class PropertyEpsgFactoryTest extends ReferencingTestBase 
      */
     @Test
     public void testAuthorityCodes() throws FactoryException {
-        final Set<String> expected = new HashSet<String>(4);
+        final Set<String> expected = new HashSet<>(4);
         assertTrue(expected.add("27572"));
         assertTrue(expected.add("3035"));
         Set<String> codes = factory.getAuthorityCodes(null);

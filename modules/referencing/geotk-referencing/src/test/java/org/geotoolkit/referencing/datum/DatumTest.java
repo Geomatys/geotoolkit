@@ -88,7 +88,7 @@ public final strictfp class DatumTest extends ReferencingTestBase {
         final Collection<GenericName> alias = WGS84.getAlias();
         assertNotNull("WGS84 alias should not be null.", alias);
         assertFalse("WGS84 alias should not be empty.", alias.isEmpty());
-        final Set<String> strings = new HashSet<String>();
+        final Set<String> strings = new HashSet<>();
         for (final GenericName name : alias) {
             assertNotNull("Collection should not contains null element.", name);
             assertTrue("Duplicated name in alias.", strings.add(name.toString()));
@@ -119,7 +119,7 @@ public final strictfp class DatumTest extends ReferencingTestBase {
      */
     @Test
     public void testCreate() {
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         properties.put("name",          "This is a name");
         properties.put("scope",         "This is a scope");
         properties.put("scope_fr",      "Valide dans ce domaine");

@@ -69,7 +69,7 @@ public final strictfp class ReferencingFactoryTest {
      */
     @Test
     public void testCreate() throws FactoryException {
-        final Map<String,Object> properties = new HashMap<String,Object>();
+        final Map<String,Object> properties = new HashMap<>();
         /*
          * Tests the Citation creation.
          */
