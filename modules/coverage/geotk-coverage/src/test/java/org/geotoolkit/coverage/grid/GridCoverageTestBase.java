@@ -206,13 +206,10 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
             out.writeObject(coverage.view(ViewType.PACKED));
             out.writeObject(coverage.view(ViewType.GEOPHYSICS));
         }
-        final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         GridCoverage2D read;
-        try {
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             read = (GridCoverage2D) in.readObject(); assertSame(read, read.view(ViewType.PACKED));
             read = (GridCoverage2D) in.readObject(); assertSame(read, read.view(ViewType.GEOPHYSICS));
-        } finally {
-            in.close();
         }
         final GridCoverage2D view = read.view(ViewType.PACKED);
         assertNotSame(read, view);

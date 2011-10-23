@@ -320,7 +320,6 @@ final class NTv2Loader extends GridLoader {
     {
         while (buffer.hasRemaining()) {
             if (channel.read(buffer) < 0) {
-                channel.close();
                 throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
             }
         }

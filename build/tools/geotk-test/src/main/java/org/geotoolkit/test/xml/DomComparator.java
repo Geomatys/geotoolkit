@@ -135,8 +135,8 @@ public strictfp class DomComparator {
         assertNotNull("A non-null 'actual' node shall be specified.", actual);
         expectedDoc = expected;
         actualDoc   = actual;
-        ignoredAttributes = new HashSet<String>();
-        ignoredNodes = new HashSet<String>();
+        ignoredAttributes = new HashSet<>();
+        ignoredNodes = new HashSet<>();
     }
 
     /**
@@ -172,11 +172,12 @@ public strictfp class DomComparator {
     private static Document read(final Object input)
             throws IOException, ParserConfigurationException, SAXException
     {
-        final InputStream stream = toInputStream(input);
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder constructeur = factory.newDocumentBuilder();
-        final Document document = constructeur.parse(stream);
-        stream.close();
+        final Document document;
+        try (InputStream stream = toInputStream(input)) {
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder constructeur = factory.newDocumentBuilder();
+            document = constructeur.parse(stream);
+        }
         return document;
     }
 
@@ -584,7 +585,7 @@ public strictfp class DomComparator {
     private static List<String> formatHierarchy(final StringBuilder buffer, Node node,
             final List<String> expected)
     {
-        final List<String> hierarchy = new ArrayList<String>();
+        final List<String> hierarchy = new ArrayList<>();
         while (node != null) {
             hierarchy.add(node.getNodeName());
             node = node.getParentNode();

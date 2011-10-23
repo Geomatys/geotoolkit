@@ -202,44 +202,45 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
             list.add(element);
         }
         int n = 0;
-        final Writer out = openHTML(new File("supported-codes.html"), "Authority codes for Coordinate Reference Systems");
-        out.write("<p>This list is generated from the EPSG database version ");
-        out.write(ThreadedEpsgFactory.VERSION);
-        out.write(", together with other sources.\n");
-        out.write("All those <cite>Coordinate Reference Systems</cite> (CRS) are supported by the " +
-                  "<a href=\"http://www.geotoolkit.org/modules/referencing/index.html\">" +
-                  "Geotoolkit.org referencing module</a> version ");
-        String version = Version.GEOTOOLKIT.toString();
-        final int snapshot = version.lastIndexOf('-');
-        if (snapshot >= 2) {
-            version = version.substring(0, snapshot);
-        }
-        out.write(version);
-        out.write(", except those with a red text in the last column.\nThere is ");
-        out.write(String.valueOf(list.size()));
-        out.write(" codes, ");
-        out.write(String.valueOf(100 * numValids / list.size())); // Really want rounding toward 0.
-        out.write("% of them being supported.</p>\n" +
-                  "<p><b>Notation:</b></p>\n" +
-                  "<ul>\n" +
-                  "  <li>The " + YX_ORDER + " symbol in front of authority codes (");
-        out.write(String.valueOf(round(100.0 * numYX / list.size())));
-        out.write("% of them) identifies the CRS having an axis order different than " +
-                  "(<var>easting</var>, <var>northing</var>).</li>\n" +
-                  "</ul>");
+        try (Writer out = openHTML(new File("supported-codes.html"), "Authority codes for Coordinate Reference Systems")) {
+            out.write("<p>This list is generated from the EPSG database version ");
+            out.write(ThreadedEpsgFactory.VERSION);
+            out.write(", together with other sources.\n");
+            out.write("All those <cite>Coordinate Reference Systems</cite> (CRS) are supported by the " +
+                      "<a href=\"http://www.geotoolkit.org/modules/referencing/index.html\">" +
+                      "Geotoolkit.org referencing module</a> version ");
+            String version = Version.GEOTOOLKIT.toString();
+            final int snapshot = version.lastIndexOf('-');
+            if (snapshot >= 2) {
+                version = version.substring(0, snapshot);
+            }
+            out.write(version);
+            out.write(", except those with a red text in the last column.\nThere is ");
+            out.write(String.valueOf(list.size()));
+            out.write(" codes, ");
+            out.write(String.valueOf(100 * numValids / list.size())); // Really want rounding toward 0.
+            out.write("% of them being supported.</p>\n" +
+                      "<p><b>Notation:</b></p>\n" +
+                      "<ul>\n" +
+                      "  <li>The " + YX_ORDER + " symbol in front of authority codes (");
+            out.write(String.valueOf(round(100.0 * numYX / list.size())));
+            out.write("% of them) identifies the CRS having an axis order different than " +
+                      "(<var>easting</var>, <var>northing</var>).</li>\n" +
+                      "</ul>");
 
-        out.write("<table bgcolor=\"aliceblue\" cellpadding=\"0\" cellspacing=\"0\">\n");
-        out.write("<tr bgcolor=\"lightskyblue\" align=\"left\">"
-                + "<th height=\"24\"></th>"
-                + "<th>Code</th>"
-                + "<th>Description</th>"
-                + "<th>Type, or reason for unsupport</th>\n");
-        for (final SupportedListGenerator element : list) {
-            element.write(out, (n & 2) != 0);
-            n++;
+            out.write("<table bgcolor=\"aliceblue\" cellpadding=\"0\" cellspacing=\"0\">\n");
+            out.write("<tr bgcolor=\"lightskyblue\" align=\"left\">"
+                    + "<th height=\"24\"></th>"
+                    + "<th>Code</th>"
+                    + "<th>Description</th>"
+                    + "<th>Type, or reason for unsupport</th>\n");
+            for (final SupportedListGenerator element : list) {
+                element.write(out, (n & 2) != 0);
+                n++;
+            }
+            out.write("</table>\n");
+            closeHTML(out);
         }
-        out.write("</table>\n");
-        closeHTML(out);
         System.exit(0);
     }
 }

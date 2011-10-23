@@ -178,16 +178,16 @@ public class MetadataWriter extends MetadataSource {
         if (identifier == null) {
             synchronized (statements) {
                 final Connection connection = statements.connection();
-                final Statement stmt = connection.createStatement();
                 connection.setAutoCommit(false);
                 boolean success = false;
                 try {
-                    if (metadata instanceof CodeList<?>) {
-                        identifier = addCode(stmt, (CodeList<?>) metadata);
-                    } else {
-                        identifier = add(stmt, metadata, new IdentityHashMap<Object,String>(), null);
+                    try (Statement stmt = connection.createStatement()) {
+                        if (metadata instanceof CodeList<?>) {
+                            identifier = addCode(stmt, (CodeList<?>) metadata);
+                        } else {
+                            identifier = add(stmt, metadata, new IdentityHashMap<Object,String>(), null);
+                        }
                     }
-                    stmt.close();
                     success = true;
                 } finally {
                     if (success) {

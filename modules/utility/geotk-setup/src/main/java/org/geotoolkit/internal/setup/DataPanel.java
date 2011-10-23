@@ -333,10 +333,10 @@ final class DataPanel extends JComponent {
         private void copy(final URL url, final File target) throws IOException {
             final URLConnection connection = url.openConnection();
             final int progressDivisor = connection.getContentLength() / 100;
-            final InputStream in = connection.getInputStream();
-            final OutputStream out = new FileOutputStream(target);
-            int done = 0;
-            try {
+            try (InputStream in = connection.getInputStream();
+                 OutputStream out = new FileOutputStream(target))
+            {
+                int done = 0;
                 final byte[] buffer = new byte[4096];
                 int n; while ((n = in.read(buffer)) > 0) {
                     out.write(buffer, 0, n);
@@ -344,9 +344,6 @@ final class DataPanel extends JComponent {
                         setProgress(Math.min(100, (done += n) / progressDivisor));
                     }
                 }
-            } finally {
-                out.close();
-                in.close();
             }
         }
 

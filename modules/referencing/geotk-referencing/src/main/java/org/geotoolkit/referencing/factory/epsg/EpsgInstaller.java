@@ -322,16 +322,12 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @since 3.05
      */
     public synchronized boolean exists() throws FactoryException {
+        boolean connected = false;
         Exception failure;
-        Connection connection = null;
-        try {
-            connection = getConnection(false);
-            try {
-                final DatabaseMetaData md = connection.getMetaData();
-                return AnsiDialectEpsgFactory.exists(md, getSchema(md));
-            } finally {
-                connection.close();
-            }
+        try (Connection connection = getConnection(false)) {
+            connected = true;
+            final DatabaseMetaData md = connection.getMetaData();
+            return AnsiDialectEpsgFactory.exists(md, getSchema(md));
         } catch (IOException | SQLTransientException e) {
             failure = e;
         } catch (SQLException e) {
@@ -341,7 +337,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
              * not rely on that. For now we assume that any non-transient failure to get the
              * connection means that the database does not exit.
              */
-            if (connection == null) {
+            if (!connected) {
                 return false;
             }
             failure = e;

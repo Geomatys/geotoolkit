@@ -207,7 +207,6 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
                 }
                 if (!results.wasNull()) {
                     if (value != null && !candidate.equals(value)) {
-                        results.close();
                         throw new SQLIntegrityConstraintViolationException(
                                 Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, code));
                     }

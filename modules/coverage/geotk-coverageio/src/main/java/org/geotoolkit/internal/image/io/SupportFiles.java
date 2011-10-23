@@ -349,13 +349,11 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
                 line = line.trim();
                 if (!line.isEmpty() && line.charAt(0) != '#') {
                     if (count >= m.length) {
-                        in.close();
                         throw new ContentFormatException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
                     }
                     try {
                         m[count++] = Double.parseDouble(line);
                     } catch (NumberFormatException e) {
-                        in.close();
                         throw new ContentFormatException(Errors.format(Errors.Keys.BAD_LINE_IN_FILE_$2,
                                 IOUtilities.name(filename), in.getLineNumber()), e);
                     }

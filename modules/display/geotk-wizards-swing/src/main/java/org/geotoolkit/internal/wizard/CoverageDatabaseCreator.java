@@ -132,10 +132,9 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
     @Override
     @SuppressWarnings("rawtypes")
     public void start(final Map settings, final ResultProgressHandle progress) {
-        final Connection connection = getLoggingService().getConnection();
         CoverageDatabaseInstaller installer = null;
         try {
-            try {
+            try (Connection connection = getLoggingService().getConnection()) {
                 installer = new CoverageDatabaseInstaller(connection) {
                     @Override protected void progress(int percent, String schema) {
                         progress.setProgress(percent, 100);
@@ -154,8 +153,6 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
                 installer.user        = wizard.user.getText();
                 installer.install();
                 installer.close(true);
-            } finally {
-                connection.close();
             }
             if (wizard.setAsDefaultEPSG.isSelected() && wizard.createEPSG.isSelected()) {
                 saveSettings(true);

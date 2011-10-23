@@ -234,7 +234,6 @@ final class CategoryTable extends Table {
                                 }
                             }
                         } catch (FactoryException exception) {
-                            results.close();
                             throw new CatalogException(exception);
                         }
                         try {

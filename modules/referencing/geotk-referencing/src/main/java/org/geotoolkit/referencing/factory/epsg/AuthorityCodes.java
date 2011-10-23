@@ -268,13 +268,14 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
         boolean exists = false;
         if (code != null) try {
             final ResultSet results = getSingle(code);
-            if (results != null) {
+            if (results != null) try {
                 while (results.next()) {
                     if (isAcceptable(results)) {
                         exists = true;
                         break;
                     }
                 }
+            } finally {
                 results.close();
             }
         } catch (SQLException exception) {
@@ -451,13 +452,14 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
             if (code != null) try {
                 synchronized (AuthorityCodes.this) {
                     final ResultSet results = getSingle(code);
-                    if (results != null) {
+                    if (results != null) try {
                         while (results.next()) {
                             if (isAcceptable(results)) {
                                 value = results.getString(2);
                                 break;
                             }
                         }
+                    } finally {
                         results.close();
                     }
                 }
