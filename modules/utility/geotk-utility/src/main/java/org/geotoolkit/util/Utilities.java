@@ -83,6 +83,9 @@ public final class Utilities extends Static {
      * Returns {@code true} if the given booleans are equals. This overloaded flavor is provided
      * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7
+     * (maybe in 2013). See {@link #equals(Object,Object)} for more information.</strong>
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
@@ -98,6 +101,9 @@ public final class Utilities extends Static {
      * Returns {@code true} if the given characters are equals. This overloaded flavor is provided
      * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7
+     * (maybe in 2013). See {@link #equals(Object,Object)} for more information.</strong>
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
@@ -113,6 +119,9 @@ public final class Utilities extends Static {
      * Returns {@code true} if the given bytes are equals. This overloaded flavor is provided
      * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7
+     * (maybe in 2013). See {@link #equals(Object,Object)} for more information.</strong>
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
@@ -128,6 +137,9 @@ public final class Utilities extends Static {
      * Returns {@code true} if the given shorts are equals. This overloaded flavor is provided
      * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7
+     * (maybe in 2013). See {@link #equals(Object,Object)} for more information.</strong>
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
@@ -143,6 +155,9 @@ public final class Utilities extends Static {
      * Returns {@code true} if the given integers are equals. This overloaded flavor is provided
      * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7
+     * (maybe in 2013). See {@link #equals(Object,Object)} for more information.</strong>
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
@@ -158,6 +173,9 @@ public final class Utilities extends Static {
      * Returns {@code true} if the given longs are equals. This overloaded flavor is provided
      * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7
+     * (maybe in 2013). See {@link #equals(Object,Object)} for more information.</strong>
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
@@ -216,6 +234,10 @@ public final class Utilities extends Static {
      * true even when the two arguments are different primitive type because of widening
      * conversions. The only exception is when a {@code boolean} argument is mixed with a
      * different primitive type.
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7 (maybe in 2013).
+     * This method will be replaced by the new {@code java.util.Objects.equals} method. Developers
+     * who are already on JDK7 should use that JDK method instead.</strong>
      *
      * @param object1 The first object to compare, or {@code null}.
      * @param object2 The second object to compare, or {@code null}.
@@ -257,6 +279,10 @@ public final class Utilities extends Static {
      *   In such case, make sure that the hash code is computed using {@link #deepHashCode(Object)}
      *   for consistency.</li>
      * </ul>
+     * <p>
+     * <strong>WARNING: This method will be removed when Geotk will switch to JDK7 (maybe in 2013).
+     * This method will be replaced by the new {@code java.util.Objects.deepEquals} method.
+     * Developers who are already on JDK7 should use that JDK method instead.</strong>
      *
      * @param object1 The first object to compare, or {@code null}.
      * @param object2 The second object to compare, or {@code null}.
