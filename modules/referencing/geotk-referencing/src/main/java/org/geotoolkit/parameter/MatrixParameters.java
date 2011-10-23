@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.io.IOException;
 
 import org.opengis.util.GenericName;
@@ -37,7 +38,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
@@ -410,8 +410,8 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
             final int numCol = this.numCol.intValue();
             for (int j=0; j<numRow; j++) {
                 for (int i=0; i<numCol; i++) {
-                    if (!Utilities.equals(this.parameter(j,i, numRow, numCol),
-                                          that.parameter(j,i, numRow, numCol)))
+                    if (!Objects.equals(this.parameter(j,i, numRow, numCol),
+                                        that.parameter(j,i, numRow, numCol)))
                     {
                         return false;
                     }

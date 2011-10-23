@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.util.Objects;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Dimension;
@@ -42,7 +44,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
@@ -187,7 +188,7 @@ public class ImageSampleValues extends JComponent {
             if (!event.getValueIsAdjusting()) {
                 final ImageTableModel samples = (ImageTableModel) table.getModel();
                 final Color c=samples.getColorAt(table.getSelectedRow(), table.getSelectedColumn());
-                if (!Utilities.equals(c, color)) {
+                if (!Objects.equals(c, color)) {
                     color = c;
                     repaint();
                 }

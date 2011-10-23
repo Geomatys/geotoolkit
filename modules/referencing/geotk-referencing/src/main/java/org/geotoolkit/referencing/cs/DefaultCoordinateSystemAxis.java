@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
@@ -46,7 +47,6 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -1295,8 +1295,8 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                          final boolean compareMetadata, final boolean compareUnit)
     {
         if (compareMetadata) {
-            if (!Utilities.equals(this.abbreviation, that.abbreviation) ||
-                !Utilities.equals(this.rangeMeaning, that.rangeMeaning) ||
+            if (!Objects.equals(this.abbreviation, that.abbreviation) ||
+                !Objects.equals(this.rangeMeaning, that.rangeMeaning) ||
                 Double.doubleToLongBits(minimum) != Double.doubleToLongBits(that.minimum) ||
                 Double.doubleToLongBits(maximum) != Double.doubleToLongBits(that.maximum))
             {
@@ -1339,8 +1339,8 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                 }
             }
         }
-        return Utilities.equals(this.direction, that.direction) &&
-               (!compareUnit || Utilities.equals(this.unit, that.unit));
+        return Objects.equals(this.direction, that.direction) &&
+               (!compareUnit || Objects.equals(this.unit, that.unit));
     }
 
     /**

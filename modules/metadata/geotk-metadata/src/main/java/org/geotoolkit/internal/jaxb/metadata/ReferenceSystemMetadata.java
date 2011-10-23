@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,7 +33,6 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.naming.DefaultNameSpace;
 
@@ -169,7 +169,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
         }
         if (object != null && object.getClass() == getClass()) {
             final ReferenceSystemMetadata that = (ReferenceSystemMetadata) object;
-            return Utilities.equals(referenceSystemIdentifier, that.referenceSystemIdentifier);
+            return Objects.equals(referenceSystemIdentifier, that.referenceSystemIdentifier);
         }
         return false;
     }

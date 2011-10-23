@@ -19,9 +19,9 @@ package org.geotoolkit.factory;
 
 import java.util.Set;
 import java.util.Map;
+import java.util.Objects;
 import java.awt.RenderingHints;
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -72,7 +72,7 @@ final class FactoryComparator {
                     {
                         return false;
                     }
-                } else if (!Utilities.equals(v1, v2)) {
+                } else if (!Objects.equals(v1, v2)) {
                     return false;
                 }
             }

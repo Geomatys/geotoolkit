@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.sql;
 import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Locale;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,7 +35,6 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.Utilities;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
@@ -283,7 +283,7 @@ final class FormatEntry extends DefaultEntry {
         }
         if (super.equals(object)) {
             final FormatEntry that = (FormatEntry) object;
-            return Utilities.equals(imageFormat, that.imageFormat);
+            return Objects.equals(imageFormat, that.imageFormat);
         }
         return false;
     }

@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.List;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
@@ -369,9 +370,9 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
         public boolean equals(final Object object) {
             if (object != null && object.getClass() == getClass()) {
                 final Parameters that = (Parameters) object;
-                return Utilities.equals(descriptor,  that.descriptor) &&
-                       Utilities.equals(normalize,   that.normalize)  &&
-                       Utilities.equals(denormalize, that.denormalize);
+                return Objects.equals(descriptor,  that.descriptor) &&
+                       Objects.equals(normalize,   that.normalize)  &&
+                       Objects.equals(denormalize, that.denormalize);
             }
             return false;
         }

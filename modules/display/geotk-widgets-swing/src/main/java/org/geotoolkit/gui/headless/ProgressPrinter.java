@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.headless;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.text.BreakIterator;
@@ -26,7 +27,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.process.ProgressController;
@@ -266,7 +266,7 @@ public class ProgressPrinter extends ProgressController {
             printInBox(Vocabulary.getResources(locale).getString(Vocabulary.Keys.WARNING));
             hasPrintedWarning = true;
         }
-        if (!Utilities.equals(source, lastSource)) {
+        if (!Objects.equals(source, lastSource)) {
             out.println();
             out.println(source != null ? source : Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED));
             lastSource = source;

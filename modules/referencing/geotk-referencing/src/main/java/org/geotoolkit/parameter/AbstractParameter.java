@@ -21,6 +21,7 @@
 package org.geotoolkit.parameter;
 
 import java.util.Set;
+import java.util.Objects;
 import java.io.Writer;
 import java.io.IOException;
 import java.io.Serializable;
@@ -34,7 +35,6 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.measure.Units;
@@ -206,7 +206,7 @@ public abstract class AbstractParameter extends FormattableObject
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final AbstractParameter that = (AbstractParameter) object;
-            return Utilities.equals(this.descriptor, that.descriptor);
+            return Objects.equals(this.descriptor, that.descriptor);
         }
         return false;
     }

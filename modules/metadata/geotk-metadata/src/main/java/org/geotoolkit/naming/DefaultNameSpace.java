@@ -22,6 +22,7 @@ package org.geotoolkit.naming;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import net.jcip.annotations.Immutable;
@@ -449,7 +450,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final DefaultNameSpace that = (DefaultNameSpace) object;
-            return equalsIgnoreParent(that) && Utilities.equals(this.parent, that.parent);
+            return equalsIgnoreParent(that) && Objects.equals(this.parent, that.parent);
         }
         return false;
     }
@@ -461,9 +462,9 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      * @return {@code true} if both namespaces are equal, ignoring the parent.
      */
     private boolean equalsIgnoreParent(final DefaultNameSpace that) {
-        return Utilities.equals(this.headSeparator, that.headSeparator) &&
-               Utilities.equals(this.separator,     that.separator) &&
-               Utilities.equals(this.name,          that.name); // Most expensive test last.
+        return Objects.equals(this.headSeparator, that.headSeparator) &&
+               Objects.equals(this.separator,     that.separator) &&
+               Objects.equals(this.name,          that.name); // Most expensive test last.
     }
 
     /**

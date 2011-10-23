@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.SortedMap;
 import java.util.Comparator;
@@ -35,7 +36,6 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.internal.OS;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -373,7 +373,7 @@ loop:   for (int i=0; ; i++) {
             format = format.trim().toLowerCase();
         }
         for (int i=0; i<FORMAT_LABELS.length; i++) {
-            if (Utilities.equals(FORMAT_LABELS[i], format)) {
+            if (Objects.equals(FORMAT_LABELS[i], format)) {
                 sourceFormat = i;
                 return;
             }

@@ -18,11 +18,11 @@
 package org.geotoolkit.internal.jaxb.gmd;
 
 import java.util.Locale;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.geotoolkit.resources.Locales;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -123,7 +123,7 @@ final class LocalisedCharacterString {
             return false;
         }
         final LocalisedCharacterString that = (LocalisedCharacterString) object;
-        return Utilities.equals(locale, that.locale) && Utilities.equals(text, that.text);
+        return Objects.equals(locale, that.locale) && Objects.equals(text, that.text);
     }
 
     /**

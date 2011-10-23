@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -43,7 +44,6 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
 import org.geotoolkit.internal.io.TemporaryFile;
@@ -157,7 +157,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                  */
                 if (reader.getWidth (imageIndex) == sourceImage.getWidth()  &&
                     reader.getHeight(imageIndex) == sourceImage.getHeight() &&
-                    Utilities.equals(sourceType, type))
+                    Objects.equals(sourceType, type))
                 {
                     param = reader.getDefaultReadParam();
                     param.setDestination(sourceImage);

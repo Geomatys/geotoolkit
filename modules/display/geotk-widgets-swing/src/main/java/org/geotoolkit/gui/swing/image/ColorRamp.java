@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.util.Objects;
+
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.ComponentUI;
@@ -38,7 +40,6 @@ import java.beans.PropertyChangeListener;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 
@@ -138,7 +139,7 @@ public class ColorRamp extends JComponent {
      */
     public boolean setGraduation(final Graduation graduation) {
         final Graduation oldGraduation = painter.setGraduation(graduation);
-        final boolean changed = !Utilities.equals(graduation, oldGraduation);
+        final boolean changed = !Objects.equals(graduation, oldGraduation);
         if (changed) {
             if (oldGraduation != null) {
                 oldGraduation.removePropertyChangeListener(ui);

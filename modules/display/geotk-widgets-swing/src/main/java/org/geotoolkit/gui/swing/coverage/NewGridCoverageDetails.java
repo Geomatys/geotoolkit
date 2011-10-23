@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.text.ParseException;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -53,7 +54,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -294,7 +294,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      */
     private void formatSelected() {
         final String formatName = getSelectedFormat();
-        if (!Utilities.equals(formatName, selectedFormat)) {
+        if (!Objects.equals(formatName, selectedFormat)) {
             selectedFormat = formatName;
             List<GridSampleDimension> bands = null;
             CoverageStoreException failure = null;

@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -41,7 +42,6 @@ import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
@@ -257,7 +257,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
             switch (mode) {
                 case STRICT: {
                     final DefaultSingleOperation that = (DefaultSingleOperation) object;
-                    return Utilities.equals(this.method, that.method);
+                    return Objects.equals(this.method, that.method);
                 }
                 case BY_CONTRACT: {
                     final SingleOperation that = (SingleOperation) object;

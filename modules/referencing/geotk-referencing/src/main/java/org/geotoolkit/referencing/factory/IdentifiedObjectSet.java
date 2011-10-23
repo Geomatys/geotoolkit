@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.factory;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -42,7 +43,6 @@ import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.collection.BackingStoreException;
 
@@ -179,7 +179,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     @Override
     public boolean add(final T object) {
         final String code = getAuthorityCode(object);
-        return !Utilities.equals(objects.put(code, object), object);
+        return !Objects.equals(objects.put(code, object), object);
     }
 
     /**

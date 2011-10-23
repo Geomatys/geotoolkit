@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
@@ -28,7 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.opengis.metadata.Identifier;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.converter.Numbers;
@@ -191,7 +191,7 @@ final class NilObjectHandler implements InvocationHandler {
                         ox = ((NilObject) other).getNilReason();
                     }
                 }
-                if (!Utilities.equals(tx, ox)) {
+                if (!Objects.equals(tx, ox)) {
                     return false;
                 }
                 break;

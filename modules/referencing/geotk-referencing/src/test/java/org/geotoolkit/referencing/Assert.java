@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing;
 
+import java.util.Objects;
+
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -62,8 +64,8 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
      */
     public static void assertNotDeepEquals(final Object o1, final Object o2) {
         assertNotSame("same", o1, o2);
-        assertFalse("equals",                      Utilities.equals    (o1, o2));
-        assertFalse("deepEquals",                  Utilities.deepEquals(o1, o2));
+        assertFalse("equals",                      Objects  .equals    (o1, o2));
+        assertFalse("deepEquals",                  Objects  .deepEquals(o1, o2));
         assertFalse("deepEquals(STRICT)",          Utilities.deepEquals(o1, o2, ComparisonMode.STRICT));
         assertFalse("deepEquals(IGNORE_METADATA)", Utilities.deepEquals(o1, o2, ComparisonMode.IGNORE_METADATA));
         assertFalse("deepEquals(APPROXIMATIVE)",   Utilities.deepEquals(o1, o2, ComparisonMode.APPROXIMATIVE));

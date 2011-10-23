@@ -18,11 +18,11 @@
 package org.geotoolkit.internal.image;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.WeakHashSet;
 
 
@@ -87,17 +87,17 @@ public final class ColorModels<T extends ColorModel> extends Static {
             return true;
         }
         if (cm1 != null && cm1.equals(cm2) &&
-            Utilities.equals(cm1.getClass(),        cm2.getClass()) &&
-            Utilities.equals(cm1.getTransferType(), cm2.getTransferType()) &&
-            Utilities.equals(cm1.getColorSpace(),   cm2.getColorSpace()))
+            cm1.getClass().equals(cm2.getClass()) &&
+            cm1.getTransferType() == cm2.getTransferType() &&
+            Objects.equals(cm1.getColorSpace(), cm2.getColorSpace()))
         {
             if (cm1 instanceof IndexColorModel) {
                 final IndexColorModel icm1 = (IndexColorModel) cm1;
                 final IndexColorModel icm2 = (IndexColorModel) cm2;
                 final int size = icm1.getMapSize();
-                if (Utilities.equals(size, icm2.getMapSize()) &&
-                    Utilities.equals(icm1.getTransparentPixel(), icm2.getTransparentPixel()) &&
-                    Utilities.equals(icm1.getValidPixels(), icm2.getValidPixels()))
+                if (icm2.getMapSize() == size &&
+                    icm1.getTransparentPixel() == icm2.getTransparentPixel() &&
+                    Objects.equals(icm1.getValidPixels(), icm2.getValidPixels()))
                 {
                     for (int i=0; i<size; i++) {
                         if (icm1.getRGB(i) != icm2.getRGB(i)) {

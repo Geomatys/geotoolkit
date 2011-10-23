@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -328,7 +329,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
         }
         if (super.equals(object)) {
             final ImagingParameters that = (ImagingParameters) object;
-            return Utilities.equals(this.parameters, that.parameters);
+            return Objects.equals(this.parameters, that.parameters);
         }
         return false;
     }

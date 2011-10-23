@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.awt.Dimension;
@@ -28,7 +29,6 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 
 
@@ -80,7 +80,7 @@ final class ComparedTileManager extends TileManager {
      * @throws AssertionError if the given objects are not equal.
      */
     private <T> T assertEqual(final T o1, final T o2) throws AssertionError {
-        if (!Utilities.equals(o1, o2)) {
+        if (!Objects.equals(o1, o2)) {
             throw new AssertionError(
                     first.getClass().getSimpleName() + '=' + o1 + ", " +
                    second.getClass().getSimpleName() + '=' + o2);
@@ -251,8 +251,8 @@ final class ComparedTileManager extends TileManager {
     public boolean equals(final Object object) {
         if (object instanceof ComparedTileManager) {
             final ComparedTileManager that = (ComparedTileManager) object;
-            return Utilities.equals(this.first,  that.first) &&
-                   Utilities.equals(this.second, that.second);
+            return Objects.equals(this.first,  that.first) &&
+                   Objects.equals(this.second, that.second);
         }
         return false;
     }

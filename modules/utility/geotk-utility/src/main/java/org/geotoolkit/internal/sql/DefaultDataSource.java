@@ -19,6 +19,7 @@ package org.geotoolkit.internal.sql;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
@@ -33,7 +34,6 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -231,7 +231,7 @@ public class DefaultDataSource implements DataSource {
         }
         if (other != null && other.getClass() == getClass()) {
             final DefaultDataSource that = (DefaultDataSource) other;
-            return Utilities.equals(this.url, that.url);
+            return Objects.equals(this.url, that.url);
         }
         return false;
     }

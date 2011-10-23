@@ -22,6 +22,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.converter.Classes;
@@ -1458,7 +1458,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
         }
         if (object instanceof GridSampleDimension) {
             final GridSampleDimension that = (GridSampleDimension) object;
-            return Utilities.equals(this.categories, that.categories);
+            return Objects.equals(this.categories, that.categories);
             // Since everything is deduced from CategoryList, two sample dimensions
             // should be equal if they have the same list of categories.
         }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util;
 
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
@@ -357,7 +358,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
         if (super.equals(object)) {
             if (object instanceof MeasurementRange<?>) {
                 final MeasurementRange<?> that = (MeasurementRange<?>) object;
-                return Utilities.equals(this.units, that.units);
+                return Objects.equals(this.units, that.units);
             }
             return true;
         }

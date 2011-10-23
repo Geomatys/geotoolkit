@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
@@ -389,7 +390,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final DefaultInternationalString that = (DefaultInternationalString) object;
-            return Utilities.equals(this.localeMap, that.localeMap);
+            return Objects.equals(this.localeMap, that.localeMap);
         }
         return false;
     }

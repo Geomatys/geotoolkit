@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util;
 
+import java.util.Objects;
 import java.io.Serializable;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
@@ -583,12 +584,12 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
         }
         if (object != null && object.getClass() == getClass()) {
             final Range<?> other = (Range<?>) object;
-            if (Utilities.equals(elementClass, other.elementClass)) {
+            if (Objects.equals(elementClass, other.elementClass)) {
                 if (isEmpty()) {
                     return other.isEmpty();
                 }
-                return Utilities.equals(minValue, other.minValue) &&
-                       Utilities.equals(maxValue, other.maxValue) &&
+                return Objects.equals(minValue, other.minValue) &&
+                       Objects.equals(maxValue, other.maxValue) &&
                        isMinIncluded == other.isMinIncluded &&
                        isMaxIncluded == other.isMaxIncluded;
             }

@@ -18,6 +18,7 @@
 package org.geotoolkit.util;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Comparator;
 import java.lang.reflect.Array;
 
@@ -1200,7 +1201,7 @@ public final class XArrays extends Static {
     public static boolean contains(final Object[] array, final Object value) {
         if (array != null) {
             for (final Object element : array) {
-                if (Utilities.equals(element, value)) {
+                if (Objects.equals(element, value)) {
                     return true;
                 }
             }

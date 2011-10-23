@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.awt.RenderingHints;
 import javax.measure.converter.ConversionException;
 import net.jcip.annotations.ThreadSafe;
@@ -39,7 +40,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -430,12 +430,12 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         CoordinateOperation operation;
         if (transform instanceof CoordinateOperation) {
             operation = (CoordinateOperation) transform;
-            if (Utilities.equals(operation.getSourceCRS(),     sourceCRS) &&
-                Utilities.equals(operation.getTargetCRS(),     targetCRS) &&
-                Utilities.equals(operation.getMathTransform(), transform))
+            if (Objects.equals(operation.getSourceCRS(),     sourceCRS) &&
+                Objects.equals(operation.getTargetCRS(),     targetCRS) &&
+                Objects.equals(operation.getMathTransform(), transform))
             {
                 if (operation instanceof SingleOperation) {
-                    if (Utilities.equals(((SingleOperation) operation).getMethod(), method)) {
+                    if (Objects.equals(((SingleOperation) operation).getMethod(), method)) {
                         return operation;
                     }
                 } else {

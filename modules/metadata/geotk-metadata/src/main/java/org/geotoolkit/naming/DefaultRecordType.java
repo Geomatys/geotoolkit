@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.Map;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlType;
 import net.jcip.annotations.Immutable;
@@ -36,7 +37,6 @@ import org.opengis.util.TypeName;
 import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.XCollections;
 
 
@@ -226,9 +226,9 @@ public class DefaultRecordType implements RecordType, Serializable {
         }
         if (other != null && other.getClass() == getClass()) {
             final DefaultRecordType that = (DefaultRecordType) other;
-            return Utilities.equals(name, that.name) &&
-                   Utilities.equals(parent, that.parent) &&
-                   Utilities.equals(memberTypes, that.memberTypes);
+            return Objects.equals(name, that.name) &&
+                   Objects.equals(parent, that.parent) &&
+                   Objects.equals(memberTypes, that.memberTypes);
         }
         return false;
     }

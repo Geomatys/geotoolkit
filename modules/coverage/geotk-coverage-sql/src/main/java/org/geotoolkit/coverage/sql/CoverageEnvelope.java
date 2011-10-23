@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Date;
+import java.util.Objects;
 import java.awt.Dimension;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
@@ -708,7 +709,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
                    Utilities.equals(zMax, that.zMax) &&
                    Utilities.equals(xResolution, that.xResolution) &&
                    Utilities.equals(yResolution, that.yResolution) &&
-                   Utilities.equals(database.spatioTemporalCRS, that.database.spatioTemporalCRS);
+                   Objects.equals(database.spatioTemporalCRS, that.database.spatioTemporalCRS);
         }
         return false;
     }

@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 
 /**
@@ -236,8 +235,8 @@ final class PropertyMap extends MetadataMap<Object> {
          * Compares the specified entry with this one for equality.
          */
         public boolean equals(final Map.Entry<?,?> entry) {
-            return Utilities.equals(getKey(),   entry.getKey()) &&
-                   Utilities.equals(getValue(), entry.getValue());
+            return Objects.equals(getKey(),   entry.getKey()) &&
+                   Objects.equals(getValue(), entry.getValue());
         }
 
         /**

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.geometry;
 
+import java.util.Objects;
 import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
@@ -27,7 +28,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -344,7 +344,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
         if (super.equals(object)) {
             final CoordinateReferenceSystem otherCRS =
                     (object instanceof Envelope2D) ? ((Envelope2D) object).crs : null;
-            return Utilities.equals(crs, otherCRS);
+            return Objects.equals(crs, otherCRS);
         }
         return false;
     }

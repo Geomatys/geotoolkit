@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.geometry;
 
+import java.util.Objects;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.Serializable;
@@ -341,7 +342,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
             if (other.getDimension() == 2 &&
                 Utilities.equals(other.getOrdinate(0), x) &&
                 Utilities.equals(other.getOrdinate(1), y) &&
-                Utilities.equals(other.getCoordinateReferenceSystem(), crs))
+                Objects.equals(other.getCoordinateReferenceSystem(), crs))
             {
                 assert hashCode() == other.hashCode() : this;
                 return true;

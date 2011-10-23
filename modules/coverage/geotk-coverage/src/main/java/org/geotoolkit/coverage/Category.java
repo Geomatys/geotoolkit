@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 
 import java.awt.Color;
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
@@ -27,7 +28,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.Classes;
@@ -809,7 +809,7 @@ public class Category implements Serializable {
      * @see GridSampleDimension#rescale
      */
     public Category rescale(final MathTransform1D sampleToGeophysics) {
-        if (Utilities.equals(sampleToGeophysics, transform)) {
+        if (Objects.equals(sampleToGeophysics, transform)) {
             return this;
         }
         return new Category(name, ARGB, range, sampleToGeophysics);
@@ -878,16 +878,16 @@ public class Category implements Serializable {
             final Category that = (Category) object;
             if (Double.doubleToRawLongBits(minimum)== Double.doubleToRawLongBits(that.minimum) &&
                 Double.doubleToRawLongBits(maximum)== Double.doubleToRawLongBits(that.maximum) &&
-                Utilities.equals(this.transform, that.transform) &&
-                Utilities.equals(this.name,      that.name ) &&
-                          Arrays.equals(this.ARGB,      that.ARGB ))
+                Objects.equals(this.transform, that.transform) &&
+                Objects.equals(this.name,      that.name ) &&
+                 Arrays.equals(this.ARGB,      that.ARGB ))
             {
                 // Special test for 'range', since 'GeophysicsCategory'
                 // computes it only when first needed.
                 final NumberRange<?> r1 = this.range;
                 final NumberRange<?> r2 = that.range;
                 if (r1 != null && r2 != null) {
-                    if (!Utilities.equals(r1, r2)) {
+                    if (!Objects.equals(r1, r2)) {
                         return false;
                     }
                     if (inverse instanceof GeophysicsCategory) {

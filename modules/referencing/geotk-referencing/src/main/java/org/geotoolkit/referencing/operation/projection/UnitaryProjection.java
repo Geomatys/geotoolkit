@@ -22,6 +22,7 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -1308,7 +1309,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                 final Parameters that = (Parameters) object;
                 return Utilities.equals(semiMajor,          that.semiMajor)          &&
                        Utilities.equals(semiMinor,          that.semiMinor)          &&
-                       Utilities.equals(rollLongitude,      that.rollLongitude)      &&
+                         Objects.equals(rollLongitude,      that.rollLongitude)      &&
                        Utilities.equals(centralMeridian,    that.centralMeridian)    &&
                        Utilities.equals(latitudeOfOrigin,   that.latitudeOfOrigin)   &&
                           Arrays.equals(standardParallels,  that.standardParallels)  &&
@@ -1558,7 +1559,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             final double e1, e2;
             final UnitaryProjection that = (UnitaryProjection) object;
             if (mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal()) {
-                if (!Utilities.equals(parameters, that.parameters)) {
+                if (!Objects.equals(parameters, that.parameters)) {
                     return false;
                 }
                 e1 = this.excentricitySquared;

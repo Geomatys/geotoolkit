@@ -22,6 +22,7 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Objects;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import net.jcip.annotations.Immutable;
@@ -42,7 +43,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.WeakValueHashMap;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -390,7 +390,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
         }
         if (super.equals(object)) {
             final NamedIdentifier that = (NamedIdentifier) object;
-            return Utilities.equals(this.getName(), that.getName());
+            return Objects.equals(this.getName(), that.getName());
         }
         return false;
     }

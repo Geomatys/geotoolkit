@@ -19,12 +19,12 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
@@ -101,7 +101,7 @@ public final class Identifier3D extends DefaultReferenceIdentifier {
     public boolean equals(final Object object) {
         if (super.equals(object)) {
             final Identifier3D other = (Identifier3D) object;
-            return Utilities.equals(horizontalCRS, other.horizontalCRS);
+            return Objects.equals(horizontalCRS, other.horizontalCRS);
         }
         return false;
     }

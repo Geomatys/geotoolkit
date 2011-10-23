@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.geometry;
 
+import java.util.Objects;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -222,8 +224,8 @@ public abstract class AbstractEnvelope implements Envelope {
                         return false;
                     }
                 }
-                if (Utilities.equals(this.getCoordinateReferenceSystem(),
-                                     that.getCoordinateReferenceSystem()))
+                if (Objects.equals(this.getCoordinateReferenceSystem(),
+                                   that.getCoordinateReferenceSystem()))
                 {
                     assert hashCode() == that.hashCode() : this;
                     return true;

@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.*; // We use a lot of those imports.
+import java.util.Objects;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.logging.Logger;
@@ -643,7 +644,7 @@ public class Tile implements Comparable<Tile>, Serializable {
          * not suitable, we will invoke ImageReader.setInput(...).
          */
         final Object input = getInput();
-        final boolean sameInput = Utilities.equals(input, currentInput);
+        final boolean sameInput = Objects.equals(input, currentInput);
         if ( !sameInput                                      ||
             ( getImageIndex() <  reader.getMinIndex())       ||
             (!seekForwardOnly && reader.isSeekForwardOnly()) ||
@@ -1353,7 +1354,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     private static int compareInputs(Object input1, Object input2) {
-        if (Utilities.equals(input1, input2)) {
+        if (Objects.equals(input1, input2)) {
             return 0;
         }
         input1 = toComparable(input1);
@@ -1451,8 +1452,8 @@ public class Tile implements Comparable<Tile>, Serializable {
                 this.xSubsampling == that.xSubsampling    &&
                 this.ySubsampling == that.ySubsampling    &&
                 this.imageIndex   == that.imageIndex      &&
-                Utilities.equals(provider, that.provider) &&
-                Utilities.deepEquals(input, that.input))
+                Objects.equals(provider, that.provider) &&
+                Objects.deepEquals(input, that.input))
             {
                 /*
                  * Compares width and height only if they are defined in both tiles.  We do not

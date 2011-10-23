@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.io.File;
 import java.awt.Dimension;
@@ -53,7 +54,6 @@ import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.coverage.sql.Layer;
 import org.geotoolkit.coverage.sql.CoverageTableModel;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
@@ -331,7 +331,7 @@ public class CoverageList extends JComponent {
      * @param layer The layer for which to get the coverage entries, or {@code null} if none.
      */
     public void setLayer(final Layer layer) {
-        if (!Utilities.equals(layer, this.layer)) {
+        if (!Objects.equals(layer, this.layer)) {
             setData(layer, envelope);
         }
     }
@@ -357,7 +357,7 @@ public class CoverageList extends JComponent {
      * @param envelope The envelope of the coverage entries to list, or {@code null} if unbounded.
      */
     public void setEnvelope(CoverageEnvelope envelope) {
-        if (!Utilities.equals(envelope, this.envelope)) {
+        if (!Objects.equals(envelope, this.envelope)) {
             setData(layer, envelope);
         }
     }

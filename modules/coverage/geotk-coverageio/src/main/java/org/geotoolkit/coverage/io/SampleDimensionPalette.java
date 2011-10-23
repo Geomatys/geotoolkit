@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Objects;
 import java.io.IOException;
 import java.awt.image.ColorModel;
 import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;
@@ -126,7 +126,7 @@ final class SampleDimensionPalette extends Palette {
         }
         if (super.equals(object)) {
             final SampleDimensionPalette that = (SampleDimensionPalette) object;
-            return Utilities.equals(band, that.band);
+            return Objects.equals(band, that.band);
         }
         return false;
     }

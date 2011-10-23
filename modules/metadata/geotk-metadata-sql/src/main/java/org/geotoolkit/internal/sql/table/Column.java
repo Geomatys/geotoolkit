@@ -20,8 +20,8 @@ package org.geotoolkit.internal.sql.table;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Objects;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.Ordering;
 
 
@@ -185,10 +185,10 @@ public final class Column extends ColumnOrParameter {
     public boolean equals(final Object object) {
         if (super.equals(object)) {
             final Column that = (Column) object;
-            return Utilities.equals(this.table,        that.table) &&
-                   Utilities.equals(this.name,         that.name ) &&
-                   Utilities.equals(this.defaultValue, that.defaultValue) &&
-                   Utilities.equals(this.ordering,     that.ordering);
+            return Objects.equals(this.table,        that.table) &&
+                   Objects.equals(this.name,         that.name ) &&
+                   Objects.equals(this.defaultValue, that.defaultValue) &&
+                   Objects.equals(this.ordering,     that.ordering);
         }
         return false;
     }

@@ -20,6 +20,7 @@ package org.geotoolkit.parameter;
 import java.util.Map;
 import java.util.List;
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -32,7 +33,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -419,7 +419,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (object instanceof MatrixParameterDescriptors && super.equals(object, mode)) {
             final MatrixParameterDescriptors that = (MatrixParameterDescriptors) object;
-            return separator == that.separator && Utilities.equals(prefix, that.prefix);
+            return separator == that.separator && Objects.equals(prefix, that.prefix);
         }
         return false;
     }

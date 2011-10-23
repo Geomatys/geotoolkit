@@ -21,6 +21,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.util.AbstractSet;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -453,7 +454,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
             int index = hash % table.length;
             for (Entry e=table[index]; e!=null; e=e.next) {
                 final E candidate = e.get();
-                if (isArray ? Utilities.deepEquals(candidate, obj) : obj.equals(candidate)) {
+                if (isArray ? Objects.deepEquals(candidate, obj) : obj.equals(candidate)) {
                     if (operation == REMOVE) {
                         e.dispose();
                     }

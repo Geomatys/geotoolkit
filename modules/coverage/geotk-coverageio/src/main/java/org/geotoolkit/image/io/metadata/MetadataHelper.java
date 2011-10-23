@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.awt.Rectangle;
@@ -45,7 +46,6 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Localized;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -553,7 +553,7 @@ public class MetadataHelper implements Localized {
                 units[i] = cs.getAxis(i).getUnit();
             }
             for (int i=1; i<units.length; i++) {
-                if (!Utilities.equals(units[i-1], units[i])) {
+                if (!Objects.equals(units[i-1], units[i])) {
                     sameUnits = false;
                     break;
                 }

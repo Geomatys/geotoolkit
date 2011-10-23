@@ -19,6 +19,7 @@ package org.geotoolkit.xml;
 
 import java.net.URI;
 import java.util.Locale;
+import java.util.Objects;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -799,16 +800,16 @@ public class XLink implements Serializable {
                     return false; // Slight optimization using the pre-computed hash code values.
                 }
             }
-            return Utilities.equals(this.type,    that.type)    &&
-                   Utilities.equals(this.href,    that.href)    &&
-                   Utilities.equals(this.role,    that.role)    &&
-                   Utilities.equals(this.arcrole, that.arcrole) &&
-                   Utilities.equals(this.title,   that.title)   &&
-                   Utilities.equals(this.show,    that.show)    &&
-                   Utilities.equals(this.actuate, that.actuate) &&
-                   Utilities.equals(this.label,   that.label)   &&
-                   Utilities.equals(this.from,    that.from)    &&
-                   Utilities.equals(this.to,      that.to);
+            return Objects.equals(this.type,    that.type)    &&
+                   Objects.equals(this.href,    that.href)    &&
+                   Objects.equals(this.role,    that.role)    &&
+                   Objects.equals(this.arcrole, that.arcrole) &&
+                   Objects.equals(this.title,   that.title)   &&
+                   Objects.equals(this.show,    that.show)    &&
+                   Objects.equals(this.actuate, that.actuate) &&
+                   Objects.equals(this.label,   that.label)   &&
+                   Objects.equals(this.from,    that.from)    &&
+                   Objects.equals(this.to,      that.to);
         }
         return false;
     }

@@ -18,6 +18,7 @@
 package org.geotoolkit.geometry;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
@@ -44,7 +45,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -1349,7 +1349,7 @@ scanNumber: while (++i < length) {
         if (object != null && object.getClass() == getClass()) {
             final GeneralEnvelope that = (GeneralEnvelope) object;
             return Arrays.equals(this.ordinates, that.ordinates) &&
-                    Utilities.equals(this.crs, that.crs);
+                  Objects.equals(this.crs, that.crs);
         }
         return false;
     }

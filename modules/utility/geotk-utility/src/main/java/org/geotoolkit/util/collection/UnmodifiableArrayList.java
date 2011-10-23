@@ -18,8 +18,8 @@
 package org.geotoolkit.util.collection;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.AbstractList;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 
@@ -354,7 +354,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
             int i = this.lower();
             int j = that.lower();
             while (--size >= 0) {
-                if (!Utilities.equals(this.array[i++], that.array[j++])) {
+                if (!Objects.equals(this.array[i++], that.array[j++])) {
                     return false;
                 }
             }

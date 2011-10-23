@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
+import java.util.Objects;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -184,8 +185,8 @@ public final class SpecializedIdentifier<T> implements Identifier {
     public boolean equals(final Object other) {
         if (other instanceof SpecializedIdentifier<?>) {
             final SpecializedIdentifier<?> that = (SpecializedIdentifier<?>) other;
-            return Utilities.equals(authority, that.authority) &&
-                   Utilities.equals(value, that.value);
+            return Objects.equals(authority, that.authority) &&
+                   Objects.equals(value, that.value);
         }
         return false;
     }

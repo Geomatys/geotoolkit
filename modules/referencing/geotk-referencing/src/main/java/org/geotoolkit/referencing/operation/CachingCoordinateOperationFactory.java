@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import java.util.Objects;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
@@ -35,7 +36,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.Cache;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -121,9 +121,9 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
             }
             if (object instanceof CRSPair) {
                 final CRSPair that = (CRSPair) object;
-                return Utilities.equals(this.sourceCRS, that.sourceCRS) &&
-                       Utilities.equals(this.targetCRS, that.targetCRS) &&
-                       Utilities.equals(this.method,    that.method);
+                return Objects.equals(this.sourceCRS, that.sourceCRS) &&
+                       Objects.equals(this.targetCRS, that.targetCRS) &&
+                       Objects.equals(this.method,    that.method);
             }
             return false;
         }

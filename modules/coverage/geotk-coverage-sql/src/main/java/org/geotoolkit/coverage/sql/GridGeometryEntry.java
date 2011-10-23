@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.awt.Shape;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -37,7 +38,6 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.AbstractEnvelope;
@@ -452,9 +452,9 @@ final class GridGeometryEntry extends DefaultEntry {
         }
         if (super.equals(object)) {
             final GridGeometryEntry that = (GridGeometryEntry) object;
-            return Utilities.equals(this.srsEntry,          that.srsEntry) &&
-                   Utilities.equals(this.geometry,          that.geometry) &&
-                      Arrays.equals(this.verticalOrdinates, that.verticalOrdinates);
+            return Objects.equals(this.srsEntry,          that.srsEntry) &&
+                   Objects.equals(this.geometry,          that.geometry) &&
+                    Arrays.equals(this.verticalOrdinates, that.verticalOrdinates);
         }
         return false;
     }

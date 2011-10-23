@@ -20,13 +20,13 @@ package org.geotoolkit.internal.jaxb;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.xml.IdentifierSpace;
 import org.geotoolkit.xml.XLink;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -114,7 +114,7 @@ final class IdentifierMapWithSpecialCases extends IdentifierMapAdapter {
      */
     @Override
     public boolean containsValue(final Object code) {
-        return super.containsValue(code) || Utilities.equals(code, getHRef());
+        return super.containsValue(code) || Objects.equals(code, getHRef());
     }
 
     /**

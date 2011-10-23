@@ -26,6 +26,7 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
@@ -1250,12 +1251,12 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
                    width2           == cast.width2            &&
                    widthDecimal     == cast.widthDecimal      &&
                    decimalSeparator == cast.decimalSeparator  &&
-                   Utilities.equals(prefix,    cast.prefix )  &&
-                   Utilities.equals(suffix0,   cast.suffix0)  &&
-                   Utilities.equals(suffix1,   cast.suffix1)  &&
-                   Utilities.equals(suffix2,   cast.suffix2)  &&
-                   Utilities.equals(numberFormat.getDecimalFormatSymbols(),
-                               cast.numberFormat.getDecimalFormatSymbols());
+                   Objects.equals(prefix,    cast.prefix )  &&
+                   Objects.equals(suffix0,   cast.suffix0)  &&
+                   Objects.equals(suffix1,   cast.suffix1)  &&
+                   Objects.equals(suffix2,   cast.suffix2)  &&
+                   Objects.equals(numberFormat.getDecimalFormatSymbols(),
+                             cast.numberFormat.getDecimalFormatSymbols());
         } else {
             return false;
         }

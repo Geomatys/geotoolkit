@@ -24,6 +24,7 @@ import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
@@ -721,7 +722,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                            Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
                            Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
                            Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&
-                           Utilities.equals(this.unit,              that.unit);
+                             Objects.equals(this.unit,              that.unit);
                 }
                 case BY_CONTRACT: {
                     if (isIvfDefinitive() != ((Ellipsoid) object).isIvfDefinitive()) {
@@ -734,7 +735,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                     return epsilonEqual(getSemiMajorAxis(),     that.getSemiMajorAxis(),     mode) &&
                            epsilonEqual(getSemiMinorAxis(),     that.getSemiMinorAxis(),     mode) &&
                            epsilonEqual(getInverseFlattening(), that.getInverseFlattening(), mode) &&
-                           Utilities.equals(getAxisUnit(),      that.getAxisUnit());
+                           Objects.equals(getAxisUnit(),        that.getAxisUnit());
                 }
             }
         }

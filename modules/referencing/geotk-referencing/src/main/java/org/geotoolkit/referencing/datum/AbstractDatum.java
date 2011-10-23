@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.datum;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import net.jcip.annotations.Immutable;
@@ -35,7 +36,6 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
@@ -295,9 +295,9 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
                 case STRICT: {
                     final AbstractDatum that = (AbstractDatum) object;
                     return this.realizationEpoch == that.realizationEpoch &&
-                           Utilities.equals(this.domainOfValidity, that.domainOfValidity) &&
-                           Utilities.equals(this.anchorPoint,      that.anchorPoint) &&
-                           Utilities.equals(this.scope,            that.scope);
+                           Objects.equals(this.domainOfValidity, that.domainOfValidity) &&
+                           Objects.equals(this.anchorPoint,      that.anchorPoint) &&
+                           Objects.equals(this.scope,            that.scope);
                 }
                 case BY_CONTRACT: {
                     final Datum that = (Datum) object;

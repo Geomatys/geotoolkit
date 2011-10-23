@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.TreeMap;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
@@ -110,7 +111,7 @@ final class CachedOperationParameters {
     public boolean equals(final Object object) {
         if (object instanceof CachedOperationParameters) {
             final CachedOperationParameters that = (CachedOperationParameters) object;
-            if (Utilities.equals(operation, that.operation) && Arrays.equals(names, that.names)) {
+            if (Objects.equals(operation, that.operation) && Arrays.equals(names, that.names)) {
                 /*
                  * Following arrays contain WeakReferences, but this is okay if they
                  * have been created with CoverageReferences because the later ensures

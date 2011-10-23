@@ -25,12 +25,12 @@ import java.util.Collections;
 import java.util.AbstractSet;
 import java.util.AbstractMap;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.io.Serializable;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.UnsupportedImplementationException;
@@ -161,7 +161,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
     public boolean containsValue(final Object code) {
         if (code instanceof String) {
             for (final Identifier identifier : identifiers) {
-                if (identifier != null && Utilities.equals(code, identifier.getCode())) {
+                if (identifier != null && Objects.equals(code, identifier.getCode())) {
                     return true;
                 }
             }
@@ -188,7 +188,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
         final Iterator<? extends Identifier> it = identifiers.iterator();
         while (it.hasNext()) {
             final Identifier identifier = it.next();
-            if (identifier != null && Utilities.equals(authority, identifier.getAuthority())) {
+            if (identifier != null && Objects.equals(authority, identifier.getAuthority())) {
                 return identifier;
             }
         }
@@ -256,7 +256,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
             final Identifier identifier = it.next();
             if (identifier == null) {
                 it.remove(); // Opportunist cleaning, but should not happen.
-            } else if (Utilities.equals(authority, identifier.getAuthority())) {
+            } else if (Objects.equals(authority, identifier.getAuthority())) {
                 if (code != null && identifier instanceof IdentifierMapEntry) {
                     return ((IdentifierMapEntry) identifier).setValue(code);
                     // No need to suppress other occurrences of the key (if any)
@@ -289,7 +289,7 @@ public class IdentifierMapAdapter extends AbstractMap<Citation,String> implement
             final Identifier identifier = it.next();
             if (identifier == null) {
                 it.remove(); // Opportunist cleaning, but should not happen.
-            } else if (Utilities.equals(authority, identifier.getAuthority())) {
+            } else if (Objects.equals(authority, identifier.getAuthority())) {
                 if (identifier instanceof SpecializedIdentifier<?>) {
                     @SuppressWarnings("unchecked")
                     final SpecializedIdentifier<T> id = (SpecializedIdentifier<T>) identifier;

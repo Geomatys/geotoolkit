@@ -29,7 +29,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.IntegerList;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -1004,11 +1003,11 @@ nextTile:   for (int tileX=minTileX; tileX<maxTileX; tileX++) {
                    dx == that.dx && dy == that.dy && nx == that.nx && ny == that.ny &&
                    xSubsampling == that.xSubsampling && ySubsampling == that.ySubsampling &&
                    xOffset == that.xOffset && yOffset == that.yOffset &&
-                   Utilities.equals(this.mosaic,      that.mosaic)   &&
-                   Utilities.equals(this.tiles,       that.tiles)    &&
-                   Arrays   .equals(this.patterns,    that.patterns) &&
-                   Utilities.equals(this.patternUsed, that.patternUsed) &&
-                   Utilities.equals(this.finer,       that.finer);
+                   Objects.equals(this.mosaic,      that.mosaic)   &&
+                   Objects.equals(this.tiles,       that.tiles)    &&
+                   Arrays .equals(this.patterns,    that.patterns) &&
+                   Objects.equals(this.patternUsed, that.patternUsed) &&
+                   Objects.equals(this.finer,       that.finer);
         }
         return false;
     }

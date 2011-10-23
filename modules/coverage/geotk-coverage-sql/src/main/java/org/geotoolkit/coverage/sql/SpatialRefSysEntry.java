@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.Dimension;
@@ -422,7 +423,7 @@ final class SpatialRefSysEntry {
             final SpatialRefSysEntry that = (SpatialRefSysEntry) object;
             return this.horizontalSRID == that.horizontalSRID &&
                    this.verticalSRID   == that.verticalSRID   &&
-                   Utilities.equals(this.temporalCRS, that.temporalCRS);
+                   Objects.equals(this.temporalCRS, that.temporalCRS);
         }
         return false;
     }

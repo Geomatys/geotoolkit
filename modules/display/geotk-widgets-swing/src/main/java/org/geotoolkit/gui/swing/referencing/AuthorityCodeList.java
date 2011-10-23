@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.AbstractListModel;
@@ -29,7 +30,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.swing.FastComboBox;
 
@@ -190,7 +190,7 @@ final class AuthorityCodeList extends AbstractListModel<AuthorityCode> implement
      */
     @Override
     public void setSelectedItem(final Object code) {
-        if (!Utilities.equals(code, selected)) {
+        if (!Objects.equals(code, selected)) {
             selected = (AuthorityCode) code;
             selectedCode = null;
             final int index = (selected != null) ? selected.index : -1;

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.util.StringTokenizer;
+import java.util.Objects;
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.DateFormat;
@@ -48,7 +49,6 @@ import javax.media.jai.RegistryElementDescriptor;
 
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.AngleFormat;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.image.KernelEditor;
@@ -186,7 +186,7 @@ public class ParameterEditor extends JComponent {
      */
     public void setParameterValue(final Object value) {
         final Object oldValue = this.value;
-        if (!Utilities.deepEquals(value, oldValue)) {
+        if (!Objects.deepEquals(value, oldValue)) {
             this.value = value;
             updateEditor();
             firePropertyChange("value", oldValue, value);

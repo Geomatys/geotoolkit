@@ -87,7 +87,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
 
@@ -2614,8 +2613,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         // Reminder: The source and target dimensions MUST be computed when
                         //           the information is available. Dimension is not always 2!!
                         method = buffered.createOperationMethod(methodCode);
-                        if (!Utilities.equals(method.getSourceDimensions(), sourceDimensions) ||
-                            !Utilities.equals(method.getTargetDimensions(), targetDimensions))
+                        if (!Objects.equals(method.getSourceDimensions(), sourceDimensions) ||
+                            !Objects.equals(method.getTargetDimensions(), targetDimensions))
                         {
                             method = new DefaultOperationMethod(method, sourceDimensions, targetDimensions);
                         }

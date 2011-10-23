@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Locale;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
@@ -127,7 +128,7 @@ public class SimpleInternationalString extends AbstractInternationalString imple
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final SimpleInternationalString that = (SimpleInternationalString) object;
-            return Utilities.equals(this.defaultValue, that.defaultValue);
+            return Objects.equals(this.defaultValue, that.defaultValue);
         }
         return false;
     }

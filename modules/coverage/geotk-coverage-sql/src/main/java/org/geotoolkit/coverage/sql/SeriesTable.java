@@ -26,10 +26,10 @@ import java.sql.SQLNonTransientException;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.table.CatalogException;
@@ -114,7 +114,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * will filters the series in order to return only the ones in this layer.
      */
     public void setLayer(final String layer) {
-        if (!Utilities.equals(layer, this.layer)) {
+        if (!Objects.equals(layer, this.layer)) {
             this.layer = layer;
             fireStateChanged("layer");
         }

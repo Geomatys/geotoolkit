@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +47,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
@@ -779,7 +779,7 @@ public class Hints extends RenderingHints {
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, nameOf(key), value));
         }
         final Object old = GLOBAL.put(key, value);
-        if (!Utilities.equals(value, old)) {
+        if (!Objects.equals(value, old)) {
             Factories.fireConfigurationChanged(Hints.class);
         }
         return old;

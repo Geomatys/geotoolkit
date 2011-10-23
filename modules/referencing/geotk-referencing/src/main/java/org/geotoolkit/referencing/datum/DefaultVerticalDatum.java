@@ -22,13 +22,13 @@ package org.geotoolkit.referencing.datum;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
@@ -238,11 +238,11 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
             switch (mode) {
                 case STRICT: {
                     final DefaultVerticalDatum that = (DefaultVerticalDatum) object;
-                    return Utilities.equals(this.type, that.type);
+                    return Objects.equals(this.type, that.type);
                 }
                 default: {
                     final VerticalDatum that = (VerticalDatum) object;
-                    return Utilities.equals(getVerticalDatumType(), that.getVerticalDatumType());
+                    return Objects.equals(getVerticalDatumType(), that.getVerticalDatumType());
                 }
             }
         }

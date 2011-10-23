@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.sql.table;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 
 /**
@@ -67,8 +67,8 @@ final class CrossReference {
     public boolean equals(final Object object) {
         if (object instanceof CrossReference) {
             final CrossReference that = (CrossReference) object;
-            return Utilities.equals(this.foreignerKey, that.foreignerKey) &&
-                   Utilities.equals(this.primaryKey,   that.primaryKey);
+            return Objects.equals(this.foreignerKey, that.foreignerKey) &&
+                   Objects.equals(this.primaryKey,   that.primaryKey);
         }
         return false;
     }

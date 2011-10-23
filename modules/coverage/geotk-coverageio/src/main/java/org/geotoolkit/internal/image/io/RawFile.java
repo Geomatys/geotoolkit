@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Objects;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -101,9 +102,9 @@ public final class RawFile implements Serializable {
     public boolean equals(final Object object) {
         if (object instanceof RawFile) {
             final RawFile that = (RawFile) object;
-            return Utilities.equals(this.file, that.file) &&
-                   Utilities.equals(this.type, that.type) &&
-                   Utilities.equals(this.size, that.size);
+            return Objects.equals(this.file, that.file) &&
+                   Objects.equals(this.type, that.type) &&
+                   Objects.equals(this.size, that.size);
         }
         return false;
     }

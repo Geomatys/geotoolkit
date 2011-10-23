@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlID;
@@ -45,7 +46,6 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
@@ -714,10 +714,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         switch (mode) {
             case STRICT: {
                 final AbstractIdentifiedObject that = (AbstractIdentifiedObject) object;
-                return Utilities.equals(name,        that.name)        &&
-                       Utilities.equals(alias,       that.alias)       &&
-                       Utilities.equals(identifiers, that.identifiers) &&
-                       Utilities.equals(remarks,     that.remarks);
+                return Objects.equals(name,        that.name)        &&
+                       Objects.equals(alias,       that.alias)       &&
+                       Objects.equals(identifiers, that.identifiers) &&
+                       Objects.equals(remarks,     that.remarks);
             }
             case BY_CONTRACT: {
                 final IdentifiedObject that = (IdentifiedObject) object;

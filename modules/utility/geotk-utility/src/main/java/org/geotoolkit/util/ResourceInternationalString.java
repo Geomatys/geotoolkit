@@ -18,6 +18,7 @@
 package org.geotoolkit.util;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -161,8 +162,8 @@ public class ResourceInternationalString extends AbstractInternationalString imp
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final ResourceInternationalString that = (ResourceInternationalString) object;
-            return Utilities.equals(this.key,       that.key) &&
-                   Utilities.equals(this.resources, that.resources);
+            return Objects.equals(this.key,       that.key) &&
+                   Objects.equals(this.resources, that.resources);
         }
         return false;
     }

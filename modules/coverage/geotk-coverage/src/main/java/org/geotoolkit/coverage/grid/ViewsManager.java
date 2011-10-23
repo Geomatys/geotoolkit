@@ -24,6 +24,7 @@ import java.awt.image.renderable.ParameterBlock;
 import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Locale;
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -49,7 +50,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.Category;
@@ -153,9 +153,9 @@ scan:   for (int i=0; i<numBands; i++) {
                 for (final GridCoverage source : sources) {
                     if (source instanceof GridCoverage2D) {
                         final GridCoverage2D candidate = (GridCoverage2D) source;
-                        if (Utilities.equals(coverage.image,            candidate.image)            &&
-                            Utilities.equals(coverage.gridGeometry,     candidate.gridGeometry)     &&
-                            Arrays   .equals(coverage.sampleDimensions, candidate.sampleDimensions) &&
+                        if (Objects.equals(coverage.image,            candidate.image)            &&
+                            Objects.equals(coverage.gridGeometry,     candidate.gridGeometry)     &&
+                            Arrays .equals(coverage.sampleDimensions, candidate.sampleDimensions) &&
                             candidate.getViewClass() == viewClass)
                             // The CRS is checked with the GridGeometry2D.
                         {

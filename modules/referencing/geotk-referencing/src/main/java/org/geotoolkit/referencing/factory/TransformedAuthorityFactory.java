@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.ThreadSafe;
 
@@ -46,7 +47,6 @@ import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Decorator;
 
@@ -328,7 +328,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
         } else {
             datum = oldDatum = null;
         }
-        final boolean sameCS = Utilities.equals(cs, oldCS) && Utilities.equals(datum, oldDatum);
+        final boolean sameCS = Objects.equals(cs, oldCS) && Objects.equals(datum, oldDatum);
         /*
          * Creates a new coordinate reference system using the same properties
          * than the original CRS, except for the coordinate system, datum and
@@ -339,7 +339,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
             final GeneralDerivedCRS         derivedCRS = (GeneralDerivedCRS) crs;
             final CoordinateReferenceSystem oldBaseCRS = derivedCRS.getBaseCRS();
             final CoordinateReferenceSystem    baseCRS = replace(oldBaseCRS);
-            if (sameCS && Utilities.equals(baseCRS, oldBaseCRS)) {
+            if (sameCS && Objects.equals(baseCRS, oldBaseCRS)) {
                 return crs;
             }
             final Map<String,?> properties = getProperties(crs);
@@ -419,7 +419,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
         final CoordinateReferenceSystem oldTgtCRS = operation.getTargetCRS();
         final CoordinateReferenceSystem sourceCRS = (oldSrcCRS != null) ? replace(oldSrcCRS) : null;
         final CoordinateReferenceSystem targetCRS = (oldTgtCRS != null) ? replace(oldTgtCRS) : null;
-        if (Utilities.equals(oldSrcCRS, sourceCRS) && Utilities.equals(oldTgtCRS, targetCRS)) {
+        if (Objects.equals(oldSrcCRS, sourceCRS) && Objects.equals(oldTgtCRS, targetCRS)) {
             return operation;
         }
         if (opFactory == null) {
@@ -502,7 +502,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
      */
     private Map<String,?> getProperties(final IdentifiedObject object) {
         final Citation authority = getAuthority();
-        if (!Utilities.equals(authority, object.getName().getAuthority())) {
+        if (!Objects.equals(authority, object.getName().getAuthority())) {
             return IdentifiedObjects.getProperties(object, authority);
         } else {
             return IdentifiedObjects.getProperties(object);
@@ -522,7 +522,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
     {
         final Set<CoordinateOperation> operations, modified;
         operations = super.createFromCoordinateReferenceSystemCodes(sourceCRS, targetCRS);
-        modified = new LinkedHashSet<CoordinateOperation>(XCollections.hashMapCapacity(operations.size()));
+        modified = new LinkedHashSet<>(XCollections.hashMapCapacity(operations.size()));
         for (final Iterator<CoordinateOperation> it = operations.iterator(); it.hasNext();) {
             final CoordinateOperation operation;
             try {

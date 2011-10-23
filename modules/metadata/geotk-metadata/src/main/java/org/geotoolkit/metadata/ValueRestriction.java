@@ -18,6 +18,7 @@
 package org.geotoolkit.metadata;
 
 import java.util.Set;
+import java.util.Objects;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import net.jcip.annotations.Immutable;
@@ -25,7 +26,6 @@ import net.jcip.annotations.Immutable;
 import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
@@ -231,8 +231,8 @@ public class ValueRestriction implements Serializable {
         if (other != null && other.getClass() == getClass()) {
             final ValueRestriction that = (ValueRestriction) other;
             return (this.obligation == that.obligation) &&
-                   Utilities.equals(this.range,       that.range) &&
-                   Utilities.equals(this.validValues, that.validValues);
+                   Objects.equals(this.range,       that.range) &&
+                   Objects.equals(this.validValues, that.validValues);
         }
         return false;
     }

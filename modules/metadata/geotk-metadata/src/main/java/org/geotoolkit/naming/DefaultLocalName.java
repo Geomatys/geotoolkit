@@ -22,6 +22,7 @@ package org.geotoolkit.naming;
 
 import java.util.List;
 import java.util.Collections;
+import java.util.Objects;
 import java.io.ObjectStreamException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,7 +34,6 @@ import org.opengis.util.LocalName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
 import org.geotoolkit.xml.Namespaces;
@@ -236,8 +236,8 @@ public class DefaultLocalName extends AbstractName implements LocalName {
         }
         if (object != null && object.getClass() == getClass()) {
             final DefaultLocalName that = (DefaultLocalName) object;
-            return Utilities.equals(this.scope, that.scope) &&
-                   Utilities.equals(this.name,  that.name);
+            return Objects.equals(this.scope, that.scope) &&
+                   Objects.equals(this.name,  that.name);
         }
         return false;
     }

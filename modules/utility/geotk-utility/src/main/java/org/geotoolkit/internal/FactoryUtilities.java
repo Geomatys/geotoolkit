@@ -18,12 +18,12 @@
 package org.geotoolkit.internal;
 
 import java.util.Map;
+import java.util.Objects;
 import java.awt.RenderingHints;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -72,7 +72,7 @@ public final class FactoryUtilities extends Static {
             final Object value = entry.getValue();
             if ((filterOnlyNulls && value != null) || key.isCompatibleValue(value)) {
                 final Object old = target.put(key, value);
-                if (!changed && !Utilities.equals(old, value)) {
+                if (!changed && !Objects.equals(old, value)) {
                     changed = true;
                 }
             }
@@ -111,7 +111,7 @@ public final class FactoryUtilities extends Static {
                 if (key instanceof RenderingHints.Key) {
                     final Object value = entry.getValue();
                     final Object old = target.put((RenderingHints.Key) key, value);
-                    if (!changed && !Utilities.equals(value, old)) {
+                    if (!changed && !Objects.equals(value, old)) {
                         changed = true;
                     }
                 }

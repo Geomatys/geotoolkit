@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -38,7 +39,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -542,7 +542,7 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
         }
         if (super.equals(object, mode)) {
             final WarpTransform2D that = (WarpTransform2D) object;
-            return Utilities.equals(this.warp, that.warp);
+            return Objects.equals(this.warp, that.warp);
         }
         return false;
     }

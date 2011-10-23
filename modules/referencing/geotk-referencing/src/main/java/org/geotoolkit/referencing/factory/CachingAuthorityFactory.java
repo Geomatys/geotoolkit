@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.WeakHashMap;
+import java.util.Objects;
 import java.util.logging.LogRecord;
 import java.util.logging.Level;
 import javax.measure.unit.Unit;
@@ -56,7 +57,6 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
@@ -540,8 +540,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         @Override public boolean equals(final Object other) {
             if (other instanceof Key) {
                 final Key that = (Key) other;
-                return Utilities.equals(type, that.type) &&
-                       Utilities.equals(code, that.code);
+                return Objects.equals(type, that.type) &&
+                       Objects.equals(code, that.code);
             }
             return false;
         }
@@ -994,8 +994,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         public boolean equals(final Object other) {
             if (other instanceof CodePair) {
                 final CodePair that = (CodePair) other;
-                return Utilities.equals(this.source, that.source) &&
-                       Utilities.equals(this.target, that.target);
+                return Objects.equals(this.source, that.source) &&
+                       Objects.equals(this.target, that.target);
             }
             return false;
         }

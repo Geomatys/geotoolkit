@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing;
 
+import java.util.Objects;
+
 import java.awt.*;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -34,7 +36,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -551,7 +552,7 @@ public class ProgressWindow extends ProgressController implements Disposable {
                 c.insets.top = 3;
                 final String[] values = (String[]) value;
                 String source = values[0];
-                if (!Utilities.equals(source, lastSource)) {
+                if (!Objects.equals(source, lastSource)) {
                     lastSource = source;
                     if (source == null) {
                         source = getString(Vocabulary.Keys.UNTITLED);

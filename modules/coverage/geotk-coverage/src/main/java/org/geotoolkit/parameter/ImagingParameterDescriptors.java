@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 import java.util.Locale;
+import java.util.Objects;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.awt.image.RenderedImage;
@@ -55,7 +56,6 @@ import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
@@ -565,8 +565,8 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
         }
         if (object instanceof ImagingParameterDescriptors && super.equals(object, mode)) {
             final ImagingParameterDescriptors that = (ImagingParameterDescriptors) object;
-            return Utilities.equals(this.operation,  that.operation) &&
-                   Utilities.equals(this.descriptor, that.descriptor);
+            return Objects.equals(this.operation,  that.operation) &&
+                   Objects.equals(this.descriptor, that.descriptor);
         }
         return false;
     }

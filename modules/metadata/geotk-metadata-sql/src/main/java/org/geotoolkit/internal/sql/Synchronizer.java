@@ -29,13 +29,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
 
@@ -412,7 +412,7 @@ public final class Synchronizer {
                                         }
                                         final String source = sourceResultSet.getString(i+1);
                                         final String target = targetResultSet.getString(index);
-                                        if (!Utilities.equals(source, target)) {
+                                        if (!Objects.equals(source, target)) {
                                             if (mismatchs == null) {
                                                 mismatchs = createMismatchTable(table, pkColumns);
                                             } else {

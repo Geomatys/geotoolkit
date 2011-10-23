@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,6 @@ import java.util.logging.Logger;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
@@ -178,8 +178,8 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         public boolean equals(final Object other) {
             if (other instanceof Map.Entry<?,?>) {
                 final Map.Entry<?,?> that = (Map.Entry<?,?>) other;
-                return Utilities.equals(key,   that.getKey()) &&
-                       Utilities.equals(get(), that.getValue());
+                return Objects.equals(key,   that.getKey()) &&
+                       Objects.equals(get(), that.getValue());
             }
             return false;
         }

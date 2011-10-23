@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.metadata.sql;
 
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -57,8 +57,8 @@ final class CacheKey {
     public boolean equals(final Object other) {
         if (other instanceof CacheKey) {
             final CacheKey that = (CacheKey) other;
-            return Utilities.equals(this.type,       that.type) &&
-                   Utilities.equals(this.identifier, that.identifier);
+            return Objects.equals(this.type,       that.type) &&
+                   Objects.equals(this.identifier, that.identifier);
         }
         return false;
     }

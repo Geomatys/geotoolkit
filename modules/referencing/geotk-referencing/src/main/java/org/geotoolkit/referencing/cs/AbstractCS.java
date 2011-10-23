@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
@@ -40,7 +41,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.measure.Measure;
@@ -246,7 +246,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * were formatted in different locales.
      */
     static Map<String,Object> name(final int key) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<>(4);
         final InternationalString name = Vocabulary.formatInternational(key);
         properties.put(NAME_KEY,  name.toString());
         properties.put(ALIAS_KEY, name);
@@ -386,7 +386,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                     continue;
                 }
                 final Unit<?> sourceUnit = sourceCS.getAxis(i).getUnit();
-                if (Utilities.equals(sourceUnit, targetUnit)) {
+                if (Objects.equals(sourceUnit, targetUnit)) {
                     // There is no units conversion to apply
                     // between source[i] and target[j].
                     continue;

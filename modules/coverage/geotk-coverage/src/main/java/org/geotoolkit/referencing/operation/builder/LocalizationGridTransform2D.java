@@ -25,6 +25,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
 import java.util.Arrays;
+import java.util.Objects;
 import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
@@ -35,7 +36,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.operation.transform.GridType;
 import org.geotoolkit.referencing.operation.transform.GridTransform;
 import org.geotoolkit.referencing.operation.transform.IterationStrategy;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
@@ -603,7 +603,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
         }
         if (super.equals(object, mode)) {
             final LocalizationGridTransform2D that = (LocalizationGridTransform2D) object;
-            return Utilities.equals(this.global, that.global);
+            return Objects.equals(this.global, that.global);
         }
         return false;
     }

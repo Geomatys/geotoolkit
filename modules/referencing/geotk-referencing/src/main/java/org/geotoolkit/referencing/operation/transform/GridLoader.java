@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.lang.reflect.UndeclaredThrowableException;
 
@@ -109,9 +110,9 @@ class GridLoader {
     public final boolean equals(final Object other) {
         if (other instanceof GridLoader) {
             final GridLoader that = (GridLoader) other;
-            return Utilities.equals(type, that.type) &&
-                   Utilities.equals(longitudeGridFile, that.longitudeGridFile) &&
-                   Utilities.equals(latitudeGridFile,  that.latitudeGridFile);
+            return Objects.equals(type, that.type) &&
+                   Objects.equals(longitudeGridFile, that.longitudeGridFile) &&
+                   Objects.equals(latitudeGridFile,  that.latitudeGridFile);
         }
         return false;
     }

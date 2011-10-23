@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.referencing;
 
+import java.util.Objects;
 import java.awt.geom.AffineTransform;
 import javax.vecmath.MismatchedSizeException;
 import javax.vecmath.SingularMatrixException;
@@ -514,7 +515,7 @@ search:     for (int j=numRow; --j>=0;) {
      */
     public static boolean equals(final Matrix m1, final Object m2, final ComparisonMode mode) {
         switch (mode) {
-            case STRICT:          return Utilities.equals(m1, m2);
+            case STRICT:          return Objects.equals(m1, m2);
             case BY_CONTRACT:     // Fall through
             case IGNORE_METADATA: return (m2 instanceof Matrix) && epsilonEqual(m1, (Matrix) m2, 0, false);
             case APPROXIMATIVE:   return (m2 instanceof Matrix) && epsilonEqual(m1, (Matrix) m2, COMPARISON_THRESHOLD, true);

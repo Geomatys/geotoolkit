@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -36,7 +37,6 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
@@ -200,7 +200,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
             switch (mode) {
                 case STRICT: {
                     final AbstractCRS that = (AbstractCRS) object;
-                    return Utilities.equals(this.coordinateSystem, that.coordinateSystem);
+                    return Objects.equals(this.coordinateSystem, that.coordinateSystem);
                 }
                 default: {
                     final CoordinateReferenceSystem that = (CoordinateReferenceSystem) object;

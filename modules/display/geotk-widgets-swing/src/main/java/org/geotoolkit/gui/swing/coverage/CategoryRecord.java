@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.Color;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.text.NumberFormat;
@@ -274,7 +275,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @return {@code true} if this object changed as a result of this method call.
      */
     public boolean setName(final String name) {
-        if (Utilities.equals(name, this.name)) {
+        if (Objects.equals(name, this.name)) {
             return false;
         }
         this.name = name;
@@ -639,7 +640,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @since 3.14
      */
     public boolean setPaletteName(final String name) {
-        final boolean changed = !Utilities.equals(name, paletteName);
+        final boolean changed = !Objects.equals(name, paletteName);
         if (changed) {
             paletteName = name;
             category = null;

@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.resources.Errors;
@@ -631,8 +631,8 @@ public class ColorMap implements Serializable {
     public boolean equals(final Object object) {
         if (object != null && getClass() == object.getClass()) {
             final ColorMap that = (ColorMap) object;
-            return Utilities.equals(this.colorMap,    that.colorMap) &&
-                   Utilities.equals(this.colorRanges, that.colorRanges);
+            return Objects.equals(this.colorMap,    that.colorMap) &&
+                   Objects.equals(this.colorRanges, that.colorRanges);
         }
         return false;
     }

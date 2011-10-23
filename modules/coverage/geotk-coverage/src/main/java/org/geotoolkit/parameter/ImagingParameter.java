@@ -18,6 +18,7 @@
 package org.geotoolkit.parameter;
 
 import java.net.URI;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import javax.media.jai.ParameterList;
 
@@ -343,7 +344,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
         }
         if (super.equals(object)) {
             final ImagingParameter<?> that = (ImagingParameter<?>) object;
-            return Utilities.deepEquals(this.getValue(), that.getValue());
+            return Objects.deepEquals(this.getValue(), that.getValue());
         }
         return false;
     }

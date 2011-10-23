@@ -23,34 +23,14 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.io.Serializable;
 
 import org.geotoolkit.lang.Static;
 
 
 /**
- * Miscellaneous methods, including convenience methods for {@link Object#equals equals} and
- * {@link Object#hashCode hashCode} implementations. Example use case in a class called
- * {@code Car}:
- *
- * {@preformat java
- *     public boolean equals(Object other) {
- *         if (this == aThat) {
- *             return true;
- *         }
- *         if (other == null || other.getClass() != getClass()) {
- *             return false;
- *         }
- *         Car that = (Car) other;
- *         return Utilities.equals(this.name,           that.name)       &&
- *                Utilities.equals(this.numDoors,       that.numDoors)   &&
- *                Utilities.equals(this.gasMileage,     that.gasMileage) &&
- *                Utilities.equals(this.color,          that.color)      &&
- *                Arrays.equals(this.maintenanceChecks, that.maintenanceChecks);
- *     }
- * }
- *
- * Note the usage of {@link Arrays} method for comparing arrays.
+ * Miscellaneous methods.
  * <p>
  * This class also provides convenience methods for computing {@linkplain Object#hashCode hash code}
  * values. All those methods expect a {@code seed} argument, which is the hash code value computed
@@ -77,96 +57,6 @@ public final class Utilities extends Static {
      * Forbid object creation.
      */
     private Utilities() {
-    }
-
-    /**
-     * Returns {@code true} if the given booleans are equals. This overloaded flavor is provided
-     * only for allowing developer to invoke {@code equals} methods without consideration for
-     * the argument type.
-     *
-     * @param o1 The first value to compare.
-     * @param o2 The second value to compare.
-     * @return {@code true} if both values are equal.
-     *
-     * @see Boolean#equals(Object)
-     */
-    public static boolean equals(final boolean o1, final boolean o2) {
-        return o1 == o2;
-    }
-
-    /**
-     * Returns {@code true} if the given characters are equals. This overloaded flavor is provided
-     * only for allowing developer to invoke {@code equals} methods without consideration for
-     * the argument type.
-     *
-     * @param o1 The first value to compare.
-     * @param o2 The second value to compare.
-     * @return {@code true} if both values are equal.
-     *
-     * @see Character#equals(Object)
-     */
-    public static boolean equals(final char o1, final char o2) {
-        return o1 == o2;
-    }
-
-    /**
-     * Returns {@code true} if the given bytes are equals. This overloaded flavor is provided
-     * only for allowing developer to invoke {@code equals} methods without consideration for
-     * the argument type.
-     *
-     * @param o1 The first value to compare.
-     * @param o2 The second value to compare.
-     * @return {@code true} if both values are equal.
-     *
-     * @see Byte#equals(Object)
-     */
-    public static boolean equals(final byte o1, final byte o2) {
-        return o1 == o2;
-    }
-
-    /**
-     * Returns {@code true} if the given shorts are equals. This overloaded flavor is provided
-     * only for allowing developer to invoke {@code equals} methods without consideration for
-     * the argument type.
-     *
-     * @param o1 The first value to compare.
-     * @param o2 The second value to compare.
-     * @return {@code true} if both values are equal.
-     *
-     * @see Short#equals(Object)
-     */
-    public static boolean equals(final short o1, final short o2) {
-        return o1 == o2;
-    }
-
-    /**
-     * Returns {@code true} if the given integers are equals. This overloaded flavor is provided
-     * only for allowing developer to invoke {@code equals} methods without consideration for
-     * the argument type.
-     *
-     * @param o1 The first value to compare.
-     * @param o2 The second value to compare.
-     * @return {@code true} if both values are equal.
-     *
-     * @see Integer#equals(Object)
-     */
-    public static boolean equals(final int o1, final int o2) {
-        return o1 == o2;
-    }
-
-    /**
-     * Returns {@code true} if the given longs are equals. This overloaded flavor is provided
-     * only for allowing developer to invoke {@code equals} methods without consideration for
-     * the argument type.
-     *
-     * @param o1 The first value to compare.
-     * @param o2 The second value to compare.
-     * @return {@code true} if both values are equal.
-     *
-     * @see Long#equals(Object)
-     */
-    public static boolean equals(final long o1, final long o2) {
-        return o1 == o2;
     }
 
     /**
@@ -198,122 +88,11 @@ public final class Utilities extends Static {
     }
 
     /**
-     * Convenience method for testing two objects for equality. One or both objects may be null.
-     * This method do <strong>not</strong> iterates recursively in array elements. If array needs
-     * to be compared, use one of {@link Arrays} method or {@link #deepEquals deepEquals} instead.
-     * <p>
-     * <b>Note on assertions:</b> There is no way to ensure at compile time that this method
-     * is not invoked with array arguments, while doing so would usually be a program error.
-     * Performing a systematic argument check would impose a useless overhead for correctly
-     * implemented {@link Object#equals} methods. As a compromise we perform this check at runtime
-     * only if assertions are enabled. Using assertions for argument check in a public API is
-     * usually a deprecated practice, but we make an exception for this particular method.
-     * <p>
-     * <b>Note on method overloading:</b> This method could be selected by the compiler for
-     * comparing primitive types, because the compiler could perform an auto-boxing and get
-     * a result assignable to {@code Object}. However it should not occur in practice because
-     * overloaded (and more efficient) methods are provided for every primitive types. This is
-     * true even when the two arguments are different primitive type because of widening
-     * conversions. The only exception is when a {@code boolean} argument is mixed with a
-     * different primitive type.
-     *
-     * @param object1 The first object to compare, or {@code null}.
-     * @param object2 The second object to compare, or {@code null}.
-     * @return {@code true} if both objects are equal.
-     * @throws AssertionError If assertions are enabled and at least one argument is an array.
-     */
-    public static boolean equals(final Object object1, final Object object2) throws AssertionError {
-        assert object1 == null || !object1.getClass().isArray() : name(object1);
-        assert object2 == null || !object2.getClass().isArray() : name(object2);
-        return (object1 == object2) || (object1 != null && object1.equals(object2));
-    }
-
-    /**
-     * Convenience method for testing two objects for equality. One or both objects may be null.
-     * If both are non-null and are arrays, then every array elements will be compared.
-     * <p>
-     * This method may be useful when the objects may or may not be array. If they are known
-     * to be arrays, consider using {@link Arrays#deepEquals(Object[],Object[])} or one of its
-     * primitive counter-part instead.
-     * <p>
-     * <strong>Rules for choosing an {@code equals} or {@code deepEquals} method</strong>
-     * <ul>
-     *   <li>If <em>both</em> objects are declared as {@code Object[]} (not anything else like
-     *   {@code String[]}), consider using {@link Arrays#deepEquals(Object[],Object[])} except
-     *   if it is known that the array elements can never be other arrays.</li>
-     *
-     *   <li>Otherwise if both objects are arrays (e.g. {@code Expression[]}, {@code String[]},
-     *   {@code int[]}, <i>etc.</i>), use {@link Arrays#equals(Object[],Object[])}. This
-     *   rule is applicable to arrays of primitive type too, since {@code Arrays.equals} is
-     *   overridden with primitive counter-parts.</li>
-     *
-     *   <li>Otherwise if at least one object is anything else than {@code Object} (e.g.
-     *   {@code String}, {@code Expression}, <i>etc.</i>), use {@link #equals(Object,Object)}.
-     *   Using this {@code deepEquals} method would be an overkill since there is no chance that
-     *   {@code String} or {@code Expression} could be an array.</li>
-     *
-     *   <li>Otherwise if <em>both</em> objects are declared exactly as {@code Object} type and
-     *   it is known that they could be arrays, only then invoke this {@code deepEquals} method.
-     *   In such case, make sure that the hash code is computed using {@link #deepHashCode(Object)}
-     *   for consistency.</li>
-     * </ul>
-     *
-     * @param object1 The first object to compare, or {@code null}.
-     * @param object2 The second object to compare, or {@code null}.
-     * @return {@code true} if both objects are equal.
-     */
-    public static boolean deepEquals(final Object object1, final Object object2) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 == null || object2 == null) {
-            return false;
-        }
-        if (object1 instanceof Object[]) {
-            return (object2 instanceof Object[]) &&
-                    Arrays.deepEquals((Object[]) object1, (Object[]) object2);
-        }
-        if (object1 instanceof double[]) {
-            return (object2 instanceof double[]) &&
-                    Arrays.equals((double[]) object1, (double[]) object2);
-        }
-        if (object1 instanceof float[]) {
-            return (object2 instanceof float[]) &&
-                    Arrays.equals((float[]) object1, (float[]) object2);
-        }
-        if (object1 instanceof long[]) {
-            return (object2 instanceof long[]) &&
-                    Arrays.equals((long[]) object1, (long[]) object2);
-        }
-        if (object1 instanceof int[]) {
-            return (object2 instanceof int[]) &&
-                    Arrays.equals((int[]) object1, (int[]) object2);
-        }
-        if (object1 instanceof short[]) {
-            return (object2 instanceof short[]) &&
-                    Arrays.equals((short[]) object1, (short[]) object2);
-        }
-        if (object1 instanceof byte[]) {
-            return (object2 instanceof byte[]) &&
-                    Arrays.equals((byte[]) object1, (byte[]) object2);
-        }
-        if (object1 instanceof char[]) {
-            return (object2 instanceof char[]) &&
-                    Arrays.equals((char[]) object1, (char[]) object2);
-        }
-        if (object1 instanceof boolean[]) {
-            return (object2 instanceof boolean[]) &&
-                    Arrays.equals((boolean[]) object1, (boolean[]) object2);
-        }
-        return object1.equals(object2);
-    }
-
-    /**
      * Convenience method for testing two objects for equality using the given level of strictness.
      * If at least one of the given objects implement the {@link LenientComparable} interface, then
      * the comparison is performed using the {@link LenientComparable#equals(Object, ComparisonMode)}
-     * method. Otherwise this method performs the same work than the above
-     * {@link #deepEquals(Object, Object)} convenience method.
+     * method. Otherwise this method performs the same work than the
+     * {@link Objects#deepEquals(Object, Object)} convenience method.
      * <p>
      * If both arguments are arrays or collections, then the elements are compared recursively.
      *
@@ -392,7 +171,7 @@ public final class Utilities extends Static {
             }
             return true;
         }
-        return deepEquals(object1, object2);
+        return Objects.deepEquals(object1, object2);
     }
 
     /**

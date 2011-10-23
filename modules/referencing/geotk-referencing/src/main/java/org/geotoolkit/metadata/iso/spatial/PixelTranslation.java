@@ -19,6 +19,7 @@ package org.geotoolkit.metadata.iso.spatial;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
 import java.io.Serializable;
 
 import org.opengis.referencing.operation.Matrix;
@@ -28,7 +29,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import static org.opengis.metadata.spatial.PixelOrientation.*;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
@@ -231,7 +231,7 @@ public final class PixelTranslation extends Static implements Serializable {
                                           final PixelInCell current,
                                           final PixelInCell expected)
     {
-        if (Utilities.equals(current, expected)) {
+        if (Objects.equals(current, expected)) {
             return gridToCRS;
         }
         if (gridToCRS == null) {
@@ -276,7 +276,7 @@ public final class PixelTranslation extends Static implements Serializable {
                                           final int xDimension,
                                           final int yDimension)
     {
-        if (Utilities.equals(current, expected)) {
+        if (Objects.equals(current, expected)) {
             return gridToCRS;
         }
         if (gridToCRS == null) {

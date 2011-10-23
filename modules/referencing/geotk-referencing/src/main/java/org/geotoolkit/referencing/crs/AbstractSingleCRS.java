@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.Datum;
@@ -31,7 +32,6 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.geotoolkit.internal.referencing.NilReferencingObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -193,7 +193,7 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
             switch (mode) {
                 case STRICT: {
                     final AbstractSingleCRS that = (AbstractSingleCRS) object;
-                    return Utilities.equals(this.datum, that.datum);
+                    return Objects.equals(this.datum, that.datum);
                 }
                 default: {
                     final SingleCRS that = (SingleCRS) object;

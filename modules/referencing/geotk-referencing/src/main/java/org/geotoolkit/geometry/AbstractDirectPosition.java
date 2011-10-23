@@ -18,6 +18,7 @@
 package org.geotoolkit.geometry;
 
 import java.util.Arrays;
+import java.util.Objects;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
@@ -338,8 +339,8 @@ scan:   while (true) {
                         return false;
                     }
                 }
-                if (Utilities.equals(this.getCoordinateReferenceSystem(),
-                                     that.getCoordinateReferenceSystem()))
+                if (Objects.equals(this.getCoordinateReferenceSystem(),
+                                   that.getCoordinateReferenceSystem()))
                 {
                     assert hashCode() == that.hashCode() : this;
                     return true;

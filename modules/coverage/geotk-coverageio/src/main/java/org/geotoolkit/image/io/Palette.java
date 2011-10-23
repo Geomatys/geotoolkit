@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io;
 
+import java.util.Objects;
 import java.awt.image.*;
 import java.awt.Dimension;
 import java.lang.ref.Reference;
@@ -26,7 +27,6 @@ import java.io.FileNotFoundException;
 import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 
@@ -289,7 +289,7 @@ public abstract class Palette {
             final Palette that = (Palette) object;
             return this.numBands    == that.numBands    &&
                    this.visibleBand == that.visibleBand &&
-                   Utilities.equals(this.name, that.name);
+                   Objects.equals(this.name, that.name);
             /*
              * Note: we do not compare PaletteFactory on purpose, since two instances could be
              * identical except for the locale to use for formatting error messages.   Because

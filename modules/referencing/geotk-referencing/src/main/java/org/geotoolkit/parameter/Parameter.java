@@ -24,6 +24,7 @@ import java.io.File;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -38,7 +39,6 @@ import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -681,8 +681,8 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         }
         if (super.equals(object)) {
             final Parameter<?> that = (Parameter<?>) object;
-            return Utilities.equals(this.value, that.value) &&
-                   Utilities.equals(this.unit,  that.unit);
+            return Objects.equals(this.value, that.value) &&
+                   Objects.equals(this.unit,  that.unit);
         }
         return false;
     }

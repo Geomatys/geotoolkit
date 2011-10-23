@@ -23,6 +23,7 @@ package org.geotoolkit.referencing;
 import java.util.Map;
 import java.util.Locale;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,7 +38,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -553,11 +553,11 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         }
         if (object != null && object.getClass() == getClass()) {
             final DefaultReferenceIdentifier that = (DefaultReferenceIdentifier) object;
-            return Utilities.equals(code,      that.code)      &&
-                   Utilities.equals(codeSpace, that.codeSpace) &&
-                   Utilities.equals(authority, that.authority) &&
-                   Utilities.equals(version,   that.version)   &&
-                   Utilities.equals(remarks,   that.remarks);
+            return Objects.equals(code,      that.code)      &&
+                   Objects.equals(codeSpace, that.codeSpace) &&
+                   Objects.equals(authority, that.authority) &&
+                   Objects.equals(version,   that.version)   &&
+                   Objects.equals(remarks,   that.remarks);
         }
         return false;
     }

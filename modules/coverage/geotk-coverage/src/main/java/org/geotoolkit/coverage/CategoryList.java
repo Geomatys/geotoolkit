@@ -25,6 +25,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Comparator;
 import java.util.Locale;
 import javax.measure.unit.Unit;
@@ -46,7 +47,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -812,7 +812,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             final CategoryList that = (CategoryList) object;
             if (Arrays.equals(this.categories, that.categories)) {
                 assert Arrays.equals(this.minimums, that.minimums);
-                return Utilities.equals(this.overflowFallback, that.overflowFallback);
+                return Objects.equals(this.overflowFallback, that.overflowFallback);
             }
             return false;
         }

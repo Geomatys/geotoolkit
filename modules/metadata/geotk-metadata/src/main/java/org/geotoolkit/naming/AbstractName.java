@@ -23,6 +23,7 @@ package org.geotoolkit.naming;
 import java.util.List;
 import java.util.Locale;
 import java.util.Iterator;
+import java.util.Objects;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlType;
 import net.jcip.annotations.Immutable;
@@ -33,7 +34,6 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -317,7 +317,7 @@ public abstract class AbstractName implements GenericName, Serializable {
             }
             if (super.equals(object)) {
                 final International that = (International) object;
-                return Utilities.equals(this.parsedNames, that.parsedNames);
+                return Objects.equals(this.parsedNames, that.parsedNames);
             }
             return false;
         }
@@ -379,8 +379,8 @@ public abstract class AbstractName implements GenericName, Serializable {
         }
         if (object != null && object.getClass() == getClass()) {
             final AbstractName that = (AbstractName) object;
-            return Utilities.equals(this.scope(), that.scope()) &&
-                   Utilities.equals(this.getParsedNames(), that.getParsedNames());
+            return Objects.equals(this.scope(), that.scope()) &&
+                   Objects.equals(this.getParsedNames(), that.getParsedNames());
         }
         return false;
     }

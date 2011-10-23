@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.grid;
 
+import java.util.Objects;
 import java.io.Serializable;
 import java.awt.image.RenderedImage;
 import net.jcip.annotations.Immutable;
@@ -34,7 +35,6 @@ import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -672,9 +672,9 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
             final GeneralGridGeometry that = (GeneralGridGeometry) object;
-            return Utilities.equals(this.gridRange, that.gridRange) &&
-                   Utilities.equals(this.gridToCRS, that.gridToCRS) &&
-                   Utilities.equals(this.envelope , that.envelope );
+            return Objects.equals(this.gridRange, that.gridRange) &&
+                   Objects.equals(this.gridToCRS, that.gridToCRS) &&
+                   Objects.equals(this.envelope , that.envelope );
             // Do not compare cornerToCRS since it may not be computed yet,
             // and should be strictly derived from gridToCRS anyway.
         }

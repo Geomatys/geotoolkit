@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
@@ -44,7 +45,6 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
@@ -336,7 +336,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
             switch (mode) {
                 case STRICT: {
                     final DefaultConcatenatedOperation that = (DefaultConcatenatedOperation) object;
-                    return Utilities.equals(this.operations, that.operations);
+                    return Objects.equals(this.operations, that.operations);
                 }
                 default: {
                     final ConcatenatedOperation that = (ConcatenatedOperation) object;

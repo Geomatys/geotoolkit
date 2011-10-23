@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.measure;
 
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.Utilities;
@@ -95,7 +96,7 @@ public final class Measure extends Number {
         if (object instanceof Measure) {
             final Measure that = (Measure) object;
             return Utilities.equals(value, that.value) &&
-                   Utilities.equals(unit,  that.unit);
+                     Objects.equals(unit,  that.unit);
         }
         return false;
     }

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.Comparator;
 import java.util.AbstractSet;
@@ -1159,7 +1160,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         }
         if (object != null && object.getClass() == getClass()) {
             final RangeSet<?> that = (RangeSet<?>) object;
-            if (length == that.length && Utilities.equals(elementClass, that.elementClass)) {
+            if (length == that.length && Objects.equals(elementClass, that.elementClass)) {
                 this.trimToSize();
                 that.trimToSize();
                 final Object a1 = this.array;

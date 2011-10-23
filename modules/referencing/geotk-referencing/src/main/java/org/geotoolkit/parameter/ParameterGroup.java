@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.ParameterValue;
@@ -39,7 +40,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterCardinalityException;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -399,7 +399,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         }
         if (super.equals(object)) {
             final ParameterGroup that = (ParameterGroup) object;
-            return Utilities.equals(this.values, that.values);
+            return Objects.equals(this.values, that.values);
         }
         return false;
     }

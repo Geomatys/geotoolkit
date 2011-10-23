@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.grid;
 
 import java.util.Map;
+import java.util.Objects;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
@@ -49,7 +50,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -127,8 +127,8 @@ public class GridCoverageFactory extends Factory {
         String tileEncoding = null;
         if (userHints != null) {
             defaultCRS = (CoordinateReferenceSystem) userHints.get(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM);
-            if (Utilities.equals(defaultCRS, DefaultGeographicCRS.WGS84) ||
-                Utilities.equals(defaultCRS, DefaultGeographicCRS.WGS84_3D))
+            if (Objects.equals(defaultCRS, DefaultGeographicCRS.WGS84) ||
+                Objects.equals(defaultCRS, DefaultGeographicCRS.WGS84_3D))
             {
                 // Will be handled in a special way by getDefaultCRS(int)
                 defaultCRS = null;

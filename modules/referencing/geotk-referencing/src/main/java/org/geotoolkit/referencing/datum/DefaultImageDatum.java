@@ -22,13 +22,13 @@ package org.geotoolkit.referencing.datum;
 
 import java.util.Map;
 import java.util.Collections;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.ImageDatum;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -152,11 +152,11 @@ public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
             switch (mode) {
                 case STRICT: {
                     final DefaultImageDatum that = (DefaultImageDatum) object;
-                    return Utilities.equals(this.pixelInCell, that.pixelInCell);
+                    return Objects.equals(this.pixelInCell, that.pixelInCell);
                 }
                 default: {
                     final ImageDatum that = (ImageDatum) object;
-                    return Utilities.equals(getPixelInCell(), that.getPixelInCell());
+                    return Objects.equals(getPixelInCell(), that.getPixelInCell());
                 }
             }
         }

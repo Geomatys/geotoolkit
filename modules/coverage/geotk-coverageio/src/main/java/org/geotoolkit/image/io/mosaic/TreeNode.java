@@ -23,10 +23,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.gui.swing.tree.Trees;
 
 
@@ -560,7 +560,7 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
         if (other == this) {
             return true;
         }
-        if (!equals(other) || !Utilities.equals(tile, other.tile)) {
+        if (!equals(other) || !Objects.equals(tile, other.tile)) {
             return false;
         }
         final Iterator<TreeNode> it1 = this .iterator();

@@ -25,12 +25,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.AbstractSet;
+import java.util.Objects;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -313,8 +313,8 @@ final class GridTileManager extends TileManager {
         if (object != null && object.getClass() == getClass()) {
             final GridTileManager that = (GridTileManager) object;
             return count == that.count &&
-                   Utilities.equals(region, that.region) &&
-                   Utilities.equals(root,   that.root); // Tests last since it may be expansive.
+                   Objects.equals(region, that.region) &&
+                   Objects.equals(root,   that.root); // Tests last since it may be expansive.
         }
         return false;
     }

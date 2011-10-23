@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Objects;
 import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
@@ -35,7 +36,6 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.referencing.IdentifiedObject;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
@@ -547,19 +547,19 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                 }
                 case BY_CONTRACT: {
                     final ParameterDescriptor<?> that = (ParameterDescriptor<?>) object;
-                    return Utilities.    equals(getValidValues(),  that.getValidValues())  &&
-                           Utilities.deepEquals(getDefaultValue(), that.getDefaultValue()) &&
-                           Utilities.    equals(getMinimumValue(), that.getMinimumValue()) &&
-                           Utilities.    equals(getMaximumValue(), that.getMaximumValue()) &&
-                           Utilities.    equals(getUnit(),         that.getUnit());
+                    return Objects.    equals(getValidValues(),  that.getValidValues())  &&
+                           Objects.deepEquals(getDefaultValue(), that.getDefaultValue()) &&
+                           Objects.    equals(getMinimumValue(), that.getMinimumValue()) &&
+                           Objects.    equals(getMaximumValue(), that.getMaximumValue()) &&
+                           Objects.    equals(getUnit(),         that.getUnit());
                 }
                 case STRICT: {
                     final DefaultParameterDescriptor<?> that = (DefaultParameterDescriptor<?>) object;
-                    return Utilities.    equals(this.validValues,  that.validValues)  &&
-                           Utilities.deepEquals(this.defaultValue, that.defaultValue) &&
-                           Utilities.    equals(this.minimum,      that.minimum)      &&
-                           Utilities.    equals(this.maximum,      that.maximum)      &&
-                           Utilities.    equals(this.unit,         that.unit);
+                    return Objects.    equals(this.validValues,  that.validValues)  &&
+                           Objects.deepEquals(this.defaultValue, that.defaultValue) &&
+                           Objects.    equals(this.minimum,      that.minimum)      &&
+                           Objects.    equals(this.maximum,      that.maximum)      &&
+                           Objects.    equals(this.unit,         that.unit);
                 }
             }
         }

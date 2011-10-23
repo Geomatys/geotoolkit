@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.ReferenceIdentifier;
@@ -42,7 +43,6 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -510,9 +510,9 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             switch (mode) {
                 case STRICT: {
                     final DefaultGeodeticDatum that = (DefaultGeodeticDatum) object;
-                    return Utilities.equals(this.ellipsoid,     that.ellipsoid)     &&
-                           Utilities.equals(this.primeMeridian, that.primeMeridian) &&
-                              Arrays.equals(this.bursaWolf,     that.bursaWolf);
+                    return Objects.equals(this.ellipsoid,     that.ellipsoid)     &&
+                           Objects.equals(this.primeMeridian, that.primeMeridian) &&
+                            Arrays.equals(this.bursaWolf,     that.bursaWolf);
                 }
                 default: {
                     final GeodeticDatum that = (GeodeticDatum) object;

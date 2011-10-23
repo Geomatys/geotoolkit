@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.gmx;
 
 import java.net.URI;
 import java.util.Locale;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -143,7 +144,7 @@ public final class Anchor extends XLink implements InternationalString {
         }
         if (super.equals(object)) {
             final Anchor that = (Anchor) object;
-            return Utilities.equals(this.value, that.value);
+            return Objects.equals(this.value, that.value);
         }
         return false;
     }

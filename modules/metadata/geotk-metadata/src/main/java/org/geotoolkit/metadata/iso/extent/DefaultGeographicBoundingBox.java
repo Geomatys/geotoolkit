@@ -21,6 +21,7 @@
 package org.geotoolkit.metadata.iso.extent;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.text.FieldPosition;
 import java.awt.geom.Rectangle2D;
 import javax.xml.bind.annotation.XmlElement;
@@ -540,7 +541,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         // is generic enough for all other cases.
         if (object != null && object.getClass() == DefaultGeographicBoundingBox.class) { // NOSONAR
             final DefaultGeographicBoundingBox that = (DefaultGeographicBoundingBox) object;
-            return Utilities.equals(this.getInclusion(),     that.getInclusion())     &&
+            return Objects  .equals(this.getInclusion(),     that.getInclusion())     &&
                    Utilities.equals(this.southBoundLatitude, that.southBoundLatitude) &&
                    Utilities.equals(this.northBoundLatitude, that.northBoundLatitude) &&
                    Utilities.equals(this.eastBoundLongitude, that.eastBoundLongitude) &&
