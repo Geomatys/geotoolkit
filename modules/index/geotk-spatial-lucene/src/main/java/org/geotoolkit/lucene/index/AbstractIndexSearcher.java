@@ -252,6 +252,10 @@ public class AbstractIndexSearcher extends IndexLucene {
     public String getIdentifierSearchField() {
         return "id";
     }
+    
+    public Map<String, Character> getNumericFields() {
+        return numericFields;
+    }
 
     /**
      * This method return the database ID of a matching Document
