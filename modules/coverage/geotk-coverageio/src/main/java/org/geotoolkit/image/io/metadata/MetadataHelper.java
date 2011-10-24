@@ -49,6 +49,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -531,9 +532,14 @@ public class MetadataHelper implements Localized {
         /*
          * Get the pixel sizes, and verify if they are the same for all axes.
          */
+        double minSize = Double.POSITIVE_INFINITY;
         final double[] sizes = new double[offsetVectors.size()];
         for (int i=0; i<sizes.length; i++) {
             sizes[i] = adjustForRoundingError(XMath.magnitude(offsetVectors.get(i)));
+            final double as = Math.abs(sizes[i]);
+            if (as < minSize) {
+                minSize = as;
+            }
         }
         boolean sameSize = true;
         for (int i=1; i<sizes.length; i++) {
@@ -575,7 +581,7 @@ public class MetadataHelper implements Localized {
             nf = NumberFormat.getInstance();
             uf = UnitFormat  .getInstance();
         }
-        nf.setMaximumFractionDigits(6);
+        InternalUtilities.configure(nf, minSize, 9);
         if (sameSize && sameUnits) {
             if (sizes.length != 0) {
                 nf.format(sizes[0], buffer, pos);
@@ -810,9 +816,7 @@ public class MetadataHelper implements Localized {
      * @see XAffineTransform#roundIfAlmostInteger(AffineTransform, double)
      */
     public double adjustForRoundingError(final double value) {
-        final double c1 = value * 360;
-        final double c2 = XMath.roundIfAlmostInteger(c1, 16);
+        return InternalUtilities.adjustForRoundingError(value, 360, 16);
         // The above threshold (16) has been determined empirically from IFREMER data.
-        return (c1 != c2) ? c2/360 : value;
     }
 }

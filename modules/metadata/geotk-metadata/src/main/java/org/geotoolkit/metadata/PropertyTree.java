@@ -45,6 +45,7 @@ import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.resources.Errors;
 
@@ -60,7 +61,7 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  * {@link javax.swing.tree.TreeModel} in some future Geotk implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -73,11 +74,6 @@ final class PropertyTree {
      * The character used for formating number when enumerating the elements of a collection.
      */
     static final char OPEN_BRACKET = '[', CLOSE_BRACKET = ']';
-
-    /**
-     * The default number of significant digits (may or may not be fraction digits).
-     */
-    private static final int PRECISION = 12;
 
     /**
      * Maximum number of characters to use in the heuristic titles.
@@ -280,9 +276,9 @@ final class PropertyTree {
                     if (value == null) {
                         final String s = c.toString();
                         if (Number.class.isAssignableFrom(childType)) {
-                            value = numberFormat.parse(s);
+                            value = getNumberFormat().parse(s);
                         } else if (Date.class.isAssignableFrom(childType)) {
-                            value = dateFormat.parse(s);
+                            value = getDateFormat().parse(s);
                         } else {
                             value = s;
                         }
@@ -374,9 +370,9 @@ final class PropertyTree {
      * a collection or a singleton.
      * <p>
      * Map or metadata are constructed as a sub tree where every nodes is a
-     * property name, and the childs are the value(s) for that property.
+     * property name, and the children are the value(s) for that property.
      *
-     * @param  branch The node where to add childs.
+     * @param  branch The node where to add children.
      * @param  value the value to add as a child.
      * @param  number Greater than 0 if the given value is a numbered metadata elements.
      *         Element are numbered if the value is an element of a collection having a
@@ -429,7 +425,7 @@ final class PropertyTree {
             if (value instanceof CodeList<?>) {
                 valueAsText = localize((CodeList<?>) value);
             } else if (value instanceof Date) {
-                valueAsText = format((Date) value);
+                valueAsText = getDateFormat().format((Date) value);
             } else if (value instanceof Number) {
                 valueAsText = format((Number) value);
             } else if (value instanceof InternationalString) {
@@ -600,41 +596,36 @@ final class PropertyTree {
     }
 
     /**
-     * Formats the specified number.
+     * Returns the date format instance, creating it when first needed.
      */
-    private String format(final Number value) {
-        if (numberFormat == null) {
-            numberFormat = NumberFormat.getNumberInstance(locale);
-            numberFormat.setMinimumFractionDigits(0);
-        }
-        int precision = 0;
-        if (!Numbers.isInteger(value.getClass())) {
-            precision = PRECISION;
-            final double v = Math.abs(value.doubleValue());
-            if (v > 0) {
-                final int digits = (int) Math.log10(v);
-                if (Math.abs(digits) >= PRECISION) {
-                    // TODO: Switch to exponential notation when a convenient API will be available in J2SE.
-                    return value.toString();
-                }
-                if (digits >= 0) {
-                    precision -= digits;
-                }
-                precision = Math.max(0, PRECISION - precision);
-            }
-        }
-        numberFormat.setMaximumFractionDigits(precision);
-        return numberFormat.format(value);
-    }
-
-    /**
-     * Formats the specified date.
-     */
-    private String format(final Date value) {
+    private DateFormat getDateFormat() {
         if (dateFormat == null) {
             dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
         }
-        return dateFormat.format(value);
+        return dateFormat;
+    }
+
+    /**
+     * Returns the number format instance, creating it when first needed.
+     */
+    private NumberFormat getNumberFormat() {
+        if (numberFormat == null) {
+            numberFormat = NumberFormat.getNumberInstance(locale);
+        }
+        return numberFormat;
+    }
+
+    /**
+     * Formats the specified number.
+     */
+    private String format(final Number value) {
+        final NumberFormat format = getNumberFormat();
+        if (Numbers.isInteger(value.getClass())) {
+            format.setMaximumFractionDigits(0);
+        } else {
+            InternalUtilities.configure(format, value.doubleValue(), 12);
+        }
+        return format.format(value);
     }
 
     /**

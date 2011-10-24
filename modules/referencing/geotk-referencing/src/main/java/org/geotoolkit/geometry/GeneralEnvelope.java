@@ -42,11 +42,11 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
@@ -655,14 +655,6 @@ scanNumber: while (++i < length) {
      * If and only if the product has been rounded, it is divided by the factor and stored in this
      * envelope in place of the original ordinate.
      * <p>
-     * The code below illustrates the work done on every ordinate values, omitting
-     * (for simplicity) the fact that {@code ordinate[i]} is left unchanged if
-     * {@code XMath.roundIfAlmostInteger} didn't rounded the product.
-     *
-     * {@preformat java
-     *     ordinates[i] = XMath.roundIfAlmostInteger(ordinates[i]*factor, maxULP) / factor;
-     * }
-     *
      * This method is useful after envelope calculations subject to rounding errors, like the
      * {@link #GeneralEnvelope(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem)}
      * constructor.
@@ -671,21 +663,12 @@ scanNumber: while (++i < length) {
      *               and divide after rounding. A recommended value is 360.
      * @param maxULP The maximal change allowed in ULPs (Unit in the Last Place).
      *
-     * @see XMath#roundIfAlmostInteger(double, int)
-     *
      * @since 3.11
      */
     public void roundIfAlmostInteger(final double factor, final int maxULP) {
-        if (!(factor > 0)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "factor", factor));
-        }
+        ensureStrictlyPositive("factor", factor);
         for (int i=0; i<ordinates.length; i++) {
-            final double value = ordinates[i] * factor;
-            final double rounded = XMath.roundIfAlmostInteger(value, maxULP);
-            if (value != rounded) {
-                ordinates[i] = rounded / factor;
-            }
+            ordinates[i] = InternalUtilities.adjustForRoundingError(ordinates[i], factor, maxULP);
         }
     }
 

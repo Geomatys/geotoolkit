@@ -31,6 +31,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -67,7 +68,7 @@ import static org.geotoolkit.util.converter.Numbers.isInteger;
  * }
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 1.0
  * @module
@@ -79,26 +80,26 @@ public class Statistics implements Cloneable, Serializable {
     private static final long serialVersionUID = -22884277805533726L;
 
     /**
-     * Valeur minimale qui aie été transmise à la méthode {@link #add(double)}.
-     * Lors de la construction, ce champs est initialisé à NaN.
+     * The minimal value given to the {@link #add(double)} method.
+     * This method is initialized to NaN at construction time.
      */
     private double min = NaN;
 
     /**
-     * Valeur maximale qui aie été transmise à la méthode {@link #add(double)}.
-     * Lors de la construction, ce champs est initialisé à NaN.
+     * The maximal value given to the {@link #add(double)} method.
+     * This method is initialized to NaN at construction time.
      */
     private double max = NaN;
 
     /**
-     * Somme de toutes les valeurs qui ont été transmises à la méthode {@link #add(double)}.
-     * Lors de la construction, ce champs est initialisé à 0.
+     * The sum of all values given to the {@link #add(double)} method.
+     * This method is initialized to 0 at construction time.
      */
     private double sum = 0;
 
     /**
-     * Somme des carrés de toutes les valeurs qui ont été transmises à la méthode
-     * {@link #add(double)}. Lors de la construction, ce champs est initialisé à 0.
+     * The sum of square of all values given to the {@link #add(double)} method.
+     * This method is initialized to 0 at construction time.
      */
     private double sum2 = 0;
 
@@ -115,15 +116,14 @@ public class Statistics implements Cloneable, Serializable {
     private transient double lowBits2;
 
     /**
-     * Nombre de données autres que NaN qui ont été transmises à la méthode
-     * {@link #add(double)}. Lors de la construction, ce champs est initialisé à 0.
+     * Number of non-NaN values given to the {@link #add(double)} method.
+     * This method is initialized to 0 at construction time.
      */
     private int n = 0;
 
     /**
-     * Nombre de données égales à NaN qui ont été transmises à la méthode {@link #add(double)}.
-     * Les NaN sont ingorés lors du calcul des statistiques, mais on les compte quand même
-     * au passage. Lors de la construction ce champs est initialisé à 0.
+     * Number of NaN values given to the {@link #add(double)} method.
+     * Those value are ignored in the computation of all above values.
      */
     private int nNaN = 0;
 
@@ -236,7 +236,7 @@ public class Statistics implements Cloneable, Serializable {
 
     /**
      * Returns the number of {@link Double#NaN NaN} samples.  {@code NaN} samples are
-     * ignored in all other statitical computation. This method count them for information
+     * ignored in all other statistical computation. This method count them for information
      * purpose only.
      *
      * @return The number of NaN values.
@@ -366,38 +366,65 @@ public class Statistics implements Cloneable, Serializable {
         if (locale == null) {
             locale = Locale.getDefault();
         }
+        return configure(null, locale);
+    }
+
+    /**
+     * Configures the given formatter for writing a set of data described by this statistics.
+     * This method applies the same heuristic rules than {@link #getNumberFormat(Locale)}.
+     *
+     * @param format The format to configure.
+     *
+     * @since 3.20
+     */
+    public void configure(final NumberFormat format) {
+        ArgumentChecks.ensureNonNull("format", format);
+        configure(format, null);
+    }
+
+    /**
+     * Implementation of {@link #getNumberFormat(Locale)} and {@link #configure(NumberFormat)}.
+     */
+    private NumberFormat configure(NumberFormat format, final Locale locale) {
         final double extremum = max(abs(min), abs(max));
         if (extremum >= 1E+10 || extremum <= 1E-4) {
             /*
              * The above threshold is high so that geocentric and projected coordinates in metres
-             * are not formatted with scientific notation (a threshold of 1E+7 would be enough).
+             * are not formatted with scientific notation (a threshold of 1E+7 is not enough).
              *
              * Below we arbitrarily keep 5 fraction digits (so a total of 6 digits). If this
              * choice is modified, then we should also change the number 5 below in this method.
              */
-            return new DecimalFormat("0.00000E00", DecimalFormatSymbols.getInstance(locale));
-        }
-        final NumberFormat format = NumberFormat.getNumberInstance(locale);
-        /*
-         * Computes a representative range of values. We take 2 standard deviations away
-         * from the mean. Assuming that data have a gaussian distribution, this is 97.7%
-         * of data. If the data have a uniform distribution, then this is 100% of data.
-         */
-        final double mean  = mean();
-        final double delta = 2 * standardDeviation(true);
-        final double range = Math.min(max, mean+delta) - Math.max(min, mean-delta);
-        /*
-         * Gets the order of magnitude of the range, as the number of decimal after the first digit
-         * (negative if range < 1). We arbitrarily choose to keep 5 decimals after the first digit
-         * (if this choice is modified, then we should change also the exponential notation above).
-         * Note that it make a difference only if at least one decimal is a fraction digit (we don't
-         * substitute integer digits by 0).
-         */
-        final double magnitude = floor(log10(range));
-        if (!isNaN(magnitude)) {
-            final int digits = max(5 - (int) magnitude, 0);
-            format.setMinimumFractionDigits(digits);
-            format.setMaximumFractionDigits(digits);
+            if (format == null) {
+                format = new DecimalFormat("0.00000E00", DecimalFormatSymbols.getInstance(locale));
+            } else if (format instanceof DecimalFormat) {
+                ((DecimalFormat) format).applyPattern("0.00000E00");
+            }
+        } else {
+            if (format == null) {
+                format = NumberFormat.getNumberInstance(locale);
+            }
+            /*
+             * Computes a representative range of values. We take 2 standard deviations away
+             * from the mean. Assuming that data have a gaussian distribution, this is 97.7%
+             * of data. If the data have a uniform distribution, then this is 100% of data.
+             */
+            final double mean  = mean();
+            final double delta = 2 * standardDeviation(true);
+            final double range = Math.min(max, mean+delta) - Math.max(min, mean-delta);
+            /*
+             * Gets the order of magnitude of the range, as the number of decimal after the first digit
+             * (negative if range < 1). We arbitrarily choose to keep 5 decimals after the first digit
+             * (if this choice is modified, then we should change also the exponential notation above).
+             * Note that it make a difference only if at least one decimal is a fraction digit (we don't
+             * substitute integer digits by 0).
+             */
+            final double magnitude = floor(log10(range));
+            if (!isNaN(magnitude)) {
+                final int digits = max(5 - (int) magnitude, 0);
+                format.setMinimumFractionDigits(digits);
+                format.setMaximumFractionDigits(digits);
+            }
         }
         return format;
     }

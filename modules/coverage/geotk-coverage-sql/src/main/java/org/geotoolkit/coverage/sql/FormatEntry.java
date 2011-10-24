@@ -35,11 +35,11 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.internal.sql.table.DefaultEntry;
+
+import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
 /**
@@ -58,13 +58,8 @@ final class FormatEntry extends DefaultEntry {
     private static final long serialVersionUID = -8790032968708208057L;
 
     /**
-     * Tolerance in ULP (<cite>Units in Last Place</cite>) for rounding numbers.
-     */
-    private static final int ULP_TOLERANCE = 4;
-
-    /**
      * The image format name as declared in the database. This value shall be a name
-     * useable in calls to {@link javax.imageio.ImageIO#getImageReadersByFormatName}.
+     * usable in calls to {@link javax.imageio.ImageIO#getImageReadersByFormatName}.
      * <p>
      * For compatibility reason, the user should be prepared to handle MIME type
      * (as understood by {@link javax.imageio.ImageIO#getImageReadersByMIMEType}).
@@ -214,26 +209,17 @@ final class FormatEntry extends DefaultEntry {
         final MeasurementRange<Double>[] ranges = new MeasurementRange[bands.size()];
         for (int i=0; i<ranges.length; i++) {
             final GridSampleDimension band = bands.get(i).geophysics(true);
+            /*
+             * The call 'roundIfAlmostInteger' is a work-around for rounding error. We perform the
+             * workaround here instead than at GridSampleDimension construction time because the
+             * minimal and maximal values are the result of a computation, not a stored value.
+             */
             ranges[i] = MeasurementRange.create(
-                    fixRoundingError(band.getMinimumValue()),
-                    fixRoundingError(band.getMaximumValue()),
+                    adjustForRoundingError(band.getMinimumValue()),
+                    adjustForRoundingError(band.getMaximumValue()),
                     band.getUnits());
         }
         return ranges;
-    }
-
-    /**
-     * Work-around for rounding error. We perform the workaround here instead than at
-     * {@code GridSampleDimension} construction time because the minimal and maximal
-     * values are the result of a computation, not a stored value.
-     */
-    private static double fixRoundingError(double value) {
-        final double v = value * 360;
-        final double r = XMath.roundIfAlmostInteger(v, ULP_TOLERANCE);
-        if (r != v) {
-            value = r / 360;
-        }
-        return value;
     }
 
     /**

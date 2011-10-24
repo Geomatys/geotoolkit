@@ -18,8 +18,8 @@
 package org.geotoolkit.display.axis;
 
 import java.text.NumberFormat;
-import java.text.DecimalFormat;
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.internal.InternalUtilities;
 
 
 /**
@@ -266,20 +266,7 @@ class NumberIterator implements TickIterator {
              * être atteinte notamment avec les nombres périodiques (par exemple des intervalles
              * de temps exprimés en fractions de jours).
              */
-            int precision;
-            double step = Math.abs(increment);
-            if (format instanceof DecimalFormat) {
-                step *= ((DecimalFormat) format).getMultiplier();
-            }
-            for (precision=0; precision<6; precision++) {
-                final double check = Math.rint(step*1E+4) % 1E+4;
-                if (!(check > step*EPS)) { // 'step' may be NaN
-                    break;
-                }
-                step *= 10;
-            }
-            format.setMinimumFractionDigits(precision);
-            format.setMaximumFractionDigits(precision);
+            InternalUtilities.configure(format, increment, 6);
             formatValid = true;
         }
         return format.format(currentValue());

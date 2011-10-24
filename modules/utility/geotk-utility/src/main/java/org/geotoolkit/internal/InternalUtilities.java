@@ -69,6 +69,17 @@ public final class InternalUtilities extends Static {
     public static final double COMPARISON_THRESHOLD = 1E-14;
 
     /**
+     * Workaround for rounding errors.
+     */
+    private static final double EPS = 1E-8;
+
+    /**
+     * Floating point tolerance in <cite>Unit in Last Place</cite> (ULP).
+     * Used in order to determine if an integer can be rounded.
+     */
+    private static final int ULP_TOLERANCE = 4;
+
+    /**
      * Do not allow instantiation of this class.
      */
     private InternalUtilities() {
@@ -163,6 +174,38 @@ public final class InternalUtilities extends Static {
     }
 
     /**
+     * Rounds the specified value, providing that the difference between the original value and
+     * the rounded value is not greater than the specified amount of floating point units. This
+     * method can be used for hiding floating point error likes 2.9999999996.
+     *
+     * @param  value The value to round.
+     * @param  scale The scale by which to multiply the value before to round it.
+     * @param  maxULP The maximal change allowed in ULPs (Unit in the Last Place).
+     * @return The rounded value, of {@code value} if it was not close enough to an integer.
+     *
+     * @since 3.20
+     */
+    public static double adjustForRoundingError(final double value, double scale, final int maxULP) {
+        scale = Math.abs(scale);
+        final double target = Math.rint(value * scale) / scale;
+        return (Math.abs(value - target) <= maxULP*Math.ulp(value)) ? target : value;
+    }
+
+    /**
+     * Work-around for rounding error. This method invokes {@link #adjustForRoundingError(double,
+     * double, int)} with arbitrary values that may change in any future version. Current values
+     * were determined empirically from practical experience with IFREMER and other data.
+     *
+     * @param value The value to fix.
+     * @return The "fixed" value.
+     *
+     * @since 3.20
+     */
+    public static double adjustForRoundingError(final double value) {
+        return adjustForRoundingError(value, 360, ULP_TOLERANCE);
+    }
+
+    /**
      * Converts a {@code float} value to {@code double} value while preserving the string
      * representation in base 10. The result may be different from the value that we would
      * get from a normal conversion - which preserve the value in base 2, but it may be
@@ -253,6 +296,35 @@ public final class InternalUtilities extends Static {
             }
         }
         return ',';
+    }
+
+    /**
+     * Sets the {@linkplain NumberFormat#getMinimumFractionDigits() minimum fraction digits} and
+     * {@linkplain NumberFormat#getMaximumFractionDigits() maximum fraction digits} of the given
+     * format objects for "acceptable" formatting of the given value. The work performed by this
+     * method is heuristic and may change in any future version.
+     *
+     * @param format The format to configure.
+     * @param value  The sample value to use for formatting the given format.
+     * @param maxPrecision The maximal precision to use (e.g. 6).
+     *
+     * @since 3.20
+     */
+    public static void configure(final NumberFormat format, double value, final int maxPrecision) {
+        value = abs(value);
+        if (format instanceof DecimalFormat) {
+            value *= ((DecimalFormat) format).getMultiplier();
+        }
+        int precision;
+        for (precision=0; precision<maxPrecision; precision++) {
+            final double check = rint(value*1E+4) % 1E+4;
+            if (!(check > value*EPS)) { // 'step' may be NaN
+                break;
+            }
+            value *= 10;
+        }
+        format.setMinimumFractionDigits(precision);
+        format.setMaximumFractionDigits(precision);
     }
 
     /**

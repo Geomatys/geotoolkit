@@ -30,7 +30,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.util.Utilities;
@@ -38,6 +37,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 
+import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
 
@@ -628,7 +628,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
         final double[] c = new double[6];
         tr.getMatrix(c);
         for (int i=0; i<c.length; i++) {
-            double m = XMath.roundIfAlmostInteger(c[i], 4);
+            double m = adjustForRoundingError(c[i]);
             if (i >= 4) { // Translation terms.
                 final double r = Math.rint(m);
                 double tolerance = IDENTITY_TOLERANCE;

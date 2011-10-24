@@ -47,13 +47,13 @@ import org.opengis.util.CodeList;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.lang.Visitor;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -546,7 +546,7 @@ public class Formatter {
                     value = Double.NaN;
                 }
                 if (!unit.equals(valueUnit)) {
-                    value = XMath.trimDecimalFractionDigits(value, 4, 9);
+                    value = InternalUtilities.adjustForRoundingError(value, 360000, 9);
                 }
                 format(value);
             } else {
@@ -685,10 +685,7 @@ public class Formatter {
      * Formats a floating point number.
      */
     private void format(double number) {
-        double t = number * 1000;
-        if (t != (t = XMath.roundIfAlmostInteger(number*1000, 4))) {
-            number = t / 1000;
-        }
+        number = InternalUtilities.adjustForRoundingError(number);
         setColor(Colors.Element.NUMBER);
         numberFormat.format(number, buffer, dummy);
         resetColor();

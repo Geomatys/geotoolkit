@@ -32,6 +32,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.LoggedFormat;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Double.NaN;
@@ -646,8 +647,7 @@ public class AngleFormat extends Format {
         }
         if (obj instanceof Number) {
             numberFormat.setMinimumIntegerDigits(1);
-            numberFormat.setMinimumFractionDigits(0);
-            numberFormat.setMaximumFractionDigits(2);
+            InternalUtilities.configure(numberFormat, ((Number) obj).doubleValue(), 6);
             return numberFormat.format(obj, toAppendTo, (pos!=null) ? pos : dummy);
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_ANGLE_OBJECT_$1,
@@ -680,8 +680,7 @@ public class AngleFormat extends Format {
             case LONGITUDE: return format(number, toAppendTo, pos, EAST,  WEST );
             case ALTITUDE: {
                 numberFormat.setMinimumIntegerDigits(1);
-                numberFormat.setMinimumFractionDigits(0);
-                numberFormat.setMaximumFractionDigits(2);
+                InternalUtilities.configure(numberFormat, number, 6);
                 return numberFormat.format(number, toAppendTo, (pos!=null) ? pos : dummy);
             }
         }
