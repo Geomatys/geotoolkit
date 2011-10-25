@@ -541,6 +541,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <useUniqueVersions>false</useUniqueVersions> <!-- http://jira.codehaus.org/browse/MSHARED-169 -->
             </manifest>
             <manifestEntries>
               <Built-On>${maven.build.timestamp}</Built-On>

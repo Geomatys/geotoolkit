@@ -43,7 +43,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
@@ -68,6 +67,7 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.Envelopes;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
 /**
@@ -104,12 +104,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * is too small, while 1E-5 seems okay.
      */
     private static final double EPS = 1E-5;
-
-    /**
-     * Floating point tolerance in <cite>Unit in Last Place</cite> (ULP).
-     * Used in order to determine if an integer can be rounded.
-     */
-    private static final int ULP_TOLERANCE = 4;
 
     /**
      * The hints to use for fetching factories. This is initialized to the system defaults.
@@ -704,7 +698,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             } else {
                 t = requestEnvelope.getMinimum(i);
             }
-            m.setElement(i, 2, fixRoundingError(t));
+            m.setElement(i, 2, adjustForRoundingError(t));
         }
         /*
          * Set the scale factors, which are the resolution. If the resolution was not specified,
@@ -722,8 +716,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         }
         if (flipX) scaleX = -scaleX;
         if (flipY) scaleY = -scaleY;
-        scaleX = fixRoundingError(scaleX);
-        scaleY = fixRoundingError(scaleY);
+        scaleX = adjustForRoundingError(scaleX);
+        scaleY = adjustForRoundingError(scaleY);
         m.setElement(X_DIMENSION, X_DIMENSION, scaleX);
         m.setElement(Y_DIMENSION, Y_DIMENSION, scaleY);
         /*
@@ -838,18 +832,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         return (transform == null) || transform.isIdentity() ||
                 (transform instanceof AffineTransform &&
                  XAffineTransform.isIdentity((AffineTransform) transform, EPS));
-    }
-
-    /**
-     * Work-around for rounding error.
-     */
-    static double fixRoundingError(double value) {
-        final double v = value * 360;
-        final double r = XMath.roundIfAlmostInteger(v, ULP_TOLERANCE);
-        if (r != v) {
-            value = r / 360;
-        }
-        return value;
     }
 
     /**

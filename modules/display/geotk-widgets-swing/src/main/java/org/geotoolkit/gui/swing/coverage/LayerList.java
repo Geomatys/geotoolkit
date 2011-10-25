@@ -62,9 +62,9 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.math.Statistics;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.Latitude;
@@ -721,23 +721,15 @@ public class LayerList extends WindowCreator {
                 }
                 final Set<Number> z = layer.getAvailableElevations();
                 if (!isNullOrEmpty(z)) {
-                    int numDigits = 0;
+                    final Statistics stats = new Statistics();
                     for (final Number value : z) {
-                        final int n = XMath.countDecimalFractionDigits(value.doubleValue());
-                        if (n > numDigits) {
-                            numDigits = n;
-                            if (numDigits > 6) {
-                                numDigits = 6;
-                                break;
-                            }
-                        }
+                        stats.add(value.doubleValue());
                     }
                     final FieldPosition pos = new FieldPosition(0);
                     final StringBuffer buffer = new StringBuffer();
                     final List<String> fz = new ArrayList<String>(z.size());
                     synchronized (heightFormat) {
-                        heightFormat.setMinimumFractionDigits(numDigits);
-                        heightFormat.setMaximumFractionDigits(numDigits);
+                        stats.configure(heightFormat);
                         for (final Number value : z) {
                             heightFormat.format(value, buffer, pos).append("    ");
                             fz.add(buffer.toString());

@@ -29,7 +29,7 @@ import org.geotoolkit.resources.Errors;
  * Simple mathematical functions in addition to the ones provided in {@link Math}.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 1.0
  * @module
@@ -388,6 +388,9 @@ public final class XMath extends Static {
      * @param  value The value to round.
      * @param  maxULP The maximal change allowed in ULPs (Unit in the Last Place).
      * @return The rounded value, of {@code value} if it was not close enough to an integer.
+     *
+     * @deprecated This method is inefficient, and the work to do about rounding error is
+     *             a bit too much implementation specific anyway.
      */
     public static double roundIfAlmostInteger(final double value, int maxULP) {
         double target = Math.rint(value);
@@ -428,7 +431,11 @@ public final class XMath extends Static {
      * @param  n The minimum amount of fraction digits.
      * @return The trimmed value, or the unchanged {@code value} if there is no small change
      *         that remove at least {@code n} fraction digits.
+     *
+     * @deprecated This method is inefficient, and the work to do about rounding error is
+     *             a bit too much implementation specific anyway.
      */
+    @Deprecated
     public static double trimDecimalFractionDigits(final double value, final int maxULP, int n) {
         double lower = value;
         double upper = value;
@@ -449,7 +456,11 @@ public final class XMath extends Static {
      *
      * @param value The value for which to count the fraction digits.
      * @return The number of fraction digits.
+     *
+     * @deprecated Was used by {@link #trimDecimalFractionDigits(double, int, int)},
+     *             which has been deprecated.
      */
+    @Deprecated
     public static int countDecimalFractionDigits(final double value) {
         final String asText = Double.toString(value);
         final int exp = asText.indexOf('E');

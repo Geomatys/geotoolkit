@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
-import static org.geotoolkit.coverage.io.GridCoverageStore.fixRoundingError;
+import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 
 
 /**
@@ -232,10 +232,10 @@ final class ImageCoverageStore extends Static {
                 if (tr.getShearX() == 0 && tr.getShearY() == 0) {
                     buffer.setLength(0);
                     transform = buffer.append("AffineTransform[scale=(")
-                            .append(fixRoundingError(tr.getScaleX())).append(", ")
-                            .append(fixRoundingError(tr.getScaleY())).append("), translation=(")
-                            .append(fixRoundingError(tr.getTranslateX())).append(", ")
-                            .append(fixRoundingError(tr.getTranslateY())).append(")]").toString();
+                            .append(adjustForRoundingError(tr.getScaleX())).append(", ")
+                            .append(adjustForRoundingError(tr.getScaleY())).append("), translation=(")
+                            .append(adjustForRoundingError(tr.getTranslateX())).append(", ")
+                            .append(adjustForRoundingError(tr.getTranslateY())).append(")]").toString();
                 } else {
                     // The 'new' is for avoiding AffineTransform2D.toString().
                     transform = new AffineTransform(tr).toString();

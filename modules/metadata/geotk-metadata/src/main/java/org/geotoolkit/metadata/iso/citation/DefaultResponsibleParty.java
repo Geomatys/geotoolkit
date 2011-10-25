@@ -69,18 +69,19 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * The organisation name is automatically set to "Open Geospatial Consortium".
      *
      * @param  role     The OGC role (point of contact, owner, etc.) for a resource.
-     * @param  resource The URI to the resource.
+     * @param  resource The URI to the resource, or {@code null} if none.
      * @return Responsible party describing OGC involvement.
      *
      * @since 2.2
      */
     public static ResponsibleParty OGC(final Role role, final OnlineResource resource) {
-        final DefaultContact contact = new DefaultContact(resource);
-        contact.freeze();
-
         final DefaultResponsibleParty ogc = new DefaultResponsibleParty(role);
         ogc.setOrganisationName(OGC.getOrganisationName());
-        ogc.setContactInfo(contact);
+        if (resource != null) {
+            final DefaultContact contact = new DefaultContact(resource);
+            contact.freeze();
+            ogc.setContactInfo(contact);
+        }
         ogc.freeze();
 
         return ogc;
@@ -345,10 +346,12 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     /**
      * Constructs a responsibility party with the given role.
      *
-     * @param role The function performed by the responsible party.
+     * @param role The function performed by the responsible party, or {@code null} if none.
      */
     public DefaultResponsibleParty(final Role role) {
-        setRole(role);
+        if (role != null) {
+            setRole(role);
+        }
     }
 
     /**

@@ -55,6 +55,11 @@ final class GeophysicsCategoryList extends CategoryList {
     private static final int MAX_DIGITS = 6;
 
     /**
+     * Workaround for rounding errors.
+     */
+    private static final double EPS = 1E-6;
+
+    /**
      * Unités des mesures géophysiques représentées par les catégories.
      * Ce champ peut être nul s'il ne s'applique pas ou si les unités
      * ne sont pas connues.
@@ -114,7 +119,6 @@ final class GeophysicsCategoryList extends CategoryList {
      */
     private static int getFractionDigitCount(final Category[] categories) {
         int ndigits = 0;
-        final double EPS = 1E-6;
         final int length=categories.length;
         for (int i=0; i<length; i++) {
             final Category category   = categories[i];

@@ -39,6 +39,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
@@ -585,13 +586,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      * This is for internal usage by {@link CategoryTable} only.
      */
     final boolean setCoefficient(final int order, final Number coeff) throws IllegalArgumentException {
-        double value   = coeff.doubleValue();
-        double scaled  = value * 3600;
-        double rounded = XMath.roundIfAlmostInteger(scaled, 8);
-        if (rounded != scaled) {
-            value = rounded / 3600;
-        }
-        return setCoefficient(order, value);
+        return setCoefficient(order, InternalUtilities.adjustForRoundingError(coeff.doubleValue(), 3600, 8));
     }
 
     /**
@@ -601,16 +596,11 @@ public class CategoryRecord implements Cloneable, Serializable {
      */
     final void configure(final NumberFormat format) {
         if (fractionDigits < 0) {
-            fractionDigits = XMath.countDecimalFractionDigits(scale);
+            InternalUtilities.configure(format, scale, 9);
+            fractionDigits = format.getMaximumFractionDigits();
         }
-        int n = Math.min(fractionDigits, 3);
-        if (format.getMinimumFractionDigits() != n) {
-            format.setMinimumFractionDigits(n);
-        }
-        n = Math.min(fractionDigits + 3, 9);
-        if (format.getMaximumFractionDigits() != n) {
-            format.setMaximumFractionDigits(n);
-        }
+        format.setMinimumFractionDigits(Math.min(fractionDigits,   3));
+        format.setMaximumFractionDigits(Math.min(fractionDigits+3, 9));
     }
 
     /**
