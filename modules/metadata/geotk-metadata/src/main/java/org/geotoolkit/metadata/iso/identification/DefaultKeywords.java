@@ -94,11 +94,13 @@ public class DefaultKeywords extends MetadataEntity implements Keywords {
     /**
      * Creates keywords initialized to the given list.
      *
-     * @param keywords Commonly used word(s) or formalised word(s)
-     *                 or phrase(s) used to describe the subject.
+     * @param keywords Commonly used word(s) or formalised word(s) or phrase(s) used to describe
+     *                 the subject, or {@code null} if none.
      */
     public DefaultKeywords(final Collection<? extends InternationalString> keywords) {
-        setKeywords(keywords);
+        if (keywords != null) {
+            setKeywords(keywords);
+        }
     }
 
     /**

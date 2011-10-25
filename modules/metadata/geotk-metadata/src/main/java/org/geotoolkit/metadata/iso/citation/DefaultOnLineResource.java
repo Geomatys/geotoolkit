@@ -278,10 +278,13 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     /**
      * Creates an on line resource initialized to the given URI.
      *
-     * @param linkage The location for on-line access using a Uniform Resource Locator address.
+     * @param linkage The location for on-line access using a Uniform Resource Locator address,
+     *        or {@code null} if none.
      */
     public DefaultOnlineResource(final URI linkage) {
-        setLinkage(linkage);
+        if (linkage != null) {
+            setLinkage(linkage);
+        }
     }
 
     /**

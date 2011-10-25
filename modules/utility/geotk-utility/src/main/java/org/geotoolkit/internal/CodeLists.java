@@ -220,7 +220,7 @@ public final class CodeLists extends Static implements CodeList.Filter {
      *
      * @param <T> The compile-time type given as the {@code codeType} parameter.
      * @param codeType The type of code list.
-     * @param name The name of the code to obtain.
+     * @param name The name of the code to obtain, or {@code null}.
      * @return A code matching the given name, or {@code null} if the name is null.
      *
      * @see CodeList#valueOf(Class, String)
@@ -236,7 +236,7 @@ public final class CodeLists extends Static implements CodeList.Filter {
      *
      * @param <T> The compile-time type given as the {@code codeType} parameter.
      * @param codeType The type of code list.
-     * @param name The name of the code to obtain.
+     * @param name The name of the code to obtain, or {@code null}.
      * @param canCreate {@code true} if this method is allowed to create new code.
      * @return A code matching the given name, or {@code null} if the name is null
      *         or if no matching code is found and {@code canCreate} is {@code false}.

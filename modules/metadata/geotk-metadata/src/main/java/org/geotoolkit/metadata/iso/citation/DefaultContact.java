@@ -264,10 +264,13 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Constructs a contact initialized to the specified online resource.
      *
-     * @param resource The on-line information that can be used to contact the individual or organization.
+     * @param resource The on-line information that can be used to contact the individual or
+     *        organization, or {@code null} if none.
      */
     public DefaultContact(final OnlineResource resource) {
-        setOnlineResource(resource);
+        if (resource != null) {
+            setOnlineResource(resource);
+        }
     }
 
     /**

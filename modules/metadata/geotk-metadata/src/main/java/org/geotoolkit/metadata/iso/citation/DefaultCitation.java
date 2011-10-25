@@ -179,17 +179,14 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     /**
      * Constructs a citation with the specified title.
      *
-     * @param title The title, as a {@link String} or an {@link InternationalString} object.
+     * @param title The title as a {@link String} or an {@link InternationalString} object,
+     *        or {@code null} if none.
      */
     public DefaultCitation(final CharSequence title) {
         this(); // Initialize the date field.
-        final InternationalString t;
-        if (title instanceof InternationalString) {
-            t = (InternationalString) title;
-        } else {
-            t = new SimpleInternationalString(title.toString());
+        if (title != null) {
+            setTitle(SimpleInternationalString.wrap(title));
         }
-        setTitle(t);
     }
 
     /**
@@ -200,23 +197,25 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * {@linkplain ResponsibleParty#getIndividualName individual name}.
      *
      * @param party The name and position information for an individual or organization that is
-     *              responsible for the resource.
+     *              responsible for the resource, or {@code null} if none.
      * @since 2.2
      */
     public DefaultCitation(final ResponsibleParty party) {
         this(); // Initialize the date field.
-        InternationalString title = party.getOrganisationName();
-        if (title == null) {
-            title = party.getPositionName();
+        if (party != null) {
+            InternationalString title = party.getOrganisationName();
             if (title == null) {
-                String name = party.getIndividualName();
-                if (name != null) {
-                    title = new SimpleInternationalString(name);
+                title = party.getPositionName();
+                if (title == null) {
+                    String name = party.getIndividualName();
+                    if (name != null) {
+                        title = new SimpleInternationalString(name);
+                    }
                 }
             }
+            setTitle(title);
+            setCitedResponsibleParties(Collections.singleton(party));
         }
-        setTitle(title);
-        setCitedResponsibleParties(Collections.singleton(party));
     }
 
     /**

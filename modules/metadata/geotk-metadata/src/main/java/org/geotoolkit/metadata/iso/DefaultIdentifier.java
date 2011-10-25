@@ -91,23 +91,30 @@ public class DefaultIdentifier extends MetadataEntity implements Identifier {
     /**
      * Creates an identifier initialized to the given code.
      *
-     * @param code The alphanumeric value identifying an instance in the namespace.
+     * @param code The alphanumeric value identifying an instance in the namespace,
+     *             or {@code null} if none.
      */
     public DefaultIdentifier(final String code) {
-        setCode(code);
+        if (code != null) {
+            setCode(code);
+        }
     }
 
     /**
      * Creates an identifier initialized to the given authority and code.
      *
-     * @param authority The organization or party responsible for definition and maintenance of the code.
-     * @param code      The alphanumeric value identifying an instance in the namespace.
+     * @param authority The organization or party responsible for definition and maintenance
+     *                  of the code, or {@code null} if none.
+     * @param code      The alphanumeric value identifying an instance in the namespace,
+     *                  or {@code null} if none.
      *
      * @since 2.2
      */
     public DefaultIdentifier(final Citation authority, final String code) {
-        setAuthority(authority);
-        setCode(code);
+        this(code);
+        if (authority != null) {
+            setAuthority(authority);
+        }
     }
 
     /**
