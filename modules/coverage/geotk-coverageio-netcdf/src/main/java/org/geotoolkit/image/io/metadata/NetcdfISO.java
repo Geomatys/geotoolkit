@@ -69,6 +69,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
@@ -82,9 +83,9 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * The mapping is defined in the following web pages:
  * <p>
  * <ul>
- *   <li><a href="http://ngdc.noaa.gov/metadata/published/xsl/nciso2.0/UnidataDD2MI.xsl">UnidataDD2MI.xsl</a> file</li>
  *   <li><a href="https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery">NetCDF
  *       Attribute Convention for Dataset Discovery</a> wiki</li>
+ *   <li><a href="http://ngdc.noaa.gov/metadata/published/xsl/nciso2.0/UnidataDD2MI.xsl">UnidataDD2MI.xsl</a> file</li>
  * </ul>
  * <p>
  * The following attributes or elements are not included in the image metadata:
@@ -102,17 +103,149 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * @module
  */
 public class NetcdfISO {
+    // TODO: document link to ISO metadata when we will implement writer.
     /**
-     * The NetCDF file from which to extract ISO metadata.
-     * This file is set at construction time.
+     * The {@value} attribute name for a short description of the dataset
+     * (<em>Highly Recommended</em>).
      */
-    protected final NetcdfFile file;
+    public static final String TITLE = "title";
+
+    /**
+     * The {@value} attribute name for a paragraph describing the dataset
+     * (<em>Highly Recommended</em>).
+     */
+    public static final String SUMMARY = "summary";
+
+    /**
+     * The {@value} attribute name for an identifier (<em>Recommended</em>).
+     * The combination of the {@value #NAMING_AUTHORITY} and the {@value}
+     * should be a globally unique identifier for the dataset.
+     */
+    public static final String IDENTIFIER = "id";
+
+    /**
+     * The {@value} attribute name for the identifier authority (<em>Recommended</em>).
+     * The combination of the {@value} and the {@value #IDENTIFIER} should be a globally
+     * unique identifier for the dataset.
+     */
+    public static final String NAMING_AUTHORITY = "naming_authority";
+
+    /**
+     * The {@value} attribute name for a comma separated list of key words and phrases
+     * (<em>Highly Recommended</em>).
+     */
+    public static final String KEYWORDS = "keywords";
+
+    /**
+     * The {@value} attribute name for the guideline for the words/phrases in the
+     * {@value #KEYWORDS} attribute (<em>Recommended</em>).
+     */
+    public static final String VOCABULARY = "keywords_vocabulary";
+
+    /**
+     * The {@value} attribute name for miscellaneous information about the data
+     * (<em>Recommended</em>).
+     */
+    public static final String COMMENT = "comment";
+
+    /**
+     * The {@value} attribute name for the date on which the metadata was created
+     * (<em>Suggested</em>). This is actually defined in the "{@code NCISOMetadata}"
+     * subgroup.
+     */
+    public static final String METADATA_CREATION = "metadata_creation";
+
+    /**
+     * The {@value} attribute name for the date on which the data was created
+     * (<em>Recommended</em>).
+     */
+    public static final String DATE_CREATED = "date_created";
+
+    /**
+     * The {@value} attribute name for the date on which this data was last modified
+     * (<em>Suggested</em>).
+     */
+    public static final String DATE_MODIFIED = "date_modified";
+
+    /**
+     * The {@value} attribute name for a date on which this data was formally issued
+     * (<em>Suggested</em>).
+     */
+    public static final String DATE_ISSUED = "date_issued";
+
+    /**
+     * The {@value} attribute name for the creator's name (<em>Recommended</em>).
+     */
+    public static final String CREATOR_NAME = "creator_name";
+
+    /**
+     * The {@value} attribute name for the creator's URL (<em>Recommended</em>).
+     */
+    public static final String CREATOR_URL = "creator_url";
+
+    /**
+     * The {@value} attribute name for the creator's email address (<em>Recommended</em>).
+     */
+    public static final String CREATOR_EMAIL = "creator_email";
+
+    /**
+     * The {@value} attribute name for creator's institution (<em>Recommended</em>).
+     */
+    public static final String INSTITUTION = "institution";
+
+    /**
+     * The {@value} attribute name for the scientific project that produced the data
+     * (<em>Recommended</em>).
+     */
+    public static final String PROJECT = "project";
+
+    /**
+     * The {@value} attribute name for a place to acknowledge various type of support for
+     * the project that produced this data (<em>Recommended</em>).
+     */
+    public static final String ACKNOWLEDGMENT = "acknowledgment";
+
+    /**
+     * The {@value} attribute name for a description of the restrictions to data access
+     * and distribution (<em>Recommended</em>).
+     */
+    public static final String LICENSE = "license";
+
+    /**
+     * The {@value} attribute name for a further refinement of the geospatial bounding box
+     * (<em>Suggested</em>).
+     */
+    public static final String LATITUDE_RESOLUTION = "geospatial_lat_resolution";
+
+    /**
+     * The {@value} attribute name for a further refinement of the geospatial bounding box
+     * (<em>Suggested</em>).
+     */
+    public static final String LONGITUDE_RESOLUTION = "geospatial_lon_resolution";
+
+    /**
+     * The {@value} attribute name for a further refinement of the geospatial bounding box
+     * (<em>Suggested</em>).
+     */
+    public static final String VERTICAL_RESOLUTION = "geospatial_vertical_resolution";
+
+    /**
+     * The {@value} attribute name for a further refinement of the geospatial bounding box
+     * (<em>Suggested</em>).
+     */
+    public static final String TIME_RESOLUTION = "time_coverage_resolution";
 
     /**
      * Names of groups where to search for metadata, in precedence order.
      * The {@code null} value stands for global attributes.
      */
     private static final String[] GROUP_NAMES = {"NCISOMetadata", "CFMetadata", null, "THREDDSMetadata"};
+
+    /**
+     * The NetCDF file from which to extract ISO metadata.
+     * This file is set at construction time.
+     */
+    protected final NetcdfFile file;
 
     /**
      * The groups where to look for metadata, in precedence order. The first group shall be
@@ -203,11 +336,13 @@ public class NetcdfISO {
      * @return The attribute value, or {@code null} if none.
      */
     private String getStringValue(final Group group, final String name) {
-        final Attribute attribute = getAttribute(group, name);
-        if (attribute != null) {
-            final String value = attribute.getStringValue();
-            if (value != null) {
-                return value.trim();
+        if (name != null) { // For createResponsibleParty(...) convenience.
+            final Attribute attribute = getAttribute(group, name);
+            if (attribute != null) {
+                final String value = attribute.getStringValue();
+                if (value != null) {
+                    return value.trim();
+                }
             }
         }
         return null;
@@ -324,6 +459,22 @@ public class NetcdfISO {
     }
 
     /**
+     * Adds the given element in the given collection if the element is non-null.
+     * If the element is non-null and the collection is null, a new collection is
+     * created. The given collection, or the new collection if it has been created,
+     * is returned.
+     */
+    private static <T> Set<T> addIfNonNull(Set<T> collection, final T element) {
+        if (element != null) {
+            if (collection == null) {
+                collection = new LinkedHashSet<>(4);
+            }
+            collection.add(element);
+        }
+        return collection;
+    }
+
+    /**
      * Returns {@code true} if the given NetCDF attribute is either null or equals to the
      * string value of the given metadata value.
      *
@@ -416,6 +567,17 @@ public class NetcdfISO {
     }
 
     /**
+     * Replaces the {@code "creator"} prefix by the given one if non-null.
+     * If the substitution can not be performed, returns {@code null}.
+     */
+    private static String replace(String key, final String prefix) {
+        if (prefix != null) {
+            key = key.startsWith("creator") ? prefix.concat(key.substring(7)) : null;
+        }
+        return key;
+    }
+
+    /**
      * Creates a {@code ResponsibleParty} element if at least one of the attributes is non-null,
      * except {@code role} which is not tested. The {@code role} is intentionally not tested
      * because it is sometime hard-coded by callers in this class, in which case it can't be null.
@@ -423,15 +585,13 @@ public class NetcdfISO {
      * This method tries to reuse the existing {@link #creator} instance, or part of it,
      * if it is suitable.
      *
-     * @param individualName   The {@code "creator_name"}  attribute value, or {@code null}.
-     * @param organisationName The {@code "institution"}   attribute value, or {@code null}.
-     * @param email            The {@code "creator_email"} attribute value, or {@code null}.
-     * @param url              The {@code "creator_url"}   attribute value, or {@code null}.
-     * @param role             May be hard-coded by the caller.
+     * @param role May be hard-coded by the caller.
      */
-    private ResponsibleParty createResponsibleParty(final String individualName,
-            final String organisationName, final String email, final String url, final Role role)
-    {
+    private ResponsibleParty createResponsibleParty(final Group group, final String prefix, final Role role) {
+        final String individualName   = getStringValue(group, replace(CREATOR_NAME,  prefix));
+        final String organisationName = getStringValue(group, replace(INSTITUTION,   prefix));
+        final String email            = getStringValue(group, replace(CREATOR_EMAIL, prefix));
+        final String url              = getStringValue(group, replace(CREATOR_URL,   prefix));
         if (individualName == null && organisationName == null && email == null && url == null) {
             return null;
         }
@@ -481,43 +641,29 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates a {@code ResponsibleParty} element if at least one of the attributes is non-null,
-     * except {@code role} which is not tested. The {@code role} is intentionally not tested
-     * because it is sometime hard-coded by callers in this class, in which case it can't be null.
-     * <p>
-     * This method tries to reuse the existing {@link #creator} instance, or part of it,
-     * if it is suitable.
-     *
-     * @param role May be hard-coded by the caller.
-     */
-    private ResponsibleParty createResponsibleParty(final Group group, final Role role) {
-        return createResponsibleParty(getStringValue(group, "creator_name"),
-                                      getStringValue(group, "institution"),
-                                      getStringValue(group, "creator_email"),
-                                      getStringValue(group, "creator_url"), role);
-    }
-
-    /**
      * Creates a {@code Citation} element if at least one of the required attributes
      * is non-null. This method will reuse the {@link #creator} field, if non-null.
      *
      * @param id The {@code <gmd:fileIdentifier> attribute.
      */
     private Citation createCitation(final String id) {
-        String title = getStringValue("title");
+        String title = getStringValue(TITLE);
         if (title == null) {
-            title = getStringValue("name");
+            title = getStringValue("full_name"); // THREDDS attribute.
+            if (title == null) {
+                title = getStringValue("name"); // THREDDS attribute.
+            }
         }
-        final Date creation  = getDateValue  ("date_created");
-        final Date modified  = getDateValue  ("date_modified");
-        final Date issued    = getDateValue  ("date_issued");
-        final String comment = getStringValue("comment");
+        final Date creation  = getDateValue  (DATE_CREATED);
+        final Date modified  = getDateValue  (DATE_MODIFIED);
+        final Date issued    = getDateValue  (DATE_ISSUED);
+        final String comment = getStringValue(COMMENT);
         if (title == null && id == null && creation == null && modified == null && issued == null && comment == null) {
             return null;
         }
         final DefaultCitation citation = new DefaultCitation(title);
         if (id != null) {
-            final String namespace = getStringValue("naming_authority");
+            final String namespace = getStringValue(NAMING_AUTHORITY);
             citation.getIdentifiers().add(new DefaultIdentifier((namespace != null) ? new DefaultCitation(namespace) : null, id));
         }
         if (creation != null) citation.getDates().add(new DefaultCitationDate(creation, DateType.CREATION));
@@ -532,11 +678,8 @@ public class NetcdfISO {
             citation.getCitedResponsibleParties().add(np);
         }
         for (final Group group : groups) {
-            final ResponsibleParty contributor = createResponsibleParty(
-                    getStringValue(group, "contributor_name"), null,
-                    getStringValue(group, "contributor_email"),
-                    getStringValue(group, "contributor_url"), CodeLists.valueOf(Role.class,
-                    getStringValue(group, "contributor_role")));
+            final ResponsibleParty contributor = createResponsibleParty(group, "contributor",
+                    CodeLists.valueOf(Role.class, getStringValue(group, "contributor_role")));
             if (contributor != null && contributor != creator) {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
@@ -553,48 +696,62 @@ public class NetcdfISO {
      */
     private DataIdentification createIdentificationInfo(final String id) throws IOException {
         DefaultDataIdentification identification = null;
-        final Citation citation = createCitation(id);
-        final String   summary  = getStringValue("summary");
-        final Set<InternationalString> project = new LinkedHashSet<>(4);
+        Set<InternationalString> project   = null;
+        Set<InternationalString> publisher = null;
+        Set<InternationalString> standards = null;
         for (final Group group : groups) {
-            final String p = getStringValue(group, "project");
-            if (p != null) {
-                project.add(wrap(p));
-            }
             final Keywords keywords = createKeywords(group, KeywordType.THEME);
-            final String   credits  = getStringValue(group, "acknowledgment");
-            if (keywords != null || credits != null) {
+            final String   credits  = getStringValue(group, ACKNOWLEDGMENT);
+            final String   license  = getStringValue(group, LICENSE);
+            if (keywords != null || credits != null || license != null) {
                 if (identification == null) {
                     identification = new DefaultDataIdentification();
                 }
                 if (keywords != null) addIfAbsent(identification.getDescriptiveKeywords(), keywords);
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
+                if (license  != null) addIfAbsent(identification.getResourceConstraints(), new DefaultLegalConstraints(license));
             }
+            project   = addIfNonNull(project,   wrap(getStringValue(group, PROJECT)));
+            publisher = addIfNonNull(publisher, wrap(getStringValue(group, "publisher_name")));
+            standards = addIfNonNull(standards, wrap(getStringValue(group, "standard_name")));
         }
+        final Citation citation = createCitation(id);
+        final String   summary  = getStringValue(SUMMARY);
         if (identification == null) {
-            if (citation == null && summary == null && creator == null && project.isEmpty()) {
+            if (citation == null && summary == null && project == null && publisher == null && creator == null) {
                 return null;
             }
             identification = new DefaultDataIdentification();
-        }
-        if (!project.isEmpty()) {
-            final DefaultKeywords keywords = new DefaultKeywords(project);
-            keywords.setType(CodeLists.valueOf(KeywordType.class, "project"));
-            identification.getDescriptiveKeywords().add(keywords);
         }
         identification.setCitation(citation);
         identification.setAbstract(wrap(summary));
         if (creator != null) {
             identification.getPointOfContacts().add(creator);
         }
+        addKeywords(identification, project,   "project");
+        addKeywords(identification, publisher, "dataCenter");
+        addKeywords(identification, standards, "theme");
         return identification;
+    }
+
+    /**
+     * Adds the given keywords to the given identification info if the given set is non-null.
+     */
+    private static void addKeywords(final DefaultDataIdentification addTo,
+            final Set<InternationalString> words, final String type)
+    {
+        if (words != null) {
+            final DefaultKeywords keywords = new DefaultKeywords(words);
+            keywords.setType(CodeLists.valueOf(KeywordType.class, type));
+            addTo.getDescriptiveKeywords().add(keywords);
+        }
     }
 
     /**
      * Returns the keywords if at least one required attribute is found, or {@code null} otherwise.
      */
     private Keywords createKeywords(final Group group, final KeywordType type) throws IOException {
-        final String list = getStringValue(group, "keywords");
+        final String list = getStringValue(group, KEYWORDS);
         DefaultKeywords keywords = null;
         if (list != null) {
             final Set<InternationalString> words = new LinkedHashSet<>();
@@ -607,7 +764,7 @@ public class NetcdfISO {
             if (!words.isEmpty()) {
                 keywords = new DefaultKeywords(words);
                 keywords.setType(type);
-                final String vocabulary = getStringValue(group, "keywords_vocabulary");
+                final String vocabulary = getStringValue(group, VOCABULARY);
                 if (vocabulary != null) {
                     keywords.setThesaurusName(new DefaultCitation(vocabulary));
                 }
@@ -624,10 +781,10 @@ public class NetcdfISO {
      */
     public Metadata createMetadata() throws IOException {
         final DefaultMetadata metadata = new DefaultMetadata();
-        final String id = getStringValue("id");
+        final String id = getStringValue(IDENTIFIER);
         metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
         metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
-        metadata.setDateStamp(getDateValue("metadata_creation"));
+        metadata.setDateStamp(getDateValue(METADATA_CREATION));
         metadata.setFileIdentifier(id);
         metadata.getHierarchyLevels().add(ScopeCode.DATASET);
         final String wms = getStringValue("wms_service");
@@ -640,7 +797,7 @@ public class NetcdfISO {
          * the THREDDS attributes if no information was found in global attributes.
          */
         for (final Group group : groups) {
-            final ResponsibleParty party = createResponsibleParty(group, Role.POINT_OF_CONTACT);
+            final ResponsibleParty party = createResponsibleParty(group, null, Role.POINT_OF_CONTACT);
             if (party != null && party != creator) {
                 addIfAbsent(metadata.getContacts(), party);
                 if (creator == null) {
@@ -695,14 +852,14 @@ public class NetcdfISO {
             if (at != null) {
                 String rsat = null;
                 switch (at) {
-                    case Lon:      rsat = "geospatial_lon_resolution"; // fallthrough
+                    case Lon:      rsat = LONGITUDE_RESOLUTION; // fallthrough
                     case GeoX:     type = DimensionNameType.COLUMN; break;
-                    case Lat:      rsat = "geospatial_lat_resolution"; // fallthrough
+                    case Lat:      rsat = LATITUDE_RESOLUTION; // fallthrough
                     case GeoY:     type = DimensionNameType.ROW; break;
-                    case Height:   rsat = "geospatial_vertical_resolution";
+                    case Height:   rsat = VERTICAL_RESOLUTION;
                     case GeoZ:
                     case Pressure: type = DimensionNameType.VERTICAL; break;
-                    case Time:     rsat = "time_coverage_resolution"; // fallthrough
+                    case Time:     rsat = TIME_RESOLUTION; // fallthrough
                     case RunTime:  type = DimensionNameType.TIME; break;
                 }
                 if (rsat != null) {

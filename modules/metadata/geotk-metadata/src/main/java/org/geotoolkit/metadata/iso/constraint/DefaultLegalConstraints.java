@@ -82,6 +82,17 @@ public class DefaultLegalConstraints extends DefaultConstraints implements Legal
     }
 
     /**
+     * Constructs a new constraints with the given {@linkplain #getUseLimitations() use limitation}.
+     *
+     * @param useLimitation The use limitation, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public DefaultLegalConstraints(final CharSequence useLimitation) {
+        super(useLimitation);
+    }
+
+    /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
      * @param source The metadata to copy, or {@code null} if none.

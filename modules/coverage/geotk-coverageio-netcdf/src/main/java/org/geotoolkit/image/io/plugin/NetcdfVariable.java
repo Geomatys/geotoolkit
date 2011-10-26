@@ -33,6 +33,11 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.internal.InternalUtilities;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
+// NetCDF attributes to be read by this class
+import static ucar.nc2.constants.CF.ADD_OFFSET;
+import static ucar.nc2.constants.CF.MISSING_VALUE;
+import static ucar.nc2.constants.CF.SCALE_FACTOR;
+
 
 /**
  * Parses the offset, scale factor, minimum, maximum and fill values from a variable. This class
@@ -58,15 +63,12 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  */
 final class NetcdfVariable {
     /**
-     * NetCDF attributes processed by this class.
+     * The {@value} attribute name (complete {@link ucar.nc2.constants.CF}).
      */
     static final String
             VALID_MIN     = "valid_min",
             VALID_MAX     = "valid_max",
             VALID_RANGE   = "valid_range",
-            SCALE_FACTOR  = "scale_factor",
-            ADD_OFFSET    = "add_offset",
-            MISSING_VALUE = "missing_value",
             FILL_VALUE    = "_FillValue";
 
     /**
