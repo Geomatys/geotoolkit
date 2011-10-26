@@ -281,16 +281,16 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                              || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionX) > 0)
                              || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionY) > 0))
         {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
         }
     }
 
     /**
-     * Checks if the bounding box of the specified image is consistents with the specified
+     * Checks if the bounding box of the specified image is consistent with the specified
      * grid geometry. If an inconsistency has been found, then an error string is returned.
      * This string will be typically used as a message in an exception to be thrown.
      * <p>
-     * Note that a succesful check at construction time may fails later if the image is part
+     * Note that a successful check at construction time may fails later if the image is part
      * of a JAI chain (i.e. is a {@link javax.media.jai.RenderedOp}) and its bounds has been
      * edited (i.e the image node as been re-rendered). Since {@code GridCoverage2D} are immutable
      * by design, we are not allowed to propagate the image change here. The {@link #getGridGeometry}

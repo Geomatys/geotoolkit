@@ -362,7 +362,7 @@ public final class Errors extends IndexedResourceBundle {
         /**
          * Envelope must be at least two-dimensional and non-empty.
          */
-        public static final int EMPTY_ENVELOPE = 60;
+        public static final int EMPTY_ENVELOPE_2D = 60;
 
         /**
          * Premature end of data file.

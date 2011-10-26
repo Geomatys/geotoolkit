@@ -1039,9 +1039,9 @@ scanNumber: while (++i < length) {
 
     /**
      * Determines whether or not this envelope is empty. An envelope is non-empty only if it has
-     * at least one {@linkplain #getDimension dimension}, and the {@linkplain #getSpan span}
+     * at least one {@linkplain #getDimension() dimension}, and the {@linkplain #getSpan(int) span}
      * is greater than 0 along all dimensions. Note that a non-empty envelope is always
-     * non-{@linkplain #isNull null}, but the converse is not always true.
+     * non-{@linkplain #isNull() null}, but the converse is not always true.
      *
      * @return {@code true} if this envelope is empty.
      */

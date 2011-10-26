@@ -778,7 +778,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      */
     private void ensureNonEmpty(final Rectangle2D envelope) throws CoverageStoreException {
         if (envelope.isEmpty()) {
-            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
+            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE_2D));
         }
     }
 

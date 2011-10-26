@@ -133,7 +133,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
         this.startTime = (startTime != null) ? startTime.getTime() : Long.MIN_VALUE;
         this.  endTime = (  endTime != null) ?   endTime.getTime() : Long.MAX_VALUE;
         if (identifier.geometry.isEmpty() || this.startTime > this.endTime) {
-            throw new IllegalRecordException(Errors.format(Errors.Keys.EMPTY_ENVELOPE));
+            throw new IllegalRecordException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
         }
         this.tiles = tiles;
     }

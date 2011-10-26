@@ -250,8 +250,10 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * in the file written by {@link GridCoverageWriter}) may be smaller if the coverage
      * available in the source does not fill completely the given envelope.
      * <p>
-     * The envelope can be specified in any {@linkplain CoordinateReferenceSystem Coordinate
-     * Reference System}. The envelope CRS is honored as below:
+     * The envelope can be specified in any {@linkplain Envelope#getCoordinateReferenceSystem()
+     * Coordinate Reference System}, unless the CRS has been restricted by a call to the
+     * {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem} method.
+     * The envelope CRS is honored as below:
      *
      * <ul>
      *   <li><p><b>At reading time</b>: {@link GridCoverageReader} may return a coverage in that CRS
@@ -273,16 +275,34 @@ public abstract class GridCoverageStoreParam implements Serializable {
      *         {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem}.
      * @throws MismatchedDimensionException If the dimension of the given envelope is not
      *         equal to the {@linkplain #getResolution() resolution} dimension.
+     * @throws IllegalArgumentException If the given envelope is illegal for an other reason.
      *
      * @see javax.imageio.IIOParam#setSourceRegion(Rectangle)
      */
-    public void setEnvelope(Envelope envelope)
-            throws MismatchedReferenceSystemException, MismatchedDimensionException
-    {
-        ensureCompatibleCRS(envelope, crs);
-        ensureCompatibleDimension(resolution, envelope);
-        if (envelope instanceof Cloneable) {
-            envelope = (Envelope) ((Cloneable) envelope).clone();
+    public void setEnvelope(Envelope envelope) throws IllegalArgumentException {
+        if (envelope != null) {
+            ensureCompatibleCRS(envelope, crs);
+            ensureCompatibleDimension(resolution, envelope);
+            /*
+             * Ensures that the envelope is non-empty.  The two dimensions to be read should
+             * have a span greater than zero, while the extra dimension may have a span of 0.
+             * We can not determine easily which dimensions will map to the rows and columns
+             * (we would need to transform the envelope for that purpose, but we don't want
+             * do do that here). As a compromise, we will just check that at least two
+             * dimensions have a non-null span.
+             */
+            int dimension = 0;
+            for (int i=envelope.getDimension(); --i>=0;) {
+                if (envelope.getSpan(i) > 0) {
+                    dimension++;
+                }
+            }
+            if (dimension < 2) {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
+            }
+            if (envelope instanceof Cloneable) {
+                envelope = (Envelope) ((Cloneable) envelope).clone();
+            }
         }
         this.envelope = envelope;
     }
