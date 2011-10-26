@@ -55,7 +55,7 @@ Running Geotoolkit.org
   <dependency>
     <groupId>org.apache.derby</groupId>
     <artifactId>derby</artifactId>
-    <version>10.8.1.2</version>
+    <version>10.8.2.2</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>
@@ -103,7 +103,7 @@ Running Geotoolkit.org
   <dependency>
     <groupId>org.apache.derby</groupId>
     <artifactId>derby</artifactId>
-    <version>10.8.1.2</version>
+    <version>10.8.2.2</version>
     <scope>runtime</scope>
   </dependency>
 </dependencies>
