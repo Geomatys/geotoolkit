@@ -32,6 +32,7 @@ import java.io.IOException;
 import ucar.nc2.Group;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateAxis;
@@ -54,11 +55,18 @@ import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
+import org.opengis.metadata.content.Band;
+import org.opengis.metadata.content.RangeElementDescription;
+import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.WarningProducer;
+import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
@@ -74,6 +82,9 @@ import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
+import org.geotoolkit.metadata.iso.content.DefaultBand;
+import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
+import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
 
 import static org.geotoolkit.util.SimpleInternationalString.wrap;
 
@@ -88,13 +99,21 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  *   <li><a href="http://ngdc.noaa.gov/metadata/published/xsl/nciso2.0/UnidataDD2MI.xsl">UnidataDD2MI.xsl</a> file</li>
  * </ul>
  * <p>
- * The following attributes or elements are not included in the image metadata:
+ * The {@link String} constants declared in this class are the name of attributes examined by this class.
+ * The attribute values are extracted using the {@link NetcdfFile#findGlobalAttributeIgnoreCase(String)}
+ * or {@link Group#findAttributeIgnoreCase(String)} methods. The current implementation searches the
+ * attribute values in the following places, in that order:
  * <p>
- * <ul>
- *   <li>{@code <xsl:attribute name="xsi:schemaLocation"/>} because this apply only to XML marshalling.</li>
- *   <li>{@code <gml:language/>} because the language is not necessarily English.</li>
- *   <li>{@code <gml:characterSet/>} because this apply only to XML marshalling.</li>
- * </ul>
+ * <ol>
+ *   <li>{@code "NCISOMetadata"} group</li>
+ *   <li>{@code "CFMetadata"} group</li>
+ *   <li>Global attributes</li>
+ *   <li>{@code "THREDDSMetadata"} group</li>
+ * </ol>
+ * <p>
+ * The {@code "CFMetadata"} group has precedence over the global attributes because the
+ * {@linkplain #LONGITUDE_RESOLUTION longitude resolution} and {@linkplain #LATITUDE_RESOLUTION
+ * latitude resolution} are often more accurate in that group.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -124,6 +143,13 @@ public class NetcdfISO {
     public static final String IDENTIFIER = "id";
 
     /**
+     * The {@value} attribute name for a long descriptive name for the variable taken from a controlled
+     * vocabulary of variable names. This is actually a {@linkplain VariableSimpleIF variable} attribute,
+     * but sometime appears also in {@linkplain NetcdfFile#findGlobalAttribute(String) global attributes}.
+     */
+    public static final String STANDARD_NAME = "standard_name";
+
+    /**
      * The {@value} attribute name for the identifier authority (<em>Recommended</em>).
      * The combination of the {@value} and the {@value #IDENTIFIER} should be a globally
      * unique identifier for the dataset.
@@ -133,6 +159,8 @@ public class NetcdfISO {
     /**
      * The {@value} attribute name for a comma separated list of key words and phrases
      * (<em>Highly Recommended</em>).
+     *
+     * @see #getKeywordSeparator(Group)
      */
     public static final String KEYWORDS = "keywords";
 
@@ -189,6 +217,14 @@ public class NetcdfISO {
     public static final String CREATOR_EMAIL = "creator_email";
 
     /**
+     * The {@value} attribute name for the role of any individuals or institutions that contributed
+     * to the creation of this data (<em>Suggested</em>). The name, URL and email attribute names
+     * will be the same than for the creator, with the {@code "creator"} prefix replaced by
+     * {@code "contributor"}.
+     */
+    public static final String CONTRIBUTOR_ROLE = "contributor_role";
+
+    /**
      * The {@value} attribute name for creator's institution (<em>Recommended</em>).
      */
     public static final String INSTITUTION = "institution";
@@ -236,8 +272,39 @@ public class NetcdfISO {
     public static final String TIME_RESOLUTION = "time_coverage_resolution";
 
     /**
+     * The {@value} attribute name for the designation associated with a range element.
+     * This attribute can be associated to {@linkplain VariableSimpleIF variables}. If
+     * specified, they shall be one flag name for each {@linkplain #FLAG_MASKS flag mask},
+     * {@linkplain #FLAG_VALUES flag value} and {@linkplain #FLAG_MEANINGS flag meaning}.
+     */
+    public static final String FLAG_NAMES = "flag_names";
+
+    /**
+     * The {@value} attribute name for bitmask to apply on sample values before to compare
+     * them to the {@linkplain #FLAG_VALUES flag values}.
+     */
+    public static final String FLAG_MASKS = "flag_masks";
+
+    /**
+     * The {@value} attribute name for sample values to be flagged. The {@linkplain #FLAG_MASKS
+     * flag masks}, flag values and {@linkplain #FLAG_MEANINGS flag meaning} attributes, used
+     * together, describe a blend of independent boolean conditions and enumerated status codes.
+     * A flagged condition is identified by a bitwise AND of the variable value and each flag masks
+     * value; a result that matches the flag values value indicates a true condition.
+     */
+    public static final String FLAG_VALUES = "flag_values";
+
+    /**
+     * The {@value} attribute name for the meaning of {@linkplain #FLAG_VALUES flag values}.
+     * Each flag values and flag masks must coincide with a flag meanings.
+     */
+    public static final String FLAG_MEANINGS = "flag_meanings";
+
+    /**
      * Names of groups where to search for metadata, in precedence order.
      * The {@code null} value stands for global attributes.
+     * <p>
+     * REMINDER: if modified, update class javadoc too.
      */
     private static final String[] GROUP_NAMES = {"NCISOMetadata", "CFMetadata", null, "THREDDSMetadata"};
 
@@ -259,6 +326,13 @@ public class NetcdfISO {
      * Were to send the warnings, or {@code null} if none.
      */
     private final WarningProducer owner;
+
+    /**
+     * The name factory, created when first needed.
+     *
+     * @todo Use the GeoAPI interface after a {@code createMemberName(...)} method has been added.
+     */
+    private transient DefaultNameFactory nameFactory;
 
     /**
      * The creator, used at metadata creation time for avoiding to declare
@@ -295,19 +369,6 @@ public class NetcdfISO {
     }
 
     /**
-     * Returns the string to use as a keyword separator. The default implementation returns
-     * {@code ","}. Subclasses can override this method in an other separator (possibly
-     * determined from the file content) is desired.
-     *
-     * @param  group The NetCDF group from which keywords are read.
-     * @return The string to use as a keyword separator, as a regular expression.
-     * @throws IOException If an I/O operation was necessary but failed.
-     */
-    public String getKeywordSeparator(final Group group) throws IOException {
-        return ",";
-    }
-
-    /**
      * Reports a warning.
      *
      * @param method    The method in which the warning occurred.
@@ -318,13 +379,17 @@ public class NetcdfISO {
     }
 
     /**
-     * Returns the attribute of the given name in the given group.
+     * Returns the NetCDF attribute of the given name in the given group, or {@code null} if none.
+     * This method is invoked for every global and group attributes to be read by this class (but
+     * not {@linkplain VariableSimpleIF variable} attributes), thus providing a single point where
+     * subclasses can filter the attributes to be read. The {@code name} argument is typically (but
+     * is not restricted too) one of the constants defined in this class.
      *
      * @param  group The group in which to search the attribute, or {@code null} for global attributes.
      * @param  name  The name of the attribute to search (can not be null).
      * @return The attribute, or {@code null} if none.
      */
-    private Attribute getAttribute(final Group group, final String name) {
+    protected Attribute getAttribute(final Group group, final String name) {
         return (group != null) ? group.findAttributeIgnoreCase(name) : file.findGlobalAttributeIgnoreCase(name);
     }
 
@@ -679,7 +744,7 @@ public class NetcdfISO {
         }
         for (final Group group : groups) {
             final ResponsibleParty contributor = createResponsibleParty(group, "contributor",
-                    CodeLists.valueOf(Role.class, getStringValue(group, "contributor_role")));
+                    CodeLists.valueOf(Role.class, getStringValue(group, CONTRIBUTOR_ROLE)));
             if (contributor != null && contributor != creator) {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
@@ -712,8 +777,8 @@ public class NetcdfISO {
                 if (license  != null) addIfAbsent(identification.getResourceConstraints(), new DefaultLegalConstraints(license));
             }
             project   = addIfNonNull(project,   wrap(getStringValue(group, PROJECT)));
-            publisher = addIfNonNull(publisher, wrap(getStringValue(group, "publisher_name")));
-            standards = addIfNonNull(standards, wrap(getStringValue(group, "standard_name")));
+            publisher = addIfNonNull(publisher, wrap(getStringValue(group, replace(CREATOR_NAME, "publisher"))));
+            standards = addIfNonNull(standards, wrap(getStringValue(group, STANDARD_NAME)));
         }
         final Citation citation = createCitation(id);
         final String   summary  = getStringValue(SUMMARY);
@@ -728,7 +793,7 @@ public class NetcdfISO {
         if (creator != null) {
             identification.getPointOfContacts().add(creator);
         }
-        addKeywords(identification, project,   "project");
+        addKeywords(identification, project,   "project"); // Not necessarily the same string than PROJECT.
         addKeywords(identification, publisher, "dataCenter");
         addKeywords(identification, standards, "theme");
         return identification;
@@ -774,60 +839,17 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates an ISO {@code Metadata} object from the information found in the NetCDF file.
+     * Returns the string to use as a keyword separator. This separator is used for parsing
+     * the {@value #KEYWORDS} attribute value. The default implementation returns {@code ","}.
+     * Subclasses can override this method in an other separator (possibly determined from
+     * the file content) is desired.
      *
-     * @return The ISO metadata object.
-     * @throws IOException If an I/O operation was required but failed.
+     * @param  group The NetCDF group from which keywords are read.
+     * @return The string to use as a keyword separator, as a regular expression.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
-    public Metadata createMetadata() throws IOException {
-        final DefaultMetadata metadata = new DefaultMetadata();
-        final String id = getStringValue(IDENTIFIER);
-        metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
-        metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
-        metadata.setDateStamp(getDateValue(METADATA_CREATION));
-        metadata.setFileIdentifier(id);
-        metadata.getHierarchyLevels().add(ScopeCode.DATASET);
-        final String wms = getStringValue("wms_service");
-        final String wcs = getStringValue("wcs_service");
-        if (wms != null || wcs != null) {
-            metadata.getHierarchyLevels().add(ScopeCode.SERVICE);
-        }
-        /*
-         * Add the ResponsibleParty which is declared in global attributes, or in
-         * the THREDDS attributes if no information was found in global attributes.
-         */
-        for (final Group group : groups) {
-            final ResponsibleParty party = createResponsibleParty(group, null, Role.POINT_OF_CONTACT);
-            if (party != null && party != creator) {
-                addIfAbsent(metadata.getContacts(), party);
-                if (creator == null) {
-                    creator = party;
-                }
-            }
-        }
-        /*
-         * Add the identification info AFTER the responsible parties, because this method
-         * will reuse the 'creator' field (if non-null).
-         */
-        final DataIdentification identification = createIdentificationInfo(id);
-        if (identification != null) {
-            metadata.getIdentificationInfo().add(identification);
-        }
-        /*
-         * Add the dimension information, if any. This metadata node
-         * is built from the NetCDF CoordinateSystem objects.
-         */
-        if (file instanceof NetcdfDataset) {
-            final NetcdfDataset ds = (NetcdfDataset) file;
-            final EnumSet<NetcdfDataset.Enhance> mode = EnumSet.copyOf(ds.getEnhanceMode());
-            if (mode.add(NetcdfDataset.Enhance.CoordSystems)) {
-                ds.enhance(mode);
-            }
-            for (final CoordinateSystem cs : ds.getCoordinateSystems()) {
-                metadata.getSpatialRepresentationInfo().add(createSpatialRepresentationInfo(cs));
-            }
-        }
-        return metadata;
+    protected String getKeywordSeparator(final Group group) throws IOException {
+        return ",";
     }
 
     /**
@@ -879,5 +901,187 @@ public class NetcdfISO {
         }
         grid.setCellGeometry(CellGeometry.AREA);
         return grid;
+    }
+
+    /**
+     * Creates a {@code <gmd:contentInfo>} element from all NetCDF variables.
+     *
+     * @return The content information.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    private CoverageDescription createContentInfo() throws IOException {
+        final DefaultCoverageDescription content = new DefaultCoverageDescription();
+        for (final VariableSimpleIF variable : file.getVariables()) {
+            content.getDimensions().add(createSampleDimension(variable));
+            final Object[] names    = getSequence(variable, FLAG_NAMES,    false);
+            final Object[] meanings = getSequence(variable, FLAG_MEANINGS, false);
+            final Object[] masks    = getSequence(variable, FLAG_MASKS,    true);
+            final Object[] values   = getSequence(variable, FLAG_VALUES,   true);
+            final int length = Math.max(masks.length, Math.max(values.length, Math.max(names.length, meanings.length)));
+            for (int i=0; i<length; i++) {
+                final RangeElementDescription element = createRangeElementDescription(variable,
+                        i < names   .length ? (String) names   [i] : null,
+                        i < meanings.length ? (String) meanings[i] : null,
+                        i < masks   .length ? (Number) masks   [i] : null,
+                        i < values  .length ? (Number) values  [i] : null);
+                if (element != null) {
+                    content.getRangeElementDescriptions().add(element);
+                }
+            }
+        }
+        return content;
+    }
+
+    /**
+     * Returns the sequence of string values for the given attribute, or an empty array if none.
+     */
+    private static Object[] getSequence(final VariableSimpleIF variable, final String name, final boolean numeric) {
+        final Attribute attribute = variable.findAttributeIgnoreCase(name);
+        if (attribute != null) {
+            boolean hasValues = false;
+            final Object[] values = new Object[attribute.getLength()];
+            for (int i=0; i<values.length; i++) {
+                if (numeric) {
+                    if ((values[i] = attribute.getNumericValue(i)) != null) {
+                        hasValues = true;
+                    }
+                } else {
+                    String value = attribute.getStringValue(i);
+                    if (value != null && !(value = value.trim()).isEmpty()) {
+                        values[i] = value.replace('_', ' ');
+                        hasValues = true;
+                    }
+                }
+            }
+            if (hasValues) {
+                return values;
+            }
+        }
+        return Strings.EMPTY;
+    }
+
+    /**
+     * Creates a {@code <gmd:dimension>} element from the given NetCDF variable. Subclasses can
+     * override this method if they need to complete the information provided in the returned
+     * object.
+     *
+     * @param  variable The NetCDF variable.
+     * @return The sample dimension information.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    protected Band createSampleDimension(final VariableSimpleIF variable) throws IOException {
+        final DefaultBand band = new DefaultBand();
+        String name = variable.getShortName();
+        if (name == null) {
+            name = variable.getName();
+        }
+        if (name != null) {
+            if (nameFactory == null) {
+                nameFactory = (DefaultNameFactory) FactoryFinder.getNameFactory(
+                        new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class));
+            }
+            final StringBuilder type = new StringBuilder(variable.getDataType().getPrimitiveClassType().getSimpleName());
+            for (int i=variable.getShape().length; --i>=0;) {
+                type.append("[]");
+            }
+            band.setSequenceIdentifier(nameFactory.createMemberName(null, name,
+                    nameFactory.createTypeName(null, type.toString())));
+        }
+        final String descriptor = variable.getDescription();
+        if (descriptor != null && !descriptor.equals(name)) {
+            band.setDescriptor(wrap(descriptor));
+        }
+//TODO: Can't store the units, because the Band interface restricts it to length.
+//      We need the SampleDimension interface proposed in ISO 19115 revision draft.
+//      band.setUnits(Units.valueOf(variable.getUnitsString()));
+        return band;
+    }
+
+    /**
+     * Creates a {@code <gmd:rangeElementDescription>} elements from the given information.
+     * Subclasses can override this method if they need to complete the information provided
+     * in the returned object.
+     * <p>
+     * <b>Note:</b> ISO 19115 range elements are approximatively equivalent to
+     * {@link org.geotoolkit.coverage.Category} in the {@code geotk-coverage} module.
+     *
+     * @param  variable The NetCDF variable.
+     * @param  name     One of the elements in the {@value #FLAG_NAMES} attribute, or {@code null}.
+     * @param  meaning  One of the elements in the {@value #FLAG_MEANINGS} attribute or {@code null}.
+     * @param  mask     One of the elements in the {@value #FLAG_MASKS} attribute or {@code null}.
+     * @param  value    One of the elements in the {@value #FLAG_VALUES} attribute or {@code null}.
+     * @return The sample dimension information or {@code null} if none.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    protected RangeElementDescription createRangeElementDescription(final VariableSimpleIF variable,
+            final String name, final String meaning, final Number mask, final Number value) throws IOException
+    {
+        if (name != null && meaning != null) {
+            final DefaultRangeElementDescription element = new DefaultRangeElementDescription();
+            element.setName(wrap(name));
+            element.setDefinition(wrap(meaning));
+            // TODO: create a record from values (and possibly from the masks).
+            //       if (pixel & mask == value) then we have that range element.
+            return element;
+        }
+        return null;
+    }
+
+    /**
+     * Creates an ISO {@code Metadata} object from the information found in the NetCDF file.
+     *
+     * @return The ISO metadata object.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    public Metadata createMetadata() throws IOException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final String id = getStringValue(IDENTIFIER);
+        metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
+        metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
+        metadata.setDateStamp(getDateValue(METADATA_CREATION));
+        metadata.setFileIdentifier(id);
+        metadata.getHierarchyLevels().add(ScopeCode.DATASET);
+        final String wms = getStringValue("wms_service");
+        final String wcs = getStringValue("wcs_service");
+        if (wms != null || wcs != null) {
+            metadata.getHierarchyLevels().add(ScopeCode.SERVICE);
+        }
+        /*
+         * Add the ResponsibleParty which is declared in global attributes, or in
+         * the THREDDS attributes if no information was found in global attributes.
+         */
+        for (final Group group : groups) {
+            final ResponsibleParty party = createResponsibleParty(group, null, Role.POINT_OF_CONTACT);
+            if (party != null && party != creator) {
+                addIfAbsent(metadata.getContacts(), party);
+                if (creator == null) {
+                    creator = party;
+                }
+            }
+        }
+        /*
+         * Add the identification info AFTER the responsible parties, because this method
+         * will reuse the 'creator' field (if non-null).
+         */
+        final DataIdentification identification = createIdentificationInfo(id);
+        if (identification != null) {
+            metadata.getIdentificationInfo().add(identification);
+        }
+        metadata.getContentInfo().add(createContentInfo());
+        /*
+         * Add the dimension information, if any. This metadata node
+         * is built from the NetCDF CoordinateSystem objects.
+         */
+        if (file instanceof NetcdfDataset) {
+            final NetcdfDataset ds = (NetcdfDataset) file;
+            final EnumSet<NetcdfDataset.Enhance> mode = EnumSet.copyOf(ds.getEnhanceMode());
+            if (mode.add(NetcdfDataset.Enhance.CoordSystems)) {
+                ds.enhance(mode);
+            }
+            for (final CoordinateSystem cs : ds.getCoordinateSystems()) {
+                metadata.getSpatialRepresentationInfo().add(createSpatialRepresentationInfo(cs));
+            }
+        }
+        return metadata;
     }
 }

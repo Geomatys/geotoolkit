@@ -33,6 +33,7 @@ import java.lang.annotation.Annotation;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
@@ -268,7 +269,7 @@ public abstract class CommandLine implements Runnable {
         if (arguments != null) {
             arguments = arguments.clone();
         } else {
-            arguments = new String[0];
+            arguments = Strings.EMPTY;
         }
         Exception status = assignValues(getClass());
         /*

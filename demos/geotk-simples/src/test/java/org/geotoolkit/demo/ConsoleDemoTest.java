@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.demo.referencing.CoordinateConversion;
@@ -85,6 +86,6 @@ public final strictfp class ConsoleDemoTest extends TestBase {
     @Test
     public void testCoordinateConversion() throws Exception {
         Installation.allowSystemPreferences = false; // For avoiding warning messages in stderr.
-        CoordinateConversion.main(new String[0]);
+        CoordinateConversion.main(Strings.EMPTY);
     }
 }

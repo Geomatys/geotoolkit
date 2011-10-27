@@ -115,11 +115,6 @@ public final class Namespaces extends Static {
     public static final String FRA = "http://www.cnig.gouv.fr/2005/fra";
 
     /**
-     * An empty array of strings.
-     */
-    static final String[] EMPTY = new String[0];
-
-    /**
      * URLs for which the prefix to use directly follows them.
      */
     private static final String[] GENERIC_URLS = {
