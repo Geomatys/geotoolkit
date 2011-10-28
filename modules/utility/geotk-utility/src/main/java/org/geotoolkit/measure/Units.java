@@ -398,6 +398,11 @@ public final class Units extends Static {
      * hands especially a few symbols found in WKT parsing or in XML files. The list of symbols
      * handled especially is implementation-dependent and may change in future Geotk versions.
      *
+     * @todo The <code>org.geotoolkit.image.io.metadata.NetcdfISO</code> class needs that we
+     *       parse the {@code "degrees_west"} symbol in such a way that the conversion from
+     *       {@code "degrees_west"} to {@code "degrees_east"} reverse the sign of the values.
+     *       This is not yet supported by current implementation.
+     *
      * @param  uom The symbol to parse, or {@code null}.
      * @return The parsed symbol, or {@code null} if {@code uom} was null.
      * @throws IllegalArgumentException if the given symbol can not be parsed.
