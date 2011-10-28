@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import javax.media.jai.JAI;
 
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
@@ -279,7 +280,7 @@ public class About extends JComponent implements Dialog {
         if (tasks != null) {
             updater = new ThreadList(tasks, totalMemoryLabel, percentUsedLabel, resources);
             final JPanel pane = new JPanel(new BorderLayout());
-            final JList  list = new JList(updater);
+            final JList list = new JList(updater);
             pane.add(new JLabel(resources.getString(Vocabulary.Keys.RUNNING_TASKS)), BorderLayout.NORTH);
             pane.add(new JScrollPane(list), BorderLayout.CENTER);
             pane.setBorder(BorderFactory.createEmptyBorder(9,9,9,9));
@@ -454,7 +455,7 @@ public class About extends JComponent implements Dialog {
          * The list of threads to display. This list will be updated in a background
          * thread (the {@linkplain #worker}) on a regular basis.
          */
-        private String[] names = new String[0];
+        private String[] names = Strings.EMPTY;
 
         /**
          * The label where to write the total amount of memory.
@@ -495,7 +496,7 @@ public class About extends JComponent implements Dialog {
          * Returns the element at the given index in this list.
          */
         @Override
-        public Object getElementAt(final int index) { // NO synchronized here
+        public String getElementAt(final int index) { // NO synchronized here
             return names[index];
         }
 

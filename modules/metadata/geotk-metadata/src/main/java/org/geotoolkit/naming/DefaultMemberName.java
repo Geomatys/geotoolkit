@@ -37,6 +37,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @author Guilhem Legal (Geomatys)
  * @version 3.17
  *
+ * @see DefaultNameFactory#createMemberName(NameSpace, CharSequence, TypeName)
+ *
  * @since 3.17
  * @module
  */

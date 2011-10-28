@@ -26,6 +26,8 @@ import ucar.nc2.ncml.NcMLReader;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.plugin.NetcdfImageReader;
@@ -44,6 +46,12 @@ import static org.geotoolkit.test.Commons.getSingleton;
  * @since 3.20
  */
 public final strictfp class NetcdfISOTest {
+    /**
+     * Tolerance factor for floating point comparison.
+     * We actually require an exact match.
+     */
+    private static final double EPS = 0;
+
     /**
      * Tests a file that contains THREDDS metadata.
      *
@@ -72,5 +80,15 @@ public final strictfp class NetcdfISOTest {
         assertEquals(Integer.valueOf( 9601), axis.get(1).getDimensionSize());
         assertEquals(Double .valueOf(8.332899328159992E-4), axis.get(0).getResolution());
         assertEquals(Double .valueOf(8.332465368190813E-4), axis.get(1).getResolution());
+
+        final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
+        final GeographicBoundingBox bbox = (GeographicBoundingBox) getSingleton(getSingleton(identification.getExtents()).getGeographicElements());
+        assertEquals("West Bound Longitude", -80, bbox.getWestBoundLongitude(), EPS);
+        assertEquals("East Bound Longitude", -64, bbox.getEastBoundLongitude(), EPS);
+        assertEquals("South Bound Latitude",  40, bbox.getSouthBoundLatitude(), EPS);
+        assertEquals("North Bound Latitude",  48, bbox.getNorthBoundLatitude(), EPS);
+
+        assertEquals("xyz2grd -R-80/-64/40/48 -I3c -Gcrm_v1.grd",
+                getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
     }
 }

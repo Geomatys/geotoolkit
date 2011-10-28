@@ -40,6 +40,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -50,7 +51,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * A factory for {@link AbstractName} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see org.geotoolkit.factory.FactoryFinder#getNameFactory
  *
@@ -60,10 +61,16 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 @ThreadSafe
 public class DefaultNameFactory extends Factory implements NameFactory {
     /**
+     * Weak references to the name created by this factory.
+     */
+    private final WeakHashSet<GenericName> pool;
+
+    /**
      * Creates a new factory. Users should not invoke this constructor directly.
      * Use {@link org.geotoolkit.factory.FactoryFinder#getNameFactory} instead.
      */
     public DefaultNameFactory() {
+        pool = WeakHashSet.newInstance(GenericName.class);
     }
 
     /**
@@ -87,6 +94,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
             case 1:  return new SimpleInternationalString(strings.values().iterator().next());
             default: return new DefaultInternationalString(strings);
         }
+        // Do not cache in the pool, because not all instances are immutable.
     }
 
     /**
@@ -171,7 +179,8 @@ public class DefaultNameFactory extends Factory implements NameFactory {
 
     /**
      * Creates a member name from the given character sequence and attribute type.
-     * The default implementation returns a new {@linkplain DefaultMemberName} instance.
+     * The default implementation returns a new or an existing {@linkplain DefaultMemberName}
+     * instance.
      *
      * @param  scope The {@linkplain GenericName#scope scope} of the type
      *         name to be created, or {@code null} for a global namespace.
@@ -183,12 +192,12 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @since 3.17
      */
     public MemberName createMemberName(final NameSpace scope, final CharSequence name, final TypeName attributeType) {
-        return new DefaultMemberName(scope, name, attributeType);
+        return pool.unique(new DefaultMemberName(scope, name, attributeType));
     }
 
     /**
      * Creates a type name from the given character sequence. The default implementation
-     * returns a new {@linkplain DefaultTypeName} instance.
+     * returns a new or an existing {@linkplain DefaultTypeName} instance.
      *
      * @param  scope The {@linkplain GenericName#scope scope} of the type
      *         name to be created, or {@code null} for a global namespace.
@@ -200,12 +209,12 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      */
     @Override
     public TypeName createTypeName(final NameSpace scope, final CharSequence name) {
-        return new DefaultTypeName(scope, name);
+        return pool.unique(new DefaultTypeName(scope, name));
     }
 
     /**
      * Creates a local name from the given character sequence. The default implementation
-     * returns a new {@linkplain DefaultLocalName} instance.
+     * returns a new or an existing {@linkplain DefaultLocalName} instance.
      *
      * @param  scope The {@linkplain GenericName#scope scope} of the local
      *         name to be created, or {@code null} for a global namespace.
@@ -221,7 +230,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
             // Following may return a cached instance.
             return ((DefaultNameSpace) scope).local(name, null);
         }
-        return new DefaultLocalName(scope, name);
+        return pool.unique(new DefaultLocalName(scope, name));
     }
 
     /**
@@ -244,7 +253,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     public GenericName createGenericName(final NameSpace scope, final CharSequence... parsedNames) {
         ensureNonNull("parsedNames", parsedNames);
         switch (parsedNames.length) {
-            default: return new DefaultScopedName(scope, Arrays.asList(parsedNames));
+            default: return pool.unique(new DefaultScopedName(scope, Arrays.asList(parsedNames)));
             case 1:  return createLocalName(scope, parsedNames[0]); // User may override.
             case 0:  throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
         }

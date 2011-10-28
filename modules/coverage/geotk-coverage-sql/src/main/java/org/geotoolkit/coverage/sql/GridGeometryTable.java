@@ -193,7 +193,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
             throw new IllegalRecordException(exception, this, results, indexOf(query.identifier), identifier);
         }
         if (entry.isEmpty()) {
-            throw new IllegalRecordException(errors().getString(Errors.Keys.EMPTY_ENVELOPE), this, results,
+            throw new IllegalRecordException(errors().getString(Errors.Keys.EMPTY_ENVELOPE_2D), this, results,
                     indexOf(width == 0 ? query.width : height == 0 ? query.height : query.identifier), identifier);
         }
         return entry;

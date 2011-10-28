@@ -34,6 +34,7 @@ import org.opengis.metadata.constraint.LegalConstraints;
 import org.opengis.metadata.constraint.SecurityConstraints;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
@@ -42,7 +43,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -72,6 +73,19 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
      * Constructs an initially empty constraints.
      */
     public DefaultConstraints() {
+    }
+
+    /**
+     * Constructs a new constraints with the given {@linkplain #getUseLimitations() use limitation}.
+     *
+     * @param useLimitation The use limitation, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public DefaultConstraints(final CharSequence useLimitation) {
+        if (useLimitation != null) {
+            getUseLimitations().add(SimpleInternationalString.wrap(useLimitation));
+        }
     }
 
     /**

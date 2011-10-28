@@ -35,6 +35,7 @@ import java.util.logging.LogRecord;
 
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
@@ -186,7 +187,7 @@ public final class Synchronizer {
         final String catalog = targetCatalog;
         final String schema  = targetSchema;
         final ResultSet results = targetMetadata.getPrimaryKeys(catalog, schema, table);
-        String[] columns = new String[0];
+        String[] columns = Strings.EMPTY;
         while (results.next()) {
             if (catalog!=null && !catalog.equals(results.getString("TABLE_CAT"))) {
                 continue;

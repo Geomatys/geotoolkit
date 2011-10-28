@@ -31,6 +31,7 @@ import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.test.TestData;
 
@@ -124,11 +125,11 @@ public final strictfp class XImageIOTest extends ImageTestBase {
      */
     @Test
     public void testGetFormatNamesByMimeType() {
-        assertArrayEquals("Geotk has no RAW writer at this time.", new String[0],
+        assertArrayEquals("Geotk has no RAW writer at this time.", Strings.EMPTY,
                 XImageIO.getFormatNamesByMimeType("image/x-raw", false, true));
         assertArrayEquals("The RAW reader should has been found.", new String[] {"raw"},
                 XImageIO.getFormatNamesByMimeType("image/x-raw", true, false));
-        assertArrayEquals("Geotk has no RAW writer at this time.", new String[0],
+        assertArrayEquals("Geotk has no RAW writer at this time.", Strings.EMPTY,
                 XImageIO.getFormatNamesByMimeType("image/x-raw", true, true));
         assertArrayEquals("The RAW reader should has been found.", new String[] {"raw"},
                 XImageIO.getFormatNamesByMimeType("image/x-raw", false, false));

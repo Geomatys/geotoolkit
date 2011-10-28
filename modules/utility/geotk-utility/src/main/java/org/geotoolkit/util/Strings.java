@@ -47,6 +47,14 @@ import org.geotoolkit.resources.Errors;
  */
 public final class Strings extends Static {
     /**
+     * An array of zero-length. This constant play a role equivalents to
+     * {@link java.util.Collections#EMPTY_LIST}.
+     *
+     * @since 3.20
+     */
+    public static final String[] EMPTY = new String[0];
+
+    /**
      * An array of strings containing only white spaces. String lengths are equal to their
      * index in the {@code spaces} array. For example, {@code spaces[4]} contains a string of
      * length 4. Strings are constructed only when first needed.

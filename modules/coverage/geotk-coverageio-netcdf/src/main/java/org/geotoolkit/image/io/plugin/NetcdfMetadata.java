@@ -65,6 +65,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static ucar.nc2.constants.CF.GRID_MAPPING;
 
 
 /**
@@ -182,7 +183,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                  * to create CRS from CF convention in the next block below. This allows us
                  * to emmit a warning in case of mismatch.
                  */
-                final String name = getStringValue(variable, "grid_mapping");
+                final String name = getStringValue(variable, GRID_MAPPING);
                 if (name != null) {
                     final Map<String,GDALGridMapping> gridMapping = reader.getGridMapping();
                     gdal = gridMapping.get(name);

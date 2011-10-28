@@ -133,7 +133,7 @@ public final class CoverageIO extends Static {
     /**
      * Creates a mosaic reader using the given tiles, which must exist. The input argument can
      * be an instance of {@link org.geotoolkit.image.io.mosaic.TileManager}, a {@link File} to
-     * a serialized instance of (@code TileManager}, a directory, or an array or collection of
+     * a serialized instance of {@code TileManager}, a directory, or an array or collection of
      * {@link org.geotoolkit.image.io.mosaic.Tile} instances.
      * <p>
      * The {@code crs} argument is optional if the input is a {@link File}, in which case this

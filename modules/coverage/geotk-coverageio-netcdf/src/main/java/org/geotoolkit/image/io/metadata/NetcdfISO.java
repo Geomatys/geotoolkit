@@ -28,10 +28,16 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.text.ParseException;
 import java.io.IOException;
+import javax.measure.unit.Unit;
+import javax.measure.unit.SI;
+import javax.measure.unit.NonSI;
+import javax.measure.converter.UnitConverter;
+import javax.measure.converter.ConversionException;
 
 import ucar.nc2.Group;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateAxis;
@@ -54,11 +60,20 @@ import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.content.Band;
+import org.opengis.metadata.content.RangeElementDescription;
+import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.measure.Units;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.WarningProducer;
+import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
@@ -69,10 +84,23 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
+import org.geotoolkit.metadata.iso.content.DefaultBand;
+import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
+import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
+import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
+import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
+import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
+import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import static org.geotoolkit.util.SimpleInternationalString.wrap;
 
@@ -82,17 +110,35 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * The mapping is defined in the following web pages:
  * <p>
  * <ul>
- *   <li><a href="http://ngdc.noaa.gov/metadata/published/xsl/nciso2.0/UnidataDD2MI.xsl">UnidataDD2MI.xsl</a> file</li>
  *   <li><a href="https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery">NetCDF
  *       Attribute Convention for Dataset Discovery</a> wiki</li>
+ *   <li><a href="http://ngdc.noaa.gov/metadata/published/xsl/nciso2.0/UnidataDD2MI.xsl">UnidataDD2MI.xsl</a> file</li>
  * </ul>
  * <p>
- * The following attributes or elements are not included in the image metadata:
+ * The {@link String} constants declared in this class are the name of attributes examined by this class.
+ * The attribute values are extracted using the {@link NetcdfFile#findGlobalAttributeIgnoreCase(String)}
+ * or {@link Group#findAttributeIgnoreCase(String)} methods. The current implementation searches the
+ * attribute values in the following places, in that order:
  * <p>
+ * <ol>
+ *   <li>{@code "NCISOMetadata"} group</li>
+ *   <li>{@code "CFMetadata"} group</li>
+ *   <li>Global attributes</li>
+ *   <li>{@code "THREDDSMetadata"} group</li>
+ * </ol>
+ * <p>
+ * The {@code "CFMetadata"} group has precedence over the global attributes because the
+ * {@linkplain #LONGITUDE_RESOLUTION longitude resolution} and {@linkplain #LATITUDE_RESOLUTION
+ * latitude resolution} are often more accurate in that group.
+ *
+ * {@section Known limitations}
  * <ul>
- *   <li>{@code <xsl:attribute name="xsi:schemaLocation"/>} because this apply only to XML marshalling.</li>
- *   <li>{@code <gml:language/>} because the language is not necessarily English.</li>
- *   <li>{@code <gml:characterSet/>} because this apply only to XML marshalling.</li>
+ *   <li>{@code "degrees_west"} and {@code "degrees_south"} units not correctly handled</li>
+ *   <li>Units of measurement not yet declared in the {@link Band} elements.</li>
+ *   <li>{@link #TIME} values not yet included in the {@link Extent} element.</li>
+ *   <li>{@link #FLAG_VALUES} and {@link #FLAG_MASKS} not yet included in the
+ *       {@link RangeElementDescription} elements.</li>
+ *   <li>Services (WMS, WCS, OPeNDAP, THREDDS) <i>etc.</i>) and transfer options not yet declared.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -102,17 +148,400 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * @module
  */
 public class NetcdfISO {
+    // TODO: document link to ISO metadata when we will implement writer.
+    /**
+     * The {@value} attribute name for a short description of the dataset
+     * (<em>Highly Recommended</em>).
+     */
+    public static final String TITLE = "title";
+
+    /**
+     * The {@value} attribute name for a paragraph describing the dataset
+     * (<em>Highly Recommended</em>).
+     */
+    public static final String SUMMARY = "summary";
+
+    /**
+     * The {@value} attribute name for an identifier (<em>Recommended</em>).
+     * The combination of the {@value #NAMING_AUTHORITY} and the {@value}
+     * should be a globally unique identifier for the dataset.
+     */
+    public static final String IDENTIFIER = "id";
+
+    /**
+     * The {@value} attribute name for a long descriptive name for the variable taken from a controlled
+     * vocabulary of variable names. This is actually a {@linkplain VariableSimpleIF variable} attribute,
+     * but sometime appears also in {@linkplain NetcdfFile#findGlobalAttribute(String) global attributes}.
+     */
+    public static final String STANDARD_NAME = "standard_name";
+
+    /**
+     * The {@value} attribute name for the identifier authority (<em>Recommended</em>).
+     * The combination of the {@value} and the {@value #IDENTIFIER} should be a globally
+     * unique identifier for the dataset.
+     */
+    public static final String NAMING_AUTHORITY = "naming_authority";
+
+    /**
+     * The {@value} attribute name for a comma separated list of key words and phrases
+     * (<em>Highly Recommended</em>).
+     *
+     * @see #getKeywordSeparator(Group)
+     */
+    public static final String KEYWORDS = "keywords";
+
+    /**
+     * The {@value} attribute name for the guideline for the words/phrases in the
+     * {@value #KEYWORDS} attribute (<em>Recommended</em>).
+     */
+    public static final String VOCABULARY = "keywords_vocabulary";
+
+    /**
+     * The {@value} attribute name for providing an audit trail for modifications to the
+     * original data (<em>Recommended</em>).
+     */
+    public static final String HISTORY = "history";
+
+    /**
+     * The {@value} attribute name for miscellaneous information about the data
+     * (<em>Recommended</em>).
+     */
+    public static final String COMMENT = "comment";
+
+    /**
+     * The {@value} attribute name for the date on which the metadata was created
+     * (<em>Suggested</em>). This is actually defined in the "{@code NCISOMetadata}"
+     * subgroup.
+     */
+    public static final String METADATA_CREATION = "metadata_creation";
+
+    /**
+     * The {@value} attribute name for the date on which the data was created
+     * (<em>Recommended</em>).
+     */
+    public static final String DATE_CREATED = "date_created";
+
+    /**
+     * The {@value} attribute name for the date on which this data was last modified
+     * (<em>Suggested</em>).
+     */
+    public static final String DATE_MODIFIED = "date_modified";
+
+    /**
+     * The {@value} attribute name for a date on which this data was formally issued
+     * (<em>Suggested</em>).
+     */
+    public static final String DATE_ISSUED = "date_issued";
+
+    /**
+     * Holds the attribute names describing a responsible party.
+     * Values are:
+     * <p>
+     * <table><tr>
+     *   <th>Responsible</th>
+     *   <th>{@link #NAME}</th>
+     *   <th>{@link #INSTITUTION}</th>
+     *   <th>{@link #URL}</th>
+     *   <th>{@link #EMAIL}</th>
+     *   <th>{@link #ROLE}</th>
+     *   <th>{@link #DEFAULT_ROLE}</th>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#CREATOR}</td>
+     *   <td>{@code "creator_name"}</td>
+     *   <td>{@code "institution"}</td>
+     *   <td>{@code "creator_url"}</td>
+     *   <td>{@code "creator_email"}</td>
+     *   <td></td>
+     *   <td>{@link Role#ORIGINATOR}</td>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#CONTRIBUTOR}</td>
+     *   <td>{@code "contributor_name"}</td>
+     *   <td></td>
+     *   <td>{@code "contributor_url"}</td>
+     *   <td>{@code "contributor_email"}</td>
+     *   <td>{@code "contributor_role"}</td>
+     *   <td></td>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#PUBLISHER}</td>
+     *   <td>{@code "publisher_name"}</td>
+     *   <td></td>
+     *   <td>{@code "publisher_url"}</td>
+     *   <td>{@code "publisher_email"}</td>
+     *   <td></td>
+     *   <td>{@link Role#PUBLISHER}</td>
+     * </tr></table>
+     *
+     * {@note The member names in this class are upper-cases because they should be considered
+     *        as constants. For example <code>NetcdfISO.CREATOR.EMAIL</code> maps exactly to the
+     *        <code>"creator_email"</code> string and nothing else. A lower-case <code>email</code>
+     *        member name could be misleading since it would suggest that the field contains the
+     *        actual name value rather than the key by which the value is identified in a NetCDF file.}
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.20
+     *
+     * @since 3.20
+     * @module
+     */
+    public static final class Responsible {
+        /**
+         * The attribute name for the responsible's name. Possible values are
+         * {@code "creator_name"}, {@code "contributor_name"} or {@code "publisher_name"}.
+         */
+        public final String NAME;
+
+        /**
+         * The attribute name for the responsible's institution, or {@code null} if none.
+         * Possible value is {@code "institution"}.
+         */
+        public final String INSTITUTION;
+
+        /**
+         * The attribute name for the responsible's URL. Possible values are
+         * {@code "creator_url"}, {@code "contributor_url"} or {@code "publisher_url"}.
+         */
+        public final String URL;
+
+        /**
+         * The attribute name for the responsible's email address. Possible values are
+         * {@code "creator_email"}, {@code "contributor_email"} or {@code "publisher_email"}.
+         */
+        public final String EMAIL;
+
+        /**
+         * The attribute name for the responsible's role, or {@code null} if none.
+         * Possible value is {@code "contributor_role"}.
+         */
+        public final String ROLE;
+
+        /**
+         * The role to use as a fallback if no attribute value is associated to the {@link #ROLE} key.
+         */
+        public final Role DEFAULT_ROLE;
+
+        /**
+         * Creates a new set of attribute names. Any argument can be {@code null}
+         * if not applicable.
+         *
+         * @param name        The attribute name for the responsible's name.
+         * @param institution The attribute name for the responsible's institution.
+         * @param url         The attribute name for the responsible's URL.
+         * @param email       The attribute name for the responsible's email address.
+         * @param role        The attribute name for the responsible's role.
+         * @param defaultRole The role to use as a fallback if no attribute value is associated to the
+         *                    {@code role} key.
+         */
+        Responsible(final String name, final String institution, final String url, final String email,
+                final String role, final Role defaultRole)
+        {
+            NAME         = name;
+            INSTITUTION  = institution;
+            URL          = url;
+            EMAIL        = email;
+            ROLE         = role;
+            DEFAULT_ROLE = defaultRole;
+        }
+    }
+
+    /**
+     * The set of attribute names for the creator (<em>Recommended</em>).
+     */
+    public static final Responsible CREATOR = new Responsible("creator_name",
+            "institution", "creator_url", "creator_email", null, Role.ORIGINATOR);
+
+    /**
+     * The set of attribute names for the contributor (<em>Suggested</em>).
+     */
+    public static final Responsible CONTRIBUTOR = new Responsible("contributor_name",
+            null, "contributor_url", "contributor_email", "contributor_role", null);
+
+    /**
+     * The set of attribute names for the publisher (<em>Suggested</em>).
+     */
+    public static final Responsible PUBLISHER = new Responsible("publisher_name",
+            null, "publisher_url", "publisher_email", null, Role.PUBLISHER);
+
+    /**
+     * The {@value} attribute name for the scientific project that produced the data
+     * (<em>Recommended</em>).
+     */
+    public static final String PROJECT = "project";
+
+    /**
+     * The {@value} attribute name for a place to acknowledge various type of support for
+     * the project that produced this data (<em>Recommended</em>).
+     */
+    public static final String ACKNOWLEDGMENT = "acknowledgment";
+
+    /**
+     * The {@value} attribute name for a description of the restrictions to data access
+     * and distribution (<em>Recommended</em>).
+     */
+    public static final String LICENSE = "license";
+
+    /**
+     * Holds the attribute names describing a simple latitude, longitude, and vertical bounding box.
+     * Values are:
+     * <p>
+     * <table><tr>
+     *   <th>Dimension</th>
+     *   <th>{@link #MINIMUM}</th>
+     *   <th>{@link #MAXIMUM}</th>
+     *   <th>{@link #RESOLUTION}</th>
+     *   <th>{@link #UNITS}</th>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#LATITUDE}</td>
+     *   <td>{@code "geospatial_lat_min"}</td>
+     *   <td>{@code "geospatial_lat_max"}</td>
+     *   <td>{@code "geospatial_lat_resolution"}</td>
+     *   <td>{@code "geospatial_lat_units"}</td>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#LONGITUDE}</td>
+     *   <td>{@code "geospatial_lon_min"}</td>
+     *   <td>{@code "geospatial_lon_max"}</td>
+     *   <td>{@code "geospatial_lon_resolution"}</td>
+     *   <td>{@code "geospatial_lon_units"}</td>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#VERTICAL}</td>
+     *   <td>{@code "geospatial_vertical_min"}</td>
+     *   <td>{@code "geospatial_vertical_max"}</td>
+     *   <td>{@code "geospatial_vertical_resolution"}</td>
+     *   <td>{@code "geospatial_vertical_units"}</td>
+     * </tr><tr>
+     *   <td>{@link NetcdfISO#TIME}</td>
+     *   <td>{@code "time_coverage_start"}</td>
+     *   <td>{@code "time_coverage_end"}</td>
+     *   <td>{@code "time_coverage_resolution"}</td>
+     *   <td>{@code "time_coverage_units"}</td>
+     * </tr></table>
+     *
+     * {@note The member names in this class are upper-cases because they should be considered
+     *        as constants. For example <code>NetcdfISO.LATITUDE.MINIMUM</code> maps exactly to
+     *        the <code>"geospatial_lat_min"</code> string and nothing else. A lower-case
+     *        <code>minimum</code> member name could be misleading since it would suggest that
+     *        the field contains the actual name value rather than the key by which the value
+     *        is identified in a NetCDF file.}
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.20
+     *
+     * @since 3.20
+     * @module
+     */
+    public static final class Dimension {
+        /**
+         * The attribute name for the minimal value of the bounding box (<em>Recommended</em>).
+         * Possible values are {@code "geospatial_lat_min"}, {@code "geospatial_lon_min"},
+         * {@code "geospatial_vertical_min"} and {@code "time_coverage_start"}.
+         */
+        public final String MINIMUM;
+
+        /**
+         * The attribute name for the maximal value of the bounding box (<em>Recommended</em>).
+         * Possible values are {@code "geospatial_lat_max"}, {@code "geospatial_lon_max"},
+         * {@code "geospatial_vertical_max"} and {@code "time_coverage_end"}.
+         */
+        public final String MAXIMUM;
+
+        /**
+         * The attribute name for a further refinement of the geospatial bounding box
+         * (<em>Suggested</em>). Possible values are {@code "geospatial_lat_resolution"},
+         * {@code "geospatial_lon_resolution"}, {@code "geospatial_vertical_resolution"}
+         * and {@code "time_coverage_resolution"}.
+         */
+        public final String RESOLUTION;
+
+        /**
+         * The attribute name for the bounding box units of measurement.
+         * Possible values are {@code "geospatial_lat_units"}, {@code "geospatial_lon_units"},
+         * {@code "geospatial_vertical_units"} and {@code "time_coverage_units"}.
+         */
+        public final String UNITS;
+
+        /**
+         * Creates a new set of attribute names.
+         */
+        Dimension(final String min, final String max, final String resolution, final String units) {
+            MINIMUM    = min;
+            MAXIMUM    = max;
+            RESOLUTION = resolution;
+            UNITS      = units;
+        }
+    }
+
+    /**
+     * The set of attribute names for the minimal and maximal latitudes of the bounding box,
+     * resolution and units. Latitudes are assumed to be in decimal degrees north, unless a
+     * units attribute is specified.
+     */
+    public static final Dimension LATITUDE = new Dimension("geospatial_lat_min",
+            "geospatial_lat_max", "geospatial_lat_resolution", "geospatial_lat_units");
+
+    /**
+     * The set of attribute names for the minimal and maximal longitudes of the bounding box,
+     * resolution and units. Longitudes are assumed to be in decimal degrees east, unless a
+     * units attribute is specified.
+     */
+    public static final Dimension LONGITUDE = new Dimension("geospatial_lon_min",
+            "geospatial_lon_max", "geospatial_lon_resolution", "geospatial_lon_units");
+
+    /**
+     * The set of attribute names for the minimal and maximal elevations of the bounding box,
+     * resolution and units. Elevations are assumed to be in metres above the ground, unless a
+     * units attribute is specified.
+     */
+    public static final Dimension VERTICAL = new Dimension("geospatial_vertical_min",
+            "geospatial_vertical_max", "geospatial_vertical_resolution", "geospatial_vertical_units");
+
+    /**
+     * The set of attribute names for the start and end times of the bounding box, resolution and
+     * units. Dates are assumed to be ..., unless a units attribute is specified.
+     */
+    public static final Dimension TIME = new Dimension("time_coverage_start",
+            "time_coverage_end", "time_coverage_resolution", "time_coverage_units");
+
+    /**
+     * The {@value} attribute name for the designation associated with a range element.
+     * This attribute can be associated to {@linkplain VariableSimpleIF variables}. If
+     * specified, they shall be one flag name for each {@linkplain #FLAG_MASKS flag mask},
+     * {@linkplain #FLAG_VALUES flag value} and {@linkplain #FLAG_MEANINGS flag meaning}.
+     */
+    public static final String FLAG_NAMES = "flag_names";
+
+    /**
+     * The {@value} attribute name for bitmask to apply on sample values before to compare
+     * them to the {@linkplain #FLAG_VALUES flag values}.
+     */
+    public static final String FLAG_MASKS = "flag_masks";
+
+    /**
+     * The {@value} attribute name for sample values to be flagged. The {@linkplain #FLAG_MASKS
+     * flag masks}, flag values and {@linkplain #FLAG_MEANINGS flag meaning} attributes, used
+     * together, describe a blend of independent boolean conditions and enumerated status codes.
+     * A flagged condition is identified by a bitwise AND of the variable value and each flag masks
+     * value; a result that matches the flag values value indicates a true condition.
+     */
+    public static final String FLAG_VALUES = "flag_values";
+
+    /**
+     * The {@value} attribute name for the meaning of {@linkplain #FLAG_VALUES flag values}.
+     * Each flag values and flag masks must coincide with a flag meanings.
+     */
+    public static final String FLAG_MEANINGS = "flag_meanings";
+
+    /**
+     * Names of groups where to search for metadata, in precedence order.
+     * The {@code null} value stands for global attributes.
+     * <p>
+     * REMINDER: if modified, update class javadoc too.
+     */
+    private static final String[] GROUP_NAMES = {"NCISOMetadata", "CFMetadata", null, "THREDDSMetadata"};
+
     /**
      * The NetCDF file from which to extract ISO metadata.
      * This file is set at construction time.
      */
     protected final NetcdfFile file;
-
-    /**
-     * Names of groups where to search for metadata, in precedence order.
-     * The {@code null} value stands for global attributes.
-     */
-    private static final String[] GROUP_NAMES = {"NCISOMetadata", "CFMetadata", null, "THREDDSMetadata"};
 
     /**
      * The groups where to look for metadata, in precedence order. The first group shall be
@@ -126,6 +555,13 @@ public class NetcdfISO {
      * Were to send the warnings, or {@code null} if none.
      */
     private final WarningProducer owner;
+
+    /**
+     * The name factory, created when first needed.
+     *
+     * @todo Use the GeoAPI interface after a {@code createMemberName(...)} method has been added.
+     */
+    private transient DefaultNameFactory nameFactory;
 
     /**
      * The creator, used at metadata creation time for avoiding to declare
@@ -162,19 +598,6 @@ public class NetcdfISO {
     }
 
     /**
-     * Returns the string to use as a keyword separator. The default implementation returns
-     * {@code ","}. Subclasses can override this method in an other separator (possibly
-     * determined from the file content) is desired.
-     *
-     * @param  group The NetCDF group from which keywords are read.
-     * @return The string to use as a keyword separator, as a regular expression.
-     * @throws IOException If an I/O operation was necessary but failed.
-     */
-    public String getKeywordSeparator(final Group group) throws IOException {
-        return ",";
-    }
-
-    /**
      * Reports a warning.
      *
      * @param method    The method in which the warning occurred.
@@ -185,13 +608,17 @@ public class NetcdfISO {
     }
 
     /**
-     * Returns the attribute of the given name in the given group.
+     * Returns the NetCDF attribute of the given name in the given group, or {@code null} if none.
+     * This method is invoked for every global and group attributes to be read by this class (but
+     * not {@linkplain VariableSimpleIF variable} attributes), thus providing a single point where
+     * subclasses can filter the attributes to be read. The {@code name} argument is typically (but
+     * is not restricted too) one of the constants defined in this class.
      *
      * @param  group The group in which to search the attribute, or {@code null} for global attributes.
      * @param  name  The name of the attribute to search (can not be null).
      * @return The attribute, or {@code null} if none.
      */
-    private Attribute getAttribute(final Group group, final String name) {
+    protected Attribute getAttribute(final Group group, final String name) {
         return (group != null) ? group.findAttributeIgnoreCase(name) : file.findGlobalAttributeIgnoreCase(name);
     }
 
@@ -203,11 +630,13 @@ public class NetcdfISO {
      * @return The attribute value, or {@code null} if none.
      */
     private String getStringValue(final Group group, final String name) {
-        final Attribute attribute = getAttribute(group, name);
-        if (attribute != null) {
-            final String value = attribute.getStringValue();
-            if (value != null) {
-                return value.trim();
+        if (name != null) { // For createResponsibleParty(...) convenience.
+            final Attribute attribute = getAttribute(group, name);
+            if (attribute != null) {
+                final String value = attribute.getStringValue();
+                if (value != null) {
+                    return value.trim();
+                }
             }
         }
         return null;
@@ -312,6 +741,27 @@ public class NetcdfISO {
     }
 
     /**
+     * Returns the attribute of the given name in the given group, as a unit of measurement.
+     *
+     * @param  group The group in which to search the attribute, or {@code null} for global attributes.
+     * @param  name  The name of the attribute to search.
+     * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @todo Current Units.valueOf(String) implementation ignore direction in "degrees_east" or
+     *       "degrees_west". We need to take that in account (with "degrees_west" to "degrees_east"
+     *       converter that reverse the sign).
+     */
+    private Unit<?> getUnitValue(final Group group, final String name) {
+        final String unit = getStringValue(group, name);
+        if (unit != null) try {
+            return Units.valueOf(unit);
+        } catch (IllegalArgumentException e) {
+            warning("getUnitValue", e);
+        }
+        return null;
+    }
+
+    /**
      * Adds the given element in the given collection if the element is not already present in the
      * collection. We define this method because the metadata API use collections while the Geotk
      * implementation uses lists. The lists are usually very short (typically 0 or 1 element), so
@@ -321,6 +771,22 @@ public class NetcdfISO {
         if (!collection.contains(element)) {
             collection.add(element);
         }
+    }
+
+    /**
+     * Adds the given element in the given collection if the element is non-null.
+     * If the element is non-null and the collection is null, a new collection is
+     * created. The given collection, or the new collection if it has been created,
+     * is returned.
+     */
+    private static <T> Set<T> addIfNonNull(Set<T> collection, final T element) {
+        if (element != null) {
+            if (collection == null) {
+                collection = new LinkedHashSet<T>(4);
+            }
+            collection.add(element);
+        }
+        return collection;
     }
 
     /**
@@ -370,18 +836,14 @@ public class NetcdfISO {
      * declares the URL as a mandatory attribute, this method will ignore all other attributes
      * if the given URL is null.
      *
-     * @param  url         The URL (mandatory - if {@code null}, no resource will be created).
-     * @param  name        The resource name (optional).
-     * @param  description The resource description (optional).
+     * @param  url The URL (mandatory - if {@code null}, no resource will be created).
      * @return The online resource, or {@code null} if the URL was null.
      */
-    private OnlineResource createOnlineResource(final String url, final String name, final String description) {
+    private OnlineResource createOnlineResource(final String url) {
         if (url != null) try {
             final DefaultOnlineResource resource = new DefaultOnlineResource(new URI(url));
             resource.setProtocol("http");
             resource.setApplicationProfile("web browser");
-            resource.setName(name);
-            resource.setDescription(wrap(description));
             resource.setFunction(OnLineFunction.INFORMATION);
             return resource;
         } catch (URISyntaxException e) {
@@ -416,24 +878,26 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates a {@code ResponsibleParty} element if at least one of the attributes is non-null,
+     * Creates a {@code ResponsibleParty} element if at least one of the attributes is defined,
      * except {@code role} which is not tested. The {@code role} is intentionally not tested
-     * because it is sometime hard-coded by callers in this class, in which case it can't be null.
+     * because it may have a default value which is never null.
      * <p>
      * This method tries to reuse the existing {@link #creator} instance, or part of it,
      * if it is suitable.
      *
-     * @param individualName   The {@code "creator_name"}  attribute value, or {@code null}.
-     * @param organisationName The {@code "institution"}   attribute value, or {@code null}.
-     * @param email            The {@code "creator_email"} attribute value, or {@code null}.
-     * @param url              The {@code "creator_url"}   attribute value, or {@code null}.
-     * @param role             May be hard-coded by the caller.
+     * @param group The group in which to read the attributes.
      */
-    private ResponsibleParty createResponsibleParty(final String individualName,
-            final String organisationName, final String email, final String url, final Role role)
-    {
+    private ResponsibleParty createResponsibleParty(final Group group, final Responsible keys) {
+        final String individualName   = getStringValue(group, keys.NAME);
+        final String organisationName = getStringValue(group, keys.INSTITUTION);
+        final String email            = getStringValue(group, keys.EMAIL);
+        final String url              = getStringValue(group, keys.URL);
         if (individualName == null && organisationName == null && email == null && url == null) {
             return null;
+        }
+        Role role = CodeLists.valueOf(Role.class, getStringValue(group, keys.ROLE));
+        if (role == null) {
+            role = keys.DEFAULT_ROLE;
         }
         ResponsibleParty party    = creator;
         Contact          contact  = null;
@@ -466,7 +930,7 @@ public class NetcdfISO {
         if (party == null) {
             if (contact == null) {
                 if (address  == null) address  = createAddress(email);
-                if (resource == null) resource = createOnlineResource(url, null, null);
+                if (resource == null) resource = createOnlineResource(url);
                 contact = createContact(address, resource);
             }
             if (individualName != null || organisationName != null || contact != null) { // Do not test role.
@@ -481,43 +945,28 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates a {@code ResponsibleParty} element if at least one of the attributes is non-null,
-     * except {@code role} which is not tested. The {@code role} is intentionally not tested
-     * because it is sometime hard-coded by callers in this class, in which case it can't be null.
-     * <p>
-     * This method tries to reuse the existing {@link #creator} instance, or part of it,
-     * if it is suitable.
-     *
-     * @param role May be hard-coded by the caller.
-     */
-    private ResponsibleParty createResponsibleParty(final Group group, final Role role) {
-        return createResponsibleParty(getStringValue(group, "creator_name"),
-                                      getStringValue(group, "institution"),
-                                      getStringValue(group, "creator_email"),
-                                      getStringValue(group, "creator_url"), role);
-    }
-
-    /**
      * Creates a {@code Citation} element if at least one of the required attributes
      * is non-null. This method will reuse the {@link #creator} field, if non-null.
      *
      * @param id The {@code <gmd:fileIdentifier> attribute.
      */
     private Citation createCitation(final String id) {
-        String title = getStringValue("title");
+        String title = getStringValue(TITLE);
         if (title == null) {
-            title = getStringValue("name");
+            title = getStringValue("full_name"); // THREDDS attribute.
+            if (title == null) {
+                title = getStringValue("name"); // THREDDS attribute.
+            }
         }
-        final Date creation  = getDateValue  ("date_created");
-        final Date modified  = getDateValue  ("date_modified");
-        final Date issued    = getDateValue  ("date_issued");
-        final String comment = getStringValue("comment");
-        if (title == null && id == null && creation == null && modified == null && issued == null && comment == null) {
+        final Date creation = getDateValue(DATE_CREATED);
+        final Date modified = getDateValue(DATE_MODIFIED);
+        final Date issued   = getDateValue(DATE_ISSUED);
+        if (title == null && id == null && creation == null && modified == null && issued == null) {
             return null;
         }
         final DefaultCitation citation = new DefaultCitation(title);
         if (id != null) {
-            final String namespace = getStringValue("naming_authority");
+            final String namespace = getStringValue(NAMING_AUTHORITY);
             citation.getIdentifiers().add(new DefaultIdentifier((namespace != null) ? new DefaultCitation(namespace) : null, id));
         }
         if (creation != null) citation.getDates().add(new DefaultCitationDate(creation, DateType.CREATION));
@@ -532,16 +981,11 @@ public class NetcdfISO {
             citation.getCitedResponsibleParties().add(np);
         }
         for (final Group group : groups) {
-            final ResponsibleParty contributor = createResponsibleParty(
-                    getStringValue(group, "contributor_name"), null,
-                    getStringValue(group, "contributor_email"),
-                    getStringValue(group, "contributor_url"), CodeLists.valueOf(Role.class,
-                    getStringValue(group, "contributor_role")));
+            final ResponsibleParty contributor = createResponsibleParty(group, CONTRIBUTOR);
             if (contributor != null && contributor != creator) {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
         }
-        citation.setOtherCitationDetails(wrap(comment));
         return citation;
     }
 
@@ -550,51 +994,76 @@ public class NetcdfISO {
      * is non-null. This method will reuse the {@link #creator} field, if non-null.
      *
      * @param id The {@code <gmd:fileIdentifier> attribute.
+     * @param publisher The publisher names, built by the caller in an opportunist way.
      */
-    private DataIdentification createIdentificationInfo(final String id) throws IOException {
+    private DataIdentification createIdentificationInfo(final String id,
+            final Set<InternationalString> publisher) throws IOException
+    {
         DefaultDataIdentification identification = null;
-        final Citation citation = createCitation(id);
-        final String   summary  = getStringValue("summary");
-        final Set<InternationalString> project = new LinkedHashSet<InternationalString>(4);
+        Set<InternationalString>  project        = null;
+        Set<InternationalString>  standards      = null;
+        boolean hasExtent = false;
         for (final Group group : groups) {
-            final String p = getStringValue(group, "project");
-            if (p != null) {
-                project.add(wrap(p));
-            }
             final Keywords keywords = createKeywords(group, KeywordType.THEME);
-            final String   credits  = getStringValue(group, "acknowledgment");
-            if (keywords != null || credits != null) {
+            final String   credits  = getStringValue(group, ACKNOWLEDGMENT);
+            final String   license  = getStringValue(group, LICENSE);
+            final Extent   extent   = hasExtent ? null : createExtent(group);
+            if (keywords != null || credits != null || license != null || extent != null) {
                 if (identification == null) {
                     identification = new DefaultDataIdentification();
                 }
                 if (keywords != null) addIfAbsent(identification.getDescriptiveKeywords(), keywords);
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
+                if (license  != null) addIfAbsent(identification.getResourceConstraints(), new DefaultLegalConstraints(license));
+                if (extent   != null) {
+                    // Takes only ONE extent, because a NetCDF file may declare many time the same
+                    // extent with different precision. The groups are ordered in such a way that
+                    // the first extent should be the most accurate one.
+                    identification.getExtents().add(extent);
+                    hasExtent = true;
+                }
             }
+            project   = addIfNonNull(project,   wrap(getStringValue(group, PROJECT)));
+            standards = addIfNonNull(standards, wrap(getStringValue(group, STANDARD_NAME)));
         }
+        final Citation citation = createCitation(id);
+        final String   summary  = getStringValue(SUMMARY);
         if (identification == null) {
-            if (citation == null && summary == null && creator == null && project.isEmpty()) {
+            if (citation==null && summary==null && project==null && standards==null && publisher==null && creator==null) {
                 return null;
             }
             identification = new DefaultDataIdentification();
-        }
-        if (!project.isEmpty()) {
-            final DefaultKeywords keywords = new DefaultKeywords(project);
-            keywords.setType(CodeLists.valueOf(KeywordType.class, "project"));
-            identification.getDescriptiveKeywords().add(keywords);
         }
         identification.setCitation(citation);
         identification.setAbstract(wrap(summary));
         if (creator != null) {
             identification.getPointOfContacts().add(creator);
         }
+        addKeywords(identification, project,   "project"); // Not necessarily the same string than PROJECT.
+        addKeywords(identification, publisher, "dataCenter");
+        addKeywords(identification, standards, "theme");
+        identification.setSupplementalInformation(wrap(getStringValue(COMMENT)));
         return identification;
+    }
+
+    /**
+     * Adds the given keywords to the given identification info if the given set is non-null.
+     */
+    private static void addKeywords(final DefaultDataIdentification addTo,
+            final Set<InternationalString> words, final String type)
+    {
+        if (words != null) {
+            final DefaultKeywords keywords = new DefaultKeywords(words);
+            keywords.setType(CodeLists.valueOf(KeywordType.class, type));
+            addTo.getDescriptiveKeywords().add(keywords);
+        }
     }
 
     /**
      * Returns the keywords if at least one required attribute is found, or {@code null} otherwise.
      */
     private Keywords createKeywords(final Group group, final KeywordType type) throws IOException {
-        final String list = getStringValue(group, "keywords");
+        final String list = getStringValue(group, KEYWORDS);
         DefaultKeywords keywords = null;
         if (list != null) {
             final Set<InternationalString> words = new LinkedHashSet<InternationalString>();
@@ -607,7 +1076,7 @@ public class NetcdfISO {
             if (!words.isEmpty()) {
                 keywords = new DefaultKeywords(words);
                 keywords.setType(type);
-                final String vocabulary = getStringValue(group, "keywords_vocabulary");
+                final String vocabulary = getStringValue(group, VOCABULARY);
                 if (vocabulary != null) {
                     keywords.setThesaurusName(new DefaultCitation(vocabulary));
                 }
@@ -617,60 +1086,17 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates an ISO {@code Metadata} object from the information found in the NetCDF file.
+     * Returns the string to use as a keyword separator. This separator is used for parsing
+     * the {@value #KEYWORDS} attribute value. The default implementation returns {@code ","}.
+     * Subclasses can override this method in an other separator (possibly determined from
+     * the file content) is desired.
      *
-     * @return The ISO metadata object.
-     * @throws IOException If an I/O operation was required but failed.
+     * @param  group The NetCDF group from which keywords are read.
+     * @return The string to use as a keyword separator, as a regular expression.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
-    public Metadata createMetadata() throws IOException {
-        final DefaultMetadata metadata = new DefaultMetadata();
-        final String id = getStringValue("id");
-        metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
-        metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
-        metadata.setDateStamp(getDateValue("metadata_creation"));
-        metadata.setFileIdentifier(id);
-        metadata.getHierarchyLevels().add(ScopeCode.DATASET);
-        final String wms = getStringValue("wms_service");
-        final String wcs = getStringValue("wcs_service");
-        if (wms != null || wcs != null) {
-            metadata.getHierarchyLevels().add(ScopeCode.SERVICE);
-        }
-        /*
-         * Add the ResponsibleParty which is declared in global attributes, or in
-         * the THREDDS attributes if no information was found in global attributes.
-         */
-        for (final Group group : groups) {
-            final ResponsibleParty party = createResponsibleParty(group, Role.POINT_OF_CONTACT);
-            if (party != null && party != creator) {
-                addIfAbsent(metadata.getContacts(), party);
-                if (creator == null) {
-                    creator = party;
-                }
-            }
-        }
-        /*
-         * Add the identification info AFTER the responsible parties, because this method
-         * will reuse the 'creator' field (if non-null).
-         */
-        final DataIdentification identification = createIdentificationInfo(id);
-        if (identification != null) {
-            metadata.getIdentificationInfo().add(identification);
-        }
-        /*
-         * Add the dimension information, if any. This metadata node
-         * is built from the NetCDF CoordinateSystem objects.
-         */
-        if (file instanceof NetcdfDataset) {
-            final NetcdfDataset ds = (NetcdfDataset) file;
-            final EnumSet<NetcdfDataset.Enhance> mode = EnumSet.copyOf(ds.getEnhanceMode());
-            if (mode.add(NetcdfDataset.Enhance.CoordSystems)) {
-                ds.enhance(mode);
-            }
-            for (final CoordinateSystem cs : ds.getCoordinateSystems()) {
-                metadata.getSpatialRepresentationInfo().add(createSpatialRepresentationInfo(cs));
-            }
-        }
-        return metadata;
+    protected String getKeywordSeparator(final Group group) throws IOException {
+        return ",";
     }
 
     /**
@@ -693,20 +1119,20 @@ public class NetcdfISO {
             Double resolution = null;
             final AxisType at = axis.getAxisType();
             if (at != null) {
-                String rsat = null;
+                Dimension rsat = null;
                 switch (at) {
-                    case Lon:      rsat = "geospatial_lon_resolution"; // fallthrough
+                    case Lon:      rsat = LONGITUDE; // fallthrough
                     case GeoX:     type = DimensionNameType.COLUMN; break;
-                    case Lat:      rsat = "geospatial_lat_resolution"; // fallthrough
+                    case Lat:      rsat = LATITUDE; // fallthrough
                     case GeoY:     type = DimensionNameType.ROW; break;
-                    case Height:   rsat = "geospatial_vertical_resolution";
+                    case Height:   rsat = VERTICAL;
                     case GeoZ:
                     case Pressure: type = DimensionNameType.VERTICAL; break;
-                    case Time:     rsat = "time_coverage_resolution"; // fallthrough
+                    case Time:     rsat = TIME; // fallthrough
                     case RunTime:  type = DimensionNameType.TIME; break;
                 }
                 if (rsat != null) {
-                    final Number res = getNumericValue(rsat);
+                    final Number res = getNumericValue(rsat.RESOLUTION);
                     if (res != null) {
                         resolution = (res instanceof Double) ? (Double) res : res.doubleValue();
                     }
@@ -722,5 +1148,283 @@ public class NetcdfISO {
         }
         grid.setCellGeometry(CellGeometry.AREA);
         return grid;
+    }
+
+    /**
+     * Returns the extent declared in the given group, or {@code null} if none.
+     */
+    private Extent createExtent(final Group group) {
+        DefaultExtent extent = null;
+        final Number xmin = getNumericValue(group, LONGITUDE.MINIMUM);
+        final Number xmax = getNumericValue(group, LONGITUDE.MAXIMUM);
+        final Number ymin = getNumericValue(group, LATITUDE .MINIMUM);
+        final Number ymax = getNumericValue(group, LATITUDE .MAXIMUM);
+        final Number zmin = getNumericValue(group, VERTICAL .MINIMUM);
+        final Number zmax = getNumericValue(group, VERTICAL .MAXIMUM);
+        final Number tmin = getNumericValue(group, TIME     .MINIMUM);
+        final Number tmax = getNumericValue(group, TIME     .MAXIMUM);
+        if (xmin != null || xmax != null || ymin != null || ymax != null) {
+            extent = new DefaultExtent();
+            final UnitConverter cλ = getConverterTo(getUnitValue(group, LONGITUDE.UNITS), NonSI.DEGREE_ANGLE);
+            final UnitConverter cφ = getConverterTo(getUnitValue(group, LATITUDE .UNITS), NonSI.DEGREE_ANGLE);
+            extent.getGeographicElements().add(new DefaultGeographicBoundingBox(
+                    valueOf(xmin, cλ), valueOf(xmax, cλ),
+                    valueOf(ymin, cφ), valueOf(ymax, cφ)));
+        }
+        if (zmin != null || zmax != null) {
+            if (extent == null) {
+                extent = new DefaultExtent();
+            }
+            final UnitConverter c = getConverterTo(getUnitValue(group, VERTICAL.UNITS), SI.METRE);
+            extent.getVerticalElements().add(new DefaultVerticalExtent(
+                    valueOf(zmin, c), valueOf(zmax, c), DefaultVerticalCRS.GEOIDAL_HEIGHT));
+        }
+        if (tmin != null || tmax != null) {
+            if (extent == null) {
+                extent = new DefaultExtent();
+            }
+            final UnitConverter c = getConverterTo(getUnitValue(group, TIME.UNITS), NonSI.DAY);
+            extent.getTemporalElements().add(new DefaultTemporalExtent(/* TODO */));
+        }
+        return extent;
+    }
+
+    /**
+     * Returns the converter from the given source unit (which may be {@code null}) to the
+     * given target unit, or {@code null} if none or incompatible.
+     */
+    private UnitConverter getConverterTo(final Unit<?> source, final Unit<?> target) {
+        if (source != null) try {
+            return source.getConverterToAny(target);
+        } catch (ConversionException e) {
+            warning("getConverterTo", e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the values of the given number if non-null, or NaN if null. If the given
+     * converter is non-null, it is applied.
+     */
+    private static double valueOf(final Number value, final UnitConverter converter) {
+        double n = Double.NaN;
+        if (value != null) {
+            n = value.doubleValue();
+            if (converter != null) {
+                n = converter.convert(n);
+            }
+        }
+        return n;
+    }
+
+    /**
+     * Creates a {@code <gmd:contentInfo>} element from all NetCDF variables.
+     *
+     * @return The content information.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    private CoverageDescription createContentInfo() throws IOException {
+        final DefaultCoverageDescription content = new DefaultCoverageDescription();
+        for (final VariableSimpleIF variable : file.getVariables()) {
+            content.getDimensions().add(createSampleDimension(variable));
+            final Object[] names    = getSequence(variable, FLAG_NAMES,    false);
+            final Object[] meanings = getSequence(variable, FLAG_MEANINGS, false);
+            final Object[] masks    = getSequence(variable, FLAG_MASKS,    true);
+            final Object[] values   = getSequence(variable, FLAG_VALUES,   true);
+            final int length = Math.max(masks.length, Math.max(values.length, Math.max(names.length, meanings.length)));
+            for (int i=0; i<length; i++) {
+                final RangeElementDescription element = createRangeElementDescription(variable,
+                        i < names   .length ? (String) names   [i] : null,
+                        i < meanings.length ? (String) meanings[i] : null,
+                        i < masks   .length ? (Number) masks   [i] : null,
+                        i < values  .length ? (Number) values  [i] : null);
+                if (element != null) {
+                    content.getRangeElementDescriptions().add(element);
+                }
+            }
+        }
+        return content;
+    }
+
+    /**
+     * Returns the sequence of string values for the given attribute, or an empty array if none.
+     */
+    private static Object[] getSequence(final VariableSimpleIF variable, final String name, final boolean numeric) {
+        final Attribute attribute = variable.findAttributeIgnoreCase(name);
+        if (attribute != null) {
+            boolean hasValues = false;
+            final Object[] values = new Object[attribute.getLength()];
+            for (int i=0; i<values.length; i++) {
+                if (numeric) {
+                    if ((values[i] = attribute.getNumericValue(i)) != null) {
+                        hasValues = true;
+                    }
+                } else {
+                    String value = attribute.getStringValue(i);
+                    if (value != null && !(value = value.trim()).isEmpty()) {
+                        values[i] = value.replace('_', ' ');
+                        hasValues = true;
+                    }
+                }
+            }
+            if (hasValues) {
+                return values;
+            }
+        }
+        return Strings.EMPTY;
+    }
+
+    /**
+     * Creates a {@code <gmd:dimension>} element from the given NetCDF variable. Subclasses can
+     * override this method if they need to complete the information provided in the returned
+     * object.
+     *
+     * @param  variable The NetCDF variable.
+     * @return The sample dimension information.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    protected Band createSampleDimension(final VariableSimpleIF variable) throws IOException {
+        final DefaultBand band = new DefaultBand();
+        String name = variable.getShortName();
+        if (name == null) {
+            name = variable.getName();
+        }
+        if (name != null) {
+            if (nameFactory == null) {
+                nameFactory = (DefaultNameFactory) FactoryFinder.getNameFactory(
+                        new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class));
+            }
+            final StringBuilder type = new StringBuilder(variable.getDataType().getPrimitiveClassType().getSimpleName());
+            for (int i=variable.getShape().length; --i>=0;) {
+                type.append("[]");
+            }
+            band.setSequenceIdentifier(nameFactory.createMemberName(null, name,
+                    nameFactory.createTypeName(null, type.toString())));
+        }
+        final String descriptor = variable.getDescription();
+        if (descriptor != null && !descriptor.equals(name)) {
+            band.setDescriptor(wrap(descriptor));
+        }
+//TODO: Can't store the units, because the Band interface restricts it to length.
+//      We need the SampleDimension interface proposed in ISO 19115 revision draft.
+//      band.setUnits(Units.valueOf(variable.getUnitsString()));
+        return band;
+    }
+
+    /**
+     * Creates a {@code <gmd:rangeElementDescription>} elements from the given information.
+     * Subclasses can override this method if they need to complete the information provided
+     * in the returned object.
+     * <p>
+     * <b>Note:</b> ISO 19115 range elements are approximatively equivalent to
+     * {@link org.geotoolkit.coverage.Category} in the {@code geotk-coverage} module.
+     *
+     * @param  variable The NetCDF variable.
+     * @param  name     One of the elements in the {@value #FLAG_NAMES} attribute, or {@code null}.
+     * @param  meaning  One of the elements in the {@value #FLAG_MEANINGS} attribute or {@code null}.
+     * @param  mask     One of the elements in the {@value #FLAG_MASKS} attribute or {@code null}.
+     * @param  value    One of the elements in the {@value #FLAG_VALUES} attribute or {@code null}.
+     * @return The sample dimension information or {@code null} if none.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    protected RangeElementDescription createRangeElementDescription(final VariableSimpleIF variable,
+            final String name, final String meaning, final Number mask, final Number value) throws IOException
+    {
+        if (name != null && meaning != null) {
+            final DefaultRangeElementDescription element = new DefaultRangeElementDescription();
+            element.setName(wrap(name));
+            element.setDefinition(wrap(meaning));
+            // TODO: create a record from values (and possibly from the masks).
+            //       if (pixel & mask == value) then we have that range element.
+            return element;
+        }
+        return null;
+    }
+
+    /**
+     * Creates an ISO {@code Metadata} object from the information found in the NetCDF file.
+     *
+     * @return The ISO metadata object.
+     * @throws IOException If an I/O operation was required but failed.
+     */
+    public Metadata createMetadata() throws IOException {
+        final DefaultMetadata metadata = new DefaultMetadata();
+        final String id = getStringValue(IDENTIFIER);
+        metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
+        metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
+        metadata.setDateStamp(getDateValue(METADATA_CREATION));
+        metadata.setFileIdentifier(id);
+        metadata.getHierarchyLevels().add(ScopeCode.DATASET);
+        final String wms = getStringValue("wms_service");
+        final String wcs = getStringValue("wcs_service");
+        if (wms != null || wcs != null) {
+            metadata.getHierarchyLevels().add(ScopeCode.SERVICE);
+        }
+        /*
+         * Add the ResponsibleParty which is declared in global attributes, or in
+         * the THREDDS attributes if no information was found in global attributes.
+         */
+        for (final Group group : groups) {
+            final ResponsibleParty party = createResponsibleParty(group, CREATOR);
+            if (party != null && party != creator) {
+                addIfAbsent(metadata.getContacts(), party);
+                if (creator == null) {
+                    creator = party;
+                }
+            }
+        }
+        /*
+         * Add the publisher AFTER the creator, because this method may
+         * reuse the 'creator' field (if non-null and if applicable).
+         */
+        Set<InternationalString> publisher = null;
+        DefaultDistribution distribution   = null;
+        for (final Group group : groups) {
+            final ResponsibleParty party = createResponsibleParty(group, PUBLISHER);
+            if (party != null) {
+                if (distribution == null) {
+                    distribution = new DefaultDistribution();
+                    metadata.setDistributionInfo(distribution);
+                }
+                final DefaultDistributor distributor = new DefaultDistributor(party);
+                // TODO: There is some transfert option, etc. that we could set there.
+                // See UnidataDD2MI.xsl for options for OPeNDAP, THREDDS, etc.
+                addIfAbsent(distribution.getDistributors(), distributor);
+                publisher = addIfNonNull(publisher, wrap(party.getIndividualName()));
+            }
+            // Also add history.
+            final String history = getStringValue(HISTORY);
+            if (history != null) {
+                final DefaultDataQuality quality = new DefaultDataQuality();
+                final DefaultLineage lineage = new DefaultLineage();
+                lineage.setStatement(wrap(history));
+                quality.setLineage(lineage);
+                addIfAbsent(metadata.getDataQualityInfo(), quality);
+            }
+        }
+        /*
+         * Add the identification info AFTER the responsible parties (both creator and publisher),
+         * because this method will reuse the 'creator' and 'publisher' information (if non-null).
+         */
+        final DataIdentification identification = createIdentificationInfo(id, publisher);
+        if (identification != null) {
+            metadata.getIdentificationInfo().add(identification);
+        }
+        metadata.getContentInfo().add(createContentInfo());
+        /*
+         * Add the dimension information, if any. This metadata node
+         * is built from the NetCDF CoordinateSystem objects.
+         */
+        if (file instanceof NetcdfDataset) {
+            final NetcdfDataset ds = (NetcdfDataset) file;
+            final EnumSet<NetcdfDataset.Enhance> mode = EnumSet.copyOf(ds.getEnhanceMode());
+            if (mode.add(NetcdfDataset.Enhance.CoordSystems)) {
+                ds.enhance(mode);
+            }
+            for (final CoordinateSystem cs : ds.getCoordinateSystems()) {
+                metadata.getSpatialRepresentationInfo().add(createSpatialRepresentationInfo(cs));
+            }
+        }
+        return metadata;
     }
 }

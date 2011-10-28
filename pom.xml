@@ -7,12 +7,9 @@
 
         Profiles available in this build:
 
-          - package      Performs additional packaging process like
-                         generating a JAR file for source code and the
-                         openoffice add-in (geotk-3.x-SNAPSHOT.oxt file).
-          - javadoc-all  Includes the internal classes in the javadoc.
-                         This is sometime useful only to Geotk developers,
-                         since users should not depend on any internal API.
+          - package         Also package source code.
+          - sign-artifacts  Apply GPG signature on the JAR files.
+          - javadoc-all     Includes the internal classes in the javadoc.
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -147,7 +144,7 @@
               <execution>
                 <id>attach-sources</id>
                 <goals>
-                  <goal>jar</goal>
+                  <goal>jar-no-fork</goal>
                 </goals>
               </execution>
             </executions>
@@ -173,9 +170,11 @@
     <javadoc.exclude>
       org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
     </javadoc.exclude>
-    <derby.version>10.8.1.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
+    <geoapi.version>3.1-SNAPSHOT</geoapi.version>
+    <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
     <netcdf.version>4.2.26</netcdf.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <website.encoding>UTF-8</website.encoding>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
   </properties>
 
@@ -191,23 +190,26 @@
        =========================================================== -->
   <dependencyManagement>
     <dependencies>
+      <!-- Import all dependency management used by the GeAPI project. -->
+      <dependency>
+        <groupId>org.opengis</groupId>
+        <artifactId>geoapi-parent</artifactId>
+        <version>${geoapi.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
       <!-- GeoAPI and its dependencies -->
       <dependency>
         <groupId>org.opengis</groupId>
         <artifactId>geoapi-pending</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>${geoapi.version}</version>
       </dependency>
       <dependency>
         <groupId>org.opengis</groupId>
         <artifactId>geoapi-conformance</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>${geoapi.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>javax.measure</groupId>
-        <artifactId>jsr-275</artifactId>
-        <version>0.9.3</version>
       </dependency>
 
       <!-- Imaging -->
@@ -363,14 +365,6 @@
         <version>1.0</version>
         <scope>runtime</scope>
       </dependency>
-
-      <!-- Tests -->
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.10</version>
-        <scope>test</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -392,7 +386,7 @@
   <!-- ===========================================================
            Build management.
 
-           Reference: http://repo1.maven.org/maven2/org/apache/maven/plugins
+           Reference: http://maven.apache.org/plugins/
        =========================================================== -->
   <build>
     <pluginManagement>
@@ -415,7 +409,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.9</version>
+          <version>2.10</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -450,17 +444,17 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-report-plugin</artifactId>
-          <version>2.9</version>
+          <version>2.10</version>
         </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.3.4</version>
+          <version>2.3.5</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.6</version>
+          <version>1.7</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -493,10 +487,10 @@
           <target>1.6</target>       <!-- The -target argument for the Java compiler.   -->
           <debug>false</debug>       <!-- Whether to include debugging information.     -->
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
-          <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
+          <encoding>${project.build.sourceEncoding}</encoding>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
-          <maxmem>512M</maxmem>
+          <maxmem>1G</maxmem>
         </configuration>
       </plugin>
 
@@ -509,7 +503,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <configuration>
-          <encoding>UTF-8</encoding>
+          <encoding>${project.build.sourceEncoding}</encoding>
           <nonFilteredFileExtensions>
             <nonFilteredFileExtension>utf</nonFilteredFileExtension>
             <nonFilteredFileExtension>tif</nonFilteredFileExtension>
@@ -529,7 +523,6 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
-            <forced>false</forced> <!-- Recreate the archive only if needed. -->
             <index>false</index>
             <!-- Note: A previous Geotk version set <index> to "true" in order to generate
                  the META-INF/INDEX.LIST file. However that index file has precedence over
@@ -541,13 +534,12 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <useUniqueVersions>false</useUniqueVersions> <!-- http://jira.codehaus.org/browse/MSHARED-169 -->
             </manifest>
             <manifestEntries>
               <Built-On>${maven.build.timestamp}</Built-On>
               <Implementation-URL>http://www.geotoolkit.org</Implementation-URL>
               <Specification-Title>GeoAPI</Specification-Title>
-              <Specification-Version>3.1-SNAPSHOT</Specification-Version>
+              <Specification-Version>${geoapi.version}</Specification-Version>
               <Specification-Vendor>Open Geospatial Consortium</Specification-Vendor>
             </manifestEntries>
           </archive>
@@ -585,8 +577,8 @@
         </executions>
         <configuration>
           <locales>en</locales>
-          <inputEncoding>UTF-8</inputEncoding>
-          <outputEncoding>UTF-8</outputEncoding>
+          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
+          <outputEncoding>${website.encoding}</outputEncoding>
           <reportPlugins>
 
 
@@ -605,14 +597,14 @@
                 </reportSet>
               </reportSets>
               <configuration>
+                <encoding>${project.build.sourceEncoding}</encoding>
+                <docencoding>${website.encoding}</docencoding>
+                <charset>${website.encoding}</charset>
                 <source>1.6</source>             <!-- Enables javadoc to handle assertions present in J2SE 1.4.  -->
-                <encoding>UTF-8</encoding>       <!-- The encoding of the source files.                          -->
-                <docencoding>UTF-8</docencoding> <!-- The encoding of the generated HTML files.                  -->
-                <charset>UTF-8</charset>         <!-- Specifies the HTML character set for this document.        -->
                 <locale>en</locale>              <!-- Locale that javadoc uses when generating documentation.    -->
                 <noqualifier>all</noqualifier>   <!-- Omit qualifying package name before class names in output. -->
                 <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->
-                <maxmemory>512M</maxmemory>      <!-- maximum Java heap size to be used when launching the tool. -->
+                <maxmemory>1G</maxmemory>        <!-- maximum Java heap size to be used when launching the tool. -->
                 <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
                 <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
                 <breakiterator>true</breakiterator>
@@ -696,13 +688,39 @@
 
 
 
-            <!-- =======================================================
-                     Build: Web site: Various reports configuration.
-                 ======================================================= -->
+            <!-- ====================================================
+                     Reports configuration for the web site
+                 ==================================================== -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-project-info-reports-plugin</artifactId>
+              <reportSets>
+                <reportSet>
+                  <reports>
+                    <report>index</report>
+                    <report>summary</report>
+                    <report>modules</report>
+                    <report>license</report>
+                    <report>distribution-management</report>
+                    <report>scm</report>
+                    <report>cim</report>
+                    <report>project-team</report>
+                    <report>mailing-list</report>
+                    <report>issue-tracking</report>
+                    <report>dependencies</report>
+                    <report>dependency-convergence</report>
+                    <report>dependency-management</report>
+                    <report>plugin-management</report>
+                  </reports>
+                </reportSet>
+              </reportSets>
             </plugin>
+
+
+
+            <!-- ====================================================
+                     JUnit test results
+                 ==================================================== -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-surefire-report-plugin</artifactId>
@@ -710,13 +728,38 @@
                 <aggregate>true</aggregate>
               </configuration>
             </plugin>
+
+
+
+            <!-- ====================================================
+                     TODO tags
+                 ==================================================== -->
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>taglist-maven-plugin</artifactId>
               <configuration>
                 <aggregate>true</aggregate>
+                <tagListOptions>
+                  <tagClasses>
+                    <tagClass>
+                      <displayName>TODO</displayName>
+                      <tags>
+                        <tag>
+                          <matchString>@todo</matchString>
+                          <matchType>ignoreCase</matchType>
+                        </tag>
+                      </tags>
+                    </tagClass>
+                  </tagClasses>
+                </tagListOptions>
               </configuration>
             </plugin>
+
+
+
+            <!-- ====================================================
+                     Test coverage report
+                 ==================================================== -->
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>cobertura-maven-plugin</artifactId>
@@ -740,8 +783,8 @@
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav</artifactId>
-        <version>1.0-beta-2</version>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>2.0</version>
       </extension>
     </extensions>
   </build>

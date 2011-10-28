@@ -19,6 +19,7 @@ package org.geotoolkit.xml;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import net.jcip.annotations.Immutable;
+import org.geotoolkit.util.Strings;
 
 
 /**
@@ -86,6 +87,6 @@ final class OGCNamespacePrefixMapper_Endorsed extends NamespacePrefixMapper {
      */
     @Override
     public String[] getPreDeclaredNamespaceUris() {
-        return Namespaces.EMPTY;
+        return Strings.EMPTY;
     }
 }
