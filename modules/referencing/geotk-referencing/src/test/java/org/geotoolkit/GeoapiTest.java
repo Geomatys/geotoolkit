@@ -18,7 +18,6 @@
 package org.geotoolkit;
 
 import java.util.EnumSet;
-import java.util.Properties;
 
 import org.opengis.util.Factory;
 import org.opengis.util.NameFactory;
@@ -37,6 +36,7 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.opengis.test.ImplementationDetails;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.FactoryFilter;
+import org.opengis.test.Configuration;
 import org.opengis.test.TestSuite;
 
 import org.geotoolkit.referencing.CRS;
@@ -124,7 +124,7 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
      * Returns the configuration map, which lists the tests to disable.
      */
     @Override
-    public Properties configuration(final Factory... factories) {
+    public Configuration configuration(final Factory... factories) {
         return null;
     }
 

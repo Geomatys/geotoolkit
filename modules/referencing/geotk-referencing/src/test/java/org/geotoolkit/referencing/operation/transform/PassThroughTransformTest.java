@@ -68,14 +68,6 @@ public final strictfp class PassThroughTransformTest extends TransformTestBase {
     }
 
     /**
-     * Verify after each test case that all GeoAPI tests were enabled.
-     */
-    @After
-    public void assertAllTestsEnabled() {
-        assertFalse(getConfiguration().containsValue("false"));
-    }
-
-    /**
      * Tests the general passthrough transform.
      *
      * @throws FactoryException Should never happen.
