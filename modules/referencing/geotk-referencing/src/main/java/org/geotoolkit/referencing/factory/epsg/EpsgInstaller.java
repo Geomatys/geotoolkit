@@ -300,7 +300,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     {
         final File hsqldb = HSQL.getFile(databaseURL);
         if (hsqldb != null) {
-            HSQL.shutdown(connection);
+            HSQL.shutdown(connection, true);
         }
         connection.close();
         if (Dialect.forURL(databaseURL) == Dialect.DERBY) {

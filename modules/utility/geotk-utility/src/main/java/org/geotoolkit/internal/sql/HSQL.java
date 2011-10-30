@@ -49,7 +49,7 @@ public final class HSQL {
     /**
      * The prefix of URL for HSQL databases.
      */
-    static final String PROTOCOL = "jdbc:hsqldb:";
+    public static final String PROTOCOL = "jdbc:hsqldb:";
 
     /**
      * The regular expression pattern for searching the "FROM (" clause.
@@ -171,11 +171,12 @@ public final class HSQL {
      * is usually not needed and should be done by the caller if he really want to do so.
      *
      * @param  connection The connection to use for shutting down the database.
+     * @param  compact {@code true} for compacting the database on shutdown.
      * @throws SQLException
      */
-    public static void shutdown(final Connection connection) throws SQLException {
+    public static void shutdown(final Connection connection, final boolean compact) throws SQLException {
         final Statement stmt = connection.createStatement();
-        stmt.execute("SHUTDOWN");
+        stmt.execute(compact ? "SHUTDOWN COMPACT" : "SHUTDOWN");
         stmt.close();
     }
 }

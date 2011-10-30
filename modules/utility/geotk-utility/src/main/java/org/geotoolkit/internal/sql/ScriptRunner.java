@@ -376,6 +376,17 @@ public class ScriptRunner implements FilenameFilter {
      * @throws SQLException If an error occurred while executing a SQL statement.
      */
     public final int run(final LineNumberReader in) throws IOException, SQLException {
+        // Determine once for ever if it is worth to look for SQL keyword replacements,
+        // and if we need to take the trouble to look two words ahead (e.g. "CREATE TABLE").
+        final boolean noReplace = replacements.isEmpty();
+        boolean replaceTwoWords = false;
+        for (final String replace : replacements.keySet()) {
+            if (replace.indexOf(' ') >= 0) {
+                replaceTwoWords = true;
+                break;
+            }
+        }
+        // Variables which will change during the iterations.
         int count = 0;
         final StringBuilder buffer = new StringBuilder();
         String line;
@@ -478,13 +489,26 @@ scanLine:   for (; i<length; i++) {
                 /*
                  * Any other kind of character. If we find the beginning of an identifier
                  * (arbitrarily assuming similar syntax than Java identifier rules), check
-                 * for the end of the word and replace it needed.
+                 * for the end of the word and replace if needed.
                  */
-                if (!insideText && !insideIdentifier && Character.isJavaIdentifierStart(c)) {
+                if (!noReplace && !insideText && !insideIdentifier && Character.isJavaIdentifierStart(c)) {
                     final int start = i;
                     while (++i < length && Character.isJavaIdentifierPart(buffer.charAt(i)));
-                    final String word = buffer.substring(start, i);
-                    final String replace = replacements.get(word);
+                    String word = buffer.substring(start, i);
+                    String replace = replacements.get(word);
+                    if (replaceTwoWords && replace == null && i<length && Character.isSpaceChar(buffer.charAt(i))) {
+                        // A single word is not sufficient. Try with two words. This is needed in
+                        // order to catch "CREATE TABLE", which needs replacement by geotk-epsg.
+                        final int mark = i;
+                        if (++i < length && Character.isJavaIdentifierStart(buffer.charAt(i))) {
+                            while (++i < length && Character.isJavaIdentifierPart(buffer.charAt(i)));
+                            word = buffer.substring(start, i);
+                            replace = replacements.get(word);
+                        }
+                        if (replace == null) {
+                            i = mark;
+                        }
+                    }
                     if (replace != null) {
                         buffer.replace(start, i, replace);
                         i = start + replace.length();
@@ -580,6 +604,9 @@ scanLine:   for (; i<length; i++) {
      * Closes the statement used by this runner. Note that this method does not close
      * the connection given to the constructor; this connection still needs to be closed
      * explicitly by the caller.
+     * <p>
+     * This method does not shutdown the database. For database shutdown, see driver-specific
+     * methods like {@link HSQL#shutdown(Connection, boolean)}.
      *
      * @param  vacuum {@code true} for performing a database vacuum (PostgreSQL).
      * @throws SQLException If an error occurred while closing the statement.

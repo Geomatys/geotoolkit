@@ -120,7 +120,7 @@ final class EmbeddedDataSource extends DefaultDataSource {
                     installer.call(new EpsgScriptRunner(connection));
                     final File hsqldb = HSQL.getFile(url);
                     if (hsqldb != null) {
-                        HSQL.shutdown(connection);
+                        HSQL.shutdown(connection, true);
                         connection.close();
                         HSQL.setReadOnly(hsqldb);
                         return false;

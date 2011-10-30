@@ -183,7 +183,7 @@ public class DefaultDataSource implements DataSource {
             case HSQL: {
                 try {
                     final Connection c = getConnection();
-                    HSQL.shutdown(c);
+                    HSQL.shutdown(c, false);
                     c.close();
                 } catch (SQLException e) {
                     Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
