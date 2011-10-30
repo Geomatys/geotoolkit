@@ -23,6 +23,9 @@ import java.util.logging.Logger;
 /**
  * A factory for loggers that redirect all Java logging events to the Apache
  * <A HREF="http://logging.apache.org/log4j">Log4J</A> framework.
+ * <p>
+ * It is not necessary to use this class directly. The Geotk library will use this factory
+ * automatically if the {@code geotk-logging-log4j.jar} file is present on the classpath.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

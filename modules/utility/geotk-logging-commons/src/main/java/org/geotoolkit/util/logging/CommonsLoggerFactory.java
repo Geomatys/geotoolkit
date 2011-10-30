@@ -26,6 +26,9 @@ import org.apache.commons.logging.impl.Jdk14Logger;
 /**
  * A factory for loggers that redirect all Java logging events to the Apache
  * <A HREF="http://jakarta.apache.org/commons/logging/">Commons-logging</A> framework.
+ * <p>
+ * It is not necessary to use this class directly. The Geotk library will use this factory
+ * automatically if the {@code geotk-logging-commons.jar} file is present on the classpath.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
