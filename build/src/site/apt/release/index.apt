@@ -42,12 +42,17 @@ Performing a Geotoolkit.org release
   the Geotk version numbers and the deployment server:
 
 --------------------------------------------------------
-export OLD_VERSION="3.18"
-export NEW_VERSION="3.19"
+export OLD_VERSION="3.19"
+export NEW_VERSION="3.20"
 export GEOTK_SERVER=(... insert foo@server.com here ...)
 --------------------------------------------------------
 
-  Then, run the script after making sure that the tests pass:
+  Search for the old version number in all <<<.apt>>> and <<<.xml>>> files. Replace them by the new
+  version numbers. The files to be updated include the <<<download.apt>>> page, the <<<run.apt>>>
+  page, the OpenOffice.org addin <<<description.xml>>> and <<<update.xml>>> files, and various
+  <<<index.apt>>> pages.
+
+  Finally, run the script after making sure that the tests pass:
 
 ---------------------
 cd public

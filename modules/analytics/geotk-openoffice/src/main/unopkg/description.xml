@@ -20,4 +20,12 @@
     <default xlink:href="geotk.png" />
   </icon>
 
+  <release-notes>
+    <src lang="en" xlink:href="http://download.geotoolkit.org/3.19/"/>
+  </release-notes>
+
+  <update-information>
+    <src xlink:href="http://www.geotoolkit.org/modules/analytics/geotk-openoffice/update.xml"/>
+  </update-information>
+
 </description>
