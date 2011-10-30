@@ -38,7 +38,7 @@ public final strictfp class HSQLTest {
     @Test
     public void testCreateURL() {
         final String databaseURL = HSQL.createURL(new File("Geotoolkit.org/EPSG/HSQL"));
-        assertTrue(databaseURL, databaseURL.startsWith("jdbc:hsqldb:file:"));
+        assertTrue(databaseURL, databaseURL.startsWith(HSQL.PROTOCOL + "file:"));
         assertTrue(databaseURL, databaseURL.endsWith("/Geotoolkit.org/EPSG/HSQL"));
     }
 

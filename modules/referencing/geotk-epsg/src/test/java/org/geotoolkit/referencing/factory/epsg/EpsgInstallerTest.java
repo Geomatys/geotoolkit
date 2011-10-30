@@ -106,7 +106,7 @@ public final strictfp class EpsgInstallerTest {
         }
         final EpsgInstaller installer = new EpsgInstaller();
         if (true) {
-            installer.setDatabase("jdbc:hsqldb:mem:EPSG");
+            installer.setDatabase(HSQL.PROTOCOL + "mem:EPSG");
             final EpsgInstaller.Result result = installer.call();
             assertTrue(result.numRows > 0);
         } else {
@@ -134,7 +134,7 @@ public final strictfp class EpsgInstallerTest {
                     final HsqlDialectEpsgFactory factory = new HsqlDialectEpsgFactory(null, connection);
                     assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
                     assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
-                    HSQL.shutdown(connection);
+                    HSQL.shutdown(connection, false);
                     factory.dispose(false);
                 }
             } finally {
