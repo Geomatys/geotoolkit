@@ -283,9 +283,6 @@ public class Mercator extends UnitaryProjection {
             super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
             return;
         }
-        if (verifyCoordinateRanges()) {
-            verifyGeographicRanges(srcPts, srcOff, numPts);
-        }
         dstOff--;
         while (--numPts >= 0) {
             double y = dstPts[dstOff += 2]; // Same as srcPts[srcOff + 1].
@@ -445,9 +442,6 @@ public class Mercator extends UnitaryProjection {
             if (srcPts != dstPts || srcOff != dstOff || rollLongitude()) {
                 super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
                 return;
-            }
-            if (verifyCoordinateRanges()) {
-                verifyGeographicRanges(srcPts, srcOff, numPts);
             }
             dstOff--;
             while (--numPts >= 0) {

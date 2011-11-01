@@ -208,9 +208,6 @@ public class Equirectangular extends UnitaryProjection {
             super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
             return;
         }
-        if (verifyCoordinateRanges()) {
-            verifyGeographicRanges(srcPts, srcOff, numPts);
-        }
         while (--numPts >= 0) {
             dstPts[dstOff] = rollLongitude(dstPts[dstOff]);
             dstOff += 2;

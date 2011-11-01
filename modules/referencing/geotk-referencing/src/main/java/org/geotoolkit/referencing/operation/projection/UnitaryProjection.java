@@ -59,7 +59,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 
 import static java.lang.Math.*;
@@ -217,29 +216,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     private double longitudeRotation = 0;
 
     /**
-     * When different than {@link #globalRangeCheckSemaphore}, coordinate ranges will be
-     * checked and a {@code WARNING} log will be issued if they are out of their natural
-     * ranges (-180/180&deg; for longitude, -90/90&deg; for latitude).
-     *
-     * {@note This check seems redundant with <code>longitudeBounds</code>, but it is not exactly
-     *        the same since this check is performed before the central meridian is subtracted
-     *        from the longitude, while <code>longitudeBounds</code> is checked after}.
-     *
-     * @see #verifyCoordinateRanges()
-     * @see #warningLogged()
-     */
-    private transient int rangeCheckSemaphore;
-
-    /**
-     * The value to be checked against {@link #rangeCheckSemaphore} in order to determine
-     * if coordinates ranges should be checked. By default, the checks are not enabled
-     * because they slow down the projections and the warning is often ignored anyway.
-     * Users need to invoke {@link #resetWarnings} explicitly in order to enable the
-     * range checks.
-     */
-    private static int globalRangeCheckSemaphore;
-
-    /**
      * Constructs a new map projection from the supplied parameters. Subclass constructors
      * must invoke {@link #finish} when they have finished their work.
      *
@@ -335,72 +311,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     }
 
     /**
-     * Verifies if the given coordinates are in the range of geographic coordinates. If they are
-     * not, then this method creates a log message; this is caller's responsibility to send that
-     * message to the logger. Otherwise this method does nothing and returns {@code null}.
-     * <p>
-     * This method should be invoked only if {@link #verifyCoordinateRange()}
-     * returns {@code true}.
-     *
-     * @param  transform The caller, which may be a {@link UnitaryProjection} or its inverse.
-     * @param  x  The longitude in radians.
-     * @param  y  The latitude in radians.
-     * @return A log message if the coordinates are not in the geographic range,
-     *         or {@code null} otherwise.
-     */
-    private static LogRecord verifyGeographicRanges(final AbstractMathTransform transform,
-                                                    final double x, final double y)
-    {
-        // Note: the following tests should not fails for NaN values.
-        final boolean xOut, yOut;
-        xOut = (x < -(PI   + ANGLE_TOLERANCE) || x > (PI   + ANGLE_TOLERANCE));
-        yOut = (y < -(PI/2 + ANGLE_TOLERANCE) || y > (PI/2 + ANGLE_TOLERANCE));
-        if (!xOut && !yOut) {
-            return null;
-        }
-        final String lineSeparator = System.lineSeparator();
-        final StringBuilder buffer = new StringBuilder(Errors.format(
-                Errors.Keys.OUT_OF_PROJECTION_VALID_AREA_$1, transform.getName()));
-        if (xOut) {
-            buffer.append(lineSeparator).append(Errors.format(
-                    Errors.Keys.LONGITUDE_OUT_OF_RANGE_$1, new Longitude(toDegrees(x))));
-        }
-        if (yOut) {
-            buffer.append(lineSeparator).append(Errors.format(
-                    Errors.Keys.LATITUDE_OUT_OF_RANGE_$1, new Latitude(toDegrees(y))));
-        }
-        final String classe;
-        if (transform instanceof Inverse) {
-            classe = ((Inverse) transform).inverse().getClass().getCanonicalName() + ".Inverse";
-        } else {
-            classe = transform.getClass().getCanonicalName();
-        }
-        final LogRecord record = new LogRecord(Level.WARNING, buffer.toString());
-        record.setSourceClassName(classe);
-        record.setSourceMethodName("transform");
-        return record;
-    }
-
-    /**
-     * Verifies if the given coordinates are in the range of geographic coordinates.
-     * If they are not, then this method logs a warning.
-     * <p>
-     * This method should be invoked only if {@link #verifyCoordinateRange()}
-     * returns {@code true}.
-     *
-     * @param srcPts The array containing the source point coordinates.
-     * @param srcOff The offset to the first point to be verified in the source array.
-     * @param numPts The number of point objects to be verified.
-     */
-    final void verifyGeographicRanges(final double[] srcPts, int srcOff, int numPts) {
-        while (--numPts >= 0) {
-            if (logWarning(verifyGeographicRanges(this, srcPts[srcOff++], srcPts[srcOff++]))) {
-                break;
-            }
-        }
-    }
-
-    /**
      * Returns {@code true} if {@link #rollLongitude(double)} needs to be invoked.
      * This is used for optimizations only.
      */
@@ -451,40 +361,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             }
         }
         return x;
-    }
-
-    /**
-     * Converts a list of coordinate point ordinal values. The default implementation invokes
-     * {@link #transform(double[],int,double[],int,boolean)} in a loop. If a geographic coordinate
-     * is outside the range of valid values, a warning may be logged. Whatever this check is done
-     * or not depends on factors like whatever warnings have been previously logged, for which
-     * projections, and if the user invoked {@link #resetWarnings}.
-     *
-     * {@note We do not override the methods working on arrays of floating point values because
-     *        they are typically never invoked. In most pratical cases, a unitary projection is
-     *        always concatenated with other transforms (usually affine) that already converted
-     *        the values from single to double precision (or conversely). If nevertheless those
-     *        methods are invoked, the default <code>AbstractMathTransform</code> implementation
-     *        will delegate to this method anyway, at the cost of using a temporary buffer.}
-     *
-     * @param srcPts The array containing the source point coordinates.
-     * @param srcOff The offset to the first point to be converted in the source array.
-     * @param dstPts The array into which the converted point coordinates are returned.
-     *               May be the same than {@code srcPts}.
-     * @param dstOff The offset to the location of the first converted point that is
-     *               stored in the destination array.
-     * @param numPts The number of point objects to be converted.
-     * @throws TransformException if a point can't be converted.
-     */
-    @Override
-    public void transform(final double[] srcPts, final int srcOff,
-                          final double[] dstPts, final int dstOff, final int numPts)
-            throws TransformException
-    {
-        if (verifyCoordinateRanges()) {
-            verifyGeographicRanges(srcPts, srcOff, numPts);
-        }
-        super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
     }
 
     /**
@@ -611,9 +487,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                                    final boolean derivate) throws TransformException
         {
             inverseTransform(srcPts, srcOff, dstPts, dstOff);
-            if (verifyCoordinateRanges()) {
-                logWarning(verifyGeographicRanges(this, srcPts[srcOff], srcPts[srcOff+1]));
-            }
             if (derivate) {
                 final Matrix derivative = UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true);
                 if (derivative != null) {
@@ -625,59 +498,12 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     }
 
     /**
-     * When {@code true}, coordinate ranges will be checked and a {@link Level#WARNING WARNING}
-     * log will be issued if they are out of their natural ranges (-180/180&deg; for longitude,
-     * -90/90&deg; for latitude).
-     */
-    final boolean verifyCoordinateRanges() {
-        /*
-         * Do not synchronize - doing so would be a major bottleneck since this method will be
-         * invoked thousands of time. The consequence is that a call to {@link #resetWarnings}
-         * may not be reflected immediately in other threads, but the later is defined only on
-         * a "best effort" basis.
-         */
-        return rangeCheckSemaphore != globalRangeCheckSemaphore;
-    }
-
-    /**
-     * Logs the given warning and set a flag for remembering that warnings have been logged.
-     * This method may ignore the argument if an other warning has already been logged in a
-     * concurrent thread.
-     *
-     * @param  record The record to log, or {@code null} if none.
-     * @return {@code true} if the record has been logged, or {@code false} otherwise.
-     */
-    private boolean logWarning(final LogRecord record) {
-        if (record != null) {
-            synchronized (UnitaryProjection.class) {
-                if (rangeCheckSemaphore != globalRangeCheckSemaphore) {
-                    rangeCheckSemaphore = globalRangeCheckSemaphore;
-                    Logging.log(UnitaryProjection.class, record);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Resets the warning status of all projections in the current JVM. Every {@link UnitaryProjection}
-     * instance may log a warning the first time they are given coordinates outside their area of
-     * validity. Subsequent coordinates outside the area of validity are silently projected in order
-     * to avoid flowing the log with warnings. In case of suspicion, this method may be invoked in
-     * order to force all projections to log again their first out-of-bounds coordinates.
-     *
-     * {@section Multi-threading}
-     * Calls to this method have immediate effect in the invoker thread. The effect in other
-     * threads may be delayed by some arbitrary amount of time. This method works only on a
-     * "best effort" basis.
-     *
-     * @see org.geotoolkit.referencing.CRS#reset(String)
+     * @deprecated Not supported anymore.
      *
      * @since 2.5
      */
+    @Deprecated
     public static synchronized void resetWarnings() {
-        globalRangeCheckSemaphore++;
     }
 
 
