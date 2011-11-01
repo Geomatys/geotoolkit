@@ -157,6 +157,7 @@ public class AlbersEqualArea extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.ESRI,    "Albers"),
             new NamedIdentifier(Citations.ESRI,    "Albers_Equal_Area_Conic"),
+            new NamedIdentifier(Citations.PROJ4,   "aea"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))
         }, new ParameterDescriptor<?>[] {

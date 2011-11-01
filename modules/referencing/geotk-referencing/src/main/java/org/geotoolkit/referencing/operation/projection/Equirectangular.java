@@ -208,9 +208,6 @@ public class Equirectangular extends UnitaryProjection {
             super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
             return;
         }
-        if (verifyCoordinateRanges()) {
-            verifyGeographicRanges(srcPts, srcOff, numPts);
-        }
         while (--numPts >= 0) {
             dstPts[dstOff] = rollLongitude(dstPts[dstOff]);
             dstOff += 2;
@@ -241,14 +238,5 @@ public class Equirectangular extends UnitaryProjection {
     @Override
     public boolean isIdentity() {
         return !rollLongitude();
-    }
-
-    /**
-     * Returns an estimation of the error in linear distance on the unit ellipse. In
-     * the case of Equirectangular projection the error is close to zero everywhere.
-     */
-    @Override
-    double getErrorEstimate(final double λ, final double φ) {
-        return 0;
     }
 }

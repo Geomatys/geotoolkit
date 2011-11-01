@@ -112,6 +112,16 @@ public class FormattableObject implements Formattable {
     public static final Citation GEOTIFF = Citations.GEOTIFF;
 
     /**
+     * Frequently used authority for formatting WKT. This is the same reference than
+     * the one declared in the {@link Citations} class, copied here for convenience.
+     *
+     * @see Citations#PROJ4
+     *
+     * @since 3.20
+     */
+    public static final Citation PROJ4 = Citations.PROJ4;
+
+    /**
      * A special citation for formatting objects as stored internally by Geotk. This citation
      * can be given to the {@code authority} argument of the {@link #toWKT(Citation,int)} method.
      * In the majority of cases, the result will be identical to the one we would get using the

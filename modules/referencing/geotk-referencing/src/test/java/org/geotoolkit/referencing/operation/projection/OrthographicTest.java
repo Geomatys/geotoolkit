@@ -131,18 +131,4 @@ public final strictfp class OrthographicTest extends ProjectionTestBase {
         derivativeDeltas = new double[] {delta, delta};
         verifyDerivative(toRadians(5), toRadians(30));
     }
-
-    /**
-     * Tests the estimation of error.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        final ErrorFitting error = new ErrorFitting(create(0, 0));
-        transform = error.projection();
-        validate();
-        error.fit(90, 90);
-        // Northing useful here; finding a model would require more work.
-    }
 }

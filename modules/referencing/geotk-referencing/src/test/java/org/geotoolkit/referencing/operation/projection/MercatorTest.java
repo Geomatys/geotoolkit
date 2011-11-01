@@ -185,29 +185,6 @@ public final strictfp class MercatorTest extends ProjectionTestBase {
     }
 
     /**
-     * Tests the estimation of error. We expect an error close to zero everywhere,
-     * even at poles.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        boolean ellipse = true;
-        do {
-            final ErrorFitting error = new ErrorFitting(create(ellipse));
-            transform = error.projection();
-            assertEquals(!ellipse, isSpherical());
-            validate();
-            error.fit(180, 90);
-            assertEquals(65341, error.delta.count());
-            assertEquals(0.0,   error.delta.minimum(), TOLERANCE);
-            assertEquals(0.0,   error.delta.maximum(), TOLERANCE);
-            assertEquals(0.0,   error.delta.mean(),    TOLERANCE);
-            assertEquals(0.0,   error.delta.rms(),     TOLERANCE);
-        } while ((ellipse = !ellipse) == false);
-    }
-
-    /**
      * Runs the tests defined in the GeoAPI-conformance module.
      *
      * @throws FactoryException   Should never happen.

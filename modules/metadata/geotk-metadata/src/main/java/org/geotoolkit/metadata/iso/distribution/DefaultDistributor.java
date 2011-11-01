@@ -101,10 +101,13 @@ public class DefaultDistributor extends MetadataEntity implements Distributor {
     /**
      * Creates a distributor with the specified contact.
      *
-     * @param distributorContact Party from whom the resource may be obtained.
+     * @param distributorContact Party from whom the resource may be obtained,
+     *        or {@code null} if none.
      */
     public DefaultDistributor(final ResponsibleParty distributorContact) {
-        setDistributorContact(distributorContact);
+        if (distributorContact != null) {
+            setDistributorContact(distributorContact);
+        }
     }
 
     /**

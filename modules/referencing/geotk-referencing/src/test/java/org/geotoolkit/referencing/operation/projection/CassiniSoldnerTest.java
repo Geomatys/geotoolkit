@@ -62,29 +62,6 @@ public final strictfp class CassiniSoldnerTest extends ProjectionTestBase {
     }
 
     /**
-     * Tests the estimation of error.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        final double TOLERANCE = 0.0006;
-        boolean ellipse = true;
-        do {
-            final ErrorFitting error = new ErrorFitting(create(ellipse));
-            transform = error.projection();
-            assertEquals(!ellipse, isSpherical());
-            validate();
-            error.fit(6, 90);
-            assertEquals(2353, error.delta.count());
-            assertEquals(0.0,  error.delta.minimum(), TOLERANCE);
-            assertEquals(0.0,  error.delta.maximum(), TOLERANCE);
-            assertEquals(0.0,  error.delta.mean(),    TOLERANCE);
-            assertEquals(0.0,  error.delta.rms(),     TOLERANCE);
-        } while ((ellipse = !ellipse) == false);
-    }
-
-    /**
      * Creates a projection and tests the derivatives at a few points.
      *
      * @throws TransformException Should never happen.

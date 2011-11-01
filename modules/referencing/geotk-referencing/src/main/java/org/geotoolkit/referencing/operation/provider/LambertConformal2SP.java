@@ -151,6 +151,7 @@ public class LambertConformal2SP extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_2SP"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic"),
             new IdentifierCode (Citations.GEOTIFF,  9), // The same code is used for 1SP.
+                     sameNameAs(Citations.PROJ4,      LambertConformal1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, LambertConformal1SP.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR,

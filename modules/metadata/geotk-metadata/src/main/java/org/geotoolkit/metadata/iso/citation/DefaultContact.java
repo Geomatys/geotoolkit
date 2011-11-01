@@ -141,6 +141,20 @@ public class DefaultContact extends MetadataEntity implements Contact {
     }
 
     /**
+     * Contact informations for the <A HREF="http://trac.osgeo.org/proj">Proj.4</A> project.
+     *
+     * @see DefaultOnlineResource#PROJ4
+     *
+     * @since 3.20
+     */
+    public static final Contact PROJ4;
+    static {
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.PROJ4);
+        c.freeze();
+        PROJ4 = c;
+    }
+
+    /**
      * Contact informations for <A HREF="http://www.esri.com">ESRI</A>.
      *
      * @see DefaultOnlineResource#ESRI

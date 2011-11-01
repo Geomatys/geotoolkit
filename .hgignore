@@ -10,6 +10,7 @@ syntax: regexp
 target$
 ^tmp$
 derby.log$
+nbproject$
 
 # Relatively big images not to be commited (for now)
 ^modules/display/geotk-wizards-swing/src/site/resources/screenshots$

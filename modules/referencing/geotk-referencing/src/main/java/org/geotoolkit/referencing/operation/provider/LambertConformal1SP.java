@@ -124,6 +124,7 @@ public class LambertConformal1SP extends MapProjection {
             new IdentifierCode (Citations.EPSG,     9801),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_1SP"),
             // Note: the GeoTIFF numerical code (9) is already used by the 2SP case.
+            new NamedIdentifier(Citations.PROJ4,    "lcc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.LAMBERT_CONFORMAL_PROJECTION))
         }, new ParameterDescriptor<?>[] {

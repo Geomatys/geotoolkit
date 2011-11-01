@@ -21,8 +21,6 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
 
 import static java.lang.Math.*;
 import static java.lang.Double.POSITIVE_INFINITY;
@@ -31,12 +29,12 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 
 /**
  * Static methods for assertions. This is used only when Java 1.4 assertions are enabled.
- * A projected point is compared with the inverse transform and an exception is thrown if
- * the distance is over some projection-dependent threshold.
+ * When a point has been projected using spherical formulas, compare with the same point
+ * transformed using spherical formulas and throw an exception if the result differ.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rémi Maréchal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -64,126 +62,9 @@ final class Assertions extends Static {
     private static final double DERIVATIVE_TOLERANCE = 1E-1;
 
     /**
-     * A conservative factory by which to increase the value returned by
-     * {@link UnitaryProjection#getErrorEstimate}. We arbitrarily tolerate
-     * 50% more than the provided estimate.
-     */
-    static final double ERROR_SCALE = 1.5;
-
-    /**
      * Do not allows instantiation of this class.
      */
     private Assertions() {
-    }
-
-    /**
-     * Returns the orthodromic distance between the two specified points using a spherical
-     * approximation. The given points must be longitude and latitude angles in radians.
-     * The returned value is the distance on a sphere of radius 1.
-     */
-    private static double orthodromicDistance(final double λ1, final double φ1,
-                                              final double λ2, final double φ2)
-    {
-        final double dλ = abs(λ2 - λ1) % (2*PI);
-        double ρ = sin(φ1)*sin(φ2) + cos(φ1)*cos(φ2)*cos(dλ);
-        if (ρ > +1) {assert ρ <= +(1+ITERATION_TOLERANCE) : ρ; ρ = +1;}
-        if (ρ < -1) {assert ρ >= -(1+ITERATION_TOLERANCE) : ρ; ρ = -1;}
-        return acos(ρ);
-    }
-
-    /**
-     * Checks if the transform of {@code point} is close enough to {@code expected}. "Close enough"
-     * means that the two points are separated by a distance shorter than the value returned by
-     * {@link UnitaryProjection#getErrorEstimate}.
-     *
-     * @param transform
-     *          The transform to test.
-     * @param inverse
-     *          {@code true} for an inverse transform instead of a direct one. In this case
-     *          the units of {@code srcPts} and {@code target} are interchanged compared to
-     *          the {@code false} case.
-     * @param expected
-     *          Point to compare to, in units of distance on the unit ellipse
-     *          if {@code inverse} is {@code false}.
-     * @param srcPts
-     *          Point to transform, in radians if {@code inverse} is {@code false}.
-     *
-     * @return Always {@code true}.
-     * @throws ProjectionError If the check failed.
-     * @throws ProjectionException If the projection failed for an other reason.
-     */
-    static boolean checkReciprocal(final UnitaryProjection transform, final boolean inverse,
-                                   final double[] expected, int dstOff,
-                                   final double[] srcPts,   int srcOff,
-                                   int numPts)
-            throws ProjectionException
-    {
-        /*
-         * If the arrays overlap, we will perform the check only on
-         * the portion of the array that doesn't overlap (if any).
-         */
-        if (srcPts == expected) {
-            int n;
-            n = (srcOff - dstOff) / 2;
-            if (n >= 0) {
-                if (n < numPts) {
-                    numPts = n;
-                }
-            } else {
-                n = -n;
-                if (n < numPts) {
-                    numPts -= n;
-                    srcOff += numPts * 2;
-                    dstOff += numPts * 2;
-                    numPts = n;
-                }
-            }
-        }
-        /*
-         * Now performs the check, allocating the buffer only if needed
-         * (numPts may had set to zero as a result of the above check).
-         */
-        if (--numPts >= 0) {
-            final double[] buffer = new double[2];
-            do {
-                final double longitude;
-                final double latitude;
-                final double distance;
-                if (inverse) {
-                    // Computes orthodromic distance (spherical model).
-                    transform.inverseTransform(srcPts, srcOff, buffer, 0);
-                    distance = orthodromicDistance(longitude = buffer[0],
-                                                   latitude  = buffer[1],
-                                                   expected[dstOff++],
-                                                   expected[dstOff++]);
-                } else {
-                    // Computes Cartesian distance.
-                    transform.transform(srcPts, srcOff, buffer, 0, false);
-                    longitude = srcPts[srcOff++];
-                    latitude  = srcPts[srcOff++];
-                    distance  = Math.hypot(expected[dstOff++] - buffer[0],
-                                           expected[dstOff++] - buffer[1]);
-                }
-                final double estimate = transform.getErrorEstimate(longitude, latitude);
-                if (distance > estimate*ERROR_SCALE + FORWARD_TOLERANCE) {
-                    /*
-                     * Do not fail for NaN values. For other cases we must throw a ProjectionException,
-                     * not an AssertionError, because some code like CRS.transform(CoordinateOperation,
-                     * ...) will project points that are know to be suspicious by surrounding them in
-                     * "try ... catch" statements. Failure are normal in their case and we want to let
-                     * them handle the exception the way they are used to.
-                     */
-                    final Parameters parameters = transform.getUnmarshalledParameters();
-                    throw new ProjectionError(Errors.format(Errors.Keys.PROJECTION_CHECK_FAILED_$4,
-                            distance * parameters.semiMajor,
-                            new Longitude(toDegrees(longitude) - parameters.centralMeridian),
-                            new Latitude (toDegrees(latitude)  - parameters.latitudeOfOrigin),
-                            transform.getName()));
-                }
-                srcOff += 2;
-            } while (--numPts >= 0);
-        }
-        return true;
     }
 
     /**

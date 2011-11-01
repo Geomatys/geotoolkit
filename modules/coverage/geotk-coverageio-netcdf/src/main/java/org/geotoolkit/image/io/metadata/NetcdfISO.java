@@ -42,28 +42,30 @@ import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.constants.AxisType;
+import ucar.nc2.constants.CF;
 import ucar.unidata.util.DateUtil;
 
 import org.opengis.metadata.Metadata;
-import org.opengis.metadata.citation.Role;
-import org.opengis.metadata.citation.Address;
-import org.opengis.metadata.citation.Contact;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.citation.OnLineFunction;
-import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.metadata.citation.ResponsibleParty;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.*;
+import org.opengis.metadata.content.*;
 import org.opengis.metadata.maintenance.ScopeCode;
+import org.opengis.metadata.distribution.Distributor;
+import org.opengis.metadata.distribution.Distribution;
+import org.opengis.metadata.constraint.LegalConstraints;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
+import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.extent.Extent;
-import org.opengis.metadata.content.Band;
-import org.opengis.metadata.content.RangeElementDescription;
-import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.extent.VerticalExtent;
+import org.opengis.metadata.extent.TemporalExtent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.measure.Units;
@@ -73,17 +75,13 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.WarningProducer;
+import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
-import org.geotoolkit.metadata.iso.citation.DefaultAddress;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.citation.*;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
@@ -92,6 +90,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
 import org.geotoolkit.metadata.iso.content.DefaultBand;
 import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
 import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
+import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
@@ -148,16 +147,29 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * @module
  */
 public class NetcdfISO {
-    // TODO: document link to ISO metadata when we will implement writer.
     /**
      * The {@value} attribute name for a short description of the dataset
      * (<em>Highly Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}.
+     * {@link Citation#getTitle() title}</li></ul>
+     *
+     * @see NetcdfFile#getTitle()
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#title_Attribute">UCAR reference</a>
      */
     public static final String TITLE = "title";
 
     /**
      * The {@value} attribute name for a paragraph describing the dataset
      * (<em>Highly Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getAbstract() abstract}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#summary_Attribute">UCAR reference</a>
      */
     public static final String SUMMARY = "summary";
 
@@ -165,46 +177,137 @@ public class NetcdfISO {
      * The {@value} attribute name for an identifier (<em>Recommended</em>).
      * The combination of the {@value #NAMING_AUTHORITY} and the {@value}
      * should be a globally unique identifier for the dataset.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getFileIdentifier() fileIdentifier}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}.
+     * {@link Citation#getIdentifiers() identifier}</li></ul>
+     *
+     * @see #createIdentifier()
+     * @see NetcdfFile#getId()
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#id_Attribute">UCAR reference</a>
      */
     public static final String IDENTIFIER = "id";
-
-    /**
-     * The {@value} attribute name for a long descriptive name for the variable taken from a controlled
-     * vocabulary of variable names. This is actually a {@linkplain VariableSimpleIF variable} attribute,
-     * but sometime appears also in {@linkplain NetcdfFile#findGlobalAttribute(String) global attributes}.
-     */
-    public static final String STANDARD_NAME = "standard_name";
 
     /**
      * The {@value} attribute name for the identifier authority (<em>Recommended</em>).
      * The combination of the {@value} and the {@value #IDENTIFIER} should be a globally
      * unique identifier for the dataset.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getFileIdentifier() fileIdentifier}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}.
+     * {@link Citation#getIdentifiers() identifier}</li></ul>
+     *
+     * @see #IDENTIFIER
+     * @see #createIdentifier()
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#id_Attribute">UCAR reference</a>
      */
     public static final String NAMING_AUTHORITY = "naming_authority";
 
     /**
+     * The {@value} attribute name for a long descriptive name for the variable taken from a controlled
+     * vocabulary of variable names. This is actually a {@linkplain VariableSimpleIF variable} attribute,
+     * but sometime appears also in {@linkplain NetcdfFile#findGlobalAttribute(String) global attributes}.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * {@link Keywords#getKeywords() keyword} with {@link KeywordType#THEME}</li></ul>
+     *
+     * @see #STANDARD_NAME_VOCABULARY
+     * @see #KEYWORDS
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#standard_name_Attribute">UCAR reference</a>
+     */
+    public static final String STANDARD_NAME = CF.STANDARD_NAME;
+
+    /**
+     * The {@value} attribute name for indicating which controlled list of variable names has been
+     * used in the {@value #STANDARD_NAME} attribute.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * {@link Keywords#getThesaurusName() thesaurusName}.
+     * {@link Citation#getTitle() title}</li></ul>
+     *
+     * @see #STANDARD_NAME
+     * @see #VOCABULARY
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#standard_name_vocabulary_Attribute">UCAR reference</a>
+     */
+    public static final String STANDARD_NAME_VOCABULARY = "standard_name_vocabulary";
+
+    /**
      * The {@value} attribute name for a comma separated list of key words and phrases
      * (<em>Highly Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * {@link Keywords#getKeywords() keyword} with {@link KeywordType#THEME}</li></ul>
      *
+     * @see #VOCABULARY
+     * @see #STANDARD_NAME
      * @see #getKeywordSeparator(Group)
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#keywords_Attribute">UCAR reference</a>
      */
     public static final String KEYWORDS = "keywords";
 
     /**
      * The {@value} attribute name for the guideline for the words/phrases in the
      * {@value #KEYWORDS} attribute (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * {@link Keywords#getThesaurusName() thesaurusName}.
+     * {@link Citation#getTitle() title}</li></ul>
+     *
+     * @see #KEYWORDS
+     * @see #STANDARD_NAME_VOCABULARY
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#keywords_vocabulary_Attribute">UCAR reference</a>
      */
     public static final String VOCABULARY = "keywords_vocabulary";
 
     /**
+     * The {@value} attribute name THREDDS data type appropriate for this dataset
+     * (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getSpatialRepresentationTypes() spatialRepresentationType}</li></ul>
+     *
+     * @see SpatialRepresentationType
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#cdm_data_type_Attribute">UCAR reference</a>
+     */
+    public static final String DATA_TYPE = "cdm_data_type";
+
+    /**
      * The {@value} attribute name for providing an audit trail for modifications to the
      * original data (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getDataQualityInfo() dataQualityInfo}.
+     * {@link DataQuality#getLineage() lineage}.
+     * {@link Lineage#getStatement() statement}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#history_Attribute">UCAR reference</a>
      */
     public static final String HISTORY = "history";
 
     /**
      * The {@value} attribute name for miscellaneous information about the data
      * (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getSupplementalInformation() supplementalInformation}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#comment_Attribute">UCAR reference</a>
      */
     public static final String COMMENT = "comment";
 
@@ -212,24 +315,51 @@ public class NetcdfISO {
      * The {@value} attribute name for the date on which the metadata was created
      * (<em>Suggested</em>). This is actually defined in the "{@code NCISOMetadata}"
      * subgroup.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getDateStamp() dateStamp}</li></ul>
      */
     public static final String METADATA_CREATION = "metadata_creation";
 
     /**
      * The {@value} attribute name for the date on which the data was created
      * (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}.
+     * {@link Citation#getDates() date}.
+     * {@link CitationDate#getDate() date} with {@link DateType#CREATION}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#date_created_Attribute">UCAR reference</a>
      */
     public static final String DATE_CREATED = "date_created";
 
     /**
      * The {@value} attribute name for the date on which this data was last modified
      * (<em>Suggested</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}.
+     * {@link Citation#getDates() date}.
+     * {@link CitationDate#getDate() date} with {@link DateType#REVISION}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#date_modified_Attribute">UCAR reference</a>
      */
     public static final String DATE_MODIFIED = "date_modified";
 
     /**
      * The {@value} attribute name for a date on which this data was formally issued
      * (<em>Suggested</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}.
+     * {@link Citation#getDates() date}.
+     * {@link CitationDate#getDate() date} with {@link DateType#PUBLICATION}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#date_issued_Attribute">UCAR reference</a>
      */
     public static final String DATE_ISSUED = "date_issued";
 
@@ -237,36 +367,39 @@ public class NetcdfISO {
      * Holds the attribute names describing a responsible party.
      * Values are:
      * <p>
-     * <table><tr>
-     *   <th>Responsible</th>
-     *   <th>{@link #NAME}</th>
-     *   <th>{@link #INSTITUTION}</th>
-     *   <th>{@link #URL}</th>
-     *   <th>{@link #EMAIL}</th>
-     *   <th>{@link #ROLE}</th>
-     *   <th>{@link #DEFAULT_ROLE}</th>
+     * <table border="1" cellspacing="0"><tr bgcolor="lightblue">
+     *   <th>Attribute</th>
+     *   <th>{@link NetcdfISO#CREATOR}</th>
+     *   <th>{@link NetcdfISO#CONTRIBUTOR}</th>
+     *   <th>{@link NetcdfISO#PUBLISHER}</th>
      * </tr><tr>
-     *   <td>{@link NetcdfISO#CREATOR}</td>
+     *   <td>{@link #NAME}</td>
      *   <td>{@code "creator_name"}</td>
-     *   <td>{@code "institution"}</td>
-     *   <td>{@code "creator_url"}</td>
-     *   <td>{@code "creator_email"}</td>
-     *   <td></td>
-     *   <td>{@link Role#ORIGINATOR}</td>
-     * </tr><tr>
-     *   <td>{@link NetcdfISO#CONTRIBUTOR}</td>
      *   <td>{@code "contributor_name"}</td>
+     *   <td>{@code "publisher_name"}</td>
+     * </tr><tr>
+     *   <td>{@link #INSTITUTION}</td>
+     *   <td>{@code "institution"}</td>
      *   <td></td>
+     *   <td></td>
+     * </tr><tr>
+     *   <td>{@link #URL}</td>
+     *   <td>{@code "creator_url"}</td>
      *   <td>{@code "contributor_url"}</td>
+     *   <td>{@code "publisher_url"}</td>
+     * </tr><tr>
+     *   <td>{@link #EMAIL}</td>
+     *   <td>{@code "creator_email"}</td>
      *   <td>{@code "contributor_email"}</td>
+     *   <td>{@code "publisher_email"}</td>
+     * </tr><tr>
+     *   <td>{@link #ROLE}</td>
+     *   <td></td>
      *   <td>{@code "contributor_role"}</td>
      *   <td></td>
      * </tr><tr>
-     *   <td>{@link NetcdfISO#PUBLISHER}</td>
-     *   <td>{@code "publisher_name"}</td>
-     *   <td></td>
-     *   <td>{@code "publisher_url"}</td>
-     *   <td>{@code "publisher_email"}</td>
+     *   <td>{@link #DEFAULT_ROLE}</td>
+     *   <td>{@link Role#ORIGINATOR}</td>
      *   <td></td>
      *   <td>{@link Role#PUBLISHER}</td>
      * </tr></table>
@@ -280,37 +413,60 @@ public class NetcdfISO {
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.20
      *
+     * @see NetcdfISO#createResponsibleParty(Group, Responsible)
+     *
      * @since 3.20
      * @module
      */
-    public static final class Responsible {
+    public static class Responsible {
         /**
          * The attribute name for the responsible's name. Possible values are
          * {@code "creator_name"}, {@code "contributor_name"} or {@code "publisher_name"}.
+         * <p>
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * {@link ResponsibleParty#getIndividualName() individualName}</li></ul>
          */
         public final String NAME;
 
         /**
          * The attribute name for the responsible's institution, or {@code null} if none.
          * Possible value is {@code "institution"}.
+         * <p>
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * {@link ResponsibleParty#getOrganisationName() organisationName}</li></ul>
          */
         public final String INSTITUTION;
 
         /**
          * The attribute name for the responsible's URL. Possible values are
          * {@code "creator_url"}, {@code "contributor_url"} or {@code "publisher_url"}.
+         * <p>
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * {@link ResponsibleParty#getContactInfo() contactInfo}.
+         * {@link Contact#getOnlineResource() onlineResource}.
+         * {@link OnlineResource#getLinkage() linkage}</li></ul>
          */
         public final String URL;
 
         /**
          * The attribute name for the responsible's email address. Possible values are
          * {@code "creator_email"}, {@code "contributor_email"} or {@code "publisher_email"}.
+         * <p>
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * {@link ResponsibleParty#getContactInfo() contactInfo}.
+         * {@link Contact#getAddress() address}.
+         * {@link Address#getElectronicMailAddresses() electronicMailAddress}</li></ul>
          */
         public final String EMAIL;
 
         /**
          * The attribute name for the responsible's role, or {@code null} if none.
          * Possible value is {@code "contributor_role"}.
+         * <p>
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * {@link ResponsibleParty#getRole()}</li></ul>
+         *
+         * @see Role
          */
         public final String ROLE;
 
@@ -331,7 +487,7 @@ public class NetcdfISO {
          * @param defaultRole The role to use as a fallback if no attribute value is associated to the
          *                    {@code role} key.
          */
-        Responsible(final String name, final String institution, final String url, final String email,
+        public Responsible(final String name, final String institution, final String url, final String email,
                 final String role, final Role defaultRole)
         {
             NAME         = name;
@@ -345,18 +501,47 @@ public class NetcdfISO {
 
     /**
      * The set of attribute names for the creator (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation} with {@link Role#ORIGINATOR}</li></ul>
+     *
+     * @see #CONTRIBUTOR
+     * @see #PUBLISHER
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#creator_name_Attribute">UCAR reference</a>
      */
     public static final Responsible CREATOR = new Responsible("creator_name",
             "institution", "creator_url", "creator_email", null, Role.ORIGINATOR);
 
     /**
      * The set of attribute names for the contributor (<em>Suggested</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCitation() citation}</li></ul>
+     *
+     * @see #CREATOR
+     * @see #PUBLISHER
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#contributor_name_Attribute">UCAR reference</a>
      */
     public static final Responsible CONTRIBUTOR = new Responsible("contributor_name",
             null, "contributor_url", "contributor_email", "contributor_role", null);
 
     /**
      * The set of attribute names for the publisher (<em>Suggested</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getDistributionInfo() distributionInfo}.
+     * {@link Distribution#getDistributors() distributors}
+     * {@link Distributor#getDistributorContact() distributorContact} with {@link Role#PUBLISHER}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * {@link Keywords#getKeywords() keyword} with the "dataCenter" {@link KeywordType}</li></ul>
+     *
+     * @see #CREATOR
+     * @see #CONTRIBUTOR
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#publisher_name_Attribute">UCAR reference</a>
      */
     public static final Responsible PUBLISHER = new Responsible("publisher_name",
             null, "publisher_url", "publisher_email", null, Role.PUBLISHER);
@@ -364,18 +549,50 @@ public class NetcdfISO {
     /**
      * The {@value} attribute name for the scientific project that produced the data
      * (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * {@link Keywords#getKeywords() keyword} with the "project" {@link KeywordType}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#project_Attribute">UCAR reference</a>
      */
     public static final String PROJECT = "project";
 
     /**
+     * The {@value} attribute name a textual description of the processing (or quality control)
+     * level of the data.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getContentInfo() contentInfo}.
+     * {@link ImageDescription#getProcessingLevelCode() processingLevelCode}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#processing_level_Attribute">UCAR reference</a>
+     */
+    public static final String PROCESSING_LEVEL = "processing_level";
+
+    /**
      * The {@value} attribute name for a place to acknowledge various type of support for
      * the project that produced this data (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getCredits() credit}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#acknowledgement_Attribute">UCAR reference</a>
      */
     public static final String ACKNOWLEDGMENT = "acknowledgment";
 
     /**
      * The {@value} attribute name for a description of the restrictions to data access
      * and distribution (<em>Recommended</em>).
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getResourceConstraints() resourceConstraints}
+     * {@link LegalConstraints#getUseLimitations() useLimitation}</li></ul>
+     *
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#license_Attribute">UCAR reference</a>
      */
     public static final String LICENSE = "license";
 
@@ -383,36 +600,48 @@ public class NetcdfISO {
      * Holds the attribute names describing a simple latitude, longitude, and vertical bounding box.
      * Values are:
      * <p>
-     * <table><tr>
-     *   <th>Dimension</th>
-     *   <th>{@link #MINIMUM}</th>
-     *   <th>{@link #MAXIMUM}</th>
-     *   <th>{@link #RESOLUTION}</th>
-     *   <th>{@link #UNITS}</th>
+     * <table border="1" cellspacing="0"><tr bgcolor="lightblue">
+     *   <th>Attributes</th>
+     *   <th>{@link NetcdfISO#LATITUDE}</th>
+     *   <th>{@link NetcdfISO#LONGITUDE}</th>
+     *   <th>{@link NetcdfISO#VERTICAL}</th>
+     *   <th>{@link NetcdfISO#TIME}</th>
      * </tr><tr>
-     *   <td>{@link NetcdfISO#LATITUDE}</td>
+     *   <td>{@link #MINIMUM}</td>
      *   <td>{@code "geospatial_lat_min"}</td>
-     *   <td>{@code "geospatial_lat_max"}</td>
-     *   <td>{@code "geospatial_lat_resolution"}</td>
-     *   <td>{@code "geospatial_lat_units"}</td>
-     * </tr><tr>
-     *   <td>{@link NetcdfISO#LONGITUDE}</td>
      *   <td>{@code "geospatial_lon_min"}</td>
-     *   <td>{@code "geospatial_lon_max"}</td>
-     *   <td>{@code "geospatial_lon_resolution"}</td>
-     *   <td>{@code "geospatial_lon_units"}</td>
-     * </tr><tr>
-     *   <td>{@link NetcdfISO#VERTICAL}</td>
      *   <td>{@code "geospatial_vertical_min"}</td>
-     *   <td>{@code "geospatial_vertical_max"}</td>
-     *   <td>{@code "geospatial_vertical_resolution"}</td>
-     *   <td>{@code "geospatial_vertical_units"}</td>
-     * </tr><tr>
-     *   <td>{@link NetcdfISO#TIME}</td>
      *   <td>{@code "time_coverage_start"}</td>
+     * </tr><tr>
+     *   <td>{@link #MAXIMUM}</td>
+     *   <td>{@code "geospatial_lat_max"}</td>
+     *   <td>{@code "geospatial_lon_max"}</td>
+     *   <td>{@code "geospatial_vertical_max"}</td>
      *   <td>{@code "time_coverage_end"}</td>
+     * </tr><tr>
+     *   <td>{@link #SPAN}</td>
+     *   <td></td>
+     *   <td></td>
+     *   <td></td>
+     *   <td>{@code "time_coverage_duration"}</td>
+     * </tr><tr>
+     *   <td>{@link #RESOLUTION}</td>
+     *   <td>{@code "geospatial_lat_resolution"}</td>
+     *   <td>{@code "geospatial_lon_resolution"}</td>
+     *   <td>{@code "geospatial_vertical_resolution"}</td>
      *   <td>{@code "time_coverage_resolution"}</td>
+     * </tr><tr>
+     *   <td>{@link #UNITS}</td>
+     *   <td>{@code "geospatial_lat_units"}</td>
+     *   <td>{@code "geospatial_lon_units"}</td>
+     *   <td>{@code "geospatial_vertical_units"}</td>
      *   <td>{@code "time_coverage_units"}</td>
+     * </tr><tr>
+     *   <td>{@link #POSITIVE}</td>
+     *   <td></td>
+     *   <td></td>
+     *   <td>{@code "geospatial_vertical_positive"}</td>
+     *   <td></td>
      * </tr></table>
      *
      * {@note The member names in this class are upper-cases because they should be considered
@@ -428,7 +657,7 @@ public class NetcdfISO {
      * @since 3.20
      * @module
      */
-    public static final class Dimension {
+    public static class Dimension {
         /**
          * The attribute name for the minimal value of the bounding box (<em>Recommended</em>).
          * Possible values are {@code "geospatial_lat_min"}, {@code "geospatial_lon_min"},
@@ -442,6 +671,12 @@ public class NetcdfISO {
          * {@code "geospatial_vertical_max"} and {@code "time_coverage_end"}.
          */
         public final String MAXIMUM;
+
+        /**
+         * The attribute name for the difference between the minimal and maximal values.
+         * Possible value is {@code "time_coverage_duration"}.
+         */
+        public final String SPAN;
 
         /**
          * The attribute name for a further refinement of the geospatial bounding box
@@ -459,13 +694,30 @@ public class NetcdfISO {
         public final String UNITS;
 
         /**
-         * Creates a new set of attribute names.
+         * The attribute name for indicating which direction is positive (<em>Suggested</em>).
+         * Possible value is {@code "geospatial_vertical_positive"}.
          */
-        Dimension(final String min, final String max, final String resolution, final String units) {
+        public final String POSITIVE;
+
+        /**
+         * Creates a new set of attribute names.
+         *
+         * @param min        The attribute name for the minimal value of the bounding box.
+         * @param max        The attribute name for the maximal value of the bounding box.
+         * @param span       The attribute name for the difference between the minimal and maximal values.
+         * @param resolution The attribute name for a further refinement of the geospatial bounding box.
+         * @param units      The attribute name for the bounding box units of measurement.
+         * @param positive   The attribute name for indicating which direction is positive.
+         */
+        public Dimension(final String min, final String max, final String span, final String resolution,
+                final String units, final String positive)
+        {
             MINIMUM    = min;
             MAXIMUM    = max;
+            SPAN       = span;
             RESOLUTION = resolution;
             UNITS      = units;
+            POSITIVE   = positive;
         }
     }
 
@@ -473,44 +725,118 @@ public class NetcdfISO {
      * The set of attribute names for the minimal and maximal latitudes of the bounding box,
      * resolution and units. Latitudes are assumed to be in decimal degrees north, unless a
      * units attribute is specified.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getExtents() extent}.
+     * {@link Extent#getGeographicElements() geographicElement}.
+     * {@link GeographicBoundingBox#getSouthBoundLatitude() southBoundLatitude} or
+     * {@link GeographicBoundingBox#getNorthBoundLatitude() northBoundLatitude}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
+     *
+     * @see #LONGITUDE
+     * @see #VERTICAL
+     * @see #TIME
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#geospatial_lat_min_Attribute">UCAR reference</a>
      */
     public static final Dimension LATITUDE = new Dimension("geospatial_lat_min",
-            "geospatial_lat_max", "geospatial_lat_resolution", "geospatial_lat_units");
+            "geospatial_lat_max", null, "geospatial_lat_resolution", "geospatial_lat_units", null);
 
     /**
      * The set of attribute names for the minimal and maximal longitudes of the bounding box,
      * resolution and units. Longitudes are assumed to be in decimal degrees east, unless a
      * units attribute is specified.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getExtents() extent}.
+     * {@link Extent#getGeographicElements() geographicElement}.
+     * {@link GeographicBoundingBox#getWestBoundLongitude() westBoundLongitude} or
+     * {@link GeographicBoundingBox#getEastBoundLongitude() eastBoundLongitude}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
+     *
+     * @see #LATITUDE
+     * @see #VERTICAL
+     * @see #TIME
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#geospatial_lon_min_Attribute">UCAR reference</a>
      */
     public static final Dimension LONGITUDE = new Dimension("geospatial_lon_min",
-            "geospatial_lon_max", "geospatial_lon_resolution", "geospatial_lon_units");
+            "geospatial_lon_max", null, "geospatial_lon_resolution", "geospatial_lon_units", null);
 
     /**
      * The set of attribute names for the minimal and maximal elevations of the bounding box,
      * resolution and units. Elevations are assumed to be in metres above the ground, unless a
      * units attribute is specified.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getExtents() extent}.
+     * {@link Extent#getVerticalElements() verticalElement}.
+     * {@link VerticalExtent#getMinimumValue() minimumValue} or
+     * {@link VerticalExtent#getMaximumValue() maximumValue}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
+     *
+     * @see #LATITUDE
+     * @see #LONGITUDE
+     * @see #TIME
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#geospatial_vertical_min_Attribute">UCAR reference</a>
      */
     public static final Dimension VERTICAL = new Dimension("geospatial_vertical_min",
-            "geospatial_vertical_max", "geospatial_vertical_resolution", "geospatial_vertical_units");
+            "geospatial_vertical_max", null, "geospatial_vertical_resolution",
+            "geospatial_vertical_units", "geospatial_vertical_positive");
 
     /**
      * The set of attribute names for the start and end times of the bounding box, resolution and
      * units. Dates are assumed to be ..., unless a units attribute is specified.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * {@link DataIdentification#getExtents() extent}.
+     * {@link Extent#getTemporalElements() temporalElement}.
+     * {@link TemporalExtent#getExtent() extent}</li>
+     * <li>{@link Metadata}.
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
+     *
+     * @see #LATITUDE
+     * @see #LONGITUDE
+     * @see #VERTICAL
+     * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#time_coverage_start_Attribute">UCAR reference</a>
      */
-    public static final Dimension TIME = new Dimension("time_coverage_start",
-            "time_coverage_end", "time_coverage_resolution", "time_coverage_units");
+    public static final Dimension TIME = new Dimension("time_coverage_start", "time_coverage_end",
+            "time_coverage_duration", "time_coverage_resolution", "time_coverage_units", null);
 
     /**
      * The {@value} attribute name for the designation associated with a range element.
      * This attribute can be associated to {@linkplain VariableSimpleIF variables}. If
      * specified, they shall be one flag name for each {@linkplain #FLAG_MASKS flag mask},
      * {@linkplain #FLAG_VALUES flag value} and {@linkplain #FLAG_MEANINGS flag meaning}.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getContentInfo() contentInfo}.
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * {@link RangeElementDescription#getName() name}</li></ul>
      */
     public static final String FLAG_NAMES = "flag_names";
 
     /**
      * The {@value} attribute name for bitmask to apply on sample values before to compare
      * them to the {@linkplain #FLAG_VALUES flag values}.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getContentInfo() contentInfo}.
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * {@link RangeElementDescription#getRangeElements() rangeElement}</li></ul>
      */
     public static final String FLAG_MASKS = "flag_masks";
 
@@ -520,12 +846,22 @@ public class NetcdfISO {
      * together, describe a blend of independent boolean conditions and enumerated status codes.
      * A flagged condition is identified by a bitwise AND of the variable value and each flag masks
      * value; a result that matches the flag values value indicates a true condition.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getContentInfo() contentInfo}.
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * {@link RangeElementDescription#getRangeElements() rangeElement}</li></ul>
      */
     public static final String FLAG_VALUES = "flag_values";
 
     /**
      * The {@value} attribute name for the meaning of {@linkplain #FLAG_VALUES flag values}.
      * Each flag values and flag masks must coincide with a flag meanings.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * {@link Metadata#getContentInfo() contentInfo}.
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * {@link RangeElementDescription#getDefinition() definition}</li></ul>
      */
     public static final String FLAG_MEANINGS = "flag_meanings";
 
@@ -878,16 +1214,52 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates a {@code ResponsibleParty} element if at least one of the attributes is defined,
-     * except {@code role} which is not tested. The {@code role} is intentionally not tested
-     * because it may have a default value which is never null.
+     * Creates a globally unique identifier for the current NetCDF {@linkplain #file}.
+     * The default implementation build the identifier from the following attributes:
      * <p>
-     * This method tries to reuse the existing {@link #creator} instance, or part of it,
-     * if it is suitable.
+     * <ul>
+     *   <li>{@value #NAMING_AUTHORITY} used as the {@linkplain Identifier#getAuthority() authority}.</li>
+     *   <li>{@value #IDENTIFIER}, or {@link NetcdfFile#getId()} if no identifier attribute was found.</li>
+     * </ul>
+     * <p>
+     * Subclasses can override this method if they need to complete the information.
      *
-     * @param group The group in which to read the attributes.
+     * @return The globally unique identifier, or {@code null} if none.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
-    private ResponsibleParty createResponsibleParty(final Group group, final Responsible keys) {
+    protected Identifier createIdentifier() throws IOException {
+        String identifier = getStringValue(IDENTIFIER);
+        if (identifier == null) {
+            identifier = file.getId();
+            if (identifier == null) {
+                return null;
+            }
+        }
+        final String namespace  = getStringValue(NAMING_AUTHORITY);
+        return new DefaultIdentifier((namespace != null) ? new DefaultCitation(namespace) : null, identifier);
+    }
+
+    /**
+     * Creates a {@code ResponsibleParty} element if at least one of the name, email or URL
+     * attributes is defined. Subclasses can override this method if they need to complete
+     * the information.
+     *
+     * @param  keys  The group of attribute names to use for fetching the values.
+     * @param  group The group in which to read the attributes values.
+     * @return The responsible party, or {@code null} if none.
+     * @throws IOException If an I/O operation was necessary but failed.
+     *
+     * @see #CREATOR
+     * @see #CONTRIBUTOR
+     * @see #PUBLISHER
+     */
+    /*
+     * Implementation note: this method tries to reuse the existing {@link #creator} instance,
+     * or part of it, if it is suitable.
+     */
+    protected ResponsibleParty createResponsibleParty(final Group group, final Responsible keys)
+            throws IOException
+    {
         final String individualName   = getStringValue(group, keys.NAME);
         final String organisationName = getStringValue(group, keys.INSTITUTION);
         final String email            = getStringValue(group, keys.EMAIL);
@@ -948,26 +1320,29 @@ public class NetcdfISO {
      * Creates a {@code Citation} element if at least one of the required attributes
      * is non-null. This method will reuse the {@link #creator} field, if non-null.
      *
-     * @param id The {@code <gmd:fileIdentifier> attribute.
+     * @param identifier The citation {@code <gmd:identifier> attribute.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
-    private Citation createCitation(final String id) {
+    private Citation createCitation(final Identifier identifier) throws IOException {
         String title = getStringValue(TITLE);
         if (title == null) {
             title = getStringValue("full_name"); // THREDDS attribute.
             if (title == null) {
                 title = getStringValue("name"); // THREDDS attribute.
+                if (title == null) {
+                    title = file.getTitle();
+                }
             }
         }
         final Date creation = getDateValue(DATE_CREATED);
         final Date modified = getDateValue(DATE_MODIFIED);
         final Date issued   = getDateValue(DATE_ISSUED);
-        if (title == null && id == null && creation == null && modified == null && issued == null) {
+        if (title == null && identifier == null && creation == null && modified == null && issued == null) {
             return null;
         }
         final DefaultCitation citation = new DefaultCitation(title);
-        if (id != null) {
-            final String namespace = getStringValue(NAMING_AUTHORITY);
-            citation.getIdentifiers().add(new DefaultIdentifier((namespace != null) ? new DefaultCitation(namespace) : null, id));
+        if (identifier != null) {
+            citation.getIdentifiers().add(identifier);
         }
         if (creation != null) citation.getDates().add(new DefaultCitationDate(creation, DateType.CREATION));
         if (modified != null) citation.getDates().add(new DefaultCitationDate(modified, DateType.REVISION));
@@ -993,25 +1368,29 @@ public class NetcdfISO {
      * Creates a {@code DataIdentification} element if at least one of the required attributes
      * is non-null. This method will reuse the {@link #creator} field, if non-null.
      *
-     * @param id The {@code <gmd:fileIdentifier> attribute.
-     * @param publisher The publisher names, built by the caller in an opportunist way.
+     * @param identifier The citation {@code <gmd:identifier> attribute.
+     * @param publisher  The publisher names, built by the caller in an opportunist way.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
-    private DataIdentification createIdentificationInfo(final String id,
+    private DataIdentification createIdentificationInfo(final Identifier identifier,
             final Set<InternationalString> publisher) throws IOException
     {
         DefaultDataIdentification identification = null;
         Set<InternationalString>  project        = null;
-        Set<InternationalString>  standards      = null;
         boolean hasExtent = false;
         for (final Group group : groups) {
-            final Keywords keywords = createKeywords(group, KeywordType.THEME);
+            final Keywords standard = createKeywords(group, KeywordType.THEME, true);
+            final Keywords keywords = createKeywords(group, KeywordType.THEME, false);
+            final String   type     = getStringValue(group, DATA_TYPE);
             final String   credits  = getStringValue(group, ACKNOWLEDGMENT);
             final String   license  = getStringValue(group, LICENSE);
             final Extent   extent   = hasExtent ? null : createExtent(group);
-            if (keywords != null || credits != null || license != null || extent != null) {
+            if (standard!=null || keywords!=null || type!=null || credits!=null || license!=null || extent!=null) {
                 if (identification == null) {
                     identification = new DefaultDataIdentification();
                 }
+                if (type     != null) addIfAbsent(identification.getSpatialRepresentationTypes(), CodeLists.valueOf(SpatialRepresentationType.class, type));
+                if (standard != null) addIfAbsent(identification.getDescriptiveKeywords(), standard);
                 if (keywords != null) addIfAbsent(identification.getDescriptiveKeywords(), keywords);
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
                 if (license  != null) addIfAbsent(identification.getResourceConstraints(), new DefaultLegalConstraints(license));
@@ -1023,13 +1402,12 @@ public class NetcdfISO {
                     hasExtent = true;
                 }
             }
-            project   = addIfNonNull(project,   wrap(getStringValue(group, PROJECT)));
-            standards = addIfNonNull(standards, wrap(getStringValue(group, STANDARD_NAME)));
+            project = addIfNonNull(project, wrap(getStringValue(group, PROJECT)));
         }
-        final Citation citation = createCitation(id);
+        final Citation citation = createCitation(identifier);
         final String   summary  = getStringValue(SUMMARY);
         if (identification == null) {
-            if (citation==null && summary==null && project==null && standards==null && publisher==null && creator==null) {
+            if (citation==null && summary==null && project==null && publisher==null && creator==null) {
                 return null;
             }
             identification = new DefaultDataIdentification();
@@ -1041,7 +1419,6 @@ public class NetcdfISO {
         }
         addKeywords(identification, project,   "project"); // Not necessarily the same string than PROJECT.
         addKeywords(identification, publisher, "dataCenter");
-        addKeywords(identification, standards, "theme");
         identification.setSupplementalInformation(wrap(getStringValue(COMMENT)));
         return identification;
     }
@@ -1061,9 +1438,13 @@ public class NetcdfISO {
 
     /**
      * Returns the keywords if at least one required attribute is found, or {@code null} otherwise.
+     *
+     * @throws IOException If an I/O operation was necessary but failed.
      */
-    private Keywords createKeywords(final Group group, final KeywordType type) throws IOException {
-        final String list = getStringValue(group, KEYWORDS);
+    private Keywords createKeywords(final Group group, final KeywordType type, final boolean standard)
+            throws IOException
+    {
+        final String list = getStringValue(group, standard ? STANDARD_NAME : KEYWORDS);
         DefaultKeywords keywords = null;
         if (list != null) {
             final Set<InternationalString> words = new LinkedHashSet<InternationalString>();
@@ -1076,7 +1457,7 @@ public class NetcdfISO {
             if (!words.isEmpty()) {
                 keywords = new DefaultKeywords(words);
                 keywords.setType(type);
-                final String vocabulary = getStringValue(group, VOCABULARY);
+                final String vocabulary = getStringValue(group, standard ? STANDARD_NAME_VOCABULARY : VOCABULARY);
                 if (vocabulary != null) {
                     keywords.setThesaurusName(new DefaultCitation(vocabulary));
                 }
@@ -1106,7 +1487,7 @@ public class NetcdfISO {
      *
      * @param  cs The NetCDF coordinate system.
      * @return The grid spatial representation info.
-     * @throws IOException If an I/O operation was required but failed.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
     @SuppressWarnings("fallthrough")
     protected GridSpatialRepresentation createSpatialRepresentationInfo(final CoordinateSystem cs) throws IOException {
@@ -1176,8 +1557,14 @@ public class NetcdfISO {
                 extent = new DefaultExtent();
             }
             final UnitConverter c = getConverterTo(getUnitValue(group, VERTICAL.UNITS), SI.METRE);
-            extent.getVerticalElements().add(new DefaultVerticalExtent(
-                    valueOf(zmin, c), valueOf(zmax, c), DefaultVerticalCRS.GEOIDAL_HEIGHT));
+            double min = valueOf(zmin, c);
+            double max = valueOf(zmax, c);
+            if (CF.POSITIVE_DOWN.equals(getStringValue(group, VERTICAL.POSITIVE))) {
+                final double tmp = min;
+                min = -max;
+                max = -tmp;
+            }
+            extent.getVerticalElements().add(new DefaultVerticalExtent(min, max, DefaultVerticalCRS.GEOIDAL_HEIGHT));
         }
         if (tmin != null || tmax != null) {
             if (extent == null) {
@@ -1185,6 +1572,7 @@ public class NetcdfISO {
             }
             final UnitConverter c = getConverterTo(getUnitValue(group, TIME.UNITS), NonSI.DAY);
             extent.getTemporalElements().add(new DefaultTemporalExtent(/* TODO */));
+            // Need to use gml:TimePeriod.[begin|end]Position
         }
         return extent;
     }
@@ -1221,10 +1609,17 @@ public class NetcdfISO {
      * Creates a {@code <gmd:contentInfo>} element from all NetCDF variables.
      *
      * @return The content information.
-     * @throws IOException If an I/O operation was required but failed.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
     private CoverageDescription createContentInfo() throws IOException {
-        final DefaultCoverageDescription content = new DefaultCoverageDescription();
+        final String processingLevel = getStringValue(PROCESSING_LEVEL);
+        final DefaultCoverageDescription content;
+        if (processingLevel != null) {
+            content = new DefaultImageDescription();
+            ((DefaultImageDescription) content).setProcessingLevelCode(new DefaultIdentifier(processingLevel));
+        } else {
+            content = new DefaultCoverageDescription();
+        }
         for (final VariableSimpleIF variable : file.getVariables()) {
             content.getDimensions().add(createSampleDimension(variable));
             final Object[] names    = getSequence(variable, FLAG_NAMES,    false);
@@ -1281,7 +1676,7 @@ public class NetcdfISO {
      *
      * @param  variable The NetCDF variable.
      * @return The sample dimension information.
-     * @throws IOException If an I/O operation was required but failed.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
     protected Band createSampleDimension(final VariableSimpleIF variable) throws IOException {
         final DefaultBand band = new DefaultBand();
@@ -1325,7 +1720,7 @@ public class NetcdfISO {
      * @param  mask     One of the elements in the {@value #FLAG_MASKS} attribute or {@code null}.
      * @param  value    One of the elements in the {@value #FLAG_VALUES} attribute or {@code null}.
      * @return The sample dimension information or {@code null} if none.
-     * @throws IOException If an I/O operation was required but failed.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
     protected RangeElementDescription createRangeElementDescription(final VariableSimpleIF variable,
             final String name, final String meaning, final Number mask, final Number value) throws IOException
@@ -1345,15 +1740,22 @@ public class NetcdfISO {
      * Creates an ISO {@code Metadata} object from the information found in the NetCDF file.
      *
      * @return The ISO metadata object.
-     * @throws IOException If an I/O operation was required but failed.
+     * @throws IOException If an I/O operation was necessary but failed.
      */
     public Metadata createMetadata() throws IOException {
         final DefaultMetadata metadata = new DefaultMetadata();
-        final String id = getStringValue(IDENTIFIER);
         metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
         metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
+        final Identifier identifier = createIdentifier();
+        if (identifier != null) {
+            String id = identifier.getCode();
+            final Citation authority = identifier.getAuthority();
+            if (authority != null) {
+                id = authority.getTitle().toString() + DefaultNameSpace.DEFAULT_SEPARATOR + id;
+            }
+            metadata.setFileIdentifier(id);
+        }
         metadata.setDateStamp(getDateValue(METADATA_CREATION));
-        metadata.setFileIdentifier(id);
         metadata.getHierarchyLevels().add(ScopeCode.DATASET);
         final String wms = getStringValue("wms_service");
         final String wcs = getStringValue("wcs_service");
@@ -1406,7 +1808,7 @@ public class NetcdfISO {
          * Add the identification info AFTER the responsible parties (both creator and publisher),
          * because this method will reuse the 'creator' and 'publisher' information (if non-null).
          */
-        final DataIdentification identification = createIdentificationInfo(id, publisher);
+        final DataIdentification identification = createIdentificationInfo(identifier, publisher);
         if (identification != null) {
             metadata.getIdentificationInfo().add(identification);
         }

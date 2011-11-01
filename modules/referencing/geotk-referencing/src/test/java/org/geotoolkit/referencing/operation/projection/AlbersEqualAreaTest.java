@@ -140,35 +140,6 @@ public final strictfp class AlbersEqualAreaTest extends ProjectionTestBase {
     }
 
     /**
-     * Tests the estimation of error. We expect an error close to zero everywhere,
-     * except at poles which are omitted.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        boolean ellipse = true;
-        do {
-            for (int phi1=-90; phi1<=90; phi1+=30) {
-                for (int phi2=-90; phi2<=90; phi2+=30) {
-                    if (phi1 != -phi2) {
-                        final ErrorFitting error = new ErrorFitting(create(ellipse, phi1, phi2));
-                        transform = error.projection();
-                        assertEquals(!ellipse, isSpherical());
-                        validate();
-                        error.fit(180, 88, 4);
-                        assertEquals(4095, error.delta.count());
-                        assertEquals(0.0,  error.delta.minimum(), TOLERANCE);
-                        assertEquals(0.0,  error.delta.maximum(), TOLERANCE);
-                        assertEquals(0.0,  error.delta.mean(),    TOLERANCE);
-                        assertEquals(0.0,  error.delta.rms(),     TOLERANCE);
-                    }
-                }
-            }
-        } while ((ellipse = !ellipse) == false);
-    }
-
-    /**
      * Creates a projection and tests the derivatives at a few points.
      *
      * @throws TransformException Should never happen.

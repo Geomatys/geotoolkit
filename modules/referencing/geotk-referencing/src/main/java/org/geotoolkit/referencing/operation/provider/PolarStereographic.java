@@ -93,6 +93,7 @@ public class PolarStereographic extends Stereographic {
             new IdentifierCode (Citations.EPSG,      9810),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_PolarStereographic"),
             new IdentifierCode (Citations.GEOTIFF,   15),
+            sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,

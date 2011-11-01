@@ -526,14 +526,4 @@ public class TransverseMercator extends CassiniOrMercator {
             }
         }
     }
-
-    /**
-     * Returns an estimation of the error in linear distance on the unit ellipse.
-     * We expect negligible error when in the domain of validity of this projection,
-     * and we disable the test when outside.
-     */
-    @Override
-    double getErrorEstimate(final double λ, final double φ) {
-        return (abs(λ) < ASSERTION_DOMAIN && abs(φ) < PI/4) ? 0 : Double.NaN;
-    }
 }

@@ -125,6 +125,7 @@ public class Mercator2SP extends MapProjection {
             new IdentifierCode (Citations.EPSG,  9805),
             new NamedIdentifier(Citations.ESRI, "Mercator"),
                      sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),
+                     sameNameAs(Citations.PROJ4,      Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,

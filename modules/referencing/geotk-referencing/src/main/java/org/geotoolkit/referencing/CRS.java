@@ -60,7 +60,6 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
@@ -1461,15 +1460,16 @@ compare:    for (final SingleCRS component : actualComponents) {
      * <ul>
      *   <li>{@code "plugins"} for {@linkplain AuthorityFactoryFinder#scanForPlugins searching
      *       the classpath for new plugins}.</li>
-     *   <li>{@code "warnings"} for {@linkplain UnitaryProjection#resetWarnings re-enabling the
-     *       warnings to be issued when a coordinate is out of geographic valid area}.</li>
      * </ul>
      *
      * @param aspects The aspects to reset, or {@code "all"} for all of them.
      *        Unknown aspects are silently ignored.
      *
      * @since 2.5
+     *
+     * @deprecated This method doesn't do anything more than {@link AuthorityFactoryFinder#scanForPlugins()}.
      */
+    @Deprecated
     public static synchronized void reset(final String aspects) {
         ensureNonNull("aspects", aspects);
         final StringTokenizer tokens = new StringTokenizer(aspects, ", \t\n\r\f");
@@ -1482,9 +1482,6 @@ compare:    for (final SingleCRS component : actualComponents) {
                 xyFactory       = null;
                 strictFactory   = null;
                 lenientFactory  = null;
-            }
-            if (all || aspect.equalsIgnoreCase("warnings")) {
-                UnitaryProjection.resetWarnings();
             }
         }
     }
