@@ -242,13 +242,4 @@ public class Equirectangular extends UnitaryProjection {
     public boolean isIdentity() {
         return !rollLongitude();
     }
-
-    /**
-     * Returns an estimation of the error in linear distance on the unit ellipse. In
-     * the case of Equirectangular projection the error is close to zero everywhere.
-     */
-    @Override
-    double getErrorEstimate(final double λ, final double φ) {
-        return 0;
-    }
 }

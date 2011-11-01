@@ -1028,14 +1028,6 @@ public final class Errors extends IndexedResourceBundle {
         public static final int POLYGON_CLOSED = 189;
 
         /**
-         * The transform result may be {0} meters away from the expected position. Are you sure that
-         * the input coordinates are inside this map projection area of validity? The point is located
-         * {1} away from the central meridian and {2} away from the latitude of origin. The projection
-         * is “{3}”.
-         */
-        public static final int PROJECTION_CHECK_FAILED_$4 = 190;
-
-        /**
          * Ranges [{0} … {1}] and [{2} … {3}] overlap.
          */
         public static final int RANGE_OVERLAP_$4 = 191;

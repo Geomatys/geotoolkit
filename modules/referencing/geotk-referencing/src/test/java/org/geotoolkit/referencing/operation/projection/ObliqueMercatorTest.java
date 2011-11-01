@@ -26,7 +26,6 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
 import static java.lang.StrictMath.*;
-import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARAMETERS;
 
 
@@ -66,27 +65,6 @@ public final strictfp class ObliqueMercatorTest extends ProjectionTestBase {
         parameters.longitudeOfCentre = cx;
         parameters.latitudeOfCentre  = cy;
         return new ObliqueMercator(parameters);
-    }
-
-    /**
-     * Tests the estimation of error.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        for (int cx=-90; cx<=90; cx+=30) {
-            for (int cy=-80; cy<=80; cy+=40) {
-                for (int azimuth=-90; azimuth<=90; azimuth+=30) {
-                    final ErrorFitting error = new ErrorFitting(create(cx, cy, azimuth));
-                    transform = error.projection();
-                    assertFalse(isSpherical());
-                    validate();
-                    error.fit(90, 90, 5);
-                    // Nothing useful here, since I didn't found a good model.
-                }
-            }
-        }
     }
 
     /**

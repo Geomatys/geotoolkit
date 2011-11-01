@@ -301,8 +301,6 @@ public class Mercator extends UnitaryProjection {
                 dstPts[dstOff] = y;
             }
         }
-        // Invoking Assertions.checkReciprocal(...) here would be
-        // useless since it works only for non-overlapping arrays.
     }
 
     /**
@@ -464,8 +462,6 @@ public class Mercator extends UnitaryProjection {
                     dstPts[dstOff] = y;
                 }
             }
-            // Invoking Assertions.checkReciprocal(...) here would be
-            // useless since it works only for non-overlapping arrays.
         }
 
         /**
@@ -496,15 +492,5 @@ public class Mercator extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, λ, φ);
         }
-    }
-
-    /**
-     * Returns an estimation of the error in linear distance on the unit ellipse.
-     * In the case of Mercator projection the error is close to zero everywhere,
-     * even at poles.
-     */
-    @Override
-    double getErrorEstimate(final double λ, final double φ) {
-        return 0;
     }
 }

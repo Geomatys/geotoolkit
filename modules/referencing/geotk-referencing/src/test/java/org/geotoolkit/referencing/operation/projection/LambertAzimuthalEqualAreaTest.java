@@ -226,30 +226,6 @@ public final strictfp class LambertAzimuthalEqualAreaTest extends ProjectionTest
     }
 
     /**
-     * Tests the estimation of error.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        boolean ellipse = true;
-        do {
-            for (int phi=-90; phi<=90; phi+=15) {
-                final ErrorFitting error = new ErrorFitting(create(ellipse, phi));
-                transform = error.projection();
-                assertEquals(!ellipse, isSpherical());
-                validate();
-                error.fit(178, 88, 2);
-                assertEquals(15931, error.delta.count());
-                assertEquals(0.0,   error.delta.minimum(), TOLERANCE);
-                assertEquals(0.0,   error.delta.maximum(), TOLERANCE);
-                assertEquals(0.0,   error.delta.mean(),    TOLERANCE);
-                assertEquals(0.0,   error.delta.rms(),     TOLERANCE);
-            }
-        } while ((ellipse = !ellipse) == false);
-    }
-
-    /**
      * Tests a point which is was known problematic in GeoTools 2.x.
      *
      * @throws TransformException Should never happen.

@@ -485,7 +485,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             verifyGeographicRanges(srcPts, srcOff, numPts);
         }
         super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
-        assert Assertions.checkReciprocal(this, true, srcPts, srcOff, dstPts, dstOff, numPts);
     }
 
     /**
@@ -601,7 +600,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
         /**
          * Inverse transforms the specified {@code srcPts} and stores the result in {@code dstPts}.
-         * If the derivative has been requested, then this method will delegates the derivative
+         * If the derivative has been requested, then this method will delegate the derivative
          * calculation to the enclosing class and inverts the resulting matrix.
          *
          * @since 3.20 (derived from 3.00)
@@ -615,7 +614,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             if (verifyCoordinateRanges()) {
                 logWarning(verifyGeographicRanges(this, srcPts[srcOff], srcPts[srcOff+1]));
             }
-            assert Assertions.checkReciprocal(UnitaryProjection.this, false, srcPts, srcOff, dstPts, dstOff, 1);
             if (derivate) {
                 final Matrix derivative = UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true);
                 if (derivative != null) {
@@ -624,29 +622,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             }
             return null;
         }
-    }
-
-    /**
-     * Returns an estimation of the error in linear distance on the unit ellipse. This method
-     * defines "error" as an estimation of the linear distance between the original point, and
-     * the {@linkplain #inverseTransform inverse transform} of the {@linkplain #transform} of
-     * that point.
-     * <p>
-     * When assertions are enabled, the referencing framework will perform the above comparisons.
-     * If the distance found is greater than the distance returned by this method plus some
-     * (implementation dependent) epsilon value, then a {@link ProjectionException} will be
-     * thrown.
-     * <p>
-     * The default implementation returns {@link Double#NaN} in all case. Subclasses
-     * should override this method in order to provide a better estimation.
-     *
-     * @param  φ The longitude usually in radians, relative to the central meridian.
-     * @param  λ The latitude usually in radians (not relative to the latitude of origin).
-     * @return The tolerance level for assertions in linear distance on the unit ellipse,
-     *         or {@link Double#NaN} if unknown.
-     */
-    double getErrorEstimate(final double φ, final double λ) {
-        return NaN;
     }
 
     /**

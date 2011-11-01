@@ -384,12 +384,18 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * with the {@link Level#FINE FINE} level. If this method returns {@code false}, then the
      * exception will be retrown as a {@link BackingStoreException}.
      * <p>
-     * The default implementation returns {@code true} if the given exception is one of the
-     * following types:
+     * The default implementation returns applies the following rules:
      * <p>
      * <ul>
-     *   <li>{@link NoSuchIdentifierException} but not {@link NoSuchAuthorityCodeException}</li>
-     *   <li>{@link OptionalFactoryOperationException}</li>
+     *   <li>If {@link OptionalFactoryOperationException}, returns {@code true} since the operation
+     *       was optional</li>
+     *   <li>If {@link NoSuchAuthorityCodeException}, returns {@code false} since failure to find
+     *       a code declared in the set would be an inconsistency. Note that this exception is a
+     *       subtype of {@code NoSuchIdentifierException}, so it must be tested before the next
+     *       case below.</li>
+     *   <li>If {@link NoSuchIdentifierException}, returns {@code true} since this exception is caused by an attempt to
+     *       {@linkplain org.opengis.referencing.operation.MathTransformFactory#createParameterizedTransform
+     *       create a parameterized transform} for an unimplemented operation.</li>
      * </ul>
      *
      * @param  exception The exception that occurred while creating an object.
@@ -397,8 +403,10 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      *         {@code false} if it should be considered fatal.
      */
     protected boolean isRecoverableFailure(final FactoryException exception) {
-        return (exception instanceof NoSuchIdentifierException && !(exception instanceof NoSuchAuthorityCodeException)) ||
-               (exception instanceof OptionalFactoryOperationException);
+        if (exception instanceof OptionalFactoryOperationException) {
+            return true;
+        }
+        return (exception instanceof NoSuchIdentifierException) && !(exception instanceof NoSuchAuthorityCodeException);
     }
 
     /**

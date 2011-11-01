@@ -491,12 +491,4 @@ public class AlbersEqualArea extends UnitaryProjection {
         }
         return false;
     }
-
-    /**
-     * Returns an estimation of the error in linear distance on the unit ellipse.
-     */
-    @Override
-    double getErrorEstimate(final double λ, final double φ) {
-        return 0;
-    }
 }

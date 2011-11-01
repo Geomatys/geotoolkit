@@ -213,33 +213,6 @@ public final strictfp class LambertConformalTest extends ProjectionTestBase {
     }
 
     /**
-     * Tests the estimation of error. We expect an error close to zero everywhere,
-     * except at poles which are omitted.
-     *
-     * @throws ProjectionException Should never happen.
-     */
-    @Test
-    public void testErrorFitting() throws ProjectionException {
-        boolean ellipse = true;
-        do {
-            for (int phi=-90; phi<=90; phi+=30) {
-                if (phi != 0) {
-                    final ErrorFitting error = new ErrorFitting(create(ellipse, phi));
-                    transform = error.projection();
-                    assertEquals(!ellipse, isSpherical());
-                    validate();
-                    error.fit(178, 88, 2);
-                    assertEquals(15931, error.delta.count());
-                    assertEquals(0.0,   error.delta.minimum(), TOLERANCE);
-                    assertEquals(0.0,   error.delta.maximum(), TOLERANCE);
-                    assertEquals(0.0,   error.delta.mean(),    TOLERANCE);
-                    assertEquals(0.0,   error.delta.rms(),     TOLERANCE);
-                }
-            }
-        } while ((ellipse = !ellipse) == false);
-    }
-
-    /**
      * Runs the tests defined in the GeoAPI-conformance module.
      *
      * @throws FactoryException   Should never happen.
