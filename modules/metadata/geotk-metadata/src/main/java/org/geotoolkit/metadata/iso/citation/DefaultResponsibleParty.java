@@ -213,6 +213,22 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
+     * The <A HREF="http://trac.osgeo.org/proj">Proj.4</A> responsible party.
+     *
+     * @see DefaultContact#PROJ4
+     *
+     * @since 3.20
+     */
+    public static final ResponsibleParty PROJ4;
+    static {
+        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        r.setOrganisationName(new SimpleInternationalString("PROJ4"));
+        r.setContactInfo(DefaultContact.PROJ4);
+        r.freeze();
+        PROJ4 = r;
+    }
+
+    /**
      * The <A HREF="http://www.esri.com">ESRI</A> responsible party.
      *
      * @see DefaultContact#ESRI

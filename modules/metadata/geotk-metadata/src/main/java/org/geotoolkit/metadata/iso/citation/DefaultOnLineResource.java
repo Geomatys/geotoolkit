@@ -136,6 +136,18 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     }
 
     /**
+     * The online resources for the <A HREF="http://trac.osgeo.org/proj">Proj.4</A> project.
+     *
+     * @since 3.20
+     */
+    public static final OnlineResource PROJ4;
+    static {
+        final DefaultOnlineResource r;
+        PROJ4 = r = new DefaultOnlineResource("http://trac.osgeo.org/proj");
+        r.freeze();
+    }
+
+    /**
      * The online resources for <A HREF="http://www.esri.com">ESRI</A>.
      */
     public static final OnlineResource ESRI;

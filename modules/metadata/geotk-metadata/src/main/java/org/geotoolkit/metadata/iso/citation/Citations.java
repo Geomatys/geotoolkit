@@ -218,7 +218,7 @@ public final class Citations extends Static {
     /**
      * The Web Map Service specification. {@linkplain Citation#getAlternateTitles Alternate titles}
      * for this citation are "WMS", "WMS 1.3.0", "OGC 04-024" and "ISO 19128". Note that the
-     * version numbers may be upgrated in future Geotk versions.
+     * version numbers may be upgraded in future Geotk versions.
      *
      * @see <A HREF="http://www.opengeospatial.org/">Open Geospatial Consortium</A>
      * @see <A HREF="http://www.opengis.org/docs/01-068r3.pdf">WMS 1.1.1 specification</A>
@@ -476,6 +476,23 @@ public final class Citations extends Static {
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         HTTP_OGC = c;
+    }
+
+    /**
+     * The <A HREF="http://trac.osgeo.org/proj/">Proj.4</A> project.
+     *
+     * @see DefaultResponsibleParty#PROJ4
+     * @category Specification
+     *
+     * @since 3.20
+     */
+    public static final IdentifierSpace<String> PROJ4;
+    static {
+        final CitationConstant.Authority<String> c = new CitationConstant.Authority<>(
+                DefaultResponsibleParty.PROJ4, "PROJ4", "PROJ4");
+        c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
+        c.freeze();
+        PROJ4 = c;
     }
 
     /**

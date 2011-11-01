@@ -38,6 +38,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -47,6 +48,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
@@ -979,6 +981,17 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         private static final long serialVersionUID = -4952134260969915530L;
 
         /**
+         * Namespaces of identifiers to ignore because they are ambiguous. For example the
+         * Proj.4 {@code "lcc"} projection name could be both <cite>Lambert Conformal 1SP</cite>
+         * or <cite>Lambert Conformal 2SP</cite>, so we can not use the Proj.4 code as a criterion.
+         *
+         * @since 3.20
+         */
+        private static final Citation[] AMBIGUOUS = new Citation[] {
+            Citations.GEOTOOLKIT, Citations.PROJ4
+        };
+
+        /**
          * An empty array for parameters having no standard parallels.
          */
         private static final double[] EMPTY = new double[0];
@@ -1131,7 +1144,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             for (final GenericName name : reference.getAlias()) {
                 if (name instanceof Identifier) {
                     final Identifier identifier = (Identifier) name;
-                    if (identifier.getAuthority() != Citations.GEOTOOLKIT &&
+                    if (!XArrays.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
                             IdentifiedObjects.nameMatches(descriptor, identifier.getCode()))
                     {
                         if (identifier instanceof DefaultReferenceIdentifier &&

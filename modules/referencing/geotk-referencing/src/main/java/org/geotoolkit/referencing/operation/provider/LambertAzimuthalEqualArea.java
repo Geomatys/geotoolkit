@@ -122,6 +122,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
             new IdentifierCode (Citations.EPSG,     1027),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  10),
+            new NamedIdentifier(Citations.PROJ4,    "laea"),
         },  new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                 LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

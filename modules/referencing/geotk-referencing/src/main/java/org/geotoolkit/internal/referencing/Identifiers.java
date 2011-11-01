@@ -103,7 +103,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(GEOTIFF, "FalseOriginLong"),
             new NamedIdentifier(GEOTIFF, "ProjCenterLong"),
             new NamedIdentifier(GEOTIFF, "CenterLong"),
-            new NamedIdentifier(GEOTIFF, "StraightVertPoleLong")
+            new NamedIdentifier(GEOTIFF, "StraightVertPoleLong"),
+            new NamedIdentifier(PROJ4,   "lon_0")
         }, 0, -180, 180, NonSI.DEGREE_ANGLE, true);
 
     /**
@@ -148,6 +149,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(GEOTIFF, "FalseOriginLat"),
             new NamedIdentifier(GEOTIFF, "ProjCenterLat"),
             new NamedIdentifier(GEOTIFF, "CenterLat"),
+            new NamedIdentifier(PROJ4,   "lat_0")
         }, 0, -90, 90, NonSI.DEGREE_ANGLE, true);
 
         STANDARD_PARALLEL_1 = new Identifiers(new NamedIdentifier[] {
@@ -157,6 +159,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Latitude of standard parallel"), epsg,
             new NamedIdentifier(EPSG,    "Latitude of pseudo standard parallel"),
             new NamedIdentifier(GEOTIFF, "StdParallel1"),
+            new NamedIdentifier(PROJ4,   "lat_1")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
     }
 
@@ -168,7 +171,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(OGC,     "standard_parallel_2"),
             new NamedIdentifier(ESRI,    "Standard_Parallel_2"),
             new NamedIdentifier(EPSG,    "Latitude of 2nd standard parallel"),
-            new NamedIdentifier(GEOTIFF, "StdParallel2")
+            new NamedIdentifier(GEOTIFF, "StdParallel2"),
+            new NamedIdentifier(PROJ4,   "lat_2")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
 
     /**
@@ -247,7 +251,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Scale factor on initial line"),
             new NamedIdentifier(EPSG,    "Scale factor on pseudo standard parallel"),
             new NamedIdentifier(GEOTIFF, "ScaleAtNatOrigin"),
-            new NamedIdentifier(GEOTIFF, "ScaleAtCenter")
+            new NamedIdentifier(GEOTIFF, "ScaleAtCenter"),
+            new NamedIdentifier(PROJ4,   "k")
         }, 1, 0, Double.POSITIVE_INFINITY, Unit.ONE, true);
 
     /**
@@ -266,7 +271,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Easting at false origin"),
             new NamedIdentifier(EPSG,    "Easting at projection centre"),
             new NamedIdentifier(GEOTIFF, "FalseEasting"),
-            new NamedIdentifier(GEOTIFF, "FalseOriginEasting")
+            new NamedIdentifier(GEOTIFF, "FalseOriginEasting"),
+            new NamedIdentifier(PROJ4,   "x_0")
         }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
@@ -285,7 +291,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Northing at false origin"),
             new NamedIdentifier(EPSG,    "Northing at projection centre"),
             new NamedIdentifier(GEOTIFF, "FalseNorthing"),
-            new NamedIdentifier(GEOTIFF, "FalseOriginNorthing")
+            new NamedIdentifier(GEOTIFF, "FalseOriginNorthing"),
+            new NamedIdentifier(PROJ4,   "y_0")
         }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**

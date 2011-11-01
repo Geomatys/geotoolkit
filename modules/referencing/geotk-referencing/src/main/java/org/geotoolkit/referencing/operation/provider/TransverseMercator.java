@@ -133,6 +133,7 @@ public class TransverseMercator extends MapProjection {
             new IdentifierCode (Citations.EPSG,      9807),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
             new IdentifierCode (Citations.GEOTIFF,   1),
+            new NamedIdentifier(Citations.PROJ4,    "tmerc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.TRANSVERSE_MERCATOR_PROJECTION))
         });

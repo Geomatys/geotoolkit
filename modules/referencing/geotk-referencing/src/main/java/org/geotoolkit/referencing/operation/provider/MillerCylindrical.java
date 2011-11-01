@@ -123,7 +123,8 @@ public class MillerCylindrical extends MapProjection {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Miller_Cylindrical"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_MillerCylindrical"),
-            new IdentifierCode (Citations.GEOTIFF,  20)
+            new IdentifierCode (Citations.GEOTIFF,  20),
+            new NamedIdentifier(Citations.PROJ4,   "mill")
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

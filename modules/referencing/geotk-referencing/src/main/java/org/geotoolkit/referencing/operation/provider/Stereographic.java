@@ -129,6 +129,7 @@ public class Stereographic extends MapProjection {
             new NamedIdentifier(Citations.ESRI,    "Stereographic"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_Stereographic"),
             new IdentifierCode (Citations.GEOTIFF,  14),
+            new NamedIdentifier(Citations.PROJ4,   "stere"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.STEREOGRAPHIC_PROJECTION))
         }, new ParameterDescriptor<?>[] {

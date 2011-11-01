@@ -160,6 +160,7 @@ public class ObliqueMercator extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
             new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Center"),
             new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Center"),
+            new NamedIdentifier(Citations.PROJ4,   "omerc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
         }, new ParameterDescriptor<?>[] {
