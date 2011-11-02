@@ -90,7 +90,7 @@ public final class Citations extends Static {
      */
     public static final Citation ISO;
     static {
-        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.OGC, "ISO", "ISO");
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.ISO, "ISO", "ISO");
         c.setAlternateTitle("ISO");
         c.setPresentationForm(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
