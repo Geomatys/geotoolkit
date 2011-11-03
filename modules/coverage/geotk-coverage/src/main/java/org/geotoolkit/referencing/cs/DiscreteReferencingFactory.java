@@ -45,7 +45,7 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 
@@ -342,7 +342,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
     public static Matrix getAffineTransform(final CoordinateReferenceSystem crs) {
         ensureNonNull("crs", crs);
         if (crs instanceof GridGeometry) {
-            final Matrix matrix = MatrixFactory.getMatrix(((GridGeometry) crs).getGridToCRS());
+            final Matrix matrix = Matrices.getMatrix(((GridGeometry) crs).getGridToCRS());
             if (matrix != null) {
                 return matrix;
             }
@@ -386,7 +386,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
             final DiscreteCoordinateSystemAxis[] axes)
     {
         final int dimension = axes.length;
-        final XMatrix matrix = MatrixFactory.create(dimension + 1);
+        final XMatrix matrix = Matrices.create(dimension + 1);
         for (int i=0; i<dimension; i++) {
             final DiscreteCoordinateSystemAxis axis = axes[i];
             final int n;
@@ -539,7 +539,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
         } else {
             tr = geometry.getGridToCRS();
         }
-        Matrix gridToCRS = MatrixFactory.getMatrix(tr);
+        Matrix gridToCRS = Matrices.getMatrix(tr);
         /*
          * If the grid geometry does not define "grid to CRS" transform, or if that
          * transform is not linear, compute a transform from the discrete axes.

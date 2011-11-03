@@ -65,8 +65,8 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -512,7 +512,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                     Errors.Keys.BAD_RANGE_$2, lowerDimension, upperDimension));
         }
         final int numDimensions = upperDimension - lowerDimension;
-        final Matrix matrix = MatrixFactory.create(numDimensions + 1);
+        final Matrix matrix = Matrices.create(numDimensions + 1);
         for (int i=0; i<numDimensions; i++) {
             final CoordinateAxis1D axis = axes[lowerDimension + i].delegate();
             if (!axis.isRegular()) {
@@ -525,7 +525,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             matrix.setElement(i, i, nice(scale));
             matrix.setElement(i, numDimensions, nice(axis.getStart()));
         }
-        return ProjectiveTransform.create(matrix);
+        return MathTransforms.linear(matrix);
     }
 
     /**

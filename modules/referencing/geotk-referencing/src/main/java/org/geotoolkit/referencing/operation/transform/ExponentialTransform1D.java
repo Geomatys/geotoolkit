@@ -310,7 +310,7 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
      */
     final MathTransform concatenateLog(final LogarithmicTransform1D other, final boolean applyOtherFirst) {
         if (applyOtherFirst) {
-            return ConcatenatedTransform.create(
+            return MathTransforms.concatenate(
                     PowerTransform1D.create(lnBase / other.lnBase),
                     LinearTransform1D.create(scale * Math.pow(base, other.offset), 0));
         } else {

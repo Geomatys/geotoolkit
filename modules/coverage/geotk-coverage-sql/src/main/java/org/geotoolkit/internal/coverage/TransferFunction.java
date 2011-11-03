@@ -27,8 +27,8 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 
@@ -105,7 +105,7 @@ public final class TransferFunction {
                  * Maybe the function is exponential? Try to concatenate a
                  * logarithmic transform and check if the result is linear.
                  */
-                MathTransform1D candidate = ConcatenatedTransform.create(function, LogarithmicTransform1D.create(10));
+                MathTransform1D candidate = MathTransforms.concatenate(function, LogarithmicTransform1D.create(10));
                 if (candidate instanceof LinearTransform) {
                     function = candidate;
                     type = TransferFunctionType.EXPONENTIAL;
@@ -113,7 +113,7 @@ public final class TransferFunction {
                     /*
                      * Maybe the function is logarithmic?
                      */
-                    candidate = ConcatenatedTransform.create(ExponentialTransform1D.create(10), function);
+                    candidate = MathTransforms.concatenate(ExponentialTransform1D.create(10), function);
                     if (candidate instanceof LinearTransform) {
                         function = candidate;
                         type = TransferFunctionType.LOGARITHMIC;

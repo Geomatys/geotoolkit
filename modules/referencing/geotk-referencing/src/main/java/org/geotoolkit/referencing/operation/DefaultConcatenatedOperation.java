@@ -40,13 +40,13 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
@@ -244,7 +244,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                 } else if (factory != null) {
                     transform = factory.createConcatenatedTransform(transform, step);
                 } else {
-                    transform = ConcatenatedTransform.create(transform, step);
+                    transform = MathTransforms.concatenate(transform, step);
                 }
             }
         }

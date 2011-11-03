@@ -40,8 +40,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.Identifier3D;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
@@ -649,10 +649,11 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                                 tgtDim = srcDim;
                             }
                         }
-                        final Matrix matrix = MatrixUtilities.forDimensions(step, srcDim, tgtDim);
-                        if (matrix == null) {
+                        Matrix matrix = Matrices.getMatrix(step);
+                        if (matrix == null || !Matrices.isAffine(matrix)) {
                             continue; // Non affine step: do not update the transform steps.
                         }
+                        matrix = Matrices.resizeAffine(matrix, srcDim, tgtDim);
                         step = mtFactory.createAffineTransform(matrix);
                     }
                     /*

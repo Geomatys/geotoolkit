@@ -49,7 +49,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -557,7 +557,7 @@ control:    for (int p=0; p<=1; p++) {
             bands[i] = GridSampleDimension.castOrCopy(getSampleDimension(i));
         }
         final MathTransform gridToCRS;
-        gridToCRS = ProjectiveTransform.create((AffineTransform) image.getProperty("gridToCRS"));
+        gridToCRS = MathTransforms.linear((AffineTransform) image.getProperty("gridToCRS"));
         if (factory == null) {
             factory = CoverageFactoryFinder.getGridCoverageFactory(HINTS);
         }

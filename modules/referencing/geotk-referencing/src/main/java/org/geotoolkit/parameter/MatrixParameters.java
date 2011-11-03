@@ -39,7 +39,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -338,7 +338,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
     public Matrix getMatrix() {
         final int numRow = this.numRow.intValue();
         final int numCol = this.numCol.intValue();
-        final Matrix matrix = MatrixFactory.create(numRow, numCol);
+        final Matrix matrix = Matrices.create(numRow, numCol);
         if (matrixValues != null) {
             for (int j=0; j<numRow; j++) {
                 final ParameterValue<?>[] row = matrixValues[j];

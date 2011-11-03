@@ -27,9 +27,9 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;
 
 import static org.geotoolkit.test.Assert.*;
@@ -140,7 +140,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
          * Add axis swap from (latitude, longitude) order to (longitude, latitude) order.
          */
         final AffineTransform2D swap = new AffineTransform2D(0, 1, 1, 0, 0, 0);
-        transform = ConcatenatedTransform.create(swap, transform);
+        transform = MathTransforms.concatenate(swap, transform);
         wkt = "CONCAT_MT[PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
@@ -186,7 +186,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
          * Add unit conversions from metres to kilometres.
          */
         final AffineTransform2D convert = new AffineTransform2D(0.001, 0, 0, 0.001, 0, 0);
-        transform = ConcatenatedTransform.create(transform, convert);
+        transform = MathTransforms.concatenate(transform, convert);
         wkt = "CONCAT_MT[PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
@@ -283,7 +283,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
         /*
          * Add unit conversions from metres to kilometres.
          */
-        transform = ConcatenatedTransform.create(transform, convert);
+        transform = MathTransforms.concatenate(transform, convert);
         wkt = "CONCAT_MT[PARAM_MT[“Mercator_2SP”,\n" +
               "    PARAMETER[“semi_major”, 6378245.0],\n" +
               "    PARAMETER[“semi_minor”, 6356863.018773047],\n" +
@@ -324,7 +324,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
         /*
          * Add axis swap from (latitude, longitude) order to (longitude, latitude) order.
          */
-        transform = ConcatenatedTransform.create(swap, transform);
+        transform = MathTransforms.concatenate(swap, transform);
         wkt = "CONCAT_MT[PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
@@ -384,7 +384,7 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
          * internal storage is actually quite different (invoke "printInternalWKT() to see).
          */
         final MathTransform second = transform;
-        transform = ConcatenatedTransform.create(first.inverse(), second);
+        transform = MathTransforms.concatenate(first.inverse(), second);
         wkt = "CONCAT_MT[PARAM_MT[“Affine”,\n" +
               "    PARAMETER[“num_row”, 3],\n" +
               "    PARAMETER[“num_col”, 3],\n" +
@@ -426,8 +426,8 @@ public final strictfp class FormattingTest extends ProjectionTestBase {
         parameters.parameter("semi-major axis").setValue(6377397.155);
         parameters.parameter("semi-minor axis").setValue(6356078.9626186555);
         transform = mtFactory.createParameterizedTransform(parameters);
-        transform = ConcatenatedTransform.create(swap, transform, convert);
-        transform = ConcatenatedTransform.create(first.inverse(), transform);
+        transform = MathTransforms.concatenate(swap, transform, convert);
+        transform = MathTransforms.concatenate(first.inverse(), transform);
         assertInstanceOf("Concatenation should have been optimized.", AffineTransform.class, transform);
         final AffineTransform at = (AffineTransform) transform;
         tolerance = 1E-10;

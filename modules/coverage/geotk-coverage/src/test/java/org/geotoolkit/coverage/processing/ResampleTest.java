@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -223,7 +223,7 @@ public final strictfp class ResampleTest extends GridProcessingTestBase {
          * new image bounds.
          */
         final AffineTransform at = AffineTransform.getScaleInstance(scaleX, scaleY);
-        final MathTransform   tr = ProjectiveTransform.create(at);
+        final MathTransform   tr = MathTransforms.linear(at);
         final GridGeometry2D geometry = new GridGeometry2D(null, tr, null);
         coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage,
                 coverage.getCoordinateReferenceSystem(), geometry, null);

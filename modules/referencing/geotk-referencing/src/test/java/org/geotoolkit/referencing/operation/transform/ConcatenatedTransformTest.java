@@ -90,7 +90,7 @@ public final strictfp class ConcatenatedTransformTest extends TransformTestBase 
         stress(source);
 
         // Optimized case.
-        transform = ConcatenatedTransform.create(first, second);
+        transform = MathTransforms.concatenate(first, second);
         assertInstanceOf("Expected optimized concatenation through matrix multiplication.",
                 AffineTransform2D.class, transform);
         validate();
@@ -107,8 +107,7 @@ public final strictfp class ConcatenatedTransformTest extends TransformTestBase 
      */
     @Test
     public void testGeneric() throws TransformException {
-        final MathTransform first = ProjectiveTransform.create(
-                ProjectiveTransform.createSelectMatrix(4, new int[] {1,3}));
+        final MathTransform first = MathTransforms.dimensionFilter(4, new int[] {1,3});
 
         final AffineTransform2D second = new AffineTransform2D();
         second.mutable = true;
@@ -146,7 +145,7 @@ public final strictfp class ConcatenatedTransformTest extends TransformTestBase 
         final MathTransform kernel = new PseudoTransform(2, 3); // Any non-linear transform.
         final MathTransform passth = PassThroughTransform.create(0, kernel, 1);
         final Matrix4 matrix = new Matrix4();
-        transform = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), passth);
+        transform = ConcatenatedTransform.create(MathTransforms.linear(matrix), passth);
         assertSame("Identity transform should be ignored.", passth, transform);
         assertEquals("Source dimensions", 3, transform.getSourceDimensions());
         assertEquals("Target dimensions", 4, transform.getTargetDimensions());
@@ -157,7 +156,7 @@ public final strictfp class ConcatenatedTransformTest extends TransformTestBase 
          */
         matrix.m00 = 3;
         matrix.m13 = 2;
-        transform = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), passth);
+        transform = ConcatenatedTransform.create(MathTransforms.linear(matrix), passth);
         assertInstanceOf("Expected a new passthrough transform.", PassThroughTransform.class, transform);
         final MathTransform subTransform = ((PassThroughTransform) transform).getSubTransform();
         assertInstanceOf("Expected a new concatenated transform.", ConcatenatedTransform.class, subTransform);
@@ -169,7 +168,7 @@ public final strictfp class ConcatenatedTransformTest extends TransformTestBase 
          * can not anymore be concatenated with the sub-transform.
          */
         matrix.m22 = 4;
-        transform = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), passth);
+        transform = ConcatenatedTransform.create(MathTransforms.linear(matrix), passth);
         assertInstanceOf("Expected a new concatenated transform.", ConcatenatedTransform.class, transform);
         assertSame(passth, ((ConcatenatedTransform) transform).transform2);
         assertEquals("Source dimensions", 3, transform.getSourceDimensions());

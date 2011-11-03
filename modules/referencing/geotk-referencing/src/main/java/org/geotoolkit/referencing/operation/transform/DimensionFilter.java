@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
@@ -363,7 +363,7 @@ public class DimensionFilter {
         }
         if (transform.isIdentity()) {
             targetDimensions = sourceDimensions;
-            return factory.createAffineTransform(MatrixFactory.create(dimInput+1));
+            return factory.createAffineTransform(Matrices.create(dimInput+1));
         }
         if (transform instanceof ConcatenatedTransform) {
             final ConcatenatedTransform ctr = (ConcatenatedTransform) transform;
@@ -405,7 +405,7 @@ public class DimensionFilter {
                  * sources are heading and trailing dimensions. A passthrough transform
                  * without its sub-transform is an identity transform...
                  */
-                return factory.createAffineTransform(MatrixFactory.create(dimInput+1));
+                return factory.createAffineTransform(Matrices.create(dimInput+1));
             }
             /*
              * There is at least one dimension to separate in the sub-transform. Performs this
@@ -549,7 +549,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
          * dimension to keep, as in the following example:  └  ┘     └          ┘ │1│
          *                                                                        └ ┘
          */
-        final XMatrix matrix = MatrixFactory.create(dimOutput+1, dimStep+1);
+        final XMatrix matrix = Matrices.create(dimOutput+1, dimStep+1);
         matrix.setZero();
         for (int j=0; j<dimOutput; j++) {
             int i = targetDimensions[j];

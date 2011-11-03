@@ -30,7 +30,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 
 /**
@@ -44,7 +44,11 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  *
  * @since 2.0
  * @module
+ *
+ * @deprecated This class will become package-privated. Use {@link MathTransforms} static methods
+ *             for creating instances of this class.
  */
+@Deprecated
 @Immutable
 public class IdentityTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
@@ -58,17 +62,11 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
     private final int dimension;
 
     /**
-     * Identity transforms for dimensions ranging from to 0 to 7.
-     * Elements in this array will be created only when first requested.
-     */
-    private static final LinearTransform[] POOL = new LinearTransform[8];
-
-    /**
      * Constructs an identity transform of the specified dimension.
      *
      * @param dimension The dimension of the transform to be created.
      *
-     * @see #create
+     * @see MathTransforms#identity(int)
      */
     protected IdentityTransform(final int dimension) {
         this.dimension = dimension;
@@ -81,24 +79,12 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      *
      * @param dimension The dimension of the transform to be returned.
      * @return An identity transform of the specified dimension.
+     *
+     * @deprecated Replaced by {@link MathTransforms#identity(int)}.
      */
-    public static synchronized LinearTransform create(final int dimension) {
-        LinearTransform candidate;
-        if (dimension < POOL.length) {
-            candidate = POOL[dimension];
-            if (candidate != null) {
-                return candidate;
-            }
-        }
-        switch (dimension) {
-            case 1:  candidate = LinearTransform1D.IDENTITY;       break;
-            case 2:  candidate = new AffineTransform2D();          break;
-            default: candidate = new IdentityTransform(dimension); break;
-        }
-        if (dimension < POOL.length) {
-            POOL[dimension] = candidate;
-        }
-        return candidate;
+    @Deprecated
+    public static LinearTransform create(final int dimension) {
+        return MathTransforms.identity(dimension);
     }
 
     /**
@@ -158,7 +144,7 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      */
     @Override
     public Matrix getMatrix() {
-        return MatrixFactory.create(dimension+1);
+        return Matrices.create(dimension+1);
     }
 
     /**
@@ -167,7 +153,7 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      */
     @Override
     public Matrix derivative(final DirectPosition point) {
-        return MatrixFactory.create(dimension);
+        return Matrices.create(dimension);
     }
 
     /**

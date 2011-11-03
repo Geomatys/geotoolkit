@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -87,7 +87,7 @@ public final strictfp class MatrixParametersTest {
         matrix.setElement(0,2,  4);
         matrix.setElement(1,0, -2);
         matrix.setElement(2,3,  7);
-        MathTransform transform = ProjectiveTransform.create(matrix);
+        MathTransform transform = MathTransforms.linear(matrix);
         assertFalse(transform instanceof AffineTransform);
         formatter.append(transform);
         assertEquals("PARAM_MT[\"Affine\", "          +
@@ -97,7 +97,7 @@ public final strictfp class MatrixParametersTest {
                      "PARAMETER[\"elt_1_0\", -2.0], " +
                      "PARAMETER[\"elt_2_3\", 7.0]]", formatter.toString());
         matrix.setSize(3,3);
-        transform = ProjectiveTransform.create(matrix);
+        transform = MathTransforms.linear(matrix);
         assertTrue(transform instanceof AffineTransform);
         formatter.clear();
         formatter.append(transform);

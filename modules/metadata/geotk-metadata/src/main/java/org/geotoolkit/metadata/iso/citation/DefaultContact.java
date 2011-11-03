@@ -65,7 +65,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Standardization</A>.
      *
      * @since 3.19
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact ISO;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.ISO);
@@ -78,7 +81,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *
      * @see DefaultOnlineResource#OGC
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact OGC;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.OGC);
@@ -91,7 +97,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * "OpenGIS consortium" is the old name for "Open Geospatial consortium".
      *
      * @see DefaultOnlineResource#OPEN_GIS
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact OPEN_GIS;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.OPEN_GIS);
@@ -104,7 +113,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * <A HREF="http://www.epsg.org">European Petroleum Survey Group</A>.
      *
      * @see DefaultOnlineResource#EPSG
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact EPSG;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.EPSG);
@@ -119,7 +131,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * @see DefaultOnlineResource#NETCDF
      *
      * @since 3.08
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact NETCDF;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.NETCDF);
@@ -132,7 +147,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> group.
      *
      * @see DefaultOnlineResource#GEOTIFF
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact GEOTIFF;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.GEOTIFF);
@@ -146,7 +164,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * @see DefaultOnlineResource#PROJ4
      *
      * @since 3.20
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact PROJ4;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.PROJ4);
@@ -158,7 +179,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for <A HREF="http://www.esri.com">ESRI</A>.
      *
      * @see DefaultOnlineResource#ESRI
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact ESRI;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.ESRI);
@@ -170,7 +194,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for <A HREF="http://www.oracle.com">Oracle</A>.
      *
      * @see DefaultOnlineResource#ORACLE
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact ORACLE;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.ORACLE);
@@ -184,7 +211,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * @see DefaultOnlineResource#POSTGIS
      *
      * @since 2.4
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact POSTGIS;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.POSTGIS);
@@ -198,7 +228,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * @see DefaultOnlineResource#SUN_MICROSYSTEMS
      *
      * @since 2.2
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact SUN_MICROSYSTEMS;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.SUN_MICROSYSTEMS);
@@ -210,7 +243,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for the <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      *
      * @see DefaultOnlineResource#GEOTOOLKIT
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact GEOTOOLKIT;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.GEOTOOLKIT);
@@ -222,7 +258,10 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for the <A HREF="http://www.geotools.org">GeoTools</A> project.
      *
      * @see DefaultOnlineResource#GEOTOOLS
+     *
+     * @deprecated To be replaced by a database (constants are becoming too numerous)
      */
+    @Deprecated
     public static final Contact GEOTOOLS;
     static {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.GEOTOOLS);

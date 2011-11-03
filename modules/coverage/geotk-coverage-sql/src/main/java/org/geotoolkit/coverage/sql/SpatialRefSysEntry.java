@@ -47,7 +47,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -355,7 +355,7 @@ final class SpatialRefSysEntry {
         final int dim = crs.getCoordinateSystem().getDimension();
         final int[] lower = new int[dim];
         final int[] upper = new int[dim];
-        final Matrix matrix = MatrixFactory.create(dim + 1);
+        final Matrix matrix = Matrices.create(dim + 1);
         int verticalDim = 0;
         if (horizontalCRS != null) {
             copy(gridToCRS, matrix);

@@ -53,11 +53,10 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -684,7 +683,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             flipY = true;
         }
         final int requestDimension = requestEnvelope.getDimension();
-        final Matrix m = MatrixFactory.create(requestDimension + 1, 3);
+        final Matrix m = Matrices.create(requestDimension + 1, 3);
         m.setElement(requestDimension, 2, 1);
         /*
          * Set the translation terms for all known dimensions. In the case of axes having reversed
@@ -726,7 +725,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * Note that the grid envelope is empty if the transform from grid to envelope as infinite
          * coefficient values. This happen for example with Mercator projection close to poles.
          */
-        MathTransform destToExtractedGrid = ProjectiveTransform.create(m);
+        MathTransform destToExtractedGrid = MathTransforms.linear(m);
         computeRequestedBounds(destToExtractedGrid, requestEnvelope, requestCRS);
         /*
          * Concatenate the transforms. We get the transform from the grid that the user
@@ -736,18 +735,17 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         if (requestToDataCRS == null) {
             final int sourceDim = destToExtractedGrid.getTargetDimensions();
             if (sourceDim != 2) {
-                requestToDataCRS = ProjectiveTransform.create(ProjectiveTransform.createSelectMatrix(
-                        sourceDim, new int[] {X_DIMENSION, Y_DIMENSION}));
+                requestToDataCRS = MathTransforms.dimensionFilter(sourceDim, new int[] {X_DIMENSION, Y_DIMENSION});
             }
         }
         if (requestToDataCRS != null) {
-            destToExtractedGrid = ConcatenatedTransform.create(destToExtractedGrid, requestToDataCRS);
+            destToExtractedGrid = MathTransforms.concatenate(destToExtractedGrid, requestToDataCRS);
         }
-        destGridToSource = destToExtractedGrid = ConcatenatedTransform.create(destToExtractedGrid, crsToGrid);
+        destGridToSource = destToExtractedGrid = MathTransforms.concatenate(destToExtractedGrid, crsToGrid);
         if (xSubsampling != 1 || ySubsampling != 1 || xmin != 0 || ymin != 0) {
             scaleX = 1d / xSubsampling;
             scaleY = 1d / ySubsampling;
-            destToExtractedGrid = ConcatenatedTransform.create(destToExtractedGrid,
+            destToExtractedGrid = MathTransforms.concatenate(destToExtractedGrid,
                     new AffineTransform2D(scaleX, 0, 0, scaleY,
                             (double) -xmin / (double) xSubsampling,
                             (double) -ymin / (double) ySubsampling));

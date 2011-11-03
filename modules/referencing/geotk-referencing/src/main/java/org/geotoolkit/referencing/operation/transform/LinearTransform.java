@@ -38,6 +38,8 @@ import org.geotoolkit.util.ComparisonMode;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
+ * @see MathTransforms
+ *
  * @since 2.0
  * @module
  */

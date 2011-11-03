@@ -53,10 +53,10 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 
@@ -489,7 +489,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             if (derivate) {
                 final Matrix derivative = UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true);
                 if (derivative != null) {
-                    return MatrixUtilities.invert(derivative);
+                    return Matrices.invert(derivative);
                 }
             }
             return null;

@@ -25,7 +25,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
+import static org.geotoolkit.referencing.operation.matrix.Matrices.*;
 
 
 /**

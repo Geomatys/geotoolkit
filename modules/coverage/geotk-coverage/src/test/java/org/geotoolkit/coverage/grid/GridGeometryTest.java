@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -46,7 +46,7 @@ public final strictfp class GridGeometryTest {
     public void testIdentity() {
         final int[] lower = new int[] {0,     0, 2};
         final int[] upper = new int[] {100, 200, 4};
-        final MathTransform identity = IdentityTransform.create(3);
+        final MathTransform identity = MathTransforms.identity(3);
         GridGeometry2D gg;
         try {
             gg = new GridGeometry2D(new GeneralGridEnvelope(lower, upper, false), identity, null);
@@ -106,7 +106,7 @@ public final strictfp class GridGeometryTest {
      */
     @Test
     public void testPixelInCell() {
-        final MathTransform identity = IdentityTransform.create(4);
+        final MathTransform identity = MathTransforms.identity(4);
         final int[] lower = new int[] {100, 300, 3, 6};
         final int[] upper = new int[] {200, 400, 4, 7};
         final GeneralGridEnvelope range = new GeneralGridEnvelope(lower, upper, false);

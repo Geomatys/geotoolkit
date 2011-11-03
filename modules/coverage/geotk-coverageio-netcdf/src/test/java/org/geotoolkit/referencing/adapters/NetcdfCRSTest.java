@@ -47,7 +47,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -247,7 +247,7 @@ public final strictfp class NetcdfCRSTest {
          * Ask again the affine transform, this time from the grid geometry.
          */
         assertTrue("getAffineTransform(GridGeometry, CELL_CENTER) should give the same result.",
-                MatrixUtilities.epsilonEqual(matrix, DiscreteReferencingFactory.getAffineTransform(
+                Matrices.equals(matrix, DiscreteReferencingFactory.getAffineTransform(
                 (GridGeometry) crs, PixelInCell.CELL_CENTER), 0, false));
         ((GeneralMatrix) matrix).sub((GeneralMatrix) DiscreteReferencingFactory.getAffineTransform(
                 (GridGeometry) crs, PixelInCell.CELL_CORNER));

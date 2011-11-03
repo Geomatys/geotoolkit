@@ -34,7 +34,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.util.ComparisonMode;
 
@@ -406,7 +406,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
                  */
                 for (int j=srcDim; --j>=0;) {
                     if (reverse[j] < 0) {
-                        final XMatrix matrix = MatrixFactory.create(srcDim + 1, dstDim + 1);
+                        final XMatrix matrix = Matrices.create(srcDim + 1, dstDim + 1);
                         for (j=0; j<srcDim; j++) { // NOSONAR: the outer loop will not continue.
                             if (j < dstDim) {
                                 matrix.setElement(j, j, 0);
@@ -419,7 +419,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
                             }
                         }
                         matrix.setElement(srcDim, dstDim, 1);
-                        inverse = ProjectiveTransform.create(matrix);
+                        inverse = MathTransforms.linear(matrix);
                         if (inverse instanceof ProjectiveTransform) {
                             ((ProjectiveTransform) inverse).inverse = this;
                         }

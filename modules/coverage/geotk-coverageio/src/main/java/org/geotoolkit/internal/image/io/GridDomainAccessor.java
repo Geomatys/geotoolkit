@@ -37,7 +37,7 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
@@ -152,7 +152,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
                 if (pixelInCell == null || pixelInCell.equals(PixelInCell.CELL_CENTER)) {
                     span--;
                 }
-                MatrixUtilities.reverseAxis(matrix, axisToReverse, span);
+                Matrices.reverseAxisDirection(matrix, axisToReverse, span);
             }
             final int gridDimension = matrix.getNumCol() - 1;
             final int crsDimension  = matrix.getNumRow() - 1;

@@ -34,6 +34,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.MatrixParameterDescriptors;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX_SIZE;
@@ -123,7 +124,7 @@ public class Affine extends MathTransformProvider {
             throws ParameterNotFoundException
     {
         final Matrix matrix = ((MatrixParameterDescriptors) getParameters()).getMatrix(values);
-        final MathTransform transform = ProjectiveTransform.create(matrix);
+        final MathTransform transform = MathTransforms.linear(matrix);
         final Affine provider = getProvider(transform.getSourceDimensions(),
                                             transform.getTargetDimensions());
         return new MathTransformDecorator(transform, provider);

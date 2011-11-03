@@ -45,7 +45,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 
@@ -532,7 +532,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         final double transY = userRange.getMaxY()   + gridRange.y*scaleY;
         final AffineTransform tr = new AffineTransform(scaleX, 0, 0, -scaleY, transX, transY);
         tr.translate(0.5, 0.5); // Maps to pixel center
-        return ProjectiveTransform.create(tr);
+        return MathTransforms.linear(tr);
     }
 
     /**
