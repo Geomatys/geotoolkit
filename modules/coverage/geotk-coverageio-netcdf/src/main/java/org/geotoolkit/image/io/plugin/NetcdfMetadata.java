@@ -323,7 +323,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 m = new NetcdfVariable(variable);
             }
             accessor.selectChild(accessor.appendChild());
-            accessor.setDescriptor(variable.getName());
+            accessor.setDescriptor(variable.getShortName());
             accessor.setUnits(m.units);
             if (variable instanceof EnhanceScaleMissing) {
                 final EnhanceScaleMissing ev = (EnhanceScaleMissing) variable;
@@ -521,8 +521,8 @@ final class NetcdfMetadata extends SpatialMetadata {
             if (netcdf instanceof VariableSimpleIF[]) {
                 for (final VariableSimpleIF var : (VariableSimpleIF[]) netcdf) {
                     final IIOMetadataNode node = new IIOMetadataNode("Variable");
-                    node.setNodeValue(var.getName());
-                    appendAttributes(new AttributeList(var.getAttributes(), var.getName()), node);
+                    node.setNodeValue(var.getShortName());
+                    appendAttributes(new AttributeList(var.getAttributes(), var.getShortName()), node);
                     node.setAttribute("data_type", String.valueOf(var.getDataType()));
                     if (var instanceof EnhanceScaleMissing) {
                         final EnhanceScaleMissing eh = (EnhanceScaleMissing) var;

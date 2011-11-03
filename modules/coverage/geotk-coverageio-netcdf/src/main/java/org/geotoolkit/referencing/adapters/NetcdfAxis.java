@@ -100,7 +100,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     @Override
     public String getCode() {
-        return axis.getName();
+        return axis.getShortName();
     }
 
     /**
@@ -111,7 +111,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     @Override
     public String getAbbreviation() {
-        final String name = axis.getName().trim();
+        final String name = axis.getShortName().trim();
         if (name.equalsIgnoreCase("longitude")) return "\u03BB";
         if (name.equalsIgnoreCase("latitude"))  return "\u03C6";
         return Strings.camelCaseToAcronym(name).toLowerCase();

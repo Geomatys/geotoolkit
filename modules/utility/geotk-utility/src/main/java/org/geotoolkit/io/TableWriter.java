@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.io;
 
-import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -708,7 +707,7 @@ public class TableWriter extends FilterWriter {
      * this row with a line separator.
      *
      * @param fill Character filling the rest of the line (default to whitespace).
-     *             This caracter may be use as a row separator.
+     *             This character may be use as a row separator.
      *
      * @see #SINGLE_HORIZONTAL_LINE
      * @see #DOUBLE_HORIZONTAL_LINE
@@ -726,7 +725,7 @@ public class TableWriter extends FilterWriter {
     }
 
     /**
-     * Flushs the table content to the underlying stream. This method should not be called
+     * Flushes the table content to the underlying stream. This method should not be called
      * before the table is completed (otherwise, columns may have the wrong width).
      *
      * @throws IOException if an output operation failed.
@@ -752,7 +751,7 @@ public class TableWriter extends FilterWriter {
     }
 
     /**
-     * Flushs the table content and close the underlying stream.
+     * Flushes the table content and closes the underlying stream.
      *
      * @throws IOException if an output operation failed.
      */
@@ -959,7 +958,15 @@ public class TableWriter extends FilterWriter {
     }
 
     /**
-     * A class wrapping a cell's content and its text's alignment.
+     * For allowing other writers defined in this package to format the table content.
+     */
+    @Override
+    final String content() {
+        return toString();
+    }
+
+    /**
+     * A class wrapping a cell content and its text alignment.
      * This class if for internal use only.
      *
      * @author Martin Desruisseaux (IRD)

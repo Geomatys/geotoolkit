@@ -75,7 +75,6 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -960,18 +959,19 @@ public class NetcdfISO {
 
     /**
      * Returns the attribute of the given name in the given group, as a string.
+     * This method considers empty strings as {@code null}.
      *
      * @param  group The group in which to search the attribute, or {@code null} for global attributes.
      * @param  name  The name of the attribute to search.
-     * @return The attribute value, or {@code null} if none.
+     * @return The attribute value, or {@code null} if none or empty.
      */
     private String getStringValue(final Group group, final String name) {
         if (name != null) { // For createResponsibleParty(...) convenience.
             final Attribute attribute = getAttribute(group, name);
             if (attribute != null) {
-                final String value = attribute.getStringValue();
-                if (value != null) {
-                    return value.trim();
+                String value = attribute.getStringValue();
+                if (value != null && !(value = value.trim()).isEmpty()) {
+                    return value;
                 }
             }
         }
@@ -1680,10 +1680,7 @@ public class NetcdfISO {
      */
     protected Band createSampleDimension(final VariableSimpleIF variable) throws IOException {
         final DefaultBand band = new DefaultBand();
-        String name = variable.getShortName();
-        if (name == null) {
-            name = variable.getName();
-        }
+        final String name = variable.getShortName();
         if (name != null) {
             if (nameFactory == null) {
                 nameFactory = (DefaultNameFactory) FactoryFinder.getNameFactory(
@@ -1748,12 +1745,7 @@ public class NetcdfISO {
         metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
         final Identifier identifier = createIdentifier();
         if (identifier != null) {
-            String id = identifier.getCode();
-            final Citation authority = identifier.getAuthority();
-            if (authority != null) {
-                id = authority.getTitle().toString() + DefaultNameSpace.DEFAULT_SEPARATOR + id;
-            }
-            metadata.setFileIdentifier(id);
+            metadata.setFileIdentifier(identifier.getCode());
         }
         metadata.setDateStamp(getDateValue(METADATA_CREATION));
         metadata.getHierarchyLevels().add(ScopeCode.DATASET);

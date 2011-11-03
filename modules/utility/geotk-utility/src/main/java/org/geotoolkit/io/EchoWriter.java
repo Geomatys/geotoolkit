@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.io;
 
-import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 import net.jcip.annotations.ThreadSafe;
@@ -26,7 +25,7 @@ import org.geotoolkit.lang.Decorator;
 
 
 /**
- * A writer that copy all output to an other stream. This writer can be used for perfoming
+ * A writer that copy all output to an other stream. This writer can be used for performing
  * an exact copy of what is sent to an other writer. For example, it may be used for echoing
  * to the standard output the content sent to a file. This writer is useful for debugging
  * purpose.
@@ -57,7 +56,7 @@ public class EchoWriter extends FilterWriter {
     }
 
     /**
-     * Creates a copy writter for the specified stream.
+     * Creates a copy writer for the specified stream.
      *
      * @param main The main stream.
      * @param echo The echo stream.
@@ -142,7 +141,7 @@ public class EchoWriter extends FilterWriter {
     }
 
     /**
-     * Flushs both streams.
+     * Flushes both streams.
      *
      * @throws IOException If an I/O error occurs.
      */
@@ -167,5 +166,17 @@ public class EchoWriter extends FilterWriter {
             out .close();
             echo.close(); // Overridden with an uncloseable version for System.out.
         }
+    }
+
+    /**
+     * Returns a string representation of the writer content if available.
+     */
+    @Override
+    final String content() {
+        String s = super.content();
+        if (s == null) {
+            s = content(echo);
+        }
+        return s;
     }
 }

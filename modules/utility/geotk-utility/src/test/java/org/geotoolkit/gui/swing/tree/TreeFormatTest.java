@@ -113,14 +113,14 @@ public final strictfp class TreeFormatTest {
         assertMultilinesEquals(
                 "[Node #1, More #1]\n" +
                 " ├──Node #2\n" +
-                " │   └──[Node #4, More #4, ext #4       after tab and a new line]\n" +
+                " │   └──[Node #4, More #4, ext #4       after tab ¶ and a new line]\n" +
                 " └──[Node #3, More #3]\n", tf.format(root));
 
         tf.setTableFormatEnabled(true);
         assertMultilinesEquals(
                 "Node #1……………………… More #1\n" +
                 " ├──Node #2\n" +
-                " │   └──Node #4… More #4… ext #4  after tab and a new line\n" +
+                " │   └──Node #4… More #4… ext #4  after tab ¶ and a new line\n" +
                 " └──Node #3…………… More #3\n", tf.format(root));
     }
 }
