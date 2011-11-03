@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.Objects;
+import java.io.Serializable;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -46,7 +47,12 @@ import org.geotoolkit.internal.Citations;
  * @since 3.19
  * @module
  */
-public final class SpecializedIdentifier<T> implements Identifier {
+public final class SpecializedIdentifier<T> implements Identifier, Serializable {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = 1673231050676950993L;
+
     /**
      * The authority, typically as an {@link NonMarshalledAuthority) instance.
      * This authority is not allowed to be null.
