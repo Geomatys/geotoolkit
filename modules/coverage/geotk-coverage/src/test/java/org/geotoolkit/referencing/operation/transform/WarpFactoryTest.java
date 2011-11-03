@@ -125,11 +125,11 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
         mapper.setGridRange(imageBounds);
         mapper.setEnvelope(domain);
         final MathTransform2D pre = (MathTransform2D)
-                ProjectiveTransform.create(mapper.createAffineTransform());
+                MathTransforms.linear(mapper.createAffineTransform());
         mapper.setEnvelope(Envelopes.transform(projection, domain, null));
         final MathTransform2D post = (MathTransform2D)
-                ProjectiveTransform.create(mapper.createAffineTransform()).inverse();
-        return ConcatenatedTransform.create(pre, projection, post);
+                MathTransforms.linear(mapper.createAffineTransform()).inverse();
+        return MathTransforms.concatenate(pre, projection, post);
     }
 
     /**

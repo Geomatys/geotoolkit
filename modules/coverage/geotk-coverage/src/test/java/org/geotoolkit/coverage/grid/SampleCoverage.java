@@ -34,8 +34,8 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
 
 import static java.awt.Color.decode;
@@ -100,7 +100,7 @@ public strictfp enum SampleCoverage {
                 new Category("Land",    decode("#000000"), create(255, 255)),
                 new Category("No data", decode("#FFFFFF"), create(  0,   0)),
                 new Category("Chl-a",   null,              create(  1, 254),
-                        ConcatenatedTransform.create(
+                        MathTransforms.concatenate(
                         LinearTransform1D.create(0.015, -1.985),
                         ExponentialTransform1D.create(10)))
         }, MetricPrefix.MILLI(GRAM).divide(CUBIC_METRE))),

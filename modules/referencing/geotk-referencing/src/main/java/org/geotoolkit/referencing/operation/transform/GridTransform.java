@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
@@ -310,7 +310,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
         final double dx = xi - col;
         final double dy = yi - row;
         final int dstDim = grid.getNumBanks();
-        final Matrix derivative = derivate ? MatrixFactory.create(dstDim, srcDim) : null;
+        final Matrix derivative = derivate ? Matrices.create(dstDim, srcDim) : null;
         for (int j=0; j<dstDim; j++) {
             final double v00 = (grid.getElemDouble(j, offset00));
             final double v01 = (grid.getElemDouble(j, offset01));

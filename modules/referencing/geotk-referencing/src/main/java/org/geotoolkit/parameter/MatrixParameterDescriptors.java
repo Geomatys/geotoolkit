@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -374,7 +374,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
         final ParameterValue<?> numColParam = Parameters.getOrCreate(numCol, parameters);
         final int numRow = numRowParam.intValue();
         final int numCol = numColParam.intValue();
-        final Matrix matrix = MatrixFactory.create(numRow, numCol);
+        final Matrix matrix = Matrices.create(numRow, numCol);
         final List<GeneralParameterValue> params = parameters.values();
         if (params != null) {
             for (final GeneralParameterValue param : params) {

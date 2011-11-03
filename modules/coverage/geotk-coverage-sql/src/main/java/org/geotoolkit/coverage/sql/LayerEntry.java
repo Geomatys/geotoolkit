@@ -71,7 +71,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.resources.Errors;
 
@@ -877,7 +877,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                         lower[timeDimension] = 0;
                         upper[timeDimension] = Math.max(((int) Math.round((max - min) / interval)) - 1, 0);
                         env = new GeneralGridEnvelope(lower, upper, true);
-                        gg = new GeneralGridGeometry(env, anchor, ProjectiveTransform.create(gridToCRS), crs);
+                        gg = new GeneralGridGeometry(env, anchor, MathTransforms.linear(gridToCRS), crs);
                     }
                 }
                 geometries.add(gg, count[i++]);

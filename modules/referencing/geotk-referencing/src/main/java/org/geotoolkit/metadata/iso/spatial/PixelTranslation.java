@@ -30,9 +30,8 @@ import static org.opengis.metadata.spatial.PixelOrientation.*;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -249,15 +248,15 @@ public final class PixelTranslation extends Static implements Serializable {
         }
         MathTransform mt;
         if (index >= translations.length) {
-            mt = ProjectiveTransform.createTranslation(dimension, offset);
+            mt = MathTransforms.linear(dimension, 1, offset);
         } else synchronized (translations) {
             mt = translations[index];
             if (mt == null) {
-                mt = ProjectiveTransform.createTranslation(dimension, offset);
+                mt = MathTransforms.linear(dimension, 1, offset);
                 translations[index] = mt;
             }
         }
-        return ConcatenatedTransform.create(mt, gridToCRS);
+        return MathTransforms.concatenate(mt, gridToCRS);
     }
 
     /**
@@ -302,17 +301,17 @@ public final class PixelTranslation extends Static implements Serializable {
             synchronized (translations) {
                 mt = translations[index];
                 if (mt == null) {
-                    mt = ProjectiveTransform.createTranslation(dimension, dx);
+                    mt = MathTransforms.linear(dimension, 1, dx);
                     translations[index] = mt;
                 }
             }
         } else {
-            final Matrix matrix = MatrixFactory.create(dimension + 1);
+            final Matrix matrix = Matrices.create(dimension + 1);
             matrix.setElement(xDimension, dimension, dx);
             matrix.setElement(yDimension, dimension, dy);
-            mt = ProjectiveTransform.create(matrix);
+            mt = MathTransforms.linear(matrix);
         }
-        return ConcatenatedTransform.create(mt, gridToCRS);
+        return MathTransforms.concatenate(mt, gridToCRS);
     }
 
     /**

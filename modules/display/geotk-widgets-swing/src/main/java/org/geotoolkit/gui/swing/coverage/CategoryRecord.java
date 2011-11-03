@@ -43,8 +43,8 @@ import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.internal.coverage.TransferFunction;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
 import org.geotoolkit.resources.Errors;
@@ -244,12 +244,12 @@ public class CategoryRecord implements Cloneable, Serializable {
                 sampleToGeophysics = LinearTransform1D.create(scale, offset);
                 switch (functionType) {
                     case LOGARITHMIC: {
-                        sampleToGeophysics = ConcatenatedTransform.create(
+                        sampleToGeophysics = MathTransforms.concatenate(
                                 LogarithmicTransform1D.create(10), sampleToGeophysics);
                         break;
                     }
                     case EXPONENTIAL: {
-                        sampleToGeophysics = ConcatenatedTransform.create(
+                        sampleToGeophysics = MathTransforms.concatenate(
                                 sampleToGeophysics, ExponentialTransform1D.create(10));
                         break;
                     }

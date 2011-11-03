@@ -49,7 +49,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
@@ -58,7 +58,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
 
 
@@ -1214,7 +1213,7 @@ public abstract class AbstractMathTransform extends FormattableObject
                 if (m1 instanceof LenientComparable) {
                     return ((LenientComparable) m1).equals(m2, mode);
                 }
-                return MatrixUtilities.equals(m1, m2, mode);
+                return Matrices.equals(m1, m2, mode);
             }
         }
         return false;
@@ -1394,7 +1393,7 @@ public abstract class AbstractMathTransform extends FormattableObject
          */
         @Override
         public Matrix derivative(final Point2D point) throws TransformException {
-            return invert(AbstractMathTransform.this.derivative(this.transform(point, null)));
+            return Matrices.invert(AbstractMathTransform.this.derivative(this.transform(point, null)));
         }
 
         /**
@@ -1404,7 +1403,7 @@ public abstract class AbstractMathTransform extends FormattableObject
          */
         @Override
         public Matrix derivative(final DirectPosition point) throws TransformException {
-            return invert(AbstractMathTransform.this.derivative(this.transform(point, null)));
+            return Matrices.invert(AbstractMathTransform.this.derivative(this.transform(point, null)));
         }
 
         /**

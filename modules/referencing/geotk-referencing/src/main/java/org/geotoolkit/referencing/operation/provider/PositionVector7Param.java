@@ -39,8 +39,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.GeocentricAffineTransform;
 import org.geotoolkit.internal.referencing.Identifiers;
 
@@ -350,9 +350,9 @@ public class PositionVector7Param extends MathTransformProvider {
         step = GeocentricTransform.create(semiMajor, semiMinor, SI.METRE, hasHeight);
         // Note: dimension may be 0 if not user-provided, which is treated as 2.
         if (dim == SRC_DIM) {
-            return ConcatenatedTransform.create(step, transform);
+            return MathTransforms.concatenate(step, transform);
         } else try {
-            return ConcatenatedTransform.create(transform, step.inverse());
+            return MathTransforms.concatenate(transform, step.inverse());
         } catch (NoninvertibleTransformException e) {
             throw new AssertionError(e); // Should never happen in Geotk implementation.
         }

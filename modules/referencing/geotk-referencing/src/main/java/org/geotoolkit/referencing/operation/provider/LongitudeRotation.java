@@ -32,7 +32,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
@@ -104,6 +104,6 @@ public class LongitudeRotation extends MathTransformProvider {
             throws ParameterNotFoundException
     {
         final double offset = doubleValue(OFFSET, values);
-        return ProjectiveTransform.create(AffineTransform.getTranslateInstance(offset, 0));
+        return MathTransforms.linear(AffineTransform.getTranslateInstance(offset, 0));
     }
 }

@@ -76,7 +76,7 @@ final class WarpAdapter extends Warp {
      */
     public WarpAdapter(final CharSequence name, final MathTransform2D inverse) {
         this.name    = name;
-        this.inverse = ConcatenatedTransform.create(PRE_TRANSFORM, inverse, POST_TRANSFORM);
+        this.inverse = MathTransforms.concatenate(PRE_TRANSFORM, inverse, POST_TRANSFORM);
     }
 
     /**

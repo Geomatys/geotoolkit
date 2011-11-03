@@ -55,10 +55,9 @@ import org.geotoolkit.io.wkt.MathTransformParser;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -481,7 +480,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         final int sourceDim = step1.getTargetDimensions();
         final int targetDim = step2.getSourceDimensions();
         if (sourceDim > targetDim) {
-            final Matrix drop = MatrixFactory.create(targetDim+1, sourceDim+1);
+            final Matrix drop = Matrices.create(targetDim+1, sourceDim+1);
             drop.setElement(targetDim, sourceDim, 1);
             step1 = createConcatenatedTransform(createAffineTransform(drop), step1);
         }
@@ -558,6 +557,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * @param  matrix The matrix used to define the affine transform.
      * @return The affine transform.
      * @throws FactoryException if the object creation failed.
+     *
+     * @see MathTransforms#linear(Matrix)
      */
     @Override
     public MathTransform createAffineTransform(final Matrix matrix)
@@ -567,7 +568,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         if (localVariables != null) {
             localVariables.lastMethod = null; // To be strict, we should set the ProjectiveTransform provider
         }
-        return pool.unique(ProjectiveTransform.create(matrix));
+        return pool.unique(MathTransforms.linear(matrix));
     }
 
     /**
@@ -591,7 +592,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
     {
         MathTransform tr;
         try {
-            tr = ConcatenatedTransform.create(transform1, transform2);
+            tr = MathTransforms.concatenate(transform1, transform2);
         } catch (IllegalArgumentException exception) {
             throw new FactoryException(exception);
         }

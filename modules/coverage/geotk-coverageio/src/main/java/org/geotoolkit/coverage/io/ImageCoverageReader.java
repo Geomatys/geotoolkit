@@ -74,10 +74,8 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -115,7 +113,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *   <tr><td>&nbsp;{@link CoordinateReferenceSystem}&nbsp;</td>
  *       <td>&nbsp;{@link DefaultImageCRS#GRID_2D}&nbsp;</td></tr>
  *   <tr><td>&nbsp;{@link MathTransform}&nbsp;</td>
- *       <td>&nbsp;{@link IdentityTransform#create(int)} with the CRS dimension&nbsp;</td></tr>
+ *       <td>&nbsp;{@link MathTransforms#identity(int)} with the CRS dimension&nbsp;</td></tr>
  * </table>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -600,7 +598,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             final int dimension = crs.getCoordinateSystem().getDimension();
             if (gridToCRS == null) {
-                gridToCRS = IdentityTransform.create(dimension);
+                gridToCRS = MathTransforms.identity(dimension);
             }
             if (pointInPixel == null) {
                 pointInPixel = PixelOrientation.CENTER;
@@ -980,12 +978,12 @@ public class ImageCoverageReader extends GridCoverageReader {
             MathTransform newGridToCRS = gridToCRS;
             if (!change.isIdentity()) {
                 final int gridDimension = gridToCRS.getSourceDimensions();
-                final XMatrix matrix = MatrixFactory.create(gridDimension + 1);
+                final XMatrix matrix = Matrices.create(gridDimension + 1);
                 matrix.setElement(xi, xi, change.getScaleX());
                 matrix.setElement(yi, yi, change.getScaleY());
                 matrix.setElement(xi, gridDimension, change.getTranslateX() - xmin);
                 matrix.setElement(yi, gridDimension, change.getTranslateY() - ymin);
-                newGridToCRS = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), gridToCRS);
+                newGridToCRS = MathTransforms.concatenate(MathTransforms.linear(matrix), gridToCRS);
             }
             final GridEnvelope gridRange = gridGeometry.getGridRange();
             final int[] low  = gridRange.getLow ().getCoordinateValues();

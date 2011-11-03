@@ -34,11 +34,11 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureDimensionMatches;
-import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
+import static org.geotoolkit.referencing.operation.matrix.Matrices.*;
 
 
 /**
@@ -146,7 +146,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
         if (subTransform.isIdentity()) {
             final int dimension = subTransform.getSourceDimensions();
             if (dimension == subTransform.getTargetDimensions()) {
-                return IdentityTransform.create(firstAffectedOrdinate + dimension + numTrailingOrdinates);
+                return MathTransforms.identity(firstAffectedOrdinate + dimension + numTrailingOrdinates);
             }
         }
         /*
@@ -157,7 +157,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
         if (subTransform instanceof LinearTransform) {
             GeneralMatrix matrix = toGeneralMatrix(((LinearTransform) subTransform).getMatrix());
             matrix = expand(matrix, firstAffectedOrdinate, numTrailingOrdinates, 1);
-            return ProjectiveTransform.create(matrix);
+            return MathTransforms.linear(matrix);
         }
         /*
          * Constructs the general PassThroughTransform object. An optimization is done right in
@@ -189,7 +189,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
             return null;
         }
         final int subDim = subTransform.getSourceDimensions();
-        final Matrix sub = MatrixFactory.create(subDim + 1);
+        final Matrix sub = Matrices.create(subDim + 1);
         /*
          * Ensure that every dimensions which are scaled by the affine transform are one
          * of the dimensions modified by the sub-transform, and not any other dimension.

@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
@@ -154,7 +154,7 @@ final class GeophysicsCategory extends Category {
         if (sampleToGeophysics.isIdentity()) {
             return this;
         }
-        sampleToGeophysics = ConcatenatedTransform.create(
+        sampleToGeophysics = MathTransforms.concatenate(
                 inverse.getSampleToGeophysics(), sampleToGeophysics);
         return inverse.rescale(sampleToGeophysics).inverse;
     }

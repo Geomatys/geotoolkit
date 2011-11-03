@@ -48,11 +48,11 @@ import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;
@@ -599,7 +599,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         assertTrue(transform instanceof LinearTransform);
         assertEquals(3, transform.getSourceDimensions());
         assertEquals(2, transform.getTargetDimensions());
-        assertEquals(new GeneralMatrix(3, 4, new double[] {
+        assertEquals(Matrices.create(3, 4, new double[] {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 0, 1
@@ -610,7 +610,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         assertTrue(transform instanceof LinearTransform);
         assertEquals(2, transform.getSourceDimensions());
         assertEquals(3, transform.getTargetDimensions());
-        assertEquals(new GeneralMatrix(4, 3, new double[] {
+        assertEquals(Matrices.create(4, 3, new double[] {
             1, 0, 0,
             0, 1, 0,
             0, 0, 0,
@@ -632,7 +632,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
         assertTrue(transform instanceof LinearTransform);
         assertEquals(3, transform.getSourceDimensions());
         assertEquals(4, transform.getTargetDimensions());
-        assertTrue(new GeneralMatrix(5, 4, new double[] {
+        assertTrue(Matrices.create(5, 4, new double[] {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 0, 0,
@@ -770,7 +770,7 @@ public strictfp class COFactoryUsingMolodenskyTest extends TransformTestBase {
     public void testGeoTemporal_to_Display() throws Exception {
         final CoordinateReferenceSystem sourceCRS = new DefaultCompoundCRS("Test3D", WGS84, UNIX);
         final CoordinateReferenceSystem targetCRS = new DefaultDerivedCRS("Display", WGS84,
-                ProjectiveTransform.create(new GeneralMatrix(3, 3, new double[]
+                MathTransforms.linear(Matrices.create(3, 3, new double[]
         {
             12.889604810996564, 0, 482.74226804123714,
             0, -12.889604810996564, 792.4484536082475,

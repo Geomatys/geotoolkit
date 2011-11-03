@@ -57,7 +57,7 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -331,7 +331,7 @@ public class MetadataHelper implements Localized {
         ensureVectorsExist(vectors);
         final int dimSource = vectors.size();        // Number of dimensions in the grid.
         final int dimTarget = origin.getDimension(); // Number of dimensions in the CRS.
-        final XMatrix matrix = MatrixFactory.create(dimTarget + 1, dimSource + 1);
+        final XMatrix matrix = Matrices.create(dimTarget + 1, dimSource + 1);
         if (dimTarget < dimSource) {
             matrix.setElement(dimTarget, dimTarget, 0);
         }

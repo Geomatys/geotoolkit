@@ -32,17 +32,15 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.MatrixParameters;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
 
 /**
@@ -157,28 +155,12 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      *
      * @param matrix The affine transform as a matrix.
      * @return The transform for the given matrix.
+     *
+     * @deprecated Moved to {@link MathTransforms#linear(Matrix)}.
      */
+    @Deprecated
     public static LinearTransform create(final Matrix matrix) {
-        final int sourceDimension = matrix.getNumCol() - 1;
-        final int targetDimension = matrix.getNumRow() - 1;
-        if (sourceDimension == targetDimension) {
-            if (matrix.isIdentity()) {
-                return IdentityTransform.create(sourceDimension);
-            }
-            if (isAffine(matrix)) {
-                switch (sourceDimension) {
-                    case 1: return LinearTransform1D.create(matrix.getElement(0,0), matrix.getElement(0,1));
-                    case 2: return create(toAffineTransform(matrix));
-                }
-            } else if (sourceDimension == 2) {
-                return new ProjectiveTransform2D(matrix);
-            }
-        }
-        final LinearTransform candidate = CopyTransform.create(matrix);
-        if (candidate != null) {
-            return candidate;
-        }
-        return new ProjectiveTransform(matrix);
+        return MathTransforms.linear(matrix);
     }
 
     /**
@@ -188,12 +170,12 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      *
      * @param matrix The affine transform as a matrix.
      * @return The transform for the given matrix.
+     *
+     * @deprecated Moved to {@link MathTransforms#linear(AffineTransform)}.
      */
+    @Deprecated
     public static LinearTransform create(final AffineTransform matrix) {
-        if (matrix.isIdentity()) {
-            return IdentityTransform.create(2);
-        }
-        return new AffineTransform2D(matrix);
+        return MathTransforms.linear(matrix);
     }
 
     /**
@@ -204,16 +186,12 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @return The scale transform.
      *
      * @since 2.3
+     *
+     * @deprecated Moved to {@link MathTransforms#linear(int, double, double)}.
      */
+    @Deprecated
     public static LinearTransform createScale(final int dimension, final double scale) {
-        if (scale == 1) {
-            return IdentityTransform.create(dimension);
-        }
-        final Matrix matrix = new GeneralMatrix(dimension + 1);
-        for (int i=0; i<dimension; i++) {
-            matrix.setElement(i, i, scale);
-        }
-        return create(matrix);
+        return MathTransforms.linear(dimension, scale, 0);
     }
 
     /**
@@ -224,16 +202,12 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @return The offset transform.
      *
      * @since 2.3
+     *
+     * @deprecated Moved to {@link MathTransforms#linear(int, double, double)}.
      */
+    @Deprecated
     public static LinearTransform createTranslation(final int dimension, final double offset) {
-        if (offset == 0) {
-            return IdentityTransform.create(dimension);
-        }
-        final Matrix matrix = new GeneralMatrix(dimension + 1);
-        for (int i=0; i<dimension; i++) {
-            matrix.setElement(i, dimension, offset);
-        }
-        return create(matrix);
+        return MathTransforms.linear(dimension, 1, offset);
     }
 
     /**
@@ -247,12 +221,16 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      *         method in order to create the transform.
      * @throws IndexOutOfBoundsException if a value of {@code toKeep}
      *         is lower than 0 or not smaller than {@code sourceDim}.
+     *
+     * @deprecated Moved to {@link Matrices#createDimensionFilter(int, int[])} and
+     *            {@link MathTransforms#dimensionFilter(int, int[])}.
      */
+    @Deprecated
     public static XMatrix createSelectMatrix(final int sourceDim, final int[] toKeep)
             throws IndexOutOfBoundsException
     {
         final int targetDim = toKeep.length;
-        final XMatrix matrix = MatrixFactory.create(targetDim+1, sourceDim+1);
+        final XMatrix matrix = Matrices.create(targetDim+1, sourceDim+1);
         matrix.setZero();
         for (int j=0; j<targetDim; j++) {
             matrix.setElement(j, toKeep[j], 1);
@@ -550,7 +528,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      */
     @Override
     public Matrix getMatrix() {
-        return MatrixFactory.create(numRow, numCol, elt);
+        return Matrices.create(numRow, numCol, elt);
     }
 
     /**
@@ -627,8 +605,8 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
             if (isIdentity()) {
                 inverse = this;
             } else {
-                Matrix matrix = MatrixFactory.create(numRow, numCol, elt);
-                matrix = MatrixUtilities.invert(matrix);
+                Matrix matrix = Matrices.create(numRow, numCol, elt);
+                matrix = Matrices.invert(matrix);
                 ProjectiveTransform inv = createInverse(matrix);
                 inv.inverse = this;
                 inverse = inv;

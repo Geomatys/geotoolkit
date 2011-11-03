@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageTestBase;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.*;
@@ -68,7 +68,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
     protected final void rotate(final double angle) {
         final AffineTransform atr = AffineTransform.getRotateInstance(toRadians(angle));
         atr.concatenate(getAffineTransform(coverage));
-        final MathTransform tr = ProjectiveTransform.create(atr);
+        final MathTransform tr = MathTransforms.linear(atr);
         CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
         crs = new DefaultDerivedCRS("Rotation " + angle + "°", crs, tr, crs.getCoordinateSystem());
         resample(crs, null, null, true);
@@ -173,7 +173,7 @@ public abstract strictfp class GridProcessingTestBase extends GridCoverageTestBa
     {
         final AffineTransform atr = AffineTransform.getTranslateInstance(5, 5);
         atr.concatenate(getAffineTransform(coverage));
-        final MathTransform tr = ProjectiveTransform.create(atr);
+        final MathTransform tr = MathTransforms.linear(atr);
         CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
         crs = new DefaultDerivedCRS("Translated", crs, tr, crs.getCoordinateSystem());
         assertEquals(asCRS, showResampled(crs, null, hints, useGeophysics));

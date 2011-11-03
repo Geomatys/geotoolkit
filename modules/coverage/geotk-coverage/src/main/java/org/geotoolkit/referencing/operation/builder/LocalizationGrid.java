@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
 
@@ -635,7 +635,7 @@ public class LocalizationGrid {
                     break;
                 }
                 case 1:  {
-                    tr = (MathTransform2D) ProjectiveTransform.create(getAffineTransform());
+                    tr = (MathTransform2D) MathTransforms.linear(getAffineTransform());
                     break;
                 }
                 default: {

@@ -51,6 +51,7 @@ import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
@@ -58,7 +59,6 @@ import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
 
 
 /**
@@ -890,7 +890,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
                 throw new MismatchedDimensionException(mismatchedDimension("point", ordinates.length, 3));
             }
             inverseTransform(null, ordinates, 0, null, ordinates, 0, 1, true, false);
-            Matrix m = invert(GeocentricTransform.this.derivative(
+            Matrix m = Matrices.invert(GeocentricTransform.this.derivative(
                     toRadians(ordinates[0]),
                     toRadians(ordinates[1]),
                               ordinates[2], true));

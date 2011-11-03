@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -231,7 +231,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
         if (matrix == null) {
             throw new UnsupportedOperationException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
         }
-        return ProjectiveTransform.create(matrix);
+        return MathTransforms.linear(matrix);
     }
 
     /**

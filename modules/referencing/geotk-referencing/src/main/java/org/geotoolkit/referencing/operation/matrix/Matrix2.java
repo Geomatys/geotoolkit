@@ -24,7 +24,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 
 /**
@@ -294,7 +293,7 @@ public class Matrix2 implements XMatrix, Serializable {
      */
     @Override
     public boolean equals(final Matrix matrix, final double tolerance) {
-        return MatrixUtilities.epsilonEqual(this, matrix, tolerance, false);
+        return Matrices.equals(this, matrix, tolerance, false);
     }
 
     /**
@@ -304,7 +303,7 @@ public class Matrix2 implements XMatrix, Serializable {
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        return MatrixUtilities.equals(this, object, mode);
+        return (object instanceof Matrix) && Matrices.equals(this, (Matrix) object, mode);
     }
 
     /**

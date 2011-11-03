@@ -35,7 +35,7 @@ import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 
@@ -337,13 +337,13 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
         if (dx == 0 && dy == 0 && dz == 0 && a == ta && b == tb) {
             // Special case for identity transform.
             if (source3D == target3D) {
-                transform = IdentityTransform.create(target3D ? 3 : 2);
+                transform = MathTransforms.identity(target3D ? 3 : 2);
             } else {
-                final XMatrix matrix = ProjectiveTransform.createSelectMatrix(3, new int[] {0,1});
+                final XMatrix matrix = Matrices.createDimensionFilter(3, new int[] {0,1});
                 if (target3D) {
                     matrix.transpose();
                 }
-                transform = ProjectiveTransform.create(matrix);
+                transform = MathTransforms.linear(matrix);
             }
         } else if (!source3D && !target3D) {
             transform = new MolodenskyTransform2D(abridged, a, b, ta, tb, dx, dy, dz);
@@ -676,7 +676,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
 
         final int srcDim = getSourceDimensions();
         final int tgtDim = getTargetDimensions();
-        final XMatrix matrix = MatrixFactory.create(tgtDim, srcDim);
+        final XMatrix matrix = Matrices.create(tgtDim, srcDim);
 
         // The following are "almost" the derivatives to be returned.
         // Some final operation commons to both kind of formulas will

@@ -86,7 +86,7 @@ public final strictfp class ExponentialTransform1DTest extends TransformTestBase
      */
     @Test
     public void testAffinePreConcatenation() throws TransformException {
-        transform = ConcatenatedTransform.create(
+        transform = MathTransforms.concatenate(
                 LinearTransform1D.create(C1, C0),
                 ExponentialTransform1D.create(BASE, SCALE));
         validate();
@@ -112,7 +112,7 @@ public final strictfp class ExponentialTransform1DTest extends TransformTestBase
         final double lnBase =  log(BASE);
         final double offset = -log(SCALE) / lnBase;
         final MathTransform1D log = LogarithmicTransform1D.create(BASE, offset);
-        transform = (LinearTransform1D) ConcatenatedTransform.create(transform, log);
+        transform = (LinearTransform1D) MathTransforms.concatenate(transform, log);
         assertTrue("Expected mathematical identities.", transform instanceof LinearTransform1D);
         assertEquals(C1, ((LinearTransform1D) transform).scale,  1E-12);
         assertEquals(C0, ((LinearTransform1D) transform).offset, 1E-12);
@@ -130,7 +130,7 @@ public final strictfp class ExponentialTransform1DTest extends TransformTestBase
      */
     @Test
     public void testAffinePostConcatenation() throws TransformException {
-        transform = ConcatenatedTransform.create(
+        transform = MathTransforms.concatenate(
                 ExponentialTransform1D.create(BASE, SCALE),
                 LinearTransform1D.create(C1, C0));
         validate();
@@ -161,7 +161,7 @@ public final strictfp class ExponentialTransform1DTest extends TransformTestBase
         final double offset = -3;
         final double base   = 8;
         final double lnBase = log(base);
-        transform = ConcatenatedTransform.create(
+        transform = MathTransforms.concatenate(
                 LogarithmicTransform1D.create(base, offset),
                 ExponentialTransform1D.create(BASE, SCALE));
         validate();

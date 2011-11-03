@@ -53,7 +53,7 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
@@ -337,7 +337,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
                 case 0:  break;
             }
             geometry2D = new GridGeometry2D(new GeneralGridEnvelope(lower, upper, false),
-                    geometry.getPixelInCell(), ProjectiveTransform.create(gridToCRS), crs, null);
+                    geometry.getPixelInCell(), MathTransforms.linear(gridToCRS), crs, null);
         }
         return geometry2D;
     }

@@ -17,19 +17,22 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
+import javax.vecmath.GMatrix;
 import javax.vecmath.SingularMatrixException;
+
 import org.opengis.referencing.operation.Matrix;
+
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 
 
 /**
- * A matrix capables to perform some operations. The GeoAPI {@link Matrix} interface is
+ * A matrix able to perform some operations. The GeoAPI {@link Matrix} interface is
  * basically a two dimensional array of numbers. The {@code XMatrix} interface adds
  * {@linkplain #invert inversion} and {@linkplain #multiply multiplication} capabilities
  * among others. It is used as a bridge across various matrix implementations in Java3D
- * ({@link javax.vecmath.Matrix3d}, {@link javax.vecmath.Matrix4d}, {@link javax.vecmath.GMatrix}).
+ * ({@link javax.vecmath.Matrix3d}, {@link javax.vecmath.Matrix4d}, {@link GMatrix}).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
@@ -120,14 +123,27 @@ public interface XMatrix extends Matrix, LenientComparable, Cloneable {
     void normalizeColumns();
 
     /**
-     * Compares the element values regardless the object class. This is similar to a call to
-     * {@link javax.vecmath.GMatrix#epsilonEquals GMatrix.epsilonEquals}. The method name is
-     * intentionally different in order to avoid ambiguities at compile-time.
+     * Compares the given matrices for equality, using the given absolute tolerance threshold.
+     * The given matrix does not need to be the same implementation class than this matrix.
+     * <p>
+     * The matrix elements are compared as below:
+     * <p>
+     * <ul>
+     *   <li>{@link Double#NaN} values are considered equals to all other NaN values</li>
+     *   <li>Infinite values are considered equal to other infinite values of the same sign</li>
+     *   <li>All other values are considered equal if the absolute value of their difference is
+     *       smaller than or equals to the given threshold.</li>
+     * </ul>
+     *
+     * {@note The name of this method is intentionally different than <code>epsilonEquals</code> in
+     * order to avoid compile-time ambiguity with the method inherited from <code>GMatrix</code>.}
      *
      * @param matrix    The matrix to compare.
      * @param tolerance The tolerance value.
-     * @return {@code true} if this matrix is close enough to the given matrix
-     *         given the tolerance value.
+     * @return {@code true} if this matrix is close enough to the given matrix given the tolerance value.
+     *
+     * @see Matrices#equals(Matrix, Matrix, double, boolean)
+     * @see GMatrix#epsilonEquals(GMatrix, double)
      *
      * @since 2.5
      */
@@ -152,6 +168,8 @@ public interface XMatrix extends Matrix, LenientComparable, Cloneable {
      * @param  object The object to compare to {@code this}.
      * @param  mode The strictness level of the comparison.
      * @return {@code true} if both objects are equal.
+     *
+     * @see Matrices#equals(Matrix, Matrix, ComparisonMode)
      *
      * @since 3.18
      */

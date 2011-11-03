@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.test.referencing.AffineTransformTest;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.Affine;
 
 import org.junit.*;
@@ -41,7 +41,7 @@ import static org.opengis.test.Assert.*;
  * the {@link MathTransformFactory} instance registered in {@link FactoryFinder}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see org.geotoolkit.naming.GeoapiTest
  * @see org.geotoolkit.referencing.factory.GeoapiTest
@@ -81,10 +81,8 @@ public final strictfp class GeoapiTest extends AffineTransformTest {
         assertInstanceOf("Not a LinearTransform.", LinearTransform.class, transform);
         final Matrix matrix = ((LinearTransform) transform).getMatrix();
         assertEquals("Matrix.isIdentity()", transform.isIdentity(), matrix.isIdentity());
-        if (matrix instanceof XMatrix) {
-            assertTrue("The matrix declared by the MathTransform is not equal to the one given at creation time.",
-                    ((XMatrix) matrix).equals(matrix, tolerance));
-        }
+        assertTrue("The matrix declared by the MathTransform is not equal to the one given at creation time.",
+                Matrices.equals(this.matrix, matrix, tolerance, false));
     }
 
     /**

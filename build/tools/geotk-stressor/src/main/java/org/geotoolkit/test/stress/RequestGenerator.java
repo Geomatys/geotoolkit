@@ -29,7 +29,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 
 /**
@@ -288,7 +288,7 @@ public class RequestGenerator {
             upper[i] = max;
         }
         return new GeneralGridGeometry(new GeneralGridEnvelope(lower, upper, false),
-                PixelInCell.CELL_CORNER, ProjectiveTransform.create(mx),
+                PixelInCell.CELL_CORNER, MathTransforms.linear(mx),
                 domain.getCoordinateReferenceSystem());
     }
 

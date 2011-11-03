@@ -60,7 +60,7 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -1250,7 +1250,7 @@ compare:    for (final SingleCRS component : actualComponents) {
     {
         if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             // Slight optimization in order to avoid the overhead of loading the full referencing engine.
-            return IdentityTransform.create(sourceCRS.getCoordinateSystem().getDimension());
+            return MathTransforms.identity(sourceCRS.getCoordinateSystem().getDimension());
         }
         ensureNonNull("sourceCRS", sourceCRS);
         ensureNonNull("targetCRS", targetCRS);

@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 
 
@@ -258,7 +258,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * @param zIndex     The 1-based index of the <var>z</var> value, or 0 if none.
      */
     final XMatrix getGridToCRS(final int dimension, int zIndex) {
-        final XMatrix matrix = MatrixFactory.create(dimension + 1);
+        final XMatrix matrix = Matrices.create(dimension + 1);
         SpatialRefSysEntry.copy(gridToCRS, matrix);
         if (verticalOrdinates != null) {
             final int imax = verticalOrdinates.length - 1;

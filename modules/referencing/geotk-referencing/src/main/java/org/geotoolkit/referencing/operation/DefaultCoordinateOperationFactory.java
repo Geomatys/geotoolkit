@@ -52,7 +52,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
@@ -182,7 +182,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (equalsIgnoreMetadata(sourceCRS, targetCRS)) {
             final int dim  = getDimension(sourceCRS);
             assert    dim == getDimension(targetCRS) : dim;
-            return createFromAffineTransform(IDENTITY, sourceCRS, targetCRS, MatrixFactory.create(dim+1));
+            return createFromAffineTransform(IDENTITY, sourceCRS, targetCRS, Matrices.create(dim+1));
         } else {
             // Query the database (if any) before to try to find the operation by ourself.
             final CoordinateOperation candidate = createFromDatabase(sourceCRS, targetCRS);
@@ -333,7 +333,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             final int dimSource = getDimension(sourceCRS);
             final int dimTarget = getDimension(targetCRS);
             if (dimTarget == dimSource) {
-                final Matrix matrix = MatrixFactory.create(dimTarget+1, dimSource+1);
+                final Matrix matrix = Matrices.create(dimTarget+1, dimSource+1);
                 return createFromAffineTransform(IDENTITY, sourceCRS, targetCRS, matrix);
             }
         }
@@ -555,7 +555,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                     final EllipsoidalCS step = new DefaultEllipsoidalCS("Step", axis0, axis1);
                     final Matrix reduced = swapAndScaleAxis(sourceCS, step);
                     assert reduced.getNumRow() == 3 && reduced.getNumCol() == 3 : reduced;
-                    matrix = MatrixFactory.create(4, 3);
+                    matrix = Matrices.create(4, 3);
                     matrix.setElement(3, 2, 1);
                     for (int jm=0,j=0; j<3; j++) {
                         if (j == k) {
@@ -1319,7 +1319,7 @@ search: for (int j=0; j<targets.size(); j++) {
          * affine transform. This transform also drop source dimensions not used
          * for any target coordinates.
          */
-        final XMatrix select = MatrixFactory.create(orderedSourceDim + 1, sourceDim + 1);
+        final XMatrix select = Matrices.create(orderedSourceDim + 1, sourceDim + 1);
         for (int j=0; j<orderedSourceDim; j++) {
             select.setElement(j, j, 0); // Safe since orderedSourceDim <= sourceDim.
             select.setElement(j, srcToOrderedSrc[j], 1);

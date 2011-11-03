@@ -99,6 +99,8 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
      *
      * @param scale  The {@code scale}  term in the linear equation.
      * @param offset The {@code offset} term in the linear equation.
+     *
+     * @see #create(double, double)
      */
     protected LinearTransform1D(final double scale, final double offset) {
         this.scale  = scale;
@@ -111,6 +113,8 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
      * @param scale  The {@code scale}  term in the linear equation.
      * @param offset The {@code offset} term in the linear equation.
      * @return The linear transform for the given scale and offset.
+     *
+     * @see MathTransforms#linear(int, double, double)
      */
     public static LinearTransform1D create(final double scale, final double offset) {
         if (scale == 0) {

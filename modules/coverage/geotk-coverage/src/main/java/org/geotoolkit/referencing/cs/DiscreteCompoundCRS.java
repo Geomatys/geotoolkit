@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
@@ -157,8 +157,7 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
     @Override
     public synchronized MathTransform getGridToCRS() {
         if (gridToCRS == null) {
-            gridToCRS = ProjectiveTransform.create(
-                    DiscreteReferencingFactory.getAffineTransform(this, cs.axes));
+            gridToCRS = MathTransforms.linear(DiscreteReferencingFactory.getAffineTransform(this, cs.axes));
         }
         return gridToCRS;
     }

@@ -38,7 +38,7 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -168,7 +168,7 @@ public final strictfp class SampleTranscoderTest {
      * convenient in order to work like in pixel coordinates.
      */
     private static GridCoverage2D createGridCoverage2D(RenderedImage image, GridSampleDimension band) {
-        final MathTransform identity = IdentityTransform.create(2);
+        final MathTransform identity = MathTransforms.identity(2);
         final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         return factory.create("Test", image, DefaultGeographicCRS.WGS84,
                     identity, new GridSampleDimension[] {band}, null, null);

@@ -72,7 +72,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.transform.IdentityTransform;
+import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
@@ -333,13 +333,13 @@ final class Resampler2D extends GridCoverage2D {
              */
             if (!targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 step1    = sourceGG.getGridToCRS(CORNER); // Really sourceGG, not targetGG
-                step2    = IdentityTransform.create(step1.getTargetDimensions());
+                step2    = MathTransforms.identity(step1.getTargetDimensions());
                 step3    = step1.inverse();
-                allSteps = IdentityTransform.create(step1.getSourceDimensions());
+                allSteps = MathTransforms.identity(step1.getSourceDimensions());
                 targetGG = new GridGeometry2D(targetGG.getGridRange(), step1, targetCRS);
             } else {
                 step1    = targetGG.getGridToCRS(CORNER);
-                step2    = IdentityTransform.create(step1.getTargetDimensions());
+                step2    = MathTransforms.identity(step1.getTargetDimensions());
                 step3    = sourceGG.getGridToCRS(CORNER).inverse();
                 allSteps = mtFactory.createConcatenatedTransform(step1, step3);
                 if (!targetGG.isDefined(GridGeometry2D.GRID_RANGE)) {

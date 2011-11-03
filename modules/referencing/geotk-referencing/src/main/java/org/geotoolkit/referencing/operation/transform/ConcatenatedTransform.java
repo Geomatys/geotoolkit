@@ -45,14 +45,13 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
-import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
+import static org.geotoolkit.referencing.operation.matrix.Matrices.*;
 
 
 /**
  * Base class for concatenated transforms. Instances can be created by calls to the
- * {@link #create(MathTransform, MathTransform)} method. When possible, the above-cited
- * method tries to concatenate {@linkplain ProjectiveTransform projective transforms}
+ * {@link MathTransforms#create(MathTransform, MathTransform)} method. When possible,
+ * the above-cited method tries to concatenate {@linkplain ProjectiveTransform projective transforms}
  * before to fallback on the creation of new {@code ConcatenatedTransform} instances.
  * <p>
  * Concatenated transforms are serializable if all their step transforms are serializables.
@@ -102,8 +101,9 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     private ConcatenatedTransform inverse;
 
     /**
-     * Constructs a concatenated transform. This constructor is for subclasses only. To
-     * create a concatenated transform, use the factory method {@link #create} instead.
+     * Constructs a concatenated transform. This constructor is for subclasses only.
+     * To create a concatenated transform, use the factory method
+     * {@link MathTransforms#create(MathTransform, MathTransform)} instead.
      *
      * @param transform1 The first math transform.
      * @param transform2 The second math transform.
@@ -145,15 +145,22 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * Concatenates the two given transforms. This factory method checks for step transforms
      * dimension. The returned transform will implement {@link MathTransform2D} if source and
      * target dimensions are equal to 2. Likewise, it will implement {@link MathTransform1D}
-     * if source and target dimensions are equal to 1. {@link MathTransform} implementations
-     * are available in two versions: direct and non-direct. The "non-direct" versions use an
-     * intermediate buffer when performing transformations; they are slower and consume more
-     * memory. They are used only as a fallback when a "direct" version can't be created.
+     * if source and target dimensions are equal to 1.
+     * <p>
+     * {@link MathTransform} implementations are available in two versions: direct and non-direct.
+     * The "non-direct" versions use an intermediate buffer when performing transformations; they
+     * are slower and consume more memory. They are used only as a fallback when a "direct" version
+     * can't be created.
      *
      * @param tr1 The first math transform.
      * @param tr2 The second math transform.
      * @return    The concatenated transform.
+     *
+     * @see MathTransforms#concatenate(MathTransform, MathTransform)
+     *
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform, MathTransform)
      */
+    @Deprecated
     public static MathTransform create(MathTransform tr1, MathTransform tr2) {
         final int dim1 = tr1.getTargetDimensions();
         final int dim2 = tr2.getSourceDimensions();
@@ -236,7 +243,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @since 3.14
+     *
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D)
      */
+    @Deprecated
     public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2) {
         return (MathTransform2D) create((MathTransform) tr1, (MathTransform) tr2);
     }
@@ -251,7 +261,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @since 3.14
+     *
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D)
      */
+    @Deprecated
     public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2) {
         return (MathTransform1D) create((MathTransform) tr1, (MathTransform) tr2);
     }
@@ -266,7 +279,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @since 3.00
+     *
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform, MathTransform, MathTransform)
      */
+    @Deprecated
     public static MathTransform create(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
         return create(create(tr1, tr2), tr3);
     }
@@ -282,7 +298,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @since 3.14
+     *
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D, MathTransform2D)
      */
+    @Deprecated
     public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2, MathTransform2D tr3) {
         return (MathTransform2D) create((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
     }
@@ -298,7 +317,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @since 3.14
+     *
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D, MathTransform1D)
      */
+    @Deprecated
     public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2, MathTransform1D tr3) {
         return (MathTransform1D) create((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
     }
@@ -329,7 +351,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                 // May not be really affine, but work anyway...
                 // This call will detect and optimize the special
                 // case where an 'AffineTransform' can be used.
-                return ProjectiveTransform.create(matrix);
+                return MathTransforms.linear(matrix);
             }
             /*
              * If the second transform is a passthrough transform and all passthrough ordinates
@@ -340,7 +362,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                 final Matrix sub = candidate.toSubMatrix(matrix1);
                 if (sub != null) {
                     return PassThroughTransform.create(candidate.firstAffectedOrdinate,
-                            create(ProjectiveTransform.create(sub), candidate.subTransform),
+                            create(MathTransforms.linear(sub), candidate.subTransform),
                             candidate.numTrailingOrdinates);
                 }
             }
@@ -352,7 +374,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         if (areInverse(tr1, tr2) || areInverse(tr2, tr1)) {
             assert tr1.getSourceDimensions() == tr2.getTargetDimensions();
             assert tr1.getTargetDimensions() == tr2.getSourceDimensions();
-            return IdentityTransform.create(tr1.getSourceDimensions());
+            return MathTransforms.identity(tr1.getSourceDimensions());
         }
         /*
          * Gives a chance to AbstractMathTransform to returns an optimized object.
