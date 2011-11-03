@@ -294,20 +294,20 @@ public class TreeFormat extends Format {
 
     /**
      * Returns {@code true} if the given tree should be formatted as a tree table.
-     * The default implementation returns {@code true} if the given tree contains
+     * The current implementation returns {@code true} if the given tree contains
      * at least one node of kind {@link TreeTableNode}.
      *
      * @param  node The root node to inspect.
      * @return {@code false} if at least one tree table node was found.
      */
-    private static boolean formatAsTable(final TreeNode node) {
+    private static boolean hasTreeTableNode(final TreeNode node) {
         if (node instanceof TreeTableNode) {
             return true;
         }
         @SuppressWarnings("unchecked")
         final Enumeration<TreeNode> e = node.children();
         if (e != null) while (e.hasMoreElements()) {
-            if (formatAsTable(e.nextElement())) {
+            if (hasTreeTableNode(e.nextElement())) {
                 return true;
             }
         }
@@ -491,15 +491,15 @@ public class TreeFormat extends Format {
 
     /**
      * Returns a string representation of the given value, or {@code null} if the value is
-     * null. If the given value contains tabulation or line terminators, they are replaced
-     * by spaces. This is necessary in order to avoid conflict with the characters expected
-     * by {@link TableWriter}.
+     * null. Tabulations are replaced by a single space, and line feeds are replaced by the
+     * Unicode "carriage return" character. This is necessary in order to avoid conflict with
+     * the characters expected by {@link TableWriter}.
      */
     private String toString(final Object value) throws IOException {
         Writer writer = lineWriter;
         if (writer == null) {
             final StringWriter buffer = new StringWriter();
-            lineWriter = writer = new ExpandedTabWriter(new LineWriter(buffer, " "));
+            lineWriter = writer = new ExpandedTabWriter(new LineWriter(buffer, " \u00B6 "));
             lineBuffer = buffer.getBuffer();
         }
         writer.write(String.valueOf(value));
@@ -572,19 +572,24 @@ public class TreeFormat extends Format {
     public void format(final TreeModel tree, final Appendable toAppendTo) throws IOException {
         final Object root = tree.getRoot();
         if (root != null) {
-            boolean isDirect = true;
+            Writer buffer = null;
             Appendable out = toAppendTo;
-            if (isTableFormatEnabled && root instanceof TreeNode && formatAsTable((TreeNode) root)) {
-                isDirect = (toAppendTo instanceof Writer);
-                out = new TableWriter(isDirect ? (Writer) toAppendTo : null, " ");
+            if (isTableFormatEnabled && (root instanceof TreeNode) && hasTreeTableNode((TreeNode) root)) {
+                final Writer writer;
+                if (toAppendTo instanceof Writer) {
+                    writer = (Writer) toAppendTo;
+                } else {
+                    writer = buffer = new StringWriter();
+                }
+                out = new TableWriter(new LineWriter(writer, lineSeparator), " ");
             }
             ensureInitialized();
             format(tree, root, out, 0, new boolean[64]);
-            if (!isDirect) {
-                out = toAppendTo.append(out.toString());
-            }
-            if (out instanceof Flushable) {
+            if (out != toAppendTo) {
                 ((Flushable) out).flush(); // Needed for writing the table content.
+            }
+            if (buffer != null) {
+                toAppendTo.append(buffer.toString());
             }
         }
     }

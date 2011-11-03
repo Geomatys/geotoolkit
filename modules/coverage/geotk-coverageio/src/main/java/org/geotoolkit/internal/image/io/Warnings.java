@@ -27,15 +27,14 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WarningProducer;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * Utilities methods for emitting warnings. The proper place for those methods should be
- * {@link org.geotoolkit.image.io.SpatialImageReader} but we don't make them part of the
- * public API.
+ * Utilities methods for emitting warnings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 3.08
  * @module
@@ -70,13 +69,11 @@ public final class Warnings extends Static {
      * We put the name of the exception class in the message only if the exception does
      * not provide a localized message, or that message is made of only one word.
      *
-     * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  plugin The object invoking this method, or {@code null}.
      * @param  level  The logging level, or {@code null} for the default one.
      * @param  caller The public class which is invoking this method.
      * @param  method The public method which is invoking this method.
      * @param  exception The exception to log.
-     * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
-     *         or {@link SpatialImageWriter}.
      */
     public static void log(final WarningProducer plugin, Level level,
             final Class<?> caller, final String method, final Exception exception)
@@ -95,13 +92,11 @@ public final class Warnings extends Static {
     /**
      * Convenience method for logging a warning from the given message.
      *
-     * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  plugin The object invoking this method, or {@code null}.
      * @param  level  The logging level, or {@code null} for the default one.
      * @param  caller The public class which is invoking this method.
      * @param  method The public method which is invoking this method.
      * @param  message The message to log.
-     * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
-     *         or {@link SpatialImageWriter}.
      */
     public static void log(final WarningProducer plugin, Level level,
             final Class<?> caller, final String method, final String message)
@@ -112,13 +107,17 @@ public final class Warnings extends Static {
         final LogRecord record = new LogRecord(level, message);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);
-        plugin.warningOccurred(record);
+        if (plugin != null) {
+            plugin.warningOccurred(record);
+        } else {
+            Logging.log(caller, record);
+        }
     }
 
     /**
      * Convenience method for logging a warning from the given method.
      *
-     * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  plugin The object invoking this method, or {@code null}.
      * @param  level  The logging level, or {@code null} for the default one.
      * @param  caller The public class which is invoking this method.
      * @param  method The public method which is invoking this method.
@@ -133,11 +132,15 @@ public final class Warnings extends Static {
         if (level == null) {
             level = Level.WARNING;
         }
-        final LogRecord record = Errors.getResources(plugin.getLocale())
+        final LogRecord record = Errors.getResources(plugin != null ? plugin.getLocale() : null)
                 .getLogRecord(level, key, arguments);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);
-        plugin.warningOccurred(record);
+        if (plugin != null) {
+            plugin.warningOccurred(record);
+        } else {
+            Logging.log(caller, record);
+        }
     }
 
     /**
@@ -145,12 +148,12 @@ public final class Warnings extends Static {
      * The key shall be one of the {@link org.geotoolkit.resources.Errors.Keys} constants.
      * This is used for formatting the message in {@link javax.imageio.IIOException}.
      *
-     * @param  plugin The {@code SpatialImageReader} or {@code SpatialImageWriter} invoking this method.
+     * @param  plugin The object invoking this method, or {@code null}.
      * @param  key The key from the error resource bundle to use for creating a message.
      * @param  arguments The arguments to be used together with the key for building the message.
      * @return The configured record to log.
      */
     public static String message(final Localized plugin, final int key, final Object... arguments) {
-        return Errors.getResources(plugin.getLocale()).getString(key, arguments);
+        return Errors.getResources(plugin != null ? plugin.getLocale() : null).getString(key, arguments);
     }
 }

@@ -830,7 +830,7 @@ public class NetcdfImageReader extends FileImageReader implements
      * @return {@code true} if the specified variable is a dimension of an other variable.
      */
     private static boolean isAxis(final VariableIF candidate, final List<? extends VariableIF> variables) {
-        final String name = candidate.getName();
+        final String name = candidate.getShortName();
         final int size = variables.size();
         for (int i=0; i<size; i++) {
             final VariableIF var = variables.get(i);
@@ -935,7 +935,7 @@ public class NetcdfImageReader extends FileImageReader implements
                 if (candidate.getRank() >= 2 && !isAxis(candidate, variables) &&
                         NetcdfVariable.VALID_TYPES.contains(candidate.getDataType()))
                 {
-                    filtered[count++] = candidate.getName();
+                    filtered[count++] = candidate.getShortName();
                 }
             }
             variableNames = UnmodifiableArrayList.wrap(XArrays.resize(filtered, count));
@@ -1327,7 +1327,7 @@ public class NetcdfImageReader extends FileImageReader implements
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2"};
+        private static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2", "grd"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as

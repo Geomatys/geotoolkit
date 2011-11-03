@@ -27,8 +27,8 @@
  * of every new line, and {@link org.geotoolkit.io.TableWriter} replaces all occurrence of
  * {@code '\t'} by the amount of spaces needed for producing a tabular output.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.02
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 1.0
  * @module
