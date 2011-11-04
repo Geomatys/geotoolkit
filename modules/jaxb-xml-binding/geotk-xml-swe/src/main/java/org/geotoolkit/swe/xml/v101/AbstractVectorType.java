@@ -138,4 +138,16 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
         hash = 37 * hash + (this.localFrame != null ? this.localFrame.hashCode() : 0);
         return hash;
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (referenceFrame != null) {
+            sb.append("referenceFrame:").append(referenceFrame).append('\n');
+        }
+        if (localFrame != null) {
+            sb.append("localFrame:").append(localFrame).append('\n');
+        }
+        return sb.toString();
+    }
 }

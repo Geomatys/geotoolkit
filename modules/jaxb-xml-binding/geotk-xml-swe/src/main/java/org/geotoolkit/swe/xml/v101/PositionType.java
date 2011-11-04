@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.Position;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -344,4 +346,73 @@ public class PositionType extends AbstractVectorType implements Position {
         this.state = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof PositionType && super.equals(object, mode)) {
+            final PositionType that = (PositionType) object;
+
+            return Utilities.equals(this.acceleration,        that.acceleration) &&
+                   Utilities.equals(this.angularAcceleration, that.angularAcceleration) &&
+                   Utilities.equals(this.angularVelocity,     that.angularVelocity) &&
+                   Utilities.equals(this.location,            that.location) &&
+                   Utilities.equals(this.orientation,         that.orientation) &&
+                   Utilities.equals(this.state,               that.state) &&
+                   Utilities.equals(this.time,                that.time) &&
+                   Utilities.equals(this.velocity,            that.velocity);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.time != null ? this.time.hashCode() : 0);
+        hash = 41 * hash + (this.location != null ? this.location.hashCode() : 0);
+        hash = 41 * hash + (this.orientation != null ? this.orientation.hashCode() : 0);
+        hash = 41 * hash + (this.velocity != null ? this.velocity.hashCode() : 0);
+        hash = 41 * hash + (this.angularVelocity != null ? this.angularVelocity.hashCode() : 0);
+        hash = 41 * hash + (this.acceleration != null ? this.acceleration.hashCode() : 0);
+        hash = 41 * hash + (this.angularAcceleration != null ? this.angularAcceleration.hashCode() : 0);
+        hash = 41 * hash + (this.state != null ? this.state.hashCode() : 0);
+        return hash;
+    }
+
+    
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (time != null) {
+            sb.append("time:").append(time).append('\n');
+        }
+        if (location != null) {
+            sb.append("location:").append(location).append('\n');
+        }
+        if (orientation != null) {
+            sb.append("orientation:").append(orientation).append('\n');
+        }
+        if (velocity != null) {
+            sb.append("velocity:").append(velocity).append('\n');
+        }
+        if (angularVelocity != null) {
+            sb.append("angularVelocity:").append(angularVelocity).append('\n');
+        }
+        if (acceleration != null) {
+            sb.append("acceleration:").append(acceleration).append('\n');
+        }
+        if (angularAcceleration != null) {
+            sb.append("angularAcceleration:").append(angularAcceleration).append('\n');
+        }
+        if (state != null) {
+            sb.append("state:").append(state).append('\n');
+        }
+        return sb.toString();
+    }
 }

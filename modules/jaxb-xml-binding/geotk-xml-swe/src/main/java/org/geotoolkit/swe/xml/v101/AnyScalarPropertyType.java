@@ -275,7 +275,8 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     public String getActuate() {
         return actuate;
     }
- /**
+ 
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override

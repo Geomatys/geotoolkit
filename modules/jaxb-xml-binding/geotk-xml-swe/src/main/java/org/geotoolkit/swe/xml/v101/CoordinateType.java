@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.Coordinate;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -157,5 +158,51 @@ public class CoordinateType implements Coordinate {
      */
     public void setName(final String value) {
         this.name = value;
+    }
+    
+    /**
+     * Verify that the object is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CoordinateType) {
+            final CoordinateType that = (CoordinateType) object;
+            return Utilities.equals(this.count, that.count) &&
+                   Utilities.equals(this.name, that.name) &&
+                   Utilities.equals(this.quantity, that.quantity) &&
+                   Utilities.equals(this.time, that.time);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (this.count != null ? this.count.hashCode() : 0);
+        hash = 47 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 47 * hash + (this.quantity != null ? this.quantity.hashCode() : 0);
+        hash = 47 * hash + (this.time != null ? this.time.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[CoordinateType]");
+        if (count != null) {
+            sb.append("count:").append(count).append('\n');
+        }
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (quantity != null) {
+            sb.append("quantity:").append(quantity).append('\n');
+        }
+        if (time != null) {
+            sb.append("time:").append(time).append('\n');
+        }
+        return sb.toString();
     }
 }
