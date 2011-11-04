@@ -726,7 +726,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     }
 
     /**
-     * {inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void show(String title, final int xAxis, final int yAxis) {
@@ -750,7 +750,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     }
 
     /**
-     * {inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void show(final String title) {

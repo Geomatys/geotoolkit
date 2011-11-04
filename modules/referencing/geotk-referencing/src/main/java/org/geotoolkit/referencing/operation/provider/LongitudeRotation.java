@@ -45,7 +45,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
- * @see ProjectiveTransform
+ * @see org.geotoolkit.referencing.operation.transform.ProjectiveTransform
  *
  * @since 2.0
  * @module
