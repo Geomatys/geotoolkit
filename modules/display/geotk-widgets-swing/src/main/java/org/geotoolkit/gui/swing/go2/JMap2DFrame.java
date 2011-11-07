@@ -41,6 +41,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -49,6 +50,10 @@ import javax.swing.JToolBar.Separator;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
 import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
@@ -74,6 +79,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
+import org.geotoolkit.gui.swing.filestore.JFileDatastoreChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
@@ -82,8 +88,15 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingle
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.RandomStyleFactory;
+import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -218,6 +231,8 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiConfigBar = new JConfigBar();
         jMenuBar1 = new JMenuBar();
         jMenu1 = new JMenu();
+        jMenuItem2 = new JMenuItem();
+        jSeparator4 = new JPopupMenu.Separator();
         jMenuItem1 = new JMenuItem();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -303,6 +318,15 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
+        jMenuItem2.setText("Add vector file data ...");
+        jMenuItem2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+        jMenu1.add(jSeparator4);
+
         jMenuItem1.setText("Quit");
         jMenuItem1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -329,8 +353,6 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
         BufferedImage image = (BufferedImage) guiMap.getCanvas().getSnapShot();
         Object output0 = new File("temp0.png");
         Object output1 = new File("temp1.png");
-
-        System.out.println("laaa");
 
         final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType("image/png");
         while (writers.hasNext()) {
@@ -377,6 +399,32 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     
 }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jMenuItem2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        
+        final List<DataStore> stores = JFileDatastoreChooser.showDialog();
+        
+        for(DataStore store : stores){
+            
+            try{
+                final Session session = store.createSession(true);
+                for(Name n : store.getNames()){
+                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(n));
+                    final MutableStyle style = RandomStyleFactory.createDefaultVectorStyle(col);
+                    final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, style);
+                    layer.setName(n.getLocalPart());
+                    layer.setDescription(new DefaultStyleFactory().description(n.getLocalPart(), n.getLocalPart()));
+                    guiMap.getContainer().getContext().layers().add(layer);
+                    
+                }
+            }catch(DataStoreException ex){
+                ex.printStackTrace();
+            }
+            
+        }
+        
+        
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
 
     private boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
@@ -416,11 +464,13 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     private JMenu jMenu1;
     private JMenuBar jMenuBar1;
     private JMenuItem jMenuItem1;
+    private JMenuItem jMenuItem2;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
-    private JSeparator jSeparator1;
+    private Separator jSeparator1;
     private Separator jSeparator2;
     private Separator jSeparator3;
+    private JPopupMenu.Separator jSeparator4;
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
     private JPanel panGeneral;
