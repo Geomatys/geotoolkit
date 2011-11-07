@@ -89,6 +89,7 @@ public final class DimapConstants {
     public static final String TAG_DATASET_QL_FORMAT = "DATASET_QL_FORMAT";
     public static final String TAG_DATASET_TN_PATH = "DATASET_TN_PATH";
     public static final String TAG_DATASET_TN_FORMAT = "DATASET_TN_FORMAT";
+    public static final String ATTRIBUTE_HREF = "href";
 
     // Scene frame group -------------------------------------------------------
     public static final String TAG_DATASET_FRAME = "Dataset_Frame";
@@ -136,6 +137,7 @@ public final class DimapConstants {
     public static final String TAG_SCENE_INSTRUMENT_INDEX = "INSTRUMENT_INDEX";
     public static final String TAG_SCENE_PROCESSING_LEVEL = "SCENE_PROCESSING_LEVEL";
     public static final String TAG_SCENE_INCIDENCE_ANGLE = "INCIDENCE_ANGLE";
+    public static final String TAG_SCENE_THEORETICAL_RESOLUTION = "THEORETICAL_RESOLUTION";
     public static final String TAG_SCENE_VIEWING_ANGLE = "VIEWING_ANGLE";
     public static final String TAG_SCENE_SUN_AZIMUTH = "SUN_AZIMUTH";
     public static final String TAG_SCENE_SUN_ELEVATION = "SUN_ELEVATION";
