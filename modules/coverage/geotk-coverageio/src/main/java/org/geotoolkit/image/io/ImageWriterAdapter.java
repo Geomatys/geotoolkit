@@ -22,7 +22,6 @@ import java.net.URL;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -48,6 +47,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
@@ -696,12 +696,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * package and we have no way to filter {@code ImageWriter} by output
          * stream.
          */
-        private static final Class<?>[] TYPES;
-        static {
-            final int n = ImageReaderAdapter.Spi.TYPES.length;
-            TYPES = Arrays.copyOf(ImageReaderAdapter.Spi.TYPES, n + 1);
-            TYPES[n] = ImageOutputStream.class;
-        }
+        private static final Class<?>[] TYPES =
+                XArrays.append(ImageReaderAdapter.Spi.TYPES, ImageOutputStream.class);
 
         /**
          * The provider of the writers to use for writing the pixel values.

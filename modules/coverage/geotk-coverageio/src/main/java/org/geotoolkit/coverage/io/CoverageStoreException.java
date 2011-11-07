@@ -66,7 +66,7 @@ public class CoverageStoreException extends DataStoreException {
      * @param message The detail message.
      * @param cause The cause for this exception.
      */
-    public CoverageStoreException(final String message, final Exception cause) {
+    public CoverageStoreException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

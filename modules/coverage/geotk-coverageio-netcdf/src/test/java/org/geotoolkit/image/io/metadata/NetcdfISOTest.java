@@ -39,6 +39,8 @@ import org.opengis.metadata.citation.Role;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.plugin.NetcdfImageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -55,6 +57,16 @@ import static org.geotoolkit.test.Commons.getSingleton;
  */
 public final strictfp class NetcdfISOTest {
     /**
+     * The THREDDS XML test file.
+     */
+    private static final String THREDDS_FILE = "thredds.ncml";
+
+    /**
+     * The binary NetCDF test file.
+     */
+    private static final String BINARY_FILE = "2005092200_sst_21-24.en.nc";
+
+    /**
      * Tolerance factor for floating point comparison.
      * We actually require an exact match.
      */
@@ -68,7 +80,7 @@ public final strictfp class NetcdfISOTest {
     @Test
     public void testTHREDDS() throws IOException {
         final Metadata metadata;
-        try (InputStream in = TestData.openStream(NetcdfImageReader.class, "thredds.ncml")) {
+        try (InputStream in = TestData.openStream(NetcdfImageReader.class, THREDDS_FILE)) {
             final NetcdfFile file = NcMLReader.readNcML(in, null);
             final NetcdfISO ncISO = new NetcdfISO(file, null);
             metadata = ncISO.createMetadata();
@@ -104,11 +116,17 @@ public final strictfp class NetcdfISOTest {
      */
     @Test
     public void testNC() throws IOException {
-        final File file = TestData.file(NetcdfImageReader.class, "2005092200_sst_21-24.en.nc");
+        final File file = TestData.file(NetcdfImageReader.class, BINARY_FILE);
         final NetcdfISO ncISO = new NetcdfISO(NetcdfFile.open(file.getPath()), null);
         final Metadata metadata = ncISO.createMetadata();
         ncISO.file.close();
+        checkSST(metadata);
+    }
 
+    /**
+     * Checks the metadata from the {@value #BINARY_FILE} file.
+     */
+    private static void checkSST(final Metadata metadata) {
         assertEquals("NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc", metadata.getFileIdentifier());
         assertEquals("NOAA/NWS/NCEP", getSingleton(metadata.getContacts()).getIndividualName());
         assertEquals(Role.ORIGINATOR, getSingleton(metadata.getContacts()).getRole());
@@ -144,5 +162,23 @@ public final strictfp class NetcdfISOTest {
         assertEquals("Vertical max", 0, vext.getMaximumValue().doubleValue(), 0);
 
         // TODO: test temporal extent
+    }
+
+    /**
+     * Same test than {@link #testNC()}, but now reading through a {@link ImageCoverageReader}.
+     * This is an integration test.
+     *
+     * @throws IOException If the test file can not be read.
+     * @throws CoverageStoreException Should never happen.
+     */
+    @Test
+    public void testGridCoverageReader() throws IOException, CoverageStoreException {
+        final NetcdfImageReader imageReader = new NetcdfImageReader(null);
+        imageReader.setInput(TestData.file(NetcdfImageReader.class, BINARY_FILE));
+        final ImageCoverageReader coverageReader = new ImageCoverageReader();
+        coverageReader.setInput(imageReader);
+        final Metadata metadata = coverageReader.getMetadata();
+        coverageReader.dispose();
+        checkSST(metadata);
     }
 }

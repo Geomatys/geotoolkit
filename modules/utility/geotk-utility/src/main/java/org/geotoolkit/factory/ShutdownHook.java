@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.factory;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 import net.jcip.annotations.ThreadSafe;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.TemporaryFile;
 
@@ -64,9 +64,7 @@ final class ShutdownHook extends Thread {
         if (registries == null) {
             registries = new ServiceRegistry[] {registry};
         } else {
-            final int n = registries.length;
-            registries = Arrays.copyOf(registries, n + 1);
-            registries[n] = registry;
+            registries = XArrays.append(registries, registry);
         }
         ShutdownHook.registries = registries;
     }

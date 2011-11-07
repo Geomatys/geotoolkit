@@ -116,7 +116,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         try {
             crs = PrjFiles.read((File) SupportFiles.changeExtension(input, "prj"));
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         /*
          * If a serialized TileManager exists, reuse it.
@@ -180,7 +180,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
                 }
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         setInput(manager);
         saved = true;
@@ -202,7 +202,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
             try {
                 managers = TileManagerFactory.DEFAULT.createFromObject(input);
             } catch (IOException e) {
-                throw new CoverageStoreException(e);
+                throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             if (managers != null && managers.length == 1) {
                 input = managers[0];

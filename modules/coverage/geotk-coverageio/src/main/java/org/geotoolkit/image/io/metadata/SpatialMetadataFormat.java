@@ -295,6 +295,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public static final String FORMAT_NAME = "geotk-coverageio_3.07";
 
     /**
+     * The ISO-19115 format name, which is {@value}. This format is supported only by a few
+     * plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}. The tree created
+     * by this metadata format can potentially be much bigger that the tree created by the
+     * default Geotk format.
+     *
+     * @since 3.20
+     */
+    public static final String ISO_FORMAT_NAME = "ISO-19115";
+
+    /**
      * The name of the single attribute to declare for node that contains array.
      * This is used mostly for the following:
      *
@@ -313,6 +323,23 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * form for collections.
      */
     private static final KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
+
+    /**
+     * The default instance for <cite>ISO 19115</cite> metadata format. This metadata format is big
+     * and supported only by a few plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
+     * For applications that don't need to full verbosity of ISO 19115, use the {@link #STREAM} metadata
+     * instead.
+     *
+     * @see PredefinedMetadataFormat#addTreeForISO19115(String)
+     *
+     * @since 3.20
+     */
+    public static final SpatialMetadataFormat ISO_19115;
+    static {
+        final PredefinedMetadataFormat p = new PredefinedMetadataFormat(ISO_FORMAT_NAME);
+        p.addTreeForISO19115(null);
+        ISO_19115 = p;
+    }
 
     /**
      * The default instance for <cite>stream</cite> metadata format. This is the metadata
@@ -348,8 +375,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * The metadata standards represented by this format. The most
-     * common standard is {@link MetadataStandard#ISO_19115 ISO_19115}.
+     * The metadata standards represented by each node. The most common standard is
+     * {@link MetadataStandard#ISO_19115 ISO_19115}. This information is used for
+     * {@linkplain #getDescription(String, String, Locale)} implementation.
      */
     private final Map<String,MetadataStandard> standards = new HashMap<>();
 
@@ -399,7 +427,15 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * the given type is a metadata, then that child is {@linkplain #addElement(String,String,int)
      * added as an element} and all its children are added recursively. Otherwise the type is
      * {@linkplain #addAttribute(String,String,int,boolean,String) added as an attribute}.
-     * <p>
+     *
+     * {@section Element type}
+     * This method expects a {@code type} argument, which can be a {@link CodeList} subclass,
+     * one of the interfaces member of the given metadata {@code standard}, or a simple JSE
+     * type (boolean, number of {@link String}). Do <strong>not</strong> specify collection
+     * types, since the type of collection elements can not be inferred easily. To specify
+     * a multi-occurrence, use the array type instead (e.g. {@code CoordinateSystemAxis[].class}).
+     *
+     * {@section Substitution map}
      * This method can be given an optional <cite>substitution map</cite>. If this map is non
      * null, then every occurrence of a class in the set of keys is replaced by the associated
      * class in the collection of values. The purpose of this map is to:
@@ -440,10 +476,11 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * method.
      *
      * @param standard      The metadata standard of the element or attribute to be added.
-     * @param type          The type of the element or attribute to be added.
+     * @param type          The type of the element or attribute to be added (see javadoc).
      * @param elementName   The name of the element or attribute node to be added.
      * @param parentName    The name of the parent node to where to add the child.
-     * @param substitution  The map of children types to substitute by other types, or {@code null}.
+     * @param substitution  The map of children types to substitute by other types (see javadoc),
+     *                      or {@code null} if none.
      */
     protected void addTree(final MetadataStandard standard, final Class<?> type,
             final String elementName, final String parentName,
@@ -490,7 +527,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param mandatory {@code true} if the element to add is mandatory.
      * @param incomplete Set of types that we plan to complete manually later. The method will
      *        use a more conservative policy for determining the child policy of those types.
-     *        A {@code null} value means that every types are incomplete.
+     *        A {@code null} value means that every types are incomplete. To mean that every
+     *        types are complete, use {@link Collections#emptySet()}.
      */
     final void addTree(final MetadataStandard standard, Class<?> type,
             final String elementName, final String parentName, final boolean mandatory,
@@ -505,8 +543,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             }
         }
         /*
-         * If the given type is an arrray, handle as a collection  (i.e. we will add a
-         * "Elements" parent node, and declare in that parent a single "Element" child
+         * If the given type is an arrray, handle as a multi-occurrence (i.e. we will add
+         * a "Elements" parent node, and declare in that parent a single "Element" child
          * which can be repeated many time).
          */
         int max = 1;
@@ -523,33 +561,89 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             }
         }
         addTree(standard, type, identifier, elementName, parentName,
-                mandatory ? 1 : 0, max, null, exclude, substitution, incomplete);
+                mandatory ? 1 : 0, max, null, incomplete, exclude, substitution,
+                new HashMap<String,Class<?>>());
     }
 
     /**
      * Implementation of {@link #addTree(Class,String,String, Map)} with a set of attribute type
-     * to exclude. This method invokes itself recursively. The given set will be modified in order
-     * to avoid infinite recursivity (e.g. {@code Identifier.getAuthority().getIdentifiers()}).
+     * to exclude. This method invokes itself recursively. The given {@code exclude} set will be
+     * modified in order to avoid infinite recursivity
+     * (e.g. {@code Identifier.getAuthority().getIdentifiers()}).
      *
-     * @param standard      The metadata standard of the element or attribute to be added.
-     * @param type          The type of the element or attribute to be added.
-     * @param identifier    The UML identifier, or {@code null} if unknown.
-     * @param elementName   The name of the element or attribute node to be added.
-     * @param parentName    The name of the parent node to where to add the child.
-     * @param minOccurrence Minimal occurrence of the element or attribute in the parent node.
-     * @param maxOccurrence Maximal occurrence of the element or attribute in the parent node.
-     * @param restriction   The restriction on the valid values, or {@code null} if none.
-     * @param exclude       The attribute types to exclude. This set will be modified.
-     * @param substitution  The classes to substitute by other classes. Applies only to childs.
-     * @param incomplete    Set of types that we plan to complete manually later, or {@code null} for all.
-     * @return The {@code elementName}, or a modified version of it if that method
-     *         modified the case, or {@code null} if it has not been added.
+     * @param standard
+     *          The metadata standard of the element or attribute to be added. This standard will
+     *          be constant for the whole tree added by this method call (including children).
+     * @param type
+     *          The type of the element or attribute to be added. May be a {@link CodeList}, an
+     *          interface of the given {@code standard}, or a simple JSE object like a boolean,
+     *          a number of a {@link String}. This type shall <strong>not</strong> be an array
+     *          or a collection. To add a multi-occurrence, specify the <em>element</em> type
+     *          with a {@code maxOccurrence} parameter greater than 1.
+     * @param identifier
+     *          On first invocation, the simple Java name of the standard interface implemented
+     *          by the given {@code type} (this is usually the UML identifier without the OGC/ISO
+     *          two-letters prefix). On recursive invocations, the UML identifier of the Java method
+     *          for the element to be added. If non-null, this argument is usually the same than
+     *          {@code elementName} but in singular form. If {@code null}, a singular name will be
+     *          derived from the {@code elementName} string if needed.
+     * @param elementName
+     *          The name of the element or attribute node to be added. This is the name of the
+     *          parent node, except that the first letter may be changed to upper-case. If the
+     *          node accepts multi-occurrence ({@code maxOccurrence > 1}), a compound child node
+     *          will be added with the {@code identifier} name and {@link #CHILD_POLICY_REPEAT}.
+     * @param parentName
+     *          The name of the parent node where to add the child. This is the name given in
+     *          calls to {@link IIOMetadataFormatImpl} methods for specifying where to add the node.
+     * @param minOccurrence
+     *          Minimal occurrence of the element or attribute in the parent node. If 0, the
+     *          element is considered optional. If different than zero, it is considered
+     *          mandatory.
+     * @param maxOccurrence
+     *          Maximal occurrence of the element or attribute in the parent node. If greater
+     *          than 1, the node will be added with {@link #CHILD_POLICY_REPEAT}.
+     * @param restriction
+     *          The restriction on the valid values, or {@code null} if none. This is used for
+     *          determining the minimal and maximal values of attributes, and the child policy.
+     * @param incomplete
+     *          Set of types that we plan to complete manually later, or {@code null} for all (to
+     *          mean that every types are complete, use {@link Collections#emptySet()} instead).
+     *          When computing the node child policy ({@link #CHILD_POLICY_CHOICE}, <i>etc.</i>)
+     *          from the child restrictions, the children types enumerated in the {@code exclude}
+     *          set will be ignored only if the given {@code type} is not incomplete. Not ignoring
+     *          an "excluded" type may lead to relaxed child policy. This is needed when a "excluded"
+     *          type is actually going to be added manually by the caller after this method call.
+     * @param exclude
+     *          The attribute types to exclude. On first invocation, this is the set of
+     *          {@code substitution} keys having a null value. On recursive invocations,
+     *          <strong>this set is modified</strong> in order to avoid infinite recursivity
+     *          (types are added before entering this method, and removed after exiting).
+     * @param substitution
+     *          The classes to substitute by other classes, or {@code null} if none. Substitutions
+     *          are applied only on children - the {@code type} argument given to this method is
+     *          not modified. This map is user-supplied and is not modified by this method.
+     * @param existings
+     *          The name of nodes added in previous iterations. The existing nodes will be added
+     *          to the new parent using the {@link #addChildElement(String, String)} instead than
+     *          creating the tree again. This method will add new elements in this map, but never
+     *          remove existing elements. The class value is used for checking purpose only.
+     * @return
+     *      The {@code elementName}, or a modified version of it if that method
+     *      modified the case, or {@code null} if it has not been added.
      */
-    private String addTree(final MetadataStandard standard, final Class<?> type,
-            String identifier, String elementName, String parentName,
-            final int minOccurrence, final int maxOccurrence, final ValueRestriction restriction,
-            final Set<Class<?>> exclude, final Map<Class<?>,Class<?>> substitution,
-            final Set<Class<?>> incomplete)
+    private String addTree(
+            final MetadataStandard       standard,
+            final Class<?>               type,
+                  String                 identifier,    // May replace first letter by upper-case.
+                  String                 elementName,   // Replaced by component name on multi-occurrence
+                  String                 parentName,    // Replaced by element name on multi-occurrence
+            final int                    minOccurrence,
+            final int                    maxOccurrence,
+            final ValueRestriction       restriction,
+            final Set<Class<?>>          incomplete,
+            final Set<Class<?>>          exclude,
+            final Map<Class<?>,Class<?>> substitution,
+            final Map<String,Class<?>>   existings)
     {
         if (maxOccurrence == 0) {
             return null;
@@ -643,7 +737,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         elementName = toElementName(elementName);
         final String containerName = elementName;
         if (maxOccurrence != 1) {
+            final Class<?> existingType = existings.get(elementName);
+            if (existingType != null) {
+                if (!existingType.equals(type)) {
+                    throw new IllegalArgumentException(elementName); // TODO: better error message
+                }
+                addChildElement(elementName, parentName);
+                return null;
+            }
             addElement(elementName, parentName, minOccurrence, maxOccurrence);
+            existings.put(elementName, type);
             standards.put(elementName, standard);
             parentName  = elementName;
             identifier  = toElementName(identifier);
@@ -671,7 +774,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         propertyTypes = standard.asTypeMap       (type, TypeValuePolicy.PROPERTY_TYPE,  NAME_POLICY);
         elementTypes  = standard.asTypeMap       (type, TypeValuePolicy.ELEMENT_TYPE,   NAME_POLICY);
         restrictions  = standard.asRestrictionMap(type, NullValuePolicy.NON_NULL,       NAME_POLICY);
-        final boolean isComplete = incomplete != null && !incomplete.contains(type);
+        final boolean isComplete = (incomplete != null) && !incomplete.contains(type);
         for (final Map.Entry<String,Class<?>> entry : elementTypes.entrySet()) {
             final Class<?> candidate = entry.getValue();
             if (isComplete && exclude.contains(candidate)) {
@@ -717,6 +820,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * Now add the child elements. The loop below invokes this method recursively
          * for each attribute of the metadata object that we are adding.
          */
+        final Class<?> existingType = existings.get(elementName);
+        if (existingType != null) {
+            if (!existingType.equals(type)) {
+                throw new IllegalArgumentException(elementName); // TODO: better error message
+            }
+            addChildElement(elementName, parentName);
+            return null;
+        }
         addElement(elementName, parentName, childPolicy);
         addObjectValue(elementName, type);
         addCustomAttributes(elementName, type);
@@ -778,8 +889,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
              * recursively for proceding to the addition, with guard against infinite recursivity.
              */
             if (exclude.add(childType)) {
-                childName = addTree(standard, childType, identifiers.get(childName),
-                        childName, elementName, min, max, vr, exclude, substitution, incomplete);
+                childName = addTree(standard, childType, identifiers.get(childName), childName,
+                        elementName, min, max, vr, incomplete, exclude, substitution, existings);
                 if (!exclude.remove(childType)) {
                     throw new AssertionError(childType);
                 }
@@ -905,8 +1016,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * Makes the first character an upper-case letter. This is used for element names,
      * which typically starts with an upper-case letter in Image I/O metadata.
      *
-     * @param  elementName The element name.
-     * @return The given name with the first character converted to an upper-case letter.
+     * @param  elementName The element name, or {@code null}.
+     * @return The given name with the first character converted to an upper-case letter,
+     *         or {@code null} if the given argument was null.
      *
      * @since 3.06
      */
@@ -1198,7 +1310,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             }
             Map<String,String> desc = Collections.emptyMap();
             if (type != null) {
-                final MetadataStandard standard = standards.get(elementName);
+                final MetadataStandard standard = getElementStandard(elementName);
                 if (standard != null) try {
                     desc = standard.asDescriptionMap(type, locale, NAME_POLICY);
                 } catch (ClassCastException e) {

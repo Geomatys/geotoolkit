@@ -30,6 +30,8 @@ import org.geotoolkit.internal.simple.SimpleCitation;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.IdentifierSpace;
 
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
+
 
 /**
  * The {@linkplain Identifier#getAuthority() authority of identifiers} that are not expected to be
@@ -162,9 +164,7 @@ public final class NonMarshalledAuthority<T> extends SimpleCitation implements I
             }
             it.remove();
         }
-        if (id != null) {
-            identifiers.add(id);
-        }
+        addIfNonNull(identifiers, id);
     }
 
     /**

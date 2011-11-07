@@ -590,7 +590,9 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             final IIOMetadata metadata = main.getImageMetadata(imageIndex);
             if (metadata != null) {
                 if (metadata instanceof SpatialMetadata) {
-                    return (SpatialMetadata) metadata;
+                    final SpatialMetadata sm = (SpatialMetadata) metadata;
+                    sm.setReadOnly(false);
+                    return sm;
                 }
                 return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, metadata);
             }
@@ -598,7 +600,9 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             final IIOMetadata metadata = main.getStreamMetadata();
             if (metadata != null) {
                 if (metadata instanceof SpatialMetadata) {
-                    return (SpatialMetadata) metadata;
+                    final SpatialMetadata sm = (SpatialMetadata) metadata;
+                    sm.setReadOnly(false);
+                    return sm;
                 }
                 return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, metadata);
             }

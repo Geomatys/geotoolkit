@@ -681,7 +681,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 // MetadataHelper default implementation returns an unmodifiable list.
                 sd = getMetadataHelper().getGridSampleDimensions(bands);
             } catch (ImageMetadataException e) {
-                throw new CoverageStoreException(e);
+                throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             Map.Entry<Map<Integer,List<GridSampleDimension>>,List<GridSampleDimension>> entry =
                     setCached(sd, sampleDimensions, index);
@@ -774,7 +774,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 return null;
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
     }
 
@@ -805,7 +805,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 return null;
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
     }
 
@@ -1028,7 +1028,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * message. Otherwise it returns the localized message of the given exception.
      */
     @Override
-    final String formatErrorMessage(final Exception e) {
+    final String formatErrorMessage(final Throwable e) {
         return formatErrorMessage(input, e, false);
     }
 
@@ -1065,7 +1065,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         try {
             close();
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         if (imageReader != null) {
             imageReader.reset();
@@ -1088,7 +1088,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         try {
             close();
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         if (imageReader != null) {
             imageReader.dispose();

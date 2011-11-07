@@ -374,16 +374,17 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         /*
          * Creates a new instance and cache it.
          */
-        final SpatialMetadata candidate = createMetadata(imageIndex);
+        SpatialMetadata candidate = createMetadata(imageIndex);
         if (candidate != null) {
-            if (metadata == null) {
-                metadata = new SpatialMetadata[Math.max(cacheIndex+1, 4)];
-            }
-            if (cacheIndex >= metadata.length) {
-                metadata = Arrays.copyOf(metadata, Math.max(cacheIndex+1, metadata.length*2));
-            }
-            metadata[cacheIndex] = (candidate != null) ? candidate : SpatialMetadata.EMPTY;
+            candidate.setReadOnly(true);
         }
+        if (metadata == null) {
+            metadata = new SpatialMetadata[Math.max(cacheIndex+1, 4)];
+        }
+        if (cacheIndex >= metadata.length) {
+            metadata = Arrays.copyOf(metadata, Math.max(cacheIndex+1, metadata.length*2));
+        }
+        metadata[cacheIndex] = (candidate != null) ? candidate : SpatialMetadata.EMPTY;
         return candidate;
     }
 

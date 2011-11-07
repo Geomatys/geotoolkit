@@ -81,7 +81,7 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * trees derived from the predefined Geotk trees.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 3.07 (derived from 3.05)
  * @module
@@ -269,6 +269,29 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
          * There is no public API for this functionality at this time...
          */
         mapName("RectifiedGridDomain", "getExtent", "Limits");
+    }
+
+    /**
+     * Adds the tree structure for an ISO-19115 metadata object.
+     * <b>Warning:</b> this tree is big and is supported only for a few plugins like
+     * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
+     *
+     * @param addToElement The name of the element where to add the tree,
+     *        or {@code null} for adding the tree at the root.
+     *
+     * @see SpatialMetadataFormat#ISO_19115
+     *
+     * @since 3.20
+     */
+    protected void addTreeForISO19115(String addToElement) {
+        if (addToElement == null) {
+            addToElement = getRootName();
+        }
+        final Map<Class<?>,Class<?>> substitution = new HashMap<>(20);
+        // TODO: need to rename the nodes below.
+        substitution.put(ProcessStepReport.class, null); // "Reports" name clash with quality.Element
+        substitution.put(Source.class, null); // "Sources" name clash with ResponsibleParty.
+        addTree(MetadataStandard.ISO_19115, Metadata.class, "Metadata", addToElement, substitution);
     }
 
     /**

@@ -1,7 +1,7 @@
 Directory content:
 
-    2005092200_sst_21-24.en.nc[ml]
-    ------------------------------
+    2005092200_sst_21-24.en.nc
+    --------------------------
     Freely available test files downloaded from http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html on October 5, 2011.
 
 
