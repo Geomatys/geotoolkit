@@ -16,20 +16,119 @@
  */
 package org.geotoolkit.metadata.dimap;
 
-import java.util.Collection;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Locale;
+import static org.geotoolkit.metadata.dimap.DimapConstants.ATTRIBUTE_HREF;
+import static org.geotoolkit.metadata.dimap.DimapConstants.ATT_HREF;
+import static org.geotoolkit.metadata.dimap.DimapConstants.ATT_VERSION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_X0;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_X1;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_X2;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_Y0;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_Y1;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_AFFINE_Y2;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BANDS_LAYOUT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_DESCRIPTION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_DISPLAY_ORDER;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_INDEX;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BAND_STATISTICS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BLUE_CHANNEL;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_BYTEORDER;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_CRS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_COPYRIGHT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_FRAME;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_ID;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_NAME;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_PRODUCER_NAME;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_PRODUCER_URL;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_PRODUCTION_DATE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_QL_PATH;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_SOURCES;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATASET_TN_PATH;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_ACCESS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_FILE_FORMAT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_ALGORITHM_NAME;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_ALGORITHM_TYPE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_TYPE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION_AFFINE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION_INSERT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION_POINTS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GREEN_CHANNEL;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_HORIZONTAL_CS_CODE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_IMAGE_DISPLAY;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_IMAGE_INTERPRETATION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_JOB_ID;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NBANDS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NBITS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NCOLS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_NROWS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PHYSICAL_BIAS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PHYSICAL_GAIN;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PHYSICAL_UNIT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY_PROCESSING_CENTER;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY_SOFTWARE_NAME;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCTION_FACILITY_SOFTWARE_VERSION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCT_INFO;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_PRODUCT_TYPE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_QUALITY_ASSESSMENT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_CS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_DIMENSIONS;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_ENCODING;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RED_CHANNEL;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SATELLITE_TIME;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_IMAGING_DATE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INCIDENCE_ANGLE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT_INDEX;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_MISSION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_MISSION_INDEX;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_PROCESSING_LEVEL;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SOURCE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SUN_AZIMUTH;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SUN_ELEVATION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_THEORETICAL_RESOLUTION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_VIEWING_ANGLE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SKIP_BYTES;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_DESCRIPTION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_INFORMATION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SPECTRAL_BAND_INFO;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_LIN_MAX;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_LIN_MIN;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_MAX;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_MEAN;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_MIN;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_STDV;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_CRS_X;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_CRS_Y;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_DATA_X;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_TIE_POINT_DATA_Y;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_ULXMAP;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_ULYMAP;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_XDIM;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_YDIM;
+import static org.geotoolkit.util.DomUtilities.firstElement;
+import static org.geotoolkit.util.DomUtilities.getListElements;
+import static org.geotoolkit.util.DomUtilities.textAttributeValueSafe;
+import static org.geotoolkit.util.DomUtilities.textValueSafe;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.measure.unit.Unit;
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
@@ -37,21 +136,27 @@ import javax.media.jai.WarpAffine;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
+import org.geotoolkit.internal.jaxb.gmi.MI_Metadata;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.metadata.dimap.DimapConstants.DataType;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
 import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
 import org.geotoolkit.metadata.iso.acquisition.DefaultOperation;
+import org.geotoolkit.metadata.iso.acquisition.DefaultPlatform;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
+import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
 import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
+import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
+import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
@@ -60,15 +165,18 @@ import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.coverage.SampleDimensionType;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.constraint.Restriction;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.lineage.Lineage;
@@ -78,22 +186,21 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import static org.geotoolkit.metadata.dimap.DimapConstants.*;
-import static org.geotoolkit.util.DomUtilities.*;
 
 /**
  * Utility class to access usable objects from a dimap file.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Christophe Mourette (Geomatys)
  * @module pending
  */
+@SuppressWarnings("restriction")
 public final class DimapAccessor extends Static {
 
     private static final Logger LOGGER = Logging.getLogger(DimapAccessor.class);
+	
 
     private DimapAccessor() {
     }
@@ -327,6 +434,56 @@ public final class DimapAccessor extends Static {
         final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
         return name;
     }
+    
+    /**
+     * @return DatasetThumbnail from Dataset_ID tag.
+     */
+    public static String readDatasetVertex(final Element doc){
+    	String result;
+        final Element datasetFrame = firstElement(doc, TAG_DATASET_FRAME);
+        final List<Element> vertexs = getListElements(datasetFrame, "Vertex");
+        Double firstLon = null;
+        Double firstLat = null;
+        result = "POLYGON ((";
+        for (Element vertex : vertexs) {
+        	final Double lon = textValueSafe(vertex, "FRAME_LON", Double.class);
+        	final Double lat = textValueSafe(vertex, "FRAME_LAT", Double.class);
+        	if (!result.endsWith("(")){
+        		result+=",";
+        	}else{
+        		firstLon = lon;
+        		firstLat = lat;
+        	}
+
+//        	final Double row = textValueSafe(vertex, "FRAME_ROW", Double.class);
+//        	final Double col = textValueSafe(vertex, "FRAME_COL", Double.class);
+        	result+=lon.toString()+' '+lat.toString();
+		}
+        if (firstLat!=null && firstLon !=null){
+        	result+=","+firstLon.toString()+' '+firstLat.toString();
+        }
+        result+=")),";
+        return result;
+        
+    }
+    
+    /**
+     * @return DatasetThumbnail from Dataset_ID tag.
+     */
+    public static String readDatasetThumbnail(final Element doc){
+        final Element datasetID = firstElement(doc, TAG_DATASET_ID);
+        final String name = textAttributeValueSafe(datasetID, TAG_DATASET_TN_PATH,ATTRIBUTE_HREF, String.class);
+        return name.toLowerCase();
+    }
+    
+    /**
+     * @return DatasetQuickLook from Dataset_ID tag.
+     */
+    public static String readDatasetQuickLook(final Element doc){
+        final Element datasetID = firstElement(doc, TAG_DATASET_ID);
+        final String name = textAttributeValueSafe(datasetID, TAG_DATASET_QL_PATH,ATTRIBUTE_HREF,  String.class);
+        return name.toLowerCase();
+    }
 
     /**
      * Converts the given dimap document in a metadata object.
@@ -343,7 +500,11 @@ public final class DimapAccessor extends Static {
             metadata = new DefaultMetadata();
         }else{
             //to ensure we don't modify the original
-            metadata = new DefaultMetadata(metadata);
+        	if (metadata instanceof MI_Metadata){
+        		metadata = new MI_Metadata(metadata);
+        	}else{
+        		metadata = new DefaultMetadata(metadata);
+        	}
         }
 
         
@@ -352,7 +513,8 @@ public final class DimapAccessor extends Static {
         metadata.setLanguage(Locale.ENGLISH);
         metadata.setDateStamp(new Date());
 
-
+        String name = null;
+        String thumbnail = null;
 
         //<xsd:element minOccurs="0" ref="Dataset_Id"/> ------------------------
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
@@ -361,13 +523,13 @@ public final class DimapAccessor extends Static {
             //DATASET_NAME  → Dataset title (MD_Metadata.fileIdentifier)
             //COPYRIGHT     → RestrictionCode ( MD_Metadata > MD_Constraints > MD_LegalConstraints.accessConstraints)
 
-            final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
+            name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
             final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
 
             if(name != null){
-                metadata.setFileIdentifier(name);
+                metadata.setFileIdentifier(name.replaceAll(":", "_").replaceAll(" ", "_").replaceAll("/", "_"));
             }
-
+            thumbnail = textAttributeValueSafe(datasetID, TAG_DATASET_TN_PATH,ATTRIBUTE_HREF, String.class);
             if(copyright != null){
                 final DefaultLegalConstraints constraints = new DefaultLegalConstraints();
                 final Restriction restric = Restriction.COPYRIGHT;
@@ -380,7 +542,21 @@ public final class DimapAccessor extends Static {
         //<xsd:element minOccurs="0" ref="Dataset_Frame"/> ---------------------
         //has been set from the geotiff informations
         final Element datasetFrame = firstElement(doc, TAG_DATASET_FRAME);
+        
+        
+        
         if(datasetFrame != null){
+        	if (metadata instanceof MI_Metadata){
+            	String wkt = readDatasetVertex(doc);
+            	final DefaultDataIdentification identification = (DefaultDataIdentification)getIdentification(metadata);
+            	final Collection<? extends Extent> mdExtents  = identification.getExtents();
+            	for (Extent extent : mdExtents) {
+					if (extent instanceof DefaultExtent){
+						((DefaultExtent)extent).setDescription(new DefaultInternationalString(wkt));
+					}
+				}
+            }
+        	 
             //MAPPING
             //FRAME_LON                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
             //FRAME_LAT                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
@@ -461,6 +637,7 @@ public final class DimapAccessor extends Static {
                     step.setProcessingInformation(processing);
                 }
                 processing.getSoftwareReferences().add(softCitation);
+                
             }
 
         }
@@ -663,14 +840,24 @@ public final class DimapAccessor extends Static {
             final String instrumentName = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT, String.class);
             final String instrumentIndex = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT_INDEX, String.class);
             final String processingLevel = textValueSafe(sceneSource, TAG_SCENE_PROCESSING_LEVEL, String.class);
-            final String incidenceAngle = textValueSafe(sceneSource, TAG_SCENE_INCIDENCE_ANGLE, String.class);
+            final Double incidenceAngle = textValueSafe(sceneSource, TAG_SCENE_INCIDENCE_ANGLE, Double.class);
+            final Double theoreticalResolution = textValueSafe(sceneSource, TAG_SCENE_THEORETICAL_RESOLUTION, Double.class);
             final String viewingAngle = textValueSafe(sceneSource, TAG_SCENE_VIEWING_ANGLE, String.class);
             final Double sunAzimuth = textValueSafe(sceneSource, TAG_SCENE_SUN_AZIMUTH, Double.class);
             final Double sunElevation = textValueSafe(sceneSource, TAG_SCENE_SUN_ELEVATION, Double.class);
 
+            
+            final DefaultDataIdentification dataIdentification = (DefaultDataIdentification)getIdentification(metadata);
+//            DefaultResolution resolution = new DefaultResolution();
+//            resolution.setDistance(theoreticalResolution);
+//			dataIdentification.getSpatialResolutions().add(resolution );
+			if (thumbnail!=null && thumbnail.contains(".")) {
 
-            final AbstractIdentification idf = getIdentification(metadata);
-            idf.setAbstract(new SimpleInternationalString(sourceDesc));
+					dataIdentification.getGraphicOverviews().add(new DefaultBrowseGraphic(generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
+			}
+            
+            //final AbstractIdentification idf = getIdentification(metadata);
+			dataIdentification.setAbstract(new SimpleInternationalString(sourceDesc));
 
             final DefaultCitation citation = new DefaultCitation();
             citation.getDates().add(new DefaultCitationDate(imagingDate, DateType.CREATION));
@@ -691,18 +878,30 @@ public final class DimapAccessor extends Static {
             instrument.setDescription(new SimpleInternationalString(instrumentName));
             instrument.setIdentifier(instrumentId);
 
+            final DefaultPlatform platform = new DefaultPlatform();
+            final DefaultCitation platformCitation = new DefaultCitation();
+            platformCitation.setTitle(new SimpleInternationalString(mission));
+			platform.setCitation(platformCitation);
+            
 
-            final DefaultAcquisitionInformation acqInfo = new DefaultAcquisitionInformation();
+            final DefaultAcquisitionInformation acqInfo = (DefaultAcquisitionInformation) getAcquisition(metadata);
             acqInfo.getOperations().add(operation);
+            acqInfo.getPlatforms().add(platform);
             acqInfo.getInstruments().add(instrument);
 
-            final DefaultImageDescription contentInfo = new DefaultImageDescription();
+            final DefaultImageDescription contentInfo = (DefaultImageDescription) getContent(metadata);
             contentInfo.setIlluminationAzimuthAngle(sunAzimuth);
             contentInfo.setIlluminationElevationAngle(sunElevation);
-
-            metadata.getAcquisitionInformation().add(acqInfo);
-            metadata.getContentInfo().add(contentInfo);
-
+            //contentInfo.setIlluminationElevationAngle(incidenceAngle);
+            
+//            final DefaultLineage lineage = getLineage(metadata);
+//            final DefaultProcessStep step = new DefaultProcessStep();
+//            DefaultProcessing defaultProcessing= (DefaultProcessing) step.getProcessingInformation();
+//            DefaultAlgorithm algorithm = new DefaultAlgorithm();
+//            algorithm.setDescription(new DefaultInternationalString(TAG_SCENE_PROCESSING_LEVEL));
+//            //jfkdj;
+//            defaultProcessing.getAlgorithms().add(algorithm);
+//            lineage.getProcessSteps().add(step);
         }
 
         //Satellite_Time -------------------------------------------------------
@@ -721,7 +920,16 @@ public final class DimapAccessor extends Static {
         return metadata;
     }
 
-    private static DefaultProcessStep getProcessStep(final DefaultMetadata metadata){
+    private static URI generateFileName(String name, String extention) {
+		try {
+			return new URI(name.replaceAll(":", "_").replaceAll(" ", "_").replaceAll("/", "_").concat(extention));
+		}catch (URISyntaxException e) {
+			return null;
+		}
+		
+	}
+
+	private static DefaultProcessStep getProcessStep(final DefaultMetadata metadata){
         final DefaultLineage lineage = getLineage(metadata);
 
         final Collection<ProcessStep> steps = lineage.getProcessSteps();
@@ -805,6 +1013,52 @@ public final class DimapAccessor extends Static {
                 copies.set(0, copy);
                 //copy and replace collection
                 metadata.setIdentificationInfo(copies);
+                return copy;
+            }
+        }
+
+    }
+
+    private static AbstractContentInformation getContent(final DefaultMetadata metadata){
+        final Collection<ContentInformation> ids = metadata.getContentInfo();
+
+        if(ids.isEmpty()){
+            final DefaultImageDescription id = new DefaultImageDescription();
+            ids.add(id);
+            return id;
+        }else{
+            final List<ContentInformation> copies = new ArrayList<ContentInformation>(ids);
+            final ContentInformation id = copies.get(0);
+            if(id instanceof DefaultImageDescription){
+                return (DefaultImageDescription) id;
+            }else{
+                final AbstractContentInformation copy = DefaultImageDescription.castOrCopy(id);
+                copies.set(0, copy);
+                //copy and replace collection
+                metadata.setContentInfo(copies);
+                return copy;
+            }
+        }
+
+    }
+    
+    private static DefaultAcquisitionInformation getAcquisition(final DefaultMetadata metadata){
+        final Collection<AcquisitionInformation> acq = metadata.getAcquisitionInformation();
+
+        if(acq.isEmpty()){
+            final DefaultAcquisitionInformation id = new DefaultAcquisitionInformation();
+            acq.add(id);
+            return id;
+        }else{
+            final List<AcquisitionInformation> copies = new ArrayList<AcquisitionInformation>(acq);
+            final AcquisitionInformation id = copies.get(0);
+            if(id instanceof DefaultDataIdentification){
+                return (DefaultAcquisitionInformation) id;
+            }else{
+                final DefaultAcquisitionInformation copy = DefaultAcquisitionInformation.castOrCopy(id);
+                copies.set(0, copy);
+                //copy and replace collection
+                metadata.setAcquisitionInformation(copies);
                 return copy;
             }
         }

@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -142,6 +144,30 @@ public final class DomUtilities extends Static {
         }
         return null;
     }
+    
+    /**
+     * Search and return the list node with a given tag name.
+     *
+     * @param parent : node to explore
+     * @param tagName : child node name
+     * @param recursive : search in sub nodes or not
+     * @return first element with tagName in parent node or null
+     */
+    public static List<Element> getListElements(final Element parent, final String tagName){
+
+
+            final NodeList lst = parent.getElementsByTagName(tagName);
+            
+            List<Element> result = new ArrayList<Element>();
+            for(int i=0,n=lst.getLength();i<n;i++){
+                final Node child = lst.item(i);
+                if(child instanceof Element && tagName.equalsIgnoreCase(child.getNodeName())){
+                    result.add((Element) child);
+                }
+            }
+            return result;
+        
+    }
 
 
 
@@ -179,6 +205,26 @@ public final class DomUtilities extends Static {
         if(text == null) return null;
         return ConverterRegistry.system().converter(String.class, clazz).convert(text);
     }
+    
+    /**
+     * Search a child node with the given tag name and return it's text attribute
+     * converted to the given clazz.
+     * The convertion in made using the geotoolkit Converters.
+     *
+     * @param <T> : wished value class
+     * @param parent : node to explore
+     * @param tagName : child node name
+     * @param attributeName : child node attibute name
+     * @param clazz : wished value class
+     * @return T or null if no node with tagname was found or convertion to given class failed.
+     */
+    public static <T> T textAttributeValue(final Element parent, final String tagName,final String attributeName, final Class<T> clazz) throws NonconvertibleObjectException{
+        final Element ele = firstElement(parent, tagName, true);
+        if(ele == null) return null;
+        final String text = ele.getAttribute(attributeName);
+        if(text == null) return null;
+        return ConverterRegistry.system().converter(String.class, clazz).convert(text);
+    }
 
     /**
      * Same as {@link DomUtilities#textValue(org.w3c.dom.Element, java.lang.String, java.lang.Class) }
@@ -187,6 +233,19 @@ public final class DomUtilities extends Static {
     public static <T> T textValueSafe(final Element parent, final String tagName, final Class<T> clazz) {
         try {
             return textValue(parent, tagName, clazz);
+        } catch (NonconvertibleObjectException ex) {
+            Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Same as {@link DomUtilities#textAttributeValue(org.w3c.dom.Element, java.lang.String, java.lang.String, java.lang.Class) }
+     * but dont throw any exception.
+     */
+    public static <T> T textAttributeValueSafe(final Element parent, final String tagName, final String attributeName, final Class<T> clazz) {
+        try {
+            return textAttributeValue(parent, tagName,attributeName,  clazz);
         } catch (NonconvertibleObjectException ex) {
             Logger.getLogger(DomUtilities.class.getName()).log(Level.WARNING, null, ex);
             return null;

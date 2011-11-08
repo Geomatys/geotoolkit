@@ -158,7 +158,7 @@ public class DimapAccessorTest {
         //<xsd:element minOccurs="0" ref="Dataset_Id"/> ------------------------
         //DATASET_NAME  → Dataset title (MD_Metadata.fileIdentifier)
         //COPYRIGHT     → RestrictionCode ( MD_Metadata > MD_Constraints > MD_LegalConstraints.accessConstraints)
-        assertEquals("Testing Scene 2", metadata.getFileIdentifier());
+        assertEquals("Testing Scene 2".replaceAll(":", "_").replaceAll(" ", "_").replaceAll("/", "_"), metadata.getFileIdentifier());
         final Collection<Constraints> constraints = metadata.getMetadataConstraints();
         assertNotNull(constraints);
         assertEquals(1, constraints.size());
