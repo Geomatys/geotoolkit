@@ -20,34 +20,23 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Collection;
 import java.util.Collections;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
-import org.opengis.util.CodeList;
-import org.opengis.annotation.Obligation;
-
-// All imports in the block below are for javadoc only.
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.opengis.metadata.acquisition.Instrument;
-import org.opengis.metadata.acquisition.Objective;
 import org.opengis.metadata.acquisition.Platform;
-import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.ImageDescription;
-import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.metadata.identification.DataIdentification;
-import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.extent.Extent;
@@ -58,27 +47,23 @@ import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.datum.Datum;
-import org.opengis.referencing.datum.Ellipsoid;
-import org.opengis.referencing.datum.PrimeMeridian;
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.cs.*;
+import org.opengis.referencing.crs.*;
+import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 
-import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.NullValuePolicy;
-import org.geotoolkit.metadata.TypeValuePolicy;
-import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.gui.swing.tree.TreeTableNode;
+import org.geotoolkit.referencing.cs.*;
+import org.geotoolkit.referencing.crs.*;
+import org.geotoolkit.referencing.datum.*;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.gui.swing.tree.TreeTableNode;
+import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -86,27 +71,10 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 /**
  * Describes the structure of {@linkplain SpatialMetadata spatial metadata}.
- * This class infers the tree structure from metadata objects defined by some
- * {@linkplain MetadataStandard metadata standard}, typically ISO 19115-2. New
- * metadata elements are declared by calls to the {@link #addTree addTree} method.
- * Default formats are defined <a href="#default-formats">below</a>.
- *
- * {@section String formatting in attributes}
- * The following formatting rules apply:
- * <p>
- * <ul>
- *   <li>Numbers are formatted as in the {@linkplain Locale#US US locale}, i.e.
- *       as {@link Integer#toString(int)} or {@link Double#toString(double)}.</li>
- *   <li>Dates are formatted with the {@code "yyyy-MM-dd HH:mm:ss"}
- *       {@linkplain java.text.SimpleDateFormat pattern} in UTC
- *       {@linkplain java.util.TimeZone timezone}.</li>
- * </ul>
- *
- * <a name="default-formats">{@section Default formats}</a>
- * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
- * GeoAPI metadata interfaces, especially {@link Metadata} and {@link ImageDescription}.
- * Consequently those instances can be considered as profiles of ISO 19115-2, with a few
- * minor departures:
+ * The default {@linkplain #getStreamInstance(String) stream} and {@link #getImageInstance(String)
+ * image} formats are inferred from a subset of the GeoAPI metadata interfaces, especially
+ * {@link Metadata} and {@link ImageDescription}. Consequently those instances can be considered
+ * as profiles of ISO 19115-2, with a few minor departures:
  * <p>
  * <ul>
  *   <li>The {@link Band} interface defined by ISO 19115-2 is used only when the values are
@@ -115,9 +83,9 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *       is used.</li>
  * </ul>
  * <p>
- * The tree structures are show below. As a general rule, the name of <em>elements</em> start with
- * a upper case letter while the name of <em>attributes</em> start with a lower case letter. The
- * valid types of attributes values are <a href="package-summary.html#accessor-types">listed here</a>.
+ * <a name="default-formats">The tree structures are show below</a>. As a general rule, the name of
+ * <em>elements</em> start with a upper case letter while the name of <em>attributes</em> start with
+ * a lower case letter. The valid types of attributes values are <a href="package-summary.html#accessor-types">listed here</a>.
  * For browsing these trees in an applet together with additional information, see the
  * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/IIOMetadataPanel.html">IIOMetadataPanel applet</a>.
  *
@@ -278,7 +246,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 </tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @see SpatialMetadata
  *
@@ -295,50 +263,64 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public static final String FORMAT_NAME = "geotk-coverageio_3.07";
 
     /**
-     * The ISO-19115 format name, which is {@value}. This format is supported only by a few
-     * plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}. The tree created
-     * by this metadata format can potentially be much bigger that the tree created by the
-     * default Geotk format.
+     * The ISO-19115 format name, which is {@value}. This metadata format is big and supported
+     * only by a few plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
+     * For applications that don't need to full verbosity of ISO 19115, consider using the
+     * {@linkplain #getStreamInstance(String) stream metadata instance} identified by the
+     * {@link #FORMAT_NAME} name instead.
      *
      * @since 3.20
      */
     public static final String ISO_FORMAT_NAME = "ISO-19115";
 
     /**
-     * The name of the single attribute to declare for node that contains array.
-     * This is used mostly for the following:
-     *
-     * {@preformat text
-     *     RectifiedGridDomain  : RectifiedGrid
-     *     └───OffsetVectors    : List<double[]>
-     *         └───OffsetVector : double[]
-     *             └───values
-     * }
-     */
-    static final String ARRAY_ATTRIBUTE_NAME = "values";
-
-    /**
      * The policy for the names of the nodes to be inferred from the ISO objects.
      * We use JavaBeans names instead of UML identifiers in order to get the plural
      * form for collections.
      */
-    private static final KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
+    static final KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
-     * The default instance for <cite>ISO 19115</cite> metadata format. This metadata format is big
-     * and supported only by a few plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
-     * For applications that don't need to full verbosity of ISO 19115, use the {@link #STREAM} metadata
-     * instead.
-     *
-     * @see PredefinedMetadataFormat#addTreeForISO19115(String)
-     *
-     * @since 3.20
+     * Holder for the default instance for <cite>ISO 19115</cite> metadata format.
+     * Applies the <cite>Initialization-on-demand holder</cite> idiom, because the
+     * ISO metadata format is very large and only occasionally used.
      */
-    public static final SpatialMetadataFormat ISO_19115;
-    static {
-        final PredefinedMetadataFormat p = new PredefinedMetadataFormat(ISO_FORMAT_NAME);
-        p.addTreeForISO19115(null);
-        ISO_19115 = p;
+    private static final class ISO {
+        private ISO() {}
+
+        /** The ISO-19115 instance for <cite>stream</cite> metadata format. */
+        static final SpatialMetadataFormat INSTANCE;
+        static {
+            final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(ISO_FORMAT_NAME);
+            builder.addTreeForISO19115(null);
+            INSTANCE = builder.getInstance();
+        }
+    }
+
+    /**
+     * Holder for the default instances of Geotk metadata format.
+     * Applies the <cite>Initialization-on-demand holder</cite> idiom,
+     * because the builder class is relatively large.
+     */
+    private static final class Geotk {
+        private Geotk() {}
+
+        /** The default instance for <cite>stream</cite> metadata format. */
+        static final SpatialMetadataFormat STREAM;
+        static {
+            SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(FORMAT_NAME);
+            builder.addTreeForStream(null);
+            STREAM = builder.getInstance();
+        }
+
+        /** The default instance for <cite>image</cite> metadata format. */
+        static final SpatialMetadataFormat IMAGE;
+        static {
+            final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(FORMAT_NAME);
+            builder.addTreeForImage(null);
+            builder.addTreeForCRS("RectifiedGridDomain");
+            IMAGE = builder.getInstance();
+        }
     }
 
     /**
@@ -346,32 +328,71 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * format that apply to file as a whole, which may contain more than one image. The
      * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
-     * @see PredefinedMetadataFormat#addTreeForStream(String)
-     *
      * @since 3.05
+     *
+     * @deprecated Replaced by call to {@code getStreamInstance(FORMAT_NAME)}.
      */
-    public static final SpatialMetadataFormat STREAM;
-    static {
-        final PredefinedMetadataFormat p = new PredefinedMetadataFormat(FORMAT_NAME);
-        p.addTreeForStream(null);
-        STREAM = p;
-    }
+    @Deprecated
+    public static final SpatialMetadataFormat STREAM = Geotk.STREAM;
 
     /**
      * The default instance for <cite>image</cite> metadata format. This
      * is the metadata format that apply to a particular image in a file.
      * The tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
-     * @see PredefinedMetadataFormat#addTreeForImage(String)
-     *
      * @since 3.05
+     *
+     * @deprecated Replaced by call to {@code getImageInstance(FORMAT_NAME)}.
      */
-    public static final SpatialMetadataFormat IMAGE;
-    static {
-        final PredefinedMetadataFormat p = new PredefinedMetadataFormat(FORMAT_NAME);
-        p.addTreeForImage(null);
-        p.addTreeForCRS("RectifiedGridDomain");
-        IMAGE = p;
+    @Deprecated
+    public static final SpatialMetadataFormat IMAGE = Geotk.IMAGE;
+
+    /**
+     * Returns the <cite>stream</cite> metadata format for the given name. This is the metadata
+     * format that apply to a file as a whole, which may contain more than one image. The
+     * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
+     *
+     * @param  name The {@link #FORMAT_NAME} or {@link #ISO_FORMAT_NAME} constant, or {@code null}
+     *              for the default format (currently {@value #FORMAT_NAME}).
+     * @return The stream metadata format for the given name.
+     * @throws IllegalArgumentException If the given name is not one of the supported constants.
+     *
+     * @since 3.20
+     */
+    public static SpatialMetadataFormat getStreamInstance(final String name) {
+        if (name != null) {
+            switch (name) {
+                case FORMAT_NAME:     break;
+                case ISO_FORMAT_NAME: return ISO.INSTANCE;
+                default: throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
+            }
+        }
+        return Geotk.STREAM;
+    }
+
+    /**
+     * Returns the <cite>image</cite> metadata format for the given name.
+     * This is the metadata format that apply to a particular image in a file.
+     * The tree structure is documented in the <a href="#default-formats">class javadoc</a>.
+     *
+     * @param  name The {@link #FORMAT_NAME} constant, or {@code null}
+     *              for the default format (currently {@value #FORMAT_NAME}).
+     * @return The image metadata format for the given name.
+     * @throws IllegalArgumentException If the given name is not one of the supported constants.
+     *
+     * @since 3.20
+     */
+    public static SpatialMetadataFormat getImageInstance(final String name) {
+        if (name != null) {
+            switch (name) {
+                case FORMAT_NAME: break;
+                // More formats may be added later (e.g. GML in JPEG2000).
+                default: throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
+            }
+        }
+        return Geotk.IMAGE;
     }
 
     /**
@@ -387,9 +408,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     private final Map<String, Map<String,String>> namesMapping = new HashMap<>();
 
     /**
-     * The last value returned by {@link #getDescriptions}, cached on the assumption
-     * that the description of different attributes of the same element are likely
-     * to be asked a few consecutive time.
+     * The last value returned by {@link #getDescription(String, String, Locale)}, cached on
+     * the assumption that the description of different attributes of the same element are
+     * likely to be asked a few consecutive time.
      */
     private transient volatile MetadataDescriptions descriptions;
 
@@ -413,7 +434,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param standard     The metadata standard of the element or attribute to be added.
      * @param type         The type of the element or attribute to be added.
      * @param substitution The map of children types to substitute by other types, or {@code null}.
+     *
+     * @deprecated Replaced by {@link SpatialMetadataFormatBuilder}.
      */
+    @Deprecated
     protected void addTree(final MetadataStandard standard, final Class<?> type,
             final Map<Class<?>,Class<?>> substitution)
     {
@@ -441,15 +465,15 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * class in the collection of values. The purpose of this map is to:
      *
      * <ul>
-     *   <li><p>Replace a base class by some specialized subclass. Since {@code IIOMetadata} are
-     *   about grided data (not generic {@code Feature}s), the exact subtype is often known and
-     *   we want the additional attributes to be declared unconditionally. Example:</p>
+     *   <li><p>Replace a base class by some specialized subclass. Since {@code IIOMetadata} is
+     *   about grided data (not generic {@code Feature}s), the exact subtype is often known at
+     *   compile time, and we want the additional attributes to be declared unconditionally.
+     *   Example:</p>
      *
      * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class);</pre></blockquote></li>
      *
-     *   <li><p>Exclude a particular class. This is conceptually equivalent to setting the target
-     *   type to {@code null}. This is used for excluding metadata type which bring a large tree
-     *   of dependencies that we may not be interested in. Example:</p>
+     *   <li><p>Exclude a particular class by setting the replacement to {@code null}. This is used
+     *   for excluding large tree of metadata which may not be applicable. Example:</p>
      *
      * <blockquote><pre>substitution.put({@linkplain Objective}.class, null);</pre></blockquote></li>
      *
@@ -464,10 +488,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * <blockquote><pre>substitution.put({@linkplain Citation}.class, String.class);</pre></blockquote></li>
      *
-     *   <li><p>Replace a collection by a singleton. This is conceptually equivalent to setting the
-     *   source type to an array, and the target type to the element of that array. This is useful
-     *   when a collection seems an overkill for the specific case of stream or image metadata.
-     *   Example:</p>
+     *   <li><p>Replace a collection by a singleton, by setting the source type to an array and the
+     *   target type to the element of that array. This is useful when a collection seems an overkill
+     *   for the specific case of stream or image metadata. Example:</p>
      *
      * <blockquote><pre>substitution.put({@linkplain Identification}[].class, {@linkplain Identification}.class);</pre></blockquote></li>
      * </ul>
@@ -481,7 +504,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param parentName    The name of the parent node to where to add the child.
      * @param substitution  The map of children types to substitute by other types (see javadoc),
      *                      or {@code null} if none.
+     *
+     * @deprecated Replaced by {@link SpatialMetadataFormatBuilder}.
      */
+    @Deprecated
     protected void addTree(final MetadataStandard standard, final Class<?> type,
             final String elementName, final String parentName,
             final Map<Class<?>,Class<?>> substitution)
@@ -490,435 +516,57 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         ensureNonNull("type",        type);
         ensureNonNull("elementName", elementName);
         ensureNonNull("parentName",  parentName);
-        addTree(standard, type, elementName, parentName, false, substitution);
-    }
-
-    /**
-     * Like the previous {@code addTree} method above, but with some additional options.
-     * This method is not yet public because we are waiting to gain more experience in
-     * order to see if more parameters need to be added.
-     *
-     * @param mandatory {@code true} if the element should be mandatory, or {@code false}
-     *        if optional.
-     */
-    final void addTree(final MetadataStandard standard, final Class<?> type,
-            final String elementName, final String parentName, final boolean mandatory,
-            final Map<Class<?>,Class<?>> substitution)
-    {
-        final Set<Class<?>> incomplete = Collections.<Class<?>>emptySet();
-        addTree(standard, type, elementName, parentName, mandatory, substitution, incomplete);
-    }
-
-    /**
-     * Adds a tree for an element that we plan to complete manually later.
-     * This method uses a more conservative algorithm for choosing the child policy.
-     */
-    final void addIncompleteTree(final MetadataStandard standard, final Class<?> type,
-            final String elementName, final String parentName,
-            final Map<Class<?>,Class<?>> substitution)
-    {
-        addTree(standard, type, elementName, parentName, false, substitution, null);
-    }
-
-    /**
-     * Implementation of the above {@code addTree} method with additional arguments.
-     * Not public because the API may change as we get more experience.
-     *
-     * @param mandatory {@code true} if the element to add is mandatory.
-     * @param incomplete Set of types that we plan to complete manually later. The method will
-     *        use a more conservative policy for determining the child policy of those types.
-     *        A {@code null} value means that every types are incomplete. To mean that every
-     *        types are complete, use {@link Collections#emptySet()}.
-     */
-    final void addTree(final MetadataStandard standard, Class<?> type,
-            final String elementName, final String parentName, final boolean mandatory,
-            final Map<Class<?>,Class<?>> substitution, final Set<Class<?>> incomplete)
-    {
-        final Set<Class<?>> exclude = new HashSet<>();
+        final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(this);
         if (substitution != null) {
-            for (final Map.Entry<Class<?>,Class<?>> entry : substitution.entrySet()) {
-                if (entry.getValue() == null) {
-                    exclude.add(entry.getKey());
-                }
-            }
+            builder.substitutions().putAll(substitution);
         }
-        /*
-         * If the given type is an arrray, handle as a multi-occurrence (i.e. we will add
-         * a "Elements" parent node, and declare in that parent a single "Element" child
-         * which can be repeated many time).
-         */
-        int max = 1;
-        String identifier = null;
-        if (type.isArray()) {
-            type = type.getComponentType();
-            max = Integer.MAX_VALUE;
-            try {
-                identifier = standard.getInterface(type).getSimpleName();
-            } catch (ClassCastException e) {
-                // Not an implementation of the expected standard.
-                // It may be an "ordinary" object from the JDK.
-                identifier = elementName;
-            }
-        }
-        addTree(standard, type, identifier, elementName, parentName,
-                mandatory ? 1 : 0, max, null, incomplete, exclude, substitution,
-                new HashMap<String,Class<?>>());
+        builder.addTree(standard, type, elementName, parentName, false);
     }
 
     /**
-     * Implementation of {@link #addTree(Class,String,String, Map)} with a set of attribute type
-     * to exclude. This method invokes itself recursively. The given {@code exclude} set will be
-     * modified in order to avoid infinite recursivity
-     * (e.g. {@code Identifier.getAuthority().getIdentifiers()}).
-     *
-     * @param standard
-     *          The metadata standard of the element or attribute to be added. This standard will
-     *          be constant for the whole tree added by this method call (including children).
-     * @param type
-     *          The type of the element or attribute to be added. May be a {@link CodeList}, an
-     *          interface of the given {@code standard}, or a simple JSE object like a boolean,
-     *          a number of a {@link String}. This type shall <strong>not</strong> be an array
-     *          or a collection. To add a multi-occurrence, specify the <em>element</em> type
-     *          with a {@code maxOccurrence} parameter greater than 1.
-     * @param identifier
-     *          On first invocation, the simple Java name of the standard interface implemented
-     *          by the given {@code type} (this is usually the UML identifier without the OGC/ISO
-     *          two-letters prefix). On recursive invocations, the UML identifier of the Java method
-     *          for the element to be added. If non-null, this argument is usually the same than
-     *          {@code elementName} but in singular form. If {@code null}, a singular name will be
-     *          derived from the {@code elementName} string if needed.
-     * @param elementName
-     *          The name of the element or attribute node to be added. This is the name of the
-     *          parent node, except that the first letter may be changed to upper-case. If the
-     *          node accepts multi-occurrence ({@code maxOccurrence > 1}), a compound child node
-     *          will be added with the {@code identifier} name and {@link #CHILD_POLICY_REPEAT}.
-     * @param parentName
-     *          The name of the parent node where to add the child. This is the name given in
-     *          calls to {@link IIOMetadataFormatImpl} methods for specifying where to add the node.
-     * @param minOccurrence
-     *          Minimal occurrence of the element or attribute in the parent node. If 0, the
-     *          element is considered optional. If different than zero, it is considered
-     *          mandatory.
-     * @param maxOccurrence
-     *          Maximal occurrence of the element or attribute in the parent node. If greater
-     *          than 1, the node will be added with {@link #CHILD_POLICY_REPEAT}.
-     * @param restriction
-     *          The restriction on the valid values, or {@code null} if none. This is used for
-     *          determining the minimal and maximal values of attributes, and the child policy.
-     * @param incomplete
-     *          Set of types that we plan to complete manually later, or {@code null} for all (to
-     *          mean that every types are complete, use {@link Collections#emptySet()} instead).
-     *          When computing the node child policy ({@link #CHILD_POLICY_CHOICE}, <i>etc.</i>)
-     *          from the child restrictions, the children types enumerated in the {@code exclude}
-     *          set will be ignored only if the given {@code type} is not incomplete. Not ignoring
-     *          an "excluded" type may lead to relaxed child policy. This is needed when a "excluded"
-     *          type is actually going to be added manually by the caller after this method call.
-     * @param exclude
-     *          The attribute types to exclude. On first invocation, this is the set of
-     *          {@code substitution} keys having a null value. On recursive invocations,
-     *          <strong>this set is modified</strong> in order to avoid infinite recursivity
-     *          (types are added before entering this method, and removed after exiting).
-     * @param substitution
-     *          The classes to substitute by other classes, or {@code null} if none. Substitutions
-     *          are applied only on children - the {@code type} argument given to this method is
-     *          not modified. This map is user-supplied and is not modified by this method.
-     * @param existings
-     *          The name of nodes added in previous iterations. The existing nodes will be added
-     *          to the new parent using the {@link #addChildElement(String, String)} instead than
-     *          creating the tree again. This method will add new elements in this map, but never
-     *          remove existing elements. The class value is used for checking purpose only.
-     * @return
-     *      The {@code elementName}, or a modified version of it if that method
-     *      modified the case, or {@code null} if it has not been added.
-     */
-    private String addTree(
-            final MetadataStandard       standard,
-            final Class<?>               type,
-                  String                 identifier,    // May replace first letter by upper-case.
-                  String                 elementName,   // Replaced by component name on multi-occurrence
-                  String                 parentName,    // Replaced by element name on multi-occurrence
-            final int                    minOccurrence,
-            final int                    maxOccurrence,
-            final ValueRestriction       restriction,
-            final Set<Class<?>>          incomplete,
-            final Set<Class<?>>          exclude,
-            final Map<Class<?>,Class<?>> substitution,
-            final Map<String,Class<?>>   existings)
-    {
-        if (maxOccurrence == 0) {
-            return null;
-        }
-        final boolean mandatory = (minOccurrence != 0);
-         /*
-         * CodeList    ⇒    Attribute VALUE_ENUMERATION
-         *
-         * The enums are the code list elements. There is no default value.
-         */
-        if (CodeList.class.isAssignableFrom(type)) {
-            @SuppressWarnings("unchecked")
-            final Class<CodeList<?>> codeType = (Class<CodeList<?>>) type;
-            final List<String> codes = Arrays.asList(getCodeList(codeType));
-            addAttribute(parentName, elementName, DATATYPE_STRING, mandatory, null, codes);
-            return elementName;
-        }
-        /*
-         * JSE type    ⇒    Attribute VALUE_ARBITRARY | VALUE_LIST | VALUE_ENUMERATION
-         *
-         * If the element is not an other object from the same metadata standard, handles it as
-         * an attribute. Everything which can not be handled by one of the DATATYPE_* constants
-         * is handled as a String.
-         */
-        if (!standard.isMetadata(type)) {
-            String containerName = elementName;
-            int dataType = typeOf(type);
-            if (maxOccurrence != 1) {
-                /*
-                 * Collection  ⇒  Attribute VALUE_LIST
-                 *
-                 * In most case, we are adding a list of String or double values. But in a
-                 * few cases we add a list of double[] arrays (e.g. "offsetVectors"), in
-                 * which cases we need to insert a compound element in the tree.
-                 */
-                final Class<?> componentType = type.getComponentType();
-                if (componentType != null) {
-                    // The container for the repeated elements (CHILD_POLICY_REPEAT)
-                    containerName = elementName = toElementName(elementName);
-                    addElement(elementName, parentName, minOccurrence, maxOccurrence);
-                    standards.put(elementName, standard);
-
-                    // The repeated element with no child, only a single attribute.
-                    parentName  = elementName;
-                    elementName = toComponentName(elementName, identifier, true);
-                    addElement(elementName, parentName, CHILD_POLICY_EMPTY);
-                    addObjectValue(elementName, componentType, 0, Integer.MAX_VALUE);
-                    standards.put(elementName, standard);
-
-                    // The attribute of kind VALUE_LIST.
-                    parentName  = elementName;
-                    elementName = ARRAY_ATTRIBUTE_NAME;
-                    dataType    = typeOf(componentType);
-                }
-                addAttribute(parentName, elementName, dataType, mandatory, minOccurrence, maxOccurrence);
-            } else if (dataType == IIOMetadataFormat.DATATYPE_BOOLEAN) {
-                /*
-                 * Boolean  ⇒  Attribute VALUE_ENUMERATION
-                 *
-                 * A default value (false) is provided only if the attribute is
-                 * not mandatory, otherwise we will require the user to specify
-                 * a value explicitly.
-                 */
-                addBooleanAttribute(parentName, elementName, !mandatory, false);
-            } else if (restriction != null && restriction.range != null) {
-                /*
-                 * Number  ⇒  Attribute VALUE_RANGE[_?_INCLUSIVE]
-                 */
-                final NumberRange<?> range = restriction.range;
-                addAttribute(parentName, elementName, dataType, mandatory, null,
-                        toString(range.getMinValue()), toString(range.getMaxValue()),
-                        range.isMinIncluded(), range.isMaxIncluded());
-            } else {
-                /*
-                 * Object  ⇒  Attribute VALUE_ARBITRARY
-                 */
-                addAttribute(parentName, elementName, dataType, mandatory, null);
-            }
-            return containerName;
-        }
-        /*
-         * Collection of Metadata    ⇒    Element CHILD_POLICY_REPEAT
-         *
-         * The 'elementName' is inferred from the method name and is typically in plural
-         * form (at least in GeoAPI interfaces).  We add a node for 'elementName', which
-         * can contain many occurrences of the actual metadata structure. The new node is
-         * set as the parent of the actual metadata structure. The name of that metadata
-         * structure is set to the UML identifier, which is typically the same name than
-         * 'elementName' except that it is in singular form.
-         */
-        elementName = toElementName(elementName);
-        final String containerName = elementName;
-        if (maxOccurrence != 1) {
-            final Class<?> existingType = existings.get(elementName);
-            if (existingType != null) {
-                if (!existingType.equals(type)) {
-                    throw new IllegalArgumentException(elementName); // TODO: better error message
-                }
-                addChildElement(elementName, parentName);
-                return null;
-            }
-            addElement(elementName, parentName, minOccurrence, maxOccurrence);
-            existings.put(elementName, type);
-            standards.put(elementName, standard);
-            parentName  = elementName;
-            identifier  = toElementName(identifier);
-            elementName = toComponentName(elementName, identifier, false);
-        }
-        /*
-         * Metadata singleton    ⇒    Element CHILD_POLICY_SOME|ALL|CHOICE|EMPTY
-         *
-         * If every childs have the same obligation,
-         * then we will apply the following mapping:
-         *
-         *   MANDATORY   ⇒ CHILD_POLICY_ALL
-         *   CONDITIONAL ⇒ CHILD_POLICY_CHOICE  (this is assuming that XOR is the condition)
-         *   FORBIDDEN   ⇒ CHILD_POLICY_EMPTY
-         *
-         * Otherwise the policy is CHILD_POLICY_SOME.
-         */
-        boolean hasChilds = false;
-        Obligation obligation = Obligation.FORBIDDEN; // If there is no child.
-        final Map<String,String> methods, identifiers;
-        final Map<String,ValueRestriction> restrictions;
-        final Map<String,Class<?>> propertyTypes, elementTypes;
-        methods       = standard.asNameMap       (type, KeyNamePolicy.  METHOD_NAME,    NAME_POLICY);
-        identifiers   = standard.asNameMap       (type, KeyNamePolicy.  UML_IDENTIFIER, NAME_POLICY);
-        propertyTypes = standard.asTypeMap       (type, TypeValuePolicy.PROPERTY_TYPE,  NAME_POLICY);
-        elementTypes  = standard.asTypeMap       (type, TypeValuePolicy.ELEMENT_TYPE,   NAME_POLICY);
-        restrictions  = standard.asRestrictionMap(type, NullValuePolicy.NON_NULL,       NAME_POLICY);
-        final boolean isComplete = (incomplete != null) && !incomplete.contains(type);
-        for (final Map.Entry<String,Class<?>> entry : elementTypes.entrySet()) {
-            final Class<?> candidate = entry.getValue();
-            if (isComplete && exclude.contains(candidate)) {
-                // If the caller does not plan to complete manually the tree after this method,
-                // then the excluded types should not be considered when determining the child
-                // policy. Note that a null 'incomplete' map means that every types are incomplete.
-                continue;
-            }
-            if (standard.isMetadata(candidate) && !CodeList.class.isAssignableFrom(candidate)) {
-                final ValueRestriction vr = restrictions.get(entry.getKey());
-                if (vr != null) {
-                    final Obligation c = vr.obligation;
-                    if (c != null) {
-                        if (!hasChilds) {
-                            hasChilds = true;
-                            obligation = c;
-                            continue;
-                        }
-                        if (c == obligation) {
-                            continue;
-                        }
-                    }
-                }
-                // Found an obligation which is unknown or different than the previous ones.
-                obligation = null;
-                hasChilds = true;
-                break;
-            }
-        }
-        if (obligation == null) {
-            // The obligation is not the same for every child.
-            obligation = Obligation.OPTIONAL;
-        }
-        final int childPolicy;
-        switch (obligation) {
-            case MANDATORY:   childPolicy = CHILD_POLICY_ALL;    break;
-            case CONDITIONAL: childPolicy = CHILD_POLICY_CHOICE; break;
-            case FORBIDDEN:   childPolicy = CHILD_POLICY_EMPTY;  break;
-            default:          childPolicy = CHILD_POLICY_SOME;   break;
-        }
-        /*
-         * At this point we have determined the child policy to apply to the new node.
-         * Now add the child elements. The loop below invokes this method recursively
-         * for each attribute of the metadata object that we are adding.
-         */
-        final Class<?> existingType = existings.get(elementName);
-        if (existingType != null) {
-            if (!existingType.equals(type)) {
-                throw new IllegalArgumentException(elementName); // TODO: better error message
-            }
-            addChildElement(elementName, parentName);
-            return null;
-        }
-        addElement(elementName, parentName, childPolicy);
-        addObjectValue(elementName, type);
-        addCustomAttributes(elementName, type);
-        standards.put(elementName, standard);
-        for (final Map.Entry<String,Class<?>> entry : propertyTypes.entrySet()) {
-            String childName = entry.getKey();
-            final ValueRestriction vr = restrictions.get(childName);
-            int min = 0, max = 1;
-            if (vr != null && vr.obligation != null) {
-                switch (vr.obligation) {
-                    case MANDATORY: min = 1; break;
-                    case FORBIDDEN: max = 0; break;
-                }
-            }
-            Class<?> childType = entry.getValue();
-            if (Collection.class.isAssignableFrom(childType)) {
-                // Replace the collection type by the type of elements in that collection.
-                childType = elementTypes.get(childName);
-                if (childType == null) {
-                    /*
-                     * We have been unable to find the element type.
-                     * Silently ignore.
-                     */
-                    continue;
-                }
-                max = Integer.MAX_VALUE;
-            }
-            /*
-             * If the caller specified a substitution map, then we perform two checks:
-             *
-             * 1) If we have a collection (max > 1), then check if the caller wants to
-             *    replace the collection (identified by an array type) by a singleton.
-             *
-             * 2) Then check if we want to replace the element type by an other element
-             *    type. It could be a new array type.
-             */
-            if (substitution != null) {
-                Class<?> replacement = null;
-                if (max > 1) { // Collection case.
-                    replacement = substitution.get(Classes.changeArrayDimension(childType, 1));
-                    if (replacement != null) {
-                        childType = replacement;    // Typically, the replacement type is the same.
-                        childName = identifiers.get(childName); // Replace plural by singular form.
-                        max = 1;
-                    }
-                }
-                replacement = substitution.get(childType);
-                if (replacement != null) {
-                    childType = replacement;
-                    replacement = childType.getComponentType();
-                    if (replacement != null) {
-                        max = Integer.MAX_VALUE;
-                        childType = replacement;
-                    }
-                }
-            }
-            /*
-             * We now have all the properties for the child that we want to add. Invoke this method
-             * recursively for proceding to the addition, with guard against infinite recursivity.
-             */
-            if (exclude.add(childType)) {
-                childName = addTree(standard, childType, identifiers.get(childName), childName,
-                        elementName, min, max, vr, incomplete, exclude, substitution, existings);
-                if (!exclude.remove(childType)) {
-                    throw new AssertionError(childType);
-                }
-                if (childName != null) {
-                    mapName(elementName, methods.get(entry.getKey()), childName);
-                }
-            }
-        }
-        return containerName;
-    }
-
-    /**
-     * Returns the code list identifiers. This is a hook for overriding by subclasses.
-     * {@link PredefinedMetadataFormat} will override this method for modifying a code
-     * inherited from a legacy OGC specification.
-     */
-    String[] getCodeList(final Class<? extends CodeList<?>> codeType) {
-        return CodeLists.identifiers(codeType);
-    }
-
-    /**
-     * Invoked when a metadata element is about to be added to the tree. This is a hook for adding
-     * custom attributes which may not be in the UML or excluded for the {@code addTree}. The main
-     * attributes of interest are {@code "name"} and {@code "type"} for referencing objects.
+     * Adds a new element type to this metadata document format with a
+     * child policy of {@link #CHILD_POLICY_REPEAT CHILD_POLICY_REPEAT}.
      * <p>
-     * The default implementation does nothing.
+     * This method is defined mostly in order to give access to protected methods
+     * from {@link SpatialMetadataFormatBuilder}.
+     *
+     * @param <T>           The compile-time type of the {@code type} argument.
+     * @param standard      The standard from which the new element is derived, or {@code null}.
+     * @param type          The legal class of the object value, or {@code null}.
+     * @param elementName   The name of the new element.
+     * @param parentName    The name of the element that will be the parent of the new element.
+     * @param childPolicy   One of the {@code CHILD_POLICY_*} constants indicating the child policy
+     *                      of the new element.
+     * @param minOccurrence The minimum number of children of the node.
+     * @param maxOccurrence The maximum number of children of the node.
      */
-    void addCustomAttributes(final String elementName, final Class<?> type) {
+    @SuppressWarnings("fallthrough")
+    final <T> void addElement(final MetadataStandard standard, final Class<T> type,
+            final String elementName, final String parentName, int childPolicy,
+            final int minOccurrence, final int maxOccurrence)
+    {
+        switch (maxOccurrence) {
+            case 0:  childPolicy = CHILD_POLICY_EMPTY; // Fallthrough
+            case 1:  addElement(elementName, parentName, childPolicy); break;
+            default: addElement(elementName, parentName, minOccurrence, maxOccurrence); break;
+        }
+        if (standard != null) {
+            standards.put(elementName, standard);
+        }
+        if (type != null) {
+            addObjectValue(elementName, type);
+            addCustomAttributes(elementName, type);
+        }
+    }
+
+    /**
+     * Adds a reference to an existing child element. This method is defined here only in
+     * order to give access to the protected method from {@link SpatialMetadataFormatBuilder}.
+     * This method is defined mostly in order to give access to a protected method from
+     * {@link SpatialMetadataFormatBuilder}.
+     */
+    final void addExistingElement(final String elementName, final String parentName) {
+        addChildElement(elementName, parentName);
     }
 
     /**
@@ -928,32 +576,154 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * implementation is as below:
      *
      * {@preformat java
-     *     addObjectValue(elementName, classType, false, getDefaultValue(classType));
+     *     addObjectValue(elementName, classType, mandatory, getDefaultValue(classType));
      * }
      *
      * @param <T> The compile-time type of {@code classType}.
      * @param elementName The name of the element for which to add an object value.
      * @param classType The legal class type of the object value.
-     *
-     * @since 3.08
      */
-    private <T> void addObjectValue(final String elementName, final Class<T> classType) {
+    final <T> void addObjectValue(final String elementName, final Class<T> classType) {
         addObjectValue(elementName, classType, false, getDefaultValue(classType));
     }
 
     /**
-     * Returns the default value for an object reference of the given type.
-     * The default implementation returns {@code null} in all cases. However
-     * the {@link PredefinedMetadataFormat} subclasses will override this method.
+     * Adds a wrapper for a list of attributes. This is usually not needed, since attributes
+     * can be declared with the {@link #VALUE_LIST VALUE_LIST} type. However in the case of
+     * two-dimensional arrays (or lists of lists), the second dimension needs to be represented
+     * by a wrapper element. The main use case if the list of offset vectors in a
+     * {@linkplain RectifiedGrid rectified grid domain}, which can be represented as below:
      *
-     * @param  <T> The compile-time type of {@code classType}.
-     * @param  classType The class type of the object for which to get a default value.
-     * @return The default value for an object of the given type, or {@code null} if none.
+     * {@preformat text
+     *     RectifiedGridDomain  : RectifiedGrid
+     *     └───OffsetVectors    : List<double[]>
+     *         └───OffsetVector : double[]
+     *             └───values
+     * }
      *
-     * @since 3.08
+     * In the above example, the name of the {@code RectifiedGridDomain}, {@code OffsetVectors}
+     * and {@code OffsetVector} nodes shall be specified by the {@code parentName},
+     * {@code elementName} and {@code componentName} arguments respectively. The creation of
+     * the {@code values} attribute is caller responsibility.
+     *
+     * @see #addElement(String, String, int, int)
+     * @see #addElement(String, String, int)
+     * @see #addObjectValue(String, Class, int, int)
      */
-    <T> T getDefaultValue(final Class<T> classType) {
-        return null;
+    final void addListWrapper(final MetadataStandard standard,
+            final String parentName, final String elementName, final String componentName,
+            final Class<?> componentType, final int minOccurrence, final int maxOccurrence)
+    {
+        addElement(elementName, parentName, minOccurrence, maxOccurrence);
+        standards.put(elementName, standard);
+
+        // The repeated element with no child, only a single attribute.
+        addElement(componentName, elementName, CHILD_POLICY_EMPTY);
+        addObjectValue(componentName, componentType, 0, Integer.MAX_VALUE);
+        standards.put(componentName, standard);
+    }
+
+    /**
+     * Adds an attribute for a code list or an enumeration. The attribute has no
+     * default value and its type is {@link #DATATYPE_STRING DATATYPE_STRING}.
+     * <p>
+     * This method is defined mostly in order to give access to protected methods
+     * from {@link SpatialMetadataFormatBuilder}.
+     *
+     * @param elementName   The name of the node where to add the attribute.
+     * @param attributeName The name of the attribute to add in the given element.
+     * @param mandatory     {@code true} if the attribute is mandatory, or {@code false} for optional.
+     * @param codes         The enumeration of valid attribute values.
+     *
+     * @see #addAttribute(String, String, int, boolean, String, List)
+     */
+    final void addEnumeration(final String elementName, final String attributeName,
+            final boolean mandatory, final String... codes)
+    {
+        addAttribute(elementName, attributeName, DATATYPE_STRING, mandatory, null, Arrays.asList(codes));
+    }
+
+    /**
+     * Adds a new attribute of the given type. This method delegates to one of the {@code addAttribute}
+     * methods defined in the super-class. The choice of method and parameters is performed according
+     * the following rules (non-exhaustive list):
+     * <p>
+     * <ul>
+     *   <li>The attribute is declared mandatory if {@code minOccurrence} is different than zero.</li>
+     *   <li>The value type is set to {@link #VALUE_RANGE} if the {@code range} parameter is non-null.</li>
+     *   <li>The value type is set to {@link #VALUE_LIST} if the {@code maxOccurrence} parameter is different than 1.</li>
+     *   <li>The value type is set to {@link #VALUE_ARBITRARY} otherwise (except for boolean values).</li>
+     * <p>
+     * This method is defined mostly in order to give access to protected methods
+     * from {@link SpatialMetadataFormatBuilder}.
+     *
+     * @param elementName   The name of the node where to add the attribute.
+     * @param attributeName The name of the attribute to add in the given element.
+     * @param dataType      The type of the attribute to add.
+     * @param minOccurrence the smallest legal number of list items (typically 0 or 1).
+     * @param maxOccurrence the largest legal number of list items (typically 1 or more).
+     * @param range         The range of valid values, or {@code null} if none.
+     *
+     * @see #addBooleanAttribute(String, String, boolean, boolean)
+     * @see #addAttribute(String, String, int, boolean, int, int)
+     * @see #addAttribute(String, String, int, boolean, String, List)
+     * @see #addAttribute(String, String, int, boolean, String, String, String, boolean, boolean)
+     */
+    final void addAttribute(final String elementName, final String attributeName,
+            int dataType, final int minOccurrence, final int maxOccurrence, final NumberRange<?> range)
+    {
+        if (dataType == IIOMetadataFormat.DATATYPE_BOOLEAN) {
+            /*
+             * Boolean  ⇒  Attribute VALUE_ENUMERATION
+             *
+             * A default value (false) is provided only if the attribute is
+             * not mandatory (minOccurrence == 0), otherwise we will require
+             * the user to specify a value explicitly.
+             */
+            addBooleanAttribute(elementName, attributeName, minOccurrence == 0, false);
+        } else if (range != null) {
+            /*
+             * Number  ⇒  Attribute VALUE_RANGE[_?_INCLUSIVE]
+             */
+            addAttribute(elementName, attributeName, dataType, minOccurrence != 0, null,
+                    toString(range.getMinValue()), toString(range.getMaxValue()),
+                    range.isMinIncluded(), range.isMaxIncluded());
+        } else if (maxOccurrence == 1) {
+            /*
+             * Object  ⇒  Attribute VALUE_ARBITRARY
+             */
+            addAttribute(elementName, attributeName, dataType, minOccurrence != 0, null);
+        } else {
+            /*
+             * Object  ⇒  Attribute VALUE_LIST
+             */
+            addAttribute(elementName, attributeName, dataType, minOccurrence != 0, minOccurrence, maxOccurrence);
+        }
+    }
+
+    /**
+     * Invoked when a metadata element is about to be added to the tree. This is a hook for adding
+     * custom attributes which may not be in the UML or excluded. The main attributes of interest
+     * are {@code "name"} and {@code "type"} for referencing objects.
+     */
+    final void addCustomAttributes(final String elementName, final Class<?> type) {
+        if (IdentifiedObject.class.isAssignableFrom(type)) {
+            addAttribute(elementName, "name", DATATYPE_STRING, true, null);
+        }
+        if (CoordinateSystemAxis.class.isAssignableFrom(type)) {
+            addAttribute(elementName, "axisAbbrev", DATATYPE_STRING, true, null);
+        }
+        final List<String> types;
+        if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
+            types = DataTypes.CRS_TYPES;
+        } else if (CoordinateSystem.class.isAssignableFrom(type)) {
+            types = DataTypes.CS_TYPES;
+        } else if (Datum.class.isAssignableFrom(type)) {
+            types = DataTypes.DATUM_TYPES;
+        } else {
+            return;
+        }
+        addAttribute(elementName, "type", DATATYPE_STRING, true, null, types);
     }
 
     /**
@@ -988,31 +758,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Returns one of the {@code DATATYPE_*} constant for the given class. If no constant
-     * matches, then returns {@code DATATYPE_STRING} on the assumption that all attributes
-     * have a sensible {@link Object#toString()} implementation.
-     *
-     * @param  type The class for which the {@code DATATYPE_*} constant is desired.
-     * @return The {@code DATATYPE_*} constant for the given class.
-     */
-    private static int typeOf(Class<?> type) {
-        type = Numbers.primitiveToWrapper(type);
-        if (Number.class.isAssignableFrom(type)) {
-            if (Numbers.isInteger(type)) {
-                return IIOMetadataFormat.DATATYPE_INTEGER;
-            }
-            if (Float.class.isAssignableFrom(type)) {
-                return IIOMetadataFormat.DATATYPE_FLOAT;
-            }
-            return IIOMetadataFormat.DATATYPE_DOUBLE;
-        }
-        if (Boolean.class.isAssignableFrom(type)) {
-            return IIOMetadataFormat.DATATYPE_BOOLEAN;
-        }
-        return IIOMetadataFormat.DATATYPE_STRING;
-    }
-
-    /**
      * Makes the first character an upper-case letter. This is used for element names,
      * which typically starts with an upper-case letter in Image I/O metadata.
      *
@@ -1036,45 +781,24 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Returns the name of an entry in a collection.
-     *
-     * @param  elementName The Java-Beans name of the collection. This is usually plural.
-     * @param  identifier  The UML identifier of the same element than above.
-     *                     This is usually singular. It may be {@code null}
-     * @param  attribute   {@code true} if the {@code elementName} is actually for an attribute.
-     * @return The name of an entry in the collection.
-     */
-    private static String toComponentName(final String elementName, final String identifier,
-            final boolean attribute)
-    {
-        if (identifier != null && !identifier.equalsIgnoreCase(elementName)) {
-            return identifier;
-        }
-        if (attribute && elementName.endsWith("s")) {
-            /*
-             * Try to make singular assuming an English speeling (we are already making the same
-             * assumption when adding the "Entry" suffix below). We do that only for attributes,
-             * not for elements, because elements may be complex structures in which the plural
-             * form is intentional.
-             *
-             * Examples:
-             *  - "DescriptiveKeywords" is an element with "Keywords" (and others) attributes.
-             *    We don't want to make it singular, because it can contains many keywords.
-             *  - "offsetVectors" is an attribute of type List<double[]>, which is converted
-             *    by this class as an "offserVectors" element with "offsetVector" childs.
-             */
-            return elementName.substring(0, elementName.length() - 1);
-        }
-        // This is used only as a fallback.
-        return (identifier != null ? identifier : elementName) + "Entry";
-    }
-
-    /**
      * Returns a string representation of the given value, or
      * {@code null} if that value is null (unbounded range).
      */
     private static String toString(final Comparable<?> value) {
         return (value != null) ? value.toString() : null;
+    }
+
+    /**
+     * Removes an attribute from a previously defined element. If no attribute with the given
+     * name was present in the given element, nothing happens and no exception is thrown.
+     *
+     * @param elementName The name of the element.
+     * @param attributeName The name of the attribute being removed.
+     */
+    @Override
+    protected void removeAttribute(final String elementName, final String attributeName) {
+        // This method is overriden only in order to allow SpatialMetadataFormatBuilder to access it.
+        super.removeAttribute(elementName, attributeName);
     }
 
     /**
@@ -1102,7 +826,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the element which is the parent of the named element, or {@code null} if none.
-     * For example if this metadata format is the {@link #STREAM} instance, then:
+     * For example if this metadata format is the {@linkplain #getStreamInstance(null) stream}
+     * instance, then:
      * <p>
      * <ul>
      *   <li>The path to {@code "GeographicElement"} is {@code "DiscoveryMetadata/Extent/GeographicElement"}.</li>
@@ -1111,8 +836,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * {@note An element may have more than one parent, since the same element can be copied under
      *        many nodes using <code>addChildElement(...)</code>. In such case, this method returns
-     *        only the first parent. Note that this case does not occur with the <code>STREAM</code>
-     *        and <code>IMAGE</code> formats defined in <code>SpatialMetadataFormat</code>.}
+     *        only the first path. Such cases do not occur with the Geotk formats identified by
+     *        <code>FORMAT_NAME</code> in this class, but occur with the more complex ISO-19115
+     *        format.}
      *
      * @param  elementName The element for which the parent is desired.
      * @return The parent of the given element, or {@code null}.
@@ -1171,13 +897,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the path to the named element, or {@code null} if none. For example if this
-     * metadata format is the {@link #STREAM} instance, then the path to the
+     * metadata format is the {@linkplain #getStreamInstance stream} instance, then the path to the
      * {@code "GeographicElement"} is {@code "DiscoveryMetadata/Extent/GeographicElement"}.
      *
      * {@note An element may have more than one path, since the same element can be copied under
      *        many nodes using <code>addChildElement(...)</code>. In such case, this method returns
-     *        only the first path. Note that this case does not occur with the <code>STREAM</code>
-     *        and <code>IMAGE</code> formats defined in <code>SpatialMetadataFormat</code>.}
+     *        only the first path. Such cases do not occur with the Geotk formats identified by
+     *        <code>FORMAT_NAME</code> in this class, but occur with the more complex ISO-19115
+     *        format.}
      *
      * @param  elementName The element for which the path is desired.
      * @return The path to the given element, or {@code null}.
@@ -1200,8 +927,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     /**
      * Returns the metadata standard implemented by the element of the given name.
      * If the given element does not implement a standard (which may happen if the
-     * element was not added by an {@link #addTree addTree(...)} method), then this
-     * method returns {@code null}.
+     * element has not been added by {@link SpatialMetadataFormatBuilder} method),
+     * then this method returns {@code null}.
      *
      * @param  elementName The element for which the standard is desired.
      * @return The standard implemented by the given element, or {@code null}.
@@ -1322,6 +1049,93 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             descriptions = candidate;
         }
         return candidate.descriptions.get(attrName);
+    }
+
+    /**
+     * Returns the default value for an object reference of the given type. This method is
+     * invoked automatically by {@link SpatialMetadataFormatBuilder} for determining the value
+     * of the {@code defaultValue} argument in the call to the {@link #addObjectValue(String,
+     * Class, boolean, Object) addObjectValue} method.
+     * <p>
+     * This method is also invoked by {@link ReferencingBuilder#getDefault(Class)}, which does not
+     * rely on {@link IIOMetadataFormat#getObjectDefaultValue(String)} because the default value of
+     * some referencing objects depends on the type of the enclosing element. For example the default
+     * coordinate system shall be ellipsoidal for a geographic CRS and Cartesian for a projected
+     * CRS.
+     * <p>
+     * The default implementation returns a value determined from the table below.
+     * Subclasses can override this method for providing different default values.
+     * <p>
+     * <table border="1" cellspacing="0">
+     * <tr bgcolor="lightblue">
+     *   <th>Type</th>
+     *   <th>Default value</th>
+     * </tr><tr>
+     *   <td>&nbsp;{@link PrimeMeridian}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultPrimeMeridian#GREENWICH}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link Ellipsoid}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEllipsoid#WGS84}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link GeodeticDatum}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultGeodeticDatum#WGS84}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link VerticalDatum}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultVerticalDatum#GEOIDAL}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link EngineeringDatum}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEngineeringDatum#UNKNOWN}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link EllipsoidalCS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEllipsoidalCS#GEODETIC_2D}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link CartesianCS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultCartesianCS#GENERIC_2D}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link GeographicCRS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultGeographicCRS#WGS84}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link GeocentricCRS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultGeocentricCRS#CARTESIAN}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;All other type&nbsp;</td>
+     *   <td>&nbsp;{@code null}&nbsp;</td>
+     * </tr>
+     * </table>
+     *
+     * @param  <T> The compile-time type of {@code classType}.
+     * @param  type The class type of the object for which to get a default value.
+     * @return The default value for an object of the given type, or {@code null} if none.
+     *
+     * @see ReferencingBuilder#getDefault(Class)
+     * @see #getObjectDefaultValue(String)
+     *
+     * @since 3.08
+     */
+    public <T> T getDefaultValue(final Class<T> type) {
+        final IdentifiedObject object;
+        if (PrimeMeridian.class.isAssignableFrom(type)) {
+            object = DefaultPrimeMeridian.GREENWICH;
+        } else if (Ellipsoid.class.isAssignableFrom(type)) {
+            object = DefaultEllipsoid.WGS84;
+        } else if (GeodeticDatum.class.isAssignableFrom(type)) {
+            object = DefaultGeodeticDatum.WGS84;
+        } else if (VerticalDatum.class.isAssignableFrom(type)) {
+            object = DefaultVerticalDatum.GEOIDAL;
+        } else if (EngineeringDatum.class.isAssignableFrom(type)) {
+            object = DefaultEngineeringDatum.UNKNOWN;
+        } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
+            object = DefaultEllipsoidalCS.GEODETIC_2D;
+        } else if (CartesianCS.class.isAssignableFrom(type)) {
+            object = DefaultCartesianCS.GENERIC_2D;
+        } else if (GeographicCRS.class.isAssignableFrom(type)) {
+            object = DefaultGeographicCRS.WGS84;
+        } else if (GeocentricCRS.class.isAssignableFrom(type)) {
+            object = DefaultGeocentricCRS.CARTESIAN;
+        } else {
+            object = null;
+        }
+        return type.cast(object);
     }
 
     /**

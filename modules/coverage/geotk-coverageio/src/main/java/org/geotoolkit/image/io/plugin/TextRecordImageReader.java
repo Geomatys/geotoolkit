@@ -309,7 +309,7 @@ public class TextRecordImageReader extends TextImageReader {
             // Stream metadata.
             return null;
         }
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
         /*
          * Computes the smallest bounding box containing the full image in user coordinates.
          * This implementation searches for minimum and maximum values in x and y columns as

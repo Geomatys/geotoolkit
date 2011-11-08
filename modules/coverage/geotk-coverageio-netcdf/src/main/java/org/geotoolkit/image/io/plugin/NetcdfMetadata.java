@@ -153,7 +153,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @param file The file for which to read metadata.
      */
     public NetcdfMetadata(final ImageReader reader, final NetcdfFile file) {
-        super(SpatialMetadataFormat.STREAM, reader, null);
+        super(SpatialMetadataFormat.getStreamInstance(null), reader, null);
         nativeMetadataFormatName = NATIVE_FORMAT_NAME;
         extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, ISO_FORMAT_NAME);
         Attribute attr = file.findGlobalAttribute("project_name");
@@ -189,7 +189,7 @@ final class NetcdfMetadata extends SpatialMetadata {
     public NetcdfMetadata(final NetcdfImageReader reader, final NetcdfDataset file,
             final VariableIF... variables) throws IOException
     {
-        super(SpatialMetadataFormat.IMAGE, reader, null);
+        super(SpatialMetadataFormat.getImageInstance(null), reader, null);
         nativeMetadataFormatName  = NATIVE_FORMAT_NAME;
         GDALGridMapping  gdal     = null;
         CoordinateSystem netcdfCS = null;
@@ -525,8 +525,8 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
                 return nativeFormat;
             }
-            if (format == SpatialMetadataFormat.STREAM && formatName.equalsIgnoreCase(ISO_FORMAT_NAME)) {
-                return SpatialMetadataFormat.ISO_19115;
+            if (format == SpatialMetadataFormat.getStreamInstance(null) && formatName.equalsIgnoreCase(ISO_FORMAT_NAME)) {
+                return SpatialMetadataFormat.getStreamInstance(ISO_FORMAT_NAME);
             }
         }
         return super.getMetadataFormat(formatName);

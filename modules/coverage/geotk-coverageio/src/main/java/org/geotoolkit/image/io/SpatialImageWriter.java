@@ -50,9 +50,9 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * This base class provides the following restrictions or conveniences:
  * <p>
  * <ul>
- *   <li>Set the metadata type to {@link SpatialMetadata} and the format to
- *       {@link SpatialMetadataFormat#STREAM STREAM} for stream metadata, or
- *       {@link SpatialMetadataFormat#IMAGE IMAGE} for image metadata.</li>
+ *   <li>Set the metadata type to {@link SpatialMetadata} and its format to
+ *       {@linkplain SpatialMetadataFormat#getStreamInstance stream metadata} and
+ *       {@linkplain SpatialMetadataFormat#getImageInstance image metadata}.</li>
  *   <li>Provide {@link #getSampleModel getSampleModel}, {@link #createRectIter createRectIter}
  *       and {@link #computeSize computeSize} static methods as helpers for the
  *       {@link #write(IIOImage) write(...)} implementations.</li>
@@ -120,7 +120,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     /**
      * Returns a metadata object containing default values for encoding a stream of images.
      * The default implementation returns an instance of {@link SpatialMetadata} using
-     * the {@link SpatialMetadataFormat#STREAM STREAM} format.
+     * the {@linkplain SpatialMetadataFormat#getStreamInstance stream format}.
      *
      * @param param Parameters that will be used to encode the image (in cases where
      *              it may affect the structure of the metadata), or {@code null}.
@@ -128,13 +128,13 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      */
     @Override
     public SpatialMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
-        return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, null);
+        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this, null);
     }
 
     /**
      * Returns a metadata object containing default values for encoding an image of the given
      * type. The default implementation returns an instance of {@link SpatialMetadata} using
-     * the {@link SpatialMetadataFormat#IMAGE IMAGE} format.
+     * the {@linkplain SpatialMetadataFormat#getImageInstance image format}.
      *
      * @param imageType The format of the image to be written later.
      * @param param Parameters that will be used to encode the image (in cases where
@@ -145,14 +145,14 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     public SpatialMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
                                                    final ImageWriteParam    param)
     {
-        return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
     }
 
     /**
      * Returns a metadata object initialized to the specified data for encoding a stream of
      * images. The default implementation returns the given metadata unchanged if it is an
-     * instance of {@link SpatialMetadata} using the {@link SpatialMetadataFormat#STREAM STREAM}
-     * format, or wraps it otherwise.
+     * instance of {@link SpatialMetadata} using the
+     * {@linkplain SpatialMetadataFormat#getStreamInstance stream format}, or wraps it otherwise.
      *
      * @param inData Stream metadata used to initialize the state of the returned object.
      * @param param Parameters that will be used to encode the image (in cases where
@@ -166,20 +166,21 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         if (inData == null) {
             return null;
         }
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(null);
         if (inData instanceof SpatialMetadata) {
             final SpatialMetadata sp = (SpatialMetadata) inData;
-            if (SpatialMetadataFormat.STREAM.equals(sp.format)) {
+            if (format.equals(sp.format)) {
                 return sp;
             }
         }
-        return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, inData);
+        return new SpatialMetadata(format, this, inData);
     }
 
     /**
      * Returns a metadata object initialized to the specified data for encoding an image of the
      * given type. The default implementation returns the given metadata unchanged if it is an
-     * instance of {@link SpatialMetadata} using the {@link SpatialMetadataFormat#IMAGE IMAGE}
-     * format, or wraps it otherwise.
+     * instance of {@link SpatialMetadata} using the
+     * {@linkplain SpatialMetadataFormat#getImageInstance image format}, or wraps it otherwise.
      *
      * @param inData Image metadata used to initialize the state of the returned object.
      * @param imageType The format of the image to be written later.
@@ -195,13 +196,14 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         if (inData == null) {
             return null;
         }
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
         if (inData instanceof SpatialMetadata) {
             final SpatialMetadata sp = (SpatialMetadata) inData;
-            if (SpatialMetadataFormat.IMAGE.equals(sp.format)) {
+            if (format.equals(sp.format)) {
                 return sp;
             }
         }
-        return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, inData);
+        return new SpatialMetadata(format, this, inData);
     }
 
     /**
@@ -587,7 +589,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.STREAM;
+                return SpatialMetadataFormat.getStreamInstance(null);
             }
             return super.getStreamMetadataFormat(formatName);
         }
@@ -602,7 +604,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.IMAGE;
+                return SpatialMetadataFormat.getImageInstance(null);
             }
             return super.getStreamMetadataFormat(formatName);
         }

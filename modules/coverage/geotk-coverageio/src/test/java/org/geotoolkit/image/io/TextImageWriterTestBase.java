@@ -106,7 +106,7 @@ public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestBa
      * Creates dummy metadata for the image to be returned by {@link #createImage()}.
      */
     private static IIOMetadata createMetadata() {
-        final IIOMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final IIOMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
         domain.setOrigin(-500, 400);
         domain.addOffsetVector(100, 0);

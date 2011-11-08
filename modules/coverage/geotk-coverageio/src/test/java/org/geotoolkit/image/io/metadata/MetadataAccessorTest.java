@@ -49,7 +49,7 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testImageDescription() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         assertMultilinesEquals("The metadata should initially contains only the root node.",
             SpatialMetadataFormat.FORMAT_NAME + "\n",
             metadata.toString());
@@ -68,7 +68,7 @@ public final strictfp class MetadataAccessorTest {
             metadata.toString());
         /*
          * Define a few values conform to the structure declared
-         * in SpatialMetadataFormat.IMAGE.
+         * in SpatialMetadataFormat.getImageInstance(null).
          */
         accessor.setAttribute("imagingCondition", "cloud");
         accessor.setAttribute("cloudCoverPercentage", 20.0);
@@ -117,7 +117,7 @@ public final strictfp class MetadataAccessorTest {
      * The child name shall be either {@code "OffsetVector"} or {@code "#auto"}.
      */
     private void testOffsetVectors(final String childName) {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         assertMultilinesEquals("The metadata should initially contains only the root node.",
             SpatialMetadataFormat.FORMAT_NAME + "\n",
             metadata.toString());
@@ -134,7 +134,7 @@ public final strictfp class MetadataAccessorTest {
             metadata.toString());
         /*
          * Define a few values conform to the structure declared
-         * in SpatialMetadataFormat.IMAGE.
+         * in SpatialMetadataFormat.getImageInstance(null).
          */
         accessor.selectChild(accessor.appendChild());
         assertNull(accessor.getAttributeAsDoubles("values", false));
@@ -169,7 +169,7 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testNonExistentAttribute() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         accessor.setAttribute("cloudCoverPercentage", 20.0); // For comparison purpose.
         accessor.setAttribute("inexistent", 10.0);
@@ -183,25 +183,26 @@ public final strictfp class MetadataAccessorTest {
         /*
          * Simpliest cases: the element below is known to appear only once.
          */
-        List<String> paths = MetadataAccessor.listPaths(SpatialMetadataFormat.STREAM, GeographicBoundingBox.class);
+        final SpatialMetadataFormat STREAM = SpatialMetadataFormat.getStreamInstance(null);
+        List<String> paths = MetadataAccessor.listPaths(STREAM, GeographicBoundingBox.class);
         assertEquals(Arrays.asList("DiscoveryMetadata/Extent/GeographicElement"), paths);
         /*
          * Simpliest case again, but deeper path. Note that it cross a collection (Instruments).
          */
-        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.STREAM, Identifier.class);
+        paths = MetadataAccessor.listPaths(STREAM, Identifier.class);
         assertEquals(Arrays.asList("AcquisitionMetadata/Platform/Instruments/Instrument/Identifier"), paths);
         /*
          * The element below appears more than once.
          * We don't consider elements order.
          */
-        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.IMAGE, Identifier.class);
+        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.getImageInstance(null), Identifier.class);
         assertEquals(new HashSet<>(Arrays.asList("ImageDescription/ImageQualityCode",
                 "ImageDescription/ProcessingLevelCode")), new HashSet<>(paths));
         /*
          * More tricky case: 'Instrument' is the type of elements in a collection.
          * But we want the path to the whole collection.
          */
-        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.STREAM, Instrument.class);
+        paths = MetadataAccessor.listPaths(STREAM, Instrument.class);
         assertEquals(Arrays.asList("AcquisitionMetadata/Platform/Instruments"), paths);
     }
 
@@ -211,7 +212,7 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testAutomaticLocation() {
-        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
         MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
         accessor.setAttribute("inclusion", true);
         assertMultilinesEquals(decodeQuotes(
@@ -224,7 +225,7 @@ public final strictfp class MetadataAccessorTest {
         /*
          * Following should fails because of ambiguity (there is many identifier).
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         try {
             accessor = new MetadataAccessor(metadata, "#auto", Identifier.class);
             fail(accessor.toString());
@@ -241,7 +242,7 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testAutomaticLocationInFallback() {
-        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
         MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
         assertEquals("GeographicElement", accessor.name());
         accessor.setAttribute("inclusion", true);
@@ -262,7 +263,7 @@ public final strictfp class MetadataAccessorTest {
          * the same name). We are just too lazy for creating a new metadata format, and the
          * approach used here is sufficient for this test.
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, (ImageReader) null, metadata);
+        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), (ImageReader) null, metadata);
         accessor = new MetadataAccessor(metadata, "#auto", RectifiedGrid.class);
         assertEquals("RectifiedGridDomain", accessor.name());
         /*

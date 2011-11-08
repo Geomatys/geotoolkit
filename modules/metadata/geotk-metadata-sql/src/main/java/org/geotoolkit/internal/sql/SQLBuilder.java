@@ -20,6 +20,7 @@ package org.geotoolkit.internal.sql;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
+import org.geotoolkit.lang.Builder;
 
 
 /**
@@ -31,7 +32,7 @@ import java.util.StringTokenizer;
  * @since 3.03
  * @module
  */
-public final class SQLBuilder {
+public final class SQLBuilder extends Builder {
     /**
      * The database dialect. This is used for a few database-dependent syntax.
      */

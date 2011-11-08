@@ -524,7 +524,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (metadata instanceof SpatialMetadata) {
             return (SpatialMetadata) metadata;
         } else if (metadata != null) {
-            return new SpatialMetadata(SpatialMetadataFormat.IMAGE, imageReader, metadata);
+            return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), imageReader, metadata);
         } else {
             return null;
         }
@@ -769,7 +769,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             if (metadata instanceof SpatialMetadata) {
                 return (SpatialMetadata) metadata;
             } else if (metadata != null) {
-                return new SpatialMetadata(SpatialMetadataFormat.STREAM, imageReader, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), imageReader, metadata);
             } else {
                 return null;
             }
@@ -800,7 +800,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             if (metadata instanceof SpatialMetadata) {
                 return (SpatialMetadata) metadata;
             } else if (metadata != null) {
-                return new SpatialMetadata(SpatialMetadataFormat.IMAGE, imageReader, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), imageReader, metadata);
             } else {
                 return null;
             }

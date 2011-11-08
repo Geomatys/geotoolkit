@@ -1397,7 +1397,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.STREAM;
+                return SpatialMetadataFormat.getStreamInstance(null);
             }
             return super.getStreamMetadataFormat(formatName);
         }
@@ -1412,7 +1412,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.IMAGE;
+                return SpatialMetadataFormat.getImageInstance(null);
             }
             return super.getStreamMetadataFormat(formatName);
         }

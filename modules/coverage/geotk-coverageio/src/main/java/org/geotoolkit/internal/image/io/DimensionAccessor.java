@@ -41,7 +41,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * {@code "ImageDescription/Dimensions"} node. Example:
  *
  * {@preformat java
- *     SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+ *     SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
  *     DimensionAccessor accessor = new DimensionAccessor(metadata);
  *     accessor.selectChild(accessor.appendChild());
  *     accessor.setValueRange(-100, 2000);

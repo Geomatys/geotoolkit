@@ -908,7 +908,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             final TileManager manager = getTileManager(imageIndex);
             final ImageGeometry geom = manager.getGridGeometry();
             if (geom != null) {
-                final SpatialMetadata sp = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+                final SpatialMetadata sp = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
                 accessor.setAll(geom.getGridToCRS(), geom.getGridRange(), null, PixelOrientation.UPPER_LEFT);
                 /*

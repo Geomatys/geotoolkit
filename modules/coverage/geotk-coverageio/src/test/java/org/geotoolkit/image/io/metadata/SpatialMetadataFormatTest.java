@@ -74,7 +74,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testStreamMetadataFormat() {
-        final IIOMetadataFormat f = SpatialMetadataFormat.STREAM;
+        final IIOMetadataFormat f = SpatialMetadataFormat.getStreamInstance(null);
 
         assertEquals(DataIdentification.class,      f.getObjectClass           ("DiscoveryMetadata"));
         assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("DiscoveryMetadata"));
@@ -167,7 +167,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImageMetadataFormat() {
-        final IIOMetadataFormat f = SpatialMetadataFormat.IMAGE;
+        final IIOMetadataFormat f = SpatialMetadataFormat.getImageInstance(null);
 
         assertEquals(ImageDescription.class,          f.getObjectClass           ("ImageDescription"));
         assertEquals(CHILD_POLICY_SOME,               f.getChildPolicy           ("ImageDescription"));
@@ -364,7 +364,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImageDescriptions() {
-        final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        final IIOMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
         assertEquals("Image distributor's code that identifies the level of radiometric and geometric processing that has been applied.",
                 format.getElementDescription("ProcessingLevelCode", Locale.ENGLISH));
         assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
@@ -378,7 +378,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testStreamParents() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.STREAM;
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(null);
         assertNull(format.getElementParent(SpatialMetadataFormat.FORMAT_NAME));
 
         assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("DiscoveryMetadata"));
@@ -405,7 +405,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImageParents() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
         assertNull(format.getElementParent(SpatialMetadataFormat.FORMAT_NAME));
 
         assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("ImageDescription"));
@@ -427,7 +427,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testStreamPaths() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.STREAM;
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(null);
         assertNull(format.getElementPath(SpatialMetadataFormat.FORMAT_NAME));
 
         assertNull  ("'citation' is an attribute, not an element.",                   format.getElementPath("citation"));
@@ -454,7 +454,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImagePaths() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
         assertNull(format.getElementPath(SpatialMetadataFormat.FORMAT_NAME));
 
         assertNull  ("'contentType' is an attribute, not an element.", format.getElementPath("contentType"));
@@ -478,8 +478,8 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testToString() throws IOException {
-        final String stream = SpatialMetadataFormat.STREAM.toString();
-        final String image  = SpatialMetadataFormat.IMAGE .toString();
+        final String stream = SpatialMetadataFormat.getStreamInstance(null).toString();
+        final String image  = SpatialMetadataFormat.getImageInstance (null).toString();
         assertTrue(!stream.isEmpty()); // Dummy check. The real interesting part is the write to a file.
         assertTrue(!image .isEmpty());
         if (false) {
