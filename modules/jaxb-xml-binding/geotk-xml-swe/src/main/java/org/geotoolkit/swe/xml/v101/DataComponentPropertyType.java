@@ -285,7 +285,14 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     public void setToHref() {
         if (abstractDataRecord != null) {
-            this.setHref(abstractDataRecord.getValue().getId());
+            if (abstractDataRecord.getValue().getId() != null) {
+                this.setHref(abstractDataRecord.getValue().getId());
+            } else if (abstractDataRecord.getValue().getName() != null) {
+                this.setHref(abstractDataRecord.getValue().getName());
+            } else {
+                this.setHref(name);
+            }
+            this.name = null;
             hiddenAbstractDataRecord = abstractDataRecord;
             abstractDataRecord       = null;
         }

@@ -92,7 +92,9 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     public DataArrayType(final String id, final int count, final AbstractDataRecordType elementType,
             final AbstractEncodingType encoding, final String values) {
         super(id, count);
-        this.elementType = new DataComponentPropertyType(elementType, id);
+        if (elementType != null) {
+            this.elementType = new DataComponentPropertyType(elementType, id);
+        }
         this.encoding    = new AbstractEncodingPropertyType(encoding);
         this.values      = values;
         
