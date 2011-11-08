@@ -289,6 +289,35 @@ public class ObservationType implements Observation, Entry {
      * @param observedProperty  The observed phenomenon.
      * @param procedure         The associated procedure.
      */
+    public ObservationType(final String                  name,
+                            final String                 definition,
+                            final FeaturePropertyType    featureOfInterest,
+                            final PhenomenonPropertyType observedProperty,
+                            final ProcessType            procedure,
+                            final Object                 result,
+                            final AbstractTimeGeometricPrimitiveType   samplingTime)
+    {
+        this.name                = name;
+        this.definition          = definition;
+        this.featureOfInterest   = featureOfInterest;
+        this.observedProperty    = observedProperty;
+        this.procedure           = procedure;
+        this.resultQuality       = null;
+        this.result              = OM_FACTORY.createResult(result);
+        this.observationMetadata = null;
+        this.procedureTime       = null;
+        this.procedureParameter  = null;
+        this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
+    }
+    
+    /**
+     * Build a new observation.
+     *
+     *
+     * @param featureOfInterest The observation station.
+     * @param observedProperty  The observed phenomenon.
+     * @param procedure         The associated procedure.
+     */
     public ObservationType(final String                name,
                             final String                definition,
                             final FeaturePropertyType   featureOfInterest,
@@ -297,19 +326,7 @@ public class ObservationType implements Observation, Entry {
                             final Object                result,
                             final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
-        this.name                = name;
-        this.definition          = definition;
-        this.featureOfInterest   = featureOfInterest;
-        if (observedProperty != null) {
-            this.observedProperty    = new PhenomenonPropertyType(observedProperty);
-        }
-        this.procedure           = procedure;
-        this.resultQuality       = null;
-        this.result              = OM_FACTORY.createResult(result);
-        this.observationMetadata = null;
-        this.procedureTime       = null;
-        this.procedureParameter  = null;
-        this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
+       this(name, definition, featureOfInterest, new PhenomenonPropertyType(observedProperty), procedure, result, samplingTime);
     }
 
     /**
@@ -320,10 +337,6 @@ public class ObservationType implements Observation, Entry {
         if (time == null) { 
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
-        }
-        PhenomenonType pheno = null;
-        if (this.observedProperty != null) {
-            pheno = this.observedProperty.getPhenomenon();
         }
         //debugging purpose
         Object res = null;
@@ -339,7 +352,7 @@ public class ObservationType implements Observation, Entry {
         return new ObservationType(temporaryName,
                                     this.definition,
                                     this.featureOfInterest,
-                                    pheno,
+                                    this.observedProperty,
                                     this.procedure,
                                     res,
                                     time);
@@ -420,6 +433,10 @@ public class ObservationType implements Observation, Entry {
         if (observedProperty != null) {
             this.observedProperty = new PhenomenonPropertyType(observedProperty);
         }
+    }
+    
+    public void setPropertyObservedProperty(final PhenomenonPropertyType observedProperty) {
+        this.observedProperty = observedProperty;
     }
     
     public PhenomenonPropertyType getPropertyObservedProperty() {
