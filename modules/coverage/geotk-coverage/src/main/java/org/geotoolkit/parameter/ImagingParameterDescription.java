@@ -126,7 +126,7 @@ final class ImagingParameterDescription extends AbstractInternationalString impl
     @Override
     public String toString(Locale locale) throws MissingResourceException {
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         final ResourceBundle resources = operation.getResourceBundle(locale);
         String name = resources.getString(key);

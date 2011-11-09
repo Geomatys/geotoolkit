@@ -61,7 +61,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     /**
      * The locale for formatting labels.
      */
-    private Locale locale = Locale.getDefault();
+    private Locale locale = Locale.getDefault(Locale.Category.FORMAT);
 
     /**
      * A list of event listeners for this component.

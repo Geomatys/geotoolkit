@@ -99,10 +99,14 @@ final class PropertyTree {
     private final MetadataStandard standard;
 
     /**
-     * The locale to use for {@linkplain Date date}, {@linkplain Number number}
-     * and {@linkplain InternationalString international string} formatting.
+     * The locale to use for {@linkplain InternationalString international string} formatting.
      */
     private final Locale locale;
+
+    /**
+     * The locale to use for {@linkplain Date date} and {@linkplain Number number} formatting.
+     */
+    private final Locale formatLocale;
 
     /**
      * The object to use for formatting numbers.
@@ -122,7 +126,9 @@ final class PropertyTree {
      * @param standard The expected standard implemented by the metadata.
      */
     public PropertyTree(final MetadataStandard standard) {
-        this(standard, Locale.getDefault());
+        this.standard     = standard;
+        this.locale       = Locale.getDefault(Locale.Category.DISPLAY);
+        this.formatLocale = Locale.getDefault(Locale.Category.FORMAT);
     }
 
     /**
@@ -133,8 +139,9 @@ final class PropertyTree {
      *                 and {@linkplain InternationalString international string} formatting.
      */
     public PropertyTree(final MetadataStandard standard, final Locale locale) {
-        this.standard = standard;
-        this.locale   = locale;
+        this.standard     = standard;
+        this.locale       = locale;
+        this.formatLocale = locale;
     }
 
 
@@ -600,7 +607,7 @@ final class PropertyTree {
      */
     private DateFormat getDateFormat() {
         if (dateFormat == null) {
-            dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+            dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, formatLocale);
         }
         return dateFormat;
     }
@@ -610,7 +617,7 @@ final class PropertyTree {
      */
     private NumberFormat getNumberFormat() {
         if (numberFormat == null) {
-            numberFormat = NumberFormat.getNumberInstance(locale);
+            numberFormat = NumberFormat.getNumberInstance(formatLocale);
         }
         return numberFormat;
     }

@@ -212,7 +212,7 @@ final strictfp class DesktopPane extends JDesktopPane {
                     Locale.CANADA,
                     Locale.FRANCE
                 };
-                final String current = Locale.getDefault().getDisplayLanguage();
+                final String current = Locale.getDefault(Locale.Category.DISPLAY).getDisplayLanguage();
                 final ButtonGroup group = new ButtonGroup();
                 for (final Locale locale : locales) {
                     final String name = locale.getDisplayLanguage();

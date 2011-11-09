@@ -1017,7 +1017,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     private String getDescription(String elementName, String attrName, Locale locale) {
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         if (attrName == null) {
             attrName = elementName;

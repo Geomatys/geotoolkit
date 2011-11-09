@@ -364,7 +364,7 @@ public class Statistics implements Cloneable, Serializable {
      */
     public NumberFormat getNumberFormat(Locale locale) {
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.FORMAT);
         }
         return configure(null, locale);
     }
@@ -462,11 +462,13 @@ public class Statistics implements Cloneable, Serializable {
      *          A string representation of this statistics object.
      */
     public String toString(Locale locale, final boolean tabulations) {
+        Locale fmtLoc = locale;
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
+            fmtLoc = Locale.getDefault(Locale.Category.FORMAT);
         }
-        final NumberFormat countFormat = NumberFormat.getIntegerInstance(locale);
-        final NumberFormat valueFormat = getNumberFormat(locale);
+        final NumberFormat countFormat = NumberFormat.getIntegerInstance(fmtLoc);
+        final NumberFormat valueFormat = getNumberFormat(fmtLoc);
         final String[] values = new String[6];
         for (int i=0; i<values.length; i++) {
             final Number value = value(i);
@@ -547,8 +549,10 @@ public class Statistics implements Cloneable, Serializable {
     public static void writeTable(final Writer out, final CharSequence[] header,
             final Statistics[] statistics, Locale locale) throws IOException
     {
+        Locale fmtLoc = locale;
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
+            fmtLoc = Locale.getDefault(Locale.Category.FORMAT);
         }
         final TableWriter table = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
         table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
@@ -568,7 +572,7 @@ public class Statistics implements Cloneable, Serializable {
             table.nextLine();
             table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         }
-        final NumberFormat   countFormat = NumberFormat.getIntegerInstance(locale);
+        final NumberFormat   countFormat = NumberFormat.getIntegerInstance(fmtLoc);
         final NumberFormat[] formats     = new NumberFormat[statistics.length];
         final StringBuffer   buffer      = new StringBuffer();
         final FieldPosition  dummy       = new FieldPosition(0);
@@ -578,7 +582,7 @@ public class Statistics implements Cloneable, Serializable {
                 final Statistics stats = statistics[i];
                 if (j == 0) {
                     table.setColumnAlignment(i+1, TableWriter.ALIGN_RIGHT);
-                    formats[i] = stats.getNumberFormat(locale);
+                    formats[i] = stats.getNumberFormat(fmtLoc);
                 }
                 if (i != 0) {
                     buffer.append('\t');

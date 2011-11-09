@@ -209,7 +209,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      */
     @Debug
     public static void print(final RenderedImage image) {
-        Trees.print(getTree(image, Locale.getDefault()));
+        Trees.print(getTree(image, Locale.getDefault(Locale.Category.DISPLAY)));
     }
 
     /**
@@ -222,7 +222,7 @@ public class OperationTreeBrowser extends JComponent implements Dialog {
      */
     @Debug
     public static void print(final RenderableImage image) {
-        Trees.print(getTree(image, Locale.getDefault()));
+        Trees.print(getTree(image, Locale.getDefault(Locale.Category.DISPLAY)));
     }
 
     /**

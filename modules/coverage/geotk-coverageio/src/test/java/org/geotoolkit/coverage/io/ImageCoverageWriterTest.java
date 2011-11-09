@@ -147,7 +147,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
             final double missingValue) throws IOException, ParseException
     {
         assertMatrixEquals(LineReaders.wrap(expected), Locale.CANADA,
-                           LineReaders.wrap(actual),   Locale.getDefault(),
+                           LineReaders.wrap(actual),   Locale.getDefault(Locale.Category.FORMAT),
                            missingValue);
     }
 
@@ -160,7 +160,7 @@ public final strictfp class ImageCoverageWriterTest extends ImageTestBase {
     {
         try (LineNumberReader in = TestData.openReader(TextMatrixImageReaderTest.class, expectedFile)) {
             assertMatrixEquals(LineReaders.wrap(in),     Locale.CANADA,
-                               LineReaders.wrap(actual), Locale.getDefault(),
+                               LineReaders.wrap(actual), Locale.getDefault(Locale.Category.FORMAT),
                                missingValue);
         }
     }

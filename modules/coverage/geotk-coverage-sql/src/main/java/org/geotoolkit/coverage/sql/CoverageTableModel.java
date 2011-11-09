@@ -157,6 +157,7 @@ public class CoverageTableModel extends AbstractTableModel {
 
     /**
      * The locale to use for formatting the cell content.
+     * Locale category is {@code Locale.Category.DISPLAY}.
      */
     private final Locale locale;
 
@@ -204,14 +205,16 @@ public class CoverageTableModel extends AbstractTableModel {
      *        {@code null} for the {@linkplain Locale#getDefault() default locale}.
      */
     public CoverageTableModel(Locale locale) {
+        Locale fmtLoc = locale;
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
+            fmtLoc = Locale.getDefault(Locale.Category.FORMAT);
         }
         this.locale  = locale;
         entries      = new GridCoverageReference[0];
-        numberFormat = NumberFormat.getNumberInstance(locale);
-        dateFormat   = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
-        timeFormat   = new SimpleDateFormat("HH:mm", locale);
+        numberFormat = NumberFormat.getNumberInstance(fmtLoc);
+        dateFormat   = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, fmtLoc);
+        timeFormat   = new SimpleDateFormat("HH:mm", fmtLoc);
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         final Vocabulary resources = Vocabulary.getResources(locale);
         DAY  = resources.getString(Vocabulary.Keys.DAY);

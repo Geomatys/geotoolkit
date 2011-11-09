@@ -302,7 +302,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              * appears in the GenericName's scope below (as an alias).
              */
             final OperationDescriptor op = (OperationDescriptor) operation;
-            final ResourceBundle bundle = op.getResourceBundle(Locale.getDefault());
+            final ResourceBundle bundle = op.getResourceBundle(Locale.getDefault(Locale.Category.DISPLAY));
             String vendor = op.getResourceBundle(Locale.US).getString("Vendor");
             Citation authority = null;
             if (vendor != null) {

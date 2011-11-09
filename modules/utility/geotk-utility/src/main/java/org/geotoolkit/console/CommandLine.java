@@ -307,7 +307,7 @@ public abstract class CommandLine implements Runnable {
             encoding = Charset.defaultCharset();
         }
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         /*
          * Arguments consumed have been set to null. Now pack the remaining arguments

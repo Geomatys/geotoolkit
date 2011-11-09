@@ -105,7 +105,7 @@ public class IndexedResourceBundle extends ResourceBundle {
      * if the ResourceBundle locale is different (e.g. standard French). However, if languages
      * don't match, then we will use ResourceBundle locale for better coherence.
      */
-    private transient Locale locale;
+    private transient Locale formatLocale;
 
     /**
      * The object to use for formatting messages. This object
@@ -147,28 +147,28 @@ public class IndexedResourceBundle extends ResourceBundle {
             throws MissingResourceException
     {
         if (locale == null) {
-            locale = Locale.getDefault();
+            locale = Locale.getDefault(Locale.Category.DISPLAY);
         }
         // No caching; we rely on the one implemented in ResourceBundle.
         return base.cast(getBundle(base.getName(), locale, base.getClassLoader(), Loader.INSTANCE));
     }
 
     /**
-     * Returns the locale to use for formatters. This is the same than {@link #getLocale()},
+     * Returns the locale to use for formatters. It is often the same than {@link #getLocale()},
      * except if the later has the same language than the default locale, in which case this
      * method returns the default locale. For example if this {@code IndexResourceBundle} is
      * for the French locale but the user is French Canadian, we will format the dates using
      * Canada French conventions rather than France conventions.
      */
     private Locale getFormatLocale() {
-        if (locale == null) {
-            locale = Locale.getDefault();
+        if (formatLocale == null) {
+            formatLocale = Locale.getDefault(Locale.Category.FORMAT);
             final Locale rl = getLocale(); // Sometime null with IBM's JDK.
-            if (rl != null && !locale.getLanguage().equalsIgnoreCase(rl.getLanguage())) {
-                locale = rl;
+            if (rl != null && !formatLocale.getLanguage().equalsIgnoreCase(rl.getLanguage())) {
+                formatLocale = rl;
             }
         }
-        return locale;
+        return formatLocale;
     }
 
     /**

@@ -278,7 +278,7 @@ public class LoggedFormat<T> extends Format {
      * @return The locale to use for formatting warnings.
      */
     protected Locale getWarningLocale() {
-        return Locale.getDefault();
+        return Locale.getDefault(Locale.Category.DISPLAY);
     }
 
     /**

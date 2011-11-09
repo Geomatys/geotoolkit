@@ -192,7 +192,7 @@ public class RangeFormat extends Format {
      * using the {@linkplain Locale#getDefault() default locale}.
      */
     public RangeFormat() {
-        this(Locale.getDefault());
+        this(Locale.getDefault(Locale.Category.FORMAT));
     }
 
     /**

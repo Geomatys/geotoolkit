@@ -904,7 +904,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
                 return gridFromCRS2D.transform(point, null);
             } catch (TransformException exception) {
                 throw new CannotEvaluateException(Errors.format(Errors.Keys.CANT_EVALUATE_$1,
-                          AbstractGridCoverage.toString(point, Locale.getDefault()), exception));
+                          AbstractGridCoverage.toString(point, Locale.getDefault(Locale.Category.FORMAT)), exception));
             }
         }
         throw new InvalidGridGeometryException(Errors.Keys.NO_TRANSFORM2D_AVAILABLE);

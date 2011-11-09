@@ -307,7 +307,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                         return text;
                     }
                 }
-                def = Locale.getDefault();
+                def = Locale.getDefault(Locale.Category.DISPLAY);
                 if (locale != def && def != Locale.UK) {
                     text = getString(def);
                     if (text != null) {

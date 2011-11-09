@@ -151,7 +151,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
     @Override
     @SuppressWarnings("rawtypes")
     protected JComponent createPanel(final WizardController controller, final String id, final Map settings) {
-        final Locale     locale    = Locale.getDefault();
+        final Locale     locale    = Locale.getDefault(Locale.Category.DISPLAY);
         final Vocabulary resources = Vocabulary.getResources(locale);
         final Wizards    wizardRes = Wizards.getResources(locale);
         final JComponent panel;

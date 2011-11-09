@@ -164,7 +164,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
 
     /**
      * The locale for logging message or reporting errors. The default implementations
-     * returns the {@linkplain Locale#getDefault default locale}. Subclasses can override
+     * returns the {@linkplain Locale#getDefault() default locale}. Subclasses can override
      * this method if a different locale is wanted.
      *
      * @return The locale for logging message.

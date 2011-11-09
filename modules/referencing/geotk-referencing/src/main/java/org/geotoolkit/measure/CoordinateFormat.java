@@ -182,7 +182,7 @@ public class CoordinateFormat extends Format {
      * ({@linkplain DefaultGeographicCRS#WGS84 WGS 1984}) coordinate reference system.
      */
     public CoordinateFormat() {
-        this(Locale.getDefault());
+        this(Locale.getDefault(Locale.Category.FORMAT));
     }
 
     /**

@@ -163,7 +163,7 @@ public class FormatChooser extends JComponent implements Dialog {
      * @todo Need a way to find the format locale.
      */
     private static synchronized String[] getPatterns(final Format format) {
-        final Locale locale = Locale.getDefault();
+        final Locale locale = Locale.getDefault(Locale.Category.FORMAT);
         String[][] patterns = PATTERNS.get(locale);
         if (patterns == null) {
             patterns = new String[3][];
