@@ -73,7 +73,7 @@ public class FilterCapabilities {
     /**
      * An empty constructor used by JAXB
      */
-    FilterCapabilities(){
+    public FilterCapabilities(){
         
     }
     
@@ -103,6 +103,34 @@ public class FilterCapabilities {
      */
     public IdCapabilitiesType getIdCapabilities() {
         return idCapabilities;
+    }
+    
+    /**
+     * @param spatialCapabilities the spatialCapabilities to set
+     */
+    public void setSpatialCapabilities(final SpatialCapabilitiesType spatialCapabilities) {
+        this.spatialCapabilities = spatialCapabilities;
+    }
+
+    /**
+     * @param temporalCapabilities the temporalCapabilities to set
+     */
+    public void setTemporalCapabilities(final TemporalCapabilitiesType temporalCapabilities) {
+        this.temporalCapabilities = temporalCapabilities;
+    }
+
+    /**
+     * @param scalarCapabilities the scalarCapabilities to set
+     */
+    public void setScalarCapabilities(final ScalarCapabilitiesType scalarCapabilities) {
+        this.scalarCapabilities = scalarCapabilities;
+    }
+
+    /**
+     * @param idCapabilities the idCapabilities to set
+     */
+    public void setIdCapabilities(final IdCapabilitiesType idCapabilities) {
+        this.idCapabilities = idCapabilities;
     }
 
     @Override
