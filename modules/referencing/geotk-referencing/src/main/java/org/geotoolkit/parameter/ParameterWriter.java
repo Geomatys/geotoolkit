@@ -76,9 +76,14 @@ public class ParameterWriter extends FilterWriter implements Localized {
     private Set<String> scopes;
 
     /**
-     * The locale.
+     * The locale for international strings.
      */
     private Locale locale = Locale.getDefault();
+
+    /**
+     * The locale for numbers, dates and angles.
+     */
+    private Locale formatLocale = Locale.getDefault(); // JDK7 allows a different value.
 
     /**
      * The formatter to use for numbers. Will be created only when first needed.
@@ -480,7 +485,7 @@ header: for (int i=0; ; i++) {
                 final Unit<?> unit = descriptor.getUnit();
                 if (unit != null) {
                     if (unitFormat == null) {
-                        unitFormat = UnitFormat.getInstance(locale);
+                        unitFormat = UnitFormat.getInstance(formatLocale);
                     }
                     String symbol;
                     try {
@@ -849,6 +854,7 @@ header: for (int i=0; ; i++) {
     public void setLocale(final Locale locale) {
         synchronized (lock) {
             this.locale  = locale;
+            formatLocale = locale;
             numberFormat = null;
             dateFormat   = null;
             angleFormat  = null;
@@ -867,7 +873,7 @@ header: for (int i=0; ; i++) {
     protected String formatValue(final Object value) {
         if (value instanceof Number) {
             if (numberFormat == null) {
-                numberFormat = NumberFormat.getNumberInstance(locale);
+                numberFormat = NumberFormat.getNumberInstance(formatLocale);
                 canSetPositivePrefix = false;
                 if (numberFormat instanceof DecimalFormat) {
                     final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
@@ -887,13 +893,13 @@ header: for (int i=0; ; i++) {
         }
         if (value instanceof Date) {
             if (dateFormat == null) {
-                dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+                dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, formatLocale);
             }
             return dateFormat.format(value);
         }
         if (value instanceof Angle) {
             if (angleFormat == null) {
-                angleFormat = AngleFormat.getInstance(locale);
+                angleFormat = AngleFormat.getInstance(formatLocale);
             }
             return angleFormat.format(value);
         }

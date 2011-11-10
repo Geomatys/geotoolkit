@@ -44,6 +44,7 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.lang.Builder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
@@ -90,7 +91,7 @@ import org.geotoolkit.resources.Errors;
  * @version 3.00
  * @module
  */
-public class GridCoverageBuilder {
+public class GridCoverageBuilder extends Builder {
     /**
      * The envelope, including coordinate reference system.
      */

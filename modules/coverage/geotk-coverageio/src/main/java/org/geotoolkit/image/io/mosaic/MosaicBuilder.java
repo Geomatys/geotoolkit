@@ -36,6 +36,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
+import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
@@ -80,7 +81,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
  * @module
  */
 @ThreadSafe
-public class MosaicBuilder implements LogProducer {
+public class MosaicBuilder extends Builder implements LogProducer {
     /**
      * The default tile size in pixels.
      */

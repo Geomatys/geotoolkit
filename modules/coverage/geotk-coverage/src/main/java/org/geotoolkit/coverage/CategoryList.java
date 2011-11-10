@@ -475,21 +475,26 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      */
     private final class Name extends AbstractInternationalString {
         /** Returns the name in the specified locale. */
-        @Override public String toString(final Locale locale) {
+        @Override public String toString(Locale locale) {
+            Locale fmtLoc = locale;
+            if (locale == null) {
+                locale = Locale.getDefault();
+                fmtLoc = locale; // JDK7 allows a different value.
+            }
             final StringBuffer buffer = new StringBuffer(30);
             if (main != null) {
                 buffer.append(main.getName().toString(locale));
             } else {
                 buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
             }
-            geophysics(true).formatRange(buffer.append(' '), locale);
+            geophysics(true).formatRange(buffer.append(' '), fmtLoc);
             return buffer.toString();
         }
 
         /** Returns the name in the default locale. */
         @Override
         public String toString() {
-            return toString(Locale.getDefault());
+            return toString(null);
         }
     }
 

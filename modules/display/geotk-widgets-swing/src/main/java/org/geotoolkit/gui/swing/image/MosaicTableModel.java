@@ -75,7 +75,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * from a background thread rather than the Swing thread:
  * <p>
  * <ul>
- *   <li>{@link #add(ImageReaderSpi, File[], ProgressListener)}</li>
+ *   <li>{@link #add(ImageReaderSpi, File[], ProgressController)}</li>
  *   <li>{@link #getTileManager()}</li>
  * </ul>
  *

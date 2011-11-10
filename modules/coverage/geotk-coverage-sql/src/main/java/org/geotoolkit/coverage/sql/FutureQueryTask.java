@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.ExecutionException;
@@ -26,6 +25,7 @@ import java.util.concurrent.CancellationException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -95,9 +95,7 @@ final class FutureQueryTask<V> extends FutureTask<V> implements FutureQuery<V> {
             if (tasks == null) {
                 tasks = new Runnable[] {task};
             } else {
-                final int length = tasks.length;
-                tasks = Arrays.copyOf(tasks, length + 1);
-                tasks[length] = task;
+                tasks = XArrays.append(tasks, task);
             }
             afterCompletion = tasks;
         }

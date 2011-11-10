@@ -43,10 +43,12 @@ import org.geotoolkit.internal.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
+
 
 /**
  * A CRS Authority Factory that manages object creation using a set of static strings from a
- * {@linkplain java.util.Properties property file}. This gives some of the benificts of using
+ * {@linkplain java.util.Properties property file}. This gives some of the benefits of using
  * the {@linkplain org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory EPSG database}
  * in a portable property file (which must be provided by the users), or add new authorities.
  * See {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory} for a subclass
@@ -151,7 +153,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      * </ol>
      *
      * If definitions are found for the same keys in both cases, then the definitions found in
-     * step 1 have precedence over the definitios found in case 2.
+     * step 1 have precedence over the definitions found in case 2.
      *
      * @param userHints
      *          An optional set of hints, or {@code null} for the default ones.
@@ -238,10 +240,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
              * approach usually don't have security constraint.
              */
             if (more.isEmpty()) {
-                final URL candidate = resourceLoader.getResource(filename);
-                if (candidate != null) {
-                    definitionFiles.add(candidate);
-                }
+                addIfNonNull(definitionFiles, resourceLoader.getResource(filename));
             }
         }
         /*

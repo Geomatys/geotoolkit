@@ -275,7 +275,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * Creates stream metadata for the given geographic bounding box.
      */
     static SpatialMetadata createStreamMetadata(final GeographicBoundingBox bbox) {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
         if (bbox != null) {
             final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
                 @Override protected double nice(final double value) {
@@ -310,7 +310,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
     static SpatialMetadata createImageMetadata(final Locale locale,
             final List<GridSampleDimension> bands, final GeneralGridGeometry geometry)
     {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         if (bands != null) {
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
             for (GridSampleDimension band : bands) {

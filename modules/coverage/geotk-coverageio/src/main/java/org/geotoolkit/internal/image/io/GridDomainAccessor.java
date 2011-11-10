@@ -67,6 +67,19 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  */
 public final class GridDomainAccessor extends MetadataAccessor {
     /**
+     * The name of the single attribute to declare for node that contains array.
+     * This is used mostly for the following:
+     *
+     * {@preformat text
+     *     RectifiedGridDomain  : RectifiedGrid
+     *     └───OffsetVectors    : List<double[]>
+     *         └───OffsetVector : double[]
+     *             └───values
+     * }
+     */
+    public static final String ARRAY_ATTRIBUTE_NAME = "values";
+
+    /**
      * Threshold for floating point comparisons.
      */
     private static final double EPS = 1E-10;
@@ -223,7 +236,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
             offsetVectors = accessor = new MetadataAccessor(this, "OffsetVectors", "OffsetVector");
         }
         accessor.selectChild(accessor.appendChild());
-        accessor.setAttribute("values", values);
+        accessor.setAttribute(ARRAY_ATTRIBUTE_NAME, values);
     }
 
     /**

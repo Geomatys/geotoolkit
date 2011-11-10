@@ -126,8 +126,8 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * </ol>
  * <p>
  * The {@code "CFMetadata"} group has precedence over the global attributes because the
- * {@linkplain #LONGITUDE_RESOLUTION longitude resolution} and {@linkplain #LATITUDE_RESOLUTION
- * latitude resolution} are often more accurate in that group.
+ * {@linkplain #LONGITUDE longitude} and {@linkplain #LATITUDE latitude} resolutions are
+ * often more accurate in that group.
  *
  * {@section Known limitations}
  * <ul>

@@ -58,7 +58,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
      */
     @Test
     public void testFormatGeographicCRS() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
         String expected = SpatialMetadataFormat.FORMAT_NAME + '\n' +
@@ -121,7 +121,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     public void testFormatProjectedCRS() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_MERCATOR);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
@@ -170,7 +170,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     public void testFormatTransverseMercatorCRS() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_UTM_10N);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
@@ -237,7 +237,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         /*
          * Following should have been tested by testFormatGeographicCRS()
          */
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
         /*
@@ -278,7 +278,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
          * Following should have been tested by testFormatProjectedCRS()
          */
         final ProjectedCRS originalCRS = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_MERCATOR);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(originalCRS);
         /*

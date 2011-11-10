@@ -109,6 +109,7 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
         final DimensionAccessor helper = new DimensionAccessor(metadata);
         assertFalse("Pixels scan should not be needed.", helper.isScanSuggested(reader, 0));
         // Scan anyway, even if the above returned 'false'.
+        metadata.setReadOnly(false);
         helper.scanValidSampleValue(reader, 0);
         assertFalse("Pixels scan should not be needed.", helper.isScanSuggested(reader, 0));
         assertMultilinesEquals(decodeQuotes(

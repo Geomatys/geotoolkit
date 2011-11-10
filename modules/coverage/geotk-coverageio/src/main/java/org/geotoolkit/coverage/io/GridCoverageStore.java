@@ -334,7 +334,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * This method is overridden by {@link GridCoverageReader} and {@link GridCoverageWriter},
      * which will format a better message including the input or output path.
      */
-    String formatErrorMessage(final Exception e) {
+    String formatErrorMessage(final Throwable e) {
         return e.getLocalizedMessage();
     }
 
@@ -347,7 +347,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * @param e The exception which occurred.
      * @param isWriting {@code false} If reading, or {@code true} if writing.
      */
-    final String formatErrorMessage(final Object path, final Exception e, final boolean isWriting) {
+    final String formatErrorMessage(final Object path, final Throwable e, final boolean isWriting) {
         String message = e.getLocalizedMessage();
         if (IOUtilities.canProcessAsPath(path)) {
             final String cause = message;

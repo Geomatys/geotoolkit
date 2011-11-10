@@ -21,7 +21,6 @@ import java.text.Format;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,9 +46,9 @@ import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WarningProducer;
@@ -215,9 +214,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * is for the {@link #EMPTY} constant only.
      */
     private SpatialMetadata() {
-        format   = null;
-        owner    = null;
-        fallback = null;
+        format     = null;
+        owner      = null;
+        fallback   = null;
+        isReadOnly = true;
     }
 
     /**
@@ -283,9 +283,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * The format name of the given fallback are merged with the name of the given format.
      */
     private SpatialMetadata(final IIOMetadataFormat format, final Object owner, final IIOMetadata fallback) {
-        if (format == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "format"));
-        }
+        ensureNonNull("format", format);
         this.format   = format;
         this.owner    = owner;
         this.fallback = fallback;
@@ -294,10 +292,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             nativeMetadataFormatName  = fallback.getNativeMetadataFormatName();
             String[] extraFormatNames = fallback.getExtraMetadataFormatNames();
             if (extraFormatNames != null) {
-                final int length = extraFormatNames.length;
-                extraFormatNames = Arrays.copyOf(extraFormatNames, length + 1);
-                extraFormatNames[length] = format.getRootName();
-                extraMetadataFormatNames = extraFormatNames;
+                extraMetadataFormatNames = XArrays.append(extraFormatNames, format.getRootName());
                 return;
             }
             /*
@@ -580,10 +575,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * time, {@code false} if we should use the fallback, or thrown an exception otherwise.
      */
     private boolean isValidName(final String formatName) throws IllegalArgumentException {
-        if (formatName == null || format == null) {
-            throw new IllegalArgumentException(getErrorResources()
-                    .getString(Errors.Keys.NULL_ARGUMENT_$1, "formatName"));
-        }
+        ensureNonNull("formatName", formatName);
         if (format.getRootName().equalsIgnoreCase(formatName)) {
             return true;
         }

@@ -218,7 +218,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
              */
             if (gridToCRS != null || crs != null) {
                 if (metadata == null) {
-                    metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+                    metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
                 }
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);

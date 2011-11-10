@@ -522,7 +522,7 @@ readLine:   while (true) {
         }
         final double[] origin = new double[] {xll, yll + scaleX * (height - (yCenter ? 1 : 0))};
         final double[] bounds = new double[] {xll + scaleY * (width - (xCenter ? 1 : 0)), yll};
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
         domain.setOrigin(origin);
         domain.addOffsetVector(scaleX, 0);

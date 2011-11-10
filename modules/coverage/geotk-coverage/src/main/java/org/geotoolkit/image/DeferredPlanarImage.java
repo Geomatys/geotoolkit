@@ -324,7 +324,7 @@ public final class DeferredPlanarImage extends PlanarImage
     /**
      * Returns a databuffer for the specified sample model. If the image uses an
      * {@link IndexColorModel} and a {@linkplain IndexColorModel#getTransparentPixel
-     * transparent pixel} is defined, then raster sample values are initilized to
+     * transparent pixel} is defined, then raster sample values are initialized to
      * the transparent pixel.
      */
     private static synchronized DataBuffer getDefaultDataBuffer(
@@ -475,7 +475,7 @@ public final class DeferredPlanarImage extends PlanarImage
     }
 
     /**
-     * Invoked when a tile computation has been cancelled. The default implementation does nothing.
+     * Invoked when a tile computation has been canceled. The default implementation does nothing.
      *
      * @param eventSource The caller of this method.
      * @param requests    The relevant tile computation requests as returned by the method used to queue the tile.
@@ -536,9 +536,7 @@ public final class DeferredPlanarImage extends PlanarImage
             if (observers == null) {
                 observers = new TileObserver[] {observer};
             } else {
-                final int length = observers.length;
-                observers = Arrays.copyOf(observers, length + 1);
-                observers[length] = observer;
+                observers = XArrays.append(observers, observer);
             }
         }
     }

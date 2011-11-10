@@ -107,6 +107,17 @@
  *   </tr>
  * </table>
  *
+ * {@section String formatting in attributes}
+ * The following formatting rules apply:
+ * <p>
+ * <ul>
+ *   <li>Numbers are formatted as in the {@linkplain Locale#US US locale}, i.e.
+ *       as {@link Integer#toString(int)} or {@link Double#toString(double)}.</li>
+ *   <li>Dates are formatted with the {@code "yyyy-MM-dd HH:mm:ss"}
+ *       {@linkplain java.text.SimpleDateFormat pattern} in UTC
+ *       {@linkplain java.util.TimeZone timezone}.</li>
+ * </ul>
+ *
  * {@section Relationship with ISO/OGC standards}
  * The <a href="SpatialMetadataFormat.html#default-formats">default metadata formats</a>
  * defined in this package are inspired by the following material:
@@ -198,7 +209,7 @@
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.09
+ * @version 3.20
  *
  * @since 2.4
  * @module

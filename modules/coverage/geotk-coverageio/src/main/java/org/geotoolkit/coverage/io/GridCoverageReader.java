@@ -18,39 +18,49 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
+import java.io.IOException;
 import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import org.w3c.dom.Node;
 
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
-import org.opengis.metadata.content.ImageDescription;
-import org.opengis.metadata.identification.Resolution;
-import org.opengis.metadata.identification.DataIdentification;
-import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
 
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.BackingStoreException;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.measure.Measure;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.identification.DefaultResolution;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.measure.Measure;
-import org.geotoolkit.util.collection.BackingStoreException;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.metadata.iso.identification.DefaultResolution;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.util.collection.XCollections.addIfNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 
 
 /**
@@ -77,7 +87,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see ImageReader
  *
@@ -243,6 +253,35 @@ public abstract class GridCoverageReader extends GridCoverageStore {
     }
 
     /**
+     * If the given metadata is non-null, supports the ISO-19115 format and contains a
+     * {@link Metadata} user object in the root node, returns that object. Otherwise
+     * creates a new, initially empty, metadata object.
+     */
+    private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws CoverageStoreException {
+        if (streamMetadata != null) try {
+            if (XArrays.containsIgnoreCase(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+                final Node root = streamMetadata.getAsTree(ISO_FORMAT_NAME);
+                if (root instanceof IIOMetadataNode) {
+                    final Object userObject = ((IIOMetadataNode) root).getUserObject();
+                    if (userObject instanceof Metadata) {
+                        // Unconditionally copy the metadata, even if the original object was
+                        // already an instance of DefaultMetadata, because the original object
+                        // may be cached in the ImageReader - so we don't want to modify it.
+                        return new DefaultMetadata((Metadata) userObject);
+                    }
+                }
+            }
+        } catch (BackingStoreException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw new CoverageStoreException(cause);
+            }
+            throw e.unwrapOrRethrow(CoverageStoreException.class);
+        }
+        return new DefaultMetadata();
+    }
+
+    /**
      * Returns the ISO 19115 metadata object associated with the input source as a whole
      * and each coverages. The default implementation constructs the metadata from the
      * {@linkplain #getStreamMetadata() stream metadata} and the
@@ -260,26 +299,46 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * @since 3.18
      */
     public Metadata getMetadata() throws CoverageStoreException {
-        final DefaultMetadata metadata       = new DefaultMetadata();
         final SpatialMetadata streamMetadata = getStreamMetadata();
-        final List<String>    coverageNames  = getCoverageNames();
-        final int             numCoverages   = coverageNames.size();
+        final DefaultMetadata metadata = createMetadata(streamMetadata);
         /*
-         * Extract all information available from the stream metadata,
-         * then check if we should complete the extents and resolutions.
+         * Extract all information available from the stream metadata, provided that metadata
+         * elements were not already provided by the above call to createMetadata(...). Since
+         * createMetadata(...) typically get its information from the stream metadata as well,
+         * we assume that creating here new objects from stream metadata would be redundant.
          */
         DataIdentification identification = null;
         if (streamMetadata != null) {
-            final DataQuality quality = streamMetadata.getInstanceForType(DataQuality.class);
-            if (quality != null) {
-                metadata.getDataQualityInfo().add(quality);
+            final Collection<DataQuality> quality = metadata.getDataQualityInfo();
+            if (quality.isEmpty()) {
+                addIfNonNull(quality, streamMetadata.getInstanceForType(DataQuality.class));
             }
-            AcquisitionInformation acquisition = streamMetadata.getInstanceForType(AcquisitionInformation.class);
-            if (acquisition != null) {
-                metadata.getAcquisitionInformation().add(acquisition);
+            final Collection<AcquisitionInformation> acquisition = metadata.getAcquisitionInformation();
+            if (acquisition.isEmpty()) {
+                addIfNonNull(acquisition, streamMetadata.getInstanceForType(AcquisitionInformation.class));
             }
-            identification = streamMetadata.getInstanceForType(DataIdentification.class);
+            /*
+             * Get the existing identification info if any, or create a new one otherwise.
+             * If an identification info is found, remove it from the metadata (it will be
+             * added back at the end of this method, or a copy of it will be added).
+             */
+            final Iterator<Identification> it = metadata.getIdentificationInfo().iterator();
+            while (it.hasNext()) {
+                final Identification candidate = it.next();
+                if (candidate instanceof DataIdentification) {
+                    identification = (DataIdentification) candidate;
+                    it.remove();
+                    break;
+                }
+            }
+            if (identification == null) {
+                identification = streamMetadata.getInstanceForType(DataIdentification.class);
+            }
         }
+        /*
+         * Check if we should complete the extents and resolutions. We will do so only
+         * if the extent and resolution are not already provided in the metadata.
+         */
         final boolean computeExtents, computeResolutions;
         if (identification != null) {
             computeExtents     = isNullOrEmpty(identification.getExtents());
@@ -288,6 +347,8 @@ public abstract class GridCoverageReader extends GridCoverageStore {
             computeExtents     = true;
             computeResolutions = true;
         }
+        final List<String> coverageNames  = getCoverageNames();
+        final int          numCoverages   = coverageNames.size();
         /*
          * If there is no "DiscoveryMetadata" node, or if this node does not contain any
          * extent or resolution, computes the missing elements from the grid geometry.
@@ -309,7 +370,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
             }
             if (computeResolutions || computeExtents) {
                 /*
-                 * Resolution along the horizontal axes only, ignoring all other axis.
+                 * Resolution along the horizontal axes only, ignoring all other axes.
                  */
                 final GeneralGridGeometry gg = getGridGeometry(i);
                 if (computeResolutions) {
@@ -346,7 +407,10 @@ public abstract class GridCoverageReader extends GridCoverageStore {
         }
         /*
          * At this point, we have computed extents and resolutions from every images
-         * in the stream. Now store the result.
+         * in the stream. Now store the result. Note that we unconditionally create
+         * a copy of the identification info, even if the original object was already
+         * an instance of DefaultDataIdentification, because the original object may
+         * be cached in the ImageReader.
          */
         if (extent != null || resolutions != null) {
             final DefaultDataIdentification copy = new DefaultDataIdentification(identification);

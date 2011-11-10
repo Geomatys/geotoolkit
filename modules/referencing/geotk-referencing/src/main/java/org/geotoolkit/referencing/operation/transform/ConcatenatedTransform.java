@@ -50,7 +50,7 @@ import static org.geotoolkit.referencing.operation.matrix.Matrices.*;
 
 /**
  * Base class for concatenated transforms. Instances can be created by calls to the
- * {@link MathTransforms#create(MathTransform, MathTransform)} method. When possible,
+ * {@link MathTransforms#concatenate(MathTransform, MathTransform)} method. When possible,
  * the above-cited method tries to concatenate {@linkplain ProjectiveTransform projective transforms}
  * before to fallback on the creation of new {@code ConcatenatedTransform} instances.
  * <p>
@@ -103,7 +103,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     /**
      * Constructs a concatenated transform. This constructor is for subclasses only.
      * To create a concatenated transform, use the factory method
-     * {@link MathTransforms#create(MathTransform, MathTransform)} instead.
+     * {@link MathTransformsconcatenate(MathTransform, MathTransform)} instead.
      *
      * @param transform1 The first math transform.
      * @param transform2 The second math transform.
@@ -262,7 +262,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      *
      * @since 3.14
      *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D)
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D)}
      */
     @Deprecated
     public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2) {
@@ -280,7 +280,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      *
      * @since 3.00
      *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform, MathTransform, MathTransform)
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform, MathTransform, MathTransform)}
      */
     @Deprecated
     public static MathTransform create(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
@@ -299,7 +299,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      *
      * @since 3.14
      *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D, MathTransform2D)
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D, MathTransform2D)}
      */
     @Deprecated
     public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2, MathTransform2D tr3) {
@@ -318,7 +318,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      *
      * @since 3.14
      *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D, MathTransform1D)
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform1D, MathTransform1D, MathTransform1D)}
      */
     @Deprecated
     public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2, MathTransform1D tr3) {

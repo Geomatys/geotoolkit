@@ -836,6 +836,26 @@ public final class XArrays extends Static {
     }
 
     /**
+     * Returns a copy of the given array with a single element appended at the end.
+     * This method should be invoked only on rare occasions. If many elements are to
+     * be added, use {@link java.util.ArrayList} instead.
+     *
+     * @param <T>      The type of elements in the array.
+     * @param array    The array to copy with a new element. The original array will not be modified.
+     * @param element  The element to add (can be null).
+     * @return         A copy of the given array with the given element appended at the end.
+     *
+     * @see #concatenate(Object[][])
+     *
+     * @since 3.20
+     */
+    public static <T> T[] append(final T[] array, final T element) {
+        final T[] copy = Arrays.copyOf(array, array.length + 1);
+        copy[array.length] = element;
+        return copy;
+    }
+
+    /**
      * Reverses the order of elements in the given array.
      * This operation is performed in-place.
      *
@@ -1247,6 +1267,8 @@ public final class XArrays extends Static {
      * @param arrays The arrays to concatenate, or {@code null}.
      * @return       The concatenation of all non-null arrays (may be a direct reference to one
      *               of the given array if it can be returned with no change), or {@code null}.
+     *
+     * @see #append(Object[], Object)
      *
      * @since 3.07
      */

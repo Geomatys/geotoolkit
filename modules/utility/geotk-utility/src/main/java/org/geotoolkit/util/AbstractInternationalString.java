@@ -134,7 +134,7 @@ public abstract class AbstractInternationalString implements InternationalString
 
     /**
      * Returns this string in the default locale. Invoking this method is equivalent to invoking
-     * <code>{@linkplain #toString(Locale) toString}({@linkplain Locale#getDefault})</code>. All
+     * <code>{@linkplain #toString(Locale) toString}({@linkplain Locale#getDefault()})</code>. All
      * methods from {@link CharSequence} operate on this string. This string is also used as the
      * criterion for {@linkplain Comparable natural ordering}.
      *

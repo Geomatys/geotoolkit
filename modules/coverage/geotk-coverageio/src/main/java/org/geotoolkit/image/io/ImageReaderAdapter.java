@@ -590,17 +590,21 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             final IIOMetadata metadata = main.getImageMetadata(imageIndex);
             if (metadata != null) {
                 if (metadata instanceof SpatialMetadata) {
-                    return (SpatialMetadata) metadata;
+                    final SpatialMetadata sm = (SpatialMetadata) metadata;
+                    sm.setReadOnly(false);
+                    return sm;
                 }
-                return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, metadata);
             }
         } else {
             final IIOMetadata metadata = main.getStreamMetadata();
             if (metadata != null) {
                 if (metadata instanceof SpatialMetadata) {
-                    return (SpatialMetadata) metadata;
+                    final SpatialMetadata sm = (SpatialMetadata) metadata;
+                    sm.setReadOnly(false);
+                    return sm;
                 }
-                return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this, metadata);
             }
         }
         return null;
@@ -1140,7 +1144,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.STREAM;
+                return SpatialMetadataFormat.getStreamInstance(null);
             }
             return main.getStreamMetadataFormat(formatName);
         }
@@ -1151,7 +1155,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
-                return SpatialMetadataFormat.IMAGE;
+                return SpatialMetadataFormat.getImageInstance(null);
             }
             return main.getImageMetadataFormat(formatName);
         }

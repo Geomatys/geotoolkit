@@ -731,7 +731,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * message. Otherwise it returns the localized message of the given exception.
      */
     @Override
-    final String formatErrorMessage(final Exception e) {
+    final String formatErrorMessage(final Throwable e) {
         return formatErrorMessage(output, e, true);
     }
 
@@ -765,7 +765,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         try {
             close();
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         if (imageWriter != null) {
             imageWriter.reset();
@@ -787,7 +787,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         try {
             close();
         } catch (IOException e) {
-            throw new CoverageStoreException(e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         if (imageWriter != null) {
             imageWriter.dispose();

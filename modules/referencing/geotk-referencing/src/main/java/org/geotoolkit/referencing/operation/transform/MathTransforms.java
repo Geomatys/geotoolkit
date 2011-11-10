@@ -197,6 +197,7 @@ public final class MathTransforms extends Static {
      * @param tr2 The second math transform.
      * @return    The concatenated transform.
      *
+     * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
      * @see ConcatenatedTransform#create(MathTransform, MathTransform)
      */
     public static MathTransform concatenate(MathTransform tr1, MathTransform tr2) {

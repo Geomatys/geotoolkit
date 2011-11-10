@@ -46,7 +46,7 @@ import org.geotoolkit.lang.Static;
  * Java {@link Collections} utility class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.10 (derived from 3.00)
  * @module
@@ -113,6 +113,21 @@ public final class XCollections extends Static {
      */
     public static boolean isNullOrEmpty(final Map<?,?> map) {
         return (map == null) || map.isEmpty();
+    }
+
+    /**
+     * Adds the given element to the given collection only if the element is non-null.
+     * If any of the given argument is null, then this method does nothing.
+     *
+     * @param  <E>        The type of elements in the collection.
+     * @param  collection The collection in which to add elements, or {@code null}.
+     * @param  element    The element to add in the collection, or {@code null}.
+     * @return {@code true} if the given element has been added, or {@code false} otherwise.
+     *
+     * @since 3.20
+     */
+    public static <E> boolean addIfNonNull(final Collection<E> collection, final E element) {
+        return (collection != null && element != null) && collection.add(element);
     }
 
     /**

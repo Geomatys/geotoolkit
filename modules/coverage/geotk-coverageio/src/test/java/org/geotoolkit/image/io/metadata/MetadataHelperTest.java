@@ -71,7 +71,7 @@ public final strictfp class MetadataHelperTest implements Localized {
     @Test
     public void testAffineTransform() throws ImageMetadataException {
         // Creates a simple metadata.
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final GridDomainAccessor accessor = new GridDomainAccessor(metadata);
         accessor.setOrigin(-10, -20);
         accessor.addOffsetVector(3, 4);
@@ -114,7 +114,7 @@ public final strictfp class MetadataHelperTest implements Localized {
     @Test
     public void testUniformTransform() throws ImageMetadataException {
         // Creates a simple metadata.
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         final GridDomainAccessor accessor = new GridDomainAccessor(metadata);
         accessor.setOrigin(-10, -20);
         accessor.addOffsetVector(4,  0);

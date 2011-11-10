@@ -498,7 +498,8 @@ public class IIOMetadataPanel extends JComponent {
      * additional information (type, valid values, <i>etc.</i>).
      */
     public void addDefaultMetadataFormats() {
-        addMetadataFormat(SpatialMetadataFormat.STREAM, SpatialMetadataFormat.IMAGE);
+        addMetadataFormat(SpatialMetadataFormat.getStreamInstance(null),
+                          SpatialMetadataFormat.getImageInstance (null));
         addMetadataFormat(null, IIOMetadataFormatImpl.getStandardFormatInstance());
     }
 }

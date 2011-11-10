@@ -35,6 +35,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.util.FactoryException;
 
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -49,7 +50,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.lang.Builder;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 
@@ -110,7 +111,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * @since 3.08 (derived from 3.07)
  * @module
  */
-public class ReferencingBuilder {
+public class ReferencingBuilder extends Builder {
     /**
      * Small tolerance factor for comparisons of floating point numbers.
      */
@@ -745,7 +746,7 @@ public class ReferencingBuilder {
      * Returns a default object of the given class. This method is invoked automatically
      * when the object was not explicitly defined in the metadata, or can not be parsed.
      * <p>
-     * The default implementation delegates to {@link PredefinedMetadataFormat#getDefaultValue(Class)}
+     * The default implementation delegates to {@link SpatialMetadataFormat#getDefaultValue(Class)}
      * for every types except {@link CoordinateReferenceSystem}. The later method is preferred to
      * {@link IIOMetadataFormat#getObjectDefaultValue(String)} because the default value may depend
      * on the {@code "type"} attribute in the enclosing element. For example if the CRS type is
@@ -760,13 +761,13 @@ public class ReferencingBuilder {
      * @return The default object of the given type, or {@code null} if none.
      * @throws FactoryException If the default object can not be created.
      *
-     * @see PredefinedMetadataFormat#getDefaultValue(Class)
+     * @see SpatialMetadataFormat#getDefaultValue(Class)
      * @see IIOMetadataFormat#getObjectDefaultValue(String)
      */
     protected <T extends IdentifiedObject> T getDefault(final Class<T> type) throws FactoryException {
         if (!CoordinateReferenceSystem.class.isAssignableFrom(type)) {
-            if (accessor.format instanceof PredefinedMetadataFormat) {
-                return ((PredefinedMetadataFormat) accessor.format).getDefaultValue(type);
+            if (accessor.format instanceof SpatialMetadataFormat) {
+                return ((SpatialMetadataFormat) accessor.format).getDefaultValue(type);
             }
         }
         return null;
@@ -778,7 +779,7 @@ public class ReferencingBuilder {
      * of the following methods which return a non-null default value:
      * <p>
      * <ul>
-     *   <li>{@link PredefinedMetadataFormat#getDefaultValue(Class)}</li>
+     *   <li>{@link SpatialMetadataFormat#getDefaultValue(Class)}</li>
      *   <li>{@link IIOMetadataFormat#getObjectDefaultValue(String)}</li>
      * </ul>
      */

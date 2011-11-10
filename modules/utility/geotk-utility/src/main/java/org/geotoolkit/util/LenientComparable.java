@@ -29,8 +29,7 @@ package org.geotoolkit.util;
  * <table>
  * <tr><th align="left" valign="top">{@link ComparisonMode#STRICT STRICT}:</th>
  * <td>Objects must be of the same class and all attributes must be equal, including
- * {@linkplain org.geotoolkit.metadata.iso.MetadataEntity#getIdentifiers() identifiers}
- * and {@linkplain org.geotoolkit.metadata.iso.MetadataEntity#getXLink() xlinks}.</td></tr>
+ * {@linkplain org.geotoolkit.metadata.iso.MetadataEntity#getIdentifiers() identifiers}.</td></tr>
  *
  * <tr><th align="left" valign="top">{@link ComparisonMode#BY_CONTRACT BY_CONTRACT}:</th>
  * <td>The same attributes than the above {@code STRICT} mode must be equal, but the metadata

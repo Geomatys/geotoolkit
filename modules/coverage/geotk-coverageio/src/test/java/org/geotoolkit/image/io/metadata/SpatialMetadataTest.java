@@ -63,7 +63,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testImageDescription() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         /*
          * Write a few data using the accessor.
          */
@@ -104,7 +104,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testInstrument() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
         MetadataAccessor accessor = new MetadataAccessor(metadata, null, "AcquisitionMetadata/Platform/Instruments", "Instrument");
         accessor.selectChild(accessor.appendChild());
         accessor.setAttribute("type", "Currentmeter");
@@ -148,7 +148,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testRectifiedGrid() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         /*
          * Write a few data using the accessor.
          */
@@ -182,7 +182,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testInexistentNode() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
         metadata.setReadOnly(true);
         assertNull("SpatialMetadata can not return an instance of an inexistent node " +
                    "if it was not allowed to create the missing nodes.",
@@ -209,7 +209,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testEmpty() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
         final DataIdentification identification = metadata.getInstanceForType(DataIdentification.class);
         assertTrue(identification.getExtents().isEmpty());
         assertTrue(identification.getSpatialResolutions().isEmpty());

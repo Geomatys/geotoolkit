@@ -247,7 +247,7 @@ public class TextMatrixImageReader extends TextImageReader {
                     if (value > maximum) maximum = value;
                 }
             }
-            final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+            final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
             accessor.selectChild(accessor.appendChild());
             if (minimum < maximum) {

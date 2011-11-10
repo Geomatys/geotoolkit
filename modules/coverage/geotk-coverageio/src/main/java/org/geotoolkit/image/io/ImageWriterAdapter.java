@@ -22,7 +22,6 @@ import java.net.URL;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Locale;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -48,6 +47,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
@@ -260,22 +260,23 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     /**
      * Returns a metadata object containing default values for encoding a stream of images.
      * The default implementation returns the union of the metadata formats declared by the
-     * {@linkplain #main} writer, and the Geotk {@link SpatialMetadataFormat#STREAM STREAM}
-     * format.
+     * {@linkplain #main} writer, and the Geotk
+     * {@linkplain SpatialMetadataFormat#getStreamInstance stream metadata format}.
      * <p>
      * Subclasses can override the {@link #writeStreamMetadata(IIOMetadata)} method
      * for writing those metadata to the output.
      */
     @Override
     public SpatialMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
-        return new SpatialMetadata(SpatialMetadataFormat.STREAM, this,
+        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this,
                 main.getDefaultStreamMetadata(unwrap(param)));
     }
 
     /**
      * Returns a metadata object containing default values for encoding an image of the given type.
      * The default implementation returns the union of the metadata formats declared by the
-     * {@linkplain #main} writer, and the Geotk {@link SpatialMetadataFormat#IMAGE IMAGE} format.
+     * {@linkplain #main} writer, and the Geotk
+     * {@linkplain SpatialMetadataFormat#getImageInstance image metadata format}.
      * <p>
      * Subclasses can override the {@link #writeImageMetadata(IIOMetadata, int, ImageWriteParam)}
      * method for writing those metadata to the output.
@@ -284,7 +285,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     public SpatialMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
                                                    final ImageWriteParam    param)
     {
-        return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this,
+        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this,
                 main.getDefaultImageMetadata(imageType, unwrap(param)));
     }
 
@@ -696,12 +697,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * package and we have no way to filter {@code ImageWriter} by output
          * stream.
          */
-        private static final Class<?>[] TYPES;
-        static {
-            final int n = ImageReaderAdapter.Spi.TYPES.length;
-            TYPES = Arrays.copyOf(ImageReaderAdapter.Spi.TYPES, n + 1);
-            TYPES[n] = ImageOutputStream.class;
-        }
+        private static final Class<?>[] TYPES =
+                XArrays.append(ImageReaderAdapter.Spi.TYPES, ImageOutputStream.class);
 
         /**
          * The provider of the writers to use for writing the pixel values.
@@ -767,7 +764,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.STREAM;
+                return SpatialMetadataFormat.getStreamInstance(null);
             }
             return main.getStreamMetadataFormat(formatName);
         }
@@ -778,7 +775,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
             if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
-                return SpatialMetadataFormat.IMAGE;
+                return SpatialMetadataFormat.getImageInstance(null);
             }
             return main.getImageMetadataFormat(formatName);
         }
