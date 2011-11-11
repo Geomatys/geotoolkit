@@ -31,6 +31,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import static org.geotoolkit.geometry.AbstractEnvelope.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -45,8 +46,23 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * This is not specific to this implementation; in Java2D too, the visual axis orientation depend
  * on the {@linkplain java.awt.Graphics2D#getTransform affine transform in the graphics context}.
  *
+ * {@section Crossing the anti-meridian}
+ * Negative width or height are interpreted as an envelope crossing the anti-meridian if the
+ * corresponding {@linkplain org.opengis.referencing.cs.CoordinateSystemAxis#getRangeMeaning()
+ * range meaning} is {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND}:
+ * <p>
+ * <ul>
+ *   <li>{@link #getWidth()}</li>
+ *   <li>{@link #getHeight()}</li>
+ *   <li>{@link #getCenterX()}</li>
+ *   <li>{@link #getCenterY()}</li>
+ * </ul>
+ * <p>
+ * The {@link #getSpan(int)} and {@link #getMedian(int)} methods delegate to the methods listed
+ * above.
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.20
  *
  * @see GeneralEnvelope
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -288,9 +304,9 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
-     * Returns the median ordinate along the specified dimension. The result should be equals
-     * (minus rounding error) to <code>({@linkplain #getMaximum getMaximum}(dimension) -
-     * {@linkplain #getMinimum getMinimum}(dimension)) / 2</code>.
+     * Returns the median ordinate along the specified dimension. The default implementation
+     * delegates to {@link #getCenterX()} or {@link #getCenterY()}, depending the requested
+     * dimension.
      *
      * @param dimension The dimension to query.
      * @return The mid ordinate value along the given dimension.
@@ -306,14 +322,14 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
-     * Returns the envelope span (typically width or height) along the specified dimension.
-     * The result should be equals (minus rounding error) to <code>{@linkplain #getMaximum
-     * getMaximum}(dimension) - {@linkplain #getMinimum getMinimum}(dimension)</code>.
+     * Returns the envelope span along the specified dimension. The default implementation
+     * delegates to {@link #getWidth()} or {@link #getHeight()}, depending the requested
+     * dimension.
      *
-     * @param dimension The dimension to query.
-     * @return The difference along maximal and minimal ordinates in the given dimension.
+     * @param  dimension The dimension to query.
+     * @return The rectangle width or height, depending the given dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     */
+      */
     @Override
     public final double getSpan(final int dimension) throws IndexOutOfBoundsException {
         switch (dimension) {
@@ -324,17 +340,95 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
-     * Returns a hash value for this envelope. Current implementation returns the same
-     * value than {@link Rectangle2D} for consistency with its {@link Rectangle2D#equals
-     * equals} method, which compare arbitrary {@code Rectangle2D} implementations.
+     * Returns the median ordinate along the <var>x</var> dimension. This method handles crossing
+     * of anti-meridian as documented in the {@link AbstractEnvelope#getMedian(int)} method.
+     *
+     * @since 3.20
      */
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public double getCenterX() {
+        double median = x + 0.5*width;
+        if (isNegative(width)) { // Special handling for -0.0
+            median = fixMedian(getAxis(crs, 0), median);
+        }
+        return median;
     }
 
     /**
-     * Compares the specified object with this envelope for equality.
+     * Returns the median ordinate along the <var>y</var> dimension. This method handles crossing
+     * of anti-meridian as documented in the {@link AbstractEnvelope#getMedian(int)} method
+     * (note that "<var>y</var>" can be longitude, as it depends on axis order).
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getCenterY() {
+        double median = y + 0.5*height;
+        if (isNegative(height)) { // Special handling for -0.0
+            median = fixMedian(getAxis(crs, 1), median);
+        }
+        return median;
+    }
+
+    /**
+     * Returns the span along the <var>x</var> dimension. This method handles crossing of
+     * anti-meridian as documented in the {@link AbstractEnvelope#getSpan(int)} method.
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getWidth() {
+        double span = width;
+        if (isNegative(span)) { // Special handling for -0.0
+            span = fixSpan(getAxis(crs, 0), span);
+        }
+        return span;
+    }
+
+    /**
+     * Returns the span along the <var>y</var> dimension. This method handles crossing of
+     * anti-meridian as documented in the {@link AbstractEnvelope#getSpan(int)} method
+     * (note that "<var>y</var>" can be longitude, as it depends on axis order).
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getHeight() {
+        double span = height;
+        if (isNegative(span)) { // Special handling for -0.0
+            span = fixSpan(getAxis(crs, 1), span);
+        }
+        return span;
+    }
+
+    /**
+     * Returns the "maximal" ordinate value on the <var>x</var> axis.
+     * This value may not be really maximal if the rectangle cross the anti-meridian.
+     */
+    @Override
+    public double getMaxX() {
+        return x + width;
+    }
+
+    /**
+     * Returns the "maximal" ordinate value on the <var>y</var> axis.
+     * This value may not be really maximal if the rectangle cross the anti-meridian.
+     */
+    @Override
+    public double getMaxY() {
+        return y + height;
+    }
+
+    /**
+     * Compares the specified object with this envelope for equality. If the given object is not
+     * an instance of {@code Envelope2D}, then the two objects are compared as plain rectangles,
+     * i.e. the {@linkplain #getCoordinateReferenceSystem() coordinate reference system} of this
+     * envelope is ignored.
+     *
+     * {@section Note on <code>hashCode()</code>}
+     * This class does not override the {@link #hashCode()} method for consistency with the
+     * {@link Rectangle2D#equals(Object)} method, which compare arbitrary {@code Rectangle2D}
+     * implementations.
      *
      * @param object The object to compare with this envelope.
      * @return {@code true} if the given object is equal to this envelope.

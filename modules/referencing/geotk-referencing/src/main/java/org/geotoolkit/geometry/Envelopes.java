@@ -529,7 +529,7 @@ public final class Envelopes extends Static {
          * is a valid point.
          */
         TransformException warning = null;
-        GeneralEnvelope generalEnvelope = null;
+        AbstractEnvelope generalEnvelope = null;
         DirectPosition sourcePt = null;
         DirectPosition targetPt = null;
         long includedMinValue = 0; // A bitmask for each dimension.
@@ -579,7 +579,11 @@ public final class Envelopes extends Static {
                     }
                     // TODO: avoid the hack below if we provide a contains(DirectPosition)
                     //       method in the GeoAPI org.opengis.geometry.Envelope interface.
-                    generalEnvelope = GeneralEnvelope.castOrCopy(envelope);
+                    if (envelope instanceof AbstractEnvelope) {
+                        generalEnvelope = (AbstractEnvelope) envelope;
+                    } else {
+                        generalEnvelope = new GeneralEnvelope(envelope);
+                    }
                 }
                 targetPt.setOrdinate(i, extremum);
                 try {

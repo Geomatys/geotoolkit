@@ -17,14 +17,14 @@
  */
 package org.geotoolkit.geometry;
 
+import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
-import org.geotoolkit.resources.Errors;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.geotoolkit.geometry.AbstractDirectPosition.checkCoordinateReferenceSystemDimension;
 
 
 /**
@@ -34,22 +34,17 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  * @module
  */
 @Immutable
-public final class ImmutableEnvelope extends AbstractEnvelope {
+public final class ImmutableEnvelope extends ArrayEnvelope implements Serializable {
     /**
-     * The coordinate reference system for this envelope.
+     * For cross-version compatibility.
      */
-    private final CoordinateReferenceSystem crs;
-
-    /**
-     * The ordinate values.
-     */
-    private final double[] ordinates;
+    private static final long serialVersionUID = 5593936512712449234L;
 
     /**
      * Creates an immutable envelope with the values of the given envelope.
@@ -57,14 +52,21 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      * @param envelope The envelope to copy.
      */
     public ImmutableEnvelope(final Envelope envelope) {
-        ensureNonNull("envelope", envelope);
-        crs  = envelope.getCoordinateReferenceSystem();
-        final int dim = envelope.getDimension();
-        ordinates = new double[2*dim];
-        for (int i=0; i<dim; i++){
-            ordinates[i]       = envelope.getMinimum(i);
-            ordinates[i + dim] = envelope.getMaximum(i);
-        }
+        super(envelope);
+    }
+
+    /**
+     * Constructs a new envelope with the same data than the specified
+     * geographic bounding box. The coordinate reference system is set
+     * to {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
+     *
+     * @param box The bounding box to copy.
+     *
+     * @since 3.20
+     */
+    public ImmutableEnvelope(final GeographicBoundingBox box) {
+        super(box);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -79,17 +81,39 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
     public ImmutableEnvelope(final CoordinateReferenceSystem crs, final double xmin,
                              final double xmax, final double ymin, final double ymax)
     {
+        super(xmin, xmax, ymin, ymax);
         this.crs = crs;
-        if (crs != null) {
-            final int dim = crs.getCoordinateSystem().getDimension();
-            if (dim != 2) {
-                throw new MismatchedDimensionException(Errors.format(
-                        Errors.Keys.MISMATCHED_DIMENSION_$3, "crs", dim, 2));
-            }
-        }
-        ordinates = new double[] {
-            xmin, ymin, xmax, ymax
-        };
+        checkCoordinateReferenceSystemDimension(crs, 2);
+        ensureValidRanges(crs, ordinates);
+    }
+
+    /**
+     * Constructs a new envelope initialized to the values parsed from the given string in
+     * <cite>Well Known Text</cite> (WKT) format. The given string is typically a {@code BOX}
+     * element like below:
+     *
+     * {@preformat wkt
+     *     BOX(-180 -90, 180 90)
+     * }
+     *
+     * However this constructor is lenient to other geometry types like {@code POLYGON}.
+     * See the javadoc of the {@link GeneralEnvelope#GeneralEnvelope(String) GeneralEnvelope}
+     * constructor for more information.
+     *
+     * @param crs  The coordinate reference system, or {@code null} if none.
+     * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.
+     * @throws NumberFormatException If a number can not be parsed.
+     * @throws IllegalArgumentException If the parenthesis are not balanced.
+     *
+     * @since 3.20
+     */
+    public ImmutableEnvelope(final CoordinateReferenceSystem crs, final String wkt)
+            throws NumberFormatException, IllegalArgumentException
+    {
+        super(wkt);
+        this.crs = crs;
+        checkCoordinateReferenceSystemDimension(crs, getDimension());
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -97,7 +121,7 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return crs;
+        return super.getCoordinateReferenceSystem();
     }
 
     /**
@@ -105,7 +129,7 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      */
     @Override
     public int getDimension() {
-        return ordinates.length / 2;
+        return super.getDimension();
     }
 
     /**
@@ -115,8 +139,7 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      */
     @Override
     public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        ensureValidIndex(ordinates.length >>> 1, dimension);
-        return ordinates[dimension];
+        return super.getMinimum(dimension);
     }
 
     /**
@@ -126,27 +149,6 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      */
     @Override
     public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        ensureValidIndex(ordinates.length >>> 1, dimension);
-        return ordinates[dimension + (ordinates.length >>> 1)];
-    }
-
-    /**
-     * Returns the median ordinate along the specified dimension.
-     *
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     */
-    @Override
-    public double getMedian(final int dimension) throws IndexOutOfBoundsException {
-        return (ordinates[dimension] + ordinates[dimension + ordinates.length/2]) / 2 ;
-    }
-
-    /**
-     * Returns the envelope span (typically width or height) along the specified dimension.
-     *
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     */
-    @Override
-    public double getSpan(final int dimension) throws IndexOutOfBoundsException {
-        return ordinates[dimension + ordinates.length/2] - ordinates[dimension];
+        return super.getMaximum(dimension);
     }
 }

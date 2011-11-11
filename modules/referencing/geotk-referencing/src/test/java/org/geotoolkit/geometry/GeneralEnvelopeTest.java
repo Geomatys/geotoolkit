@@ -168,7 +168,7 @@ public final strictfp class GeneralEnvelopeTest {
         assertTrue   (e1.equals(e2, 1E-4, false));
         assertEquals (e1.hashCode(), e2.hashCode());
         /*
-         * Offset slightly one coordinate value. Should not be equals anymore,
+         * Offset slightly some coordinate value. Should not be equals anymore,
          * except when comparing with a tolerance value.
          */
         e2.setRange(2, e2.getMinimum(2) + 3E-5, e2.getMaximum(2) - 3E-5);
@@ -182,7 +182,7 @@ public final strictfp class GeneralEnvelopeTest {
          * Applies a greater offset. Should not be equal,
          * even when comparing with a tolerance value.
          */
-        e2.setRange(1, e2.getMinimum(1) + 3, e2.getMaximum(1) - 3);
+        e2.setRange(1, e2.getMinimum(1) + 1.5, e2.getMaximum(1) - 1.5);
         assertTrue (e1.contains(e2, true ));
         assertFalse(e1.contains(e2, false));
         assertFalse(e1.equals  (e2));

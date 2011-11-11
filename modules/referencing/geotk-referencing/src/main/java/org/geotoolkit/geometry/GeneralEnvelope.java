@@ -18,12 +18,9 @@
 package org.geotoolkit.geometry;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
 import java.lang.reflect.Field;
-import javax.measure.unit.Unit;
-import javax.measure.converter.ConversionException;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
@@ -42,7 +39,6 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -84,7 +80,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.19
+ * @version 3.20
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -93,7 +89,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @since 1.2
  * @module
  */
-public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Serializable {
+public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -106,25 +102,13 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     private static volatile Field ordinatesField;
 
     /**
-     * Minimum and maximum ordinate values. The first half contains minimum ordinates, while the
-     * last half contains maximum ordinates. This layout is convenient for the creation of lower
-     * and upper corner direct positions.
-     */
-    private final double[] ordinates;
-
-    /**
-     * The coordinate reference system, or {@code null}.
-     */
-    private CoordinateReferenceSystem crs;
-
-    /**
      * Constructs an empty envelope of the specified dimension. All ordinates
      * are initialized to 0 and the coordinate reference system is undefined.
      *
      * @param dimension The envelope dimension.
      */
     public GeneralEnvelope(final int dimension) {
-        ordinates = new double[dimension << 1];
+        super(dimension);
     }
 
     /**
@@ -132,10 +116,12 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      *
      * @param min The minimal value.
      * @param max The maximal value.
+     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
+     *         less than or equal to the corresponding ordinate value in the maximum point.
      */
-    public GeneralEnvelope(final double min, final double max) {
-        ordinates = new double[] {min, max};
-        checkCoordinates(ordinates);
+    public GeneralEnvelope(final double min, final double max) throws IllegalArgumentException {
+        super(min, max);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -147,16 +133,9 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @throws IllegalArgumentException if an ordinate value in the minimum point is not
      *         less than or equal to the corresponding ordinate value in the maximum point.
      */
-    public GeneralEnvelope(final double[] minDP, final double[] maxDP)
-            throws IllegalArgumentException
-    {
-        ensureNonNull("minDP", minDP);
-        ensureNonNull("maxDP", maxDP);
-        ensureSameDimension(minDP.length, maxDP.length);
-        ordinates = new double[minDP.length + maxDP.length];
-        System.arraycopy(minDP, 0, ordinates, 0,            minDP.length);
-        System.arraycopy(maxDP, 0, ordinates, minDP.length, maxDP.length);
-        checkCoordinates(ordinates);
+    public GeneralEnvelope(final double[] minDP, final double[] maxDP) throws IllegalArgumentException {
+        super(minDP, maxDP);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -168,7 +147,8 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @throws MismatchedDimensionException if the two positions don't have the same dimension.
      * @throws MismatchedReferenceSystemException if the two positions don't use the same CRS.
      * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point.
+     *         less than or equal to the corresponding ordinate value in the maximum point
+     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      */
     public GeneralEnvelope(final GeneralDirectPosition minDP, final GeneralDirectPosition maxDP)
             throws MismatchedReferenceSystemException, IllegalArgumentException
@@ -176,9 +156,10 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
 //  Uncomment next lines if Sun fixes RFE #4093999
 //      ensureNonNull("minDP", minDP);
 //      ensureNonNull("maxDP", maxDP);
-        this(minDP.ordinates, maxDP.ordinates);
+        super(minDP.ordinates, maxDP.ordinates);
         crs = getCoordinateReferenceSystem(minDP, maxDP);
         AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, ordinates.length >>> 1);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -192,7 +173,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     public GeneralEnvelope(final CoordinateReferenceSystem crs) {
 //  Uncomment next line if Sun fixes RFE #4093999
 //      ensureNonNull("crs", crs);
-        this(crs.getCoordinateSystem().getDimension());
+        super(crs.getCoordinateSystem().getDimension());
         this.crs = crs;
     }
 
@@ -202,21 +183,8 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @param envelope The envelope to copy.
      */
     public GeneralEnvelope(final Envelope envelope) {
-        ensureNonNull("envelope", envelope);
-        if (envelope instanceof GeneralEnvelope) {
-            final GeneralEnvelope e = (GeneralEnvelope) envelope;
-            ordinates = e.ordinates.clone();
-            crs = e.crs;
-        } else {
-            crs = envelope.getCoordinateReferenceSystem();
-            final int dimension = envelope.getDimension();
-            ordinates = new double[2*dimension];
-            for (int i=0; i<dimension; i++) {
-                ordinates[i]           = envelope.getMinimum(i);
-                ordinates[i+dimension] = envelope.getMaximum(i);
-            }
-            checkCoordinates(ordinates);
-        }
+        super(envelope);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -229,14 +197,8 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @since 2.4
      */
     public GeneralEnvelope(final GeographicBoundingBox box) {
-        ensureNonNull("box", box);
-        ordinates = new double[] {
-            box.getWestBoundLongitude(),
-            box.getSouthBoundLatitude(),
-            box.getEastBoundLongitude(),
-            box.getNorthBoundLatitude()
-        };
-        crs = DefaultGeographicCRS.WGS84;
+        super(box);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -246,12 +208,8 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @param rect The rectangle to copy.
      */
     public GeneralEnvelope(final Rectangle2D rect) {
-        ensureNonNull("rect", rect);
-        ordinates = new double[] {
-            rect.getMinX(), rect.getMinY(),
-            rect.getMaxX(), rect.getMaxY()
-        };
-        checkCoordinates(ordinates);
+        super(rect);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -292,16 +250,15 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
                            final CoordinateReferenceSystem crs)
             throws IllegalArgumentException
     {
-        ensureNonNull("gridEnvelope", gridEnvelope);
+//  Uncomment next line if Sun fixes RFE #4093999
+//      ensureNonNull("gridEnvelope", gridEnvelope);
+        super(gridEnvelope.getDimension());
         ensureNonNull("gridToCRS", gridToCRS);
-        final int dimRange  = gridEnvelope.getDimension();
-        final int dimSource = gridToCRS.getSourceDimensions();
-        final int dimTarget = gridToCRS.getTargetDimensions();
-        ensureSameDimension(dimRange, dimSource);
-        ensureSameDimension(dimRange, dimTarget);
-        ordinates = new double[dimSource << 1];
+        final int dimension = getDimension();
+        ensureSameDimension(dimension, gridToCRS.getSourceDimensions());
+        ensureSameDimension(dimension, gridToCRS.getTargetDimensions());
         final double offset = PixelTranslation.getPixelTranslation(anchor) + 0.5;
-        for (int i=0; i<dimSource; i++) {
+        for (int i=0; i<dimension; i++) {
             /*
              * According OpenGIS specification, GridGeometry maps pixel's center. We want a bounding
              * box for all pixels, not pixel's centers. Offset by 0.5 (use -0.5 for maximum too, not
@@ -312,7 +269,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
              */
             setRange(i, gridEnvelope.getLow(i) - offset, gridEnvelope.getHigh(i) - (offset - 1));
         }
-        final GeneralEnvelope transformed;
+        final ArrayEnvelope transformed;
         try {
             transformed = Envelopes.transform(gridToCRS, this);
         } catch (TransformException exception) {
@@ -368,117 +325,8 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @since 3.09
      */
     public GeneralEnvelope(final String wkt) throws NumberFormatException, IllegalArgumentException {
-        ensureNonNull("wkt", wkt);
-        int levelParenth = 0; // Number of opening parenthesis: (
-        int levelBracket = 0; // Number of opening brackets: [
-        int dimLimit     = 4; // The length of minimum and maximum arrays.
-        int maxDimension = 0; // The number of valid entries in the minimum and maximum arrays.
-        final int length = wkt.length();
-        double[] minimum = new double[dimLimit];
-        double[] maximum = new double[dimLimit];
-        int dimension = 0;
-scan:   for (int i=0; i<length; i++) {
-            char c = wkt.charAt(i);
-            if (Character.isJavaIdentifierStart(c)) {
-                do if (++i >= length) break scan;
-                while (Character.isJavaIdentifierPart(c = wkt.charAt(i)));
-            }
-            if (Character.isWhitespace(c)) {
-                continue;
-            }
-            switch (c) {
-                case ',':                                      dimension=0; continue;
-                case '(':     ++levelParenth;                  dimension=0; continue;
-                case '[':     ++levelBracket;                  dimension=0; continue;
-                case ')': if (--levelParenth<0) fail(wkt,'('); dimension=0; continue;
-                case ']': if (--levelBracket<0) fail(wkt,'['); dimension=0; continue;
-            }
-            /*
-             * At this point we have skipped the leading keyword (BOX, POLYGON, etc.),
-             * the spaces and the parenthesis if any. We should be at the beginning of
-             * a number. Search the first separator character (which determine the end
-             * of the number) and parse the number.
-             */
-            final int start = i;
-            boolean flush = false;
-scanNumber: while (++i < length) {
-                c = wkt.charAt(i);
-                if (Character.isWhitespace(c)) {
-                    break;
-                }
-                switch (c) {
-                    case ',':                                      flush=true; break scanNumber;
-                    case ')': if (--levelParenth<0) fail(wkt,'('); flush=true; break scanNumber;
-                    case ']': if (--levelBracket<0) fail(wkt,'['); flush=true; break scanNumber;
-                }
-            }
-            final double value = Double.parseDouble(wkt.substring(start, i));
-            /*
-             * Adjust the minimum and maximum value using the number that we parsed,
-             * increasing the arrays size if necessary. Remember the maximum number
-             * of dimensions we have found so far.
-             */
-            if (dimension == maxDimension) {
-                if (dimension == dimLimit) {
-                    dimLimit *= 2;
-                    minimum = Arrays.copyOf(minimum, dimLimit);
-                    maximum = Arrays.copyOf(maximum, dimLimit);
-                }
-                minimum[dimension] = maximum[dimension] = value;
-                maxDimension = ++dimension;
-            } else {
-                if (value < minimum[dimension]) minimum[dimension] = value;
-                if (value > maximum[dimension]) maximum[dimension] = value;
-                dimension++;
-            }
-            if (flush) {
-                dimension = 0;
-            }
-        }
-        if (levelParenth != 0) fail(wkt, ')');
-        if (levelBracket != 0) fail(wkt, ']');
-        ordinates = XArrays.resize(minimum, maxDimension << 1);
-        System.arraycopy(maximum, 0, ordinates, maxDimension, maxDimension);
-    }
-
-    /**
-     * Throws an exception for unmatched parenthesis during WKT parsing.
-     */
-    private static void fail(final String wkt, char missing) {
-        throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2, wkt, missing));
-    }
-
-    /**
-     * Makes sure the specified dimensions are identical.
-     */
-    private static void ensureSameDimension(final int dim1, final int dim2)
-            throws MismatchedDimensionException
-    {
-        if (dim1 != dim2) {
-            throw new MismatchedDimensionException(Errors.format(
-                    Errors.Keys.MISMATCHED_DIMENSION_$2, dim1, dim2));
-        }
-    }
-
-    /**
-     * Checks if ordinate values in the minimum point are less than or
-     * equal to the corresponding ordinate value in the maximum point.
-     *
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not less
-     *         than or equal to the corresponding ordinate value in the maximum point.
-     */
-    private static void checkCoordinates(final double[] ordinates) throws IllegalArgumentException {
-        final int dimension = ordinates.length >>> 1;
-        for (int i=0; i<dimension; i++) {
-            final double min = ordinates[i];
-            final double max = ordinates[dimension+i];
-            if (min > max) { // We accept 'NaN' values.
-                String message = Errors.format(Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, i);
-                message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, min, max);
-                throw new IllegalArgumentException(message);
-            }
-        }
+        super(wkt);
+        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -504,7 +352,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final int getDimension() {
-        return ordinates.length >>> 1;
+        return super.getDimension();
     }
 
     /**
@@ -514,8 +362,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        assert crs == null || crs.getCoordinateSystem().getDimension() == getDimension();
-        return crs;
+        return super.getCoordinateReferenceSystem();
     }
 
     /**
@@ -673,53 +520,6 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMinimum minimal ordinates}
-     * for each dimension for all points within the {@code Envelope}.
-     *
-     * @return The lower corner.
-     */
-    @Override
-    public DirectPosition getLowerCorner() {
-        final int dim = ordinates.length >>> 1;
-        final GeneralDirectPosition position = new GeneralDirectPosition(dim);
-        System.arraycopy(ordinates, 0, position.ordinates, 0, dim);
-        position.setCoordinateReferenceSystem(crs);
-        return position;
-    }
-
-    /**
-     * A coordinate position consisting of all the {@linkplain #getMaximum maximal ordinates}
-     * for each dimension for all points within the {@code Envelope}.
-     *
-     * @return The upper corner.
-     */
-    @Override
-    public DirectPosition getUpperCorner() {
-        final int dim = ordinates.length >>> 1;
-        final GeneralDirectPosition position = new GeneralDirectPosition(dim);
-        System.arraycopy(ordinates, dim, position.ordinates, 0, dim);
-        position.setCoordinateReferenceSystem(crs);
-        return position;
-    }
-
-    /**
-     * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
-     * for each dimension for all points within the {@code Envelope}.
-     *
-     * @return The median coordinates.
-     *
-     * @since 2.5
-     */
-    public DirectPosition getMedian() {
-        final GeneralDirectPosition position = new GeneralDirectPosition(ordinates.length >>> 1);
-        for (int i=position.ordinates.length; --i>=0;) {
-            position.ordinates[i] = getMedian(i);
-        }
-        position.setCoordinateReferenceSystem(crs);
-        return position;
-    }
-
-    /**
      * Returns the minimal ordinate along the specified dimension.
      *
      * @param  dimension The dimension to query.
@@ -728,8 +528,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        ensureValidIndex(ordinates.length >>> 1, dimension);
-        return ordinates[dimension];
+        return super.getMinimum(dimension);
     }
 
     /**
@@ -741,60 +540,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        ensureValidIndex(ordinates.length >>> 1, dimension);
-        return ordinates[dimension + (ordinates.length >>> 1)];
-    }
-
-    /**
-     * Returns the median ordinate along the specified dimension. The result should be equals
-     * (minus rounding error) to <code>({@linkplain #getMaximum getMaximum}(dimension) -
-     * {@linkplain #getMinimum getMinimum}(dimension)) / 2</code>.
-     *
-     * @param  dimension The dimension to query.
-     * @return The mid ordinate value along the given dimension.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     */
-    @Override
-    public final double getMedian(final int dimension) throws IndexOutOfBoundsException {
-        return 0.5*(ordinates[dimension] + ordinates[dimension + (ordinates.length >>> 1)]);
-    }
-
-    /**
-     * Returns the envelope span (typically width or height) along the specified dimension.
-     * The result should be equals (minus rounding error) to <code>{@linkplain #getMaximum
-     * getMaximum}(dimension) - {@linkplain #getMinimum getMinimum}(dimension)</code>.
-     *
-     * @param  dimension The dimension to query.
-     * @return The difference along maximal and minimal ordinates in the given dimension.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     */
-    @Override
-    public final double getSpan(final int dimension) throws IndexOutOfBoundsException {
-        return ordinates[dimension + (ordinates.length >>> 1)] - ordinates[dimension];
-    }
-
-    /**
-     * Returns the envelope span along the specified dimension, in terms of the given units.
-     *
-     * @param  dimension The dimension to query.
-     * @param  unit The unit for the return value.
-     * @return The span in terms of the given unit.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     * @throws ConversionException if the length can't be converted to the specified units.
-     *
-     * @since 2.5
-     */
-    public double getSpan(final int dimension, final Unit<?> unit)
-            throws IndexOutOfBoundsException, ConversionException
-    {
-        double value = getSpan(dimension);
-        if (crs != null) {
-            final Unit<?> source = crs.getCoordinateSystem().getAxis(dimension).getUnit();
-            if (source != null) {
-                value = source.getConverterToAny(unit).convert(value);
-            }
-        }
-        return value;
+        return super.getMaximum(dimension);
     }
 
     /**
@@ -804,16 +550,15 @@ scanNumber: while (++i < length) {
      * @param  minimum   The minimum value along the specified dimension.
      * @param  maximum   The maximum value along the specified dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
+     *         less than or equal to the corresponding ordinate value in the maximum point
+     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      */
-    public void setRange(final int dimension, double minimum, double maximum)
-            throws IndexOutOfBoundsException
+    public void setRange(final int dimension, final double minimum, final double maximum)
+            throws IndexOutOfBoundsException, IllegalArgumentException
     {
-        if (minimum > maximum) {
-            // Make an empty envelope (min == max)
-            // while keeping it legal (min <= max).
-            minimum = maximum = 0.5 * (minimum + maximum);
-        }
         ensureValidIndex(ordinates.length >>> 1, dimension);
+        ensureValidRange(crs, dimension, minimum, maximum);
         ordinates[dimension + (ordinates.length >>> 1)] = maximum;
         ordinates[dimension]                            = minimum;
     }
@@ -829,10 +574,13 @@ scanNumber: while (++i < length) {
      *  <var>x</var><sub>max</sub>, <var>y</var><sub>max</sub>, <var>z</var><sub>max</sub>)
      *
      * @param ordinates The new ordinate values.
+     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
+     *         less than or equal to the corresponding ordinate value in the maximum point
+     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      *
      * @since 2.5
      */
-    public void setEnvelope(final double... ordinates) {
+    public void setEnvelope(final double... ordinates) throws IllegalArgumentException {
         if ((ordinates.length & 1) != 0) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ODD_ARRAY_LENGTH_$1, ordinates.length));
@@ -843,7 +591,7 @@ scanNumber: while (++i < length) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$3, "ordinates", dimension, check));
         }
-        checkCoordinates(ordinates);
+        ensureValidRanges(crs, ordinates);
         System.arraycopy(ordinates, 0, this.ordinates, 0, ordinates.length);
     }
 
@@ -1097,10 +845,11 @@ scanNumber: while (++i < length) {
 
     /**
      * Adds a point to this envelope. The resulting envelope is the smallest envelope that
-     * contains both the original envelope and the specified point. After adding a point,
-     * a call to {@link #contains} with the added point as an argument will return {@code true},
-     * except if one of the point ordinates was {@link Double#NaN} (in which case the
-     * corresponding ordinate have been ignored).
+     * contains both the original envelope and the specified point.
+     * <p>
+     * After adding a point, a call to {@link #contains(DirectPosition) contains(DirectPosition)}
+     * with the added point as an argument will return {@code true}, except if one of the point
+     * ordinates was {@link Double#NaN} (in which case the corresponding ordinate have been ignored).
      *
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
      *        For performance reason, it will no be verified unless Java assertions are enabled.}
@@ -1145,34 +894,6 @@ scanNumber: while (++i < length) {
             if (max > ordinates[i+dim]) ordinates[i+dim] = max;
         }
         assert isEmpty() || contains(envelope, true) || hasNaN(envelope) : envelope;
-    }
-
-    /**
-     * Tests if a specified coordinate is inside the boundary of this envelope.
-     * If it least one ordinate value in the given point is {@link Double#NaN NaN},
-     * then this method returns {@code false}.
-     *
-     * {@note This method assumes that the specified point uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
-     *
-     * @param  position The point to text.
-     * @return {@code true} if the specified coordinates are inside the boundary
-     *         of this envelope; {@code false} otherwise.
-     * @throws MismatchedDimensionException if the specified point doesn't have
-     *         the expected dimension.
-     */
-    public boolean contains(final DirectPosition position) throws MismatchedDimensionException {
-        ensureNonNull("position", position);
-        final int dim = ordinates.length >>> 1;
-        AbstractDirectPosition.ensureDimensionMatch("point", position.getDimension(), dim);
-        assert equalsIgnoreMetadata(crs, position.getCoordinateReferenceSystem()) : position;
-        for (int i=0; i<dim; i++) {
-            final double value = position.getOrdinate(i);
-            if (!(value >= ordinates[i    ])) return false;
-            if (!(value <= ordinates[i+dim])) return false;
-            // Use '!' in order to take 'NaN' in account.
-        }
-        return true;
     }
 
     /**
@@ -1312,32 +1033,6 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns a hash value for this envelope.
-     */
-    @Override
-    public int hashCode() {
-        int code = Arrays.hashCode(ordinates);
-        if (crs != null) {
-            code += crs.hashCode();
-        }
-        assert code == super.hashCode();
-        return code;
-    }
-
-    /**
-     * Compares the specified object with this envelope for equality.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object != null && object.getClass() == getClass()) {
-            final GeneralEnvelope that = (GeneralEnvelope) object;
-            return Arrays.equals(this.ordinates, that.ordinates) &&
-                  Objects.equals(this.crs, that.crs);
-        }
-        return false;
-    }
-
-    /**
      * Returns a deep copy of this envelope.
      *
      * @return A clone of this envelope.
@@ -1347,7 +1042,7 @@ scanNumber: while (++i < length) {
         try {
             Field field = ordinatesField;
             if (field == null) {
-                field = GeneralEnvelope.class.getDeclaredField("ordinates");
+                field = ArrayEnvelope.class.getDeclaredField("ordinates");
                 field.setAccessible(true);
                 ordinatesField = field;
             }
