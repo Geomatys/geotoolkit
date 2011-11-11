@@ -20,10 +20,14 @@
  * {@linkplain org.opengis.referencing.operation.MathTransform Math transform} implementations.
  * This package does not include map projections, which are a special kind of transforms defined
  * in their own {@linkplain org.geotoolkit.referencing.operation.projection projection} package.
+ * Other useful references are:
  * <p>
- * Users wanting to know more about the available transforms (including map projections) and their
- * parameters should look at the {@linkplain org.geotoolkit.referencing.operation.provider provider}
- * package.
+ * <ul>
+ *   <li>To know more about the available transforms (including map projections) and their parameters,
+ *       see the {@linkplain org.geotoolkit.referencing.operation.provider provider} package.</li>
+ *   <li>For convenience methods that may avoid the need to explore this low-level package, see
+ *       {@link org.geotoolkit.referencing.operation.MathTransforms} in the parent package.</li>
+ * </ul>
  *
  * {@section Grid data}
  *

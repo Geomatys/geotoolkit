@@ -29,7 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * An operation on coordinates that does not include any change of
- * {@linkplain org.opengis.referencing.datum.Datum}. The best-known example of a
+ * {@linkplain org.opengis.referencing.datum.Datum datum}. The best-known example of a
  * coordinate conversion is a map projection. The parameters describing coordinate
  * conversions are defined rather than empirically derived.
  * <p>

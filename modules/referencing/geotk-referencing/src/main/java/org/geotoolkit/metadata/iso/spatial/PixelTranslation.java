@@ -31,7 +31,7 @@ import static org.opengis.metadata.spatial.PixelOrientation.*;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 
 /**

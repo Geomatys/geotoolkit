@@ -157,9 +157,9 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
          * @since 3.20 (derived from 3.00)
          */
         @Override
-        protected Matrix transform(final double[] srcPts, final int srcOff,
-                                   final double[] dstPts, final int dstOff,
-                                   final boolean derivate) throws TransformException
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff,
+                                final boolean derivate) throws TransformException
         {
             Matrix derivative = null;
             if (derivate) {

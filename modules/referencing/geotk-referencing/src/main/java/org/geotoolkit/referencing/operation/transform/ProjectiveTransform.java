@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.MatrixParameters;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -56,14 +57,15 @@ import static org.geotoolkit.util.Utilities.hash;
  * computation is similar to {@link javax.media.jai.PerspectiveTransform} in
  * <cite>Java Advanced Imaging</cite>):
  *
+ * <table><tr><td nowrap>
  * {@preformat text
  *     x' = u/t
  *     y' = v/t
  *     y' = w/t
  * }
- *
+ * </td><td><blockquote>
  * where {@code (u,v,w)} are obtained by:
- *
+ * </blockquote></td><td nowrap>
  * {@preformat text
  *     ┌   ┐     ┌                    ┐ ┌   ┐
  *     │ u │     │ m00  m01  m02  m03 │ │ x │
@@ -72,24 +74,20 @@ import static org.geotoolkit.util.Utilities.hash;
  *     │ t │     │ m30  m31  m32  m33 │ │ 1 │
  *     └   ┘     └                    ┘ └   ┘
  * }
+ * </td></tr></table>
  *
  * In the special case of an affine transform, the last row contains only zero
  * values except in the last column, which contains 1.
  * <p>
- * This transform is used for the following operations:
- * <ul>
- *   <li>"<cite>Longitude rotation</cite>" (EPSG 9601)</li>
- *   <li>"<cite>Affine general parametric transformation</cite>"
- *       (EPSG 9624, OGC's name {@code "Affine"}) with default matrix size of
- *       {@value org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}&times;{@value
- *       org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}.</li>
- * </ul>
- * <p>
  * See any of the following providers for a list of programmatic parameters:
  * <p>
  * <ul>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.Affine}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.LongitudeRotation}</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider.Affine} -
+ *       "<cite>Affine general parametric transformation</cite>" (EPSG 9624) with default matrix size of
+ *       {@value org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}&times;{@value
+ *       org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}.</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider.LongitudeRotation} -
+ *       "<cite>Longitude rotation</cite>" (EPSG 9601)</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -108,6 +106,14 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2104496465933824935L;
+
+    /**
+     * Identity transforms for dimensions ranging from to 0 to 7.
+     * Elements in this array will be created only when first requested.
+     *
+     * @see #identity(int)
+     */
+    private static final LinearTransform[] IDENTITIES = new LinearTransform[8];
 
     /**
      * The number of rows.
@@ -156,11 +162,62 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @param matrix The affine transform as a matrix.
      * @return The transform for the given matrix.
      *
-     * @deprecated Moved to {@link MathTransforms#linear(Matrix)}.
+     * @see MathTransforms#linear(Matrix)
      */
-    @Deprecated
     public static LinearTransform create(final Matrix matrix) {
-        return MathTransforms.linear(matrix);
+        final int sourceDimension = matrix.getNumCol() - 1;
+        final int targetDimension = matrix.getNumRow() - 1;
+        if (sourceDimension == targetDimension) {
+            if (matrix.isIdentity()) {
+                return identity(sourceDimension);
+            }
+            if (Matrices.isAffine(matrix)) {
+                switch (sourceDimension) {
+                    case 1: return LinearTransform1D.create(matrix.getElement(0,0), matrix.getElement(0,1));
+                    case 2: return MathTransforms.linear(Matrices.toAffineTransform(matrix));
+                }
+            } else if (sourceDimension == 2) {
+                return new ProjectiveTransform2D(matrix);
+            }
+        }
+        final LinearTransform candidate = CopyTransform.create(matrix);
+        if (candidate != null) {
+            return candidate;
+        }
+        return new ProjectiveTransform(matrix);
+    }
+
+    /**
+     * Returns an identity transform of the specified dimension. In the special case of
+     * dimension 1 and 2, this method returns instances of {@link LinearTransform1D} or
+     * {@link AffineTransform2D} respectively.
+     *
+     * @param dimension The dimension of the transform to be returned.
+     * @return An identity transform of the specified dimension.
+     *
+     * @since 3.20
+     *
+     * @see MathTransforms#identity(int)
+     */
+    public static LinearTransform identity(final int dimension) {
+        LinearTransform candidate;
+        synchronized (IDENTITIES) {
+            if (dimension < IDENTITIES.length) {
+                candidate = IDENTITIES[dimension];
+                if (candidate != null) {
+                    return candidate;
+                }
+            }
+            switch (dimension) {
+                case 1:  candidate = LinearTransform1D.IDENTITY;       break;
+                case 2:  candidate = new AffineTransform2D();          break;
+                default: candidate = new IdentityTransform(dimension); break;
+            }
+            if (dimension < IDENTITIES.length) {
+                IDENTITIES[dimension] = candidate;
+            }
+        }
+        return candidate;
     }
 
     /**
@@ -281,9 +338,9 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate)
     {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
         return derivate ? derivative((DirectPosition) null) : null;

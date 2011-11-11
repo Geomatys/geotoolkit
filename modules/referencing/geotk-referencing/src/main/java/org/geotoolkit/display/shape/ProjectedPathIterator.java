@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.math.XMath.SQRT2;
@@ -273,7 +273,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
      * fields. This method tries to perform the two operations in a single step if possible.
      */
     private void derivativeAndTransform(final double[] coords) throws TransformException {
-        derivative = MathTransforms.derivativeAndTransform(projection, coords, 0, coords, 0, true);
+        derivative = MathTransforms.derivativeAndTransform(projection, coords, 0, coords, 0);
         if (derivative == null) {
             throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
         }

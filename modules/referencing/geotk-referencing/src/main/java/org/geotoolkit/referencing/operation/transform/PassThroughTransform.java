@@ -146,7 +146,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
         if (subTransform.isIdentity()) {
             final int dimension = subTransform.getSourceDimensions();
             if (dimension == subTransform.getTargetDimensions()) {
-                return MathTransforms.identity(firstAffectedOrdinate + dimension + numTrailingOrdinates);
+                return ProjectiveTransform.identity(firstAffectedOrdinate + dimension + numTrailingOrdinates);
             }
         }
         /*
@@ -157,7 +157,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
         if (subTransform instanceof LinearTransform) {
             GeneralMatrix matrix = toGeneralMatrix(((LinearTransform) subTransform).getMatrix());
             matrix = expand(matrix, firstAffectedOrdinate, numTrailingOrdinates, 1);
-            return MathTransforms.linear(matrix);
+            return ProjectiveTransform.create(matrix);
         }
         /*
          * Constructs the general PassThroughTransform object. An optimization is done right in
@@ -281,9 +281,9 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate) throws TransformException
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate) throws TransformException
     {
         Matrix derivative = null;
         if (derivate) {

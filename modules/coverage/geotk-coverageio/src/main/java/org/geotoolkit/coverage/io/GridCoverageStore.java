@@ -56,7 +56,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.InvalidGridGeometryException;
 import org.geotoolkit.display.shape.XRectangle2D;

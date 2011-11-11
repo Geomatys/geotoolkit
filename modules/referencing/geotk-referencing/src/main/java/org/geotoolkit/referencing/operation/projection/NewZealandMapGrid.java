@@ -143,9 +143,9 @@ public class NewZealandMapGrid extends UnitaryProjection {
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate) throws ProjectionException
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate) throws ProjectionException
     {
         if (dstPts != null) {
             final double dphi = srcPts[srcOff + 1];

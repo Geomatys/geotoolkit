@@ -52,7 +52,6 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84_3D;

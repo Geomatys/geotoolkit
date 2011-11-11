@@ -33,7 +33,7 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageTestBase;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.*;

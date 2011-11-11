@@ -179,9 +179,9 @@ public class Equirectangular extends UnitaryProjection {
      * opportunistically computes the projection derivative if {@code derivate} is {@code true}.
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate) throws ProjectionException
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate) throws ProjectionException
     {
         if (dstPts != null) {
             final double λ = srcPts[srcOff + 1]; // Must be before writing x.

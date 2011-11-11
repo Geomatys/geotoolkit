@@ -233,9 +233,9 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate)
     {
         if (dstPts != null) {
             dstPts[dstOff] = offset + scale*srcPts[srcOff];

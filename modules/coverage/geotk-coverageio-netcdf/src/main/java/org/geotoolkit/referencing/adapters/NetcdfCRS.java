@@ -65,8 +65,8 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

@@ -111,8 +111,8 @@
  * The following formatting rules apply:
  * <p>
  * <ul>
- *   <li>Numbers are formatted as in the {@linkplain Locale#US US locale}, i.e.
- *       as {@link Integer#toString(int)} or {@link Double#toString(double)}.</li>
+ *   <li>Numbers are formatted as in the {@linkplain java.util.Locale#US US locale}, i.e. as
+ *       {@link java.lang.Integer#toString(int)} or {@link java.lang.Double#toString(double)}.</li>
  *   <li>Dates are formatted with the {@code "yyyy-MM-dd HH:mm:ss"}
  *       {@linkplain java.text.SimpleDateFormat pattern} in UTC
  *       {@linkplain java.util.TimeZone timezone}.</li>

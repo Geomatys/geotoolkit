@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;

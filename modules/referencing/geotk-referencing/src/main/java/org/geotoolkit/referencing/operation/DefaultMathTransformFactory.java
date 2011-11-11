@@ -56,7 +56,6 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;

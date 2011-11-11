@@ -29,6 +29,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Exponential.*;

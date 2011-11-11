@@ -24,7 +24,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import org.junit.*;
 import static org.junit.Assert.*;

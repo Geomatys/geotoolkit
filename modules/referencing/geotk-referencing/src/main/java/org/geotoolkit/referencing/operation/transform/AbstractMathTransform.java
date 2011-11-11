@@ -375,7 +375,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *
      * @since 3.20 (derived from 3.00)
      */
-    protected abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
+    public abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException;
 
     /**

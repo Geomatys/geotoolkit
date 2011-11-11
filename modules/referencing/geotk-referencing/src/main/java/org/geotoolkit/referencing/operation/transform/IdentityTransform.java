@@ -31,6 +31,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 
 /**
@@ -182,9 +183,9 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate)
     {
         if (dstPts != null) {
             System.arraycopy(srcPts, srcOff, dstPts, dstOff, dimension);

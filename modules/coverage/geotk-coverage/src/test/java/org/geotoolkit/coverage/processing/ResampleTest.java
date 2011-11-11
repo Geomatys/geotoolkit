@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;

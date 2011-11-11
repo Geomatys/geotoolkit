@@ -36,6 +36,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;

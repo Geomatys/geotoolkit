@@ -86,9 +86,9 @@ public abstract class VerticalTransform extends AbstractMathTransform {
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate) throws TransformException
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate) throws TransformException
     {
         if (dstPts != null) {
             final double x = srcPts[srcOff  ];
