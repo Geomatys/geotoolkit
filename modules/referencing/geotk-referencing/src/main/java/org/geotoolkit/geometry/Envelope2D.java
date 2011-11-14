@@ -95,6 +95,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      *
      * @param envelope The envelope to copy.
      * @throws MismatchedDimensionException If the given envelope is not two-dimensional.
+     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      */
     public Envelope2D(final Envelope envelope) throws MismatchedDimensionException {
         super(envelope.getMinimum(0), envelope.getMinimum(1),
@@ -107,6 +108,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
         setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
+        ensureValidRanges();
     }
 
     /**
@@ -115,6 +117,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * to {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
      *
      * @param box The bounding box to copy.
+     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      *
      * @since 3.11
      */
@@ -125,6 +128,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
         y      = box.getSouthBoundLatitude();
         width  = box.getEastBoundLongitude() - x;
         height = box.getNorthBoundLatitude() - y;
+        ensureValidRanges();
     }
 
     /**
@@ -132,10 +136,12 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      *
      * @param crs The coordinate reference system, or {@code null}.
      * @param rect The rectangle to copy.
+     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      */
     public Envelope2D(final CoordinateReferenceSystem crs, final Rectangle2D rect) {
         super(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
         setCoordinateReferenceSystem(crs);
+        ensureValidRanges();
     }
 
     /**
@@ -151,12 +157,14 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @param y The <var>y</var> minimal value.
      * @param width The envelope width.
      * @param height The envelope height.
+     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      */
     public Envelope2D(final CoordinateReferenceSystem crs,
                       final double x, final double y, final double width, final double height)
     {
         super(x, y, width, height);
         setCoordinateReferenceSystem(crs);
+        ensureValidRanges();
     }
 
     /**
@@ -188,6 +196,17 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
               Math.abs(maxDP.x - minDP.x),
               Math.abs(maxDP.y - minDP.y));
         setCoordinateReferenceSystem(AbstractEnvelope.getCoordinateReferenceSystem(minDP, maxDP));
+        ensureValidRanges();
+    }
+
+    /**
+     * Ensures that the ranges are valid.
+     *
+     * @throws IllegalArgumentException If a range of ordinate values is invalid.
+     */
+    private void ensureValidRanges() throws IllegalArgumentException {
+        ensureValidRange(crs, 0, x, x+width);
+        ensureValidRange(crs, 1, y, y+height);
     }
 
     /**

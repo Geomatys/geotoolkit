@@ -22,6 +22,7 @@ import org.opengis.geometry.DirectPosition;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.Double.NaN;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 
 
@@ -127,8 +128,8 @@ public final strictfp class AbstractEnvelopeTest {
      */
     @Test
     public void testCrossingAntiMeridianTwice() {
-        final DirectPosition inside     = new DirectPosition2D(18, 32);
-        final DirectPosition wasOutside = new DirectPosition2D( 3, 32);
+        final DirectPosition wasInside = new DirectPosition2D(18, 32);
+        final DirectPosition outside   = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, 12, -364, 30, 50);
@@ -139,11 +140,11 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,   12, envelope.getMinimum(0), STRICT);
             assertEquals(label, -364, envelope.getMaximum(0), STRICT);
             assertEquals(label,    4, envelope.getMedian (0), STRICT); // Note the alternance with the previous test methods.
-            assertEquals(label,  704, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridian() + 360°.
+            assertEquals(label,  NaN, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridian() + 360°.
             if (envelope instanceof AbstractEnvelope) {
                 final AbstractEnvelope ext = (AbstractEnvelope) envelope;
-                assertTrue(label, ext.contains(inside));
-                assertTrue(label, ext.contains(wasOutside));
+                assertFalse(label, ext.contains(wasInside));
+                assertFalse(label, ext.contains(outside));
             }
         }
     }
@@ -153,8 +154,8 @@ public final strictfp class AbstractEnvelopeTest {
      */
     @Test
     public void testCrossingAntiMeridianThreeTimes() {
-        final DirectPosition inside     = new DirectPosition2D(18, 32);
-        final DirectPosition wasOutside = new DirectPosition2D( 3, 32);
+        final DirectPosition wasInside = new DirectPosition2D(18, 32);
+        final DirectPosition outside   = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, 372, -364, 30, 50);
@@ -165,11 +166,11 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,  372, envelope.getMinimum(0), STRICT);
             assertEquals(label, -364, envelope.getMaximum(0), STRICT);
             assertEquals(label, -176, envelope.getMedian (0), STRICT); // Note the alternance with the previous test methods.
-            assertEquals(label, 1064, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridianTwice() + 360°.
+            assertEquals(label,  NaN, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridianTwice() + 360°.
             if (envelope instanceof AbstractEnvelope) {
                 final AbstractEnvelope ext = (AbstractEnvelope) envelope;
-                assertTrue(label, ext.contains(inside));
-                assertTrue(label, ext.contains(wasOutside));
+                assertFalse(label, ext.contains(wasInside));
+                assertFalse(label, ext.contains(outside));
             }
         }
     }
@@ -228,13 +229,11 @@ public final strictfp class AbstractEnvelopeTest {
 
     /**
      * Tests with an invalid range along the latitude axis, which is not of kind "wraparound".
-     * We exclude the rectangle case (at least for now), since {@code Rectangle2D} constructors
-     * do not reject negative sizes.
      */
     @Test
     public void testInvalidEnvelope() {
         for (int type=0; type<LAST; type++) {
-            if (type != RECTANGLE) try {
+            try {
                 create(type, -4, 12, 50, 30);
                 fail("Type " + type + " should not have been created.");
             } catch (IllegalArgumentException e) {

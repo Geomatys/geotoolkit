@@ -279,7 +279,8 @@ public abstract class AbstractEnvelope implements Envelope {
      *   <li>If the {@linkplain #getCoordinateReferenceSystem() coordinate reference system} is
      *       non-null and the {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning}
      *       of the requested dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then
-     *       this method adjusts the span in order to make it a valid positive number.</li>
+     *       this method adds the axis range (typically 360° of longitude) to the span. If the
+     *       result is a positive number, it is returned.</li>
      *   <li>Otherwise this method returns {@link Double#NaN NaN}.</li>
      * </ul>
      *
@@ -307,30 +308,17 @@ public abstract class AbstractEnvelope implements Envelope {
      * @param  span The negative span.
      * @return A positive span, or NaN if the span can not be fixed.
      */
-    static double fixSpan(final CoordinateSystemAxis axis, final double span) {
+    static double fixSpan(final CoordinateSystemAxis axis, double span) {
         if (axis != null && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
             final double cycle = axis.getMaximumValue() - axis.getMinimumValue();
             if (cycle > 0 && cycle != Double.POSITIVE_INFINITY) {
-                return fixSpan(span, cycle);
+                span += cycle;
+                if (span >= 0) {
+                    return span;
+                }
             }
         }
         return Double.NaN;
-    }
-
-    /**
-     * Adds a multiple of {@code cycle} to the given span in order to make it a positive number.
-     * This method tries to preserve the number of rounds. For example if the span is -720° and
-     * the cycle is 360° (the usual value for longitudes), this is 2 rounds around the globe.
-     *
-     * @param span  The (<var>maximum</var> - <var>minimum</var>) envelope span, as a negative number.
-     * @param cycle The (<var>maximum</var> - <var>minimum</var>) axis span, as a positive number.
-     */
-    private static double fixSpan(final double span, final double cycle) {
-        if (span == -0.0) {
-            return cycle;
-        }
-        final double n = Math.floor(span / cycle); // Always <= -1
-        return span - cycle*(2*n + 1);
     }
 
     /**
@@ -392,9 +380,8 @@ public abstract class AbstractEnvelope implements Envelope {
                     if (cycle > 0 && cycle != Double.POSITIVE_INFINITY) {
                         // Makes sure that value >= minimum.
                         value -= cycle * Math.floor((value - minimum) / cycle);
-                        final double span = maximum - minimum;
-                        if (isNegative(span)) { // Special handling for -0.0
-                            maximum = minimum + fixSpan(span, cycle);
+                        if (isNegative(maximum - minimum)) { // Special handling for -0.0
+                            maximum += cycle;
                         }
                     }
                 }
