@@ -201,6 +201,7 @@
                   <fileset dir="${project.build.directory}/test-classes">
                     <include name="org/geotoolkit/GeoapiTest.class"/>
                     <include name="META-INF/services/org.opengis.test.ImplementationDetails"/>
+                    <include name="META-INF/services/org.opengis.test.FactoryFilter"/>
                   </fileset>
                 </copy>
               </target>
