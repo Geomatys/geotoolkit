@@ -25,6 +25,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
@@ -47,15 +48,18 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * on the {@linkplain java.awt.Graphics2D#getTransform affine transform in the graphics context}.
  *
  * {@section Crossing the anti-meridian}
- * Negative width or height are interpreted as an envelope crossing the anti-meridian if the
- * corresponding {@linkplain org.opengis.referencing.cs.CoordinateSystemAxis#getRangeMeaning()
- * range meaning} is {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND}:
+ * Negative values in the {@linkplain #width width} or {@linkplain #height height} fields are
+ * interpreted as an envelope crossing the anti-meridian, providing that the corresponding
+ * {@linkplain CoordinateSystemAxis#getRangeMeaning() axis range meaning} is
+ * {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND WRAPAROUND}.
+ * All the following methods are anti-meridian aware:
  * <p>
  * <ul>
  *   <li>{@link #getWidth()}</li>
  *   <li>{@link #getHeight()}</li>
  *   <li>{@link #getCenterX()}</li>
  *   <li>{@link #getCenterY()}</li>
+ *   <li>{@link #contains(double,double)}</li>
  * </ul>
  * <p>
  * The {@link #getSpan(int)} and {@link #getMedian(int)} methods delegate to the methods listed
@@ -423,6 +427,9 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     /**
      * Returns the "maximal" ordinate value on the <var>x</var> axis.
      * This value may not be really maximal if the rectangle cross the anti-meridian.
+     * This is rather the <var>x</var> ordinate value of the in the
+     * {@linkplain AbstractEnvelope#getUpperCorner() upper corner as documented in the
+     * <code>AbstractEnvelope</code> interface}.
      */
     @Override
     public double getMaxX() {
@@ -432,10 +439,39 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     /**
      * Returns the "maximal" ordinate value on the <var>y</var> axis.
      * This value may not be really maximal if the rectangle cross the anti-meridian.
+     * This is rather the <var>y</var> ordinate value of the in the
+     * {@linkplain AbstractEnvelope#getUpperCorner() upper corner as documented in the
+     * <code>AbstractEnvelope</code> interface}.
      */
     @Override
     public double getMaxY() {
         return y + height;
+    }
+
+    /**
+     * Tests if a specified coordinate is inside the boundary of this envelope.
+     * If it least one of the given ordinate value is {@link Double#NaN NaN},
+     * then this method returns {@code false}.
+     *
+     * @param  x The first ordinate value of the point to text.
+     * @param  y The second ordinate value of the point to text.
+     * @return {@code true} if the specified coordinate is inside the boundary
+     *         of this envelope; {@code false} otherwise.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean contains(final double x, final double y) {
+        boolean c1 = (x >= this.x);
+        boolean c2 = (x <= this.x + width);
+        // See AbstractEnvelope.contains(DirectPosition) for explanation.
+        if ((c1 & c2) || ((c1 | c2) && isNegative(width) && isWrapAround(crs, 0))) {
+            // Same check, but for y axis.
+            c1 = (y >= this.y);
+            c2 = (y <= this.y + height);
+            return (c1 & c2) || ((c1 | c2) && isNegative(height) && isWrapAround(crs, 1));
+        }
+        return false;
     }
 
     /**

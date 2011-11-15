@@ -54,7 +54,7 @@ import static org.geotoolkit.util.Strings.trimFractionalPart;
  * </ul>
  * <p>
  * All other methods, including {@link #toString()}, {@link #equals(Object)} and {@link #hashCode()},
- * are implemented on top of the above three methods.
+ * are implemented on top of the above four methods.
  *
  * {@section Crossing the anti-meridian}
  * The <cite>Web Coverage Service</cite> (WCS) specification authorizes (with special treatment)
@@ -135,6 +135,19 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
+     * Returns {@code true} if the axis for the given dimension has the
+     * {@link RangeMeaning#WRAPAROUND WRAPAROUND} range meaning.
+     *
+     * @param  crs The envelope CRS, or {@code null}.
+     * @param  dimension The dimension for which to get the axis.
+     * @return {@code true} if the range meaning is {@code WRAPAROUND}.
+     */
+    static boolean isWrapAround(final CoordinateReferenceSystem crs, final int dimension) {
+        final CoordinateSystemAxis axis = getAxis(crs, dimension);
+        return (axis != null) && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning());
+    }
+
+    /**
      * Checks if the given "minimal" value is less than or equals to the "maximal" value.
      * The <var>minimum</var> &lt;= <var>maximum</var> requirement is relaxed only for
      * axis range of type {@link RangeMeaning#WRAPAROUND}.
@@ -148,13 +161,10 @@ public abstract class AbstractEnvelope implements Envelope {
     static void ensureValidRange(final CoordinateReferenceSystem crs, final int dimension,
             final double minimum, final double maximum) throws IllegalArgumentException
     {
-        if (minimum > maximum) { // We accept 'NaN' values.
-            final CoordinateSystemAxis axis = getAxis(crs, dimension);
-            if (axis == null || !RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
-                String message = Errors.format(Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, dimension);
-                message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, minimum, maximum);
-                throw new IllegalArgumentException(message);
-            }
+        if (minimum > maximum && !isWrapAround(crs, dimension)) { // We accept 'NaN' values.
+            String message = Errors.format(Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, dimension);
+            message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, minimum, maximum);
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -173,6 +183,14 @@ public abstract class AbstractEnvelope implements Envelope {
      * The default implementation returns a unmodifiable direct position backed by this envelope,
      * so changes in this envelope will be immediately reflected in the direct position.
      *
+     * {@note The <cite>Web Coverage Service</cite> (WCS) 1.1 specification uses an extended
+     * interpretation of the bounding box definition. In a WCS 1.1 data structure, the lower
+     * corner defines the edges region in the directions of <em>decreasing</em> coordinate
+     * values in the envelope CRS. This is usually the algebraic minimum coordinates, but not
+     * always. For example, an envelope crossing the anti-meridian could have a lower corner
+     * longitude greater than the upper corner longitude. This <code>AbstractEnvelope</code>
+     * base class accepts such extended interpretation for <code>WRAPAROUND</code> axes.}
+     *
      * @return The lower corner.
      */
     @Override
@@ -184,6 +202,14 @@ public abstract class AbstractEnvelope implements Envelope {
      * A coordinate position consisting of all the {@linkplain #getMaximum maximal ordinates}.
      * The default implementation returns a unmodifiable direct position backed by this envelope,
      * so changes in this envelope will be immediately reflected in the direct position.
+     *
+     * {@note The <cite>Web Coverage Service</cite> (WCS) 1.1 specification uses an extended
+     * interpretation of the bounding box definition. In a WCS 1.1 data structure, the upper
+     * corner defines the edges region in the directions of <em>increasing</em> coordinate
+     * values in the envelope CRS. This is usually the algebraic maximum coordinates, but not
+     * always. For example, an envelope crossing the anti-meridian could have an upper corner
+     * longitude less than the lower corner longitude. This <code>AbstractEnvelope</code>
+     * base class accepts such extended interpretation for <code>WRAPAROUND</code> axes.}
      *
      * @return The upper corner.
      */
@@ -224,8 +250,8 @@ public abstract class AbstractEnvelope implements Envelope {
      *   <li>If the {@linkplain #getCoordinateReferenceSystem() coordinate reference system} is
      *       non-null and the {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning}
      *       of the requested dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then
-     *       this method shifts the median ordinate by half the axis range (typically 180° of
-     *       longitude).</li>
+     *       this method shifts the <var>maximum</var> value by the periodicity (typically 360°
+     *       of longitude) before to compute the median.</li>
      *   <li>Otherwise this method returns {@link Double#NaN NaN}.</li>
      * </ul>
      *
@@ -238,10 +264,10 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     @Override
     public double getMedian(final int dimension) throws IndexOutOfBoundsException {
-        final double minimum = getMinimum(dimension);
-        final double maximum = getMaximum(dimension);
-        double median = 0.5 * (minimum + maximum);
-        if (isNegative(maximum - minimum)) { // Special handling for -0.0
+        final double lower = getMinimum(dimension);
+        final double upper = getMaximum(dimension);
+        double median = 0.5 * (lower + upper);
+        if (isNegative(upper - lower)) { // Special handling for -0.0
             median = fixMedian(getAxis(getCoordinateReferenceSystem(), dimension), median);
         }
         return median;
@@ -279,8 +305,9 @@ public abstract class AbstractEnvelope implements Envelope {
      *   <li>If the {@linkplain #getCoordinateReferenceSystem() coordinate reference system} is
      *       non-null and the {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning}
      *       of the requested dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then
-     *       this method adds the axis range (typically 360° of longitude) to the span. If the
-     *       result is a positive number, it is returned.</li>
+     *       this method shifts the <var>maximum</var> value by the periodicity (typically 360°
+     *       of longitude) before to compute the span. If the result is a positive number, it is
+     *       returned.</li>
      *   <li>Otherwise this method returns {@link Double#NaN NaN}.</li>
      * </ul>
      *
@@ -355,7 +382,7 @@ public abstract class AbstractEnvelope implements Envelope {
      *        For performance reason, it will no be verified unless Java assertions are enabled.}
      *
      * @param  position The point to text.
-     * @return {@code true} if the specified coordinates are inside the boundary
+     * @return {@code true} if the specified coordinate is inside the boundary
      *         of this envelope; {@code false} otherwise.
      * @throws MismatchedDimensionException if the specified point doesn't have
      *         the expected dimension.
@@ -368,27 +395,28 @@ public abstract class AbstractEnvelope implements Envelope {
         AbstractDirectPosition.ensureDimensionMatch("point", position.getDimension(), dimension);
         final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
         assert equalsIgnoreMetadata(crs, position.getCoordinateReferenceSystem()) : position;
-        final CoordinateSystem cs = (crs != null) ? crs.getCoordinateSystem() : null;
         for (int i=0; i<dimension; i++) {
-            double value   = position.getOrdinate(i);
-            double minimum = getMinimum(i);
-            double maximum = getMaximum(i);
-            if (cs != null) { // Should be mandatory, but let be lenient.
-                final CoordinateSystemAxis axis = cs.getAxis(i);
-                if (axis != null && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
-                    final double cycle = axis.getMaximumValue() - axis.getMinimumValue();
-                    if (cycle > 0 && cycle != Double.POSITIVE_INFINITY) {
-                        // Makes sure that value >= minimum.
-                        value -= cycle * Math.floor((value - minimum) / cycle);
-                        if (isNegative(maximum - minimum)) { // Special handling for -0.0
-                            maximum += cycle;
-                        }
-                    }
+            final double value = position.getOrdinate(i);
+            final double lower = getMinimum(i);
+            final double upper = getMaximum(i);
+            final boolean c1   = (value >= lower);
+            final boolean c2   = (value <= upper);
+            if (c1 & c2) {
+                continue; // Point inside the range, check other dimensions.
+            }
+            if (c1 | c2) {
+                final double span = upper - lower;
+                if (isNegative(span) && !Double.isNaN(span) && isWrapAround(crs, i)) {
+                    /*
+                     * "Spanning the anti-meridian" case: if we reach this point, then the
+                     * [upper...lower] range  (note the 'lower' and 'upper' interchanging)
+                     * is actually an empty space outside the envelope and we have checked
+                     * that the ordinate value is outside that empty space.
+                     */
+                    continue;
                 }
             }
-            if (!(value >= minimum && value <= maximum)) { // Use '!' in order to take 'NaN' in account.
-                return false;
-            }
+            return false;
         }
         return true;
     }

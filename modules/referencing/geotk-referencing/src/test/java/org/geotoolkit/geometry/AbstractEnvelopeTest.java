@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.geometry;
 
+import java.awt.geom.Rectangle2D;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.DirectPosition;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -76,8 +76,8 @@ public final strictfp class AbstractEnvelopeTest {
      */
     @Test
     public void testSimpleEnvelope() {
-        final DirectPosition inside  = new DirectPosition2D( 3, 32);
-        final DirectPosition outside = new DirectPosition2D(-5, 32);
+        final DirectPosition2D inside  = new DirectPosition2D( 3, 32);
+        final DirectPosition2D outside = new DirectPosition2D(-5, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, -4, 12, 30, 50);
@@ -94,6 +94,11 @@ public final strictfp class AbstractEnvelopeTest {
                 assertTrue (label, ext.contains(inside));
                 assertFalse(label, ext.contains(outside));
             }
+            if (envelope instanceof Rectangle2D) {
+                final Rectangle2D ext = (Rectangle2D) envelope;
+                assertTrue (label, ext.contains(inside));
+                assertFalse(label, ext.contains(outside));
+            }
         }
     }
 
@@ -102,8 +107,8 @@ public final strictfp class AbstractEnvelopeTest {
      */
     @Test
     public void testCrossingAntiMeridian() {
-        final DirectPosition inside  = new DirectPosition2D(18, 32);
-        final DirectPosition outside = new DirectPosition2D( 3, 32);
+        final DirectPosition2D inside  = new DirectPosition2D(18, 32);
+        final DirectPosition2D outside = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, 12, -4, 30, 50);
@@ -120,16 +125,22 @@ public final strictfp class AbstractEnvelopeTest {
                 assertTrue (label, ext.contains(inside));
                 assertFalse(label, ext.contains(outside));
             }
+            if (envelope instanceof Rectangle2D) {
+                final Rectangle2D ext = (Rectangle2D) envelope;
+                assertTrue (label, ext.contains(inside));
+                assertFalse(label, ext.contains(outside));
+            }
         }
     }
 
     /**
-     * Tests a case crossing the anti-meridian twice.
+     * Tests a the anti-meridian case with a larger empty space
+     * on the left side.
      */
     @Test
     public void testCrossingAntiMeridianTwice() {
-        final DirectPosition wasInside = new DirectPosition2D(18, 32);
-        final DirectPosition outside   = new DirectPosition2D( 3, 32);
+        final DirectPosition2D inside  = new DirectPosition2D(18, 32);
+        final DirectPosition2D outside = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, 12, -364, 30, 50);
@@ -143,19 +154,25 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,  NaN, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridian() + 360°.
             if (envelope instanceof AbstractEnvelope) {
                 final AbstractEnvelope ext = (AbstractEnvelope) envelope;
-                assertFalse(label, ext.contains(wasInside));
+                assertTrue (label, ext.contains(inside));
+                assertFalse(label, ext.contains(outside));
+            }
+            if (envelope instanceof Rectangle2D) {
+                final Rectangle2D ext = (Rectangle2D) envelope;
+                assertTrue (label, ext.contains(inside));
                 assertFalse(label, ext.contains(outside));
             }
         }
     }
 
     /**
-     * Tests a case crossing the anti-meridian three times.
+     * Tests a the anti-meridian case with a larger empty space
+     * on the left and right sides.
      */
     @Test
     public void testCrossingAntiMeridianThreeTimes() {
-        final DirectPosition wasInside = new DirectPosition2D(18, 32);
-        final DirectPosition outside   = new DirectPosition2D( 3, 32);
+        final DirectPosition2D wasInside = new DirectPosition2D(18, 32);
+        final DirectPosition2D outside   = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, 372, -364, 30, 50);
@@ -172,6 +189,11 @@ public final strictfp class AbstractEnvelopeTest {
                 assertFalse(label, ext.contains(wasInside));
                 assertFalse(label, ext.contains(outside));
             }
+            if (envelope instanceof Rectangle2D) {
+                final Rectangle2D ext = (Rectangle2D) envelope;
+                assertFalse(label, ext.contains(wasInside));
+                assertFalse(label, ext.contains(outside));
+            }
         }
     }
 
@@ -180,8 +202,8 @@ public final strictfp class AbstractEnvelopeTest {
      */
     @Test
     public void testRange0() {
-        final DirectPosition wasInside = new DirectPosition2D(18, 32);
-        final DirectPosition outside   = new DirectPosition2D( 3, 32);
+        final DirectPosition2D wasInside = new DirectPosition2D(18, 32);
+        final DirectPosition2D outside   = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, -0.0, 0.0, 30, 50);
@@ -198,6 +220,11 @@ public final strictfp class AbstractEnvelopeTest {
                 assertFalse(label, ext.contains(wasInside));
                 assertFalse(label, ext.contains(outside));
             }
+            if (envelope instanceof Rectangle2D) {
+                final Rectangle2D ext = (Rectangle2D) envelope;
+                assertFalse(label, ext.contains(wasInside));
+                assertFalse(label, ext.contains(outside));
+            }
         }
     }
 
@@ -206,8 +233,8 @@ public final strictfp class AbstractEnvelopeTest {
      */
     @Test
     public void testRange360() {
-        final DirectPosition inside     = new DirectPosition2D(18, 32);
-        final DirectPosition wasOutside = new DirectPosition2D( 3, 32);
+        final DirectPosition2D inside     = new DirectPosition2D(18, 32);
+        final DirectPosition2D wasOutside = new DirectPosition2D( 3, 32);
         for (int type=0; type<LAST; type++) {
             final String label = "Type " + type;
             final Envelope envelope = create(type, 0.0, -0.0, 30, 50);
@@ -221,6 +248,11 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,  360, envelope.getSpan   (0), STRICT);
             if (envelope instanceof AbstractEnvelope) {
                 final AbstractEnvelope ext = (AbstractEnvelope) envelope;
+                assertTrue(label, ext.contains(inside));
+                assertTrue(label, ext.contains(wasOutside));
+            }
+            if (envelope instanceof Rectangle2D) {
+                final Rectangle2D ext = (Rectangle2D) envelope;
                 assertTrue(label, ext.contains(inside));
                 assertTrue(label, ext.contains(wasOutside));
             }
