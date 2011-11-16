@@ -117,7 +117,7 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
     }
 
     /**
-     * Returns the envelope coordinate reference system, or {@code null} if unknown.
+     * {@inheritDoc}
      */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
@@ -125,7 +125,7 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
     }
 
     /**
-     * The length of coordinate sequence (the number of entries) in this envelope.
+     * {@inheritDoc}
      */
     @Override
     public int getDimension() {
@@ -133,9 +133,7 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
     }
 
     /**
-     * Returns the minimal ordinate along the specified dimension.
-     *
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * {@inheritDoc}
      */
     @Override
     public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
@@ -143,9 +141,7 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
     }
 
     /**
-     * Returns the maximal ordinate along the specified dimension.
-     *
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * {@inheritDoc}
      */
     @Override
     public double getMaximum(final int dimension) throws IndexOutOfBoundsException {

@@ -34,6 +34,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.geotoolkit.math.XMath.isNegative;
 
 
 /**
@@ -303,7 +304,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns the number of dimensions.
+     * The length of coordinate sequence (the number of entries) in this envelope.
      */
     @Override
     public int getDimension() {
@@ -354,6 +355,10 @@ scanNumber: while (++i < length) {
     /**
      * Returns the minimal ordinate along the specified dimension.
      *
+     * Despite the method name, the value returned by this method may in some
+     * occasions be greater than the {@linkplain #getMaximum(int) maximum} value.
+     * See {@link AbstractEnvelope#getLowerCorner()} for more information.
+     *
      * @param  dimension The dimension to query.
      * @return The minimal ordinate value along the given dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
@@ -366,6 +371,10 @@ scanNumber: while (++i < length) {
 
     /**
      * Returns the maximal ordinate along the specified dimension.
+     *
+     * Despite the method name, the value returned by this method may in some
+     * occasions be less than the {@linkplain #getMinimum(int) minimum} value.
+     * See {@link AbstractEnvelope#getUpperCorner()} for more information.
      *
      * @param  dimension The dimension to query.
      * @return The maximal ordinate value along the given dimension.

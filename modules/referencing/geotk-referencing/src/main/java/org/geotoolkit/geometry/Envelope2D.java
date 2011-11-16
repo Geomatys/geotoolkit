@@ -32,6 +32,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.geometry.AbstractEnvelope.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

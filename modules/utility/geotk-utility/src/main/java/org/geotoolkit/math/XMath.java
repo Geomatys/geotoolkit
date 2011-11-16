@@ -191,6 +191,52 @@ public final class XMath extends Static {
     }
 
     /**
+     * Returns {@code true} if the given value is positive, <em>excluding</em> negative zero.
+     * Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the value is {@code +0.0}, returns {@code true}</li>
+     *   <li>If the value is {@code -0.0}, returns <b>{@code false}</b></li>
+     *   <li>If the value is {@link Double#NaN NaN}, returns {@code false}</li>
+     * </ul>
+     * <p>
+     * As seen from the above cases, this method distinguishes positive zero from negative zero.
+     * The handling of zero values is the difference between invoking {@code isPositive(double)}
+     * and testing if (<var>value</var> &gt;= 0).
+     *
+     * @param  value The value to test.
+     * @return {@code true} if the given value is positive, excluding negative zero.
+     *
+     * @since 3.20
+     */
+    public static boolean isPositive(final double value) {
+        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) == 0 && !Double.isNaN(value);
+    }
+
+    /**
+     * Returns {@code true} if the given value is negative, <em>including</em> negative zero.
+     * Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the value is {@code +0.0}, returns {@code false}</li>
+     *   <li>If the value is {@code -0.0}, returns <b>{@code true}</b></li>
+     *   <li>If the value is {@link Double#NaN NaN}, returns {@code false}</li>
+     * </ul>
+     * <p>
+     * As seen from the above cases, this method distinguishes positive zero from negative zero.
+     * The handling of zero values is the difference between invoking {@code isNegative(double)}
+     * and testing if (<var>value</var> &lt; 0).
+     *
+     * @param  value The value to test.
+     * @return {@code true} if the given value is negative, including negative zero.
+     *
+     * @since 3.20
+     */
+    public static boolean isNegative(final double value) {
+        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) != 0 && !Double.isNaN(value);
+    }
+
+    /**
      * Returns the sign of <var>x</var>. This method returns
      *    -1 if <var>x</var> is negative,
      *     0 if <var>x</var> is zero or {@code NaN} and

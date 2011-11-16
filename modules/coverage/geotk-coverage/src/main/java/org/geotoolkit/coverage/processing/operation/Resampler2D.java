@@ -597,7 +597,7 @@ final class Resampler2D extends GridCoverage2D {
                         Envelope target = Envelopes.transform(targetGG.getEnvelope(), targetCRS);
                         source = targetGG.reduce(source);
                         target = targetGG.reduce(target);
-                        if (!(new GeneralEnvelope(source).contains(target, true))) {
+                        if (!(GeneralEnvelope.castOrCopy(source).contains(target, true))) {
                             if (interpolation != null && !(interpolation instanceof InterpolationNearest)) {
                                 return reproject(sourceCoverage, targetCRS, targetGG, null, background, hints);
                             } else {

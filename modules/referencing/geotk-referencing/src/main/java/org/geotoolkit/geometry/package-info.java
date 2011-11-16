@@ -54,8 +54,10 @@
  * edges region in the directions of <em>increasing</em> coordinate values. Those lower and upper
  * corners are usually the algebraic minimum and maximum coordinates respectively, but not always.
  * For example, an envelope crossing the anti-meridian could have a lower corner longitude greater
- * than the upper corner longitude.
- * <p>
+ * than the upper corner longitude, like the red box below (the green box is the usual case):
+ *
+ * <center><img src="doc-files/AntiMeridian.png"></center>
+ *
  * Every envelopes defined in this package support the extended bounding box interpretation.
  * The extended interpretation applies on any axis having the
  * {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND WRAPAROUND} range meaning and

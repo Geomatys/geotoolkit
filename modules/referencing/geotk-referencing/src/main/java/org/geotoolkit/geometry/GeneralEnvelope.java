@@ -236,7 +236,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *
      * @throws MismatchedDimensionException If one of the supplied object doesn't have
      *         a dimension compatible with the other objects.
-     * @throws IllegalArgumentException if an argument is illegal for some other reason,
+     * @throws IllegalArgumentException if an argument is illegal for some other raisons,
      *         including failure to use the provided math transform.
      *
      * @since 2.3
@@ -348,7 +348,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns the number of dimensions.
+     * {@inheritDoc}
      */
     @Override
     public final int getDimension() {
@@ -356,9 +356,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns the coordinate reference system in which the coordinates are given.
-     *
-     * @return The coordinate reference system, or {@code null}.
+     * {@inheritDoc}
      */
     @Override
     public final CoordinateReferenceSystem getCoordinateReferenceSystem() {
@@ -520,11 +518,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns the minimal ordinate along the specified dimension.
-     *
-     * @param  dimension The dimension to query.
-     * @return The minimal ordinate value along the given dimension.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * {@inheritDoc}
      */
     @Override
     public final double getMinimum(final int dimension) throws IndexOutOfBoundsException {
@@ -532,11 +526,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns the maximal ordinate along the specified dimension.
-     *
-     * @param  dimension The dimension to query.
-     * @return The maximal ordinate value along the given dimension.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * {@inheritDoc}
      */
     @Override
     public final double getMaximum(final int dimension) throws IndexOutOfBoundsException {
@@ -799,8 +789,11 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
             return true;
         }
         for (int i=0; i<dimension; i++) {
-            if (!(ordinates[i] < ordinates[i+dimension])) { // Use '!' in order to catch NaN
-                return true;
+            final double span = ordinates[i+dimension] - ordinates[i];
+            if (!(span > 0)) { // Use '!' in order to catch NaN
+                if (!(span < 0 && isWrapAround(crs, i))) {
+                    return true;
+                }
             }
         }
         assert !isNull() : this;
@@ -852,7 +845,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * ordinates was {@link Double#NaN} (in which case the corresponding ordinate have been ignored).
      *
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * @param  position The point to add.
      * @throws MismatchedDimensionException if the specified point doesn't have
@@ -876,7 +869,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * two {@code Envelope} objects.
      *
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * @param  envelope the {@code Envelope} to add to this envelope.
      * @throws MismatchedDimensionException if the specified envelope doesn't
@@ -897,56 +890,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns {@code true} if this envelope completely encloses the specified envelope.
-     * If one or more edges from the specified envelope coincide with an edge from this
-     * envelope, then this method returns {@code true} only if {@code edgesInclusive}
-     * is {@code true}.
-     *
-     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
-     *
-     * @param  envelope The envelope to test for inclusion.
-     * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
-     * @return {@code true} if this envelope completely encloses the specified one.
-     * @throws MismatchedDimensionException if the specified envelope doesn't have
-     *         the expected dimension.
-     *
-     * @see #intersects(Envelope, boolean)
-     * @see #equals(Envelope, double, boolean)
-     *
-     * @since 2.2
-     */
-    public boolean contains(final Envelope envelope, final boolean edgesInclusive)
-            throws MismatchedDimensionException
-    {
-        ensureNonNull("envelope", envelope);
-        final int dim = ordinates.length >>> 1;
-        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
-        assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
-        for (int i=0; i<dim; i++) {
-            double inner = envelope.getMinimum(i);
-            double outer = ordinates[i];
-            if (!(edgesInclusive ? inner >= outer : inner > outer)) { // ! is for catching NaN.
-                return false;
-            }
-            inner = envelope.getMaximum(i);
-            outer = ordinates[i+dim];
-            if (!(edgesInclusive ? inner <= outer : inner < outer)) { // ! is for catching NaN.
-                return false;
-            }
-        }
-        assert intersects(envelope, edgesInclusive) || hasNaN(envelope) : envelope;
-        return true;
-    }
-
-    /**
      * Returns {@code true} if this envelope intersects the specified envelope.
      * If one or more edges from the specified envelope coincide with an edge from this
      * envelope, then this method returns {@code true} only if {@code edgesInclusive}
      * is {@code true}.
      *
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * @param  envelope The envelope to test for intersection.
      * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
@@ -985,7 +935,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * Sets this envelope to the intersection if this envelope with the specified one.
      *
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * @param  envelope the {@code Envelope} to intersect to this envelope.
      * @throws MismatchedDimensionException if the specified envelope doesn't
@@ -1006,29 +956,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
             }
             ordinates[i    ] = min;
             ordinates[i+dim] = max;
-        }
-    }
-
-    /**
-     * Returns a {@link Rectangle2D} with the same bounds as this {@code Envelope}.
-     * This envelope must be two-dimensional before this method is invoked.
-     * This is a convenience method for inter-operability with Java2D.
-     *
-     * @return This envelope as a two-dimensional rectangle.
-     * @throws IllegalStateException if this envelope is not two-dimensional.
-     */
-    public Rectangle2D toRectangle2D() throws IllegalStateException {
-        /*
-         * NOTE: if the type created below is changed to something else than XRectangle2D, then we
-         *       must perform a usage search  because some client code cast the returned object to
-         *       XRectangle2D when this envelope is known to not be a subclass of GeneralEnvelope.
-         */
-        if (ordinates.length == 4) {
-            return XRectangle2D.createFromExtremums(ordinates[0], ordinates[1],
-                                                    ordinates[2], ordinates[3]);
-        } else {
-            throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NOT_TWO_DIMENSIONAL_$1, getDimension()));
         }
     }
 
