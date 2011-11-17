@@ -41,7 +41,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
@@ -801,27 +800,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns {@code true} if at least one ordinate in the given position
-     * is {@link Double#NaN}. This is used for assertions only.
-     */
-    private static boolean hasNaN(final DirectPosition position) {
-        for (int i=position.getDimension(); --i>=0;) {
-            if (Double.isNaN(position.getOrdinate(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns {@code true} if at least one ordinate in the given envelope
-     * is {@link Double#NaN}. This is used for assertions only.
-     */
-    private static boolean hasNaN(final Envelope envelope) {
-        return hasNaN(envelope.getLowerCorner()) || hasNaN(envelope.getUpperCorner());
-    }
-
-    /**
      * Adds to this envelope a point of the given array.
      *
      * @param  array The array which contains the ordinate values.
@@ -887,48 +865,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
             if (max > ordinates[i+dim]) ordinates[i+dim] = max;
         }
         assert isEmpty() || contains(envelope, true) || hasNaN(envelope) : envelope;
-    }
-
-    /**
-     * Returns {@code true} if this envelope intersects the specified envelope.
-     * If one or more edges from the specified envelope coincide with an edge from this
-     * envelope, then this method returns {@code true} only if {@code edgesInclusive}
-     * is {@code true}.
-     *
-     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
-     *
-     * @param  envelope The envelope to test for intersection.
-     * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
-     * @return {@code true} if this envelope intersects the specified one.
-     * @throws MismatchedDimensionException if the specified envelope doesn't have
-     *         the expected dimension.
-     *
-     * @see #contains(Envelope, boolean)
-     * @see #equals(Envelope, double, boolean)
-     *
-     * @since 2.2
-     */
-    public boolean intersects(final Envelope envelope, final boolean edgesInclusive)
-            throws MismatchedDimensionException
-    {
-        ensureNonNull("envelope", envelope);
-        final int dim = ordinates.length >>> 1;
-        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
-        assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
-        for (int i=0; i<dim; i++) {
-            double inner = envelope.getMaximum(i);
-            double outer = ordinates[i];
-            if (!(edgesInclusive ? inner >= outer : inner > outer)) { // ! is for catching NaN.
-                return false;
-            }
-            inner = envelope.getMinimum(i);
-            outer = ordinates[i+dim];
-            if (!(edgesInclusive ? inner <= outer : inner < outer)) { // ! is for catching NaN.
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

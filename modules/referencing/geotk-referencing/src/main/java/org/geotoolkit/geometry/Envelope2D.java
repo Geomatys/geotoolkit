@@ -32,6 +32,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import static org.geotoolkit.math.XMath.isPositive;
 import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.geometry.AbstractEnvelope.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -61,6 +62,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *   <li>{@link #getCenterX()}</li>
  *   <li>{@link #getCenterY()}</li>
  *   <li>{@link #contains(double,double)}</li>
+ *   <li>{@link #contains(Rectangle2D)} and its variant receiving {@code double} arguments</li>
+ *   <li>{@link #intersects(Rectangle2D)} and its variant receiving {@code double} arguments</li>
  * </ul>
  * <p>
  * The {@link #getSpan(int)} and {@link #getMedian(int)} methods delegate to the methods listed
@@ -454,25 +457,150 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * If it least one of the given ordinate value is {@link Double#NaN NaN},
      * then this method returns {@code false}.
      *
-     * @param  x The first ordinate value of the point to text.
-     * @param  y The second ordinate value of the point to text.
+     * @param  px The first ordinate value of the point to text.
+     * @param  py The second ordinate value of the point to text.
      * @return {@code true} if the specified coordinate is inside the boundary
      *         of this envelope; {@code false} otherwise.
      *
      * @since 3.20
      */
     @Override
-    public boolean contains(final double x, final double y) {
-        boolean c1 = (x >= this.x);
-        boolean c2 = (x <= this.x + width);
+    public boolean contains(final double px, final double py) {
+        boolean c1 = (px >= x);
+        boolean c2 = (px <= x + width);
         // See AbstractEnvelope.contains(DirectPosition) for explanation.
         if ((c1 & c2) || ((c1 | c2) && isNegative(width) && isWrapAround(crs, 0))) {
             // Same check, but for y axis.
-            c1 = (y >= this.y);
-            c2 = (y <= this.y + height);
+            c1 = (py >= y);
+            c2 = (py <= y + height);
             return (c1 & c2) || ((c1 | c2) && isNegative(height) && isWrapAround(crs, 1));
         }
         return false;
+    }
+
+    /**
+     * Returns {@code true} if this envelope completely encloses the specified rectangle.
+     * This method supports anti-meridian spanning in the same way than
+     * {@link AbstractEnvelope#contains(Envelope, boolean)}.
+     *
+     * @param  rect The rectangle to test for inclusion.
+     * @return {@code true} if this envelope completely encloses the specified rectangle.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean contains(final Rectangle2D rect) {
+        if (rect instanceof Envelope2D) {
+            // Need to bypass the overriden getWidth()/getHeight().
+            final Envelope2D env = (Envelope2D) rect;
+            return contains(env.x, env.y, env.width, env.height);
+        }
+        return super.contains(rect);
+    }
+
+    /**
+     * Returns {@code true} if this envelope completely encloses the specified rectangle.
+     * This method supports anti-meridian spanning in the same way than
+     * {@link AbstractEnvelope#contains(Envelope, boolean)}.
+     *
+     * @param  rx The <var>x</var> ordinate of the lower corner of the rectangle to test for inclusion.
+     * @param  ry The <var>y</var> ordinate of the lower corner of the rectangle to test for inclusion.
+     * @param  rw The width of the rectangle to test for inclusion. May be negative if the rectangle spans the anti-meridian.
+     * @param  rh The height of the rectangle to test for inclusion. May be negative.
+     * @return {@code true} if this envelope completely encloses the specified one.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean contains(final double rx, final double ry, final double rw, final double rh) {
+        for (int i=0; i!=2; i++) {
+            final double min0, min1, span0, span1;
+            if (i == 0) {
+                min0 =  x;  span0 = width;
+                min1 = rx;  span1 = rw;
+            } else {
+                min0 =  y;  span0 = height;
+                min1 = ry;  span1 = rh;
+            }
+            // See AbstractEnvelope.contains(Envelope) for an
+            // illustration of the algorithm applied here.
+            final boolean minCondition = (min1 >= min0);
+            final boolean maxCondition = (min1 + span1 <= min0 + span0);
+            if (minCondition & maxCondition) {
+                if ((java.lang.Double.doubleToRawLongBits(span1) & Long.MIN_VALUE) == 0 ||
+                    (java.lang.Double.doubleToRawLongBits(span0) & Long.MIN_VALUE) != 0)
+                {
+                    continue;
+                }
+            } else if (minCondition != maxCondition && isNegative(span0)
+                    && isPositive(span1) && isWrapAround(crs, i))
+            {
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if this envelope intersects the specified envelope.
+     * This method supports anti-meridian spanning in the same way than
+     * {@link AbstractEnvelope#intersects(Envelope, boolean)}.
+     *
+     * @param  rect The rectangle to test for intersection.
+     * @return {@code true} if this envelope intersects the specified rectangle.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean intersects(final Rectangle2D rect) {
+        if (rect instanceof Envelope2D) {
+            // Need to bypass the overriden getWidth()/getHeight().
+            final Envelope2D env = (Envelope2D) rect;
+            return intersects(env.x, env.y, env.width, env.height);
+        }
+        return super.contains(rect);
+    }
+
+    /**
+     * Returns {@code true} if this envelope intersects the specified envelope.
+     * This method supports anti-meridian spanning in the same way than
+     * {@link AbstractEnvelope#intersects(Envelope, boolean)}.
+     *
+     * @param  rx The <var>x</var> ordinate of the lower corner of the rectangle to test for intersection.
+     * @param  ry The <var>y</var> ordinate of the lower corner of the rectangle to test for intersection.
+     * @param  rw The width of the rectangle to test for inclusion. May be negative if the rectangle spans the anti-meridian.
+     * @param  rh The height of the rectangle to test for inclusion. May be negative.
+     * @return {@code true} if this envelope intersects the specified rectangle.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean intersects(final double rx, final double ry, final double rw, final double rh) {
+        for (int i=0; i!=2; i++) {
+            final double min0, min1, span0, span1;
+            if (i == 0) {
+                min0 =  x;  span0 = width;
+                min1 = rx;  span1 = rw;
+            } else {
+                min0 =  y;  span0 = height;
+                min1 = ry;  span1 = rh;
+            }
+            // See AbstractEnvelope.intersects(Envelope) for an
+            // illustration of the algorithm applied here.
+            final boolean minCondition = (min1 <= min0 + span0);
+            final boolean maxCondition = (min1 + span1 >= min0);
+            if (maxCondition & minCondition) {
+                continue;
+            }
+            final boolean sp0 = isNegative(span0);
+            final boolean sp1 = isNegative(span1);
+            if (sp0 | sp1) {
+                if ((sp0 & sp1) | (maxCondition | minCondition)) continue;
+            }
+            return false;
+        }
+        return true;
     }
 
     /**

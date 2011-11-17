@@ -74,7 +74,8 @@ import static org.geotoolkit.math.XMath.isPositive;
  *   <li>{@link #getMedian(int)}</li>
  *   <li>{@link #getSpan(int)}</li>
  *   <li>{@link #contains(DirectPosition)}</li>
- *   <li>{@link #contains(Envelope)}</li>
+ *   <li>{@link #contains(Envelope, boolean)}</li>
+ *   <li>{@link #intersects(Envelope, boolean)}</li>
  * </ul>
  *
  * {@section Note on positive and negative zeros}
@@ -467,46 +468,141 @@ public abstract class AbstractEnvelope implements Envelope {
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
                 envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dimension; i++) {
-            final double  min = getMinimum(i);
-            final double  max = getMaximum(i);
-            final double eMin = envelope.getMinimum(i);
-            final double eMax = envelope.getMaximum(i);
-            final boolean minIncluded, maxIncluded;
+            final double min0 = getMinimum(i);
+            final double max0 = getMaximum(i);
+            final double min1 = envelope.getMinimum(i);
+            final double max1 = envelope.getMaximum(i);
+            final boolean minCondition, maxCondition;
             if (edgesInclusive) {
-                minIncluded = (eMin >= min);
-                maxIncluded = (eMax <= max);
+                minCondition = (min1 >= min0);
+                maxCondition = (max1 <= max0);
             } else {
-                minIncluded = (eMin > min);
-                maxIncluded = (eMax < max);
+                minCondition = (min1 > min0);
+                maxCondition = (max1 < max0);
             }
-            if (minIncluded & maxIncluded) {
-                /*
-                 *              maxInc                  maxInc
-                 *     ┌─────────────┐                  ─────┐      ┌─────
-                 *     │  ┌───────┐  │        or        ──┐  │      │  ┌──
-                 *     │  └───────┘  │                  ──┘  │      │  └──
-                 *     └─────────────┘                  ─────┘      └─────
-                 *     minInc                                       minInc
-                 */
-                continue;
-            }
-            if (minIncluded != maxIncluded && isNegative(max - min) && isPositive(eMax - eMin)
-                    && isWrapAround(getCoordinateReferenceSystem(), i))
+            if (minCondition & maxCondition) {
+                /*           maxCnd          maxCnd
+                 *  ┌─────────────┐          ────┐  ┌────                      ┌─┐
+                 *  │  ┌───────┐  │    or    ──┐ │  │ ┌──    excluding    ───┐ │ │ ┌───
+                 *  │  └───────┘  │          ──┘ │  │ └──                 ───┘ │ │ └───
+                 *  └─────────────┘          ────┘  └────                      └─┘
+                 *  minCnd                          minCnd */
+                if ((Double.doubleToRawLongBits(max1 - min1) & Long.MIN_VALUE) == 0 || // isPositive(...) without NaN check since it has been implicitely done.
+                    (Double.doubleToRawLongBits(max0 - min0) & Long.MIN_VALUE) != 0)   // isNegative(...) without NaN check since it has been implicitely done.
+                {
+                    continue;
+                }
+            } else if (minCondition != maxCondition && isNegative(max0 - min0) &&
+                    isPositive(max1 - min1) && isWrapAround(getCoordinateReferenceSystem(), i))
             {
-                /*
-                 *          maxInc                     !maxInc
-                 *     ──────────┐  ┌─────              ─────┐  ┌─────────
-                 *       ┌────┐  │  │           or           │  │  ┌────┐
-                 *       └────┘  │  │                        │  │  └────┘
-                 *     ──────────┘  └─────              ─────┘  └─────────
-                 *                  !minInc                     minInc
-                 */
+                /*       maxCnd                     !maxCnd
+                 *  ──────────┐  ┌─────              ─────┐  ┌─────────
+                 *    ┌────┐  │  │           or           │  │  ┌────┐
+                 *    └────┘  │  │                        │  │  └────┘
+                 *  ──────────┘  └─────              ─────┘  └─────────
+                 *               !minCnd                     minCnd */
                 continue;
             }
             return false;
         }
-//        assert intersects(envelope, edgesInclusive) || hasNaN(envelope) : envelope;
+        // The test for ArrayEnvelope.class is for avoiding never-ending callbacks.
+        assert envelope.getClass() == ArrayEnvelope.class ||
+               intersects(new ArrayEnvelope(envelope), edgesInclusive) : envelope;
         return true;
+    }
+
+    /**
+     * Returns {@code true} if this envelope intersects the specified envelope.
+     * If one or more edges from the specified envelope coincide with an edge from this
+     * envelope, then this method returns {@code true} only if {@code edgesInclusive}
+     * is {@code true}.
+     *
+     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method can handle envelopes spanning the anti-meridian.
+     *
+     * @param  envelope The envelope to test for intersection.
+     * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
+     * @return {@code true} if this envelope intersects the specified one.
+     * @throws MismatchedDimensionException if the specified envelope doesn't have
+     *         the expected dimension.
+     *
+     * @see #contains(Envelope, boolean)
+     * @see #equals(Envelope, double, boolean)
+     *
+     * @since 3.20 (derived from 2.2)
+     */
+    public boolean intersects(final Envelope envelope, final boolean edgesInclusive)
+            throws MismatchedDimensionException
+    {
+        ensureNonNull("envelope", envelope);
+        final int dimension = getDimension();
+        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
+        assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
+                envelope.getCoordinateReferenceSystem()) : envelope;
+        for (int i=0; i<dimension; i++) {
+            final double min0 = getMinimum(i);
+            final double max0 = getMaximum(i);
+            final double min1 = envelope.getMinimum(i);
+            final double max1 = envelope.getMaximum(i);
+            final boolean minCondition, maxCondition;
+            if (edgesInclusive) {
+                minCondition = (min1 <= max0);
+                maxCondition = (max1 >= min0);
+            } else {
+                minCondition = (min1 < max0);
+                maxCondition = (max1 > min0);
+            }
+            if (maxCondition & minCondition) {
+                /*     ┌──────────┐
+                 *     │  ┌───────┼──┐
+                 *     │  └───────┼──┘
+                 *     └──────────┘ (this is the most standard case) */
+                continue;
+            }
+            final boolean sp0 = isNegative(max0 - min0);
+            final boolean sp1 = isNegative(max1 - min1);
+            if (sp0 | sp1) {
+                /*
+                 * If both envelopes span the anti-meridian (sp0 & sp1), we have an unconditional
+                 * intersection (since both envelopes extend to infinities). Otherwise we have one
+                 * of the cases illustrated below. Note that the rectangle could also intersect on
+                 * only once side.
+                 *         ┌──────────┐                   ─────┐      ┌─────
+                 *     ────┼───┐  ┌───┼────      or          ┌─┼──────┼─┐
+                 *     ────┼───┘  └───┼────                  └─┼──────┼─┘
+                 *         └──────────┘                   ─────┘      └───── */
+                if ((sp0 & sp1) | (maxCondition | minCondition)) continue;
+            }
+            // The test for ArrayEnvelope.class is for avoiding never-ending callbacks.
+            assert envelope.getClass() == ArrayEnvelope.class || hasNaN(envelope) ||
+                    !contains(new ArrayEnvelope(envelope), edgesInclusive) : envelope;
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if at least one ordinate in the given envelope
+     * is {@link Double#NaN}. This is used for assertions only.
+     */
+    static boolean hasNaN(final Envelope envelope) {
+        return hasNaN(envelope.getLowerCorner()) || hasNaN(envelope.getUpperCorner());
+    }
+
+    /**
+     * Returns {@code true} if at least one ordinate in the given position
+     * is {@link Double#NaN}. This is used for assertions only.
+     */
+    static boolean hasNaN(final DirectPosition position) {
+        for (int i=position.getDimension(); --i>=0;) {
+            if (Double.isNaN(position.getOrdinate(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

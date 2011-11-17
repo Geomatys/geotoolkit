@@ -44,6 +44,7 @@ public final class XMath extends Static {
 
     /**
      * Bit mask to isolate the sign bit of a {@code double}.
+     * This is incidentally the same value than {@link Long#MIN_VALUE}.
      */
     private static final long SIGN_BIT_MASK = 0x8000000000000000L;
 
