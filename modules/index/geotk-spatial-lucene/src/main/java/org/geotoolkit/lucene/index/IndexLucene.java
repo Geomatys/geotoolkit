@@ -18,8 +18,9 @@ package org.geotoolkit.lucene.index;
 
 import java.io.File;
 import java.util.logging.Level;
-
 import java.util.logging.Logger;
+import java.util.HashSet;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.ClassicAnalyzer;
         
@@ -69,7 +70,7 @@ public abstract class IndexLucene {
     * Analyzer field is set to default value ClassicAnalyzer.
     */
     public IndexLucene() {
-        analyzer = new ClassicAnalyzer(Version.LUCENE_34);
+        analyzer = new ClassicAnalyzer(Version.LUCENE_34, new HashSet<String>());
     }
 
     /**
@@ -78,7 +79,7 @@ public abstract class IndexLucene {
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null)
-            this.analyzer = new ClassicAnalyzer(Version.LUCENE_34);
+            this.analyzer = new ClassicAnalyzer(Version.LUCENE_34, new HashSet<String>());
         else
             this.analyzer = analyzer;
     }
