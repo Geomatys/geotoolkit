@@ -26,6 +26,7 @@ import org.apache.lucene.analysis.standard.ClassicAnalyzer;
         
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Base class to manipulate Lucene index.
@@ -38,7 +39,7 @@ public abstract class IndexLucene {
     /**
      * for debug purpose.
      */
-    protected static final Logger LOGGER = Logger.getLogger("org.constellation.metadata.index");
+    protected static final Logger LOGGER = Logging.getLogger(IndexLucene.class);
 
     /**
      * A lucene analyser.

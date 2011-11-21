@@ -73,7 +73,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
     @Override
     public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
 
-        DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
+        final DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
 
         final TermDocs termDocs;
         termDocs = reader.termDocs();
