@@ -16,8 +16,14 @@
  */
 package org.geotoolkit.filter.text.cql2;
 
+import com.vividsolutions.jts.geom.Point;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.text.commons.CompilerUtil;
 import org.geotoolkit.filter.text.commons.Language;
+import org.geotoolkit.util.logging.Logging;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opengis.filter.Filter;
@@ -64,6 +70,8 @@ public class CQLGeoOperationTest {
 
     protected Language language;
 
+    protected static final Logger LOGGER = Logging.getLogger(CQLGeoOperationTest.class);
+    
     /**
      * New instance of CQLTemporalPredicateTest
      */
@@ -111,6 +119,23 @@ public class CQLGeoOperationTest {
 
         Assert.assertTrue("Contains was expected", resultFilter instanceof Contains);
 
+    }
+    
+    @Test
+    public void containsPT3D() throws CQLException      {
+        Filter resultFilter = CompilerUtil.parseFilter(language,"CONTAINS(ATTR1, POINT3D(1 2 3))");
+
+        Assert.assertTrue("Contains was expected", resultFilter instanceof Contains);
+        Contains cfilter = (Contains) resultFilter;
+        Assert.assertEquals(new DefaultPropertyName("ATTR1"), cfilter.getExpression1());
+        
+        Assert.assertTrue("Literal was expected but was "+ cfilter.getExpression2().getClass().getName(), cfilter.getExpression2() instanceof DefaultLiteral);
+        DefaultLiteral lit = (DefaultLiteral) cfilter.getExpression2();
+        Assert.assertTrue("Point was expected but was "+ lit.getValue().getClass().getName(), lit.getValue() instanceof Point);
+        Point p = (Point) lit.getValue();
+        Assert.assertEquals(1, p.getX(), 0);
+        Assert.assertEquals(2, p.getY(), 0);
+        Assert.assertEquals(3, p.getCoordinate().z, 0);
     }
 
     @Test

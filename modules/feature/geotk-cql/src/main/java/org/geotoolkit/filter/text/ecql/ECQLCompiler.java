@@ -415,7 +415,13 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
 
             case JJTPOINTTEXT_NODE:
                 return builder.buildPointText();
+                
+            case JJTPOINT3D_NODE:
+                return builder.buildCoordinate3D();
 
+            case JJTPOINT3DTEXT_NODE:
+                return builder.buildPoint3DText();
+                
             case JJTLINESTRINGTEXT_NODE:
                 return builder.buildLineString(JJTPOINT_NODE);
 

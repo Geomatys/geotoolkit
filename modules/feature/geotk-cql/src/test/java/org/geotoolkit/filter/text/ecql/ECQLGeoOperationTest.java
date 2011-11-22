@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.filter.text.ecql;
 
+import com.vividsolutions.jts.geom.Point;
+import java.util.logging.Level;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.filter.text.commons.CompilerUtil;
 import org.geotoolkit.filter.text.commons.Language;
 import org.geotoolkit.filter.text.cql2.CQLException;
@@ -121,6 +125,37 @@ public final class ECQLGeoOperationTest extends CQLGeoOperationTest{
         Filter resultFilter = CompilerUtil.parseFilter(language,"CONTAINS(the_geom, POINT(1 2))");
 
         Assert.assertTrue("Contains was expected", resultFilter instanceof Contains);
+        Contains cfilter = (Contains) resultFilter;
+        
+        Assert.assertEquals(new DefaultPropertyName("the_geom"), cfilter.getExpression2());
+        
+        Assert.assertTrue("Literal was expected but was "+ cfilter.getExpression1().getClass().getName(), cfilter.getExpression1() instanceof DefaultLiteral);
+        DefaultLiteral lit = (DefaultLiteral) cfilter.getExpression1();
+        Assert.assertTrue("Point was expected but was "+ lit.getValue().getClass().getName(), lit.getValue() instanceof Point);
+        Point p = (Point) lit.getValue();
+        Assert.assertEquals(1, p.getX(), 0);
+        Assert.assertEquals(2, p.getY(), 0);
+    }
+    
+    @Test
+    public void containsPT3D() throws CQLException      {
+        Filter resultFilter = CompilerUtil.parseFilter(language,"CONTAINS(the_geom, POINT3D(1 2 3))");
+
+        Assert.assertTrue("Contains was expected", resultFilter instanceof Contains);
+        Contains cfilter = (Contains) resultFilter;
+        LOGGER.log(Level.INFO, "ECQL EXP1: {0}", cfilter.getExpression1());
+        LOGGER.log(Level.INFO, "ECQL EXP2: {0}", cfilter.getExpression2());
+        
+        Assert.assertEquals(new DefaultPropertyName("the_geom"), cfilter.getExpression2());
+        
+        Assert.assertTrue("Literal was expected but was "+ cfilter.getExpression1().getClass().getName(), cfilter.getExpression1() instanceof DefaultLiteral);
+        DefaultLiteral lit = (DefaultLiteral) cfilter.getExpression1();
+        Assert.assertTrue("Point was expected but was "+ lit.getValue().getClass().getName(), lit.getValue() instanceof Point);
+        Point p = (Point) lit.getValue();
+        Assert.assertEquals(1, p.getX(), 0);
+        Assert.assertEquals(2, p.getY(), 0);
+        Assert.assertEquals(3, p.getCoordinate().z, 0);
+
     }
 
     @Override

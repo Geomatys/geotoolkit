@@ -77,6 +77,8 @@ import com.vividsolutions.jts.io.WKTReader;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @author Guilhem Legal (Geomatys)
+ * 
  * @module pending
  * @since 2.6
  */
@@ -787,7 +789,7 @@ public abstract class AbstractFilterBuilder {
 
             // transforms wkt to vividsolution geometry
             final String vividGeom = transformWKTGeometry(wktGeom);
-
+            
             final WKTReader reader = new WKTReader();
 
             final Geometry g = reader.read(vividGeom);
@@ -851,6 +853,8 @@ public abstract class AbstractFilterBuilder {
             transformed.append(MULTIPOINT_TYPE).append("(").append(argument).append(")");
 
             return transformed.toString();
+        } else if (wktGeom.indexOf("POINT3D") != -1) {
+            return wktGeom.replace("POINT3D", "POINT");
         } else {
             return wktGeom;
         }

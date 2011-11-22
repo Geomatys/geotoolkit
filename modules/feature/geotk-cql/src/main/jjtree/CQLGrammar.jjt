@@ -146,6 +146,7 @@ TOKEN [IGNORE_CASE]: /* include all and exclude all filters */
 TOKEN [IGNORE_CASE]: /* geometry markers */
 {
   < POINT: "point"> |
+  < POINT3D: "point3D"> |
   < LINESTRING: "linestring"> |
   < POLYGON: "polygon"> |
   < MULTIPOINT: "multipoint"> |
@@ -489,6 +490,7 @@ void DistanceUnits() #DistanceUnits_Node:
 /*
  * <geometry literal> ::= 
  *	  <Point Tagged Text>
+ * 	| <Point3D Tagged Text>
  * 	| <LineString Tagged Text>
  * 	| <Polygon Tagged Text>
  *	| <MultiPoint Tagged Text>
@@ -501,6 +503,7 @@ void GeometryLiteral() #void:
 {}
 {
   PointTaggedText() |
+  Point3DTaggedText() |
   LineStringTaggedText() |
   PolygonTaggedText() |
   MultiPointTaggedText() |
@@ -907,6 +910,15 @@ void Point() #void:
 }
 
 /*
+ * <Point3D> := <x><space><y><space><z>
+ */
+void Point3D() #void:
+{}
+{
+  NumericLiteral() NumericLiteral() NumericLiteral()
+}
+
+/*
  * <LineString Text> := EMPTY
  * | <left paren><Point>{<comma><Point >} ... <right paren>
  */
@@ -928,6 +940,20 @@ void PointText() #void:
 {}
 {
 	(<LP> Point() <RP>)?
+}
+
+void Point3DTaggedText() #WKTNode:
+{} 
+{
+  jjtThis.token = <POINT3D> Point3DText()
+}
+/*
+ * <Point3D Text> := EMPTY | <left paren> <Point3D> <right paren>
+ */
+void Point3DText() #void:
+{}
+{
+	(<LP> Point3D() <RP>)?
 }
 
 void LineStringTaggedText() #WKTNode:

@@ -188,8 +188,22 @@ final class ECQLFilterBuilder extends AbstractFilterBuilder {
 
         return new Coordinate(x, y);
     }
+    
+    public Coordinate buildCoordinate3D() throws CQLException {
+        final double z = getResultStack().popDoubleValue();
+        final double y = getResultStack().popDoubleValue();
+        final double x = getResultStack().popDoubleValue();
+        
+
+        return new Coordinate(x, y, z);
+    }
 
     public Point buildPointText() throws CQLException {
+        final PointBuilder builder = new PointBuilder(getStatement(), getResultStack());
+        return (Point) builder.build();
+    }
+    
+    public Point buildPoint3DText() throws CQLException {
         final PointBuilder builder = new PointBuilder(getStatement(), getResultStack());
         return (Point) builder.build();
     }
