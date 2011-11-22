@@ -20,15 +20,19 @@
  */
 package org.geotoolkit.referencing.datum;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Collections;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
@@ -46,12 +50,14 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * it is combined to create a {@linkplain org.opengis.referencing.crs.VerticalCRS vertical CRS}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlType(name = "VerticalDatumType")
+@XmlRootElement(name = "VerticalDatum")
 public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum {
     /**
      * Serial number for inter-operability with different versions.
@@ -78,9 +84,10 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     }
 
     /**
-     * The type of this vertical datum. Default is "geoidal".
+     * The type of this vertical datum. Consider this field as final.
+     * If {@code null}, a value will be set by {@link #afterUnmarshal(Unmarshaller, Object)}.
      */
-    private final VerticalDatumType type;
+    private VerticalDatumType type;
 
     /**
      * Default vertical datum for {@linkplain VerticalDatumType#BAROMETRIC barometric heights}.
@@ -118,7 +125,9 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultVerticalDatum() {
-        this(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
+        super(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
+        // We need to let the DefaultVerticalDatum fields unitialized,
+        // because afterUnmarshal will check for null values.
     }
 
     /**
@@ -179,7 +188,46 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     }
 
     /**
-     * The type of this vertical datum. Default is geoidal.
+     * Invoked after unmarshalling in order to infer the datum type from its name. This is
+     * necessary because GML 3.2 does not contain any attribute for the datum type. The
+     * algorithm used here is determined on a heuristic basis and may be changed in any
+     * future version. If the type can not be determined, default on the ellipsoidal type
+     * since it will usually implies no additional calculation.
+     *
+     * @since 3.20
+     */
+    final void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
+        if (type == null) {
+            final StringBuilder name = new StringBuilder(getName(null));
+            Strings.toASCII(name);
+            for (int i=name.length(); --i>=0;) {
+                // Following algorithm doesn't work for all Locale, but it should
+                // be okay since we removed many non-ASCII characters above.
+                name.setCharAt(i, Character.toLowerCase(name.charAt(i)));
+            }
+                 if (find(name, "depth"))      type = VerticalDatumType.DEPTH;
+            else if (find(name, "geoid"))      type = VerticalDatumType.GEOIDAL;
+            else if (find(name, "barometric")) type = VerticalDatumType.BAROMETRIC;
+            else type = VerticalDatumTypes.ELLIPSOIDAL;
+        }
+    }
+
+    /**
+     * Returns {@code true} if the given string was found in the given name, either at the
+     * name beginning or after a space. We don't test the character after the given string
+     * because the word may be incomplete (e.g. {@code "geoid"} vs {@code "geoidal"}).
+     *
+     * @param  name      The datum name, in lower cases and mostly US-ASCII characters.
+     * @param  candidate The word to search, in lower cases and mostly US-ASCII characters.
+     * @return {@code true} if the given string was found in the given name at a word boundary.
+     */
+    private static boolean find(final StringBuilder name, final String candidate) {
+        final int i = name.indexOf(candidate);
+        return (i == 0) || (i >= 0 && Character.isWhitespace(name.charAt(i-1)));
+    }
+
+    /**
+     * The type of this vertical datum.
      *
      * @return The type of this vertical datum.
      */

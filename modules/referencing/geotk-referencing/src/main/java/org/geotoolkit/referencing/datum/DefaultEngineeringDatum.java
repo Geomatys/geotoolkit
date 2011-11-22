@@ -22,6 +22,8 @@ package org.geotoolkit.referencing.datum;
 
 import java.util.Map;
 import java.util.Collections;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.EngineeringDatum;
@@ -44,6 +46,8 @@ import org.geotoolkit.io.wkt.Formatter;
  * @module
  */
 @Immutable
+@XmlType(name = "EngineeringDatumType")
+@XmlRootElement(name = "EngineeringDatum")
 public class DefaultEngineeringDatum extends AbstractDatum implements EngineeringDatum {
     /**
      * Serial number for inter-operability with different versions.

@@ -21,8 +21,10 @@
 package org.geotoolkit.referencing.datum;
 
 import java.util.Map;
-import java.util.Collections;
 import java.util.Objects;
+import java.util.Collections;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.ImageDatum;
@@ -47,6 +49,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Immutable
+@XmlType(name = "ImageDatumType")
+@XmlRootElement(name = "ImageDatum")
 public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
     /**
      * Serial number for inter-operability with different versions.

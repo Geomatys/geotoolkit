@@ -71,13 +71,13 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 1.2
  * @module
  */
 @Immutable
-@XmlType(propOrder={
+@XmlType(name="EllipsoidType", propOrder={
     "semiMajorAxisMeasure",
     "secondDefiningParameter"
 })
@@ -224,7 +224,9 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * reserved to JAXB, which will assign values to the fields using reflexion.
      */
     private DefaultEllipsoid() {
-        this(WGS84);
+        super(org.geotoolkit.internal.referencing.NilReferencingObject.INSTANCE);
+        // We need to let the DefaultEllipsoid fields unitialized, because
+        // completeSecondDefiningParameter() will check for zero values.
     }
 
     /**
@@ -278,6 +280,26 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         this.semiMinorAxis     = check("semiMinorAxis",     semiMinorAxis);
         this.inverseFlattening = check("inverseFlattening", inverseFlattening);
         this.ivfDefinitive     = ivfDefinitive;
+    }
+
+    /**
+     * Invoked after the "<cite>second defining parameter</cite>" parameter has been set,
+     * in order to compute its counter part. This method is invoked after JAXB unmarshalling.
+     *
+     * @since 3.20
+     */
+    private void completeSecondDefiningParameter() {
+        if (semiMajorAxis != 0) {
+            if (ivfDefinitive) {
+                if (semiMinorAxis == 0 && inverseFlattening != 0) {
+                    semiMinorAxis = semiMajorAxis*(1 - 1/inverseFlattening);
+                }
+            } else {
+                if (inverseFlattening == 0 && semiMinorAxis != 0) {
+                    inverseFlattening = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
+                }
+            }
+        }
     }
 
     /**
@@ -445,6 +467,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         }
         semiMajorAxis = uom.value;
         unit = uom.unit.asType(Length.class);
+        completeSecondDefiningParameter();
     }
 
     /**
@@ -530,6 +553,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                 if (inverseFlattening == 0) {
                     inverseFlattening = value;
                     ivfDefinitive = true;
+                    completeSecondDefiningParameter();
                     return;
                 }
             } else {
@@ -544,6 +568,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                 if (semiMinorAxis == 0) {
                     semiMinorAxis = value;
                     ivfDefinitive = false;
+                    completeSecondDefiningParameter();
                     return;
                 }
             }

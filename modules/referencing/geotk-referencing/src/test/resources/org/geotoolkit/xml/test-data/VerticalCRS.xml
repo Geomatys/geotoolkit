@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gmx="http://www.isotc211.org/2005/gmx">
+<gmd:MD_Metadata
+        xmlns:gco = "http://www.isotc211.org/2005/gco"
+        xmlns:gmd = "http://www.isotc211.org/2005/gmd"
+        xmlns:gml = "http://www.opengis.net/gml"
+        xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation = "http://www.isotc211.org/2005/gmd http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd">
   <gmd:fileIdentifier>
     <gco:CharacterString>20090901</gco:CharacterString>
   </gmd:fileIdentifier>
@@ -99,10 +104,10 @@
             <gmd:EX_VerticalExtent>
               <gmd:verticalCRS>
                 <gml:VerticalCRS gml:id="idvertCRS">
-                <gml:name>idvertCRS</gml:name>
+                  <gml:name>idvertCRS</gml:name>
                   <gml:verticalCS>
                     <gml:VerticalCS gml:id="meters">
-                    <gml:name>meters</gml:name>
+                      <gml:name>meters</gml:name>
                       <gml:axis>
                         <gml:CoordinateSystemAxis uom="m" gml:id="meters">
                           <gml:name>meters</gml:name>
@@ -113,8 +118,8 @@
                     </gml:VerticalCS>
                   </gml:verticalCS>
                   <gml:verticalDatum>
-                    <gml:VerticalDatum gml:id="D28">
-                      <gml:name>D28</gml:name>
+                    <gml:VerticalDatum gml:id="Depth">
+                      <gml:name>Depth</gml:name>
                       <gml:realizationEpoch/>
                     </gml:VerticalDatum>
                   </gml:verticalDatum>

@@ -61,7 +61,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -74,8 +74,8 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(EX_Extent.class),
-
-    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(CD_Ellipsoid.class),
+    @XmlJavaTypeAdapter(CD_PrimeMeridian.class),
     @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(InternationalStringConverter.class)
 })
@@ -92,3 +92,4 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gco.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
+import org.geotoolkit.internal.jaxb.referencing.*;
