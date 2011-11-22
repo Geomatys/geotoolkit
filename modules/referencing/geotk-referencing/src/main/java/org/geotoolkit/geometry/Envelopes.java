@@ -607,11 +607,7 @@ public final class Envelopes extends Static {
                     }
                     // TODO: avoid the hack below if we provide a contains(DirectPosition)
                     //       method in the GeoAPI org.opengis.geometry.Envelope interface.
-                    if (envelope instanceof AbstractEnvelope) {
-                        generalEnvelope = (AbstractEnvelope) envelope;
-                    } else {
-                        generalEnvelope = new GeneralEnvelope(envelope);
-                    }
+                    generalEnvelope = AbstractEnvelope.castOrCopy(envelope);
                 }
                 targetPt.setOrdinate(i, extremum);
                 try {

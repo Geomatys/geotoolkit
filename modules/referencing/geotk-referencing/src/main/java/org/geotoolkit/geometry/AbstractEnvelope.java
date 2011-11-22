@@ -36,8 +36,10 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.shape.XRectangle2D;
 
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
+import static org.geotoolkit.math.XMath.SIGN_BIT_MASK;
 import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.math.XMath.isPositive;
 
@@ -100,6 +102,26 @@ public abstract class AbstractEnvelope implements Envelope {
      * Constructs an envelope.
      */
     protected AbstractEnvelope() {
+    }
+
+    /**
+     * Returns the given envelope as an {@code AbstractEnvelope} instance. If the given envelope
+     * is already an instance of {@code AbstractEnvelope}, then it is returned unchanged.
+     * Otherwise the coordinate values and the CRS of the given envelope are copied in a
+     * new envelope.
+     *
+     * @param  envelope The envelope to cast, or {@code null}.
+     * @return The values of the given envelope as an {@code AbstractEnvelope} instance.
+     *
+     * @see GeneralEnvelope#castOrCopy(Envelope)
+     *
+     * @since 3.20
+     */
+    public static AbstractEnvelope castOrCopy(final Envelope envelope) {
+        if (envelope == null || envelope instanceof AbstractEnvelope) {
+            return (AbstractEnvelope) envelope;
+        }
+        return new GeneralEnvelope(envelope);
     }
 
     /**
@@ -187,6 +209,24 @@ public abstract class AbstractEnvelope implements Envelope {
             message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, minimum, maximum);
             throw new IllegalArgumentException(message);
         }
+    }
+
+    /**
+     * Returns {@code true} if the given value is negative, without checks for {@code NaN}.
+     * This method should be invoked only when the number is known to not be {@code NaN},
+     * otherwise the safer {@link org.geotoolkit.math.XMath#isNegative(double)} method shall
+     * be used instead. Note that the check for {@code NaN} doesn't need to be explicit.
+     * For example in the following code, {@code NaN} values were implicitly checked by
+     * the {@code (a < b)} comparison:
+     *
+     * {@preformat java
+     *     if (a < b && isNegativeUnsafe(a)) {
+     *         // ... do some stuff
+     *     }
+     * }
+     */
+    static boolean isNegativeUnsafe(final double value) {
+        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) != 0;
     }
 
     /**
@@ -487,9 +527,7 @@ public abstract class AbstractEnvelope implements Envelope {
                  *  │  └───────┘  │          ──┘ │  │ └──                 ───┘ │ │ └───
                  *  └─────────────┘          ────┘  └────                      └─┘
                  *  minCnd                          minCnd */
-                if ((Double.doubleToRawLongBits(max1 - min1) & Long.MIN_VALUE) == 0 || // isPositive(...) without NaN check since it has been implicitely done.
-                    (Double.doubleToRawLongBits(max0 - min0) & Long.MIN_VALUE) != 0)   // isNegative(...) without NaN check since it has been implicitely done.
-                {
+                if (!isNegativeUnsafe(max1 - min1) || isNegativeUnsafe(max0 - min0)) {
                     continue;
                 }
             } else if (minCondition != maxCondition && isNegative(max0 - min0) &&
@@ -574,7 +612,11 @@ public abstract class AbstractEnvelope implements Envelope {
                  *     ────┼───┐  ┌───┼────      or          ┌─┼──────┼─┐
                  *     ────┼───┘  └───┼────                  └─┼──────┼─┘
                  *         └──────────┘                   ─────┘      └───── */
-                if ((sp0 & sp1) | (maxCondition | minCondition)) continue;
+                if ((sp0 & sp1) | (maxCondition | minCondition)) {
+                    if (isWrapAround(getCoordinateReferenceSystem(), i)) {
+                        continue;
+                    }
+                }
             }
             // The test for ArrayEnvelope.class is for avoiding never-ending callbacks.
             assert envelope.getClass() == ArrayEnvelope.class || hasNaN(envelope) ||
@@ -738,6 +780,7 @@ public abstract class AbstractEnvelope implements Envelope {
                     if (!Utilities.equals(this.getMinimum(i), that.getMinimum(i)) ||
                         !Utilities.equals(this.getMaximum(i), that.getMaximum(i)))
                     {
+                        assert !equals(that, 0.0, false) : this;
                         return false;
                     }
                 }
@@ -745,6 +788,7 @@ public abstract class AbstractEnvelope implements Envelope {
                                    that.getCoordinateReferenceSystem()))
                 {
                     assert hashCode() == that.hashCode() : this;
+                    assert equals(that, 0.0, false) : this;
                     return true;
                 }
             }
@@ -795,16 +839,15 @@ public abstract class AbstractEnvelope implements Envelope {
         }
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dimension; i++) {
-            double epsilon;
+            double epsilon = eps;
             if (epsIsRelative) {
-                epsilon = Math.max(getSpan(i), envelope.getSpan(i));
-                epsilon = (epsilon > 0 && epsilon < Double.POSITIVE_INFINITY) ? epsilon*eps : eps;
-            } else {
-                epsilon = eps;
+                final double span = Math.max(getSpan(i), envelope.getSpan(i));
+                if (span > 0 && span < Double.POSITIVE_INFINITY) {
+                    epsilon *= span;
+                }
             }
-            // Comparison below uses '!' in order to catch NaN values.
-            if (!(Math.abs(getMinimum(i) - envelope.getMinimum(i)) <= epsilon &&
-                  Math.abs(getMaximum(i) - envelope.getMaximum(i)) <= epsilon))
+            if (!epsilonEqual(getMinimum(i), envelope.getMinimum(i), epsilon) ||
+                !epsilonEqual(getMaximum(i), envelope.getMaximum(i), epsilon))
             {
                 return false;
             }

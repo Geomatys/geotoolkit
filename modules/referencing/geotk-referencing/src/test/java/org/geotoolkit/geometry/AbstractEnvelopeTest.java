@@ -19,6 +19,7 @@ package org.geotoolkit.geometry;
 
 import java.awt.geom.Rectangle2D;
 import org.opengis.geometry.Envelope;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static java.lang.Double.NaN;
@@ -34,6 +35,7 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
  *
  * @since 3.20
  */
+@Depend(DirectPositionTest.class)
 public final strictfp class AbstractEnvelopeTest {
     /**
      * Tolerance threshold for strict floating point comparisons.

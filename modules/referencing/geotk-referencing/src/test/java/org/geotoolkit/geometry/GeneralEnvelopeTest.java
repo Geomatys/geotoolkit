@@ -21,20 +21,135 @@ import org.opengis.geometry.DirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import org.geotoolkit.test.Depend;
+
+import static java.lang.Double.NaN;
+import static org.geotoolkit.referencing.Assert.*;
+import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 
 
 /**
- * Tests the {@link GeneralEnvelope} class.
+ * Tests the {@link GeneralEnvelope} class. The {@link Envelope2D} class will also be tested as a
+ * side effect, because it is used for comparison purpose. Note that {@link AbstractEnvelopeTest}
+ * already tested {@code contains} and {@code intersects} methods, so this test file will focus on
+ * other methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 2.4
  */
-@Depend(DirectPositionTest.class)
+@Depend(AbstractEnvelopeTest.class)
 public final strictfp class GeneralEnvelopeTest {
+    /**
+     * The comparison threshold for strict comparisons.
+     */
+    private static final double STRICT = 0;
+
+    /**
+     * Tolerance threshold for floating point comparisons.
+     */
+    private static final double EPS = 1E-4;
+
+    /**
+     * Creates a new geographic envelope for the given ordinate values.
+     */
+    private static GeneralEnvelope create(final double xmin, final double ymin, final double xmax, final double ymax) {
+        final GeneralEnvelope envelope = new GeneralEnvelope(WGS84);
+        envelope.setEnvelope(xmin, ymin, xmax, ymax);
+        return envelope;
+    }
+
+    /**
+     * Asserts that the intersection of the two following envelopes is equals to the given rectangle.
+     * First, this method tests using the {@link Envelope2D} implementation. Then, it tests using the
+     * {@link GeneralEnvelope} implementation.
+     */
+    private static void assertIntersectEquals(final GeneralEnvelope e1, final GeneralEnvelope e2,
+            final double xmin, final double ymin, final double xmax, final double ymax)
+    {
+        final boolean isEmpty = !(((xmax - xmin) * (ymax - ymin)) != 0); // Use ! for catching NaN.
+        final Envelope2D r1 = new Envelope2D(e1);
+        final Envelope2D r2 = new Envelope2D(e2);
+        final Envelope2D ri = r1.createIntersection(r2);
+        assertEquals("isEmpty", isEmpty, r1.isEmpty());
+        assertEquals("xmin", xmin, ri.getMinX(), STRICT);
+        assertEquals("xmax", xmax, ri.getMaxX(), STRICT);
+        assertEquals("ymin", ymin, ri.getMinY(), STRICT);
+        assertEquals("ymax", ymax, ri.getMaxY(), STRICT);
+        assertEquals("Interchanged arguments.", ri, r2.createIntersection(r1));
+        final GeneralEnvelope ei = new GeneralEnvelope(e1);
+        ei.intersect(e2);
+        assertEquals("isEmpty", isEmpty, e1.isEmpty());
+        assertTrue("Using GeneralEnvelope.", ei.equals(ri, STRICT, false));
+        ei.setEnvelope(e2);
+        ei.intersect(e1);
+        assertEquals("isEmpty", isEmpty, e1.isEmpty());
+        assertTrue("Using GeneralEnvelope.", ei.equals(ri, STRICT, false));
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#intersect(Envelope)} and
+     * {@link Envelope2D#createIntersection(Rectangle2D)} methods.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testIntersection() {
+        //  ┌─────────────┐
+        //  │  ┌───────┐  │
+        //  │  └───────┘  │
+        //  └─────────────┘
+        final GeneralEnvelope e1 = create(20, -20, 80, 10);
+        final GeneralEnvelope e2 = create(40, -10, 62,  8);
+        assertIntersectEquals(e1, e2, 40, -10, 62, 8);
+        //  ┌──────────┐
+        //  │  ┌───────┼──┐
+        //  │  └───────┼──┘
+        //  └──────────┘
+        e1.setEnvelope(20, -20,  80, 12);
+        e2.setEnvelope(40, -10, 100, 30);
+        final double ymin=-10, ymax=12; // Will not change anymore
+        assertIntersectEquals(e1, e2, 40, ymin, 80, ymax);
+        //  ────┐  ┌────
+        //  ──┐ │  │ ┌──
+        //  ──┘ │  │ └──
+        //  ────┘  └────
+        e1.setRange(0,  80, 20);
+        e2.setRange(0, 100, 18);
+        assertIntersectEquals(e1, e2, 100, ymin, 18, ymax);
+        //  ────┐  ┌────
+        //  ────┼──┼─┐┌─
+        //  ────┼──┼─┘└─
+        //  ────┘  └────
+        e2.setRange(0, 100, 90);
+        assertIntersectEquals(e1, e2, 100, ymin, 20, ymax);
+        //  ─────┐      ┌─────
+        //     ┌─┼────┐ │
+        //     └─┼────┘ │
+        //  ─────┘      └─────
+        e2.setRange(0, 10, 30);
+        assertIntersectEquals(e1, e2, 10, ymin, 20, ymax);
+        //  ──────────┐  ┌─────
+        //    ┌────┐  │  │
+        //    └────┘  │  │
+        //  ──────────┘  └─────
+        e2.setRange(0, 10, 16);
+        assertIntersectEquals(e1, e2, 10, ymin, 16, ymax);
+        //  ─────┐     ┌─────
+        //       │ ┌─┐ │
+        //       │ └─┘ │
+        //  ─────┘     └─────
+        e2.setRange(0, 40, 60);
+        assertIntersectEquals(e1, e2, NaN, ymin, NaN, ymax);
+        //  ─────┐     ┌─────
+        //     ┌─┼─────┼─┐
+        //     └─┼─────┼─┘
+        //  ─────┘     └─────
+        e2.setRange(0, 10, 90);
+        assertIntersectEquals(e1, e2, NaN, ymin, NaN, ymax);
+    }
+
     /**
      * Tests the {@link GeneralEnvelope#setSubEnvelope(Envelope, int)} method.
      *
@@ -42,7 +157,7 @@ public final strictfp class GeneralEnvelopeTest {
      */
     @Test
     public void testSetSubEnvelope() {
-        final GeneralEnvelope horizontal = new GeneralEnvelope(new double[] {-180, -90}, new double[] {180, 90});
+        final GeneralEnvelope horizontal = create(-180, -90, 180, 90);
         final GeneralEnvelope vertical   = new GeneralEnvelope(20, 40);
         final GeneralEnvelope envelope   = new GeneralEnvelope(3);
         assertTrue (envelope.isEmpty());
@@ -86,25 +201,25 @@ public final strictfp class GeneralEnvelopeTest {
     public void testWktParsing() {
         GeneralEnvelope envelope = new GeneralEnvelope("BOX(-180 -90,180 90)");
         assertEquals(2, envelope.getDimension());
-        assertEquals(-180, envelope.getMinimum(0), 0);
-        assertEquals( 180, envelope.getMaximum(0), 0);
-        assertEquals( -90, envelope.getMinimum(1), 0);
-        assertEquals(  90, envelope.getMaximum(1), 0);
+        assertEquals(-180, envelope.getMinimum(0), STRICT);
+        assertEquals( 180, envelope.getMaximum(0), STRICT);
+        assertEquals( -90, envelope.getMinimum(1), STRICT);
+        assertEquals(  90, envelope.getMaximum(1), STRICT);
 
         envelope = new GeneralEnvelope("BOX3D(-180 -90 10, 180 90 30)");
         assertEquals(3, envelope.getDimension());
-        assertEquals(-180, envelope.getMinimum(0), 0);
-        assertEquals( 180, envelope.getMaximum(0), 0);
-        assertEquals( -90, envelope.getMinimum(1), 0);
-        assertEquals(  90, envelope.getMaximum(1), 0);
-        assertEquals(  10, envelope.getMinimum(2), 0);
-        assertEquals(  30, envelope.getMaximum(2), 0);
+        assertEquals(-180, envelope.getMinimum(0), STRICT);
+        assertEquals( 180, envelope.getMaximum(0), STRICT);
+        assertEquals( -90, envelope.getMinimum(1), STRICT);
+        assertEquals(  90, envelope.getMaximum(1), STRICT);
+        assertEquals(  10, envelope.getMinimum(2), STRICT);
+        assertEquals(  30, envelope.getMaximum(2), STRICT);
 
         envelope = new GeneralEnvelope("POLYGON((-80 -30,-100 40,80 40,100 -40,-80 -30))");
-        assertEquals(-100, envelope.getMinimum(0), 0);
-        assertEquals( 100, envelope.getMaximum(0), 0);
-        assertEquals( -40, envelope.getMinimum(1), 0);
-        assertEquals(  40, envelope.getMaximum(1), 0);
+        assertEquals(-100, envelope.getMinimum(0), STRICT);
+        assertEquals( 100, envelope.getMaximum(0), STRICT);
+        assertEquals( -40, envelope.getMinimum(1), STRICT);
+        assertEquals(  40, envelope.getMaximum(1), STRICT);
 
         assertEquals("BOX2D(6 10, 6 10)",     new GeneralEnvelope("POINT(6 10)").toString());
         assertEquals("BOX3D(6 10 3, 6 10 3)", new GeneralEnvelope("POINT M [ 6 10 3 ] ").toString());
@@ -164,8 +279,8 @@ public final strictfp class GeneralEnvelopeTest {
         assertFalse  (e1.contains(e2, false));
         assertNotSame(e1, e2);
         assertEquals (e1, e2);
-        assertTrue   (e1.equals(e2, 1E-4, true ));
-        assertTrue   (e1.equals(e2, 1E-4, false));
+        assertTrue   (e1.equals(e2, EPS, true ));
+        assertTrue   (e1.equals(e2, EPS, false));
         assertEquals (e1.hashCode(), e2.hashCode());
         /*
          * Offset slightly some coordinate value. Should not be equals anymore,
@@ -175,8 +290,8 @@ public final strictfp class GeneralEnvelopeTest {
         assertTrue (e1.contains(e2, true ));
         assertFalse(e1.contains(e2, false));
         assertFalse(e1.equals  (e2));
-        assertTrue (e1.equals  (e2, 1E-4, true ));
-        assertTrue (e1.equals  (e2, 1E-4, false));
+        assertTrue (e1.equals  (e2, EPS, true ));
+        assertTrue (e1.equals  (e2, EPS, false));
         assertFalse(e1.hashCode() == e2.hashCode());
         /*
          * Applies a greater offset. Should not be equal,
@@ -186,8 +301,8 @@ public final strictfp class GeneralEnvelopeTest {
         assertTrue (e1.contains(e2, true ));
         assertFalse(e1.contains(e2, false));
         assertFalse(e1.equals  (e2));
-        assertFalse(e1.equals  (e2, 1E-4, true ));
-        assertFalse(e1.equals  (e2, 1E-4, false));
+        assertFalse(e1.equals  (e2, EPS, true ));
+        assertFalse(e1.equals  (e2, EPS, false));
         assertFalse(e1.hashCode() == e2.hashCode());
     }
 

@@ -64,7 +64,7 @@ public final class InternalUtilities extends Static {
      *
      * By extension, the same threshold value is used for comparing other floating point values.
      *
-     * @since 3.18
+     * @since 3.20
      */
     public static final double COMPARISON_THRESHOLD = 1E-14;
 
@@ -97,6 +97,21 @@ public final class InternalUtilities extends Static {
      */
     public static String identity(final Object value) {
         return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
+    }
+
+    /**
+     * Returns {@code true} if the given values are approximatively equal.
+     * Two NaN values are considered equal.
+     *
+     * @param  v1 The first value to compare.
+     * @param  v2 The second value to compare.
+     * @param  epsilon The tolerance threshold, which must be positive.
+     * @return {@code true} If both values are approximatively equal.
+     *
+     * @since 3.20
+     */
+    public static boolean epsilonEqual(final double v1, final double v2, final double epsilon) {
+        return (abs(v1 - v2) <= epsilon) || Double.doubleToLongBits(v1) == Double.doubleToLongBits(v2);
     }
 
     /**

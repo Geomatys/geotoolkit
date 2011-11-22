@@ -46,6 +46,8 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.geotoolkit.math.XMath.isNegative;
+import static org.geotoolkit.math.XMath.isSameSign;
 
 
 /**
@@ -148,6 +150,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * @throws IllegalArgumentException if an ordinate value in the minimum point is not
      *         less than or equal to the corresponding ordinate value in the maximum point
      *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
+     *
+     * @see Envelope2D#Envelope2D(DirectPosition2D, DirectPosition2D)
      */
     public GeneralEnvelope(final GeneralDirectPosition minDP, final GeneralDirectPosition maxDP)
             throws MismatchedReferenceSystemException, IllegalArgumentException
@@ -180,6 +184,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * Constructs a new envelope with the same data than the specified envelope.
      *
      * @param envelope The envelope to copy.
+     *
+     * @see Envelope2D#Envelope2D(Envelope)
      */
     public GeneralEnvelope(final Envelope envelope) {
         super(envelope);
@@ -193,6 +199,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *
      * @param box The bounding box to copy.
      *
+     * @see Envelope2D#Envelope2D(GeographicBoundingBox)
+     *
      * @since 2.4
      */
     public GeneralEnvelope(final GeographicBoundingBox box) {
@@ -205,6 +213,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * The coordinate reference system is initially undefined.
      *
      * @param rect The rectangle to copy.
+     *
+     * @see Envelope2D#Envelope2D(CoordinateReferenceSystem, Rectangle2D)
      */
     public GeneralEnvelope(final Rectangle2D rect) {
         super(rect);
@@ -336,6 +346,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *
      * @param  envelope The envelope to cast, or {@code null}.
      * @return The values of the given envelope as a {@code GeneralEnvelope} instance.
+     *
+     * @see AbstractEnvelope#castOrCopy(Envelope)
      *
      * @since 3.19
      */
@@ -647,7 +659,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
 
     /**
      * Returns a new envelope that encompass only some dimensions of this envelope.
-     * This method copy this envelope ordinates into a new envelope, beginning at
+     * This method copies this envelope ordinates into a new envelope, beginning at
      * dimension {@code lower} and extending to dimension {@code upper-1}.
      * Thus the dimension of the sub-envelope is {@code upper-lower}.
      *
@@ -790,7 +802,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         for (int i=0; i<dimension; i++) {
             final double span = ordinates[i+dimension] - ordinates[i];
             if (!(span > 0)) { // Use '!' in order to catch NaN
-                if (!(span < 0 && isWrapAround(crs, i))) {
+                if (!(isNegative(span) && isWrapAround(crs, i))) {
                     return true;
                 }
             }
@@ -801,6 +813,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
 
     /**
      * Adds to this envelope a point of the given array.
+     * This method does not check for anti-meridian spanning. It is invoked only
+     * by the {@link Envelopes} transform methods, which build "normal" envelopes.
      *
      * @param  array The array which contains the ordinate values.
      * @param  offset Index of the first valid ordinate value in the given array.
@@ -883,16 +897,87 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dim; i++) {
-            double min = Math.max(ordinates[i    ], envelope.getMinimum(i));
-            double max = Math.min(ordinates[i+dim], envelope.getMaximum(i));
-            if (min > max) {
-                // Make an empty envelope (min==max)
-                // while keeping it legal (min<=max).
-                min = max = 0.5*(min+max);
+            final double min0  = ordinates[i];
+            final double max0  = ordinates[i+dim];
+            final double min1  = envelope.getMinimum(i);
+            final double max1  = envelope.getMaximum(i);
+            final double span0 = max0 - min0;
+            final double span1 = max1 - min1;
+            if (isSameSign(span0, span1)) { // Always 'false' if any value is NaN.
+                /*
+                 * First, verify that the two envelopes intersect.
+                 *     ┌──────────┐             ┌─────────────┐
+                 *     │  ┌───────┼──┐    or    │  ┌───────┐  │
+                 *     │  └───────┼──┘          │  └───────┘  │
+                 *     └──────────┘             └─────────────┘
+                 */
+                if ((min1 > max0 || max1 < min0) && !isNegativeUnsafe(span0)) {
+                    /*
+                     * The check for !isNegative(span0) is because if both envelopes span the
+                     * anti-merdian, then there is always an intersection on both side no matter
+                     * what envelope ordinates are because both envelopes extend toward infinities:
+                     *     ────┐  ┌────            ────┐  ┌────
+                     *     ──┐ │  │ ┌──     or     ────┼──┼─┐┌─
+                     *     ──┘ │  │ └──            ────┼──┼─┘└─
+                     *     ────┘  └────            ────┘  └────
+                     * Since we excluded the above case, entering in this block means that the
+                     * envelopes are "normal" and do not intersect, so we set ordinates to NaN.
+                     *   ┌────┐
+                     *   │    │     ┌────┐
+                     *   │    │     └────┘
+                     *   └────┘
+                     */
+                    ordinates[i] = ordinates[i+dim] = Double.NaN;
+                    continue;
+                }
+            } else if (isWrapAround(crs, i)) {
+                int intersect = 0; // A bitmask of intersections (two bits).
+                if (isNegativeUnsafe(span0)) {
+                    /*
+                     * The first line below checks for the case illustrated below. The second
+                     * line does the same check, but with the small rectangle on the right side.
+                     *    ─────┐      ┌─────              ──────────┐  ┌─────
+                     *       ┌─┼────┐ │           or        ┌────┐  │  │
+                     *       └─┼────┘ │                     └────┘  │  │
+                     *    ─────┘      └─────              ──────────┘  └─────
+                     */
+                    if (min1 <= max0) {intersect  = 1; ordinates[i    ] = min1;}
+                    if (max1 >= min0) {intersect |= 2; ordinates[i+dim] = max1;}
+                } else {
+                    // Same than above, but with indices 0 and 1 interchanged.
+                    // No need to set ordinate values since they would be the same.
+                    if (min0 <= max1) {intersect  = 1;}
+                    if (max0 >= min1) {intersect |= 2;}
+                }
+                /*
+                 * Cases 0 and 3 are illustrated below. In case 1 and 2, we will set
+                 * only the ordinate value which has not been set by the above code.
+                 *
+                 *                [intersect=0]          [intersect=3]
+                 *              ─────┐     ┌─────      ─────┐     ┌─────
+                 *  negative:    max0│ ┌─┐ │min0          ┌─┼─────┼─┐
+                 *                   │ └─┘ │              └─┼─────┼─┘
+                 *              ─────┘     └─────      ─────┘     └─────
+                 *
+                 *               max1  ┌─┐  min1          ┌─────────┐
+                 * positive:    ─────┐ │ │ ┌─────      ───┼─┐     ┌─┼───
+                 *              ─────┘ │ │ └─────      ───┼─┘     └─┼───
+                 *                     └─┘                └─────────┘
+                 */
+                switch (intersect) {
+                    case 0: // Fall theough
+                    case 3: ordinates[i] = ordinates[i+dim] = Double.NaN; break;
+                    case 2: if (min1 > min0) ordinates[i    ] = min1; break;
+                    case 1: if (max1 < max0) ordinates[i+dim] = max1; break;
+                    default: throw new AssertionError(intersect);
+                }
+                continue;
             }
-            ordinates[i    ] = min;
-            ordinates[i+dim] = max;
+            if (min1 > min0) ordinates[i    ] = min1;
+            if (max1 < max0) ordinates[i+dim] = max1;
         }
+        // Tests only if the interection result is non-empty.
+        assert isEmpty() || AbstractEnvelope.castOrCopy(envelope).contains(this, true) : this;
     }
 
     /**
