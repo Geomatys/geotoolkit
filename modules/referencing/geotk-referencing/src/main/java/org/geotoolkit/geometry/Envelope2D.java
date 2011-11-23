@@ -484,7 +484,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * <p>
      * Note that if the {@linkplain #width} or {@linkplain #height} value is
      * {@link java.lang.Double#NaN NaN}, then the envelope is considered empty.
-     * This is different than the default {@link Rectangle2D.Double#isEmpty()}
+     * This is different than the default {@link java.awt.geom.Rectangle2D.Double#isEmpty()}
      * implementation, which doesn't check for {@code NaN} values.
      *
      * @since 3.20

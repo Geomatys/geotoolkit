@@ -73,7 +73,12 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @since 2.3
  * @module
+ *
+ * @deprecated This class is a legacy from old days and has never been seriously used in the
+ *             Geotoolkit.org library. Its work is quite arbitrary, so we are probably better
+ *             to let users do their work in their own way.
  */
+@Deprecated
 public class ImageWorker extends ImageInspector {
     /**
      * The {@linkplain ColorQuantization Color Quantization} method to be applied if a an image

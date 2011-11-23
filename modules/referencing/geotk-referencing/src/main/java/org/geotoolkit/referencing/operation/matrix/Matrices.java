@@ -121,7 +121,7 @@ public class Matrices extends Static {
      * @throws IndexOutOfBoundsException if a value of {@code toKeep}
      *         is lower than 0 or not smaller than {@code sourceDim}.
      *
-     * @see org.geotoolkit.referencing.operation.transform.MathTransforms#dimensionFilter(int, int[])
+     * @see org.geotoolkit.referencing.operation.MathTransforms#dimensionFilter(int, int[])
      */
     public static XMatrix createDimensionFilter(final int sourceDim, final int[] toKeep)
             throws IndexOutOfBoundsException
