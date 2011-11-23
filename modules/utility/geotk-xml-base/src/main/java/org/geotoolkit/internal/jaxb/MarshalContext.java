@@ -28,6 +28,7 @@ import org.opengis.metadata.Identifier;
 import org.geotoolkit.xml.ObjectLinker;
 import org.geotoolkit.xml.ObjectConverters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.Version;
 
 
 /**
@@ -35,12 +36,19 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * Contains also static methods for managing the collections to be marshalled.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.07
  * @module
  */
 public final class MarshalContext {
+    /**
+     * The GML 3.2 version.
+     *
+     * @since 3.20
+     */
+    public static final Version GML_3_2 = new Version("3.2");
+
     /**
      * The bit flag telling if a marshalling process is under progress.
      * The value is unchanged for unmarshalling processes.
@@ -79,6 +87,14 @@ public final class MarshalContext {
      * @since 3.18
      */
     private ObjectLinker linker;
+
+    /**
+     * The GML version to be marshalled or unmarshalled, or {@code null} if unspecified.
+     * If null, than the latest version is assumed.
+     *
+     * @since 3.20
+     */
+    private Version versionGML;
 
     /**
      * The base URL of ISO 19139 (or other standards) schemas. The valid values
@@ -133,6 +149,7 @@ public final class MarshalContext {
         if (previous != null) {
             converters    = previous.converters;
             linker        = previous.linker;
+            versionGML    = previous.versionGML;
             schemas       = previous.schemas;
             locale        = previous.locale;
             timezone      = previous.timezone;
@@ -198,6 +215,27 @@ public final class MarshalContext {
             }
         }
         return ObjectConverters.DEFAULT;
+    }
+
+    /**
+     * Returns {@code true} if the GML version is equals or newer than the specified version.
+     * If no GML version were specified, then this method returns {@code true}, i.e. newest
+     * version is assumed.
+     *
+     * @param  version The version to compare to.
+     * @return {@code true} if the GML version is equals or newer than the specified version.
+     *
+     * @since 3.20
+     */
+    public static boolean versionGML(final Version version) {
+        final MarshalContext current = CURRENT.get();
+        if (current != null) {
+            final Version versionGML = current.versionGML;
+            if (versionGML != null) {
+                return versionGML.compareTo(version) >= 0;
+            }
+        }
+        return true;
     }
 
     /**
@@ -385,6 +423,7 @@ public final class MarshalContext {
      *
      * @param  converters The converters in use.
      * @param  linker     The linker in use.
+     * @param  versionGML The GML version, or {@code null}.
      * @param  schemas    The schemas root URL, or {@code null} if none.
      * @param  locale     The locale, or {@code null} if unspecified.
      * @param  timezone   The timezone, or {@code null} if unspecified.
@@ -392,11 +431,13 @@ public final class MarshalContext {
      * @return The context on which to invoke {@link #finish()} when the (un)marshalling is finished.
      */
     public static MarshalContext begin(final ObjectConverters converters, final ObjectLinker linker,
-            final Map<String,String> schemas, final Locale locale, final TimeZone timezone, final int bitMasks)
+            final Version versionGML, final Map<String,String> schemas,
+            final Locale locale, final TimeZone timezone, final int bitMasks)
     {
         final MarshalContext current = new MarshalContext();
         current.converters = converters;
         current.linker     = linker;
+        current.versionGML = versionGML;
         current.schemas    = schemas; // NOSONAR: No clone, because this method is internal.
         current.locale     = locale;
         current.timezone   = timezone;

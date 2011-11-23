@@ -163,10 +163,20 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
         final MarshallerPool      pool = new MarshallerPool(DefaultMetadata.class);
         final Marshaller    marshaller = pool.acquireMarshaller();
         marshaller.marshal(metadata, sw);
-        pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, VERTICAL_CRS_XML);
         assertDomEquals(expected, result, "xmlns:*", "xsi:schemaLocation");
+        /*
+         * Tests again with an older GML version, which include the datum type element.
+         * Checks that this element is present in GML 3.1 and absent in latest GML.
+         */
+        sw.getBuffer().setLength(0);
+        marshaller.setProperty(XML.GML_VERSION, "3.1");
+        marshaller.marshal(metadata, sw);
+        final String result31 = sw.toString();
+        pool.release(marshaller);
+        assertTrue(result31.contains("<gml:verticalDatumType>depth</gml:verticalDatumType>"));
+        assertFalse(result.contains("verticalDatumType"));
     }
 
     /**

@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,47 +17,39 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
-import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.VerticalDatumType;
 import org.geotoolkit.internal.jaxb.gml.CodeListAdapter;
 
 
 /**
- * JAXB adapter for {@link AxisDirection}, in order to integrate the value in an element
+ * JAXB adapter for {@link VerticalDatumType}, in order to integrate the value in an element
  * complying with OGC/ISO standard.
  *
- * @author Guilhem Legal (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
- * @since 3.00
+ * @since 3.20
  * @module
  */
-public final class CS_AxisDirection extends CodeListAdapter<AxisDirection> {
+public final class CD_VerticalDatumType extends CodeListAdapter<VerticalDatumType> {
     /**
      * Ensures that the adapted code list class is loaded.
      */
     static {
-        ensureClassLoaded(AxisDirection.class);
+        ensureClassLoaded(VerticalDatumType.class);
     }
 
     /**
      * Empty constructor for JAXB only.
      */
-    public CS_AxisDirection() {
+    public CD_VerticalDatumType() {
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Class<AxisDirection> getCodeListClass() {
-        return AxisDirection.class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getCodeSpace() {
-        return "EPSG";
+    protected Class<VerticalDatumType> getCodeListClass() {
+        return VerticalDatumType.class;
     }
 }

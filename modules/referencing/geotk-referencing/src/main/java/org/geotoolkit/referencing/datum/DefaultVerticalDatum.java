@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
@@ -34,6 +35,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -208,6 +210,9 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      * The algorithm used here is determined on a heuristic basis and may be changed in any
      * future version. If the type can not be determined, default on the ellipsoidal type
      * since it will usually implies no additional calculation.
+     * <p>
+     * No synchronization needed; this is not a problem if this value is computed twice.
+     * This method returns only existing immutable instances.
      *
      * @since 3.20
      */
@@ -241,6 +246,28 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     @Override
     public VerticalDatumType getVerticalDatumType() {
         return type();
+    }
+
+    /**
+     * Returns the type to be marshalled to XML. This element was present in GML 3.0 and 3.1,
+     * but has been removed from GML 3.2.
+     *
+     * @todo Disabled for now - we need to define an adapter.
+     */
+    @XmlElement(name = "verticalDatumType")
+    private VerticalDatumType getMarshalled() {
+        return (MarshalContext.versionGML(MarshalContext.GML_3_2)) ? null : getVerticalDatumType();
+    }
+
+    /**
+     * Invoked by JAXB only. The vertical datum type is set only if it has
+     * not already been specified.
+     */
+    private void setMarshalled(final VerticalDatumType t) {
+        if (type != null) {
+            throw new IllegalStateException();
+        }
+        type = t;
     }
 
     /**
