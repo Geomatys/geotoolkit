@@ -66,7 +66,6 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
      */
     public ImmutableEnvelope(final GeographicBoundingBox box) {
         super(box);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -84,7 +83,6 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
         super(xmin, xmax, ymin, ymax);
         this.crs = crs;
         checkCoordinateReferenceSystemDimension(crs, 2);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -113,7 +111,6 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
         super(wkt);
         this.crs = crs;
         checkCoordinateReferenceSystemDimension(crs, getDimension());
-        ensureValidRanges(crs, ordinates);
     }
 
     /**

@@ -69,8 +69,7 @@ import static org.geotoolkit.math.XMath.isPositive;
  *
  * <center><img src="doc-files/AntiMeridian.png"></center>
  *
- * The default implementation of the following methods handle
- * such cases for dimensions having {@link RangeMeaning#WRAPAROUND}:
+ * The default implementation of the following methods can handle such cases:
  * <p>
  * <ul>
  *   <li>{@link #getMedian(int)}</li>
@@ -191,27 +190,6 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * Checks if the given "minimal" value is less than or equals to the "maximal" value.
-     * The <var>minimum</var> &lt;= <var>maximum</var> requirement is relaxed only for
-     * axis range of type {@link RangeMeaning#WRAPAROUND}.
-     *
-     * @param  crs       The envelope coordinate reference system, or {@code null}.
-     * @param  dimension The dimension for which the range is verified.
-     * @param  minimum   The minimal value in the given dimension.
-     * @param  maximum   The maximal value in the given dimension.
-     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
-     */
-    static void ensureValidRange(final CoordinateReferenceSystem crs, final int dimension,
-            final double minimum, final double maximum) throws IllegalArgumentException
-    {
-        if (minimum > maximum && !isWrapAround(crs, dimension)) { // We accept 'NaN' values.
-            String message = Errors.format(Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, dimension);
-            message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, minimum, maximum);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    /**
      * Returns {@code true} if the given value is negative, without checks for {@code NaN}.
      * This method should be invoked only when the number is known to not be {@code NaN},
      * otherwise the safer {@link org.geotoolkit.math.XMath#isNegative(double)} method shall
@@ -239,8 +217,8 @@ public abstract class AbstractEnvelope implements Envelope {
      * corner defines the edges region in the directions of <em>decreasing</em> coordinate
      * values in the envelope CRS. This is usually the algebraic minimum coordinates, but not
      * always. For example, an envelope crossing the anti-meridian could have a lower corner
-     * longitude greater than the upper corner longitude. This <code>AbstractEnvelope</code>
-     * base class accepts such extended interpretation for <code>WRAPAROUND</code> axes.}
+     * longitude greater than the upper corner longitude. Such extended interpretation applies
+     * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
      * @return The lower corner.
      */
@@ -259,8 +237,8 @@ public abstract class AbstractEnvelope implements Envelope {
      * corner defines the edges region in the directions of <em>increasing</em> coordinate
      * values in the envelope CRS. This is usually the algebraic maximum coordinates, but not
      * always. For example, an envelope crossing the anti-meridian could have an upper corner
-     * longitude less than the lower corner longitude. This <code>AbstractEnvelope</code>
-     * base class accepts such extended interpretation for <code>WRAPAROUND</code> axes.}
+     * longitude less than the lower corner longitude. Such extended interpretation applies
+     * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
      * @return The upper corner.
      */
@@ -301,7 +279,8 @@ public abstract class AbstractEnvelope implements Envelope {
      * above is actually in the middle of the space <em>outside</em> the envelope. In such cases,
      * this method shifts the <var>median</var> value by half of the periodicity (180° in the
      * longitude case) in order to switch from <cite>outer</cite> space to <cite>inner</cite>
-     * space.
+     * space. If the axis range meaning is not {@code WRAPAROUND}, then this method returns
+     * {@link Double#NaN NaN}.
      *
      * @param  dimension The dimension for which to obtain the ordinate value.
      * @return The median ordinate at the given dimension, or {@link Double#NaN}.
@@ -426,12 +405,10 @@ public abstract class AbstractEnvelope implements Envelope {
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
-     * For any dimension, if <var>maximum</var> &lt; <var>minimum</var> and the
-     * {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning} is
-     * {@linkplain RangeMeaning#WRAPAROUND wraparound}, then this method uses an algorithm which
-     * is the opposite of the usual one: rather than testing if the given point is inside the
-     * envelope interior, this method tests if the given point is <em>outside</em> the envelope
-     * <em>exterior</em>.
+     * For any dimension, if <var>maximum</var> &lt; <var>minimum</var> then this method uses an
+     * algorithm which is the opposite of the usual one: rather than testing if the given point is
+     * inside the envelope interior, this method tests if the given point is <em>outside</em> the
+     * envelope <em>exterior</em>.
      *
      * @param  position The point to text.
      * @return {@code true} if the specified coordinate is inside the boundary
@@ -457,8 +434,7 @@ public abstract class AbstractEnvelope implements Envelope {
                 continue; // Point inside the range, check other dimensions.
             }
             if (c1 | c2) {
-                final double span = upper - lower;
-                if (isNegative(span) && isWrapAround(getCoordinateReferenceSystem(), i)) {
+                if (isNegative(upper - lower)) {
                     /*
                      * "Spanning the anti-meridian" case: if we reach this point, then the
                      * [upper...lower] range  (note the 'lower' and 'upper' interchanging)
@@ -530,20 +506,20 @@ public abstract class AbstractEnvelope implements Envelope {
                 if (!isNegativeUnsafe(max1 - min1) || isNegativeUnsafe(max0 - min0)) {
                     continue;
                 }
-            } else if (minCondition != maxCondition && isNegative(max0 - min0) &&
-                    isPositive(max1 - min1) && isWrapAround(getCoordinateReferenceSystem(), i))
-            {
+            } else if (minCondition != maxCondition) {
                 /*       maxCnd                     !maxCnd
                  *  ──────────┐  ┌─────              ─────┐  ┌─────────
                  *    ┌────┐  │  │           or           │  │  ┌────┐
                  *    └────┘  │  │                        │  │  └────┘
                  *  ──────────┘  └─────              ─────┘  └─────────
                  *               !minCnd                     minCnd */
-                continue;
+                if (isNegative(max0 - min0) && isPositive(max1 - min1)) {
+                    continue;
+                }
             }
             return false;
         }
-        // The test for ArrayEnvelope.class is for avoiding never-ending callbacks.
+        // The check for ArrayEnvelope.class is for avoiding never-ending callbacks.
         assert envelope.getClass() == ArrayEnvelope.class ||
                intersects(new ArrayEnvelope(envelope), edgesInclusive) : envelope;
         return true;
@@ -613,12 +589,10 @@ public abstract class AbstractEnvelope implements Envelope {
                  *     ────┼───┘  └───┼────                  └─┼──────┼─┘
                  *         └──────────┘                   ─────┘      └───── */
                 if ((sp0 & sp1) | (maxCondition | minCondition)) {
-                    if (isWrapAround(getCoordinateReferenceSystem(), i)) {
-                        continue;
-                    }
+                    continue;
                 }
             }
-            // The test for ArrayEnvelope.class is for avoiding never-ending callbacks.
+            // The check for ArrayEnvelope.class is for avoiding never-ending callbacks.
             assert envelope.getClass() == ArrayEnvelope.class || hasNaN(envelope) ||
                     !contains(new ArrayEnvelope(envelope), edgesInclusive) : envelope;
             return false;
@@ -662,13 +636,9 @@ public abstract class AbstractEnvelope implements Envelope {
             throw new IllegalStateException(Errors.format(
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
-        final double xmin = getMinimum(0);
-        final double ymin = getMinimum(1);
-        final double xmax = getMaximum(0);
-        final double ymax = getMaximum(1);
-        final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
-        return (crs != null) ? new Envelope2D(crs, xmin, ymin, xmax-xmin, ymax-ymin)
-                             : XRectangle2D.createFromExtremums(xmin, ymin, xmax, ymax);
+        return XRectangle2D.createFromExtremums(
+                getMinimum(0), getMinimum(1),
+                getMaximum(0), getMaximum(1));
     }
 
     /**

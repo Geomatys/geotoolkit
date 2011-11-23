@@ -35,6 +35,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 import static org.geotoolkit.math.XMath.isNegative;
+import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
 
 /**
@@ -157,6 +158,12 @@ class ArrayEnvelope extends AbstractEnvelope implements Serializable {
             box.getEastBoundLongitude(),
             box.getNorthBoundLatitude()
         };
+        if (Boolean.FALSE.equals(box.getInclusion())) {
+            swap(0);
+            if (!isPoleToPole(ordinates[1], ordinates[3])) {
+                swap(1);
+            }
+        }
         crs = DefaultGeographicCRS.WGS84;
     }
 
@@ -284,23 +291,13 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Checks if ordinate values in the minimum point are less than or
-     * equals to the corresponding ordinate value in the maximum point.
-     * The <var>minimum</var> &lt;= <var>maximum</var> requirement is
-     * relaxed only for axis range of type {@code WRAPAROUND}.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @param  ordinates The minimal ordinate values, followed by the maximal ordinate values.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not less
-     *         than or equal to the corresponding ordinate value in the maximum point.
+     * Swaps two ordinate values.
      */
-    static void ensureValidRanges(final CoordinateReferenceSystem crs, final double... ordinates)
-            throws IllegalArgumentException
-    {
-        final int dimension = ordinates.length >>> 1;
-        for (int i=0; i<dimension; i++) {
-            ensureValidRange(crs, i, ordinates[i], ordinates[i+dimension]);
-        }
+    private void swap(final int i) {
+        final int m = i + (ordinates.length >>> 1);
+        final double t = ordinates[i];
+        ordinates[i] = ordinates[m];
+        ordinates[m] = t;
     }
 
     /**

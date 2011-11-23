@@ -25,7 +25,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
@@ -38,6 +37,8 @@ import static org.geotoolkit.math.XMath.isPositive;
 import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.math.XMath.isSameSign;
 import static org.geotoolkit.geometry.AbstractEnvelope.*;
+
+import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
 
 /**
@@ -53,10 +54,8 @@ import static org.geotoolkit.geometry.AbstractEnvelope.*;
  *
  * {@section Crossing the anti-meridian}
  * Negative values in the {@linkplain #width width} or {@linkplain #height height} fields are
- * interpreted as an envelope crossing the anti-meridian, providing that the corresponding
- * {@linkplain CoordinateSystemAxis#getRangeMeaning() axis range meaning} is
- * {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND WRAPAROUND}.
- * All the following methods are anti-meridian aware:
+ * interpreted as an envelope crossing the anti-meridian. All the following methods are
+ * anti-meridian aware:
  * <p>
  * <ul>
  *   <li>{@link #getWidth()}</li>
@@ -111,10 +110,6 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * rectangles) can not query directly the {@link Envelope#getSpan(int)} or equivalent methods,
      * because the return value is not the one expected by this class when the envelope spans the
      * anti-meridian.
-     * <p>
-     * It is caller's responsibility to invoke {@link #ensureValidRanges()} after this constructor.
-     * We do not check for the range in this constructor because the caller may want to set the CRS
-     * first.
      */
     private Envelope2D(final double xmin, final double ymin, final double xmax, final double ymax) {
         super(xmin, ymin, xmax - xmin, ymax - ymin);
@@ -125,7 +120,6 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      *
      * @param envelope The envelope to copy.
      * @throws MismatchedDimensionException If the given envelope is not two-dimensional.
-     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      *
      * @see GeneralEnvelope#GeneralEnvelope(Envelope)
      */
@@ -138,7 +132,6 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
         setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
-        ensureValidRanges();
     }
 
     /**
@@ -147,7 +140,6 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * to {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
      *
      * @param box The bounding box to copy.
-     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      *
      * @see GeneralEnvelope#GeneralEnvelope(GeographicBoundingBox)
      *
@@ -159,22 +151,29 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
              box.getEastBoundLongitude(),
              box.getNorthBoundLatitude());
         crs = DefaultGeographicCRS.WGS84;
-        ensureValidRanges();
+        if (Boolean.FALSE.equals(box.getInclusion())) {
+            x += width;
+            width = -width;
+            if (!isPoleToPole(y, y+height)) {
+                y += height;
+                height = -height;
+            }
+        }
     }
 
     /**
      * Constructs two-dimensional envelope defined by an other {@link Rectangle2D}.
+     * If the given rectangle has negative width or height, they will be interpreted
+     * as envelope spanning the anti-meridian.
      *
      * @param crs The coordinate reference system, or {@code null}.
      * @param rect The rectangle to copy.
-     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
      *
      * @see GeneralEnvelope#GeneralEnvelope(Rectangle2D)
      */
     public Envelope2D(final CoordinateReferenceSystem crs, final Rectangle2D rect) {
         this(rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY());
         setCoordinateReferenceSystem(crs);
-        ensureValidRanges();
     }
 
     /**
@@ -188,16 +187,14 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @param crs The coordinate reference system, or {@code null}.
      * @param x The <var>x</var> minimal value.
      * @param y The <var>y</var> minimal value.
-     * @param width The envelope width.
-     * @param height The envelope height.
-     * @throws IllegalArgumentException If the given range of ordinate values is invalid.
+     * @param width The envelope width. May be negative for envelope spanning the anti-meridian.
+     * @param height The envelope height. May be negative for envelope spanning the anti-meridian.
      */
     public Envelope2D(final CoordinateReferenceSystem crs,
                       final double x, final double y, final double width, final double height)
     {
         super(x, y, width, height); // Really 'super', not 'this'.
         setCoordinateReferenceSystem(crs);
-        ensureValidRanges();
     }
 
     /**
@@ -227,17 +224,6 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     {
         this(minDP.x, minDP.y, maxDP.x, maxDP.y);
         setCoordinateReferenceSystem(AbstractEnvelope.getCoordinateReferenceSystem(minDP, maxDP));
-        ensureValidRanges();
-    }
-
-    /**
-     * Ensures that the ranges are valid.
-     *
-     * @throws IllegalArgumentException If a range of ordinate values is invalid.
-     */
-    private void ensureValidRanges() throws IllegalArgumentException {
-        ensureValidRange(crs, 0, x, x+width);
-        ensureValidRange(crs, 1, y, y+height);
     }
 
     /**
@@ -274,8 +260,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * Sets the coordinate reference system in which the coordinate are given.
      * This method <strong>does not</strong> reproject the envelope.
      * If the envelope coordinates need to be transformed to the new CRS, consider using
-     * {@link org.geotoolkit.referencing.CRS#transform(Envelope, CoordinateReferenceSystem)}
-     * instead.
+     * {@link Envelopes#transform(Envelope, CoordinateReferenceSystem)} instead.
      *
      * @param crs The new coordinate reference system, or {@code null}.
      */
@@ -301,8 +286,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * corner defines the edges region in the directions of <em>decreasing</em> coordinate
      * values in the envelope CRS. This is usually the algebraic minimum coordinates, but not
      * always. For example, an envelope crossing the anti-meridian could have a lower corner
-     * longitude greater than the upper corner longitude. This <code>Envelope2D</code> class
-     * accepts such extended interpretation for <code>WRAPAROUND</code> axes.}
+     * longitude greater than the upper corner longitude. Such extended interpretation applies
+     * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
      * @return The lower corner.
      */
@@ -320,8 +305,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * corner defines the edges region in the directions of <em>increasing</em> coordinate
      * values in the envelope CRS. This is usually the algebraic maximum coordinates, but not
      * always. For example, an envelope crossing the anti-meridian could have an upper corner
-     * longitude less than the lower corner longitude. This <code>Envelope2D</code> class
-     * accepts such extended interpretation for <code>WRAPAROUND</code> axes.}
+     * longitude less than the lower corner longitude. Such extended interpretation applies
+     * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
      * @return The upper corner.
      */
@@ -531,11 +516,11 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
         boolean c1 = (px >= x);
         boolean c2 = (px <= x + width);
         // See AbstractEnvelope.contains(DirectPosition) for explanation.
-        if ((c1 & c2) || ((c1 | c2) && isNegative(width) && isWrapAround(crs, 0))) {
+        if ((c1 & c2) || ((c1 | c2) && isNegative(width))) {
             // Same check, but for y axis.
             c1 = (py >= y);
             c2 = (py <= y + height);
-            return (c1 & c2) || ((c1 | c2) && isNegative(height) && isWrapAround(crs, 1));
+            return (c1 & c2) || ((c1 | c2) && isNegative(height));
         }
         return false;
     }
@@ -600,10 +585,10 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                 if (!isNegativeUnsafe(span1) || isNegativeUnsafe(span0)) {
                     continue;
                 }
-            } else if (minCondition != maxCondition && isNegative(span0)
-                    && isPositive(span1) && isWrapAround(crs, i))
-            {
-                continue;
+            } else if (minCondition != maxCondition) {
+                if (isNegative(span0) && isPositive(span1)) {
+                    continue;
+                }
             }
             return false;
         }
@@ -673,9 +658,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
             final boolean sp1 = isNegative(span1);
             if (sp0 | sp1) {
                 if ((sp0 & sp1) | (maxCondition | minCondition)) {
-                    if (isWrapAround(crs, i)) {
-                        continue;
-                    }
+                    continue;
                 }
             }
             return false;
@@ -690,7 +673,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
      * This method supports anti-meridian spanning in the same way than
-     * {@link AbstractEnvelope#intersects(Envelope, boolean)}.     *
+     * {@link AbstractEnvelope#intersects(Envelope, boolean)}.
+     *
      * @param rect The rectangle to be intersected with this envelope.
      * @return The intersection of the given rectangle with this envelope.
      */
@@ -723,7 +707,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                 if ((min1 > max0 || max1 < min0) && !isNegativeUnsafe(span0)) {
                     continue; // No intersection: leave ordinate values to NaN
                 }
-            } else if (isWrapAround(crs, i)) {
+            } else {
                 int intersect = 0; // A bitmask of intersections (two bits).
                 if (isNegativeUnsafe(span0)) {
                     if (min1 <= max0) {min = min1; intersect  = 1;}

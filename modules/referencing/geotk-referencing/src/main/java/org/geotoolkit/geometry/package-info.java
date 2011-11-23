@@ -58,13 +58,18 @@
  *
  * <center><img src="doc-files/AntiMeridian.png"></center>
  *
- * Every envelopes defined in this package support the extended bounding box interpretation.
- * The extended interpretation applies on any axis having the
- * {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND WRAPAROUND} range meaning and
- * envelope limits such that <var>maximum</var> &lt; <var>minimum</var>. In order to reduce
- * the risk of mistakes, any attempt to define <var>maximum</var> &lt; <var>minimum</var>
- * on axis having any range meaning other than {@code WRAPAROUND} will throw an
- * {@link java.lang.IllegalArgumentException}.
+ * As of Geotk 3.20, every envelopes defined in this package support the extended bounding box
+ * interpretation: for any dimension, ordinate values such that <var>upper</var> &lt; <var>lower</var>
+ * are handled in a special way. This handling is slightly different for two groups of methods:
+ * <p>
+ * <ul>
+ *   <li>In calculation of envelopes spans and median positions (centers) - handled specially only
+ *       on axes having the {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND WRAPAROUND}
+ *       range meaning</li>
+ *   <li>When checking for containment, intersections or unions - can be handled specially for
+ *       any axis, in which case the envelope represents an <em>exclusion</em> area instead
+ *       than an inclusion area.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20

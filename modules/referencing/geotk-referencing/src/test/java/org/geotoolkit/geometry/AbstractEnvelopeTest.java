@@ -360,19 +360,4 @@ public final strictfp class AbstractEnvelopeTest {
             }
         }
     }
-
-    /**
-     * Tests with an invalid range along the latitude axis, which is not of kind "wraparound".
-     */
-    @Test
-    public void testInvalidEnvelope() {
-        for (int type=0; type<LAST; type++) {
-            try {
-                create(type, -4, 12, 50, 30);
-                fail("Type " + type + " should not have been created.");
-            } catch (IllegalArgumentException e) {
-                // This is the expected exception.
-            }
-        }
-    }
 }

@@ -476,11 +476,6 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_DESCRIPTOR_FOR_PARAMETER_$1 = 80;
 
         /**
-         * Bad ordinates at dimension {0}.
-         */
-        public static final int ILLEGAL_ENVELOPE_ORDINATE_$1 = 81;
-
-        /**
          * “{0}” is not a valid identifier.
          */
         public static final int ILLEGAL_IDENTIFIER_$1 = 82;
@@ -509,6 +504,11 @@ public final class Errors extends IndexedResourceBundle {
          * This operation can’t be applied to values of class ‘{0}’.
          */
         public static final int ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1 = 87;
+
+        /**
+         * Bad ordinates at dimension {0}.
+         */
+        public static final int ILLEGAL_ORDINATE_AT_$1 = 81;
 
         /**
          * The dimension of the “{0}” image is ({1}×{2}) pixels, while the expected dimension was

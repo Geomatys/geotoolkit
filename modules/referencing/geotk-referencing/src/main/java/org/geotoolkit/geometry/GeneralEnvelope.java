@@ -117,12 +117,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *
      * @param min The minimal value.
      * @param max The maximal value.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point.
      */
-    public GeneralEnvelope(final double min, final double max) throws IllegalArgumentException {
+    public GeneralEnvelope(final double min, final double max) {
         super(min, max);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -131,12 +128,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * @param  minDP Minimum ordinate values.
      * @param  maxDP Maximum ordinate values.
      * @throws MismatchedDimensionException if the two positions don't have the same dimension.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point.
      */
-    public GeneralEnvelope(final double[] minDP, final double[] maxDP) throws IllegalArgumentException {
+    public GeneralEnvelope(final double[] minDP, final double[] maxDP) {
         super(minDP, maxDP);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -147,14 +141,11 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * @param  maxDP Point containing maximum ordinate values.
      * @throws MismatchedDimensionException if the two positions don't have the same dimension.
      * @throws MismatchedReferenceSystemException if the two positions don't use the same CRS.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point
-     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      *
      * @see Envelope2D#Envelope2D(DirectPosition2D, DirectPosition2D)
      */
     public GeneralEnvelope(final GeneralDirectPosition minDP, final GeneralDirectPosition maxDP)
-            throws MismatchedReferenceSystemException, IllegalArgumentException
+            throws MismatchedReferenceSystemException
     {
 //  Uncomment next lines if Sun fixes RFE #4093999
 //      ensureNonNull("minDP", minDP);
@@ -162,7 +153,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         super(minDP.ordinates, maxDP.ordinates);
         crs = getCoordinateReferenceSystem(minDP, maxDP);
         AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, ordinates.length >>> 1);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -189,7 +179,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      */
     public GeneralEnvelope(final Envelope envelope) {
         super(envelope);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -205,7 +194,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      */
     public GeneralEnvelope(final GeographicBoundingBox box) {
         super(box);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -218,7 +206,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      */
     public GeneralEnvelope(final Rectangle2D rect) {
         super(rect);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -335,7 +322,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      */
     public GeneralEnvelope(final String wkt) throws NumberFormatException, IllegalArgumentException {
         super(wkt);
-        ensureValidRanges(crs, ordinates);
     }
 
     /**
@@ -551,15 +537,11 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * @param  minimum   The minimum value along the specified dimension.
      * @param  maximum   The maximum value along the specified dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point
-     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      */
     public void setRange(final int dimension, final double minimum, final double maximum)
-            throws IndexOutOfBoundsException, IllegalArgumentException
+            throws IndexOutOfBoundsException
     {
         ensureValidIndex(ordinates.length >>> 1, dimension);
-        ensureValidRange(crs, dimension, minimum, maximum);
         ordinates[dimension + (ordinates.length >>> 1)] = maximum;
         ordinates[dimension]                            = minimum;
     }
@@ -575,13 +557,10 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *  <var>x</var><sub>max</sub>, <var>y</var><sub>max</sub>, <var>z</var><sub>max</sub>)
      *
      * @param ordinates The new ordinate values.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point
-     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      *
      * @since 2.5
      */
-    public void setEnvelope(final double... ordinates) throws IllegalArgumentException {
+    public void setEnvelope(final double... ordinates) {
         if ((ordinates.length & 1) != 0) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ODD_ARRAY_LENGTH_$1, ordinates.length));
@@ -592,7 +571,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$3, "ordinates", dimension, check));
         }
-        ensureValidRanges(crs, ordinates);
         System.arraycopy(ordinates, 0, this.ordinates, 0, ordinates.length);
     }
 
@@ -930,7 +908,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                     ordinates[i] = ordinates[i+dim] = Double.NaN;
                     continue;
                 }
-            } else if (isWrapAround(crs, i)) {
+            } else {
                 int intersect = 0; // A bitmask of intersections (two bits).
                 if (isNegativeUnsafe(span0)) {
                     /*
