@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.junit.*;
 
 import static org.junit.Assert.*;

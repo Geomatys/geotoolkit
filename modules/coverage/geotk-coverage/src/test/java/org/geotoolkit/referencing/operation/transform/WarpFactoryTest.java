@@ -36,6 +36,7 @@ import org.geotoolkit.math.Statistics;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.test.Depend;

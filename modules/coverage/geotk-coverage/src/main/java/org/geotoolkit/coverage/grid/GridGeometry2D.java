@@ -45,7 +45,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 

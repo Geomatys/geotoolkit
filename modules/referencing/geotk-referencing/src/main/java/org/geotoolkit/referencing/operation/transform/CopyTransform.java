@@ -182,9 +182,9 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate)
     {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
         return derivate ? derivative((DirectPosition) null) : null;
@@ -419,7 +419,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
                             }
                         }
                         matrix.setElement(srcDim, dstDim, 1);
-                        inverse = MathTransforms.linear(matrix);
+                        inverse = ProjectiveTransform.create(matrix);
                         if (inverse instanceof ProjectiveTransform) {
                             ((ProjectiveTransform) inverse).inverse = this;
                         }

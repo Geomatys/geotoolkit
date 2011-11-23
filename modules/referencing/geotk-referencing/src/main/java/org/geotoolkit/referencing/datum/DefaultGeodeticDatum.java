@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.ReferenceIdentifier;
@@ -65,6 +68,11 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Immutable
+@XmlType(name = "GeodeticDatumType", propOrder={
+    "primeMeridian",
+    "ellipsoid"
+})
+@XmlRootElement(name = "GeodeticDatum")
 public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum {
     /**
      * Serial number for inter-operability with different versions.
@@ -151,11 +159,13 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     /**
      * The ellipsoid.
      */
+    @XmlElement
     private final Ellipsoid ellipsoid;
 
     /**
      * The prime meridian.
      */
+    @XmlElement
     private final PrimeMeridian primeMeridian;
 
     /**

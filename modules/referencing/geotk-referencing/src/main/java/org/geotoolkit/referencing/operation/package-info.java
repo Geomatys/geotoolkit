@@ -20,18 +20,23 @@
  * {@linkplain org.geotoolkit.referencing.operation.AbstractCoordinateOperation Coordinate operation} implementations.
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing.operation OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
- *
- * {@section Registering math transforms}
- * The {@linkplain org.geotoolkit.referencing.operation.DefaultMathTransformFactory math transform factory}
- * search for all math transforms in the class path, not just Geotk implementations. To be found, math
- * transforms must be registered as services in its JAR file, more specifically in the following JAR entry:
- *
- * {@preformat text
- *     META-INF/services/org.geotoolkit.referencing.operation.MathTransformProvider
- * }
+ * <p>
+ * This package provides an ISO 19111 {@link org.geotoolkit.referencing.operation.AbstractCoordinateOperation
+ * Coordinate Operation implementation} and support classes. The actual transform work is performed by the
+ * following sub-packages, but most users will not need to deal with them directly:
+ * <p>
+ * <ul>
+ *   <li>{@link org.geotoolkit.referencing.operation.projection} for map projections</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.transform} for any transform other than map projections</li>
+ *   <li>{@link org.geotoolkit.referencing.operation.provider} for registering the transforms from the above 2 packages.</li>
+ * </ul>
+ * <p>
+ * In order to reduce the need to explore those low-level sub-packages, this package defines a
+ * {@link org.geotoolkit.referencing.operation.MathTransforms} class which centralize in one
+ * places some of the most frequently used functions from the sub-packages.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 1.2
  * @module

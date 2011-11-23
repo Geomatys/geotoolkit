@@ -33,7 +33,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 /**
  * An operation on coordinates that usually includes a change of
- * {@linkplain org.opengis.referencing.datum.Datum}. The parameters of a coordinate
+ * {@linkplain org.opengis.referencing.datum.Datum datum}. The parameters of a coordinate
  * transformation are empirically derived from data containing the coordinates of a
  * series of points in both coordinate reference systems. This computational process
  * is usually "over-determined", allowing derivation of error (or accuracy) estimates

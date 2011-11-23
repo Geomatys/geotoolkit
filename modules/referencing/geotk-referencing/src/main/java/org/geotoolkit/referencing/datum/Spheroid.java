@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.datum;
 import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
+import javax.xml.bind.annotation.XmlTransient;
 import net.jcip.annotations.Immutable;
 import static java.lang.Math.*;
 
@@ -38,6 +39,7 @@ import static java.lang.Math.*;
  * @module
  */
 @Immutable
+@XmlTransient
 final class Spheroid extends DefaultEllipsoid {
     /**
      * Serial number for inter-operability with different versions.

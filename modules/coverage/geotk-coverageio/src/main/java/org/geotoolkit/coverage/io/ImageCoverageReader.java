@@ -75,7 +75,7 @@ import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.datum;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import net.jcip.annotations.Immutable;
@@ -70,6 +71,7 @@ import static org.geotoolkit.util.Utilities.deepEquals;
  * @module
  */
 @Immutable
+@XmlType(name="AbstractDatumType")
 public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
     /**
      * Serial number for inter-operability with different versions.

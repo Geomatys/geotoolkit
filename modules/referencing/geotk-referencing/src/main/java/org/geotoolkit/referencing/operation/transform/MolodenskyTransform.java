@@ -337,13 +337,13 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
         if (dx == 0 && dy == 0 && dz == 0 && a == ta && b == tb) {
             // Special case for identity transform.
             if (source3D == target3D) {
-                transform = MathTransforms.identity(target3D ? 3 : 2);
+                transform = ProjectiveTransform.identity(target3D ? 3 : 2);
             } else {
                 final XMatrix matrix = Matrices.createDimensionFilter(3, new int[] {0,1});
                 if (target3D) {
                     matrix.transpose();
                 }
-                transform = MathTransforms.linear(matrix);
+                transform = ProjectiveTransform.create(matrix);
             }
         } else if (!source3D && !target3D) {
             transform = new MolodenskyTransform2D(abridged, a, b, ta, tb, dx, dy, dz);
@@ -442,9 +442,9 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate)
     {
         Matrix derivative = null;
         if (derivate) {

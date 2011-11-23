@@ -346,9 +346,9 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate)
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate)
     {
         Matrix derivative = null;
         if (derivate) {
@@ -795,9 +795,9 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
          * returns the derivative at that location.
          */
         @Override
-        protected Matrix transform(final double[] srcPts, final int srcOff,
-                                   final double[] dstPts, final int dstOff,
-                                   final boolean derivate)
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff,
+                                final boolean derivate)
         {
             inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, 1, hasHeight, false);
             return null;

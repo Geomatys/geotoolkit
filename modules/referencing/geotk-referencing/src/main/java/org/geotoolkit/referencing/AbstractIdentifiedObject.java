@@ -90,7 +90,7 @@ import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
  */
 @Immutable
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name="IdentifiedObjectType", propOrder={
     "identifier",
     "name"
 })

@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.util.Utilities;

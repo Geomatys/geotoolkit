@@ -20,9 +20,11 @@
  */
 package org.geotoolkit.referencing.datum;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Collections;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.TemporalDatum;
@@ -45,6 +47,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Immutable
+@XmlType(name = "TemporalDatumType")
+@XmlRootElement(name = "TemporalDatum")
 public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum {
     /**
      * Serial number for inter-operability with different versions.

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.datum;
+package org.geotoolkit.xml;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,8 +26,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.xml.MarshallerPool;
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 
 import org.junit.*;

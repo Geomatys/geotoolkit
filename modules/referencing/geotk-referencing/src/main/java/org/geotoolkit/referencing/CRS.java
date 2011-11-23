@@ -60,7 +60,7 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 

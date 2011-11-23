@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<gml:GeographicCRS gml:id="WGS84(DD)" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gmx="http://www.isotc211.org/2005/gmx">
+<gml:GeographicCRS gml:id="WGS84(DD)"
+        xmlns:gmd = "http://www.isotc211.org/2005/gmd"
+        xmlns:gml = "http://www.opengis.net/gml"
+        xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation = "http://www.isotc211.org/2005/gmd http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd">
   <gml:name>WGS84(DD)</gml:name>
   <gml:ellipsoidalCS>
     <gml:EllipsoidalCS gml:id="Géodésique 2D">
@@ -25,6 +29,23 @@
       <gml:identifier codeSpace="EPSG">6326</gml:identifier>
       <gml:name>World Geodetic System 1984</gml:name>
       <gml:realizationEpoch/>
+      <gml:primeMeridian>
+        <gml:Ellipsoid gml:id="Greenwich">
+          <gml:name>Greenwich</gml:name>
+          <gml:greenwichLongitude>0.0</gml:greenwichLongitude>
+        </gml:Ellipsoid>
+      </gml:primeMeridian>
+      <gml:ellipsoid>
+        <gml:Ellipsoid gml:id="WGS84">
+            <gml:name>WGS84</gml:name>
+            <gml:semiMajorAxis uom="http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])">6378137.0</gml:semiMajorAxis>
+            <gml:secondDefiningParameter>
+              <gml:SecondDefiningParameter>
+                <gml:inverseFlattening uom="">298.257223563</gml:inverseFlattening>
+              </gml:SecondDefiningParameter>
+            </gml:secondDefiningParameter>
+        </gml:Ellipsoid>
+      </gml:ellipsoid>
     </gml:GeodeticDatum>
   </gml:geodeticDatum>
 </gml:GeographicCRS>

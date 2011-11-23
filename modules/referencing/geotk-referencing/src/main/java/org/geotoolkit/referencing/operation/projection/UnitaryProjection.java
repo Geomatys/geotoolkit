@@ -404,7 +404,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
+    public abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws ProjectionException;
 
     /**
@@ -481,9 +481,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
          * @since 3.20 (derived from 3.00)
          */
         @Override
-        protected Matrix transform(final double[] srcPts, final int srcOff,
-                                   final double[] dstPts, final int dstOff,
-                                   final boolean derivate) throws TransformException
+        public Matrix transform(final double[] srcPts, final int srcOff,
+                                final double[] dstPts, final int dstOff,
+                                final boolean derivate) throws TransformException
         {
             inverseTransform(srcPts, srcOff, dstPts, dstOff);
             if (derivate) {

@@ -323,12 +323,13 @@ public abstract class AbstractMathTransform extends FormattableObject
      * the following:
      *
      * {@preformat java
-     *     double[] p = Arrays.copyOfRange(srcPts, srcOff, srcOff + getSourceDimensions());
-     *     transform(srcPts, srcOff, dstPts, dstOff, 1);  // May overwrite srcPts.
-     *     Matrix d = null;
+     *     Matrix derivative = null;
      *     if (derivate) {
-     *         d = derivative(new GeneralDirectPosition(p));
+     *         double[] ordinates = Arrays.copyOfRange(srcPts, srcOff, srcOff + getSourceDimensions());
+     *         derivative = this.derivative(new GeneralDirectPosition(ordinates));
      *     }
+     *     this.transform(srcPts, srcOff, dstPts, dstOff, 1);  // May overwrite srcPts.
+     *     return derivative;
      * }
      *
      * However this method provides two advantages:
@@ -348,13 +349,6 @@ public abstract class AbstractMathTransform extends FormattableObject
      * {@section Implementation note}
      * The source and destination may overlap. Consequently, implementors must read all source
      * ordinate values before to start writing the transformed ordinates in the destination array.
-     * <p>
-     * This method is protected in order to encourage users to invoke the bulk methods with a
-     * number of points greater than 1 when possible. The bulk methods are usually faster than
-     * invoking repeatedly this method. Users who really want the transform and the derivative
-     * together should invoke the {@link MathTransforms#derivativeAndTransform(MathTransform,
-     * double[], int, double[], int, boolean) MathTransforms.derivativeAndTransform} static
-     * method.
      *
      * @param srcPts The array containing the source coordinate (can not be {@code null}).
      * @param srcOff The offset to the point to be transformed in the source array.
@@ -370,12 +364,13 @@ public abstract class AbstractMathTransform extends FormattableObject
      * @throws TransformException If the point can't be transformed or if a problem occurred while
      *         calculating the derivative.
      *
-     * @see #transform(DirectPosition, DirectPosition)
      * @see #derivative(DirectPosition)
+     * @see #transform(DirectPosition, DirectPosition)
+     * @see org.geotoolkit.referencing.operation.MathTransforms#derivativeAndTransform(MathTransform, double[], int, double[], int)
      *
      * @since 3.20 (derived from 3.00)
      */
-    protected abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
+    public abstract Matrix transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, boolean derivate)
             throws TransformException;
 
     /**

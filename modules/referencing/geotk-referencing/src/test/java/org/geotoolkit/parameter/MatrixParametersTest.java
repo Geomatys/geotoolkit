@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import org.junit.*;
 import static org.junit.Assert.*;

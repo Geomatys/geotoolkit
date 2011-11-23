@@ -21,6 +21,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;

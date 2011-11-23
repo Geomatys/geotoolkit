@@ -89,7 +89,7 @@ public final class SecondDefiningParameter {
      * @return {@code true} if the measure is the inverse of the flattening value.
      */
     public boolean isIvfDefinitive() {
-        return Unit.ONE.equals(measure.unit);
+        return (measure != null) && Unit.ONE.equals(measure.unit);
     }
 
     /**

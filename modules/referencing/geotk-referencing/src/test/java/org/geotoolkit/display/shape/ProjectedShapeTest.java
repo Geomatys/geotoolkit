@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.test.gui.ShapeTestBase;
 import org.geotoolkit.test.referencing.WKT;
 

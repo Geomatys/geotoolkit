@@ -19,7 +19,7 @@ package org.geotoolkit.lang;
 
 
 /**
- * Base class of all classes that are builder for other object.
+ * Base class of all classes that are builder for other objects.
  * This base class is defined mostly for documentation purpose.
  *
  * @author Martin Desruisseaux (Geomatys)

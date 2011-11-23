@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collection;
 import java.util.Collections;
-import javax.imageio.metadata.IIOMetadataFormat;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.RecordType;
@@ -273,10 +273,10 @@ public class SpatialMetadataFormatBuilder extends Builder {
      * <p>
      * <ul>
      *   <li>If the given type is a metadata, then it is
-     *       {@linkplain IIOMetadataFormat#addElement(String,String,int) added as an element}
+     *       {@linkplain IIOMetadataFormatImpl#addElement(String,String,int) added as an element}
      *       and all its children are added recursively.</li>
      *   <li>Otherwise the type is
-     *      {@linkplain IIOMetadataFormat##addAttribute(String,String,int,boolean,String) added as an attribute}.</li>
+     *      {@linkplain IIOMetadataFormatImpl#addAttribute(String,String,int,boolean,String) added as an attribute}.</li>
      * </ul>
      *
      * {@section Element type}
@@ -629,17 +629,17 @@ public class SpatialMetadataFormatBuilder extends Builder {
         type = Numbers.primitiveToWrapper(type);
         if (Number.class.isAssignableFrom(type)) {
             if (Numbers.isInteger(type)) {
-                return IIOMetadataFormat.DATATYPE_INTEGER;
+                return DATATYPE_INTEGER;
             }
             if (Float.class.isAssignableFrom(type)) {
-                return IIOMetadataFormat.DATATYPE_FLOAT;
+                return DATATYPE_FLOAT;
             }
-            return IIOMetadataFormat.DATATYPE_DOUBLE;
+            return DATATYPE_DOUBLE;
         }
         if (Boolean.class.isAssignableFrom(type)) {
-            return IIOMetadataFormat.DATATYPE_BOOLEAN;
+            return DATATYPE_BOOLEAN;
         }
-        return IIOMetadataFormat.DATATYPE_STRING;
+        return DATATYPE_STRING;
     }
 
     /**
@@ -701,7 +701,7 @@ public class SpatialMetadataFormatBuilder extends Builder {
      * @param addToElement The name of the element where to add the tree,
      *        or {@code null} for adding the tree at the root.
      *
-     * @see SpatialMetadataFormat#ISO_19115
+     * @see SpatialMetadataFormat#ISO_FORMAT_NAME
      *
      * @since 3.20
      */

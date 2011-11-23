@@ -17,29 +17,80 @@
  */
 package org.geotoolkit.geometry;
 
-import org.opengis.geometry.DirectPosition;
+import java.awt.geom.Rectangle2D;
+import javax.measure.unit.Unit;
+import javax.measure.converter.ConversionException;
+
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.RangeMeaning;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.display.shape.XRectangle2D;
 
+import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
+import static org.geotoolkit.math.XMath.SIGN_BIT_MASK;
+import static org.geotoolkit.math.XMath.isNegative;
+import static org.geotoolkit.math.XMath.isPositive;
 
 
 /**
- * Base class for {@linkplain Envelope envelope} implementations. This base class
- * provides default implementations for {@link #toString()}, {@link #equals(Object)}
- * and {@link #hashCode()} methods.
+ * Base class for {@linkplain Envelope envelope} implementations. This base class does not hold any
+ * state and does not implement the {@link java.io.Serializable} or {@link org.geotoolkit.util.Cloneable}
+ * interfaces. The internal representation, and the choice to be cloneable or serializable, is left
+ * to implementors.
  * <p>
- * This class do not holds any state. The decision to implement {@link java.io.Serializable}
- * or {@link org.geotoolkit.util.Cloneable} interfaces is left to implementors.
+ * Implementors needs to define at least the following methods:
+ * <p>
+ * <ul>
+ *   <li>{@link #getDimension()}</li>
+ *   <li>{@link #getCoordinateReferenceSystem()}</li>
+ *   <li>{@link #getMinimum(int)}</li>
+ *   <li>{@link #getMaximum(int)}</li>
+ * </ul>
+ * <p>
+ * All other methods, including {@link #toString()}, {@link #equals(Object)} and {@link #hashCode()},
+ * are implemented on top of the above four methods.
+ *
+ * {@section Spanning the anti-meridian of a Geographic CRS}
+ * The <cite>Web Coverage Service</cite> (WCS) specification authorizes (with special treatment)
+ * cases where <var>upper</var> &lt; <var>lower</var> at least in the longitude case. They are
+ * envelopes crossing the anti-meridian, like the red box below (the green box is the usual case):
+ *
+ * <center><img src="doc-files/AntiMeridian.png"></center>
+ *
+ * The default implementation of the following methods can handle such cases:
+ * <p>
+ * <ul>
+ *   <li>{@link #getMedian(int)}</li>
+ *   <li>{@link #getSpan(int)}</li>
+ *   <li>{@link #contains(DirectPosition)}</li>
+ *   <li>{@link #contains(Envelope, boolean)}</li>
+ *   <li>{@link #intersects(Envelope, boolean)}</li>
+ * </ul>
+ *
+ * {@section Note on positive and negative zeros}
+ * The IEEE 754 standard defines two different values for positive zero and negative zero.
+ * When used with Geotk envelopes and keeping in mind the above discussion, those zeros have
+ * different meanings:
+ * <p>
+ * <ul>
+ *   <li>The [-0…0°] range is an empty envelope.</li>
+ *   <li>The [0…-0°] range makes a full turn around the globe, like the [-180…180°]
+ *       range except that the former range spans across the anti-meridian.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -49,6 +100,26 @@ public abstract class AbstractEnvelope implements Envelope {
      * Constructs an envelope.
      */
     protected AbstractEnvelope() {
+    }
+
+    /**
+     * Returns the given envelope as an {@code AbstractEnvelope} instance. If the given envelope
+     * is already an instance of {@code AbstractEnvelope}, then it is returned unchanged.
+     * Otherwise the coordinate values and the CRS of the given envelope are copied in a
+     * new envelope.
+     *
+     * @param  envelope The envelope to cast, or {@code null}.
+     * @return The values of the given envelope as an {@code AbstractEnvelope} instance.
+     *
+     * @see GeneralEnvelope#castOrCopy(Envelope)
+     *
+     * @since 3.20
+     */
+    public static AbstractEnvelope castOrCopy(final Envelope envelope) {
+        if (envelope == null || envelope instanceof AbstractEnvelope) {
+            return (AbstractEnvelope) envelope;
+        }
+        return new GeneralEnvelope(envelope);
     }
 
     /**
@@ -87,9 +158,66 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
+     * Returns the axis of the given coordinate reference system for the given dimension,
+     * or {@code null} if none.
+     *
+     * @param  crs The envelope CRS, or {@code null}.
+     * @param  dimension The dimension for which to get the axis.
+     * @return The axis at the given dimension, or {@code null}.
+     */
+    static CoordinateSystemAxis getAxis(final CoordinateReferenceSystem crs, final int dimension) {
+        if (crs != null) {
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            if (cs != null) {
+                return cs.getAxis(dimension);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns {@code true} if the axis for the given dimension has the
+     * {@link RangeMeaning#WRAPAROUND WRAPAROUND} range meaning.
+     *
+     * @param  crs The envelope CRS, or {@code null}.
+     * @param  dimension The dimension for which to get the axis.
+     * @return {@code true} if the range meaning is {@code WRAPAROUND}.
+     */
+    static boolean isWrapAround(final CoordinateReferenceSystem crs, final int dimension) {
+        final CoordinateSystemAxis axis = getAxis(crs, dimension);
+        return (axis != null) && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning());
+    }
+
+    /**
+     * Returns {@code true} if the given value is negative, without checks for {@code NaN}.
+     * This method should be invoked only when the number is known to not be {@code NaN},
+     * otherwise the safer {@link org.geotoolkit.math.XMath#isNegative(double)} method shall
+     * be used instead. Note that the check for {@code NaN} doesn't need to be explicit.
+     * For example in the following code, {@code NaN} values were implicitly checked by
+     * the {@code (a < b)} comparison:
+     *
+     * {@preformat java
+     *     if (a < b && isNegativeUnsafe(a)) {
+     *         // ... do some stuff
+     *     }
+     * }
+     */
+    static boolean isNegativeUnsafe(final double value) {
+        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) != 0;
+    }
+
+    /**
      * A coordinate position consisting of all the {@linkplain #getMinimum minimal ordinates}.
-     * The default implementation returns a direct position backed by this envelope, so changes
-     * in this envelope will be immediately reflected in the direct position.
+     * The default implementation returns a unmodifiable direct position backed by this envelope,
+     * so changes in this envelope will be immediately reflected in the direct position.
+     *
+     * {@note The <cite>Web Coverage Service</cite> (WCS) 1.1 specification uses an extended
+     * interpretation of the bounding box definition. In a WCS 1.1 data structure, the lower
+     * corner defines the edges region in the directions of <em>decreasing</em> coordinate
+     * values in the envelope CRS. This is usually the algebraic minimum coordinates, but not
+     * always. For example, an envelope crossing the anti-meridian could have a lower corner
+     * longitude greater than the upper corner longitude. Such extended interpretation applies
+     * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
      * @return The lower corner.
      */
@@ -100,14 +228,416 @@ public abstract class AbstractEnvelope implements Envelope {
 
     /**
      * A coordinate position consisting of all the {@linkplain #getMaximum maximal ordinates}.
-     * The default implementation returns a direct position backed by this envelope, so changes
-     * in this envelope will be immediately reflected in the direct position.
+     * The default implementation returns a unmodifiable direct position backed by this envelope,
+     * so changes in this envelope will be immediately reflected in the direct position.
+     *
+     * {@note The <cite>Web Coverage Service</cite> (WCS) 1.1 specification uses an extended
+     * interpretation of the bounding box definition. In a WCS 1.1 data structure, the upper
+     * corner defines the edges region in the directions of <em>increasing</em> coordinate
+     * values in the envelope CRS. This is usually the algebraic maximum coordinates, but not
+     * always. For example, an envelope crossing the anti-meridian could have an upper corner
+     * longitude less than the lower corner longitude. Such extended interpretation applies
+     * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
      * @return The upper corner.
      */
     @Override
     public DirectPosition getUpperCorner() {
         return new UpperCorner();
+    }
+
+    /**
+     * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
+     * for each dimension for all points within the {@code Envelope}.
+     *
+     * @return The median coordinates.
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    public DirectPosition getMedian() {
+        final GeneralDirectPosition position = new GeneralDirectPosition(getDimension());
+        for (int i=position.ordinates.length; --i>=0;) {
+            position.ordinates[i] = getMedian(i);
+        }
+        position.setCoordinateReferenceSystem(getCoordinateReferenceSystem());
+        return position;
+    }
+
+    /**
+     * Returns the median ordinate along the specified dimension. In most cases, the result is
+     * equals (minus rounding error) to:
+     *
+     * {@preformat java
+     *     median = (getMaximum(dimension) + getMinimum(dimension)) / 2;
+     * }
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * If <var>maximum</var> &lt; <var>minimum</var> and the
+     * {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning} for the requested
+     * dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then the median calculated
+     * above is actually in the middle of the space <em>outside</em> the envelope. In such cases,
+     * this method shifts the <var>median</var> value by half of the periodicity (180° in the
+     * longitude case) in order to switch from <cite>outer</cite> space to <cite>inner</cite>
+     * space. If the axis range meaning is not {@code WRAPAROUND}, then this method returns
+     * {@link Double#NaN NaN}.
+     *
+     * @param  dimension The dimension for which to obtain the ordinate value.
+     * @return The median ordinate at the given dimension, or {@link Double#NaN}.
+     * @throws IndexOutOfBoundsException If the given index is negative or is equals or greater
+     *         than the {@linkplain #getDimension() envelope dimension}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getMedian(final int dimension) throws IndexOutOfBoundsException {
+        final double lower = getMinimum(dimension);
+        final double upper = getMaximum(dimension);
+        double median = 0.5 * (lower + upper);
+        if (isNegative(upper - lower)) { // Special handling for -0.0
+            median = fixMedian(getAxis(getCoordinateReferenceSystem(), dimension), median);
+        }
+        return median;
+    }
+
+    /**
+     * Shifts the median value when the minimum is greater than the maximum.
+     * If no shift can be applied, returns {@code NaN}.
+     */
+    static double fixMedian(final CoordinateSystemAxis axis, final double median) {
+        if (axis != null && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
+            final double minimum = axis.getMinimumValue();
+            final double maximum = axis.getMaximumValue();
+            final double cycle   = maximum - minimum;
+            if (cycle > 0 && cycle != Double.POSITIVE_INFINITY) {
+                // The copySign is for shifting in the direction of the valid range center.
+                return median + 0.5 * Math.copySign(cycle, 0.5*(minimum + maximum) - median);
+            }
+        }
+        return Double.NaN;
+    }
+
+    /**
+     * Returns the envelope span (typically width or height) along the specified dimension.
+     * In most cases, the result is equals (minus rounding error) to:
+     *
+     * {@preformat java
+     *     span = getMaximum(dimension) - getMinimum(dimension);
+     * }
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * If <var>maximum</var> &lt; <var>minimum</var> and the
+     * {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning} for the requested
+     * dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then the span calculated
+     * above is negative. In such cases, this method adds the periodicity (typically 360° of
+     * longitude) to the span. If the result is a positive number, it is returned. Otherwise
+     * this method returns {@link Double#NaN NaN}.
+     *
+     * @param  dimension The dimension for which to obtain the span.
+     * @return The span (typically width or height) at the given dimension, or {@link Double#NaN}.
+     * @throws IndexOutOfBoundsException If the given index is negative or is equals or greater
+     *         than the {@linkplain #getDimension() envelope dimension}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getSpan(final int dimension) {
+        double span = getMaximum(dimension) - getMinimum(dimension);
+        if (isNegative(span)) { // Special handling for -0.0
+            span = fixSpan(getAxis(getCoordinateReferenceSystem(), dimension), span);
+        }
+        return span;
+    }
+
+    /**
+     * Transforms a negative span into a valid value if the axis range meaning is "wraparound".
+     * Returns {@code NaN} otherwise.
+     *
+     * @param  axis The axis for the span dimension, or {@code null}.
+     * @param  span The negative span.
+     * @return A positive span, or NaN if the span can not be fixed.
+     */
+    static double fixSpan(final CoordinateSystemAxis axis, double span) {
+        if (axis != null && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
+            final double cycle = axis.getMaximumValue() - axis.getMinimumValue();
+            if (cycle > 0 && cycle != Double.POSITIVE_INFINITY) {
+                span += cycle;
+                if (span >= 0) {
+                    return span;
+                }
+            }
+        }
+        return Double.NaN;
+    }
+
+    /**
+     * Returns the envelope span along the specified dimension, in terms of the given units.
+     * The default implementation invokes {@link #getSpan(int)} and converts the result.
+     *
+     * @param  dimension The dimension to query.
+     * @param  unit The unit for the return value.
+     * @return The span in terms of the given unit.
+     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * @throws ConversionException if the length can't be converted to the specified units.
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    public double getSpan(final int dimension, final Unit<?> unit)
+            throws IndexOutOfBoundsException, ConversionException
+    {
+        double value = getSpan(dimension);
+        final CoordinateSystemAxis axis = getAxis(getCoordinateReferenceSystem(), dimension);
+        if (axis != null) {
+            final Unit<?> source = axis.getUnit();
+            if (source != null) {
+                value = source.getConverterToAny(unit).convert(value);
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Tests if a specified coordinate is inside the boundary of this envelope.
+     * If it least one ordinate value in the given point is {@link Double#NaN NaN},
+     * then this method returns {@code false}.
+     *
+     * {@note This method assumes that the specified point uses the same CRS than this envelope.
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * For any dimension, if <var>maximum</var> &lt; <var>minimum</var> then this method uses an
+     * algorithm which is the opposite of the usual one: rather than testing if the given point is
+     * inside the envelope interior, this method tests if the given point is <em>outside</em> the
+     * envelope <em>exterior</em>.
+     *
+     * @param  position The point to text.
+     * @return {@code true} if the specified coordinate is inside the boundary
+     *         of this envelope; {@code false} otherwise.
+     * @throws MismatchedDimensionException if the specified point doesn't have
+     *         the expected dimension.
+     *
+     * @since 3.20 (derived from 3.00)
+     */
+    public boolean contains(final DirectPosition position) throws MismatchedDimensionException {
+        ensureNonNull("position", position);
+        final int dimension = getDimension();
+        AbstractDirectPosition.ensureDimensionMatch("point", position.getDimension(), dimension);
+        assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
+                position.getCoordinateReferenceSystem()) : position;
+        for (int i=0; i<dimension; i++) {
+            final double value = position.getOrdinate(i);
+            final double lower = getMinimum(i);
+            final double upper = getMaximum(i);
+            final boolean c1   = (value >= lower);
+            final boolean c2   = (value <= upper);
+            if (c1 & c2) {
+                continue; // Point inside the range, check other dimensions.
+            }
+            if (c1 | c2) {
+                if (isNegative(upper - lower)) {
+                    /*
+                     * "Spanning the anti-meridian" case: if we reach this point, then the
+                     * [upper...lower] range  (note the 'lower' and 'upper' interchanging)
+                     * is actually a space outside the envelope and we have checked that
+                     * the ordinate value is outside that space.
+                     */
+                    continue;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if this envelope completely encloses the specified envelope.
+     * If one or more edges from the specified envelope coincide with an edge from this
+     * envelope, then this method returns {@code true} only if {@code edgesInclusive}
+     * is {@code true}.
+     *
+     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * For every cases illustrated below, the yellow box is considered completely enclosed
+     * in the blue envelope:
+     *
+     * <center><img src="doc-files/Contains.png"></center>
+     *
+     * @param  envelope The envelope to test for inclusion.
+     * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
+     * @return {@code true} if this envelope completely encloses the specified one.
+     * @throws MismatchedDimensionException if the specified envelope doesn't have
+     *         the expected dimension.
+     *
+     * @see #intersects(Envelope, boolean)
+     * @see #equals(Envelope, double, boolean)
+     *
+     * @since 3.20 (derived from 2.2)
+     */
+    public boolean contains(final Envelope envelope, final boolean edgesInclusive)
+            throws MismatchedDimensionException
+    {
+        ensureNonNull("envelope", envelope);
+        final int dimension = getDimension();
+        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
+        assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
+                envelope.getCoordinateReferenceSystem()) : envelope;
+        for (int i=0; i<dimension; i++) {
+            final double min0 = getMinimum(i);
+            final double max0 = getMaximum(i);
+            final double min1 = envelope.getMinimum(i);
+            final double max1 = envelope.getMaximum(i);
+            final boolean minCondition, maxCondition;
+            if (edgesInclusive) {
+                minCondition = (min1 >= min0);
+                maxCondition = (max1 <= max0);
+            } else {
+                minCondition = (min1 > min0);
+                maxCondition = (max1 < max0);
+            }
+            if (minCondition & maxCondition) {
+                /*           maxCnd          maxCnd
+                 *  ┌─────────────┐          ────┐  ┌────                      ┌─┐
+                 *  │  ┌───────┐  │    or    ──┐ │  │ ┌──    excluding    ───┐ │ │ ┌───
+                 *  │  └───────┘  │          ──┘ │  │ └──                 ───┘ │ │ └───
+                 *  └─────────────┘          ────┘  └────                      └─┘
+                 *  minCnd                          minCnd */
+                if (!isNegativeUnsafe(max1 - min1) || isNegativeUnsafe(max0 - min0)) {
+                    continue;
+                }
+            } else if (minCondition != maxCondition) {
+                /*       maxCnd                     !maxCnd
+                 *  ──────────┐  ┌─────              ─────┐  ┌─────────
+                 *    ┌────┐  │  │           or           │  │  ┌────┐
+                 *    └────┘  │  │                        │  │  └────┘
+                 *  ──────────┘  └─────              ─────┘  └─────────
+                 *               !minCnd                     minCnd */
+                if (isNegative(max0 - min0) && isPositive(max1 - min1)) {
+                    continue;
+                }
+            }
+            return false;
+        }
+        // The check for ArrayEnvelope.class is for avoiding never-ending callbacks.
+        assert envelope.getClass() == ArrayEnvelope.class ||
+               intersects(new ArrayEnvelope(envelope), edgesInclusive) : envelope;
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if this envelope intersects the specified envelope.
+     * If one or more edges from the specified envelope coincide with an edge from this
+     * envelope, then this method returns {@code true} only if {@code edgesInclusive}
+     * is {@code true}.
+     *
+     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method can handle envelopes spanning the anti-meridian.
+     *
+     * @param  envelope The envelope to test for intersection.
+     * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
+     * @return {@code true} if this envelope intersects the specified one.
+     * @throws MismatchedDimensionException if the specified envelope doesn't have
+     *         the expected dimension.
+     *
+     * @see #contains(Envelope, boolean)
+     * @see #equals(Envelope, double, boolean)
+     *
+     * @since 3.20 (derived from 2.2)
+     */
+    public boolean intersects(final Envelope envelope, final boolean edgesInclusive)
+            throws MismatchedDimensionException
+    {
+        ensureNonNull("envelope", envelope);
+        final int dimension = getDimension();
+        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
+        assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
+                envelope.getCoordinateReferenceSystem()) : envelope;
+        for (int i=0; i<dimension; i++) {
+            final double min0 = getMinimum(i);
+            final double max0 = getMaximum(i);
+            final double min1 = envelope.getMinimum(i);
+            final double max1 = envelope.getMaximum(i);
+            final boolean minCondition, maxCondition;
+            if (edgesInclusive) {
+                minCondition = (min1 <= max0);
+                maxCondition = (max1 >= min0);
+            } else {
+                minCondition = (min1 < max0);
+                maxCondition = (max1 > min0);
+            }
+            if (maxCondition & minCondition) {
+                /*     ┌──────────┐
+                 *     │  ┌───────┼──┐
+                 *     │  └───────┼──┘
+                 *     └──────────┘ (this is the most standard case) */
+                continue;
+            }
+            final boolean sp0 = isNegative(max0 - min0);
+            final boolean sp1 = isNegative(max1 - min1);
+            if (sp0 | sp1) {
+                /*
+                 * If both envelopes span the anti-meridian (sp0 & sp1), we have an unconditional
+                 * intersection (since both envelopes extend to infinities). Otherwise we have one
+                 * of the cases illustrated below. Note that the rectangle could also intersect on
+                 * only once side.
+                 *         ┌──────────┐                   ─────┐      ┌─────
+                 *     ────┼───┐  ┌───┼────      or          ┌─┼──────┼─┐
+                 *     ────┼───┘  └───┼────                  └─┼──────┼─┘
+                 *         └──────────┘                   ─────┘      └───── */
+                if ((sp0 & sp1) | (maxCondition | minCondition)) {
+                    continue;
+                }
+            }
+            // The check for ArrayEnvelope.class is for avoiding never-ending callbacks.
+            assert envelope.getClass() == ArrayEnvelope.class || hasNaN(envelope) ||
+                    !contains(new ArrayEnvelope(envelope), edgesInclusive) : envelope;
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if at least one ordinate in the given envelope
+     * is {@link Double#NaN}. This is used for assertions only.
+     */
+    static boolean hasNaN(final Envelope envelope) {
+        return hasNaN(envelope.getLowerCorner()) || hasNaN(envelope.getUpperCorner());
+    }
+
+    /**
+     * Returns {@code true} if at least one ordinate in the given position
+     * is {@link Double#NaN}. This is used for assertions only.
+     */
+    static boolean hasNaN(final DirectPosition position) {
+        for (int i=position.getDimension(); --i>=0;) {
+            if (Double.isNaN(position.getOrdinate(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a {@link Rectangle2D} with the same bounds then this {@code Envelope}.
+     * This envelope must be two-dimensional before this method is invoked.
+     *
+     * @return This envelope as a two-dimensional rectangle.
+     * @throws IllegalStateException if this envelope is not two-dimensional.
+     *
+     * @since 3.20 (derived from 3.00)
+     */
+    public Rectangle2D toRectangle2D() throws IllegalStateException {
+        final int dimension = getDimension();
+        if (dimension != 2) {
+            throw new IllegalStateException(Errors.format(
+                    Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
+        }
+        return XRectangle2D.createFromExtremums(
+                getMinimum(0), getMinimum(1),
+                getMaximum(0), getMaximum(1));
     }
 
     /**
@@ -219,6 +749,7 @@ public abstract class AbstractEnvelope implements Envelope {
                     if (!Utilities.equals(this.getMinimum(i), that.getMinimum(i)) ||
                         !Utilities.equals(this.getMaximum(i), that.getMaximum(i)))
                     {
+                        assert !equals(that, 0.0, false) : this;
                         return false;
                     }
                 }
@@ -226,6 +757,7 @@ public abstract class AbstractEnvelope implements Envelope {
                                      that.getCoordinateReferenceSystem()))
                 {
                     assert hashCode() == that.hashCode() : this;
+                    assert equals(that, 0.0, false) : this;
                     return true;
                 }
             }
@@ -254,7 +786,7 @@ public abstract class AbstractEnvelope implements Envelope {
      * range of -180 to 180° while the later can have a range of thousands of meters.
      *
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance reason, it will no be verified unless Java assertions are enabled.}
+     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * @param envelope The envelope to compare with.
      * @param eps The tolerance value to use for numerical comparisons.
@@ -276,16 +808,15 @@ public abstract class AbstractEnvelope implements Envelope {
         }
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dimension; i++) {
-            double epsilon;
+            double epsilon = eps;
             if (epsIsRelative) {
-                epsilon = Math.max(getSpan(i), envelope.getSpan(i));
-                epsilon = (epsilon > 0 && epsilon < Double.POSITIVE_INFINITY) ? epsilon*eps : eps;
-            } else {
-                epsilon = eps;
+                final double span = Math.max(getSpan(i), envelope.getSpan(i));
+                if (span > 0 && span < Double.POSITIVE_INFINITY) {
+                    epsilon *= span;
+                }
             }
-            // Comparison below uses '!' in order to catch NaN values.
-            if (!(Math.abs(getMinimum(i) - envelope.getMinimum(i)) <= epsilon &&
-                  Math.abs(getMaximum(i) - envelope.getMaximum(i)) <= epsilon))
+            if (!epsilonEqual(getMinimum(i), envelope.getMinimum(i), epsilon) ||
+                !epsilonEqual(getMaximum(i), envelope.getMaximum(i), epsilon))
             {
                 return false;
             }

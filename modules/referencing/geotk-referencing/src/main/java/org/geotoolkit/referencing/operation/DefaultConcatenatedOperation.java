@@ -46,7 +46,6 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;

@@ -31,7 +31,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 
 /**

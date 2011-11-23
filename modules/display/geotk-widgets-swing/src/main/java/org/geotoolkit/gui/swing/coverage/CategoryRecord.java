@@ -42,7 +42,7 @@ import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.internal.coverage.TransferFunction;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;

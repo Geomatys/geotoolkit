@@ -49,7 +49,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.referencing.CRSUtilities;

@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.MathTransforms;
 
 
 /**

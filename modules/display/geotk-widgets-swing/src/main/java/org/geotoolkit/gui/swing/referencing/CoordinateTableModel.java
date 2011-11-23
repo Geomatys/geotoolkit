@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.geometry.Envelopes;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 
 
@@ -44,7 +44,7 @@ import org.geotoolkit.geometry.TransformedDirectPosition;
  * is specified at construction time.
  * <p>
  * This table model provides a way to display invalid coordinates in a different color.
- * <cite>Invalide coordinates</cite> are defined here as coordinates outside the CRS
+ * <cite>Invalid coordinates</cite> are defined here as coordinates outside the CRS
  * {@linkplain CoordinateReferenceSystem#getDomainOfValidity() domain of validity}.
  * This color display can be enabled by the following code:
  *
@@ -92,7 +92,7 @@ public class CoordinateTableModel extends AbstractTableModel {
     /**
      * The CRS valid area.
      */
-    private final GeneralEnvelope validArea;
+    private final ImmutableEnvelope validArea;
 
     /**
      * For transformation from the table CRS to WGS84.
@@ -111,7 +111,7 @@ public class CoordinateTableModel extends AbstractTableModel {
         for (int i=0; i<columnNames.length; i++){
             columnNames[i] = crs.getCoordinateSystem().getAxis(i).getName().getCode();
         }
-        validArea = new GeneralEnvelope(Envelopes.getDomainOfValidity(crs));
+        validArea = new ImmutableEnvelope(Envelopes.getDomainOfValidity(crs));
     }
 
     /**

@@ -826,7 +826,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the element which is the parent of the named element, or {@code null} if none.
-     * For example if this metadata format is the {@linkplain #getStreamInstance(null) stream}
+     * For example if this metadata format is the {@linkplain #getStreamInstance(String) stream}
      * instance, then:
      * <p>
      * <ul>

@@ -45,8 +45,34 @@
  *   </tr>
  * </table>
  *
+ * {@section Envelopes spanning the anti-meridian of a Geographic CRS}
+ * The Web Coverage Service (WCS) 1.1 specification uses an extended interpretation of the bounding
+ * box definition. In a WCS 1.1 data structure, the {@linkplain org.opengis.geometry.Envelope#getLowerCorner()
+ * lower corner} defines the edges region in the directions of <em>decreasing</em> coordinate values
+ * in the {@linkplain org.opengis.geometry.Envelope#getCoordinateReferenceSystem() envelope CRS},
+ * while the {@linkplain org.opengis.geometry.Envelope#getUpperCorner() upper corner} defines the
+ * edges region in the directions of <em>increasing</em> coordinate values. Those lower and upper
+ * corners are usually the algebraic minimum and maximum coordinates respectively, but not always.
+ * For example, an envelope crossing the anti-meridian could have a lower corner longitude greater
+ * than the upper corner longitude, like the red box below (the green box is the usual case):
+ *
+ * <center><img src="doc-files/AntiMeridian.png"></center>
+ *
+ * As of Geotk 3.20, every envelopes defined in this package support the extended bounding box
+ * interpretation: for any dimension, ordinate values such that <var>upper</var> &lt; <var>lower</var>
+ * are handled in a special way. This handling is slightly different for two groups of methods:
+ * <p>
+ * <ul>
+ *   <li>In calculation of envelopes spans and median positions (centers) - handled specially only
+ *       on axes having the {@link org.opengis.referencing.cs.RangeMeaning#WRAPAROUND WRAPAROUND}
+ *       range meaning</li>
+ *   <li>When checking for containment, intersections or unions - can be handled specially for
+ *       any axis, in which case the envelope represents an <em>exclusion</em> area instead
+ *       than an inclusion area.</li>
+ * </ul>
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.20
  *
  * @since 1.2
  * @module

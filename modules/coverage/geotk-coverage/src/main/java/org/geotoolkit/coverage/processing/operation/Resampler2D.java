@@ -66,15 +66,16 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.AbstractCoverageProcessor;
 import org.geotoolkit.coverage.processing.CannotReprojectException;
+import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperationFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.image.ImageUtilities;
@@ -597,7 +598,7 @@ final class Resampler2D extends GridCoverage2D {
                         Envelope target = Envelopes.transform(targetGG.getEnvelope(), targetCRS);
                         source = targetGG.reduce(source);
                         target = targetGG.reduce(target);
-                        if (!(new GeneralEnvelope(source).contains(target, true))) {
+                        if (!(AbstractEnvelope.castOrCopy(source).contains(target, true))) {
                             if (interpolation != null && !(interpolation instanceof InterpolationNearest)) {
                                 return reproject(sourceCoverage, targetCRS, targetGG, null, background, hints);
                             } else {

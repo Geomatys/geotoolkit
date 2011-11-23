@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 

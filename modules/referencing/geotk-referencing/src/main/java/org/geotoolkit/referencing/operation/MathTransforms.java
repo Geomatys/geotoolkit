@@ -15,24 +15,37 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation.transform;
+package org.geotoolkit.referencing.operation;
 
 import java.awt.geom.AffineTransform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.MathTransform2D;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 
 /**
- * Utility methods for creating Geotk implementations of {@link MathTransform},
- * and for performing some operations on arbitrary instances.
+ * Utility methods related to {@link MathTransform}s. This class centralizes in one place some of
+ * the most commonly used functions from the {@link org.geotoolkit.referencing.operation.transform}
+ * package, thus reducing the need to explore that low-level package. The {@code MathTransforms}
+ * class provides the following services:
+ * <p>
+ * <ul>
+ *   <li>Create various Geotk implementations of {@link MathTransform}</li>
+ *   <li>Perform non-standard operations on arbitrary instances</li>
+ * </ul>
  * <p>
  * The factory static methods are provided as convenient alternatives to the GeoAPI
  * {@link org.opengis.referencing.operation.MathTransformFactory} interface. However
@@ -49,14 +62,6 @@ import org.opengis.referencing.operation.MathTransform2D;
  */
 public final class MathTransforms extends Static {
     /**
-     * Identity transforms for dimensions ranging from to 0 to 7.
-     * Elements in this array will be created only when first requested.
-     *
-     * @see #identity(int)
-     */
-    private static final LinearTransform[] IDENTITIES = new LinearTransform[8];
-
-    /**
      * Do not allow instantiation of this class.
      */
     private MathTransforms() {
@@ -71,24 +76,7 @@ public final class MathTransforms extends Static {
      * @return An identity transform of the specified dimension.
      */
     public static LinearTransform identity(final int dimension) {
-        LinearTransform candidate;
-        synchronized (IDENTITIES) {
-            if (dimension < IDENTITIES.length) {
-                candidate = IDENTITIES[dimension];
-                if (candidate != null) {
-                    return candidate;
-                }
-            }
-            switch (dimension) {
-                case 1:  candidate = LinearTransform1D.IDENTITY;       break;
-                case 2:  candidate = new AffineTransform2D();          break;
-                default: candidate = new IdentityTransform(dimension); break;
-            }
-            if (dimension < IDENTITIES.length) {
-                IDENTITIES[dimension] = candidate;
-            }
-        }
-        return candidate;
+        return ProjectiveTransform.identity(dimension);
     }
 
     /**
@@ -134,26 +122,7 @@ public final class MathTransforms extends Static {
      * @see org.opengis.referencing.operation.MathTransformFactory#createAffineTransform(Matrix)
      */
     public static LinearTransform linear(final Matrix matrix) {
-        final int sourceDimension = matrix.getNumCol() - 1;
-        final int targetDimension = matrix.getNumRow() - 1;
-        if (sourceDimension == targetDimension) {
-            if (matrix.isIdentity()) {
-                return identity(sourceDimension);
-            }
-            if (Matrices.isAffine(matrix)) {
-                switch (sourceDimension) {
-                    case 1: return LinearTransform1D.create(matrix.getElement(0,0), matrix.getElement(0,1));
-                    case 2: return linear(Matrices.toAffineTransform(matrix));
-                }
-            } else if (sourceDimension == 2) {
-                return new ProjectiveTransform2D(matrix);
-            }
-        }
-        final LinearTransform candidate = CopyTransform.create(matrix);
-        if (candidate != null) {
-            return candidate;
-        }
-        return new ProjectiveTransform(matrix);
+        return ProjectiveTransform.create(matrix);
     }
 
     /**
@@ -198,7 +167,6 @@ public final class MathTransforms extends Static {
      * @return    The concatenated transform.
      *
      * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
-     * @see ConcatenatedTransform#create(MathTransform, MathTransform)
      */
     public static MathTransform concatenate(MathTransform tr1, MathTransform tr2) {
         return ConcatenatedTransform.create(tr1, tr2);
@@ -273,8 +241,9 @@ public final class MathTransforms extends Static {
 
     /**
      * A buckle method for calculating derivative and coordinate transformation in a single step.
-     * The results are stored in the given destination objects if non-null. Invoking this method
-     * is equivalent to the following code, except that it may execute faster:
+     * The transform result is stored in the given destination array, and the derivative matrix
+     * is returned. Invoking this method is equivalent to the following code, except that it may
+     * execute faster with some {@code MathTransform} implementations:
      *
      * {@preformat java
      *     DirectPosition ptSrc = ...;
@@ -284,34 +253,25 @@ public final class MathTransforms extends Static {
      * }
      *
      * @param transform The transform to use.
-     * @param srcPts The array containing the source coordinate (can not be {@code null}).
+     * @param srcPts The array containing the source coordinate.
      * @param srcOff The offset to the point to be transformed in the source array.
      * @param dstPts the array into which the transformed coordinate is returned.
-     *               May be the same than {@code srcPts}. May be {@code null} if
-     *               only the derivative matrix is desired.
      * @param dstOff The offset to the location of the transformed point that is
      *               stored in the destination array.
-     * @param derivate {@code true} for computing the derivative, or {@code false} if not needed.
-     * @return The matrix of the transform derivative at the given source position, or {@code null}
-     *         if the {@code derivate} argument is {@code false} or if this transform does not
-     *         support derivative calculation.
+     * @return The matrix of the transform derivative at the given source position.
      * @throws TransformException If the point can't be transformed or if a problem occurred while
      *         calculating the derivative.
      */
-    public static Matrix derivativeAndTransform(
-            final MathTransform transform,
-            final double[] srcPts, final int srcOff,
-            final double[] dstPts, final int dstOff, final boolean derivate)
+    public static Matrix derivativeAndTransform(final MathTransform transform,
+                                                final double[] srcPts, final int srcOff,
+                                                final double[] dstPts, final int dstOff)
             throws TransformException
     {
         if (transform instanceof AbstractMathTransform) {
-            return ((AbstractMathTransform) transform).transform(srcPts, srcOff, dstPts, dstOff, derivate);
+            return ((AbstractMathTransform) transform).transform(srcPts, srcOff, dstPts, dstOff, true);
         }
-        Matrix derivative = null;
-        if (derivate) {
-            // Must be calculated before to transform the coordinate.
-            derivative = transform.derivative(new DirectPositionView(srcPts, srcOff, transform.getSourceDimensions()));
-        }
+        // Must be calculated before to transform the coordinate.
+        final Matrix derivative = transform.derivative(new DirectPositionView(srcPts, srcOff, transform.getSourceDimensions()));
         if (dstPts != null) {
             transform.transform(srcPts, srcOff, dstPts, dstOff, 1);
         }

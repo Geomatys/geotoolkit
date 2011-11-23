@@ -75,9 +75,9 @@ public abstract class AbstractMathTransform1D extends AbstractMathTransform impl
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate) throws TransformException
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate) throws TransformException
     {
         final double ordinate = srcPts[srcOff];
         if (dstPts != null) {

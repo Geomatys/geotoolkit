@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.LenientComparable;
@@ -50,9 +51,9 @@ import static org.geotoolkit.referencing.operation.matrix.Matrices.*;
 
 /**
  * Base class for concatenated transforms. Instances can be created by calls to the
- * {@link MathTransforms#concatenate(MathTransform, MathTransform)} method. When possible,
- * the above-cited method tries to concatenate {@linkplain ProjectiveTransform projective transforms}
- * before to fallback on the creation of new {@code ConcatenatedTransform} instances.
+ * {@link #create(MathTransform, MathTransform)} method. When possible, the above-cited
+ * method concatenates {@linkplain ProjectiveTransform projective transforms} before to
+ * fallback on the creation of new {@code ConcatenatedTransform} instances.
  * <p>
  * Concatenated transforms are serializable if all their step transforms are serializables.
  *
@@ -102,8 +103,8 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
 
     /**
      * Constructs a concatenated transform. This constructor is for subclasses only.
-     * To create a concatenated transform, use the factory method
-     * {@link MathTransformsconcatenate(MathTransform, MathTransform)} instead.
+     * To create a concatenated transform, use the {@link #create(MathTransform, MathTransform)}
+     * factory method instead.
      *
      * @param transform1 The first math transform.
      * @param transform2 The second math transform.
@@ -157,10 +158,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @return    The concatenated transform.
      *
      * @see MathTransforms#concatenate(MathTransform, MathTransform)
-     *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform, MathTransform)
      */
-    @Deprecated
     public static MathTransform create(MathTransform tr1, MathTransform tr2) {
         final int dim1 = tr1.getTargetDimensions();
         final int dim2 = tr2.getSourceDimensions();
@@ -244,7 +242,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      *
      * @since 3.14
      *
-     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D)
+     * @deprecated Moved to {@link MathTransforms#concatenate(MathTransform2D, MathTransform2D)}
      */
     @Deprecated
     public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2) {
@@ -351,7 +349,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                 // May not be really affine, but work anyway...
                 // This call will detect and optimize the special
                 // case where an 'AffineTransform' can be used.
-                return MathTransforms.linear(matrix);
+                return ProjectiveTransform.create(matrix);
             }
             /*
              * If the second transform is a passthrough transform and all passthrough ordinates
@@ -362,7 +360,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                 final Matrix sub = candidate.toSubMatrix(matrix1);
                 if (sub != null) {
                     return PassThroughTransform.create(candidate.firstAffectedOrdinate,
-                            create(MathTransforms.linear(sub), candidate.subTransform),
+                            create(ProjectiveTransform.create(sub), candidate.subTransform),
                             candidate.numTrailingOrdinates);
                 }
             }
@@ -374,7 +372,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         if (areInverse(tr1, tr2) || areInverse(tr2, tr1)) {
             assert tr1.getSourceDimensions() == tr2.getTargetDimensions();
             assert tr1.getTargetDimensions() == tr2.getSourceDimensions();
-            return MathTransforms.identity(tr1.getSourceDimensions());
+            return ProjectiveTransform.identity(tr1.getSourceDimensions());
         }
         /*
          * Gives a chance to AbstractMathTransform to returns an optimized object.
@@ -670,9 +668,9 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @since 3.20 (derived from 3.00)
      */
     @Override
-    protected Matrix transform(final double[] srcPts, final int srcOff,
-                               final double[] dstPts, final int dstOff,
-                               final boolean derivate) throws TransformException
+    public Matrix transform(final double[] srcPts, final int srcOff,
+                            final double[] dstPts, final int dstOff,
+                            final boolean derivate) throws TransformException
     {
         assert isValid();
         final int bufferDim = transform2.getSourceDimensions();
@@ -686,9 +684,15 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
             buffer = dstPts;
             offset = dstOff;
         }
-        final Matrix matrix1 = MathTransforms.derivativeAndTransform(transform1, srcPts, srcOff, buffer, offset, derivate);
-        final Matrix matrix2 = MathTransforms.derivativeAndTransform(transform2, buffer, offset, dstPts, dstOff, derivate);
-        return (matrix1 != null && matrix2 != null) ? multiply(matrix2, matrix1) : null;
+        if (derivate) {
+            final Matrix matrix1 = MathTransforms.derivativeAndTransform(transform1, srcPts, srcOff, buffer, offset);
+            final Matrix matrix2 = MathTransforms.derivativeAndTransform(transform2, buffer, offset, dstPts, dstOff);
+            return multiply(matrix2, matrix1);
+        } else {
+            transform1.transform(srcPts, srcOff, buffer, offset, 1);
+            transform2.transform(buffer, offset, dstPts, dstOff, 1);
+            return null;
+        }
     }
 
     /**

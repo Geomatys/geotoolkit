@@ -64,9 +64,27 @@ public final class InternalUtilities extends Static {
      *
      * By extension, the same threshold value is used for comparing other floating point values.
      *
-     * @since 3.18
+     * @since 3.20
      */
     public static final double COMPARISON_THRESHOLD = 1E-14;
+
+    /**
+     * Default tolerance thershold for comparing ordinate values in a projected CRS,
+     * assuming that the unit of measurement is metre. This is not a tolerance for
+     * testing map projection accuracy.
+     *
+     * @since 3.20
+     */
+    public static final double LINEAR_TOLERANCE = 1.0;
+
+    /**
+     * Default tolerance threshold for comparing ordinate values in a geographic CRS,
+     * assuming that the unit of measurement is decimal degrees and using the standard
+     * nautical mile length.
+     *
+     * @since 3.20
+     */
+    public static final double ANGULAR_TOLERANCE = LINEAR_TOLERANCE / (1852 * 60);
 
     /**
      * Workaround for rounding errors.
@@ -97,6 +115,34 @@ public final class InternalUtilities extends Static {
      */
     public static String identity(final Object value) {
         return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
+    }
+
+    /**
+     * Returns {@code true} if {@code ymin} is the south pole and {@code ymax} is the north pole.
+     *
+     * @param ymin The minimal latitude to test.
+     * @param ymax The maximal latitude to test.
+     * @return {@code true} if the given latitudes are south pole to noth pole respectively.
+     *
+     * @since 3.20
+     */
+    public static boolean isPoleToPole(final double ymin, final double ymax) {
+        return abs(ymin + 90) <= ANGULAR_TOLERANCE && abs(ymax - 90) <= ANGULAR_TOLERANCE;
+    }
+
+    /**
+     * Returns {@code true} if the given values are approximatively equal.
+     * Two NaN values are considered equal.
+     *
+     * @param  v1 The first value to compare.
+     * @param  v2 The second value to compare.
+     * @param  epsilon The tolerance threshold, which must be positive.
+     * @return {@code true} If both values are approximatively equal.
+     *
+     * @since 3.20
+     */
+    public static boolean epsilonEqual(final double v1, final double v2, final double epsilon) {
+        return (abs(v1 - v2) <= epsilon) || Double.doubleToLongBits(v1) == Double.doubleToLongBits(v2);
     }
 
     /**

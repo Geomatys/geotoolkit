@@ -44,7 +44,8 @@ import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -104,6 +105,33 @@ public final class Envelopes extends Static {
      */
     public static Envelope getDomainOfValidity(final CoordinateReferenceSystem crs) {
         return CRS.getEnvelope(crs);
+    }
+
+    /**
+     * A buckle method for calculating derivative and coordinate transformation in a single step,
+     * if the given {@code derivative} argument is {@code true}.
+     *
+     * @param transform The transform to use.
+     * @param srcPts The array containing the source coordinate at offset 0.
+     * @param dstPts the array into which the transformed coordinate is returned.
+     * @param dstOff The offset to the location of the transformed point that is
+     *               stored in the destination array.
+     * @param derivate {@code true} for computing the derivative, or {@code false} if not needed.
+     * @return The matrix of the transform derivative at the given source position, or {@code null}
+     *         if the {@code derivate} argument is {@code false}.
+     * @throws TransformException If the point can't be transformed or if a problem occurred while
+     *         calculating the derivative.
+     */
+    private static Matrix derivativeAndTransform(final MathTransform transform, final double[] srcPts,
+            final double[] dstPts, final int dstOff, final boolean derivate) throws TransformException
+    {
+        if (transform instanceof AbstractMathTransform) {
+            return ((AbstractMathTransform) transform).transform(srcPts, 0, dstPts, dstOff, derivate);
+        }
+        // Derivative must be calculated before to transform the coordinate.
+        final Matrix derivative = derivate ? transform.derivative(new DirectPositionView(srcPts, 0, transform.getSourceDimensions())) : null;
+        transform.transform(srcPts, 0, dstPts, dstOff, 1);
+        return derivative;
     }
 
     /**
@@ -255,8 +283,8 @@ public final class Envelopes extends Static {
              */
             final int offset = pointIndex * targetDim;
             try {
-                derivatives[pointIndex] = MathTransforms.derivativeAndTransform(transform,
-                        sourcePt, 0, ordinates, offset, isDerivativeSupported);
+                derivatives[pointIndex] = derivativeAndTransform(transform,
+                        sourcePt, ordinates, offset, isDerivativeSupported);
             } catch (TransformException e) {
                 if (!isDerivativeSupported) {
                     throw e; // Derivative were already disabled, so something went wrong.
@@ -529,7 +557,7 @@ public final class Envelopes extends Static {
          * is a valid point.
          */
         TransformException warning = null;
-        GeneralEnvelope generalEnvelope = null;
+        AbstractEnvelope generalEnvelope = null;
         DirectPosition sourcePt = null;
         DirectPosition targetPt = null;
         long includedMinValue = 0; // A bitmask for each dimension.
@@ -579,7 +607,7 @@ public final class Envelopes extends Static {
                     }
                     // TODO: avoid the hack below if we provide a contains(DirectPosition)
                     //       method in the GeoAPI org.opengis.geometry.Envelope interface.
-                    generalEnvelope = GeneralEnvelope.castOrCopy(envelope);
+                    generalEnvelope = AbstractEnvelope.castOrCopy(envelope);
                 }
                 targetPt.setOrdinate(i, extremum);
                 try {
@@ -792,7 +820,7 @@ public final class Envelopes extends Static {
             point[1] = φ2;
             try {
                 D1 = D2;
-                D2 = MathTransforms.derivativeAndTransform(transform, point, 0, point, 0, isDerivativeSupported && i != 8);
+                D2 = derivativeAndTransform(transform, point, point, 0, isDerivativeSupported && i != 8);
             } catch (TransformException e) {
                 if (!isDerivativeSupported) {
                     throw e; // Derivative were already disabled, so something went wrong.

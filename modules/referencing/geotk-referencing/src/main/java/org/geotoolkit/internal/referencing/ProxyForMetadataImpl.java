@@ -46,6 +46,8 @@ import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
+
 
 /**
  * Provides convenience methods for some metadata constructors. This is mostly a helper class
@@ -53,7 +55,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -164,8 +166,25 @@ public final class ProxyForMetadataImpl extends ProxyForMetadata implements Chan
                 envelope = Envelopes.transform(operation, envelope);
             }
         }
-        target.setBounds(envelope.getMinimum(0), envelope.getMaximum(0),
-                         envelope.getMinimum(1), envelope.getMaximum(1));
+        double xmin = envelope.getMinimum(0);
+        double xmax = envelope.getMaximum(0);
+        double ymin = envelope.getMinimum(1);
+        double ymax = envelope.getMaximum(1);
+        if (ymin > ymax) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ORDINATE_AT_$1, 1));
+        }
+        boolean inclusion = true;
+        if (xmin > xmax) {
+            // Longitude is spanning the anti-meridian: we accept them only for lattitudes from
+            // poles to poles, because we can declare the bounding box as exclusive only as a whole.
+            if (!isPoleToPole(ymin, ymax)) {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ORDINATE_AT_$1, 0));
+            }
+            double t=xmin; xmin=xmax; xmax=t;
+            inclusion = false;
+        }
+        target.setBounds(xmin, xmax, ymin, ymax);
+        target.setInclusion(inclusion);
     }
 
     /**

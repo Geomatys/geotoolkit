@@ -27,7 +27,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.referencing.operation.transform.MathTransforms;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;

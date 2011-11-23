@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RectangularShape;
+import java.awt.geom.Rectangle2D;
 import javax.swing.tree.TreeNode;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.media.jai.iterator.RectIter;
@@ -373,6 +374,64 @@ public strictfp class Assert extends org.opengis.test.Assert {
             } while (!it.nextPixelDone());
             it.startPixels();
         } while (!it.nextLineDone());
+    }
+
+    /**
+     * Tests if the given {@code outer} shape contains the given {@code inner} rectangle.
+     * This method will also verify class consistency by invoking the {@code intersects}
+     * method, and by interchanging the arguments. This method can be used for testing
+     * the {@code outer} implementation - it should not be needed for standard implementations.
+     *
+     * @param outer The shape which is expected to contains the given rectangle.
+     * @param inner The rectangle which should be contained by the shape.
+     *
+     * @since 3.20
+     */
+    public static void assertContains(final RectangularShape outer, final Rectangle2D inner) {
+        assertTrue("outer.contains(inner)",   outer.contains  (inner));
+        assertTrue("outer.intersects(inner)", outer.intersects(inner));
+        if (outer instanceof Rectangle2D) {
+            assertTrue ("inner.intersects(outer)", inner.intersects((Rectangle2D) outer));
+            assertFalse("inner.contains(outer)",   inner.contains  ((Rectangle2D) outer));
+        }
+        assertTrue("outer.contains(centerX, centerY)",
+                outer.contains(inner.getCenterX(), inner.getCenterY()));
+    }
+
+    /**
+     * Tests if the given {@code r1} shape is disjoint with the given {@code r2} rectangle.
+     * This method will also verify class consistency by invoking the {@code contains}
+     * method, and by interchanging the arguments. This method can be used for testing
+     * the {@code r1} implementation - it should not be needed for standard implementations.
+     *
+     * @param r1 The first shape to test.
+     * @param r2 The second rectangle to test.
+     *
+     * @since 3.20
+     */
+    public static void assertDisjoint(final RectangularShape r1, final Rectangle2D r2) {
+        assertFalse("r1.intersects(r2)", r1.intersects(r2));
+        assertFalse("r1.contains(r2)",   r1.contains(r2));
+        if (r1 instanceof Rectangle2D) {
+            assertFalse("r2.intersects(r1)", r2.intersects((Rectangle2D) r1));
+            assertFalse("r2.contains(r1)",   r2.contains  ((Rectangle2D) r1));
+        }
+        for (int i=0; i<9; i++) {
+            final double x, y;
+            switch (i % 3) {
+                case 0: x = r2.getMinX();    break;
+                case 1: x = r2.getCenterX(); break;
+                case 2: x = r2.getMaxX();    break;
+                default: throw new AssertionError(i);
+            }
+            switch (i / 3) {
+                case 0: y = r2.getMinY();    break;
+                case 1: y = r2.getCenterY(); break;
+                case 2: y = r2.getMaxY();    break;
+                default: throw new AssertionError(i);
+            }
+            assertFalse("r1.contains(" + x + ", " + y + ')', r1.contains(x, y));
+        }
     }
 
     /**

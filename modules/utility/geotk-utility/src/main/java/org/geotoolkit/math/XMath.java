@@ -43,9 +43,23 @@ public final class XMath extends Static {
     public static final double SQRT2 = 1.4142135623730951;
 
     /**
-     * Bit mask to isolate the sign bit of a {@code double}.
+     * Bit mask to isolate the sign bit of non-{@link Double#NaN NaN} values in a {@code double}.
+     * For any value other than {@code NaN}, the following code evaluate to 0 if the given value
+     * is positive:
+     *
+     * {@preformat java
+     *     Double.doubleToRawLongBits(value) & SIGN_BIT_MASK;
+     * }
+     *
+     * Note that this idiom differentiates positive zero from negative zero. It should be used
+     * only when such difference matter.
+     *
+     * @see #isPositive(double)
+     * @see #isNegative(double)
+     *
+     * @since 3.20
      */
-    private static final long SIGN_BIT_MASK = 0x8000000000000000L;
+    public static final long SIGN_BIT_MASK = Long.MIN_VALUE;
 
     /**
      * Table of some integer powers of 10. Used for fast computation of {@link #pow10(int)}.
@@ -188,6 +202,75 @@ public final class XMath extends Static {
         } catch (NumberFormatException exception) {
             return StrictMath.pow(10, x);
         }
+    }
+
+    /**
+     * Returns {@code true} if the given value is positive, <em>excluding</em> negative zero.
+     * Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the value is {@code +0.0}, returns {@code true}</li>
+     *   <li>If the value is {@code -0.0}, returns <b>{@code false}</b></li>
+     *   <li>If the value is {@link Double#NaN NaN}, returns {@code false}</li>
+     * </ul>
+     * <p>
+     * As seen from the above cases, this method distinguishes positive zero from negative zero.
+     * The handling of zero values is the difference between invoking {@code isPositive(double)}
+     * and testing if (<var>value</var> &gt;= 0).
+     *
+     * @param  value The value to test.
+     * @return {@code true} if the given value is positive, excluding negative zero.
+     *
+     * @since 3.20
+     */
+    public static boolean isPositive(final double value) {
+        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) == 0 && !Double.isNaN(value);
+    }
+
+    /**
+     * Returns {@code true} if the given value is negative, <em>including</em> negative zero.
+     * Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the value is {@code +0.0}, returns {@code false}</li>
+     *   <li>If the value is {@code -0.0}, returns <b>{@code true}</b></li>
+     *   <li>If the value is {@link Double#NaN NaN}, returns {@code false}</li>
+     * </ul>
+     * <p>
+     * As seen from the above cases, this method distinguishes positive zero from negative zero.
+     * The handling of zero values is the difference between invoking {@code isNegative(double)}
+     * and testing if (<var>value</var> &lt; 0).
+     *
+     * @param  value The value to test.
+     * @return {@code true} if the given value is negative, including negative zero.
+     *
+     * @since 3.20
+     */
+    public static boolean isNegative(final double value) {
+        return (Double.doubleToRawLongBits(value) & SIGN_BIT_MASK) != 0 && !Double.isNaN(value);
+    }
+
+    /**
+     * Returns {@code true} if the given values have the same sign, differentiating positive
+     * and negative zeros. Special cases:
+     * <p>
+     * <ul>
+     *   <li>{@code +0.0} and {@code -0.0} are considered to have opposite sign</li>
+     *   <li>If any value is {@link Double#NaN NaN}, returns {@code false}</li>
+     * </ul>
+     * <p>
+     *
+     * @param  v1 The first value.
+     * @param  v2 The second value, to compare the sign with the first value.
+     * @return {@code true} if the given values are not NaN and have the same sign.
+     *
+     * @see Math#signum(double)
+     *
+     * @since 3.20
+     */
+    public static boolean isSameSign(final double v1, final double v2) {
+        return !Double.isNaN(v1) && !Double.isNaN(v2) &&
+                ((Double.doubleToRawLongBits(v1) ^ Double.doubleToRawLongBits(v2)) & SIGN_BIT_MASK) == 0;
     }
 
     /**

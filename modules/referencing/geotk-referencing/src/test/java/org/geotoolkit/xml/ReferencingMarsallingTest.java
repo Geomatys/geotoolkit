@@ -38,9 +38,9 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
-import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -235,8 +235,8 @@ public final strictfp class ReferencingMarsallingTest extends LocaleDependantTes
          */
         final Map<String, Object> properties = new HashMap<String, Object>();
         properties.put(SCOPE_KEY, null);
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "D28"));
-        final DefaultVerticalDatum datum = new DefaultVerticalDatum(properties, VerticalDatumTypes.ELLIPSOIDAL);
+        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "Depth"));
+        final DefaultVerticalDatum datum = new DefaultVerticalDatum(properties, VerticalDatumType.DEPTH);
         /*
          * Vertical Coordinate System.
          */
