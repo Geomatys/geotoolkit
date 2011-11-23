@@ -56,20 +56,20 @@ import org.geotoolkit.util.Utilities;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "AbstractDatumType", propOrder = {
+@XmlType(propOrder = {
     "datumID",
     "anchorPoint",
     "realizationEpoch",
     "validArea",
     "scope"
 })
-/*@XmlSeeAlso({
-    VerticalDatumType.class,
+@XmlSeeAlso({
+    //VerticalDatumType.class,
     EngineeringDatumType.class,
     ImageDatumType.class,
-    GeodeticDatumType.class,
+    //GeodeticDatumType.class,
     TemporalDatumBaseType.class
-})*/
+})
 public abstract class AbstractDatumType extends AbstractDatumBaseType {
 
     private List<IdentifierType> datumID;
