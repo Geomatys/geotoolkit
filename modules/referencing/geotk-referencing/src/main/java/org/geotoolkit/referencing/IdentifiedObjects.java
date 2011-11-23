@@ -20,7 +20,6 @@
  */
 package org.geotoolkit.referencing;
 
-import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import java.util.Collections;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 
+import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
@@ -52,6 +52,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.Citations.iterator;
 import static org.geotoolkit.internal.Citations.identifierMatches;
 
 
@@ -76,7 +77,8 @@ import static org.geotoolkit.internal.Citations.identifierMatches;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.20
  *
  * @see CRS
  * @see org.geotoolkit.geometry.Envelopes
@@ -178,7 +180,7 @@ public final class IdentifiedObjects extends Static {
      * @param  info The identified object to view as a properties map.
      * @param  authority The new authority for the object to be created, or {@code null} if it
      *         is not going to have any declared authority.
-     * @return An view of the identified object as a mutable map.
+     * @return A view of the identified object as a mutable map.
      */
     public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
         final Map<String,Object> properties = new HashMap<>(getProperties(info));
@@ -228,7 +230,9 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Returns an object name according the given authority.
+     * Returns an object name according the given authority. This method is {@code null}-safe:
+     * every properties are checked for null values, even the properties that are supposed to
+     * be mandatory (not all implementation defines all mandatory values).
      *
      * @param  info The object to get the name from, or {@code null}.
      * @param  authority The authority for the name to return, or {@code null} for any authority.
@@ -237,33 +241,51 @@ public final class IdentifiedObjects extends Static {
      *         specified authority was found.
      */
     static String name(final IdentifiedObject info, final Citation authority) {
-        if (info == null) {
-            return null;
-        }
-        Identifier identifier = info.getName();
-        if (authority == null) {
-            return identifier.getCode();
-        }
         String name = null;
-        Citation infoAuthority = identifier.getAuthority();
-        if (infoAuthority != null) {
-            if (identifierMatches(authority, infoAuthority)) {
-                name = identifier.getCode();
+        if (info != null) {
+            Identifier identifier = info.getName();
+            if (authority == null) {
+                if (identifier != null) {
+                    name = identifier.getCode();
+                }
+                if (name == null) {
+                    final Iterator<GenericName> it = iterator(info.getAlias());
+                    if (it != null) while (it.hasNext()) {
+                        final GenericName alias = it.next();
+                        if (alias != null) {
+                            name = (alias instanceof Identifier) ? ((Identifier) alias).getCode() : alias.toString();
+                            if (name != null) break;
+                        }
+                    }
+                }
             } else {
-                for (final GenericName alias : info.getAlias()) {
-                    if (alias != null) { // Paranoiac check.
-                        if (alias instanceof Identifier) {
-                            identifier = (Identifier) alias;
-                            infoAuthority = identifier.getAuthority();
-                            if (infoAuthority != null && identifierMatches(authority, infoAuthority)) {
-                                name = identifier.getCode();
-                                break;
-                            }
-                        } else {
-                            final GenericName scope = alias.scope().name();
-                            if (scope != null && identifierMatches(authority, scope.toString())) {
-                                name = alias.toString();
-                                break;
+                if (identifier != null) {
+                    if (identifierMatches(authority, identifier.getAuthority())) {
+                        name = identifier.getCode();
+                    }
+                }
+                if (name == null) {
+                    final Iterator<GenericName> it = iterator(info.getAlias());
+                    if (it != null) while (it.hasNext()) {
+                        final GenericName alias = it.next();
+                        if (alias != null) {
+                            if (alias instanceof Identifier) {
+                                identifier = (Identifier) alias;
+                                if (identifierMatches(authority, identifier.getAuthority())) {
+                                    name = identifier.getCode();
+                                    if (name != null) break;
+                                }
+                            } else {
+                                final NameSpace ns = alias.scope();
+                                if (ns != null) {
+                                    final GenericName scope = ns.name();
+                                    if (scope != null) {
+                                        if (identifierMatches(authority, scope.toString())) {
+                                            name = alias.toString();
+                                            if (name != null) break;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -305,17 +327,12 @@ public final class IdentifiedObjects extends Static {
      */
     static ReferenceIdentifier identifier(final IdentifiedObject object, final Citation authority) {
         if (object != null) {
-            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
-            if (identifiers != null) {
-                for (final ReferenceIdentifier identifier : identifiers) {
-                    if (identifier != null) { // Paranoiac check.
-                        if (authority == null) {
-                            return identifier;
-                        }
-                        final Citation infoAuthority = identifier.getAuthority();
-                        if (infoAuthority != null && identifierMatches(authority, infoAuthority)) {
-                            return identifier;
-                        }
+            final Iterator<ReferenceIdentifier> it = iterator(object.getIdentifiers());
+            if (it != null) while (it.hasNext()) {
+                final ReferenceIdentifier identifier = it.next();
+                if (identifier != null) { // Paranoiac check.
+                    if (authority == null || identifierMatches(authority, identifier.getAuthority())) {
+                        return identifier;
                     }
                 }
             }
@@ -350,14 +367,13 @@ public final class IdentifiedObjects extends Static {
      */
     public static String getIdentifier(final IdentifiedObject object) {
         if (object != null) {
-            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
-            if (identifiers != null) {
-                for (final ReferenceIdentifier identifier : identifiers) {
-                    if (identifier != null) { // Paranoiac check.
-                        final String code = identifier.toString();
-                        if (code != null) { // Paranoiac check.
-                            return code;
-                        }
+            final Iterator<ReferenceIdentifier> it = iterator(object.getIdentifiers());
+            if (it != null) while (it.hasNext()) {
+                final ReferenceIdentifier identifier = it.next();
+                if (identifier != null) { // Paranoiac check.
+                    final String code = identifier.toString();
+                    if (code != null) { // Paranoiac check.
+                        return code;
                     }
                 }
             }

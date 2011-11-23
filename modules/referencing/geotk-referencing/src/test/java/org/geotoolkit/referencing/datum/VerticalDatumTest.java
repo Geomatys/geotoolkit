@@ -68,7 +68,6 @@ public final strictfp class VerticalDatumTest extends ReferencingTestBase {
     private static VerticalDatumType typeForName(final Field typeField, final String name) throws IllegalAccessException {
         final DefaultVerticalDatum datum = new DefaultVerticalDatum(name, VerticalDatumType.OTHER_SURFACE);
         typeField.set(datum, null);
-        datum.afterUnmarshal(null, null);
         return datum.getVerticalDatumType();
     }
 }

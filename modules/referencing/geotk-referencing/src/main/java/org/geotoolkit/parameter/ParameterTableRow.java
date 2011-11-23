@@ -116,7 +116,7 @@ final class ParameterTableRow {
 
     /**
      * Returns the authority of the given identifier, or {@code null} if none.
-     * As a side effect, this method remember the length of the widest identifier.
+     * As a side effect, this method remembers the length of the widest identifier.
      */
     private String getAuthority(final Identifier identifier) {
         String authority = Citations.getIdentifier(identifier.getAuthority());

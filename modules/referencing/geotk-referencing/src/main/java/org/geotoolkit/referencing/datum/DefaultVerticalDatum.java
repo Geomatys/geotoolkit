@@ -23,7 +23,6 @@ package org.geotoolkit.referencing.datum;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Collections;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.Immutable;
@@ -188,31 +187,6 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     }
 
     /**
-     * Invoked after unmarshalling in order to infer the datum type from its name. This is
-     * necessary because GML 3.2 does not contain any attribute for the datum type. The
-     * algorithm used here is determined on a heuristic basis and may be changed in any
-     * future version. If the type can not be determined, default on the ellipsoidal type
-     * since it will usually implies no additional calculation.
-     *
-     * @since 3.20
-     */
-    final void afterUnmarshal(final Unmarshaller unmarshaller, final Object parent) {
-        if (type == null) {
-            final StringBuilder name = new StringBuilder(getName(null));
-            Strings.toASCII(name);
-            for (int i=name.length(); --i>=0;) {
-                // Following algorithm doesn't work for all Locale, but it should
-                // be okay since we removed many non-ASCII characters above.
-                name.setCharAt(i, Character.toLowerCase(name.charAt(i)));
-            }
-                 if (find(name, "depth"))      type = VerticalDatumType.DEPTH;
-            else if (find(name, "geoid"))      type = VerticalDatumType.GEOIDAL;
-            else if (find(name, "barometric")) type = VerticalDatumType.BAROMETRIC;
-            else type = VerticalDatumTypes.ELLIPSOIDAL;
-        }
-    }
-
-    /**
      * Returns {@code true} if the given string was found in the given name, either at the
      * name beginning or after a space. We don't test the character after the given string
      * because the word may be incomplete (e.g. {@code "geoid"} vs {@code "geoidal"}).
@@ -227,13 +201,46 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     }
 
     /**
+     * Returns the type of this datum, or infers the type from the datum name if no type were
+     * specified. The later case occurs after unmarshalling, since GML 3.2 does not contain any
+     * attribute for the datum type. It may also happen if the datum were created using reflection.
+     * <p>
+     * The algorithm used here is determined on a heuristic basis and may be changed in any
+     * future version. If the type can not be determined, default on the ellipsoidal type
+     * since it will usually implies no additional calculation.
+     *
+     * @since 3.20
+     */
+    private VerticalDatumType type() {
+        VerticalDatumType type = this.type;
+        if (type == null) {
+            type = VerticalDatumTypes.ELLIPSOIDAL;
+            final String s = getName(null);
+            if (s != null) {
+                final StringBuilder name = new StringBuilder(s);
+                Strings.toASCII(name);
+                for (int i=name.length(); --i>=0;) {
+                    // Following algorithm doesn't work for all Locale, but it should
+                    // be okay since we removed many non-ASCII characters above.
+                    name.setCharAt(i, Character.toLowerCase(name.charAt(i)));
+                }
+                     if (find(name, "depth"))      type = VerticalDatumType.DEPTH;
+                else if (find(name, "geoid"))      type = VerticalDatumType.GEOIDAL;
+                else if (find(name, "barometric")) type = VerticalDatumType.BAROMETRIC;
+            }
+            this.type = type;
+        }
+        return type;
+    }
+
+    /**
      * The type of this vertical datum.
      *
      * @return The type of this vertical datum.
      */
     @Override
     public VerticalDatumType getVerticalDatumType() {
-        return type;
+        return type();
     }
 
     /**
@@ -241,6 +248,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      */
     @Override
     final int getLegacyDatumType() {
+        final VerticalDatumType type = getVerticalDatumType();
         final int ordinal = type.ordinal();
         if (ordinal>=0 && ordinal<LEGACY_CODES.length) {
             assert type.equals(TYPES[ordinal]) : type;
@@ -286,7 +294,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
             switch (mode) {
                 case STRICT: {
                     final DefaultVerticalDatum that = (DefaultVerticalDatum) object;
-                    return Objects.equals(this.type, that.type);
+                    return Objects.equals(this.type(), that.type());
                 }
                 default: {
                     final VerticalDatum that = (VerticalDatum) object;
@@ -302,7 +310,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      */
     @Override
     protected int computeHashCode() {
-        return hash(type, super.computeHashCode());
+        return hash(type(), super.computeHashCode());
     }
 
     /**
