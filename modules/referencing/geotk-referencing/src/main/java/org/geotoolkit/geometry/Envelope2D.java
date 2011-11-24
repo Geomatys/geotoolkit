@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.awt.geom.Rectangle2D;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -67,6 +68,10 @@ import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
  *   <li>{@link #contains(double,double)}</li>
  *   <li>{@link #contains(Rectangle2D)} and its variant receiving {@code double} arguments</li>
  *   <li>{@link #intersects(Rectangle2D)} and its variant receiving {@code double} arguments</li>
+ *   <li>{@link #createIntersection(Rectangle2D)}</li>
+ *   <li>{@link #createUnion(Rectangle2D)}</li>
+ *   <li>{@link #add(Rectangle2D)}</li>
+ *   <li>{@link #add(double,double)}</li>
  * </ul>
  * <p>
  * The {@link #getSpan(int)} and {@link #getMedian(int)} methods delegate to the methods listed
@@ -674,7 +679,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
      * This method supports anti-meridian spanning in the same way than
-     * {@link AbstractEnvelope#intersect(Envelope)}.
+     * {@link GeneralEnvelope#intersect(Envelope)}.
      *
      * @param rect The rectangle to be intersected with this envelope.
      * @return The intersection of the given rectangle with this envelope.
@@ -731,17 +736,34 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
 
     /**
      * Returns the union of this envelope with the specified rectangle.
-     *
-     * {@section Spanning the anti-meridian of a Geographic CRS}
-     * This method supports anti-meridian spanning in the same way than
-     * {@link AbstractEnvelope#add(Envelope)}.
+     * The default implementation clones this envelope, then delegates
+     * to {@link #add(Rectangle2D)}.
      *
      * @param rect The rectangle to add to this envelope.
      * @return The union of the given rectangle with this envelope.
      */
     public Envelope2D createUnion(final Rectangle2D rect) {
+        final Envelope2D union = (Envelope2D) clone();
+        union.add(rect);
+        assert union.isEmpty() || (union.contains(this) && union.contains(rect)) : union;
+        return union;
+    }
+
+    /**
+     * Adds an other rectangle to this rectangle. The resulting rectangle is the union of the
+     * two {@code Rectangle} objects.
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports anti-meridian spanning in the same way than
+     * {@link GeneralEnvelope#add(Envelope)}, except if the result is a rectangle expanding to
+     * infinities. In the later case, the field values are set to {@code NaN} because infinite
+     * values are a little bit problematic in {@link Rectangle2D} objects.
+     *
+     * @param rect The rectangle to add to this envelope.
+     */
+    @Override
+    public void add(final Rectangle2D rect) {
         final Envelope2D env = (rect instanceof Envelope2D) ? (Envelope2D) rect : null;
-        final Envelope2D union = new Envelope2D(crs, NaN, NaN, NaN, NaN);
         for (int i=0; i!=2; i++) {
             final double min0, min1, span0, span1;
             if (i == 0) {
@@ -749,11 +771,13 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                 span0 = width;
                 min1  = rect.getX();
                 span1 = (env != null) ? env.width : rect.getWidth();
+                x = width = NaN;
             } else {
                 min0  = y;
                 span0 = height;
                 min1  = rect.getY();
                 span1 = (env != null) ? env.height : rect.getHeight();
+                y = height = NaN;
             }
             final double max0 = min0 + span0;
             final double max1 = min1 + span1;
@@ -796,10 +820,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                     if (right > left) {min = min1; max = max0;}
                 }
             }
-            union.setRange(i, min, max);
+            setRange(i, min, max);
         }
-        assert union.isEmpty() || (union.contains(this) && union.contains(rect)) : union;
-        return union;
     }
 
     /**
@@ -819,6 +841,48 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
             case 1: y = minimum; height = span; break;
             default: throw indexOutOfBounds(dimension);
         }
+    }
+
+    /**
+     * Adds a point to this rectangle. The resulting rectangle is the smallest rectangle that
+     * contains both the original rectangle and the specified point.
+     * <p>
+     * After adding a point, a call to {@link #contains(double, double)} with the added point
+     * as an argument will return {@code true}, except if one of the point ordinates was
+     * {@link Double#NaN} in which case the corresponding ordinate has been ignored.
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports anti-meridian spanning in the same way than
+     * {@link GeneralEnvelope#add(DirectPosition)}.
+     *
+     * @param px The first ordinate of the point to add.
+     * @param py The second ordinate of the point to add.
+     */
+    @Override
+    public void add(final double px, final double py) {
+        double off = px - x;
+        if (!isNegative(width)) { // Standard case, or NaN.
+            if (off < 0) {x=px; width -= off;}
+            if (off > width)   {width  = off;}
+        } else if (off < 0) {
+            final double r = width - off;
+            if (r < 0) {
+                if (r > off) width  = off;
+                else {x=px;  width -= off;}
+            }
+        }
+        off = py - y;
+        if (!isNegative(height)) {
+            if (off < 0) {y=py; height -= off;}
+            if (off > height)  {height  = off;}
+        } else if (off < 0) {
+            final double r = height - off;
+            if (r < 0) {
+                if (r > off) height  = off;
+                else {y=py;  height -= off;}
+            }
+        }
+        assert contains(px, py) || isEmpty() || isNaN(px) || isNaN(py);
     }
 
     /**

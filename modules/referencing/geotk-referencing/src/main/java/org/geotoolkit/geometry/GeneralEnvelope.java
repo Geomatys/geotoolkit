@@ -818,6 +818,18 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports envelopes spanning the anti-meridian. In such cases it is possible to
+     * move both envelope borders in order to encompass the given point, as illustrated below (the
+     * new point is represented by the {@code +} symbol):
+     *
+     * {@preformat text
+     *    ─────┐   + ┌─────
+     *    ─────┘     └─────
+     * }
+     *
+     * The default implementation moves only the border which is closest to the given point.
+     *
      * @param  position The point to add.
      * @throws MismatchedDimensionException if the specified point doesn't have
      *         the expected dimension.
@@ -868,7 +880,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         if (left > 0) {
             right -= value;
             if (right > 0) {
-                if (right < left) {
+                if (right > left) {
                     i += (ordinates.length >>> 1);
                 }
                 ordinates[i] = value;
@@ -882,6 +894,12 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports envelopes spanning the anti-meridian. If one or both envelopes span
+     * the anti-meridian, then the result of the {@code add} operation may be an envelope expanding
+     * to infinities. In such case, the ordinate range will be either [-&infin;&hellip;&infin;] or
+     * [0&hellip;-0] depending on whatever the original range span the anti-meridian or not.
      *
      * @param  envelope the {@code Envelope} to add to this envelope.
      * @throws MismatchedDimensionException if the specified envelope doesn't
@@ -995,6 +1013,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports envelopes spanning the anti-meridian.
      *
      * @param  envelope the {@code Envelope} to intersect to this envelope.
      * @throws MismatchedDimensionException if the specified envelope doesn't

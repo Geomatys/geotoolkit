@@ -156,6 +156,29 @@ public final strictfp class GeneralEnvelopeTest {
     }
 
     /**
+     * Asserts that adding the given point to the given envelope produces the given result.
+     * First, this method tests using the {@link Envelope2D} implementation. Then, it tests
+     * using the {@link GeneralEnvelope} implementation.
+     */
+    private static void assertAddEquals(final GeneralEnvelope e, final DirectPosition2D p,
+            final double xmin, final double ymin, final double xmax, final double ymax)
+    {
+        final Envelope2D r = new Envelope2D(e);
+        r.add(p);
+        assertEquals("xmin", xmin, r.getMinX(), STRICT);
+        assertEquals("xmax", xmax, r.getMaxX(), STRICT);
+        assertEquals("ymin", ymin, r.getMinY(), STRICT);
+        assertEquals("ymax", ymax, r.getMaxY(), STRICT);
+        assertEnvelopeEquals(r, xmin, ymin, xmax, ymax);
+
+        // Compares with GeneralEnvelope.
+        final GeneralEnvelope ec = new GeneralEnvelope(e);
+        ec.add(p);
+        assertEnvelopeEquals(ec, xmin, ymin, xmax, ymax);
+        assertTrue("Using GeneralEnvelope.", ec.equals(r, STRICT, false));
+    }
+
+    /**
      * Tests the {@link GeneralEnvelope#intersect(Envelope)} and
      * {@link Envelope2D#createIntersection(Rectangle2D)} methods.
      *
@@ -277,6 +300,36 @@ public final strictfp class GeneralEnvelopeTest {
         //  ─────┘     └─────
         e2.setRange(0, 10, 90);
         assertUnionEquals(e1, e2, +0.0, ymin, -0.0, ymax, true, true);
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#add(DirectPosition)} and
+     * {@link Envelope2D#add(Point2D)} methods.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testAddPoint() {
+        final double ymin=-20, ymax=30; // Will not change anymore
+        final GeneralEnvelope  e = create(20, ymin,  80, ymax);
+        final DirectPosition2D p = new DirectPosition2D(40, 15);
+        assertAddEquals(e, p, 20, ymin, 80, ymax);
+
+        p.x = 100; // Add on the right side.
+        assertAddEquals(e, p, 20, ymin, 100, ymax);
+
+        p.x = -10; // Add on the left side.
+        assertAddEquals(e, p, -10, ymin, 80, ymax);
+
+        e.setRange(0,  80, 20);
+        p.x = 100; // No change expected.
+        assertAddEquals(e, p, 80, ymin, 20, ymax);
+
+        p.x = 70; // Add on the right side.
+        assertAddEquals(e, p, 70, ymin, 20, ymax);
+
+        p.x = 30; // Add on the left side.
+        assertAddEquals(e, p, 80, ymin, 30, ymax);
     }
 
     /**
