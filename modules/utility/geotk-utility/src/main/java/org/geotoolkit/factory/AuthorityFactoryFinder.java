@@ -387,7 +387,7 @@ loop:       for (int i=0; ; i++) {
         public boolean filter(final Object provider) {
             if (authority != null) {
                 final Citation declared = ((AuthorityFactory) provider).getAuthority();
-                if (declared != null && Citations.identifierMatches(declared, authority)) {
+                if (Citations.identifierMatches(declared, authority)) {
                     return (filter == null) || filter.filter(provider);
                 }
             }

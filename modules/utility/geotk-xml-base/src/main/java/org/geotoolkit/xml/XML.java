@@ -47,7 +47,7 @@ import org.geotoolkit.lang.Static;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -126,6 +126,19 @@ public final class XML extends Static {
      * @since 3.17
      */
     public static final String SCHEMAS = "org.geotoolkit.xml.schemas";
+
+    /**
+     * Specifies the GML version to be marshalled or unmarshalled. The GML version may affect the
+     * set of XML elements to be marshalled. Newer versions typically have more elements, but not
+     * always. For example in {@code gml:VerticalDatum}, the {@code gml:verticalDatumType} property
+     * presents in GML 3.0 and 3.1 has been removed in GML 3.2.
+     * <p>
+     * The value can be {@link String} or {@link org.geotoolkit.util.Version} objects.
+     * If no version is specified, then the most recent GML version is assumed.
+     *
+     * @since 3.20
+     */
+    public static final String GML_VERSION = "org.geotoolkit.gml.version";
 
     /**
      * Allows client code to replace {@code xlink} or {@code uuidref} attributes by the actual

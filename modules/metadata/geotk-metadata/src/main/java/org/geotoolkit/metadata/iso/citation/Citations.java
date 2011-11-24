@@ -658,7 +658,7 @@ public final class Citations extends Static {
      *
      * @param  citation The citation for which to get the identifier, or {@code null}.
      * @return The shortest identifier of the given citation, or {@code null} if the
-     *         given citation was null.
+     *         given citation was null or doesn't declare any identifier or title.
      *
      * @since 2.4
      */

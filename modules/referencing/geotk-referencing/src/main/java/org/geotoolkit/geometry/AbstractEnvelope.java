@@ -501,9 +501,24 @@ public abstract class AbstractEnvelope implements Envelope {
                  *  │  ┌───────┐  │    or    ──┐ │  │ ┌──    excluding    ───┐ │ │ ┌───
                  *  │  └───────┘  │          ──┘ │  │ └──                 ───┘ │ │ └───
                  *  └─────────────┘          ────┘  └────                      └─┘
-                 *  minCnd                          minCnd */
-                if (!isNegativeUnsafe(max1 - min1) || isNegativeUnsafe(max0 - min0)) {
+                 *  minCnd                          minCnd
+                 */
+                // sp1=true if the small rectangle in above pictures spans the anti-meridian.
+                final boolean sp1 = isNegativeUnsafe(max1 - min1);
+                if (!sp1) {
+                    // Not the excluded case, go to next dimension.
                     continue;
+                }
+                if (isNegativeUnsafe(max0 - min0)) {
+                    // Not the excluded case, go to next dimension.
+                    continue;
+                } else if (sp1) {
+                    // If this envelope does not span the anti-meridian but the given envelope
+                    // does, we don't contain the given envelope except in the special case
+                    // where this envelope expands to infinities.
+                    if (min0 == Double.NEGATIVE_INFINITY && max0 == Double.POSITIVE_INFINITY) {
+                        continue;
+                    }
                 }
             } else if (minCondition != maxCondition) {
                 /*       maxCnd                     !maxCnd
@@ -512,8 +527,16 @@ public abstract class AbstractEnvelope implements Envelope {
                  *    └────┘  │  │                        │  │  └────┘
                  *  ──────────┘  └─────              ─────┘  └─────────
                  *               !minCnd                     minCnd */
-                if (isNegative(max0 - min0) && isPositive(max1 - min1)) {
-                    continue;
+                if (isNegative(max0 - min0)) {
+                    if (isPositive(max1 - min1)) {
+                        continue;
+                    }
+                    // Special case for the [0…-0] range, if inclusive.
+                    if (edgesInclusive && Double.doubleToRawLongBits(min0) == 0L &&
+                            Double.doubleToRawLongBits(max0) == SIGN_BIT_MASK)
+                    {
+                        continue;
+                    }
                 }
             }
             return false;

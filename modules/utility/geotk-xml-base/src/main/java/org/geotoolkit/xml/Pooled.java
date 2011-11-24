@@ -28,6 +28,7 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
+import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
@@ -45,7 +46,7 @@ import static org.geotoolkit.internal.jaxb.MarshalContext.*;
  * "endorsed JAR" names if needed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -91,6 +92,14 @@ abstract class Pooled {
      * @since 3.18
      */
     private ObjectLinker linker;
+
+    /**
+     * The GML version to be marshalled or unmarshalled, or {@code null} if unspecified.
+     * If null, than the latest version is assumed.
+     *
+     * @since 3.20
+     */
+    private Version versionGML;
 
     /**
      * The base URL of ISO 19139 (or other standards) schemas. It shall be an unmodifiable
@@ -150,6 +159,8 @@ abstract class Pooled {
         initial.clear();
         converters = null;
         linker     = null;
+        versionGML = null;
+        schemas    = null;
         locale     = null;
         timezone   = null;
     }
@@ -218,6 +229,10 @@ abstract class Pooled {
                 schemas = InternalUtilities.subset((Map<?,?>) value, String.class, "gmd");
                 return;
             }
+            if (name.equals(XML.GML_VERSION)) {
+                versionGML = (value instanceof CharSequence) ? new Version(value.toString()) : (Version) value;
+                return;
+            }
             if (name.equals(XML.LOCALE)) {
                 locale = (Locale) value;
                 return;
@@ -259,6 +274,8 @@ abstract class Pooled {
             return linker;
         } else if (name.equals(XML.SCHEMAS)) {
             return schemas;
+        } else if (name.equals(XML.GML_VERSION)) {
+            return versionGML;
         } else if (name.equals(XML.LOCALE)) {
             return locale;
         } else if (name.equals(XML.TIMEZONE)) {
@@ -371,6 +388,6 @@ abstract class Pooled {
      * @since 3.07
      */
     final MarshalContext begin() {
-        return MarshalContext.begin(converters, linker, schemas, locale, timezone, bitMasks);
+        return MarshalContext.begin(converters, linker, versionGML, schemas, locale, timezone, bitMasks);
     }
 }

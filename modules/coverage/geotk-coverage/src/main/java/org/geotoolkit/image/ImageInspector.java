@@ -54,7 +54,12 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @since 2.3
  * @module
+ *
+ * @deprecated This class is a legacy from old days and has never been seriously used in the
+ *             Geotoolkit.org library. Its work is quite arbitrary, so we are probably better
+ *             to let users do their work in their own way.
  */
+@Deprecated
 public class ImageInspector {
     /**
      * An additional {@code PaletteInterpretation} code representing the IHS (Intensity, Hue,
@@ -667,7 +672,7 @@ public class ImageInspector {
      * Returns the type of the {@linkplain ColorSpace Color Space} used by the {@linkplain #image}.
      * If the Color Space is known to this method, then it returns one of the constants defined
      * in the {@link PaletteInterpretation} code list, or the {@link #IHS} constant. Otherwise
-     * this methor returns {@code null}.
+     * this method returns {@code null}.
      *
      *
      * {@section Index Color Model}
@@ -681,7 +686,7 @@ public class ImageInspector {
      * {@code IndexColorModel} having only gray colors, use {@link #isGrayScale} instead.
      *
      * @return The palette interpretation inferred from the Color Space of the current image,
-     *         or {@code null} if unnkown.
+     *         or {@code null} if unknown.
      *
      * @see ImageWorker#setColorSpaceType
      *

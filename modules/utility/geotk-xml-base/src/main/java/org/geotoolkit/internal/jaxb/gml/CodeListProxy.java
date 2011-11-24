@@ -15,51 +15,50 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jaxb.referencing;
+package org.geotoolkit.internal.jaxb.gml;
 
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
-import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.util.CodeList;
 
 
 /**
- * JAXB adapter for {@link AxisDirection}, in order to integrate the value in an element
- * complying with ISO-19139 standard.
+ * JAXB adapter for {@link GMLCodeList}, in order to integrate the value in an element
+ * complying with OGC/ISO standard.
  * <p>
- * This implementation can not be merged with {@link CS_AxisDirection} because we
- * are not allowed to use {@code @XmlValue} annotation in a class that extend an other
- * class.
+ * This implementation can not be merged with {@link GMLCodeList} because we are not
+ * allowed to use {@code @XmlValue} annotation in a class that extend an other class.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.02
+ * @version 3.20
  *
- * @since 3.00
+ * @since 3.20 (derived from 3.00)
  * @module
  */
-public final class AxisDirectionType {
+public final class CodeListProxy {
     /**
-     * The XML value.
-     */
-    @XmlValue
-    String value;
-
-    /**
-     * The code space as a XML attribute. This is often {@code "EPSG"}.
+     * The code space of the {@linkplain #identifier} as an URI, or {@code null}.
      */
     @XmlAttribute
     String codeSpace;
 
     /**
+     * The code list identifier.
+     */
+    @XmlValue
+    String identifier;
+
+    /**
      * Empty constructor for JAXB only.
      */
-    public AxisDirectionType() {
+    public CodeListProxy() {
     }
 
     /**
      * Creates a new adapter for the given value.
      */
-    AxisDirectionType(final AxisDirection value) {
-       this.codeSpace = "EPSG"; // NOSONAR: will be read by JAXB.
-       this.value     = value.identifier();
+    CodeListProxy(final String codeSpace, final CodeList<?> value) {
+       this.codeSpace  = codeSpace;
+       this.identifier = value.identifier();
     }
 }

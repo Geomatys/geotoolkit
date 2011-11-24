@@ -58,7 +58,7 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
     /**
      * Constructs a new envelope with the same data than the specified
      * geographic bounding box. The coordinate reference system is set
-     * to {@linkplain DefaultGeographicCRS#WGS84 WGS84}.
+     * to {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84}.
      *
      * @param box The bounding box to copy.
      *

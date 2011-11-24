@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
+
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.ComparisonMode;
 
@@ -38,7 +39,7 @@ import org.geotoolkit.util.ComparisonMode;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
  *
- * @see MathTransforms
+ * @see org.geotoolkit.referencing.operation.MathTransforms
  *
  * @since 2.0
  * @module

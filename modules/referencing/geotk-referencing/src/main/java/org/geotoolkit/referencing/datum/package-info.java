@@ -76,6 +76,7 @@
     @XmlJavaTypeAdapter(EX_Extent.class),
     @XmlJavaTypeAdapter(CD_Ellipsoid.class),
     @XmlJavaTypeAdapter(CD_PrimeMeridian.class),
+    @XmlJavaTypeAdapter(CD_VerticalDatumType.class),
     @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(InternationalStringConverter.class)
 })

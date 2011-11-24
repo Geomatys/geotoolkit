@@ -114,7 +114,7 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
      * @param offset The {@code offset} term in the linear equation.
      * @return The linear transform for the given scale and offset.
      *
-     * @see MathTransforms#linear(int, double, double)
+     * @see org.geotoolkit.referencing.operation.MathTransforms#linear(int, double, double)
      */
     public static LinearTransform1D create(final double scale, final double offset) {
         if (scale == 0) {
