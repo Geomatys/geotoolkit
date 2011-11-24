@@ -19,6 +19,8 @@ package org.geotoolkit.geometry;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
+
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
@@ -63,14 +65,40 @@ public final strictfp class GeneralEnvelopeTest {
 
     /**
      * Asserts that the the given two-dimensional envelope is equals to the given rectangle.
+     * The {@code xmin} and {@code ymin} argument are actually the <var>x</var> ordinate values
+     * for the lower and upper corner. The actual {@code xmin} and {@code ymin} values will be
+     * inferred from those corners.
+     * <p>
+     * This method assumes that only the <var>x</var> axis may be a wraparound axis.
      */
     private static void assertEnvelopeEquals(final Envelope e,
-            final double xmin, final double ymin, final double xmax, final double ymax)
+            final double lower, final double ymin, final double upper, final double ymax)
     {
-        assertEquals("xmin", xmin, e.getMinimum(0), STRICT);
-        assertEquals("xmax", xmax, e.getMaximum(0), STRICT);
-        assertEquals("ymin", ymin, e.getMinimum(1), STRICT);
-        assertEquals("ymax", ymax, e.getMaximum(1), STRICT);
+        final double xmin, xmax;
+        if (XMath.isNegative(upper - lower)) { // Check for anti-meridian spanning.
+            xmin = -180;
+            xmax = +180;
+        } else {
+            xmin = lower;
+            xmax = upper;
+        }
+        final DirectPosition l = e.getLowerCorner();
+        final DirectPosition u = e.getUpperCorner();
+        assertEquals("lower", lower, l.getOrdinate(0), STRICT);
+        assertEquals("upper", upper, u.getOrdinate(0), STRICT);
+        assertEquals("xmin",  xmin,  e.getMinimum (0), STRICT);
+        assertEquals("xmax",  xmax,  e.getMaximum (0), STRICT);
+        assertEquals("ymin",  ymin,  e.getMinimum (1), STRICT);
+        assertEquals("ymax",  ymax,  e.getMaximum (1), STRICT);
+        assertEquals("ymin",  ymin,  l.getOrdinate(1), STRICT);
+        assertEquals("ymax",  ymax,  u.getOrdinate(1), STRICT);
+        if (e instanceof Envelope2D) {
+            final Envelope2D ri = (Envelope2D) e;
+            assertEquals("xmin", xmin, ri.getMinX(), STRICT);
+            assertEquals("xmax", xmax, ri.getMaxX(), STRICT);
+            assertEquals("ymin", ymin, ri.getMinY(), STRICT);
+            assertEquals("ymax", ymax, ri.getMaxY(), STRICT);
+        }
     }
 
     /**
@@ -86,10 +114,6 @@ public final strictfp class GeneralEnvelopeTest {
         final Envelope2D r2 = new Envelope2D(e2);
         final Envelope2D ri = r1.createIntersection(r2);
         assertEquals("isEmpty", isEmpty, r1.isEmpty());
-        assertEquals("xmin", xmin, ri.getMinX(), STRICT);
-        assertEquals("xmax", xmax, ri.getMaxX(), STRICT);
-        assertEquals("ymin", ymin, ri.getMinY(), STRICT);
-        assertEquals("ymax", ymax, ri.getMaxY(), STRICT);
         assertEnvelopeEquals(ri, xmin, ymin, xmax, ymax);
         assertEquals("Interchanged arguments.", ri, r2.createIntersection(r1));
 
@@ -127,10 +151,6 @@ public final strictfp class GeneralEnvelopeTest {
         final Envelope2D r1 = new Envelope2D(e1);
         final Envelope2D r2 = new Envelope2D(e2);
         final Envelope2D ri = r1.createUnion(r2);
-        assertEquals("xmin", inf ? NaN : xmin, ri.getMinX(), STRICT);
-        assertEquals("xmax", inf ? NaN : xmax, ri.getMaxX(), STRICT);
-        assertEquals("ymin",             ymin, ri.getMinY(), STRICT);
-        assertEquals("ymax",             ymax, ri.getMaxY(), STRICT);
         assertEnvelopeEquals(ri, inf ? NaN : xmin, ymin, inf ? NaN : xmax, ymax);
         assertEquals("Interchanged arguments.", ri, r2.createUnion(r1));
 
@@ -165,10 +185,6 @@ public final strictfp class GeneralEnvelopeTest {
     {
         final Envelope2D r = new Envelope2D(e);
         r.add(p);
-        assertEquals("xmin", xmin, r.getMinX(), STRICT);
-        assertEquals("xmax", xmax, r.getMaxX(), STRICT);
-        assertEquals("ymin", ymin, r.getMinY(), STRICT);
-        assertEquals("ymax", ymax, r.getMaxY(), STRICT);
         assertEnvelopeEquals(r, xmin, ymin, xmax, ymax);
 
         // Compares with GeneralEnvelope.
@@ -348,12 +364,12 @@ public final strictfp class GeneralEnvelopeTest {
         envelope.setSubEnvelope(horizontal, 0);
         envelope.setSubEnvelope(vertical,   2);
         assertFalse(envelope.isEmpty());
-        assertEquals(-180, envelope.getMinimum(0), 0);
-        assertEquals( 180, envelope.getMaximum(0), 0);
-        assertEquals( -90, envelope.getMinimum(1), 0);
-        assertEquals(  90, envelope.getMaximum(1), 0);
-        assertEquals(  20, envelope.getMinimum(2), 0);
-        assertEquals(  40, envelope.getMaximum(2), 0);
+        assertEquals(-180, envelope.getLower(0), 0);
+        assertEquals( 180, envelope.getUpper(0), 0);
+        assertEquals( -90, envelope.getLower(1), 0);
+        assertEquals(  90, envelope.getUpper(1), 0);
+        assertEquals(  20, envelope.getLower(2), 0);
+        assertEquals(  40, envelope.getUpper(2), 0);
     }
 
     /**
@@ -383,25 +399,25 @@ public final strictfp class GeneralEnvelopeTest {
     public void testWktParsing() {
         GeneralEnvelope envelope = new GeneralEnvelope("BOX(-180 -90,180 90)");
         assertEquals(2, envelope.getDimension());
-        assertEquals(-180, envelope.getMinimum(0), STRICT);
-        assertEquals( 180, envelope.getMaximum(0), STRICT);
-        assertEquals( -90, envelope.getMinimum(1), STRICT);
-        assertEquals(  90, envelope.getMaximum(1), STRICT);
+        assertEquals(-180, envelope.getLower(0), STRICT);
+        assertEquals( 180, envelope.getUpper(0), STRICT);
+        assertEquals( -90, envelope.getLower(1), STRICT);
+        assertEquals(  90, envelope.getUpper(1), STRICT);
 
         envelope = new GeneralEnvelope("BOX3D(-180 -90 10, 180 90 30)");
         assertEquals(3, envelope.getDimension());
-        assertEquals(-180, envelope.getMinimum(0), STRICT);
-        assertEquals( 180, envelope.getMaximum(0), STRICT);
-        assertEquals( -90, envelope.getMinimum(1), STRICT);
-        assertEquals(  90, envelope.getMaximum(1), STRICT);
-        assertEquals(  10, envelope.getMinimum(2), STRICT);
-        assertEquals(  30, envelope.getMaximum(2), STRICT);
+        assertEquals(-180, envelope.getLower(0), STRICT);
+        assertEquals( 180, envelope.getUpper(0), STRICT);
+        assertEquals( -90, envelope.getLower(1), STRICT);
+        assertEquals(  90, envelope.getUpper(1), STRICT);
+        assertEquals(  10, envelope.getLower(2), STRICT);
+        assertEquals(  30, envelope.getUpper(2), STRICT);
 
         envelope = new GeneralEnvelope("POLYGON((-80 -30,-100 40,80 40,100 -40,-80 -30))");
-        assertEquals(-100, envelope.getMinimum(0), STRICT);
-        assertEquals( 100, envelope.getMaximum(0), STRICT);
-        assertEquals( -40, envelope.getMinimum(1), STRICT);
-        assertEquals(  40, envelope.getMaximum(1), STRICT);
+        assertEquals(-100, envelope.getLower(0), STRICT);
+        assertEquals( 100, envelope.getUpper(0), STRICT);
+        assertEquals( -40, envelope.getLower(1), STRICT);
+        assertEquals(  40, envelope.getUpper(1), STRICT);
 
         assertEquals("BOX2D(6 10, 6 10)",     new GeneralEnvelope("POINT(6 10)").toString());
         assertEquals("BOX3D(6 10 3, 6 10 3)", new GeneralEnvelope("POINT M [ 6 10 3 ] ").toString());
@@ -468,7 +484,7 @@ public final strictfp class GeneralEnvelopeTest {
          * Offset slightly some coordinate value. Should not be equals anymore,
          * except when comparing with a tolerance value.
          */
-        e2.setRange(2, e2.getMinimum(2) + 3E-5, e2.getMaximum(2) - 3E-5);
+        e2.setRange(2, e2.getLower(2) + 3E-5, e2.getUpper(2) - 3E-5);
         assertTrue (e1.contains(e2, true ));
         assertFalse(e1.contains(e2, false));
         assertFalse(e1.equals  (e2));
@@ -479,7 +495,7 @@ public final strictfp class GeneralEnvelopeTest {
          * Applies a greater offset. Should not be equal,
          * even when comparing with a tolerance value.
          */
-        e2.setRange(1, e2.getMinimum(1) + 1.5, e2.getMaximum(1) - 1.5);
+        e2.setRange(1, e2.getLower(1) + 1.5, e2.getUpper(1) - 1.5);
         assertTrue (e1.contains(e2, true ));
         assertFalse(e1.contains(e2, false));
         assertFalse(e1.equals  (e2));

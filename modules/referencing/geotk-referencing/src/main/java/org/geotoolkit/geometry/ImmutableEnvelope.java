@@ -112,36 +112,4 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
         this.crs = crs;
         checkCoordinateReferenceSystemDimension(crs, getDimension());
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return super.getCoordinateReferenceSystem();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getDimension() {
-        return super.getDimension();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        return super.getMinimum(dimension);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        return super.getMaximum(dimension);
-    }
 }

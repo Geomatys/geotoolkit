@@ -44,7 +44,6 @@ import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -435,9 +434,7 @@ final class GridGeometryEntry extends DefaultEntry {
         if (Arrays.equals(verticalOrdinates, that.verticalOrdinates)) {
             final AbstractEnvelope e1 = (AbstractEnvelope) this.geometry.getEnvelope();
             final AbstractEnvelope e2 = (AbstractEnvelope) that.geometry.getEnvelope();
-            if (CRS.equalsIgnoreMetadata(e1.getCoordinateReferenceSystem(), e2.getCoordinateReferenceSystem())) {
-                return e1.equals(e2, EPS, true);
-            }
+            return e1.equals(e2, EPS, true);
         }
         return false;
     }

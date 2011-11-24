@@ -26,6 +26,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.util.Cloneable;
@@ -35,11 +36,13 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
+import static java.lang.Double.POSITIVE_INFINITY;
+import static java.lang.Double.NEGATIVE_INFINITY;
 import static org.geotoolkit.math.XMath.isPositive;
 import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.math.XMath.isSameSign;
 import static org.geotoolkit.geometry.AbstractEnvelope.*;
-
+import static org.geotoolkit.geometry.AbstractDirectPosition.checkCoordinateReferenceSystemDimension;
 import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
 
 
@@ -54,16 +57,23 @@ import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
  * This is not specific to this implementation; in Java2D too, the visual axis orientation depend
  * on the {@linkplain java.awt.Graphics2D#getTransform affine transform in the graphics context}.
  *
- * {@section Crossing the anti-meridian}
- * Negative values in the {@linkplain #width width} or {@linkplain #height height} fields are
- * interpreted as an envelope crossing the anti-meridian. All the following methods are
- * anti-meridian aware:
- * <p>
+ * {@section Spanning the anti-meridian of a Geographic CRS}
+ * The <cite>Web Coverage Service</cite> (WCS) specification authorizes (with special treatment)
+ * cases where <var>upper</var> &lt; <var>lower</var> at least in the longitude case. They are
+ * envelopes spanning the anti-meridian, like the red box below (the green box is the usual case).
+ * For {@code Envelope2D} objects, they are rectangle with negative {@linkplain #width width} or
+ * {@linkplain #height height} field values. The default implementation of methods listed in the
+ * right column can handle such cases.
+ *
+ * <center><table><tr><td style="white-space:nowrap">
+ *   <img src="doc-files/AntiMeridian.png">
+ * </td><td style="white-space:nowrap">
+ * Supported methods:
  * <ul>
- *   <li>{@link #getWidth()}</li>
- *   <li>{@link #getHeight()}</li>
- *   <li>{@link #getCenterX()}</li>
- *   <li>{@link #getCenterY()}</li>
+ *   <li>{@link #getMinimum(int)}</li>
+ *   <li>{@link #getMaximum(int)}</li>
+ *   <li>{@link #getSpan(int)}</li>
+ *   <li>{@link #getMedian(int)}</li>
  *   <li>{@link #isEmpty()}</li>
  *   <li>{@link #contains(double,double)}</li>
  *   <li>{@link #contains(Rectangle2D)} and its variant receiving {@code double} arguments</li>
@@ -73,9 +83,11 @@ import static org.geotoolkit.internal.InternalUtilities.isPoleToPole;
  *   <li>{@link #add(Rectangle2D)}</li>
  *   <li>{@link #add(double,double)}</li>
  * </ul>
- * <p>
- * The {@link #getSpan(int)} and {@link #getMedian(int)} methods delegate to the methods listed
- * above.
+ * </td></tr></table></center>
+ *
+ * The {@link #getMinX()}, {@link #getMinY()}, {@link #getMaxX()}, {@link #getMaxY()},
+ * {@link #getCenterX()}, {@link #getCenterY()}, {@link #getWidth()} and {@link #getHeight()}
+ * methods delegate to the above-cited methods.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
@@ -122,6 +134,21 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
+     * Creates a new envelope from the given positions and CRS.
+     *
+     * @see #Envelope2D(DirectPosition, DirectPosition)
+     */
+    private Envelope2D(final CoordinateReferenceSystem crs,
+            final DirectPosition lower, final DirectPosition upper)
+            throws MismatchedReferenceSystemException
+    {
+        this(lower.getOrdinate(0), lower.getOrdinate(1),
+             upper.getOrdinate(0), upper.getOrdinate(1));
+        checkCoordinateReferenceSystemDimension(crs, 2);
+        this.crs = crs;
+    }
+
+    /**
      * Constructs two-dimensional envelope defined by an other {@link Envelope}.
      *
      * @param envelope The envelope to copy.
@@ -130,14 +157,12 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @see GeneralEnvelope#GeneralEnvelope(Envelope)
      */
     public Envelope2D(final Envelope envelope) throws MismatchedDimensionException {
-        this(envelope.getMinimum(0), envelope.getMinimum(1),
-             envelope.getMaximum(0), envelope.getMaximum(1));
+        this(envelope.getCoordinateReferenceSystem(), envelope.getLowerCorner(), envelope.getUpperCorner());
         final int dimension = envelope.getDimension();
         if (dimension != 2) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
-        setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
     }
 
     /**
@@ -178,8 +203,9 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @see GeneralEnvelope#GeneralEnvelope(Rectangle2D)
      */
     public Envelope2D(final CoordinateReferenceSystem crs, final Rectangle2D rect) {
-        this(rect.getMinX(), rect.getMinY(), rect.getMaxX(), rect.getMaxY());
-        setCoordinateReferenceSystem(crs);
+        super(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()); // Really 'super', not 'this'.
+        checkCoordinateReferenceSystemDimension(crs, 2);
+        this.crs = crs;
     }
 
     /**
@@ -200,7 +226,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                       final double x, final double y, final double width, final double height)
     {
         super(x, y, width, height); // Really 'super', not 'this'.
-        setCoordinateReferenceSystem(crs);
+        checkCoordinateReferenceSystemDimension(crs, 2);
+        this.crs = crs;
     }
 
     /**
@@ -217,19 +244,18 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * returned by {@link #getLowerCorner()} and {@link #getUpperCorner()} methods, which may
      * have an extended interpretation. See the javadoc of above-cited methods for more details.
      *
-     * @param minDP The fist position.
-     * @param maxDP The second position.
+     * @param lower The fist position.
+     * @param upper The second position.
      * @throws MismatchedReferenceSystemException if the two positions don't use the same CRS.
      *
      * @see GeneralEnvelope#GeneralEnvelope(GeneralDirectPosition, GeneralDirectPosition)
      *
      * @since 2.4
      */
-    public Envelope2D(final DirectPosition2D minDP, final DirectPosition2D maxDP)
+    public Envelope2D(final DirectPosition lower, final DirectPosition upper)
             throws MismatchedReferenceSystemException
     {
-        this(minDP.x, minDP.y, maxDP.x, maxDP.y);
-        setCoordinateReferenceSystem(AbstractEnvelope.getCoordinateReferenceSystem(minDP, maxDP));
+        this(AbstractEnvelope.getCoordinateReferenceSystem(lower, upper), lower, upper);
     }
 
     /**
@@ -247,8 +273,13 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                 throw new MismatchedDimensionException(Errors.format(
                         Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
             }
+            final DirectPosition lower = envelope.getLowerCorner();
+            final DirectPosition upper = envelope.getUpperCorner();
+            x      = lower.getOrdinate(0);
+            y      = lower.getOrdinate(1);
+            width  = upper.getOrdinate(0) - x;
+            height = upper.getOrdinate(1) - y;
             setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
-            setFrame(envelope.getMinimum(0), envelope.getMinimum(1), envelope.getSpan(0), envelope.getSpan(1));
         }
     }
 
@@ -271,12 +302,12 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @param crs The new coordinate reference system, or {@code null}.
      */
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
-        AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, getDimension());
+        checkCoordinateReferenceSystemDimension(crs, 2);
         this.crs = crs;
     }
 
     /**
-     * Returns the number of dimensions.
+     * Returns the number of dimensions, which is always 2.
      */
     @Override
     public final int getDimension() {
@@ -284,41 +315,41 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
-     * A coordinate position consisting of all the minimal ordinates for each
+     * A coordinate position consisting of all the starting ordinates for each
      * dimension for all points within the {@code Envelope}.
      *
      * {@note The <cite>Web Coverage Service</cite> (WCS) 1.1 specification uses an extended
      * interpretation of the bounding box definition. In a WCS 1.1 data structure, the lower
      * corner defines the edges region in the directions of <em>decreasing</em> coordinate
      * values in the envelope CRS. This is usually the algebraic minimum coordinates, but not
-     * always. For example, an envelope crossing the anti-meridian could have a lower corner
+     * always. For example, an envelope spanning the anti-meridian could have a lower corner
      * longitude greater than the upper corner longitude. Such extended interpretation applies
      * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
-     * @return The lower corner.
+     * @return The lower corner, typically (but not necessarily) containing minimal ordinate values.
      */
     @Override
     public DirectPosition2D getLowerCorner() {
-        return new DirectPosition2D(crs, getMinX(), getMinY());
+        return new DirectPosition2D(crs, x, y);
     }
 
     /**
-     * A coordinate position consisting of all the maximal ordinates for each
+     * A coordinate position consisting of all the ending ordinates for each
      * dimension for all points within the {@code Envelope}.
      *
      * {@note The <cite>Web Coverage Service</cite> (WCS) 1.1 specification uses an extended
      * interpretation of the bounding box definition. In a WCS 1.1 data structure, the upper
      * corner defines the edges region in the directions of <em>increasing</em> coordinate
      * values in the envelope CRS. This is usually the algebraic maximum coordinates, but not
-     * always. For example, an envelope crossing the anti-meridian could have an upper corner
+     * always. For example, an envelope spanning the anti-meridian could have an upper corner
      * longitude less than the lower corner longitude. Such extended interpretation applies
      * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
-     * @return The upper corner.
+     * @return The upper corner, typically (but not necessarily) containing maximal ordinate values.
      */
     @Override
     public DirectPosition2D getUpperCorner() {
-        return new DirectPosition2D(crs, getMaxX(), getMaxY());
+        return new DirectPosition2D(crs, x+width, y+height);
     }
 
     /**
@@ -329,157 +360,163 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
-     * Returns the minimal ordinate along the specified dimension.
+     * Returns the minimal ordinate along the specified dimension. This method handles
+     * anti-meridian spanning as documented in the {@link AbstractEnvelope#getMinimum(int)}
+     * method.
      *
      * @param dimension The dimension to query.
      * @return The minimal ordinate value along the given dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
      */
     @Override
-    public final double getMinimum(final int dimension) throws IndexOutOfBoundsException {
+    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
+        final double value, span;
         switch (dimension) {
-            case 0:  return getMinX();
-            case 1:  return getMinY();
+            case 0:  value=x; span=width;  break;
+            case 1:  value=y; span=height; break;
             default: throw indexOutOfBounds(dimension);
         }
+        if (isNegative(span)) { // Special handling for -0.0
+            final CoordinateSystemAxis axis = getAxis(crs, dimension);
+            return (axis != null) ? axis.getMinimumValue() : NEGATIVE_INFINITY;
+        }
+        return value;
     }
 
     /**
-     * Returns the maximal ordinate along the specified dimension.
+     * Returns the maximal ordinate along the specified dimension. This method handles
+     * anti-meridian spanning as documented in the {@link AbstractEnvelope#getMaximum(int)}
+     * method.
      *
      * @param dimension The dimension to query.
      * @return The maximal ordinate value along the given dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
      */
     @Override
-    public final double getMaximum(final int dimension) throws IndexOutOfBoundsException {
+    public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
+        final double value, span;
         switch (dimension) {
-            case 0:  return getMaxX();
-            case 1:  return getMaxY();
+            case 0:  value=x; span=width;  break;
+            case 1:  value=y; span=height; break;
             default: throw indexOutOfBounds(dimension);
         }
+        if (isNegative(span)) { // Special handling for -0.0
+            final CoordinateSystemAxis axis = getAxis(crs, dimension);
+            return (axis != null) ? axis.getMaximumValue() : POSITIVE_INFINITY;
+        }
+        return value + span;
     }
 
     /**
-     * Returns the median ordinate along the specified dimension. The default implementation
-     * delegates to {@link #getCenterX()} or {@link #getCenterY()}, depending the requested
-     * dimension.
+     * Returns the median ordinate along the specified dimension. This method handles
+     * anti-meridian spanning as documented in the {@link AbstractEnvelope#getMedian(int)}
+     * method.
      *
      * @param dimension The dimension to query.
      * @return The mid ordinate value along the given dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
      */
     @Override
-    public final double getMedian(final int dimension) throws IndexOutOfBoundsException {
+    public double getMedian(final int dimension) throws IndexOutOfBoundsException {
+        double value, span;
         switch (dimension) {
-            case 0:  return getCenterX();
-            case 1:  return getCenterY();
+            case 0:  value=x; span=width;  break;
+            case 1:  value=y; span=height; break;
             default: throw indexOutOfBounds(dimension);
         }
+        value += 0.5*span;
+        if (isNegative(span)) { // Special handling for -0.0
+            value = fixMedian(getAxis(crs, dimension), value);
+        }
+        return value;
     }
 
     /**
-     * Returns the envelope span along the specified dimension. The default implementation
-     * delegates to {@link #getWidth()} or {@link #getHeight()}, depending the requested
-     * dimension.
+     * Returns the envelope span along the specified dimension. This method handles anti-meridian
+     * spanning as documented in the {@link AbstractEnvelope#getSpan(int)} method.
      *
      * @param  dimension The dimension to query.
      * @return The rectangle width or height, depending the given dimension.
      * @throws IndexOutOfBoundsException If the given index is out of bounds.
       */
     @Override
-    public final double getSpan(final int dimension) throws IndexOutOfBoundsException {
+    public double getSpan(final int dimension) throws IndexOutOfBoundsException {
+        double span;
         switch (dimension) {
-            case 0:  return getWidth ();
-            case 1:  return getHeight();
+            case 0:  span=width;  break;
+            case 1:  span=height; break;
             default: throw indexOutOfBounds(dimension);
         }
-    }
-
-    /**
-     * Returns the median ordinate along the <var>x</var> dimension. This method handles crossing
-     * of anti-meridian as documented in the {@link AbstractEnvelope#getMedian(int)} method.
-     *
-     * @since 3.20
-     */
-    @Override
-    public double getCenterX() {
-        double median = x + 0.5*width;
-        if (isNegative(width)) { // Special handling for -0.0
-            median = fixMedian(getAxis(crs, 0), median);
-        }
-        return median;
-    }
-
-    /**
-     * Returns the median ordinate along the <var>y</var> dimension. This method handles crossing
-     * of anti-meridian as documented in the {@link AbstractEnvelope#getMedian(int)} method
-     * (note that "<var>y</var>" can be longitude, as it depends on axis order).
-     *
-     * @since 3.20
-     */
-    @Override
-    public double getCenterY() {
-        double median = y + 0.5*height;
-        if (isNegative(height)) { // Special handling for -0.0
-            median = fixMedian(getAxis(crs, 1), median);
-        }
-        return median;
-    }
-
-    /**
-     * Returns the span along the <var>x</var> dimension. This method handles crossing of
-     * anti-meridian as documented in the {@link AbstractEnvelope#getSpan(int)} method.
-     *
-     * @since 3.20
-     */
-    @Override
-    public double getWidth() {
-        double span = width;
         if (isNegative(span)) { // Special handling for -0.0
-            span = fixSpan(getAxis(crs, 0), span);
+            span = fixSpan(getAxis(crs, dimension), span);
         }
         return span;
     }
 
+    // Do not override getX() and getY() - their default implementations is okay.
+
     /**
-     * Returns the span along the <var>y</var> dimension. This method handles crossing of
-     * anti-meridian as documented in the {@link AbstractEnvelope#getSpan(int)} method
-     * (note that "<var>y</var>" can be longitude, as it depends on axis order).
-     *
-     * @since 3.20
+     * Returns the {@linkplain #getMinimum(int) minimal} ordinate value for dimension 0.
      */
     @Override
-    public double getHeight() {
-        double span = height;
-        if (isNegative(span)) { // Special handling for -0.0
-            span = fixSpan(getAxis(crs, 1), span);
-        }
-        return span;
+    public double getMinX() {
+        return getMinimum(0);
     }
 
     /**
-     * Returns the "maximal" ordinate value on the <var>x</var> axis.
-     * This value may not be really maximal if the rectangle cross the anti-meridian.
-     * This is rather the <var>x</var> ordinate value of the in the
-     * {@linkplain AbstractEnvelope#getUpperCorner() upper corner as documented in the
-     * <code>AbstractEnvelope</code> interface}.
+     * Returns the {@linkplain #getMinimum(int) minimal} ordinate value for dimension 1.
+     */
+    @Override
+    public double getMinY() {
+        return getMinimum(1);
+    }
+
+    /**
+     * Returns the {@linkplain #getMaximum(int) maximal} ordinate value for dimension 0.
      */
     @Override
     public double getMaxX() {
-        return x + width;
+        return getMaximum(0);
     }
 
     /**
-     * Returns the "maximal" ordinate value on the <var>y</var> axis.
-     * This value may not be really maximal if the rectangle cross the anti-meridian.
-     * This is rather the <var>y</var> ordinate value of the in the
-     * {@linkplain AbstractEnvelope#getUpperCorner() upper corner as documented in the
-     * <code>AbstractEnvelope</code> interface}.
+     * Returns the {@linkplain #getMaximum(int) maximal} ordinate value for dimension 1.
      */
     @Override
     public double getMaxY() {
-        return y + height;
+        return getMaximum(1);
+    }
+
+    /**
+     * Returns the {@linkplain #getMedian(int) median} ordinate value for dimension 0.
+     */
+    @Override
+    public double getCenterX() {
+        return getMedian(0);
+    }
+
+    /**
+     * Returns the {@linkplain #getMedian(int) median} ordinate value for dimension 1.
+     */
+    @Override
+    public double getCenterY() {
+        return getMedian(1);
+    }
+
+    /**
+     * Returns the {@linkplain #getSpan(int) span} for dimension 0.
+     */
+    @Override
+    public double getWidth() {
+        return getSpan(0);
+    }
+
+    /**
+     * Returns the {@linkplain #getSpan(int) span} for dimension 1.
+     */
+    @Override
+    public double getHeight() {
+        return getSpan(1);
     }
 
     /**

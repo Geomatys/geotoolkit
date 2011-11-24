@@ -22,8 +22,9 @@ import java.util.Objects;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
 
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.RangeMeaning;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -301,7 +302,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * The length of coordinate sequence (the number of entries) in this envelope.
+     * {@inheritDoc}
      */
     @Override
     public int getDimension() {
@@ -309,9 +310,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns the coordinate reference system in which the coordinates are given.
-     *
-     * @return The coordinate reference system, or {@code null}.
+     * {@inheritDoc}
      */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
@@ -320,10 +319,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMinimum minimal ordinates}
-     * for each dimension for all points within the {@code Envelope}.
-     *
-     * @return The lower corner.
+     * {@inheritDoc}
      */
     @Override
     public DirectPosition getLowerCorner() {
@@ -335,10 +331,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMaximum maximal ordinates}
-     * for each dimension for all points within the {@code Envelope}.
-     *
-     * @return The upper corner.
+     * {@inheritDoc}
      */
     @Override
     public DirectPosition getUpperCorner() {
@@ -350,37 +343,52 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns the minimal ordinate along the specified dimension.
-     *
-     * Despite the method name, the value returned by this method may in some
-     * occasions be greater than the {@linkplain #getMaximum(int) maximum} value.
-     * See {@link AbstractEnvelope#getLowerCorner()} for more information.
-     *
-     * @param  dimension The dimension to query.
-     * @return The minimal ordinate value along the given dimension.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * {@inheritDoc}
      */
     @Override
-    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
+    public double getLower(final int dimension) throws IndexOutOfBoundsException {
         ensureValidIndex(ordinates.length >>> 1, dimension);
         return ordinates[dimension];
     }
 
     /**
-     * Returns the maximal ordinate along the specified dimension.
-     *
-     * Despite the method name, the value returned by this method may in some
-     * occasions be less than the {@linkplain #getMinimum(int) minimum} value.
-     * See {@link AbstractEnvelope#getUpperCorner()} for more information.
-     *
-     * @param  dimension The dimension to query.
-     * @return The maximal ordinate value along the given dimension.
-     * @throws IndexOutOfBoundsException If the given index is out of bounds.
+     * {@inheritDoc}
+     */
+    @Override
+    public double getUpper(final int dimension) throws IndexOutOfBoundsException {
+        final int dim = ordinates.length >>> 1;
+        ensureValidIndex(dim, dimension);
+        return ordinates[dimension + dim];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
+        final int dim = ordinates.length >>> 1;
+        ensureValidIndex(dim, dimension);
+        double lower = ordinates[dimension];
+        if (isNegative(ordinates[dimension + dim] - lower)) { // Special handling for -0.0
+            final CoordinateSystemAxis axis = getAxis(crs, dimension);
+            lower = (axis != null) ? axis.getMinimumValue() : Double.NEGATIVE_INFINITY;
+        }
+        return lower;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        ensureValidIndex(ordinates.length >>> 1, dimension);
-        return ordinates[dimension + (ordinates.length >>> 1)];
+        final int dim = ordinates.length >>> 1;
+        ensureValidIndex(dim, dimension);
+        double upper = ordinates[dimension + dim];
+        if (isNegative(upper - ordinates[dimension])) { // Special handling for -0.0
+            final CoordinateSystemAxis axis = getAxis(crs, dimension);
+            upper = (axis != null) ? axis.getMaximumValue() : Double.POSITIVE_INFINITY;
+        }
+        return upper;
     }
 
     /**
@@ -388,6 +396,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public double getMedian(final int dimension) throws IndexOutOfBoundsException {
+        ensureValidIndex(ordinates.length >>> 1, dimension);
         final double minimum = ordinates[dimension];
         final double maximum = ordinates[dimension + (ordinates.length >>> 1)];
         double median = 0.5 * (minimum + maximum);
@@ -402,6 +411,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public double getSpan(final int dimension) throws IndexOutOfBoundsException {
+        ensureValidIndex(ordinates.length >>> 1, dimension);
         double span = ordinates[dimension + (ordinates.length >>> 1)] - ordinates[dimension];
         if (isNegative(span)) { // Special handling for -0.0
             span = fixSpan(getAxis(crs, dimension), span);

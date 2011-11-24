@@ -52,9 +52,11 @@
  * in the {@linkplain org.opengis.geometry.Envelope#getCoordinateReferenceSystem() envelope CRS},
  * while the {@linkplain org.opengis.geometry.Envelope#getUpperCorner() upper corner} defines the
  * edges region in the directions of <em>increasing</em> coordinate values. Those lower and upper
- * corners are usually the algebraic minimum and maximum coordinates respectively, but not always.
- * For example, an envelope crossing the anti-meridian could have a lower corner longitude greater
- * than the upper corner longitude, like the red box below (the green box is the usual case):
+ * corners are usually the algebraic {@linkplain org.opengis.geometry.Envelope#getMinimum(int) minimum}
+ * and {@linkplain org.opengis.geometry.Envelope#getMaximum(int) maximum} coordinates respectively,
+ * but not always. For example, an envelope crossing the anti-meridian could have a lower corner
+ * longitude greater than the upper corner longitude, like the red box below (the green box is the
+ * usual case):
  *
  * <center><img src="doc-files/AntiMeridian.png"></center>
  *

@@ -74,6 +74,26 @@ public final strictfp class AbstractEnvelopeTest {
     }
 
     /**
+     * Returns the lower value at the given dimension.
+     */
+    private static double getLower(final Envelope envelope, final int dimension) {
+        if (envelope instanceof Envelope2D) {
+            return ((Envelope2D) envelope).getLowerCorner().getOrdinate(dimension);
+        }
+        return ((AbstractEnvelope) envelope).getLower(dimension);
+    }
+
+    /**
+     * Returns the upper value at the given dimension.
+     */
+    private static double getUpper(final Envelope envelope, final int dimension) {
+        if (envelope instanceof Envelope2D) {
+            return ((Envelope2D) envelope).getUpperCorner().getOrdinate(dimension);
+        }
+        return ((AbstractEnvelope) envelope).getUpper(dimension);
+    }
+
+    /**
      * Tests the simple case (no anti-meridian crossing).
      *
      * {@preformat text
@@ -147,8 +167,10 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,   50, envelope.getMaximum(1), STRICT);
             assertEquals(label,   40, envelope.getMedian (1), STRICT);
             assertEquals(label,   20, envelope.getSpan   (1), STRICT);
-            assertEquals(label,   12, envelope.getMinimum(0), STRICT);
-            assertEquals(label,   -4, envelope.getMaximum(0), STRICT);
+            assertEquals(label,   12, getLower (envelope, 0), STRICT);
+            assertEquals(label, -180, envelope.getMinimum(0), STRICT);
+            assertEquals(label,   -4, getUpper (envelope, 0), STRICT);
+            assertEquals(label, +180, envelope.getMaximum(0), STRICT);
             assertEquals(label, -176, envelope.getMedian (0), STRICT);
             assertEquals(label,  344, envelope.getSpan   (0), STRICT); // 360° - testSimpleEnvelope()
             if (envelope instanceof AbstractEnvelope) {
@@ -200,8 +222,10 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,   50, envelope.getMaximum(1), STRICT);
             assertEquals(label,   40, envelope.getMedian (1), STRICT);
             assertEquals(label,   20, envelope.getSpan   (1), STRICT);
-            assertEquals(label,   12, envelope.getMinimum(0), STRICT);
-            assertEquals(label, -364, envelope.getMaximum(0), STRICT);
+            assertEquals(label,   12, getLower (envelope, 0), STRICT);
+            assertEquals(label, -180, envelope.getMinimum(0), STRICT);
+            assertEquals(label, -364, getUpper (envelope, 0), STRICT);
+            assertEquals(label, +180, envelope.getMaximum(0), STRICT);
             assertEquals(label,    4, envelope.getMedian (0), STRICT); // Note the alternance with the previous test methods.
             assertEquals(label,  NaN, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridian() + 360°.
             if (envelope instanceof AbstractEnvelope) {
@@ -248,8 +272,10 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,   50, envelope.getMaximum(1), STRICT);
             assertEquals(label,   40, envelope.getMedian (1), STRICT);
             assertEquals(label,   20, envelope.getSpan   (1), STRICT);
-            assertEquals(label,  372, envelope.getMinimum(0), STRICT);
-            assertEquals(label, -364, envelope.getMaximum(0), STRICT);
+            assertEquals(label,  372, getLower (envelope, 0), STRICT);
+            assertEquals(label, -180, envelope.getMinimum(0), STRICT);
+            assertEquals(label, -364, getUpper (envelope, 0), STRICT);
+            assertEquals(label, +180, envelope.getMaximum(0), STRICT);
             assertEquals(label, -176, envelope.getMedian (0), STRICT); // Note the alternance with the previous test methods.
             assertEquals(label,  NaN, envelope.getSpan   (0), STRICT); // testCrossingAntiMeridianTwice() + 360°.
             if (envelope instanceof AbstractEnvelope) {
@@ -338,8 +364,10 @@ public final strictfp class AbstractEnvelopeTest {
             assertEquals(label,   50, envelope.getMaximum(1), STRICT);
             assertEquals(label,   40, envelope.getMedian (1), STRICT);
             assertEquals(label,   20, envelope.getSpan   (1), STRICT);
-            assertEquals(label,  0.0, envelope.getMinimum(0), STRICT);
-            assertEquals(label, -0.0, envelope.getMaximum(0), STRICT);
+            assertEquals(label,  0.0, getLower (envelope, 0), STRICT);
+            assertEquals(label, -180, envelope.getMinimum(0), STRICT);
+            assertEquals(label, -0.0, getUpper (envelope, 0), STRICT);
+            assertEquals(label, +180, envelope.getMaximum(0), STRICT);
             assertEquals(label,  180, envelope.getMedian (0), STRICT);
             assertEquals(label,  360, envelope.getSpan   (0), STRICT);
             if (envelope instanceof AbstractEnvelope) {

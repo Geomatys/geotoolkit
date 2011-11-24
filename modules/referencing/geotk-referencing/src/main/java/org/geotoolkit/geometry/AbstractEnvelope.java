@@ -55,8 +55,8 @@ import static org.geotoolkit.math.XMath.isPositive;
  * <ul>
  *   <li>{@link #getDimension()}</li>
  *   <li>{@link #getCoordinateReferenceSystem()}</li>
- *   <li>{@link #getMinimum(int)}</li>
- *   <li>{@link #getMaximum(int)}</li>
+ *   <li>{@link #getLower(int)}</li>
+ *   <li>{@link #getUpper(int)}</li>
  * </ul>
  * <p>
  * All other methods, including {@link #toString()}, {@link #equals(Object)} and {@link #hashCode()},
@@ -65,19 +65,23 @@ import static org.geotoolkit.math.XMath.isPositive;
  * {@section Spanning the anti-meridian of a Geographic CRS}
  * The <cite>Web Coverage Service</cite> (WCS) specification authorizes (with special treatment)
  * cases where <var>upper</var> &lt; <var>lower</var> at least in the longitude case. They are
- * envelopes crossing the anti-meridian, like the red box below (the green box is the usual case):
+ * envelopes crossing the anti-meridian, like the red box below (the green box is the usual case).
+ * The default implementation of methods listed in the right column can handle such cases.
  *
- * <center><img src="doc-files/AntiMeridian.png"></center>
- *
- * The default implementation of the following methods can handle such cases:
- * <p>
+ * <center><table><tr><td style="white-space:nowrap">
+ *   <img src="doc-files/AntiMeridian.png">
+ * </td><td style="white-space:nowrap">
+ * Supported methods:
  * <ul>
+ *   <li>{@link #getMinimum(int)}</li>
+ *   <li>{@link #getMaximum(int)}</li>
  *   <li>{@link #getMedian(int)}</li>
  *   <li>{@link #getSpan(int)}</li>
  *   <li>{@link #contains(DirectPosition)}</li>
  *   <li>{@link #contains(Envelope, boolean)}</li>
  *   <li>{@link #intersects(Envelope, boolean)}</li>
  * </ul>
+ * </td></tr></table></center>
  *
  * {@section Note on positive and negative zeros}
  * The IEEE 754 standard defines two different values for positive zero and negative zero.
@@ -137,16 +141,16 @@ public abstract class AbstractEnvelope implements Envelope {
     /**
      * Returns the common CRS of specified points.
      *
-     * @param  minDP The first position.
-     * @param  maxDP The second position.
+     * @param  lower The first position.
+     * @param  upper The second position.
      * @return Their common CRS, or {@code null} if none.
      * @throws MismatchedReferenceSystemException if the two positions don't use the same CRS.
      */
-    static CoordinateReferenceSystem getCoordinateReferenceSystem(final DirectPosition minDP,
-            final DirectPosition maxDP) throws MismatchedReferenceSystemException
+    static CoordinateReferenceSystem getCoordinateReferenceSystem(final DirectPosition lower,
+            final DirectPosition upper) throws MismatchedReferenceSystemException
     {
-        final CoordinateReferenceSystem crs1 = minDP.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem crs2 = maxDP.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs1 = lower.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs2 = upper.getCoordinateReferenceSystem();
         if (crs1 == null) {
             return crs2;
         } else {
@@ -208,7 +212,7 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMinimum minimal ordinates}.
+     * A coordinate position consisting of all the {@linkplain #getLower(int) lower ordinates}.
      * The default implementation returns a unmodifiable direct position backed by this envelope,
      * so changes in this envelope will be immediately reflected in the direct position.
      *
@@ -220,7 +224,7 @@ public abstract class AbstractEnvelope implements Envelope {
      * longitude greater than the upper corner longitude. Such extended interpretation applies
      * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
-     * @return The lower corner.
+     * @return The lower corner, typically (but not necessarily) containing minimal ordinate values.
      */
     @Override
     public DirectPosition getLowerCorner() {
@@ -228,7 +232,7 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * A coordinate position consisting of all the {@linkplain #getMaximum maximal ordinates}.
+     * A coordinate position consisting of all the {@linkplain #getUpper(int) upper ordinates}.
      * The default implementation returns a unmodifiable direct position backed by this envelope,
      * so changes in this envelope will be immediately reflected in the direct position.
      *
@@ -240,11 +244,85 @@ public abstract class AbstractEnvelope implements Envelope {
      * longitude less than the lower corner longitude. Such extended interpretation applies
      * mostly to axes having <code>WRAPAROUND</code> range meaning.}
      *
-     * @return The upper corner.
+     * @return The upper corner, typically (but not necessarily) containing maximal ordinate values.
      */
     @Override
     public DirectPosition getUpperCorner() {
         return new UpperCorner();
+    }
+
+    /**
+     * Returns the limit in the direction of decreasing ordinate values in the specified dimension.
+     * This is usually the algebraic {@linkplain #getMinimum(int) minimum}, except if this envelope
+     * spans the anti-meridian.
+     *
+     * @param  dimension The dimension for which to obtain the ordinate value.
+     * @return The starting ordinate value at the given dimension.
+     * @throws IndexOutOfBoundsException If the given index is negative or is equals or greater
+     *         than the {@linkplain #getDimension() envelope dimension}.
+     *
+     * @since 3.20
+     */
+    public abstract double getLower(int dimension) throws IndexOutOfBoundsException ;
+
+    /**
+     * Returns the limit in the direction of increasing ordinate values in the specified dimension.
+     * This is usually the algebraic {@linkplain #getMaximum(int) maximum}, except if this envelope
+     * spans the anti-meridian.
+     *
+     * @param  dimension The dimension for which to obtain the ordinate value.
+     * @return The starting ordinate value at the given dimension.
+     * @throws IndexOutOfBoundsException If the given index is negative or is equals or greater
+     *         than the {@linkplain #getDimension() envelope dimension}.
+     *
+     * @since 3.20
+     */
+    public abstract double getUpper(int dimension) throws IndexOutOfBoundsException ;
+
+    /**
+     * Returns the minimal ordinate value for the specified dimension. In the typical case
+     * of envelopes <em>not</em> spanning the anti-meridian, this method returns the
+     * {@link #getLower(int)} value verbatim. In the case of envelope spanning the anti-meridian,
+     * this method returns the {@linkplain CoordinateSystemAxis#getMinimumValue() axis minimum value}.
+     *
+     * @param  dimension The dimension for which to obtain the ordinate value.
+     * @return The minimal ordinate value at the given dimension.
+     * @throws IndexOutOfBoundsException If the given index is negative or is equals or greater
+     *         than the {@linkplain #getDimension() envelope dimension}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
+        double lower = getLower(dimension);
+        if (isNegative(getUpper(dimension) - lower)) { // Special handling for -0.0
+            final CoordinateSystemAxis axis = getAxis(getCoordinateReferenceSystem(), dimension);
+            lower = (axis != null) ? axis.getMinimumValue() : Double.NEGATIVE_INFINITY;
+        }
+        return lower;
+    }
+
+    /**
+     * Returns the maximal ordinate value for the specified dimension. In the typical case
+     * of envelopes <em>not</em> spanning the anti-meridian, this method returns the
+     * {@link #getUpper(int)} value verbatim. In the case of envelope spanning the anti-meridian,
+     * this method returns the {@linkplain CoordinateSystemAxis#getMaximumValue() axis maximum value}.
+     *
+     * @param  dimension The dimension for which to obtain the ordinate value.
+     * @return The maximal ordinate value at the given dimension.
+     * @throws IndexOutOfBoundsException If the given index is negative or is equals or greater
+     *         than the {@linkplain #getDimension() envelope dimension}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
+        double upper = getUpper(dimension);
+        if (isNegative(upper - getLower(dimension))) { // Special handling for -0.0
+            final CoordinateSystemAxis axis = getAxis(getCoordinateReferenceSystem(), dimension);
+            upper = (axis != null) ? axis.getMaximumValue() : Double.POSITIVE_INFINITY;
+        }
+        return upper;
     }
 
     /**
@@ -269,11 +347,11 @@ public abstract class AbstractEnvelope implements Envelope {
      * equals (minus rounding error) to:
      *
      * {@preformat java
-     *     median = (getMaximum(dimension) + getMinimum(dimension)) / 2;
+     *     median = (getUpper(dimension) + getLower(dimension)) / 2;
      * }
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
-     * If <var>maximum</var> &lt; <var>minimum</var> and the
+     * If <var>upper</var> &lt; <var>lower</var> and the
      * {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning} for the requested
      * dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then the median calculated
      * above is actually in the middle of the space <em>outside</em> the envelope. In such cases,
@@ -291,8 +369,8 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     @Override
     public double getMedian(final int dimension) throws IndexOutOfBoundsException {
-        final double lower = getMinimum(dimension);
-        final double upper = getMaximum(dimension);
+        final double lower = getLower(dimension);
+        final double upper = getUpper(dimension);
         double median = 0.5 * (lower + upper);
         if (isNegative(upper - lower)) { // Special handling for -0.0
             median = fixMedian(getAxis(getCoordinateReferenceSystem(), dimension), median);
@@ -322,11 +400,11 @@ public abstract class AbstractEnvelope implements Envelope {
      * In most cases, the result is equals (minus rounding error) to:
      *
      * {@preformat java
-     *     span = getMaximum(dimension) - getMinimum(dimension);
+     *     span = getUpper(dimension) - getLower(dimension);
      * }
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
-     * If <var>maximum</var> &lt; <var>minimum</var> and the
+     * If <var>upper</var> &lt; <var>lower</var> and the
      * {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning} for the requested
      * dimension is {@linkplain RangeMeaning#WRAPAROUND wraparound}, then the span calculated
      * above is negative. In such cases, this method adds the periodicity (typically 360° of
@@ -342,7 +420,7 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     @Override
     public double getSpan(final int dimension) {
-        double span = getMaximum(dimension) - getMinimum(dimension);
+        double span = getUpper(dimension) - getLower(dimension);
         if (isNegative(span)) { // Special handling for -0.0
             span = fixSpan(getAxis(getCoordinateReferenceSystem(), dimension), span);
         }
@@ -405,7 +483,7 @@ public abstract class AbstractEnvelope implements Envelope {
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
-     * For any dimension, if <var>maximum</var> &lt; <var>minimum</var> then this method uses an
+     * For any dimension, if <var>upper</var> &lt; <var>lower</var> then this method uses an
      * algorithm which is the opposite of the usual one: rather than testing if the given point is
      * inside the envelope interior, this method tests if the given point is <em>outside</em> the
      * envelope <em>exterior</em>.
@@ -426,8 +504,8 @@ public abstract class AbstractEnvelope implements Envelope {
                 position.getCoordinateReferenceSystem()) : position;
         for (int i=0; i<dimension; i++) {
             final double value = position.getOrdinate(i);
-            final double lower = getMinimum(i);
-            final double upper = getMaximum(i);
+            final double lower = getLower(i);
+            final double upper = getUpper(i);
             final boolean c1   = (value >= lower);
             final boolean c2   = (value <= upper);
             if (c1 & c2) {
@@ -483,11 +561,13 @@ public abstract class AbstractEnvelope implements Envelope {
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
                 envelope.getCoordinateReferenceSystem()) : envelope;
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dimension; i++) {
-            final double min0 = getMinimum(i);
-            final double max0 = getMaximum(i);
-            final double min1 = envelope.getMinimum(i);
-            final double max1 = envelope.getMaximum(i);
+            final double min0 = getLower(i);
+            final double max0 = getUpper(i);
+            final double min1 = lower.getOrdinate(i);
+            final double max1 = upper.getOrdinate(i);
             final boolean minCondition, maxCondition;
             if (edgesInclusive) {
                 minCondition = (min1 >= min0);
@@ -579,11 +659,13 @@ public abstract class AbstractEnvelope implements Envelope {
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
                 envelope.getCoordinateReferenceSystem()) : envelope;
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dimension; i++) {
-            final double min0 = getMinimum(i);
-            final double max0 = getMaximum(i);
-            final double min1 = envelope.getMinimum(i);
-            final double max1 = envelope.getMaximum(i);
+            final double min0 = getLower(i);
+            final double max0 = getUpper(i);
+            final double min1 = lower.getOrdinate(i);
+            final double max1 = upper.getOrdinate(i);
             final boolean minCondition, maxCondition;
             if (edgesInclusive) {
                 minCondition = (min1 <= max0);
@@ -660,8 +742,8 @@ public abstract class AbstractEnvelope implements Envelope {
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
         return XRectangle2D.createFromExtremums(
-                getMinimum(0), getMinimum(1),
-                getMaximum(0), getMaximum(1));
+                getLower(0), getLower(1),
+                getUpper(0), getUpper(1));
     }
 
     /**
@@ -694,16 +776,18 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     static String toString(final Envelope envelope) {
         final int dimension = envelope.getDimension();
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         final StringBuilder buffer = new StringBuilder("BOX").append(dimension).append("D(");
         for (int i=0; i<dimension; i++) {
             if (i != 0) {
                 buffer.append(' ');
             }
-            trimFractionalPart(buffer.append(envelope.getMinimum(i)));
+            trimFractionalPart(buffer.append(lower.getOrdinate(i)));
         }
         buffer.append(',');
         for (int i=0; i<dimension; i++) {
-            trimFractionalPart(buffer.append(' ').append(envelope.getMaximum(i)));
+            trimFractionalPart(buffer.append(' ').append(upper.getOrdinate(i)));
         }
         return buffer.append(')').toString();
     }
@@ -741,7 +825,7 @@ public abstract class AbstractEnvelope implements Envelope {
         boolean p = true;
         do {
             for (int i=0; i<dimension; i++) {
-                final long bits = Double.doubleToLongBits(p ? getMinimum(i) : getMaximum(i));
+                final long bits = Double.doubleToLongBits(p ? getLower(i) : getUpper(i));
                 code = 31 * code + ((int)(bits) ^ (int)(bits >>> 32));
             }
         } while ((p = !p) == false);
@@ -766,12 +850,12 @@ public abstract class AbstractEnvelope implements Envelope {
     @Override
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
-            final Envelope that = (Envelope) object;
+            final AbstractEnvelope that = (AbstractEnvelope) object;
             final int dimension = getDimension();
             if (dimension == that.getDimension()) {
                 for (int i=0; i<dimension; i++) {
-                    if (!Utilities.equals(this.getMinimum(i), that.getMinimum(i)) ||
-                        !Utilities.equals(this.getMaximum(i), that.getMaximum(i)))
+                    if (!Utilities.equals(this.getLower(i), that.getLower(i)) ||
+                        !Utilities.equals(this.getUpper(i), that.getUpper(i)))
                     {
                         assert !equals(that, 0.0, false) : this;
                         return false;
@@ -796,21 +880,25 @@ public abstract class AbstractEnvelope implements Envelope {
      * ground resolution of a {@linkplain org.opengis.coverage.grid.GridCoverage.GridCoverage
      * grid coverage}).
      * <p>
-     * If {@code epsIsRelative} is set to {@code true}, the actual tolerance value for a given
-     * dimension <var>i</var> is {@code eps}&times;{@code span} where {@code span} is the
-     * maximum of {@linkplain #getSpan this envelope span} and the specified envelope length
-     * along dimension <var>i</var>.
-     * <p>
-     * If {@code epsIsRelative} is set to {@code false}, the actual tolerance value for a
-     * given dimension <var>i</var> is {@code eps}.
-     * <p>
-     * Relative tolerance value (as opposed to absolute tolerance value) help to workaround the
-     * fact that tolerance value are CRS dependent. For example the tolerance value need to be
-     * smaller for geographic CRS than for UTM projections, because the former typically has a
-     * range of -180 to 180° while the later can have a range of thousands of meters.
+     * <ul>
+     *   <li>If {@code epsIsRelative} is set to {@code true}, the actual tolerance value for a
+     *       given dimension <var>i</var> is {@code eps}&times;{@code span} where {@code span}
+     *       is the maximum of {@linkplain #getSpan this envelope span} and the specified envelope
+     *       length along dimension <var>i</var>.</li>
+     *   <li>If {@code epsIsRelative} is set to {@code false}, the actual tolerance value for a
+     *       given dimension <var>i</var> is {@code eps}.</li>
+     * </ul>
      *
-     * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
-     *        For performance raisons, it will no be verified unless Java assertions are enabled.}
+     * {@note Relative tolerance value (as opposed to absolute tolerance value) help to workaround
+     * the fact that tolerance value are CRS dependent. For example the tolerance value need to be
+     * smaller for geographic CRS than for UTM projections, because the former typically has a
+     * range of -180 to 180° while the later can have a range of thousands of meters.}
+     *
+     * {@section Coordinate Reference System}
+     * To be considered equal, the two envelopes must have the same {@linkplain #getDimension() dimension}
+     * and their CRS must be {@linkplain org.geotoolkit.referencing.CRS#equalsIgnoreMetadata equals,
+     * ignoring metadata}. If at least one envelope has a null CRS, then the CRS are ignored and the
+     * ordinate values are compared as if the CRS were equal.
      *
      * @param envelope The envelope to compare with.
      * @param eps The tolerance value to use for numerical comparisons.
@@ -830,7 +918,11 @@ public abstract class AbstractEnvelope implements Envelope {
         if (envelope.getDimension() != dimension) {
             return false;
         }
-        assert equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem()) : envelope;
+        if (!equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem())) {
+            return false;
+        }
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dimension; i++) {
             double epsilon = eps;
             if (epsIsRelative) {
@@ -839,8 +931,8 @@ public abstract class AbstractEnvelope implements Envelope {
                     epsilon *= span;
                 }
             }
-            if (!epsilonEqual(getMinimum(i), envelope.getMinimum(i), epsilon) ||
-                !epsilonEqual(getMaximum(i), envelope.getMaximum(i), epsilon))
+            if (!epsilonEqual(getLower(i), lower.getOrdinate(i), epsilon) ||
+                !epsilonEqual(getUpper(i), upper.getOrdinate(i), epsilon))
             {
                 return false;
             }
@@ -874,7 +966,7 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     private final class LowerCorner extends Corner {
         @Override public double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
-            return getMinimum(dimension);
+            return getLower(dimension);
         }
     }
 
@@ -883,7 +975,7 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     private final class UpperCorner extends Corner {
         @Override public double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
-            return getMaximum(dimension);
+            return getUpper(dimension);
         }
     }
 }
