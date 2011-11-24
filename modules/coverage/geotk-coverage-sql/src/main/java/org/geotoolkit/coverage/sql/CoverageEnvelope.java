@@ -614,8 +614,8 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      *         than the {@linkplain #getDimension envelope dimension}.
      */
     @Override
-    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        return getEnvelope().getMinimum(dimension);
+    public double getLower(final int dimension) throws IndexOutOfBoundsException {
+        return getEnvelope().getLower(dimension);
     }
 
     /**
@@ -627,8 +627,8 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      *         than the {@linkplain #getDimension envelope dimension}.
      */
     @Override
-    public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        return getEnvelope().getMaximum(dimension);
+    public double getUpper(final int dimension) throws IndexOutOfBoundsException {
+        return getEnvelope().getUpper(dimension);
     }
 
     /**

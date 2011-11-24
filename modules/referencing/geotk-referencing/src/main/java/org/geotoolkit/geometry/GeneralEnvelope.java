@@ -79,6 +79,31 @@ import static org.geotoolkit.math.XMath.isSameSign;
  *       <cite>Well Known Text</cite> format.</li>
  * </ul>
  *
+ * {@section Spanning the anti-meridian of a Geographic CRS}
+ * The <cite>Web Coverage Service</cite> (WCS) specification authorizes (with special treatment)
+ * cases where <var>upper</var> &lt; <var>lower</var> at least in the longitude case. They are
+ * envelopes crossing the anti-meridian, like the red box below (the green box is the usual case).
+ * The default implementation of methods listed in the right column can handle such cases.
+ *
+ * <center><table><tr><td style="white-space:nowrap">
+ *   <img src="doc-files/AntiMeridian.png">
+ * </td><td style="white-space:nowrap">
+ * Supported methods:
+ * <ul>
+ *   <li>{@link #getMinimum(int)}</li>
+ *   <li>{@link #getMaximum(int)}</li>
+ *   <li>{@link #getMedian(int)}</li>
+ *   <li>{@link #getSpan(int)}</li>
+ *   <li>{@link #isEmpty()}</li>
+ *   <li>{@link #contains(DirectPosition)}</li>
+ *   <li>{@link #contains(Envelope, boolean)}</li>
+ *   <li>{@link #intersects(Envelope, boolean)}</li>
+ *   <li>{@link #intersect(Envelope)}</li>
+ *   <li>{@link #add(Envelope)}</li>
+ *   <li>{@link #add(DirectPosition)}</li>
+ * </ul>
+ * </td></tr></table></center>
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
  * @version 3.20
@@ -137,21 +162,21 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * Constructs a envelope defined by two positions. The coordinate
      * reference system is inferred from the supplied direct position.
      *
-     * @param  minDP Point containing minimum ordinate values.
-     * @param  maxDP Point containing maximum ordinate values.
+     * @param  lower Point containing the starting ordinate values.
+     * @param  upper Point containing the ending ordinate values.
      * @throws MismatchedDimensionException if the two positions don't have the same dimension.
      * @throws MismatchedReferenceSystemException if the two positions don't use the same CRS.
      *
-     * @see Envelope2D#Envelope2D(DirectPosition2D, DirectPosition2D)
+     * @see Envelope2D#Envelope2D(DirectPosition, DirectPosition)
      */
-    public GeneralEnvelope(final GeneralDirectPosition minDP, final GeneralDirectPosition maxDP)
+    public GeneralEnvelope(final GeneralDirectPosition lower, final GeneralDirectPosition upper)
             throws MismatchedReferenceSystemException
     {
 //  Uncomment next lines if Sun fixes RFE #4093999
-//      ensureNonNull("minDP", minDP);
-//      ensureNonNull("maxDP", maxDP);
-        super(minDP.ordinates, maxDP.ordinates);
-        crs = getCoordinateReferenceSystem(minDP, maxDP);
+//      ensureNonNull("lower", lower);
+//      ensureNonNull("upper", upper);
+        super(lower.ordinates, upper.ordinates);
+        crs = getCoordinateReferenceSystem(lower, upper);
         AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, ordinates.length >>> 1);
     }
 
@@ -515,22 +540,6 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        return super.getMinimum(dimension);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        return super.getMaximum(dimension);
-    }
-
-    /**
      * Sets the envelope range along the specified dimension.
      *
      * @param  dimension The dimension to set.
@@ -590,12 +599,14 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         ensureNonNull("envelope", envelope);
         final int dimension = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
-        if (envelope instanceof GeneralEnvelope) {
-            System.arraycopy(((GeneralEnvelope) envelope).ordinates, 0, ordinates, 0, ordinates.length);
+        if (envelope instanceof ArrayEnvelope) {
+            System.arraycopy(((ArrayEnvelope) envelope).ordinates, 0, ordinates, 0, ordinates.length);
         } else {
+            final DirectPosition lower = envelope.getLowerCorner();
+            final DirectPosition upper = envelope.getUpperCorner();
             for (int i=0; i<dimension; i++) {
-                ordinates[i]           = envelope.getMinimum(i);
-                ordinates[i+dimension] = envelope.getMaximum(i);
+                ordinates[i]           = lower.getOrdinate(i);
+                ordinates[i+dimension] = upper.getOrdinate(i);
             }
         }
         final CoordinateReferenceSystem envelopeCRS = envelope.getCoordinateReferenceSystem();
@@ -629,9 +640,11 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
             throw new IndexOutOfBoundsException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", offset));
         }
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<subDim; i++) {
-            ordinates[offset]           = envelope.getMinimum(i);
-            ordinates[offset+dimension] = envelope.getMaximum(i);
+            ordinates[offset]           = lower.getOrdinate(i);
+            ordinates[offset+dimension] = upper.getOrdinate(i);
             offset++;
         }
     }
@@ -818,6 +831,18 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports envelopes spanning the anti-meridian. In such cases it is possible to
+     * move both envelope borders in order to encompass the given point, as illustrated below (the
+     * new point is represented by the {@code +} symbol):
+     *
+     * {@preformat text
+     *    ─────┐   + ┌─────
+     *    ─────┘     └─────
+     * }
+     *
+     * The default implementation moves only the border which is closest to the given point.
+     *
      * @param  position The point to add.
      * @throws MismatchedDimensionException if the specified point doesn't have
      *         the expected dimension.
@@ -868,7 +893,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         if (left > 0) {
             right -= value;
             if (right > 0) {
-                if (right < left) {
+                if (right > left) {
                     i += (ordinates.length >>> 1);
                 }
                 ordinates[i] = value;
@@ -883,6 +908,12 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports envelopes spanning the anti-meridian. If one or both envelopes span
+     * the anti-meridian, then the result of the {@code add} operation may be an envelope expanding
+     * to infinities. In such case, the ordinate range will be either [-&infin;&hellip;&infin;] or
+     * [0&hellip;-0] depending on whatever the original range span the anti-meridian or not.
+     *
      * @param  envelope the {@code Envelope} to add to this envelope.
      * @throws MismatchedDimensionException if the specified envelope doesn't
      *         have the expected dimension.
@@ -892,11 +923,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dim; i++) {
             final double min0 = ordinates[i];
             final double max0 = ordinates[i+dim];
-            final double min1 = envelope.getMinimum(i);
-            final double max1 = envelope.getMaximum(i);
+            final double min1 = lower.getOrdinate(i);
+            final double max1 = upper.getOrdinate(i);
             final boolean sp0 = isNegative(max0 - min0);
             final boolean sp1 = isNegative(max1 - min1);
             if (sp0 == sp1) {
@@ -996,6 +1029,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * {@note This method assumes that the specified envelope uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
      *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports envelopes spanning the anti-meridian.
+     *
      * @param  envelope the {@code Envelope} to intersect to this envelope.
      * @throws MismatchedDimensionException if the specified envelope doesn't
      *         have the expected dimension.
@@ -1005,11 +1041,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
+        final DirectPosition lower = envelope.getLowerCorner();
+        final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dim; i++) {
             final double min0  = ordinates[i];
             final double max0  = ordinates[i+dim];
-            final double min1  = envelope.getMinimum(i);
-            final double max1  = envelope.getMaximum(i);
+            final double min1  = lower.getOrdinate(i);
+            final double max1  = upper.getOrdinate(i);
             final double span0 = max0 - min0;
             final double span1 = max1 - min1;
             if (isSameSign(span0, span1)) { // Always 'false' if any value is NaN.
