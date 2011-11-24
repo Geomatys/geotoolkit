@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.geometry;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.DirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -61,6 +62,18 @@ public final strictfp class GeneralEnvelopeTest {
     }
 
     /**
+     * Asserts that the the given two-dimensional envelope is equals to the given rectangle.
+     */
+    private static void assertEnvelopeEquals(final Envelope e,
+            final double xmin, final double ymin, final double xmax, final double ymax)
+    {
+        assertEquals("xmin", xmin, e.getMinimum(0), STRICT);
+        assertEquals("xmax", xmax, e.getMaximum(0), STRICT);
+        assertEquals("ymin", ymin, e.getMinimum(1), STRICT);
+        assertEquals("ymax", ymax, e.getMaximum(1), STRICT);
+    }
+
+    /**
      * Asserts that the intersection of the two following envelopes is equals to the given rectangle.
      * First, this method tests using the {@link Envelope2D} implementation. Then, it tests using the
      * {@link GeneralEnvelope} implementation.
@@ -77,15 +90,69 @@ public final strictfp class GeneralEnvelopeTest {
         assertEquals("xmax", xmax, ri.getMaxX(), STRICT);
         assertEquals("ymin", ymin, ri.getMinY(), STRICT);
         assertEquals("ymax", ymax, ri.getMaxY(), STRICT);
+        assertEnvelopeEquals(ri, xmin, ymin, xmax, ymax);
         assertEquals("Interchanged arguments.", ri, r2.createIntersection(r1));
+
+        // Compares with GeneralEnvelope.
         final GeneralEnvelope ei = new GeneralEnvelope(e1);
         ei.intersect(e2);
         assertEquals("isEmpty", isEmpty, e1.isEmpty());
+        assertEnvelopeEquals(ei, xmin, ymin, xmax, ymax);
         assertTrue("Using GeneralEnvelope.", ei.equals(ri, STRICT, false));
+
+        // Interchanges arguments.
         ei.setEnvelope(e2);
         ei.intersect(e1);
         assertEquals("isEmpty", isEmpty, e1.isEmpty());
+        assertEnvelopeEquals(ei, xmin, ymin, xmax, ymax);
         assertTrue("Using GeneralEnvelope.", ei.equals(ri, STRICT, false));
+    }
+
+    /**
+     * Asserts that the union of the two following envelopes is equals to the given rectangle.
+     * First, this method tests using the {@link Envelope2D} implementation. Then, it tests
+     * using the {@link GeneralEnvelope} implementation.
+     *
+     * @param inf {@code true} if the range after union is infinite. The handling of such case
+     *        is different for {@link GeneralEnvelope} than for {@link Envelope2D} because we
+     *        can not store infinite values in a reliable way in a {@link Rectangle2D} object,
+     *        so we use NaN instead.
+     * @param exactlyOneAntiMeridianSpan {@code true} if one envelope spans the anti-meridian
+     *        and the other does not.
+     */
+    private static void assertUnionEquals(final GeneralEnvelope e1, final GeneralEnvelope e2,
+            final double xmin, final double ymin, final double xmax, final double ymax,
+            final boolean inf, final boolean exactlyOneAntiMeridianSpan)
+    {
+        final Envelope2D r1 = new Envelope2D(e1);
+        final Envelope2D r2 = new Envelope2D(e2);
+        final Envelope2D ri = r1.createUnion(r2);
+        assertEquals("xmin", inf ? NaN : xmin, ri.getMinX(), STRICT);
+        assertEquals("xmax", inf ? NaN : xmax, ri.getMaxX(), STRICT);
+        assertEquals("ymin",             ymin, ri.getMinY(), STRICT);
+        assertEquals("ymax",             ymax, ri.getMaxY(), STRICT);
+        assertEnvelopeEquals(ri, inf ? NaN : xmin, ymin, inf ? NaN : xmax, ymax);
+        assertEquals("Interchanged arguments.", ri, r2.createUnion(r1));
+
+        // Compares with GeneralEnvelope.
+        final GeneralEnvelope ei = new GeneralEnvelope(e1);
+        ei.add(e2);
+        assertEnvelopeEquals(ei, xmin, ymin, xmax, ymax);
+        if (!inf) {
+            assertTrue("Using GeneralEnvelope.", ei.equals(ri, STRICT, false));
+        }
+
+        // Interchanges arguments.
+        ei.setEnvelope(e2);
+        ei.add(e1);
+        if (inf && exactlyOneAntiMeridianSpan) {
+            assertEnvelopeEquals(ei, Double.NEGATIVE_INFINITY, ymin, Double.POSITIVE_INFINITY, ymax);
+        } else {
+            assertEnvelopeEquals(ei, xmin, ymin, xmax, ymax);
+        }
+        if (!inf) {
+            assertTrue("Using GeneralEnvelope.", ei.equals(ri, STRICT, false));
+        }
     }
 
     /**
@@ -148,6 +215,68 @@ public final strictfp class GeneralEnvelopeTest {
         //  ─────┘     └─────
         e2.setRange(0, 10, 90);
         assertIntersectEquals(e1, e2, NaN, ymin, NaN, ymax);
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#add(Envelope)} and
+     * {@link Envelope2D#createUnion(Rectangle2D)} methods.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testUnion() {
+        //  ┌─────────────┐
+        //  │  ┌───────┐  │
+        //  │  └───────┘  │
+        //  └─────────────┘
+        final GeneralEnvelope e1 = create(20, -20, 80, 10);
+        final GeneralEnvelope e2 = create(40, -10, 62,  8);
+        assertUnionEquals(e1, e2, 20, -20, 80, 10, false, false);
+        //  ┌──────────┐
+        //  │  ┌───────┼──┐
+        //  │  └───────┼──┘
+        //  └──────────┘
+        e1.setEnvelope(20, -20,  80, 12);
+        e2.setEnvelope(40, -10, 100, 30);
+        final double ymin=-20, ymax=30; // Will not change anymore
+        assertUnionEquals(e1, e2, 20, ymin, 100, ymax, false, false);
+        //  ────┐  ┌────
+        //  ──┐ │  │ ┌──
+        //  ──┘ │  │ └──
+        //  ────┘  └────
+        e1.setRange(0,  80, 20);
+        e2.setRange(0, 100, 18);
+        assertUnionEquals(e1, e2, 80, ymin, 20, ymax, false, false);
+        //  ────┐  ┌────
+        //  ────┼──┼─┐┌─
+        //  ────┼──┼─┘└─
+        //  ────┘  └────
+        e2.setRange(0, 100, 90);
+        assertUnionEquals(e1, e2, +0.0, ymin, -0.0, ymax, true, false);
+        //  ─────┐      ┌─────
+        //     ┌─┼────┐ │
+        //     └─┼────┘ │
+        //  ─────┘      └─────
+        e2.setRange(0, 10, 30);
+        assertUnionEquals(e1, e2, 80, ymin, 30, ymax, false, true);
+        //  ──────────┐  ┌─────
+        //    ┌────┐  │  │
+        //    └────┘  │  │
+        //  ──────────┘  └─────
+        e2.setRange(0, 10, 16);
+        assertUnionEquals(e1, e2, 80, ymin, 20, ymax, false, true);
+        //  ─────┐     ┌─────
+        //       │ ┌─┐ │
+        //       │ └─┘ │
+        //  ─────┘     └─────
+        e2.setRange(0, 41, 60);
+        assertUnionEquals(e1, e2, 41, ymin, 20, ymax, false, true);
+        //  ─────┐     ┌─────
+        //     ┌─┼─────┼─┐
+        //     └─┼─────┼─┘
+        //  ─────┘     └─────
+        e2.setRange(0, 10, 90);
+        assertUnionEquals(e1, e2, +0.0, ymin, -0.0, ymax, true, true);
     }
 
     /**

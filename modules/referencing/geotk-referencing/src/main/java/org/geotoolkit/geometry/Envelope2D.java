@@ -33,6 +33,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import static java.lang.Double.NaN;
+import static java.lang.Double.isNaN;
 import static org.geotoolkit.math.XMath.isPositive;
 import static org.geotoolkit.math.XMath.isNegative;
 import static org.geotoolkit.math.XMath.isSameSign;
@@ -673,7 +674,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      *
      * {@section Spanning the anti-meridian of a Geographic CRS}
      * This method supports anti-meridian spanning in the same way than
-     * {@link AbstractEnvelope#intersects(Envelope, boolean)}.
+     * {@link AbstractEnvelope#intersect(Envelope)}.
      *
      * @param rect The rectangle to be intersected with this envelope.
      * @return The intersection of the given rectangle with this envelope.
@@ -707,6 +708,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                 if ((min1 > max0 || max1 < min0) && !isNegativeUnsafe(span0)) {
                     continue; // No intersection: leave ordinate values to NaN
                 }
+            } else if (isNaN(span0) || isNaN(span1)) {
+                continue; // Leave ordinate values to NaN
             } else {
                 int intersect = 0; // A bitmask of intersections (two bits).
                 if (isNegativeUnsafe(span0)) {
@@ -724,6 +727,79 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
         }
         assert inter.isEmpty() || (contains(inter) && rect.contains(inter)) : inter;
         return inter;
+    }
+
+    /**
+     * Returns the union of this envelope with the specified rectangle.
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * This method supports anti-meridian spanning in the same way than
+     * {@link AbstractEnvelope#add(Envelope)}.
+     *
+     * @param rect The rectangle to add to this envelope.
+     * @return The union of the given rectangle with this envelope.
+     */
+    public Envelope2D createUnion(final Rectangle2D rect) {
+        final Envelope2D env = (rect instanceof Envelope2D) ? (Envelope2D) rect : null;
+        final Envelope2D union = new Envelope2D(crs, NaN, NaN, NaN, NaN);
+        for (int i=0; i!=2; i++) {
+            final double min0, min1, span0, span1;
+            if (i == 0) {
+                min0  = x;
+                span0 = width;
+                min1  = rect.getX();
+                span1 = (env != null) ? env.width : rect.getWidth();
+            } else {
+                min0  = y;
+                span0 = height;
+                min1  = rect.getY();
+                span1 = (env != null) ? env.height : rect.getHeight();
+            }
+            final double max0 = min0 + span0;
+            final double max1 = min1 + span1;
+            double min = Math.min(min0, min1);
+            double max = Math.max(max0, max1);
+            /*
+             * See GeneralEnvelope.add(Envelope) for an explanation of the algorithm applied below.
+             * Note that the "continue" statement has reverse meaning: ordinates are left to NaN.
+             */
+            final boolean sp0 = isNegative(span0);
+            final boolean sp1 = isNegative(span1);
+            if (sp0 == sp1) {
+                if (sp0 && !isNegativeUnsafe(max - min)) {
+                    continue; // Leave ordinates to NaN.
+                }
+            } else if (sp0) {
+                if (max1 <= max0 || min1 >= min0) {
+                    min = min0;
+                    max = max0;
+                } else {
+                    final double left  = min1 - max0;
+                    final double right = min0 - max1;
+                    if (!(left > 0 || right > 0)) {
+                        continue; // Leave ordinates to NaN.
+                    }
+                    if (left > right) {min = min1; max = max0;}
+                    if (right > left) {min = min0; max = max1;}
+                }
+            } else {
+                if (max0 <= max1 || min0 >= min1) {
+                    min = min1;
+                    max = max1;
+                } else {
+                    final double left  = min0 - max1;
+                    final double right = min1 - max0;
+                    if (!(left > 0 || right > 0)) {
+                        continue; // Leave ordinates to NaN.
+                    }
+                    if (left > right) {min = min0; max = max1;}
+                    if (right > left) {min = min1; max = max0;}
+                }
+            }
+            union.setRange(i, min, max);
+        }
+        assert union.isEmpty() || (union.contains(this) && union.contains(rect)) : union;
+        return union;
     }
 
     /**

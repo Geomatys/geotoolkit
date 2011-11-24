@@ -541,9 +541,10 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     public void setRange(final int dimension, final double minimum, final double maximum)
             throws IndexOutOfBoundsException
     {
-        ensureValidIndex(ordinates.length >>> 1, dimension);
-        ordinates[dimension + (ordinates.length >>> 1)] = maximum;
-        ordinates[dimension]                            = minimum;
+        final int d = ordinates.length >>> 1;
+        ensureValidIndex(d, dimension);
+        ordinates[dimension + d] = maximum;
+        ordinates[dimension]     = minimum;
     }
 
     /**
@@ -812,7 +813,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * <p>
      * After adding a point, a call to {@link #contains(DirectPosition) contains(DirectPosition)}
      * with the added point as an argument will return {@code true}, except if one of the point
-     * ordinates was {@link Double#NaN} (in which case the corresponding ordinate have been ignored).
+     * ordinates was {@link Double#NaN} in which case the corresponding ordinate has been ignored.
      *
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
      *        For performance raisons, it will no be verified unless Java assertions are enabled.}
@@ -828,10 +829,51 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         assert equalsIgnoreMetadata(crs, position.getCoordinateReferenceSystem()) : position;
         for (int i=0; i<dim; i++) {
             final double value = position.getOrdinate(i);
-            if (value < ordinates[i    ]) ordinates[i    ] = value;
-            if (value > ordinates[i+dim]) ordinates[i+dim] = value;
+            final double min = ordinates[i];
+            final double max = ordinates[i+dim];
+            if (!isNegative(max - min)) { // Standard case, or NaN.
+                if (value < min) ordinates[i    ] = value;
+                if (value > max) ordinates[i+dim] = value;
+            } else {
+                /*
+                 * Spanning the anti-meridian. The [max…min] range (not that min/max are
+                 * interchanged) is actually an exclusion area. Changes only the closest
+                 * side.
+                 */
+                addToClosest(i, value, max, min);
+            }
         }
-        assert isEmpty() || contains(position) || hasNaN(position) : position;
+        assert contains(position) || isEmpty() || hasNaN(position) : position;
+    }
+
+    /**
+     * Invoked when a point is added to a range spanning the anti-meridian.
+     * In the example below, the new point is represented by the {@code +}
+     * symbol. The point is added only on the closest side.
+     *
+     * {@preformat text
+     *    ─────┐   + ┌─────
+     *    ─────┘     └─────
+     * }
+     *
+     * @param  i     The dimension of the ordinate
+     * @param  value The ordinate value to add to this envelope.
+     * @param  left  The border on the left side,  which is the <em>max</em> value (yes, this is confusing!)
+     * @param  right The border on the right side, which is the <em>min</em> value (yes, this is confusing!)
+     *
+     * @since 3.20
+     */
+    private void addToClosest(int i, final double value, double left, double right) {
+        left = value - left;
+        if (left > 0) {
+            right -= value;
+            if (right > 0) {
+                if (right < left) {
+                    i += (ordinates.length >>> 1);
+                }
+                ordinates[i] = value;
+            }
+        }
     }
 
     /**
@@ -851,12 +893,101 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dim; i++) {
-            final double min = envelope.getMinimum(i);
-            final double max = envelope.getMaximum(i);
-            if (min < ordinates[i    ]) ordinates[i    ] = min;
-            if (max > ordinates[i+dim]) ordinates[i+dim] = max;
+            final double min0 = ordinates[i];
+            final double max0 = ordinates[i+dim];
+            final double min1 = envelope.getMinimum(i);
+            final double max1 = envelope.getMaximum(i);
+            final boolean sp0 = isNegative(max0 - min0);
+            final boolean sp1 = isNegative(max1 - min1);
+            if (sp0 == sp1) {
+                /*
+                 * Standard case (for rows in the above pictures), or case where both envelopes
+                 * span the anti-meridian (which is almost the same with an additional post-add
+                 * check).
+                 *    ┌──────────┐          ┌──────────┐
+                 *    │  ┌────┐  │    or    │  ┌───────┼──┐
+                 *    │  └────┘  │          │  └───────┼──┘
+                 *    └──────────┘          └──────────┘
+                 *
+                 *    ────┐  ┌────          ────┐  ┌────
+                 *    ──┐ │  │ ┌──    or    ────┼──┼─┐┌─
+                 *    ──┘ │  │ └──          ────┼──┼─┘└─
+                 *    ────┘  └────          ────┘  └────
+                 */
+                if (min1 < min0) ordinates[i    ] = min1;
+                if (max1 > max0) ordinates[i+dim] = max1;
+                if (!sp0 || isNegativeUnsafe(ordinates[i+dim] - ordinates[i])) {
+                    continue; // We are done, go to the next dimension.
+                }
+                // If we were spanning the anti-meridian before the union but
+                // are not anymore after the union, we actually merged to two
+                // sides, so the envelope is spanning to infinities. The code
+                // close to the end of this loop will set an infinite range.
+            } else if (sp0) {
+                /*
+                 * Only this envelope spans the anti-meridian; the given envelope is normal or
+                 * has NaN values.  First we need to exclude the cases were the given envelope
+                 * is fully included in this envelope:
+                 *   ──────────┐  ┌─────
+                 *     ┌────┐  │  │
+                 *     └────┘  │  │
+                 *   ──────────┘  └─────
+                 */
+                if (max1 <= max0) continue;  // This is the case of above picture.
+                if (min1 >= min0) continue;  // Like above picture, but on the right side.
+                /*
+                 * At this point, the given envelope partially overlaps the "exclusion area"
+                 * of this envelope or has NaN values. We will move at most one edge of this
+                 * envelope, in order to leave as much free space as possible.
+                 *    ─────┐      ┌─────
+                 *       ┌─┼────┐ │
+                 *       └─┼────┘ │
+                 *    ─────┘      └─────
+                 */
+                final double left  = min1 - max0;
+                final double right = min0 - max1;
+                if (left > 0 || right > 0) {
+                    // The < and > checks below are not completly redundant.
+                    // The difference is when a value is NaN.
+                    if (left > right) ordinates[i    ] = min1;
+                    if (right > left) ordinates[i+dim] = max1; // This is the case illustrated above.
+                    continue; // We are done, go to the next dimension.
+                }
+                // If we reach this point, the given envelope fills completly the "exclusion area"
+                // of this envelope. As a consequence this envelope is now spanning to infinities.
+                // We will set that fact close to the end of this loop.
+            } else {
+                /*
+                 * Opposite of above case: this envelope is "normal" or has NaN values, and the
+                 * given envelope spans to infinities.
+                 */
+                if (max0 <= max1 || min0 >= min1) {
+                    ordinates[i]     = min1;
+                    ordinates[i+dim] = max1;
+                    continue;
+                }
+                final double left  = min0 - max1;
+                final double right = min1 - max0;
+                if (left > 0 || right > 0) {
+                    if (left > right) ordinates[i+dim] = max1;
+                    if (right > left) ordinates[i    ] = min1;
+                    continue;
+                }
+            }
+            /*
+             * If we reach that point, we went in one of the many cases where the envelope
+             * has been expanded to infinity.  Declares an infinite range while preserving
+             * the "normal" / "anti-meridian spanning" state.
+             */
+            if (sp0) {
+                ordinates[i    ] = +0.0;
+                ordinates[i+dim] = -0.0;
+            } else {
+                ordinates[i    ] = Double.NEGATIVE_INFINITY;
+                ordinates[i+dim] = Double.POSITIVE_INFINITY;
+            }
         }
-        assert isEmpty() || contains(envelope, true) || hasNaN(envelope) : envelope;
+        assert contains(envelope, true) || isEmpty() || hasNaN(envelope) : this;
     }
 
     /**
@@ -910,22 +1041,24 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                 }
             } else {
                 int intersect = 0; // A bitmask of intersections (two bits).
-                if (isNegativeUnsafe(span0)) {
-                    /*
-                     * The first line below checks for the case illustrated below. The second
-                     * line does the same check, but with the small rectangle on the right side.
-                     *    ─────┐      ┌─────              ──────────┐  ┌─────
-                     *       ┌─┼────┐ │           or        ┌────┐  │  │
-                     *       └─┼────┘ │                     └────┘  │  │
-                     *    ─────┘      └─────              ──────────┘  └─────
-                     */
-                    if (min1 <= max0) {intersect  = 1; ordinates[i    ] = min1;}
-                    if (max1 >= min0) {intersect |= 2; ordinates[i+dim] = max1;}
-                } else {
-                    // Same than above, but with indices 0 and 1 interchanged.
-                    // No need to set ordinate values since they would be the same.
-                    if (min0 <= max1) {intersect  = 1;}
-                    if (max0 >= min1) {intersect |= 2;}
+                if (!Double.isNaN(span0) && !Double.isNaN(span1)) {
+                    if (isNegativeUnsafe(span0)) {
+                        /*
+                         * The first line below checks for the case illustrated below. The second
+                         * line does the same check, but with the small rectangle on the right side.
+                         *    ─────┐      ┌─────              ──────────┐  ┌─────
+                         *       ┌─┼────┐ │           or        ┌────┐  │  │
+                         *       └─┼────┘ │                     └────┘  │  │
+                         *    ─────┘      └─────              ──────────┘  └─────
+                         */
+                        if (min1 <= max0) {intersect  = 1; ordinates[i    ] = min1;}
+                        if (max1 >= min0) {intersect |= 2; ordinates[i+dim] = max1;}
+                    } else {
+                        // Same than above, but with indices 0 and 1 interchanged.
+                        // No need to set ordinate values since they would be the same.
+                        if (min0 <= max1) {intersect  = 1;}
+                        if (max0 >= min1) {intersect |= 2;}
+                    }
                 }
                 /*
                  * Cases 0 and 3 are illustrated below. In case 1 and 2, we will set
@@ -943,7 +1076,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                  *                     └─┘                └─────────┘
                  */
                 switch (intersect) {
-                    case 0: // Fall theough
+                    case 0: // Fall through
                     case 3: ordinates[i] = ordinates[i+dim] = Double.NaN; break;
                     case 2: if (min1 > min0) ordinates[i    ] = min1; break;
                     case 1: if (max1 < max0) ordinates[i+dim] = max1; break;
