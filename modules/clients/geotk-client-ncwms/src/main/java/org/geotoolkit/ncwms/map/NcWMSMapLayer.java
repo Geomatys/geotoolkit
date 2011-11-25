@@ -28,6 +28,7 @@ import org.geotoolkit.ncwms.NcGetLegendRequest;
 import org.geotoolkit.ncwms.NcGetMapRequest;
 import org.geotoolkit.ncwms.NcGetMetadataMinMaxRequest;
 import org.geotoolkit.ncwms.NcGetMetadataRequest;
+import org.geotoolkit.ncwms.NcGetTimeseriesRequest;
 import org.geotoolkit.ncwms.NcGetTransectRequest;
 import org.geotoolkit.ncwms.NcGetVerticalProfileRequest;
 import org.geotoolkit.ncwms.NcWMSCommonRequest;
@@ -379,4 +380,30 @@ public class NcWMSMapLayer extends WMSMapLayer {
         return request.getURL();
     }
     
+    /**
+     * Generates a GetVerticalProfile URL.
+     * 
+     * @param crsCode       A crs code.
+     * @param x             The X coordinate of a point
+     * @param y             The Y coordinate of a point
+     * @param outputFormat  The mimetype of the output format.Possible values: image/png ...
+     * @param dateBegin     The period date begin
+     * @param dateEnd       The period date end
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
+    public URL queryTimeseries(final Envelope env, final Dimension rect, int x,
+            int y, final String infoFormat, 
+            final String dateBegin, final String dateEnd) throws MalformedURLException, TransformException, FactoryException {
+        final NcGetTimeseriesRequest request = ((NcWebMapServer) getServer()).createGetTimeseries();
+        
+        final String[] layer = new String[]{getLayerNames()[0]};
+        prepareGetFeatureInfoRequest(request, env, rect, x, y, layer, infoFormat, 0);
+        
+        // Mandatory
+        request.setDateBegin(dateBegin);
+        request.setDateEnd(dateEnd);
+        
+        return request.getURL();
+    }
 }

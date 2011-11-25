@@ -21,9 +21,11 @@ import java.net.URL;
 import org.geotoolkit.ncwms.v111.NcGetFeatureInfo111;
 import org.geotoolkit.ncwms.v111.NcGetLegend111;
 import org.geotoolkit.ncwms.v111.NcGetMap111;
+import org.geotoolkit.ncwms.v111.NcGetTimeseries111;
 import org.geotoolkit.ncwms.v130.NcGetFeatureInfo130;
 import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
+import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
@@ -189,4 +191,21 @@ public class NcWebMapServer extends WebMapServer{
         return new NcGetVerticalProfile(getURI().toString());
     }
 
+    /**
+     * Returns the GetTimeseries request object. 
+     */
+    public NcGetTimeseriesRequest createGetTimeseries() {
+        
+        switch (getVersion()) {
+            
+            case v111:
+                return new NcGetTimeseries111(getURI().toString(),securityManager);
+                
+            case v130:
+                return new NcGetTimeseries130(getURI().toString(),securityManager);
+                
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
 }

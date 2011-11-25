@@ -391,6 +391,47 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
             }
         }
     }
+    
+    /**
+     * Encode ELEVATION parameters if defined in the envelope.
+     *
+     * @param env Current Envelope
+     * @param map map containing GetMap parameters
+     */
+    protected void encodeElevation(final Envelope env, final Map<String, String> map) {
+        //append time and elevation parameter
+        final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            final AxisDirection ad = axis.getDirection();
+            if (ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)) {
+                //found a vertical axis
+                final double minV = env.getMinimum(i);
+                final double maxV = env.getMaximum(i);
+
+                if (Double.isNaN(minV) || Double.isInfinite(minV)) {
+                    if (Double.isNaN(maxV) || Double.isInfinite(maxV)) {
+                        //both null, do nothing
+                    } else {
+                        //only max limit
+                        map.put("ELEVATION", String.valueOf(maxV));
+                    }
+                } else if (Double.isNaN(maxV) || Double.isInfinite(maxV)) {
+                    if (Double.isNaN(minV) || Double.isInfinite(minV)) {
+                        //both null, do nothing
+                    } else {
+                        //only min limit
+                        map.put("ELEVATION", String.valueOf(minV));
+                    }
+                } else {
+                    //both ok, calculate median
+                    final double median = (minV + maxV) / 2;
+                    map.put("ELEVATION", String.valueOf(median));
+                }
+
+            }
+        }
+    }
 
     /**
      * Transform a double representing a Date to a String
