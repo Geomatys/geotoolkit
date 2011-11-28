@@ -359,8 +359,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      *               stored in the destination array.
      * @param derivate {@code true} for computing the derivative, or {@code false} if not needed.
      * @return The matrix of the transform derivative at the given source position, or {@code null}
-     *         if the {@code derivate} argument is {@code false} or if this transform does not
-     *         support derivative calculation.
+     *         if the {@code derivate} argument is {@code false}.
      * @throws TransformException If the point can't be transformed or if a problem occurred while
      *         calculating the derivative.
      *

@@ -106,12 +106,12 @@ final strictfp class RandomFailureTransform extends PseudoTransform {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws TransformException
     {
-        super.transform(srcPts, srcOff, dstPts, dstOff, false);
+        final Matrix derivative = super.transform(srcPts, srcOff, dstPts, dstOff, derivate);
         final int index = ordinal++;
         if (random.nextInt(denominator) == 0) {
             assertTrue("Clash in coordinate ordinal.", failures.add(index));
             throw new TransformException("Random exception for testing purpose.");
         }
-        return null;
+        return derivative;
     }
 }

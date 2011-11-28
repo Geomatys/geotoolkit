@@ -453,8 +453,10 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
                                 final double[] dstPts, final int dstOff,
                                 final boolean derivate) throws TransformException
         {
+            final Matrix derivative = derivate ? derivative(
+                    new Point2D.Double(srcPts[srcOff], srcPts[srcOff+1])) : null;
             transform(srcPts, srcOff, dstPts, dstOff, 1);
-            return null;
+            return derivative;
         }
 
         /**
