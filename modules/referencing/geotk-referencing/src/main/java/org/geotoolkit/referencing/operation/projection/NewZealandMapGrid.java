@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.math.Complex;
+import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
 
@@ -166,6 +167,9 @@ public class NewZealandMapGrid extends UnitaryProjection {
             }
             dstPts[dstOff  ] = z.imag;
             dstPts[dstOff+1] = z.real;
+        }
+        if (derivate) {
+            throw new ProjectionException(Errors.Keys.CANT_COMPUTE_DERIVATIVE);
         }
         return null;
     }

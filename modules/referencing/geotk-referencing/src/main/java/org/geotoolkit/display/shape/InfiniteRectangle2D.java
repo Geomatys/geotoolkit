@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.geometry.UnmodifiableGeometryException;
+
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
@@ -281,13 +283,10 @@ final class InfiniteRectangle2D extends Rectangle2D implements Serializable {
 
     /**
      * Always throws an exception, since this rectangle is immutable.
-     *
-     * @todo Throws UnmodifiableGeometryException instead?
-     *       (defined in renderer module for now)
      */
     @Override
     public void setRect(double x, double y, double w, double h) {
-        throw new UnsupportedOperationException();
+        throw new UnmodifiableGeometryException();
     }
 
     /**

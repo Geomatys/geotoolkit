@@ -219,6 +219,40 @@ public final strictfp class EnvelopesTest extends ReferencingTestBase {
     }
 
     /**
+     * Tests the conversions of a rectangle with a datum shift. The envelope is transformed twice:
+     * once with CRS built from WKT, and once with the CRS fetched from the EPSG database. Those
+     * two approaches use different datum shift methods, and experience show that it is worth to
+     * check both of them.
+     *
+     * @throws FactoryException Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testDatumShift() throws FactoryException, TransformException {
+        CoordinateReferenceSystem sourceCRS = CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
+        CoordinateReferenceSystem targetCRS = DefaultGeographicCRS.WGS84;
+        final GeneralEnvelope env = new GeneralEnvelope(sourceCRS);
+        env.setRange(0, -3980814, -3113802);
+        env.setRange(1,    83461,  1166891);
+        final Envelope ex = CRS.transform(env, targetCRS);
+        assertEquals(-43.03947, ex.getMinimum(0), 1E-5);
+        assertEquals(-31.39226, ex.getMaximum(0), 1E-5);
+        assertEquals( 17.99971, ex.getMinimum(1), 1E-5);
+        assertEquals( 29.44712, ex.getMaximum(1), 1E-5);
+        /*
+         * Same envelope transformation, but using the CRS fetched from the EPSG database.
+         */
+        sourceCRS = CRS.decode("EPSG:27572");
+        targetCRS = CRS.decode("EPSG:4326");
+        env.setCoordinateReferenceSystem(sourceCRS);
+        final Envelope rs = CRS.transform(env, targetCRS);
+        assertEquals(ex.getMinimum(1), rs.getMinimum(0), 0.01);
+        assertEquals(ex.getMaximum(1), rs.getMaximum(0), 0.01);
+        assertEquals(ex.getMinimum(0), rs.getMinimum(1), 0.01);
+        assertEquals(ex.getMaximum(0), rs.getMaximum(1), 0.01);
+    }
+
+    /**
      * Returns the inverse of the given conversion. This method is not strictly correct since we
      * reuse the properties (name, aliases, etc.) from the given conversion, which is not correct.
      * However those properties are not significant for the purpose of this test.

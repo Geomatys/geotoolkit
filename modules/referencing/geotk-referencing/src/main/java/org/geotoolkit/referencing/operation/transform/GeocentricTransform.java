@@ -55,6 +55,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
+import org.geotoolkit.internal.referencing.DirectPositionView;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
@@ -797,10 +798,12 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
         @Override
         public Matrix transform(final double[] srcPts, final int srcOff,
                                 final double[] dstPts, final int dstOff,
-                                final boolean derivate)
+                                final boolean derivate) throws TransformException
         {
+            final Matrix derivative = derivate ? derivative(
+                    new DirectPositionView(srcPts, srcOff, getSourceDimensions())) : null;
             inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, 1, hasHeight, false);
-            return null;
+            return derivative;
         }
 
         /**

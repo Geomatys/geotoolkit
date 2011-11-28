@@ -45,6 +45,7 @@ import org.geotoolkit.parameter.ParameterGroup;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -397,12 +398,14 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
     @Override
     public Matrix transform(final double[] srcPts, final int srcOff,
                             final double[] dstPts, final int dstOff,
-                            final boolean derivate)
+                            final boolean derivate) throws TransformException
     {
+        final Matrix derivative = derivate ? derivative(
+                new Point2D.Double(srcPts[srcOff], srcPts[srcOff+1])) : null;
         if (dstPts != null) {
             transform(srcPts, srcOff, dstPts, dstOff, 1);
         }
-        return null;
+        return derivative;
     }
 
     /**

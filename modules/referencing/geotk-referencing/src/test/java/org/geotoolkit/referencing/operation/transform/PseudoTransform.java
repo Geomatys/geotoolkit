@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
+import org.geotoolkit.internal.referencing.DirectPositionView;
 import static java.lang.StrictMath.*;
 
 
@@ -95,12 +96,14 @@ strictfp class PseudoTransform extends AbstractMathTransform {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws TransformException
     {
+        final Matrix derivative = derivate ? derivative(
+                new DirectPositionView(srcPts, srcOff, getSourceDimensions())) : null;
         System.arraycopy(srcPts, srcOff, buffer, 0, sourceDimension);
         for (int i=0; i<targetDimension; i++) {
             double v = buffer[i % sourceDimension];
             v += (i+1)*1000 + round(v * 1000);
             dstPts[dstOff + i] = v;
         }
-        return null;
+        return derivative;
     }
 }

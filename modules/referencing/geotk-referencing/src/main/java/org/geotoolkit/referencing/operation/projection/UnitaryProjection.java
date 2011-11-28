@@ -398,8 +398,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      *               stored in the destination array.
      * @param  derivate {@code true} for computing the derivative, or {@code false} if not needed.
      * @return The matrix of the projection derivative at the given source position, or {@code null}
-     *         if the {@code derivate} argument is {@code false} or if this map projection does not
-     *         support derivative calculation.
+     *         if the {@code derivate} argument is {@code false}.
      * @throws ProjectionException if the point can't be converted.
      *
      * @since 3.20 (derived from 3.00)
@@ -488,10 +487,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         {
             inverseTransform(srcPts, srcOff, dstPts, dstOff);
             if (derivate) {
-                final Matrix derivative = UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true);
-                if (derivative != null) {
-                    return Matrices.invert(derivative);
-                }
+                return Matrices.invert(UnitaryProjection.this.transform(dstPts, dstOff, null, 0, true));
             }
             return null;
         }
