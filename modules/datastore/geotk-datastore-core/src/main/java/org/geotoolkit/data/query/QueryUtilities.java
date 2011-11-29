@@ -114,7 +114,7 @@ public class QueryUtilities {
                     throw new NullPointerException("Session can not be null.");
                 }
 
-                absolute = new DefaultTextStatement(select.getStatement(), session);
+                absolute = new DefaultTextStatement(select.getStatement(), session, select.getName());
             }else{
                 absolute = source;
             }

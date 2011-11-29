@@ -59,6 +59,7 @@ import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.util.FactoryException;
@@ -674,7 +675,7 @@ public class PostGISDialect extends AbstractSQLDialect {
 
     @Override
     public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
-            final ResultSet result, final String name) throws SQLException,DataStoreException{
+            final ResultSet result) throws SQLException,DataStoreException{
         
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
@@ -704,14 +705,22 @@ public class PostGISDialect extends AbstractSQLDialect {
                 if(table != null){
                     desc = table.getSimpleType().getDescriptor(columnbaseName);
                     
-                    if(!columnName.equals(columnbaseName)){
-                        //column has been renamed using an alias
-                        adb.reset();
-                        atb.reset();
-                        adb.copy(desc);
-                        adb.setName(desc.getName().getNamespaceURI(), columnName);
-                        desc = adb.buildDescriptor();                        
+                    //column name might have change
+                    //and user data must be changed
+                    adb.reset();
+                    adb.copy(desc);
+                    adb.setName(desc.getName().getNamespaceURI(), columnName);
+                    
+                    atb.reset();
+                    atb.copy((AttributeType)desc.getType());                    
+                    if(Geometry.class.isAssignableFrom(atb.getBinding())){
+                        atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
+                        adb.setType(atb.buildGeometryType());
+                    }else{
+                        adb.setType(atb.buildType());
                     }
+                    
+                    desc = adb.buildDescriptor();
                 }
             }
 
@@ -742,6 +751,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 }
 
                 if(Geometry.class.isAssignableFrom(atb.getBinding())){
+                    atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
                     adb.setType(atb.buildGeometryType());
                 }else{
                     adb.setType(atb.buildType());

@@ -270,10 +270,11 @@ public final class QueryBuilder {
      * 
      * @param language
      * @param statement
+     * @param query name
      * @return Query
      */
-    public static Query language(final String language, final String statement){
-        return new DefaultQuery(language, statement);
+    public static Query language(final String language, final String statement, final Name name){
+        return new DefaultQuery(language, statement,name);
     }
 
     /**

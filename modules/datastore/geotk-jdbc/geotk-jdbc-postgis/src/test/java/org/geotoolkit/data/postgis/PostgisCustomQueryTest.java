@@ -17,12 +17,11 @@
 package org.geotoolkit.data.postgis;
 
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.ExtendedDataStore;
-import org.geotoolkit.data.query.DefaultTextStatement;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.TextStatement;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCTestSetup;
@@ -30,6 +29,7 @@ import org.geotoolkit.jdbc.JDBCTestSupport;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -52,9 +52,10 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
         assertFalse(store.getNames().contains(name));
         
         //add a new query
-        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, "SELECT geometry ,\"intProperty\" FROM custom");    
-        store.addQuery(query, name);
+        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, "SELECT geometry ,\"intProperty\" FROM custom",name);    
+        store.addQuery(query);
         assertTrue(store.getNames().contains(name));
+        
         
         final FeatureType ft = store.getFeatureType(name);
         assertEquals(name, ft.getName());        
@@ -75,8 +76,9 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
         assertFalse(store.getNames().contains(name));
         
         //add a new query
-        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, "SELECT geometry as geo ,\"intProperty\" as it FROM custom");    
-        store.addQuery(query, name);
+        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, 
+                "SELECT geometry as geo ,\"intProperty\" as it FROM custom",name);    
+        store.addQuery(query);
         assertTrue(store.getNames().contains(name));
         
         final FeatureType ft = store.getFeatureType(name);
@@ -88,6 +90,38 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
         assertTrue(CRS.equalsIgnoreMetadata(CRS.decode("EPSG:4326",true), ((GeometryDescriptor)ft.getDescriptor("geo")).getCoordinateReferenceSystem() ));
         assertEquals(Integer.class, ft.getDescriptor("it").getType().getBinding());
                 
+    }
+    
+    @Test
+    public void testRead() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
+        
+        final ExtendedDataStore store = new ExtendedDataStore(dataStore);        
+        final Name name = DefaultName.valueOf("{http://www.geotoolkit.org/test}extsql");        
+        assertFalse(store.getNames().contains(name));
+        
+        //add a new query
+        final Query query = QueryBuilder.language(JDBCDataStore.CUSTOM_SQL, 
+                "SELECT geometry as geo ,\"intProperty\" as it FROM custom",name);    
+        store.addQuery(query);
+        assertTrue(store.getNames().contains(name));
+        
+        final FeatureType ft = store.getFeatureType(name);
+                
+        final FeatureCollection col = store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
+        assertEquals(ft, col.getFeatureType());
+        assertEquals(3, col.size());
+        
+        final FeatureIterator ite = col.iterator();
+        try{
+            while(ite.hasNext()){
+                final Feature f = ite.next();
+                assertEquals(f.getType(), ft);
+            }
+        }finally{
+            ite.close();
+        }
+        
+        
     }
     
 
@@ -108,6 +142,10 @@ public class PostgisCustomQueryTest extends JDBCTestSupport{
                 + "\"doubleProperty\" double precision, "
                 + "\"stringProperty\" varchar)");
                 run("INSERT INTO GEOMETRY_COLUMNS VALUES('', 'public', 'custom', 'geometry', 2, '4326', 'POINT')");
+                
+                run("INSERT INTO \"custom\" VALUES(0, GeometryFromText('POINT(0 0)', 4326), 0, 0.0, 'zero')"); 
+                run("INSERT INTO \"custom\" VALUES(1, GeometryFromText('POINT(1 1)', 4326), 1, 1.1, 'one')");
+                run("INSERT INTO \"custom\" VALUES(2, GeometryFromText('POINT(2 2)', 4326), 2, 2.2, 'two')");
             }
         };
     }

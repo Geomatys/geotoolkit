@@ -19,6 +19,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
+import org.opengis.feature.type.Name;
 
 /**
  * Text statements are queries express in a different form.
@@ -45,5 +46,12 @@ public interface TextStatement extends Source {
      *         might be null in single selector query.
      */
     Session getSession();
+    
+    /**
+     * Since text statement are not linked to any specific data, they can contain a
+     * name to simplify reconizing them.
+     * @return name of the query, can be null
+     */
+    Name getName();
 
 }

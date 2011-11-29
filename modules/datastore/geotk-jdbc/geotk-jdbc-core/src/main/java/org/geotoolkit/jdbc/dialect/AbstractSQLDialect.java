@@ -556,7 +556,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
-            final ResultSet result, final String name) throws SQLException,DataStoreException{
+            final ResultSet result) throws SQLException,DataStoreException{
         //do nothing more
     }
     

@@ -19,6 +19,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.data.session.Session;
+import org.opengis.feature.type.Name;
 
 /**
  *
@@ -27,12 +28,14 @@ import org.geotoolkit.data.session.Session;
  */
 public class DefaultTextStatement implements TextStatement {
 
+    private final Name name;
     private final String statement;
     private final Session session;
 
-    public DefaultTextStatement(final String statement, final Session session) {
+    public DefaultTextStatement(final String statement, final Session session, final Name name) {
         this.statement = statement;
         this.session = session;
+        this.name = name;
     }
 
     @Override
@@ -45,4 +48,9 @@ public class DefaultTextStatement implements TextStatement {
         return session;
     }
 
+    @Override
+    public Name getName() {
+        return name;
+    }
+    
 }

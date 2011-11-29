@@ -429,12 +429,19 @@ public final class DataBaseModel {
      * @return FeatureType
      * @throws SQLException
      */
-    public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException, DataStoreException{
+    public FeatureType analyzeResult(final ResultSet result, Name name) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
-        final String namespace = store.getNamespaceURI();
+        String namespace;
+        
+        if(name == null){
+            namespace = store.getNamespaceURI();
+            name = new DefaultName(namespace, "undefined");
+        }else{
+            namespace = name.getNamespaceURI();
+        }
         
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
-        ftb.setName(ensureGMLNS(namespace, name));
+        ftb.setName(ensureGMLNS(namespace, name.getLocalPart()));
 
         final ResultSetMetaData metadata = result.getMetaData();
         final int nbcol = metadata.getColumnCount();
@@ -495,7 +502,7 @@ public final class DataBaseModel {
             ftb.add(desc);
         }
 
-        dialect.analyzeResult(this, ftb, result, name);
+        dialect.analyzeResult(this, ftb, result);
         return ftb.buildFeatureType();
     }
 
