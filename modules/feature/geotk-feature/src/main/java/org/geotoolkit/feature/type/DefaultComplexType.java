@@ -159,9 +159,9 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         if (this == o) {
             return true;
         }
-        if (o instanceof DefaultComplexType && super.equals(o)) {
-            DefaultComplexType that = (DefaultComplexType) o;
-            return Utilities.deepEquals(this.descriptors, that.descriptors);
+        if (o instanceof ComplexType && super.equals(o)) {
+            final ComplexType that = (ComplexType) o;
+            return Utilities.deepEquals(this.getDescriptors(), that.getDescriptors());
         }
         return false;
     }

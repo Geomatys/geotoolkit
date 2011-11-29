@@ -118,7 +118,7 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
             return false;
         }
 
-        AttributeType att = (AttributeType) other;
+        final AttributeType att = (AttributeType) other;
 
         if (identified != att.isIdentified()) {
             return false;

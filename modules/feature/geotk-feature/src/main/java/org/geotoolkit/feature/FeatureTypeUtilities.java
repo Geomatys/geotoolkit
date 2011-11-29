@@ -76,6 +76,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.util.Collection;
 import org.opengis.feature.type.PropertyType;
 
 /**
@@ -997,9 +998,9 @@ public final class FeatureTypeUtilities {
             throw new RuntimeException(e);
         }
     }
-
+    
     /** Exact equality based on typeNames, namespace, attributes and ancestors */
-    public static boolean equals(final SimpleFeatureType typeA, final SimpleFeatureType typeB) {
+    public static boolean equals(final FeatureType typeA, final FeatureType typeB) {
         if (typeA == typeB) {
             return true;
         }
@@ -1007,17 +1008,20 @@ public final class FeatureTypeUtilities {
         if (typeA == null || typeB == null) {
             return false;
         }
-        return equalsId(typeA, typeB) && equals(typeA.getAttributeDescriptors(), typeB.getAttributeDescriptors()) &&
-                equalsAncestors(typeA, typeB);
+        return equalsId(typeA, typeB) && 
+               equals(typeA.getDescriptors(), typeB.getDescriptors()) &&
+               equalsAncestors(typeA, typeB);
     }
+    
 
-    public static boolean equals(final List attributesA, final List attributesB) {
+    public static boolean equals(final Collection attributesA, final Collection attributesB) {
         return equals(
-                (AttributeDescriptor[]) attributesA.toArray(new AttributeDescriptor[attributesA.size()]),
-                (AttributeDescriptor[]) attributesB.toArray(new AttributeDescriptor[attributesB.size()]));
+                (PropertyDescriptor[]) attributesA.toArray(new PropertyDescriptor[attributesA.size()]),
+                (PropertyDescriptor[]) attributesB.toArray(new PropertyDescriptor[attributesB.size()]));
     }
 
-    public static boolean equals(final AttributeDescriptor[] attributesA, final AttributeDescriptor[] attributesB) {
+    public static boolean equals(final PropertyDescriptor[] attributesA, 
+            final PropertyDescriptor[] attributesB) {
         if (attributesA.length != attributesB.length) {
             return false;
         }
@@ -1039,23 +1043,23 @@ public final class FeatureTypeUtilities {
      * @param typeA
      * @param typeB
      */
-    public static boolean equalsAncestors(final SimpleFeatureType typeA, final SimpleFeatureType typeB) {
+    public static boolean equalsAncestors(final FeatureType typeA, final FeatureType typeB) {
         return ancestors(typeA).equals(typeB);
     }
 
-    public static Set ancestors(final SimpleFeatureType featureType) {
+    public static Set ancestors(final FeatureType featureType) {
         if (featureType == null || getAncestors(featureType).isEmpty()) {
             return Collections.EMPTY_SET;
         }
         return new HashSet(getAncestors(featureType));
     }
 
-    public static boolean equals(final AttributeDescriptor a, final AttributeDescriptor b) {
+    public static boolean equals(final PropertyDescriptor a, final PropertyDescriptor b) {
         return a == b || (a != null && a.equals(b));
     }
-
+    
     /** Quick check of namespace and typename */
-    public static boolean equalsId(final SimpleFeatureType typeA, final SimpleFeatureType typeB) {
+    public static boolean equalsId(final FeatureType typeA, final FeatureType typeB) {
         if (typeA == typeB) {
             return true;
         }
@@ -1064,8 +1068,8 @@ public final class FeatureTypeUtilities {
             return false;
         }
 
-        final String typeNameA = typeA.getTypeName();
-        final String typeNameB = typeB.getTypeName();
+        final String typeNameA = typeA.getName().getLocalPart();
+        final String typeNameB = typeB.getName().getLocalPart();
         if (typeNameA == null && typeNameB != null) {
             return false;
         } else if (!typeNameA.equals(typeNameB)) {

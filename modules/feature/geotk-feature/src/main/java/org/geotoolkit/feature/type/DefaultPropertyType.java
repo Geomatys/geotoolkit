@@ -148,7 +148,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
             return false;
         }
 
-        PropertyType prop = (PropertyType) other;
+        final PropertyType prop = (PropertyType) other;
 
         if (!Utilities.equals(name, prop.getName())) {
             return false;
