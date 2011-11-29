@@ -21,7 +21,8 @@ package org.geotoolkit.data.query;
 import org.geotoolkit.data.session.Session;
 
 /**
- *
+ * Text statements are queries express in a different form.
+ * 
  * @author Johann Sorel (Geoamtys)
  * @module pending
  */

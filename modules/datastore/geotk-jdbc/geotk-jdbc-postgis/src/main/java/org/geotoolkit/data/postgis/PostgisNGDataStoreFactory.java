@@ -111,7 +111,7 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
         // setup loose bbox
         final Boolean loose = (Boolean) params.parameter(LOOSEBBOX.getName().toString()).getValue();
         dialect.setLooseBBOXEnabled(loose == null || Boolean.TRUE.equals(loose));
-
+        
         return dataStore;
     }
 

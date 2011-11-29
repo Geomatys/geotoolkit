@@ -36,6 +36,7 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.session.SessionDecorator;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
@@ -118,11 +119,18 @@ public final class ExtendedDataStore extends AbstractDataStore{
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
             final Query original = getQuery(typeName);
+            FeatureType ft;
             try {
-                return wrapped.getFeatureType(original);
+                ft = wrapped.getFeatureType(original);
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
+            //set the proper name
+            final FeatureTypeBuilder fb = new FeatureTypeBuilder();
+            fb.copy(ft);
+            fb.setName(typeName);
+            ft = fb.buildFeatureType();
+            return ft;
         }
         return wrapped.getFeatureType(typeName);
     }

@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.jdbc.dialect;
 
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.jdbc.reverse.DataBaseModel;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsGreaterThan;
 import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
@@ -547,7 +550,16 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
         throw new UnsupportedOperationException("Override this method when isLimitOffsetSupported returns true");
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
+            final ResultSet result, final String name) throws SQLException,DataStoreException{
+        //do nothing more
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // Static //////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -639,5 +651,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     protected static void initBaseSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
     }
+    
+    
 
 }

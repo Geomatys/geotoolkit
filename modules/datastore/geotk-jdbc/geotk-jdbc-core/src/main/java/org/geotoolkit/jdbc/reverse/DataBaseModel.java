@@ -445,7 +445,7 @@ public final class DataBaseModel {
             final String schemaName = metadata.getSchemaName(i);
             final String tableName = metadata.getTableName(i);
             final int type = metadata.getColumnType(i);
-
+            
             //search if we already have this minute
             PropertyDescriptor desc = null;
             final SchemaMetaModel schema = getSchemaMetaModel(schemaName);
@@ -467,7 +467,7 @@ public final class DataBaseModel {
                 adb.setMaxOccurs(1);
 
                 final int nullable = metadata.isNullable(i);
-                adb.setNillable(nullable == metadata.columnNullable);
+                adb.setNillable(nullable == ResultSetMetaData.columnNullable);
 
 
                 atb.setName(ensureGMLNS(namespace, columnName));
@@ -495,6 +495,7 @@ public final class DataBaseModel {
             ftb.add(desc);
         }
 
+        dialect.analyzeResult(this, ftb, result, name);
         return ftb.buildFeatureType();
     }
 

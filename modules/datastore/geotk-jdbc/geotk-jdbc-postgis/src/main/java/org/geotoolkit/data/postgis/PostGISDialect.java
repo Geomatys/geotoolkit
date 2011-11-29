@@ -33,6 +33,7 @@ import com.vividsolutions.jts.io.WKTReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
@@ -44,18 +45,28 @@ import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.postgis.ewkb.JtsBinaryParser;
 import org.geotoolkit.data.postgis.wkb.WKBAttributeIO;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
+import org.geotoolkit.jdbc.reverse.DataBaseModel;
+import org.geotoolkit.jdbc.reverse.SchemaMetaModel;
+import org.geotoolkit.jdbc.reverse.TableMetaModel;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import org.postgresql.jdbc4.Jdbc4ResultSetMetaData;
+
+import static org.geotoolkit.jdbc.AbstractJDBCDataStore.*;
 
 
 public class PostGISDialect extends AbstractSQLDialect {
@@ -661,4 +672,88 @@ public class PostGISDialect extends AbstractSQLDialect {
         }
     }
 
+    @Override
+    public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
+            final ResultSet result, final String name) throws SQLException,DataStoreException{
+        
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                
+        final String namespace = ftb.getName().getNamespaceURI();
+        
+        //postgis jdbc driver provide more informations on properties
+        //we recreate them from scratch
+        ftb.getProperties().clear();
+        
+        final Jdbc4ResultSetMetaData metadata = (Jdbc4ResultSetMetaData)result.getMetaData();
+        final int nbcol = metadata.getColumnCount();
+
+        for(int i=1; i<=nbcol; i++){
+            final String columnName = metadata.getColumnName(i);
+            final String columnbaseName = metadata.getBaseColumnName(i);
+            final String typeName = metadata.getColumnTypeName(i);
+            final String schemaName = metadata.getBaseSchemaName(i);
+            final String tableName = metadata.getBaseTableName(i);
+            final int type = metadata.getColumnType(i);
+            
+            //search if we already have this minute
+            PropertyDescriptor desc = null;
+            final SchemaMetaModel schema = model.getSchemaMetaModel(schemaName);
+            if(schema != null){
+                final TableMetaModel table = schema.getTable(tableName);
+                if(table != null){
+                    desc = table.getSimpleType().getDescriptor(columnbaseName);
+                    
+                    if(!columnName.equals(columnbaseName)){
+                        //column has been renamed using an alias
+                        adb.reset();
+                        atb.reset();
+                        adb.copy(desc);
+                        adb.setName(desc.getName().getNamespaceURI(), columnName);
+                        desc = adb.buildDescriptor();                        
+                    }
+                }
+            }
+
+            if(desc == null){
+                //could not find the original type
+                //this column must be calculated
+                adb.reset();
+                atb.reset();
+                
+                adb.setName(ensureGMLNS(namespace, columnName));
+                adb.setMinOccurs(1);
+                adb.setMaxOccurs(1);
+
+                final int nullable = metadata.isNullable(i);
+                adb.setNillable(nullable == ResultSetMetaData.columnNullable);
+
+
+                atb.setName(ensureGMLNS(namespace, columnName));
+                Connection cx = null;
+                try {
+                    cx = dataStore.getDataSource().getConnection();
+                    buildMapping(atb, cx, typeName, type,
+                            schemaName, tableName, columnName);
+                } catch (SQLException e) {
+                    throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
+                } finally {
+                    dataStore.closeSafe(cx);
+                }
+
+                if(Geometry.class.isAssignableFrom(atb.getBinding())){
+                    adb.setType(atb.buildGeometryType());
+                }else{
+                    adb.setType(atb.buildType());
+                }
+                
+                adb.findBestDefaultValue();
+                desc = adb.buildDescriptor();
+            }
+
+            ftb.add(desc);
+        }
+
+    }
+    
 }
