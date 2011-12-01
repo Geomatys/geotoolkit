@@ -247,7 +247,7 @@ public class BriefRecordType extends AbstractRecordType {
             s.append("type: ").append(type).append('\n');
         }
         if (boundingBox != null) {
-            s.append("bounding box: ").append('\n');
+            s.append("bounding box(").append(boundingBox.size()).append("): \n");
             for (JAXBElement<? extends BoundingBoxType> jb : boundingBox) {
                 s.append(jb.getValue()).append('\n');
             }

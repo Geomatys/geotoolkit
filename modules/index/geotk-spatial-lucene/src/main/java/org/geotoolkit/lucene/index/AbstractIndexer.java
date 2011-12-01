@@ -191,13 +191,12 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, analyzer);
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
             //adding the document in a specific model. in this case we use a MDwebDocument.
             writer.addDocument(createDocument(meta));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
-            writer.optimize();
             writer.close();
 
         } catch (IndexingException ex) {
@@ -230,7 +229,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(final String identifier) {
         try {
-            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, analyzer);
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
             final Term t          = new Term("id", identifier);
@@ -241,7 +240,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             LOGGER.log(logLevel, "Metadata: {0} removed from the index", identifier);
 
             writer.commit();
-            writer.optimize();
             writer.close();
 
         } catch (CorruptIndexException ex) {

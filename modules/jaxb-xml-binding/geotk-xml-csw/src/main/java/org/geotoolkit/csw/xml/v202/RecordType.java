@@ -104,10 +104,11 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         if (bboxes != null) {
             for (BoundingBoxType bbox: bboxes) {
-                if (bbox instanceof WGS84BoundingBoxType)
+                if (bbox instanceof WGS84BoundingBoxType) {
                     this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-                else
+                } else {
                     this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+                }
             }
         }
         
@@ -206,11 +207,9 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
         
         if (boundingBox != null && !boundingBox.isEmpty()) {
-            s.append("bounding boxes:");
-            for (JAXBElement<? extends BoundingBoxType> bb: boundingBox) {
-                BoundingBoxType bbox = bb.getValue();
-                if (bbox != null)
-                    s.append(bbox.toString()).append('\n');
+            s.append("bounding box(").append(boundingBox.size()).append("): \n");
+            for (JAXBElement<? extends BoundingBoxType> jb : boundingBox) {
+                s.append(jb.getValue()).append('\n');
             }
         }
         
