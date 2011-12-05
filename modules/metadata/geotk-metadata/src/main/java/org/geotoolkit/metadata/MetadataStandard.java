@@ -72,13 +72,22 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * the tree of XML nodes to be associated with raster data.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  * @module
  */
 @ThreadSafe
 public final class MetadataStandard {
+    /**
+     * Metadata instances defined in this class. The current implementation does not yet
+     * contains the user-defined instances. However this may be something we will need to
+     * do in the future.
+     *
+     * @since 3.20
+     */
+    private static final MetadataStandard[] INSTANCES;
+
     /**
      * An instance working on ISO 19111 standard as defined by
      * <A HREF="http://www.geoapi.org">GeoAPI</A> interfaces
@@ -119,6 +128,12 @@ public final class MetadataStandard {
         ISO_19115 = new MetadataStandard("ISO 19115", "org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix, null);
         ISO_19119 = new MetadataStandard("ISO 19119", "org.opengis.service.",  null, null, null);
         ISO_19123 = new MetadataStandard("ISO 19123", "org.opengis.coverage.", null, null, null);
+        INSTANCES = new MetadataStandard[] {
+            ISO_19111,
+            ISO_19115,
+            ISO_19119,
+            ISO_19123
+        };
     }
 
     /**
@@ -224,6 +239,39 @@ public final class MetadataStandard {
         this.acronyms              = acronyms;
         this.prefix                = prefix;
         this.name                  = name;
+    }
+
+    /**
+     * Returns the metadata standard for the given class. The argument given to this method can be
+     * either an interface defined by the standard, or a class implementing such interface. If the
+     * class implements more than one interface, then the first interface recognized by this method,
+     * in declaration order, will be retained.
+     * <p>
+     * The current implementation recognizes only the standards defined by the public static
+     * constants defined in this class. A future Geotk version may recognize user-defined
+     * constants.
+     *
+     * @param  type The metadata standard interface, or an implementation class.
+     * @return The metadata standard for the given type, or {@code null} if not found.
+     *
+     * @since 3.20
+     */
+    public static MetadataStandard forClass(final Class<?> type) {
+        String name = type.getName();
+        for (final MetadataStandard candidate : INSTANCES) {
+            if (name.startsWith(candidate.interfacePackage)) {
+                return candidate;
+            }
+        }
+        for (final Class<?> interf : Classes.getAllInterfaces(type)) {
+            name = interf.getName();
+            for (final MetadataStandard candidate : INSTANCES) {
+                if (name.startsWith(candidate.interfacePackage)) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -517,7 +565,7 @@ public final class MetadataStandard {
      *       will be immediately reflected in the restriction map.</li>
      * </ul>
      *
-     * @param metadata The metadata intance for which to get the restriction that are violated,
+     * @param metadata The metadata instance for which to get the map of violated restrictions,
      *                 or the {@link Class} of a metadata object for listing all restrictions.
      * @param  content Whatever the entries having no restriction or no violation (null value)
      *         should be included in the map.
@@ -672,7 +720,7 @@ public final class MetadataStandard {
      * @throws ClassCastException if the specified implementation class do
      *         not implements a metadata interface of the expected package.
      *
-     * @see ModifiableMetadata#isModifiable
+     * @see ModifiableMetadata#isModifiable()
      */
     final boolean isModifiable(final Class<?> implementation) throws ClassCastException {
         return getAccessor(implementation).isModifiable();

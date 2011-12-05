@@ -77,7 +77,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -147,6 +147,20 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     @Override
     protected ModifiableMetadata clone() throws CloneNotSupportedException {
         return (ModifiableMetadata) super.clone();
+    }
+
+    /**
+     * Removes all empty properties from this metadata object. The default implementation
+     * iterates over the properties using {@linkplain java.lang.reflect Java reflection},
+     * and sets to {@code null} the property for which {@link #isEmpty()} returned {@code true}.
+     *
+     * @throws UnmodifiableMetadataException If this metadata is not modifiable.
+     *
+     * @since 3.20
+     */
+    @Override
+    public void trim() throws UnmodifiableMetadataException {
+        super.trim();
     }
 
     /**
