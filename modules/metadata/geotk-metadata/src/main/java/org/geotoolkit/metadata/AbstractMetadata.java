@@ -18,6 +18,8 @@
 package org.geotoolkit.metadata;
 
 import java.util.Map;
+import java.util.Locale;
+import java.util.Collection;
 import java.util.logging.Logger;
 import java.text.ParseException;
 import java.lang.reflect.Modifier;
@@ -38,7 +40,7 @@ import org.geotoolkit.gui.swing.tree.TreeTableNode;
  * {@link #equals(Object)} and {@link #hashCode()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -103,7 +105,7 @@ public abstract class AbstractMetadata implements LenientComparable {
      * @return The standard interface implemented by this implementation class.
      */
     public Class<?> getInterface() {
-        // No need to sychronize, since this method do not depends on property values.
+        // No need to sychronize, since this method does not depend on property values.
         return getStandard().getInterface(getClass());
     }
 
@@ -112,7 +114,7 @@ public abstract class AbstractMetadata implements LenientComparable {
      * uses heuristic rules which return {@code false} if and only if:
      * <p>
      * <ul>
-     *   <li>this class do not contains any {@code set*(...)} method</li>
+     *   <li>This class does not contains any {@code set*(...)} method</li>
      *   <li>All {@code get*()} methods return a presumed immutable object.
      *       The meaning of "<cite>presumed immutable</cite>" may vary in
      *       different Geotk versions.</li>
@@ -135,6 +137,41 @@ public abstract class AbstractMetadata implements LenientComparable {
     }
 
     /**
+     * Returns {@code true} if this metadata contains only {@code null} or empty properties.
+     * A property is considered empty in any of the following cases:
+     * <p>
+     * <ul>
+     *   <li>An empty {@linkplain CharSequence character sequences}, ignoring white spaces.</li>
+     *   <li>An {@linkplain Collection#isEmpty() empty collection} or an empty array.</li>
+     *   <li>A collection or array containing only {@code null} or empty elements.</li>
+     *   <li>An other metadata object containing only {@code null} or empty attributes.</li>
+     * </ul>
+     *
+     * {@section Note for implementors}
+     * The default implementation uses {@linkplain java.lang.reflect Java reflection} indirectly,
+     * by iterating over all entries returned by {@link #asMap()}.  Subclasses that override this
+     * method should usually not invoke {@code super.isEmpty()}, because the Java reflection will
+     * discover and process the properties defined in the sub-classes - which is usually not the
+     * intend when overriding a method.
+     *
+     * @return {@code true} if this metadata is empty.
+     *
+     * @see org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox#isEmpty()
+     *
+     * @since 3.20
+     */
+    public boolean isEmpty() {
+        return Trimmer.isEmpty(this, false);
+    }
+
+    /**
+     * To be made public by {@link ModifiableMetadata}.
+     */
+    void trim() {
+        Trimmer.isEmpty(this, true);
+    }
+
+    /**
      * Returns a view of this metadata object as a {@linkplain Map map}. The map is backed by this
      * metadata object using Java reflection, so changes in the underlying metadata object are
      * immediately reflected in the map. The keys are the property names as determined by the list
@@ -144,6 +181,13 @@ public abstract class AbstractMetadata implements LenientComparable {
      * if the underlying metadata object contains {@code setFoo(...)} methods.
      *
      * @return A view of this metadata object as a map.
+     *
+     * @see MetadataStandard#asMap(Object)
+     * @see MetadataStandard#asMap(Object, NullValuePolicy, KeyNamePolicy)
+     * @see MetadataStandard#asNameMap(Class, KeyNamePolicy, KeyNamePolicy)
+     * @see MetadataStandard#asTypeMap(Class, TypeValuePolicy, KeyNamePolicy)
+     * @see MetadataStandard#asRestrictionMap(Object, NullValuePolicy, KeyNamePolicy)
+     * @see MetadataStandard#asDescriptionMap(Class, Locale, KeyNamePolicy)
      */
     public synchronized Map<String,Object> asMap() {
         if (asMap == null) {
@@ -162,6 +206,8 @@ public abstract class AbstractMetadata implements LenientComparable {
      *
      * @return A view of this metadata object as a tree table.
      *
+     * @see MetadataStandard#asTreeTable(Object)
+     *
      * @since 3.19
      */
     public synchronized TreeTableNode asTreeTable() {
@@ -177,6 +223,8 @@ public abstract class AbstractMetadata implements LenientComparable {
      * reflected in the tree). However it may be improved in a future Geotk implementation.
      *
      * @return A view of this metadata object as a tree.
+     *
+     * @see MetadataStandard#asTree(Object)
      */
     public synchronized TreeModel asTree() {
         return getStandard().asTree(this);
@@ -235,7 +283,7 @@ public abstract class AbstractMetadata implements LenientComparable {
         }
         final MetadataStandard standard = getStandard();
         if (mode != ComparisonMode.STRICT) {
-            if (!standard.getInterface(getClass()).isInstance(object)) {
+            if (!getInterface().isInstance(object)) {
                 return false;
             }
         }

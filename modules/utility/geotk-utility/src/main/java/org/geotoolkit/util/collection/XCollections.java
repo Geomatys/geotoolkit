@@ -160,6 +160,9 @@ public final class XCollections extends Static {
 
     /**
      * Returns the specified array as an immutable set, or {@code null} if the array is null.
+     * If the given array contains duplicated elements, i.e. elements that are equal in the
+     * sense of {@link Object#equals(Object)}, then only the last instance of the duplicated
+     * values will be included in the returned set.
      *
      * @param  <E> The type of array elements.
      * @param  array The array to copy in a set. May be {@code null}.
@@ -186,8 +189,9 @@ public final class XCollections extends Static {
      * standard {@link Collections#unmodifiableMap(Map)} in that it tries to returns a more
      * efficient object when there is zero or one element. <em>The map returned by this
      * method may or may not be a view of the given map</em>. Consequently this method
-     * shall be used <strong>only</strong> if the given map will not be modified after this
-     * method call. In case of doubt, use the standard {@link Collections#unmodifiableMap(Map)}.
+     * shall be used <strong>only</strong> if the given map will <strong>not</strong> be
+     * modified after this method call. In case of doubt, use the standard
+     * {@link Collections#unmodifiableMap(Map)} method instead.
      *
      * @param  <K>  The type of keys in the map.
      * @param  <V>  The type of values in the map.
@@ -213,6 +217,36 @@ public final class XCollections extends Static {
             }
         }
         return map;
+    }
+
+    /**
+     * Returns the given value as a collection. Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the value is an instance of {@link Collection}, then it is returned unchanged.</li>
+     *   <li>Otherwise if the value is an array of objects, then it is returned
+     *       {@linkplain Arrays#asList(Object[]) as a list}.</li>
+     *   <li>Otherwise if the value is non-null, then it is returned as a
+     *       {@linkplain Collections#singleton(Object) singleton}.</li>
+     *   <li>Otherwise this method returns an {@linkplain Collections#emptySet() empty set}.</li>
+     * </ul>
+     *
+     * @param  value The value to return as a collection, or {@code null}.
+     * @return The value as a collection, or wrapped in a collection (never {@code null}).
+     *
+     * @since 3.20
+     */
+    public static Collection<?> asCollection(final Object value) {
+        if (value == null) {
+            return Collections.emptySet();
+        }
+        if (value instanceof Collection<?>) {
+            return (Collection<?>) value;
+        }
+        if (value instanceof Object[]) {
+            return Arrays.asList((Object[]) value);
+        }
+        return Collections.singleton(value);
     }
 
     /**

@@ -410,7 +410,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     }
 
     /**
-     * Logs an message for the specified exception.
+     * Logs a message for the specified exception.
      */
     static void log(final FactoryException exception, final String code) {
         final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CANT_CREATE_OBJECT_FROM_CODE_$1, code);

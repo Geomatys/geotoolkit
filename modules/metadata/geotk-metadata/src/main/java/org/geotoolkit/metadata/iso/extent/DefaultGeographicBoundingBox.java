@@ -514,12 +514,21 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     }
 
     /**
-     * Returns {@code true} if this bounding box is empty.
+     * Returns {@code true} if this bounding box is empty. A geographic bounding box is considered
+     * non-empty if the {@linkplain #getEastBoundLongitude() east bound longitude} is greater than
+     * the {@linkplain #getWestBoundLongitude() west bound longitude}, and the
+     * {@linkplain #getNorthBoundLatitude() north bound latitude} is greater than the
+     * {@linkplain #getSouthBoundLatitude() south bound latitude}.
      *
-     * @return {@code true} if this box is empty.
+     * {@note This method does not test the <cite>inclusion</cite> property since it has no effect
+     *        on whatever the bounding box defines a non-empty (possibly exclusive) area.}
+     *
+     * @return {@code true} if this geographic bounding box defines an empty area
+     *         (no matter if inclusive or exclusive).
      *
      * @since 2.5
      */
+    @Override
     public synchronized boolean isEmpty() {
         // Use '!' in order to catch NaN values.
         return !(eastBoundLongitude > westBoundLongitude && northBoundLatitude > southBoundLatitude);

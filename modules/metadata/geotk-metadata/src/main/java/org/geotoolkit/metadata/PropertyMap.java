@@ -241,7 +241,7 @@ final class PropertyMap extends MetadataMap<Object> {
 
         /**
          * Compares the specified object with this entry for equality.
-         * Criterions are specified by the {@link Map.Entry} contract.
+         * Criterion are specified by the {@link Map.Entry} contract.
          */
         @Override
         public boolean equals(final Object object) {
@@ -261,6 +261,20 @@ final class PropertyMap extends MetadataMap<Object> {
                 code ^= x.hashCode();
             }
             return code;
+        }
+
+        /**
+         * Returns a string representation of this entry.
+         * This method is mostly for debugging purpose.
+         */
+        @Override
+        public String toString() {
+            String value = String.valueOf(getValue()).trim();
+            final int s = value.indexOf(System.lineSeparator());
+            if (s >= 0) {
+                value = value.substring(0, s) + '…';
+            }
+            return getKey() + '=' + value;
         }
     }
 

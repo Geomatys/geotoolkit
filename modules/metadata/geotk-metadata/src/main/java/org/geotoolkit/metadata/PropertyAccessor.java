@@ -1153,13 +1153,17 @@ final class PropertyAccessor {
     }
 
     /**
-     * Returns {@code true} if the specified object is null or an empty collection,
-     * array or string.
+     * Returns {@code true} if the specified object is null or an empty collection, array or string.
+     * <p>
+     * This method intentionally does not inspect array or collection elements, since this method
+     * is invoked from methods doing shallow copy or comparison. If we were inspecting elements,
+     * we would need to add a check against infinite recursivity.
      */
     static boolean isEmpty(final Object value) {
         return value == null ||
+                ((value instanceof CharSequence) && value.toString().trim().isEmpty())  ||
                 ((value instanceof Collection<?>) && ((Collection<?>) value).isEmpty()) ||
-                ((value instanceof CharSequence) && value.toString().trim().isEmpty()) ||
+                ((value instanceof Map<?,?>) && ((Map<?,?>) value).isEmpty())           ||
                 (value.getClass().isArray() && Array.getLength(value) == 0);
     }
 }
