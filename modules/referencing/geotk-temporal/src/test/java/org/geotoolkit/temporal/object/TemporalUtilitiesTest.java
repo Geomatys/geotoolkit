@@ -335,4 +335,32 @@ public class TemporalUtilitiesTest implements Test{
 
     }
 
+    
+    @Test
+    public void toIso8601XWithTimeZoneTest(){
+
+        final Date date = new Date();
+        String str = TemporalUtilities.toISO8601(date,TimeZone.getTimeZone("GMT-8")) ;
+        assertNotNull(str);
+        assertFalse(str.isEmpty());
+        assertTrue(str.endsWith("-0800"));
+        
+        str = TemporalUtilities.toISO8601(date,TimeZone.getTimeZone("GMT+1")) ;
+        assertNotNull(str);
+        assertFalse(str.isEmpty());
+        assertTrue(str.endsWith("+0100"));
+        //if timezone is null set +0000 to date format
+        str = TemporalUtilities.toISO8601(date,null) ;
+        assertNotNull(str);
+        assertFalse(str.isEmpty());
+        assertTrue(str.endsWith("+0000"));
+        
+
+
+        //should not raise an error
+        str = TemporalUtilities.toISO8601(null,TimeZone.getTimeZone("GMT-8"));
+        assertNotNull(str);
+        assertTrue(str.isEmpty());
+
+    }
 }
