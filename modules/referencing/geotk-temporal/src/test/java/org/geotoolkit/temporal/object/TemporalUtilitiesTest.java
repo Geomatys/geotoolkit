@@ -27,13 +27,12 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static java.util.Calendar.*;
 
-
 /**
- *
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class TemporalUtilitiesTest implements Test{
+public class TemporalUtilitiesTest implements Test {
 
     @Override
     public Class<? extends Throwable> expected() {
@@ -51,19 +50,19 @@ public class TemporalUtilitiesTest implements Test{
     }
 
     @Test
-    public void dateErrorParsingTest(){
+    public void dateErrorParsingTest() {
         try {
             TemporalUtilities.parseDate("fsdfsdfs");
             fail("Parsing should have raise a parse exception.");
         } catch (ParseException ex) {
-            //ok
+            // ok
         }
 
         try {
             TemporalUtilities.parseDate(null);
             fail("Parsing should have raise a null pointer exception.");
         } catch (NullPointerException ex) {
-            //ok
+            // ok
         } catch (ParseException ex) {
             fail("Parsing should have raise a null pointer exception.");
         }
@@ -71,17 +70,16 @@ public class TemporalUtilitiesTest implements Test{
     }
 
     @Test
-    public void dateParsingTest() throws ParseException{
+    public void dateParsingTest() throws ParseException {
         String str;
         final Calendar date = Calendar.getInstance();
         int year = 1995;
-        int month = 10; //starts at 0
+        int month = 10; // starts at 0
         int day = 23;
         int hour = 16;
         int min = 41;
         int sec = 36;
         int mil = 512;
-
 
         str = "11/1995";
         date.setTime(TemporalUtilities.parseDate(str));
@@ -93,7 +91,6 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
-
 
         str = "23/11/1995";
         date.setTime(TemporalUtilities.parseDate(str));
@@ -205,8 +202,9 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(0, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
 
-        //ISO 8601 dates--------------------------------------------------------
-        
+        // ISO 8601
+        // dates--------------------------------------------------------
+
         str = "1995-11-23T16:41:36";
         date.setTime(TemporalUtilities.parseDate(str));
         date.setTimeZone(TimeZone.getDefault());
@@ -228,7 +226,6 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
         assertEquals(mil, date.get(MILLISECOND));
-
 
         str = "1995-11-23T16:41:36Z";
         date.setTime(TemporalUtilities.parseDate(str));
@@ -269,7 +266,7 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
-        assertEquals(hour-4, date.get(HOUR_OF_DAY));
+        assertEquals(hour - 4, date.get(HOUR_OF_DAY));
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
@@ -280,7 +277,7 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
-        assertEquals(hour-4, date.get(HOUR_OF_DAY));
+        assertEquals(hour - 4, date.get(HOUR_OF_DAY));
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
@@ -291,7 +288,7 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
-        assertEquals(hour+4, date.get(HOUR_OF_DAY));
+        assertEquals(hour + 4, date.get(HOUR_OF_DAY));
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
@@ -302,16 +299,15 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
-        assertEquals(hour+4, date.get(HOUR_OF_DAY));
+        assertEquals(hour + 4, date.get(HOUR_OF_DAY));
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
         assertEquals(0, date.get(MILLISECOND));
 
-
     }
 
     @Test
-    public void durationFormatingTest(){
+    public void durationFormatingTest() {
 
         assertEquals("0ms", TemporalUtilities.durationToString(0));
         assertEquals("15ms", TemporalUtilities.durationToString(15));
@@ -321,44 +317,42 @@ public class TemporalUtilitiesTest implements Test{
     }
 
     @Test
-    public void iso8601Test(){
+    public void iso8601Test() {
 
         final Date date = new Date();
         String str = TemporalUtilities.toISO8601(date);
         assertNotNull(str);
         assertFalse(str.isEmpty());
 
-        //should not raise an error
+        // should not raise an error
         str = TemporalUtilities.toISO8601(null);
         assertNotNull(str);
         assertTrue(str.isEmpty());
 
     }
 
-    
     @Test
-    public void toIso8601XWithTimeZoneTest(){
+    public void toIso8601XWithTimeZoneTest() {
 
         final Date date = new Date();
-        String str = TemporalUtilities.toISO8601(date,TimeZone.getTimeZone("GMT-8")) ;
+        String str = TemporalUtilities.toISO8601(date,
+                TimeZone.getTimeZone("GMT-8"));
         assertNotNull(str);
         assertFalse(str.isEmpty());
         assertTrue(str.endsWith("-0800"));
-        
-        str = TemporalUtilities.toISO8601(date,TimeZone.getTimeZone("GMT+1")) ;
+
+        str = TemporalUtilities.toISO8601(date, TimeZone.getTimeZone("GMT+1"));
         assertNotNull(str);
         assertFalse(str.isEmpty());
         assertTrue(str.endsWith("+0100"));
-        //if timezone is null set +0000 to date format
-        str = TemporalUtilities.toISO8601(date,null) ;
+        // if timezone is null set +0000 to date format
+        str = TemporalUtilities.toISO8601(date, null);
         assertNotNull(str);
         assertFalse(str.isEmpty());
         assertTrue(str.endsWith("+0000"));
-        
 
-
-        //should not raise an error
-        str = TemporalUtilities.toISO8601(null,TimeZone.getTimeZone("GMT-8"));
+        // should not raise an error
+        str = TemporalUtilities.toISO8601(null, TimeZone.getTimeZone("GMT-8"));
         assertNotNull(str);
         assertTrue(str.isEmpty());
 
