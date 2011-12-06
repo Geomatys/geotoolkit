@@ -18,8 +18,10 @@ package org.geotoolkit.display2d.style.raster;
 
 import java.awt.Color;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.lang.reflect.Array;
 import org.opengis.filter.expression.Function;
 
@@ -86,6 +88,11 @@ public class CompatibleColorModel extends ColorModel{
     @Override
     public int getAlpha(int pixel) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public WritableRaster createCompatibleWritableRaster(int w, int h) {        
+        return Raster.createPackedRaster(new DataBufferInt(w*h),w,h,16,null); 
     }
     
 }
