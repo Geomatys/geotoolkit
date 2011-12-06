@@ -22,10 +22,11 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.util.collection.CheckedContainer;
 
 
 /**
- * Implementation of {@link AbstractMetadata#isEmpty()} and {@link ModifiableMetadata#trim()}
+ * Implementation of {@link AbstractMetadata#isEmpty()} and {@link ModifiableMetadata#prune()}
  * methods.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -34,20 +35,20 @@ import org.geotoolkit.util.collection.XCollections;
  * @since 3.20
  * @module
  */
-final class Trimmer extends ThreadLocal<Map<Object,Boolean>> {
+final class Pruner extends ThreadLocal<Map<Object,Boolean>> {
     /**
      * The thread-local map of metadata object already tested.
      */
-    private static final Trimmer INSTANCE = new Trimmer();
+    private static final Pruner INSTANCE = new Pruner();
 
     /**
      * For internal usage only.
      */
-    private Trimmer() {
+    private Pruner() {
     }
 
     /**
-     * Creates an initially empty hash map when the {@code isEmpty()} or {@code trim()}
+     * Creates an initially empty hash map when the {@code isEmpty()} or {@code prune()}
      * method is invoked, before any recursive invocation.
      */
     @Override
@@ -56,37 +57,44 @@ final class Trimmer extends ThreadLocal<Map<Object,Boolean>> {
     }
 
     /**
-     * Returns the metadata properties suitable to the {@link ModifiableMetadata#trim()} method.
+     * Returns the metadata properties suitable to the {@link ModifiableMetadata#prune()} method.
      * The difference between this method and the default {@link MetadataStandard#asMap(Object)}
      * is that empty (but non-null) values are returned. This is necessary in order to allow us
      * to set them to {@code null}.
      */
-    private static Map<String, Object> asTrimMap(final MetadataStandard standard, final Object metadata) {
+    private static Map<String, Object> asMap(final MetadataStandard standard, final Object metadata) {
         return standard.asMap(metadata, NullValuePolicy.NON_NULL, KeyNamePolicy.JAVABEANS_PROPERTY);
+    }
+
+    /**
+     * Returns {@code true} if the value for the given entry is a primitive type.
+     */
+    private static boolean isPrimitive(final Map.Entry<String,Object> entry) {
+        return (entry instanceof CheckedContainer<?>) && ((CheckedContainer<?>) entry).getElementType().isPrimitive();
     }
 
     /**
      * Returns {@code true} if all properties in the given metadata are null or empty.
      * This method is the entry point for the {@link AbstractMetadata#isEmpty()} and
-     * {@link ModifiableMetadata#trim()} public methods.
+     * {@link ModifiableMetadata#prune()} public methods.
      * <p>
      * This method is typically invoked recursively while we iterate down the metadata
      * tree. It creates a map of visited nodes when the iteration begin, and deletes
      * that map when the iteration end.
      *
      * @param  metadata The metadata object.
-     * @param  trim {@code true} for deleting empty entries.
+     * @param  prune {@code true} for deleting empty entries.
      * @return {@code true} if all metadata properties are null or empty.
      */
-    static boolean isEmpty(final AbstractMetadata metadata, final boolean trim) {
-        final Map<String,Object> properties = trim ?
-                asTrimMap(metadata.getStandard(), metadata) : metadata.asMap();
+    static boolean isEmpty(final AbstractMetadata metadata, final boolean prune) {
+        final Map<String,Object> properties = prune ?
+                asMap(metadata.getStandard(), metadata) : metadata.asMap();
         final Map<Object,Boolean> tested = INSTANCE.get();
         if (!tested.isEmpty()) {
-            return isEmpty(properties, tested, trim);
+            return isEmpty(properties, tested, prune);
         } else try {
             tested.put(metadata, Boolean.FALSE);
-            return isEmpty(properties, tested, trim);
+            return isEmpty(properties, tested, prune);
         } finally {
             INSTANCE.remove();
         }
@@ -99,11 +107,11 @@ final class Trimmer extends ThreadLocal<Map<Object,Boolean>> {
      *
      * @param  properties The metadata properties.
      * @param  tested An initially singleton map, to be filled with tested metadata.
-     * @param  trim {@code true} for removing empty properties.
+     * @param  prune {@code true} for removing empty properties.
      * @return {@code true} if all metadata properties are null or empty.
      */
     private static boolean isEmpty(final Map<String,Object> properties,
-            final Map<Object,Boolean> tested, final boolean trim)
+            final Map<Object,Boolean> tested, final boolean prune)
     {
         boolean isEmpty = true;
         for (final Map.Entry<String,Object> entry : properties.entrySet()) {
@@ -140,20 +148,27 @@ final class Trimmer extends ThreadLocal<Map<Object,Boolean>> {
                         final boolean e;
                         if (element instanceof AbstractMetadata) {
                             final AbstractMetadata md = (AbstractMetadata) element;
-                            if (trim) md.trim();
+                            if (prune) md.prune();
                             e = md.isEmpty();
                         } else {
                             final MetadataStandard standard = MetadataStandard.forClass(element.getClass());
                             if (standard != null) {
-                                e = isEmpty(trim ? asTrimMap(standard, element) : standard.asMap(element), tested, trim);
+                                e = isEmpty(prune ? asMap(standard, element) : standard.asMap(element), tested, prune);
+                            } else if (isPrimitive(entry)) {
+                                if (value instanceof Number) {
+                                    e = Double.isNaN(((Number) value).doubleValue());
+                                } else {
+                                    // Typically methods of the kind 'isFooAvailable()'.
+                                    e = Boolean.FALSE.equals(value);
+                                }
                             } else {
-                                e = false; // Element is a String, Number, etc.
+                                e = false; // Element is a String, Number (not primitive), etc.
                             }
                         }
                         if (!e) {
                             // At this point, we have determined that the property is not empty.
                             // If we are not removing empty nodes, there is no need to continue.
-                            if (!trim) {
+                            if (!prune) {
                                 return false;
                             }
                             allEmpty = false;
@@ -162,14 +177,14 @@ final class Trimmer extends ThreadLocal<Map<Object,Boolean>> {
                     }
                     // Found an empty element. Remove it if we are
                     // allowed to do so, then check next elements.
-                    if (trim && values == value) {
+                    if (prune && values == value) {
                         it.remove();
                     }
                 }
                 // If all elements were empty, set the whole property to 'null'.
                 if (allEmpty) {
                     tested.put(value, Boolean.TRUE);
-                    if (trim) {
+                    if (prune) {
                         entry.setValue(null);
                     }
                 } else {

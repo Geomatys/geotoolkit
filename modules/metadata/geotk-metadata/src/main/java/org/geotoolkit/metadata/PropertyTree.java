@@ -38,7 +38,7 @@ import org.opengis.metadata.Identifier;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.internal.jaxb.NonMarshalledAuthority;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
@@ -583,8 +583,8 @@ final class PropertyTree {
             int newCount = 0;
             for (int i=0; i<count; i++) {
                 final Collection<?> collection = collections[i];
-                if (baseType.isAssignableFrom((collection instanceof CheckedCollection<?>) ?
-                        ((CheckedCollection<?>) collection).getElementType() : Object.class))
+                if (baseType.isAssignableFrom((collection instanceof CheckedContainer<?>) ?
+                        ((CheckedContainer<?>) collection).getElementType() : Object.class))
                 {
                     final String name = getTitle(collection);
                     if (name != null && (shortestName == null || name.length() < shortestName.length())) {

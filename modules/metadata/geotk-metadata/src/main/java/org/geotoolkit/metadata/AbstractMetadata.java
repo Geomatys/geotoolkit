@@ -146,6 +146,9 @@ public abstract class AbstractMetadata implements LenientComparable {
      *   <li>A collection or array containing only {@code null} or empty elements.</li>
      *   <li>An other metadata object containing only {@code null} or empty attributes.</li>
      * </ul>
+     * <p>
+     * Note that empty properties can be removed by calling the {@link ModifiableMetadata#prune()}
+     * method.
      *
      * {@section Note for implementors}
      * The default implementation uses {@linkplain java.lang.reflect Java reflection} indirectly,
@@ -161,14 +164,14 @@ public abstract class AbstractMetadata implements LenientComparable {
      * @since 3.20
      */
     public boolean isEmpty() {
-        return Trimmer.isEmpty(this, false);
+        return Pruner.isEmpty(this, false);
     }
 
     /**
      * To be made public by {@link ModifiableMetadata}.
      */
-    void trim() {
-        Trimmer.isEmpty(this, true);
+    void prune() {
+        Pruner.isEmpty(this, true);
     }
 
     /**

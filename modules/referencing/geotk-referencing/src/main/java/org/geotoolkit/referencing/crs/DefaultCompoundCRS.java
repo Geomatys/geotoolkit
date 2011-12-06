@@ -39,7 +39,7 @@ import org.opengis.referencing.datum.Datum;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
@@ -308,8 +308,8 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        if (crs instanceof CheckedCollection<?>) {
-            final Class<?> type = ((CheckedCollection<?>) crs).getElementType();
+        if (crs instanceof CheckedContainer<?>) {
+            final Class<?> type = ((CheckedContainer<?>) crs).getElementType();
             if (SingleCRS.class.isAssignableFrom(type)) {
                 singles = (List<SingleCRS>) crs;
                 return;

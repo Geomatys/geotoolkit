@@ -132,7 +132,7 @@ class CitationConstant extends DefaultCitation {
      * @return A modifiable clone of this citation.
      */
     @Override
-    public final DefaultCitation clone() {
+    protected final DefaultCitation clone() {
         return new DefaultCitation(this);
     }
 

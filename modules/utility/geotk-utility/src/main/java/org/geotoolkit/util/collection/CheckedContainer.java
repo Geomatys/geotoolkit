@@ -17,26 +17,25 @@
  */
 package org.geotoolkit.util.collection;
 
-import java.util.Collection;
-
 
 /**
- * Collection that ensures that all elements are assignable to a given base type.
- * The base {@linkplain #getElementType type} is usually specified at collection
- * construction time.
+ * A container that ensures that all elements are assignable to a given base type.
+ * Checked containers are usually {@linkplain CheckedCollection checked collections},
+ * but are not limited to collections.
  *
- * @param <E> The base type of elements in the collection.
+ * @param <E> The base type of elements in the container.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.20
  *
- * @since 2.4
+ * @since 3.20
  * @module
  */
-public interface CheckedCollection<E> extends Collection<E>, CheckedContainer<E> {
+public interface CheckedContainer<E> {
     /**
-     * Returns the base type of all elements in this collection.
+     * Returns the base type of all elements in this container.
+     *
+     * @return The element type.
      */
-    @Override
     Class<? extends E> getElementType();
 }

@@ -30,7 +30,7 @@ import org.opengis.metadata.identification.AggregateInformation;
 import org.opengis.metadata.identification.RepresentativeFraction;
 
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.test.TestBase;
 
@@ -248,8 +248,8 @@ public final strictfp class ISOTest extends TestBase {
                 final Class<?> impl = getImplementation(type);
                 assertFalse(Collection.class.isAssignableFrom(type));
                 final Object example = accessor.get(i, dummyInstance);
-                if (example instanceof CheckedCollection<?>) {
-                    assertTrue(type.isAssignableFrom(((CheckedCollection<?>) example).getElementType()));
+                if (example instanceof CheckedContainer<?>) {
+                    assertTrue(type.isAssignableFrom(((CheckedContainer<?>) example).getElementType()));
                 }
                 if (impl != null) {
                     assertTrue(type.isAssignableFrom(impl));
