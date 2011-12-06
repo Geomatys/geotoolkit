@@ -24,6 +24,8 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.util.collection.CheckedContainer;
+
 
 /**
  * A view of a metadata object as a map. Keys are property names and values
@@ -125,7 +127,7 @@ final class PropertyMap extends MetadataMap<Object> {
 
     /**
      * Puts every entries from the given map. This method is overloaded for performance
-     * raisons since we are not interested in the return value of the {@link #put} method.
+     * reasons since we are not interested in the return value of the {@link #put} method.
      */
     @Override
     public void putAll(final Map<? extends String, ?> map) {
@@ -172,11 +174,11 @@ final class PropertyMap extends MetadataMap<Object> {
      * A map entry for a given property.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @since 2.4
      */
-    private final class Property implements Map.Entry<String,Object> {
+    private final class Property implements Map.Entry<String,Object>, CheckedContainer<Object> {
         /**
          * The property index.
          */
@@ -194,6 +196,17 @@ final class PropertyMap extends MetadataMap<Object> {
          */
         Property(final String property) {
             index = accessor.indexOf(property);
+        }
+
+        /**
+         * Returns value type as declared in the interface method signature.
+         * It may be a primitive type.
+         *
+         * @since 3.20
+         */
+        @Override
+        public Class<?> getElementType() {
+            return accessor.type(index, TypeValuePolicy.PROPERTY_TYPE);
         }
 
         /**

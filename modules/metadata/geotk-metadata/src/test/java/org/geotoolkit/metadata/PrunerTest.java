@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests the {@link AbstractMetadata#isEmpty()} and {@link ModifiableMetadata#trim()} methods.
+ * Tests the {@link AbstractMetadata#isEmpty()} and {@link ModifiableMetadata#prune()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @since 3.20
  */
 @Depend(PropertyMapTest.class)
-public final strictfp class TrimmerTest {
+public final strictfp class PrunerTest {
     /** The root metadata object being tested. */
     private final DefaultMetadata metadata;
 
@@ -53,7 +53,7 @@ public final strictfp class TrimmerTest {
     /**
      * Creates the metadata objects to be used for the test.
      */
-    public TrimmerTest() {
+    public PrunerTest() {
         metadata       = new DefaultMetadata();
         identification = new DefaultDataIdentification();
         extent         = new DefaultExtent();
@@ -107,10 +107,10 @@ public final strictfp class TrimmerTest {
     }
 
     /**
-     * Tests the {@link ModifiableMetadata#trim()} method.
+     * Tests the {@link ModifiableMetadata#prune()} method.
      */
     @Test
-    public void testTrim() {
+    public void testPrune() {
         metadata.setFileIdentifier("A file identifiers");
         identification.setCitation(new DefaultCitation("A citation title"));
         assertFalse(PropertyAccessor.isEmpty(metadata.getFileIdentifier()));
@@ -120,7 +120,7 @@ public final strictfp class TrimmerTest {
         assertEquals(1, extent.getGeographicElements().size());
         assertFalse(metadata.isEmpty());
 
-        metadata.trim();
+        metadata.prune();
         assertFalse(PropertyAccessor.isEmpty(metadata.getFileIdentifier()));
         assertFalse(PropertyAccessor.isEmpty(identification.getCitation()));
         assertEquals(1, metadata.getIdentificationInfo().size());
@@ -131,7 +131,7 @@ public final strictfp class TrimmerTest {
         metadata.setFileIdentifier(" ");
         identification.setCitation(new DefaultCitation(" "));
         assertNotNull(metadata.getFileIdentifier());
-        metadata.trim();
+        metadata.prune();
 
         assertNull(metadata.getFileIdentifier());
         assertNull(identification.getCitation());

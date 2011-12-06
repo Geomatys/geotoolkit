@@ -36,7 +36,7 @@
  * </table>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.20
  *
  * @since 3.08
  * @module

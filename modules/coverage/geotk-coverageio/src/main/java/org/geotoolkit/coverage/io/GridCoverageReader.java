@@ -389,7 +389,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
                  * Horizontal, vertical and temporal extents. The horizontal extents is
                  * represented as a geographic bounding box, which may require a reprojection.
                  */
-                if (computeExtents) {
+                if (computeExtents && gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
                     if (extent == null) {
                         extent = new UniqueExtents();
                     }

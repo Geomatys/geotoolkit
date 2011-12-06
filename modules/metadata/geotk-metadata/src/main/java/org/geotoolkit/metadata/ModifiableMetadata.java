@@ -134,12 +134,13 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Returns a shallow copy of this metadata.
-     * <p>
+     *
+     * {@section Usage}
      * While {@linkplain Cloneable cloneable}, this class do not provides the {@code clone()}
      * operation as part of the public API. The clone operation is required for the internal
-     * working of the {@link #unmodifiable()} method, which expect from {@code clone()} a
-     * <strong>shallow</strong> copy of this metadata entity. The default implementation of
-     * {@link Object#clone()} is sufficient for most use.
+     * working of the {@link #unmodifiable()} method, which needs <strong>shallow</strong>
+     * copies of metadata entities. The default {@link Object#clone()} implementation is
+     * sufficient in most cases.
      *
      * @return A <strong>shallow</strong> copy of this metadata.
      * @throws CloneNotSupportedException if the clone is not supported.
@@ -150,17 +151,19 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * Removes all empty properties from this metadata object. The default implementation
-     * iterates over the properties using {@linkplain java.lang.reflect Java reflection},
-     * and sets to {@code null} the property for which {@link #isEmpty()} returned {@code true}.
+     * Removes all references to {@linkplain #isEmpty() empty} properties. The default
+     * implementation iterates over all {@linkplain NullValuePolicy#NON_NULL non null}
+     * properties using {@linkplain java.lang.reflect Java reflection}, and sets to
+     * {@code null} the properties for which {@link #isEmpty() isEmpty()} returned
+     * {@code true}.
      *
      * @throws UnmodifiableMetadataException If this metadata is not modifiable.
      *
      * @since 3.20
      */
     @Override
-    public void trim() throws UnmodifiableMetadataException {
-        super.trim();
+    public void prune() throws UnmodifiableMetadataException {
+        super.prune();
     }
 
     /**

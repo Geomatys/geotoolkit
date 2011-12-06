@@ -45,18 +45,19 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Describes the valid range of grid coordinates and the math transform to transform grid
- * coordinates to real world coordinates. Grid geometries contains:
+ * Describes the valid range of grid coordinates and the transform from those grid coordinates
+ * to real world coordinates. Grid geometries contains:
  * <p>
  * <ul>
  *   <li>An optional {@linkplain GridEnvelope grid envelope} (a.k.a. "<cite>grid range</cite>"),
  *       usually inferred from the {@linkplain RenderedImage rendered image} size.</li>
- *   <li>An optional "grid to CRS" {@linkplain MathTransform transform}, which may be inferred
- *       from the grid envelope and the georeferenced envelope.</li>
- *   <li>An optional georeferenced {@linkplain Envelope envelope}, which may be inferred from
- *       the grid envelope and the "grid to CRS" transform.</li>
- *   <li>An optional {@linkplain CoordinateReferenceSystem coordinate reference system} to be
- *       given to the envelope.</li>
+ *   <li>An optional "<cite>grid to CRS</cite>" {@linkplain MathTransform transform}, which can
+ *       be inferred from the grid envelope and the georeferenced envelope.</li>
+ *   <li>An optional georeferenced {@linkplain Envelope envelope}, which can be inferred from
+ *       the grid envelope and the "<cite>grid to CRS</cite>" transform.</li>
+ *   <li>An optional {@linkplain CoordinateReferenceSystem coordinate reference system} (CRS)
+ *       to be given to the envelope. This CRS is the target of the <cite>grid to CRS</cite>
+ *       transform.</li>
  * </ul>
  * <p>
  * All grid geometry attributes are optional because some of them may be inferred from a wider

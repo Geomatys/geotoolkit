@@ -464,8 +464,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *   <li>If the underlying NetCDF coordinate system {@linkplain CoordinateSystem#isRegular()
      *       is regular}, then the returned transform implements the
      *       {@link org.geotoolkit.referencing.operation.transform.LinearTransform} interface.</li>
-     *   <li>If in addition of being regular this CRS is also two-dimensional, then the returned
-     *       transform is also an instance of Java2D {@link java.awt.geom.AffineTransform}.</li>
+     *   <li>If this CRS is regular and two-dimensional, then the returned transform is also an
+     *       instance of Java2D {@link java.awt.geom.AffineTransform}.</li>
      * </ul>
      *
      * {@section Limitation}
@@ -490,7 +490,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *   <li>If every NetCDF axes in the given range of dimensions are
      *       {@linkplain CoordinateAxis1D#isRegular() regular}, then the returned transform implements
      *       the {@link org.geotoolkit.referencing.operation.transform.LinearTransform} interface.</li>
-     *   <li>If in addition of the above the range spans two dimensions (i.e. {@code upperDimension}
+     *   <li>If, in addition of the above, the range spans two dimensions (i.e. {@code upperDimension}
      *       - {@code lowerDimension} == 2), then the returned transform is also an instance of Java2D
      *       {@link java.awt.geom.AffineTransform}.</li>
      * </ul>

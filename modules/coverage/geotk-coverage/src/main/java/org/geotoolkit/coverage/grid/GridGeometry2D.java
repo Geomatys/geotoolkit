@@ -51,8 +51,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Describes the valid range of grid coordinates and the math transform, in the special case
- * where only 2 dimensions are in use. By "in use", we means dimension with more than 1 pixel.
+ * A {@link GeneralGridGeometry} where only 2 dimensions have more than 1 cell.
  * For example a grid size of 512&times;512&times;1 pixels can be represented by this
  * {@code GridGeometry2D} class (some peoples said 2.5D) because a two-dimensional grid
  * coordinate is enough for referencing a pixel without ambiguity. But a grid size of
@@ -60,8 +59,39 @@ import org.geotoolkit.resources.Errors;
  * because a three-dimensional coordinate is mandatory for referencing a pixel without
  * ambiguity.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * {@section Constructors}
+ * The most complete way to create a {@code GridGeometry2D} instance is to provide all the
+ * following information:
+ * <p>
+ * <ul>
+ *   <li>An optional {@linkplain GridEnvelope grid envelope} - See the constraints documented below.</li>
+ *   <li>An optional "<cite>grid to CRS</cite>" {@linkplain MathTransform transform}.</li>
+ *   <li>An optional {@link PixelInCell} or {@link PixelOrientation} code, which specify whatever
+ *       the source of the "<cite>grid to CRS</cite>" transform maps a pixel corner or the pixel
+ *       center.</li>
+ *   <li>An optional {@linkplain CoordinateReferenceSystem coordinate reference system} (CRS)
+ *       which is the target of the <cite>grid to CRS</cite> transform.</li>
+ * </ul>
+ * <p>
+ * This class defines also some convenience constructors for inferring the math transform from a
+ * {@linkplain Envelope geodetic envelope}. However those convenience constructors use heuristic
+ * rules which try to guess whatever an axis should be reversed according common practice. Users
+ * should alway prefer the above listed argument types when possible.
+ *
+ * {@section Constraints}
+ * The above-listed arguments shall comply with the following constraints:
+ * <p>
+ * <ul>
+ *   <li>Only two dimensions in the grid envelope can have a
+ *       {@linkplain GridEnvelope#getSpan(int) span} larger than 1.</li>
+ *   <li>If the grid geometry describes a {@link java.awt.image.BufferedImage}, then the
+ *       {@linkplain GridEnvelope#getLow() lowest valid grid ordinates} shall be zero.
+ *       For other kind of {@link java.awt.image.RenderedImage}, the lowest ordinates
+ *       may be non-zero.</li>
+ * </ul>
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see ImageGeometry
  * @see GeneralGridGeometry
@@ -94,7 +124,10 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * GridEnvelope#getSpan span} greater than 1 in the {@linkplain #getGridRange grid envelope}.
      * Their values are usually 0 and 1 respectively.
      * <p>
-     * It is guaranteed that {@link #gridDimensionX} &lt; {@link #gridDimensionY}.
+     * Notes:
+     * <ul>
+     *   <li>It is guaranteed that {@link #gridDimensionX} &lt; {@link #gridDimensionY}.</li>
+     * </ul>
      */
     public final int gridDimensionX, gridDimensionY;
 
@@ -103,10 +136,12 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * They are index of (<var>x</var>, <var>y</var>) ordinates in a direct position after the
      * {@linkplain #getGridToCRS grid to CRS} transform.
      * <p>
-     * There is no guarantee that {@link #gridDimensionX} maps to {@link #axisDimensionX} and
-     * {@link #gridDimensionY} maps to {@link #axisDimensionY}, since axis may be interchanged.
-     * <p>
-     * It is guaranteed that {@link #axisDimensionX} &lt; {@link #axisDimensionY}.
+     * Notes:
+     * <ul>
+     *   <li>It is guaranteed that {@link #axisDimensionX} &lt; {@link #axisDimensionY}.</li>
+     *   <li>There is no guarantee that {@link #gridDimensionX} maps to {@link #axisDimensionX} and
+     *   {@link #gridDimensionY} maps to {@link #axisDimensionY}, since axis may be interchanged.</li>
+     * </ul>
      */
     public final int axisDimensionX, axisDimensionY;
 
@@ -173,12 +208,14 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * is a copy constructor useful when the instance must be a {@code GridGeometry2D}.
      *
      * @param other The other grid geometry to copy.
+     * @throws IllegalArgumentException If the given grid geometry does not comply to the
+     *         constraints documented in the class javadoc.
      *
      * @see #castOrCopy(GridGeometry)
      *
      * @since 2.5
      */
-    public GridGeometry2D(final GridGeometry other) {
+    public GridGeometry2D(final GridGeometry other) throws IllegalArgumentException {
         super(other);
         if (other instanceof GridGeometry2D) {
             final GridGeometry2D gg = (GridGeometry2D) other;
@@ -208,18 +245,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * Constructs a new grid geometry from a grid envelope and a math transform. The arguments are
      * passed unchanged to the {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,
      * MathTransform, CoordinateReferenceSystem) super-class constructor}. However, they must
-     * obey to the following additional constraints:
-     * <p>
-     * <ul>
-     *   <li>Only two dimensions in the grid envelope can have a
-     *       {@linkplain GridEnvelope#getSpan span} larger than 1.</li>
-     * </ul>
+     * obey to the additional constraints documented in the class javadoc.
      *
      * @param  gridRange The valid coordinate range of a grid coverage, or {@code null} if none.
-     *         The lowest valid grid coordinate is zero for {@link java.awt.image.BufferedImage},
-     *         but may be non-zero for arbitrary {@link java.awt.image.RenderedImage}. A grid with
-     *         512 cells can have a minimum coordinate of 0 and maximum of 512, with 511 as the
-     *         highest valid index.
      * @param  gridToCRS The math transform which allows for the transformations
      *         from grid coordinates (pixel's <em>center</em>) to real world earth coordinates.
      * @param  crs The coordinate reference system for the "real world" coordinates, or {@code null}
@@ -230,6 +258,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws IllegalArgumentException if {@code gridRange} has more than 2 dimensions with
      *         a {@linkplain GridEnvelope#getSpan span} larger than 1, or if the math transform
      *         can't transform coordinates in the domain of the specified grid envelope.
+     *
+     * @see #GridGeometry2D(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem, Hints)
+     * @see #GridGeometry2D(GridEnvelope, PixelOrientation, MathTransform, CoordinateReferenceSystem, Hints)
      *
      * @since 2.2
      */
@@ -570,14 +601,17 @@ public class GridGeometry2D extends GeneralGridGeometry {
          * If no grid envelope were specified, then we assume that they are the 2 first dimensions.
          */
         final DimensionFilter filter = DimensionFilter.getInstance(hints);
+        boolean isEmpty = true;
         if (gridRange != null) {
             final int dimension = gridRange.getDimension();
             for (int i=0; i<dimension; i++) {
                 if (gridRange.getSpan(i) > 1) {
                     filter.addSourceDimension(i);
+                    isEmpty = false;
                 }
             }
-        } else {
+        }
+        if (isEmpty) {
             filter.addSourceDimensionRange(0, 2);
         }
         Exception cause = null;

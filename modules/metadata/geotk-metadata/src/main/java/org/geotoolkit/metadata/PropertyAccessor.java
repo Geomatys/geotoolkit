@@ -39,7 +39,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.util.collection.CheckedContainer;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -634,11 +634,13 @@ final class PropertyAccessor {
 
     /**
      * Returns the type of the property at the given index. The returned type is usually
-     * a GeoAPI interface (at least in the case of Geotk implementation). Primitive
-     * types like {@code double} or {@code int} are converted to their wrapper types.
+     * a GeoAPI interface (at least in the case of Geotk implementation).
      * <p>
-     * If the property is a collection, then this method returns the type of collection
-     * elements.
+     * If the given policy is {@code ELEMENT_TYPE}, then:
+     * <ul>
+     *   <li>primitive types like {@code double} or {@code int} are converted to their wrapper types;</li>
+     *   <li>if the property is a collection, then returns the type of collection elements.</li>
+     * </ul>
      *
      * @param  index The index of the property.
      * @param  policy The kind of type to return.
@@ -902,9 +904,9 @@ final class PropertyAccessor {
                     if (addTo == null) {
                         // No previous collection. Create one.
                         newValue = Arrays.asList(elements);
-                    } else if (addTo instanceof CheckedCollection<?>) {
+                    } else if (addTo instanceof CheckedContainer<?>) {
                         // Get the explicitly-specified element type.
-                        elementType = ((CheckedCollection<?>) addTo).getElementType();
+                        elementType = ((CheckedContainer<?>) addTo).getElementType();
                     }
                 }
                 if (elementType != null) {
