@@ -49,7 +49,14 @@ public class Linear1D extends Search1D {
         if (khi != klo) {
             final double yklo = y[klo];
             final double xklo = x[klo];
-            return (y[khi] - yklo) / (float) ((x[khi] - xklo) * (xi - xklo)) + yklo;
+            final double ykhi = y[khi];
+            final double xkhi = x[khi];
+            final double step = xkhi - xklo;
+            final double evo = ykhi - yklo;
+            final double a = evo/step;
+            final double x = xi - xklo;
+            final double b = yklo;
+            return a * x + b;
         } else {
             return y[khi];
         }
