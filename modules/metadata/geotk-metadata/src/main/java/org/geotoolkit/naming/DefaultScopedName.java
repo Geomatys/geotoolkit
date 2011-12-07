@@ -44,6 +44,12 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * A composite of a {@linkplain NameSpace name space} (as a {@linkplain LocalName local name})
  * and a {@linkplain GenericName generic name} valid in that name space. See the
  * {@linkplain ScopedName GeoAPI javadoc} for more information.
+ * <p>
+ * {@code DefaultScopedName} can be instantiated by any of the following methods:
+ * <ul>
+ *   <li>{@link DefaultNameFactory#createGenericName(NameSpace, CharSequence[])} with an array of length 2 or more</li>
+ *   <li>{@link DefaultNameFactory#parseGenericName(NameSpace, CharSequence)} with at least one separator</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

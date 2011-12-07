@@ -33,11 +33,14 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 /**
  * The name to identify a member of a {@linkplain org.opengis.util.Record record}.
+ * <p>
+ * {@code DefaultMemberName} can be instantiated by any of the following methods:
+ * <ul>
+ *   <li>{@link DefaultNameFactory#createMemberName(NameSpace, CharSequence, TypeName)}</li>
+ * </ul>
  *
  * @author Guilhem Legal (Geomatys)
  * @version 3.17
- *
- * @see DefaultNameFactory#createMemberName(NameSpace, CharSequence, TypeName)
  *
  * @since 3.17
  * @module

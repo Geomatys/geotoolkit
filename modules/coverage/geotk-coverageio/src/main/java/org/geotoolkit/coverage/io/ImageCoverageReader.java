@@ -46,8 +46,11 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.util.GenericName;
+import org.opengis.util.NameFactory;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -118,7 +121,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -190,7 +193,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * The names of coverages, or {@code null} if not yet determined.
      * This is created by {@link #getCoverageNames()} when first needed.
      */
-    private transient List<String> coverageNames;
+    private transient List<? extends GenericName> coverageNames;
 
     /**
      * The value returned by {@link #getGridGeometry(int)}, computed when first needed.
@@ -212,9 +215,20 @@ public class ImageCoverageReader extends GridCoverageReader {
     private transient MetadataHelper helper;
 
     /**
-     * The grid coverage factory to use.
+     * The grid coverage factory to use for building {@link GridCoverage2D} instances.
+     * This factory can be specified at construction time in the {@link Hints} map.
+     *
+     * @since 3.20
      */
-    private final GridCoverageFactory factory;
+    protected final GridCoverageFactory coverageFactory;
+
+    /**
+     * The name factory to use for building {@link GenericName} instances.
+     * This factory can be specified at construction time in the {@link Hints} map.
+     *
+     * @since 3.20
+     */
+    protected final NameFactory nameFactory;
 
     /**
      * Creates a new instance using the default
@@ -232,7 +246,8 @@ public class ImageCoverageReader extends GridCoverageReader {
      *        or {@code null} for the default hints.
      */
     public ImageCoverageReader(final Hints hints) {
-        factory = CoverageFactoryFinder.getGridCoverageFactory(hints);
+        coverageFactory = CoverageFactoryFinder.getGridCoverageFactory(hints);
+        nameFactory = FactoryFinder.getNameFactory(hints);
     }
 
     /**
@@ -485,18 +500,21 @@ public class ImageCoverageReader extends GridCoverageReader {
      * {@inheritDoc}
      */
     @Override
-    public List<String> getCoverageNames() throws CoverageStoreException {
+    public List<? extends GenericName> getCoverageNames() throws CoverageStoreException {
         if (coverageNames == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
                 throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
             }
             try {
+                List<String> imageNames = null;
                 if (imageReader instanceof NamedImageStore) {
-                    coverageNames = ((NamedImageStore) imageReader).getImageNames();
+                    imageNames = ((NamedImageStore) imageReader).getImageNames();
                 }
-                if (coverageNames == null) {
-                    coverageNames = new NameList(getInputName(), imageReader.getNumImages(true));
+                if (imageNames != null) {
+                    coverageNames = new NameList(nameFactory, imageNames);
+                } else {
+                    coverageNames = new NameList(nameFactory, getInputName(), imageReader.getNumImages(true));
                 }
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
@@ -942,9 +960,10 @@ public class ImageCoverageReader extends GridCoverageReader {
         final String name;
         final RenderedImage image;
         try {
-            final List<String> names = getCoverageNames();
+            final List<? extends GenericName> names = getCoverageNames();
             try {
-                name = (index < names.size()) ? names.get(index) : null;
+                final GenericName gc = (index < names.size()) ? names.get(index) : null;
+                name = (gc != null) ? gc.toString() : null;
             } catch (BackingStoreException e) {
                 throw e.unwrapOrRethrow(IOException.class);
             }
@@ -996,7 +1015,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
             }
         }
-        final GridCoverage2D coverage = factory.create(name, image, gridGeometry, bands, null, properties);
+        final GridCoverage2D coverage = coverageFactory.create(name, image, gridGeometry, bands, null, properties);
         if (loggingEnabled) {
             fullTime = System.nanoTime() - fullTime;
             final Level level = getLogLevel(fullTime);

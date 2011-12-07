@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.naming;
 
+import java.util.Map;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
@@ -44,6 +45,12 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * A domain in which {@linkplain AbstractName names} given by character strings are defined.
  * This implementation does not support localization in order to avoid ambiguity when testing
  * two namespaces for {@linkplain #equals equality}.
+ * <p>
+ * {@code DefaultNameSpace} can be instantiated by any of the following methods:
+ * <ul>
+ *   <li>{@link DefaultNameFactory#createNameSpace(GenericName)}</li>
+ *   <li>{@link DefaultNameFactory#createNameSpace(GenericName, Map)}</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

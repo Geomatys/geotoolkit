@@ -30,6 +30,11 @@ import org.opengis.util.MemberName;
 
 /**
  * The name of an {@linkplain MemberName attribute} type.
+ * <p>
+ * {@code DefaultTypeName} can be instantiated by any of the following methods:
+ * <ul>
+ *   <li>{@link DefaultNameFactory#createTypeName(NameSpace, CharSequence)}</li>
+ * </ul>
  *
  * @author Guilhem Legal (Geomatys)
  * @author Cédric Briançon (Geomatys)

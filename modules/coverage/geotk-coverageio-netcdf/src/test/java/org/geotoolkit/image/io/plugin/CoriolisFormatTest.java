@@ -442,7 +442,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
     public void testCoverageReader() throws CoverageStoreException, TransformException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(getTestFile());
-        assertArrayEquals(VARIABLE_NAMES, reader.getCoverageNames().toArray());
+        assertArrayEquals(VARIABLE_NAMES, toStringArray(reader.getCoverageNames()));
         final GridCoverage2D coverage = reader.read(0, null);
         assertNotNull(coverage);
         reader.dispose();

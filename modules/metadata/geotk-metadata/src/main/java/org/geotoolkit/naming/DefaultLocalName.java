@@ -46,6 +46,13 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * names which are directly accessible to and maintained by a name space. Names are local to
  * one and only one name space. The name space within which they are local is indicated by
  * the {@linkplain #scope() scope}.
+ * <p>
+ * {@code DefaultLocalName} can be instantiated by any of the following methods:
+ * <ul>
+ *   <li>{@link DefaultNameFactory#createLocalName(NameSpace, CharSequence)}</li>
+ *   <li>{@link DefaultNameFactory#createGenericName(NameSpace, CharSequence[])} with an array of length 1</li>
+ *   <li>{@link DefaultNameFactory#parseGenericName(NameSpace, CharSequence)} without separator</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
