@@ -31,44 +31,44 @@ public interface DCMIRecord extends AbstractRecord {
      * Gets the value of the dcElement property.
      * (unModifiable)
      */
-    public List<? extends Object> getDCElement();
+    List<? extends Object> getDCElement();
     
-    public AbstractSimpleLiteral getIdentifier();
+    AbstractSimpleLiteral getIdentifier();
     
-    public AbstractSimpleLiteral getTitle();
+    AbstractSimpleLiteral getTitle();
     
-    public AbstractSimpleLiteral getType();
+    AbstractSimpleLiteral getType();
     
-    public List<? extends AbstractSimpleLiteral> getSubject();
+    List<? extends AbstractSimpleLiteral> getSubject();
     
-    public List<? extends AbstractSimpleLiteral> getFormat();
+    List<? extends AbstractSimpleLiteral> getFormat();
     
-    public AbstractSimpleLiteral getModified();
+    AbstractSimpleLiteral getModified();
     
-    public List< ? extends AbstractSimpleLiteral> getAbstract();
+    List< ? extends AbstractSimpleLiteral> getAbstract();
     
-    public List<? extends AbstractSimpleLiteral> getCreator();
+    List<? extends AbstractSimpleLiteral> getCreator();
     
-    public AbstractSimpleLiteral getLanguage();
+    AbstractSimpleLiteral getLanguage();
     
-    public List<? extends AbstractSimpleLiteral> getRelation();
+    List<? extends AbstractSimpleLiteral> getRelation();
     
-    public List<? extends AbstractSimpleLiteral> getSource();
+    List<? extends AbstractSimpleLiteral> getSource();
     
-    public List<? extends AbstractSimpleLiteral> getCoverage();
+    List<? extends AbstractSimpleLiteral> getCoverage();
     
-    public AbstractSimpleLiteral getDate();
+    AbstractSimpleLiteral getDate();
     
-    public List<? extends AbstractSimpleLiteral> getRights();
+    List<? extends AbstractSimpleLiteral> getRights();
     
-    public AbstractSimpleLiteral getSpatial();
+    AbstractSimpleLiteral getSpatial();
     
-    public AbstractSimpleLiteral getReferences();
+    AbstractSimpleLiteral getReferences();
     
-    public List<? extends AbstractSimpleLiteral> getPublisher();
+    List<? extends AbstractSimpleLiteral> getPublisher();
     
-    public List<? extends AbstractSimpleLiteral> getContributor();
+    List<? extends AbstractSimpleLiteral> getContributor();
     
-    public AbstractSimpleLiteral getDescription();
+    List<? extends AbstractSimpleLiteral> getDescription();
 
 }

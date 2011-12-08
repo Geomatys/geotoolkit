@@ -255,7 +255,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getSubject() {
-        List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
         if (subject != null) {
             for(JAXBElement<SimpleLiteral> jb: subject) {
                 response.add(jb.getValue());
@@ -276,7 +276,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<? extends AbstractSimpleLiteral> getFormat() {
-        List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
         if (format != null) {
             for(JAXBElement<SimpleLiteral> jb: format) {
                 response.add(jb.getValue());
@@ -307,7 +307,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getAbstract() {
-        List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
         if (_abstract != null) {
             for(JAXBElement<SimpleLiteral> jb: _abstract) {
                 response.add(jb.getValue());
@@ -328,9 +328,9 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getCreator() {
-       List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> response = new ArrayList<AbstractSimpleLiteral>();
         if (creator != null) {
-            for(JAXBElement<SimpleLiteral> jb: creator) {
+            for (JAXBElement<SimpleLiteral> jb : creator) {
                 response.add(jb.getValue());
             }
         }
@@ -362,7 +362,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getRelation() {
-        List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("relation")) {
                 result.add(jb.getValue());
@@ -376,7 +376,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getSource() {
-        List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("source")) {
                 result.add(jb.getValue());
@@ -390,7 +390,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getCoverage() {
-        List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("coverage")) {
                 result.add(jb.getValue());
@@ -418,7 +418,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getRights() {
-        List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("rights")) {
                 result.add(jb.getValue());
@@ -452,7 +452,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getPublisher() {
-        List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("publisher")) {
                 result.add(jb.getValue());
@@ -466,7 +466,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
     
     public List<AbstractSimpleLiteral> getContributor() {
-        List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("contributor")) {
                 result.add(jb.getValue());
@@ -479,13 +479,14 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         this.dcElement.add(dublinFactory.createDescription(description));
     }
     
-    public AbstractSimpleLiteral getDescription() {
+    public List<AbstractSimpleLiteral> getDescription() {
+        final List<AbstractSimpleLiteral> result = new ArrayList<AbstractSimpleLiteral>();
         for (JAXBElement<SimpleLiteral> jb: dcElement) {
             if (jb.getName().getLocalPart().equals("description")) {
-                return jb.getValue();
+                result.add(jb.getValue());
             }
         }
-        return null;
+        return result;
     }
     
     @Override
