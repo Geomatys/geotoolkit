@@ -45,6 +45,7 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.util.GenericName;
 
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
@@ -156,11 +157,6 @@ public final class MapBuilder {
         }
 
         @Override
-        public List<String> getCoverageNames() throws CoverageStoreException, CancellationException {
-            return Collections.emptyList();
-        }
-
-        @Override
         public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
             return (GeneralGridGeometry) coverage.getGridGeometry();
         }
@@ -173,6 +169,11 @@ public final class MapBuilder {
         @Override
         public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
             return coverage;
+        }
+
+        @Override
+        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
+            return Collections.emptyList();
         }
 
     }
