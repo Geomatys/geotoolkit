@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 
+import org.opengis.util.GenericName;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.measure.unit.NonSI;
@@ -32,7 +33,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -370,7 +370,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         }
         final GridCoverageReader reader = layer.getCoverageReader();
         try {
-            final List<String> names = reader.getCoverageNames();
+            final List<? extends GenericName> names = reader.getCoverageNames();
             
             if(mustInterpolation){
                 for(int i=0,n=names.size();i<n;i++){
