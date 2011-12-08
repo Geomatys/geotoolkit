@@ -49,6 +49,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -998,15 +999,14 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Service provider interface (SPI) for {@link ImageReaderAdapter}s. The constructor of this
      * class initializes the {@link ImageReaderSpi#inputTypes} field to types that can represent
-     * a filename, like {@link File} or {@link URL} (see the table below for the complete list),
-     * rather than the usual {@linkplain #STANDARD_INPUT_TYPE standard input type}. The other
-     * fields ({@link #names names}, {@link #suffixes suffixes}, {@link #MIMETypes MIMETypes})
-     * are set to the same values than the wrapped provider.
+     * a filename, like {@link File} or {@link URL}, rather than the usual
+     * {@linkplain #STANDARD_INPUT_TYPE standard input type}. The {@link #names names} and
+     * {@link #MIMETypes MIMETypes} fields are set to the values of the wrapped provider,
+     * suffixed with the string given at construction time.
      * <p>
-     * Because the names are the same by default, an ordering needs to be established between this
-     * provider and the wrapped one. By default this implementation conservatively gives precedence
-     * to the original provider. Subclasses shall override the
-     * {@link #onRegistration(ServiceRegistry, Class)} method if they want a different ordering.
+     * <b>Example:</b> An {@code ImageReaderAdapter} wrapping the {@code "tiff"} image reader
+     * with the {@code "-wf"} suffix will have the {@code "tiff-wf"} format name and the
+     * {@code "image/x-tiff-wf"} MIME type.
      * <p>
      * The table below summarizes the initial values.
      * Those values can be modified by subclass constructors.
@@ -1017,13 +1017,13 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #names}&nbsp;</td>
-     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider, suffixed by the given string.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #suffixes}&nbsp;</td>
      *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #MIMETypes}&nbsp;</td>
-     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider, suffixed by the given string.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #inputTypes}&nbsp;</td>
      *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}&nbsp;</td>
@@ -1034,7 +1034,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.14
+     * @version 3.20
      *
      * @see ImageWriterAdapter.Spi
      *
@@ -1079,6 +1079,22 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         private final boolean acceptOther;
 
         /**
+         * @deprecated Specify a suffix.
+         */
+        @Deprecated
+        protected Spi(final ImageReaderSpi main) {
+            this(main, "");
+        }
+
+        /**
+         * @deprecated Specify a suffix.
+         */
+        @Deprecated
+        protected Spi(final String format) {
+            this(format, "");
+        }
+
+        /**
          * Creates an {@code ImageReaderAdapter.Spi} wrapping the given provider. The fields are
          * initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is up
          * to the subclass to initialize all other instance variables in order to provide working
@@ -1088,9 +1104,14 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the readers to use for reading the pixel values.
+         * @param suffix The suffix to append to {@linkplain #getFormatNames() format names} and
+         *               {@linkplain #getMIMETypes() MIME types}.
+         *
+         * @since 3.20
          */
-        protected Spi(final ImageReaderSpi main) {
-            ensureNonNull("main", main);
+        protected Spi(final ImageReaderSpi main, String suffix) {
+            ensureNonNull("main",   main);
+            ensureNonNull("prefix", suffix);
             this.main  = main;
             names      = main.getFormatNames();
             suffixes   = main.getFileSuffixes();
@@ -1113,6 +1134,10 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             }
             this.acceptStream = acceptStream;
             this.acceptOther  = acceptOther;
+            suffix = suffix.trim();
+            if (!suffix.isEmpty()) {
+                addPrefix(names, MIMETypes, suffix);
+            }
         }
 
         /**
@@ -1121,10 +1146,36 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for reading the pixel values.
+         * @param  suffix The suffix to append to {@linkplain #getFormatNames() format names} and
+         *                {@linkplain #getMIMETypes() MIME types}.
          * @throws IllegalArgumentException If no provider is found for the given format.
+         *
+         * @since 3.20
          */
-        protected Spi(final String format) throws IllegalArgumentException {
-            this(Formats.getReaderByFormatName(format, Spi.class));
+        protected Spi(final String format, final String suffix) throws IllegalArgumentException {
+            this(Formats.getReaderByFormatName(format, Spi.class), suffix);
+        }
+
+        /**
+         * Appends the given suffix in the given names array if the array is non-null,
+         * then updates the MIME type arrays. The replacement is performed in-place.
+         */
+        static void addPrefix(final String[] names, final String[] MIMETypes, final String suffix) {
+            if (names != null) {
+                final String upper = suffix.toUpperCase(Locale.ENGLISH);
+                final boolean[] replaced = new boolean[(MIMETypes != null) ? MIMETypes.length : 0];
+                for (int i=0; i<names.length; i++) {
+                    final String oldName = names[i];
+                    final String newName = oldName.concat(Strings.isUpperCase(oldName) ? upper : suffix);
+                    for (int j=0; j<replaced.length; j++) {
+                        if (!replaced[j]) {
+                            MIMETypes[j] = MIMETypes[j].replace(oldName, newName);
+                            replaced[j] = true;
+                        }
+                    }
+                    names[i] = newName;
+                }
+            }
         }
 
         /**
@@ -1228,7 +1279,9 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          *     registry.setOrdering(category, main, this);
          * }
          *
-         * Subclasses should override this method if they want to specify a different ordering.
+         * The plugin order matter when an {@linkplain javax.imageio.ImageIO#getImageReadersBySuffix(String)
+         * image reader is selected by file suffix}, because the {@linkplain #getFileSuffixes() file suffixes}
+         * of this adapter are the same than the file suffixes of the {@linkplain #main} provider by default.
          *
          * @see ServiceRegistry#setOrdering(Class, Object, Object)
          */

@@ -50,6 +50,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addPrefix;
 import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
 
 
@@ -645,15 +646,14 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     /**
      * Service provider interface (SPI) for {@link ImageWriterAdapter}s. The constructor of this
      * class initializes the {@link ImageWriterSpi#outputTypes} field to types that can represent
-     * a filename, like {@link File} or {@link URL} (see the table below for the complete list),
-     * rather than the usual {@linkplain #STANDARD_OUTPUT_TYPE standard output type}. The other
-     * fields ({@link #names names}, {@link #suffixes suffixes}, {@link #MIMETypes MIMETypes})
-     * are set to the same values than the wrapped provider.
+     * a filename, like {@link File} or {@link URL}, rather than the usual
+     * {@linkplain #STANDARD_OUTPUT_TYPE standard output type}. The {@link #names names} and
+     * {@link #MIMETypes MIMETypes} fields are set to the values of the wrapped provider,
+     * suffixed with the string given at construction time.
      * <p>
-     * Because the names are the same by default, an ordering needs to be established between this
-     * provider and the wrapped one. By default this implementation conservatively gives precedence
-     * to the original provider. Subclasses shall override the
-     * {@link #onRegistration(ServiceRegistry, Class)} method if they want a different ordering.
+     * <b>Example:</b> An {@code ImageWriterAdapter} wrapping the {@code "tiff"} image writer
+     * with the {@code "-wf"} suffix will have the {@code "tiff-wf"} format name and the
+     * {@code "image/x-tiff-wf"} MIME type.
      * <p>
      * The table below summarizes the initial values.
      * Those values can be modified by subclass constructors.
@@ -664,13 +664,13 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #names}&nbsp;</td>
-     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider, suffixed by the given string.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #suffixes}&nbsp;</td>
      *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #MIMETypes}&nbsp;</td>
-     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider, suffixed by the given string.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
      *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL},
@@ -682,7 +682,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.14
+     * @version 3.20
      *
      * @see ImageReaderAdapter.Spi
      *
@@ -712,6 +712,22 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         final boolean acceptStream;
 
         /**
+         * @deprecated Specify a suffix.
+         */
+        @Deprecated
+        protected Spi(final ImageWriterSpi main) {
+            this(main, "");
+        }
+
+        /**
+         * @deprecated Specify a suffix.
+         */
+        @Deprecated
+        protected Spi(final String format) {
+            this(format, "");
+        }
+
+        /**
          * Creates an {@code ImageWriterAdapter.Spi} wrapping the given provider. The fields are
          * initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is up
          * to the subclass to initialize all other instance variables in order to provide working
@@ -721,9 +737,14 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the writers to use for writing the pixel values.
+         * @param suffix The suffix to append to {@linkplain #getFormatNames() format names} and
+         *               {@linkplain #getMIMETypes() MIME types}.
+         *
+         * @since 3.20
          */
-        protected Spi(final ImageWriterSpi main) {
+        protected Spi(final ImageWriterSpi main, String suffix) {
             ensureNonNull("main", main);
+            ensureNonNull("prefix", suffix);
             this.main   = main;
             names       = main.getFormatNames();
             suffixes    = main.getFileSuffixes();
@@ -736,6 +757,10 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             extraStreamMetadataFormatNames       = addSpatialFormat(main.getExtraStreamMetadataFormatNames());
             extraImageMetadataFormatNames        = addSpatialFormat(main.getExtraImageMetadataFormatNames());
             acceptStream = Classes.isAssignableTo(ImageOutputStream.class, main.getOutputTypes());
+            suffix = suffix.trim();
+            if (!suffix.isEmpty()) {
+                addPrefix(names, MIMETypes, suffix);
+            }
         }
 
         /**
@@ -744,10 +769,14 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for writing the pixel values.
+         * @param  suffix The suffix to append to {@linkplain #getFormatNames() format names} and
+         *                {@linkplain #getMIMETypes() MIME types}.
          * @throws IllegalArgumentException If no provider is found for the given format.
+         *
+         * @since 3.20
          */
-        protected Spi(final String format) throws IllegalArgumentException {
-            this(Formats.getWriterByFormatName(format, Spi.class));
+        protected Spi(final String format, final String suffix) throws IllegalArgumentException {
+            this(Formats.getWriterByFormatName(format, Spi.class), suffix);
         }
 
         /**
@@ -820,7 +849,9 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          *     registry.setOrdering(category, main, this);
          * }
          *
-         * Subclasses should override this method if they want to specify a different ordering.
+         * The plugin order matter when an {@linkplain javax.imageio.ImageIO#getImageWriterBySuffix(String)
+         * image writer is selected by file suffix}, because the {@linkplain #getFileSuffixes() file suffixes}
+         * of this adapter are the same than the file suffixes of the {@linkplain #main} provider by default.
          *
          * @see ServiceRegistry#setOrdering(Class, Object, Object)
          */

@@ -207,7 +207,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.12
+     * @version 3.20
      *
      * @see WorldFileImageReader.Spi
      *
@@ -221,7 +221,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * @param main The provider of the writers to use for writing the pixel values.
          */
         public Spi(final ImageWriterSpi main) {
-            super(main);
+            super(main, WorldFileImageReader.Spi.NAME_SUFFIX);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();

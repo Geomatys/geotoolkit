@@ -53,6 +53,7 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
+import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
@@ -425,7 +426,7 @@ public final class NewGridCoverageReference {
          * store their information only in stream metadata, so we will fallback on stream
          * metadata if there is no image metadata.
          */
-        String imageFormat = Formats.getDisplayName(spi);
+        String imageFormat = Formats.getDisplayName(ImageReaderAdapter.Spi.unwrap(spi));
         if (imageFormat == null) {
             imageFormat = IOUtilities.extension(inputFile);
         }

@@ -91,7 +91,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
         final File file = File.createTempFile("Geotk", ".png");
         final File wf = (File) IOUtilities.changeExtension(file, "pgw");
         try {
-            CoverageIO.write(coverage, "png", file);
+            CoverageIO.write(coverage, "png-wf", file);
         } finally {
             assertTrue(file.delete());
             assertTrue(wf.delete());
