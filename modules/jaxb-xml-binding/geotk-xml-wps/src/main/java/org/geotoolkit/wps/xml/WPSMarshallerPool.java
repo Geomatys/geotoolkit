@@ -30,7 +30,10 @@ public class WPSMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.wps.xml.v100:org.geotoolkit.gml.xml.v311:org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool("org.geotoolkit.wps.xml.v100:"
+                                        + "org.geotoolkit.gml.xml.v311:"
+                                        + "org.geotoolkit.ows.xml.v100:"
+                                        + "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
             Logger.getLogger(WPSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
