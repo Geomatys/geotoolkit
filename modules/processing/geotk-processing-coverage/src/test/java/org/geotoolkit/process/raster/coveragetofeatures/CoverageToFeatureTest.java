@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.raster.coveragetofeatures;
 
+import org.opengis.util.GenericName;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -318,7 +319,7 @@ public class CoverageToFeatureTest {
         }
 
         @Override
-        public List<String> getCoverageNames() throws CoverageStoreException, CancellationException {
+        public List<? extends GenericName> getCoverageNames() throws CoverageStoreException, CancellationException {
             return Collections.emptyList();
         }
 
