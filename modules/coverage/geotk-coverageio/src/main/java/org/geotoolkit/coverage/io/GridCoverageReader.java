@@ -41,6 +41,7 @@ import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.util.GenericName;
 
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.XArrays;
@@ -168,7 +169,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * elements in the returned list are the names of each coverage.
      * <p>
      * The returned list may be backed by this {@code GridCoverageReader}: it should be used
-     * only as long as this reader and its input source are valids. Iterating over the list
+     * only as long as this reader and its input source are valid. Iterating over the list
      * may be costly and the operation performed on the list may throw a
      * {@link BackingStoreException}.
      *
@@ -180,7 +181,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *
      * @see ImageReader#getNumImages(boolean)
      */
-    public abstract List<String> getCoverageNames()
+    public abstract List<? extends GenericName> getCoverageNames()
             throws CoverageStoreException, CancellationException;
 
     /**
@@ -347,8 +348,8 @@ public abstract class GridCoverageReader extends GridCoverageStore {
             computeExtents     = true;
             computeResolutions = true;
         }
-        final List<String> coverageNames  = getCoverageNames();
-        final int          numCoverages   = coverageNames.size();
+        final List<? extends GenericName> coverageNames = getCoverageNames();
+        final int numCoverages = coverageNames.size();
         /*
          * If there is no "DiscoveryMetadata" node, or if this node does not contain any
          * extent or resolution, computes the missing elements from the grid geometry.

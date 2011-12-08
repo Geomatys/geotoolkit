@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.test.Depend;
@@ -30,17 +32,19 @@ import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.util.XArrays;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi.NAME_SUFFIX;
 
 
 /**
  * Tests {@link WorldFileImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.20
  *
  * @since 3.07
  */
@@ -144,10 +148,39 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
     @Test
     public void testImageIO() throws IOException {
         final Locale locale = Locale.getDefault();
+        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        final ImageReaderSpi[] disabledSpi = {
+            // We will need to unregister some service providerd that may conflict
+            // with this test. Save them in order to restore them after the test.
+            registry.getServiceProviderByClass(TextRecordImageReader.Spi.class)
+        };
         File file = TestData.file(org.geotoolkit.image.ImageInspector.class, "Contour.png");
-        WorldFileImageReader.Spi.registerDefaults(null);
-        Locale.setDefault(Locale.US);
         try {
+            Locale.setDefault(Locale.US);
+            for (final ImageReaderSpi spi : disabledSpi) {
+                registry.deregisterServiceProvider(spi);
+            }
+            WorldFileImageReader.Spi.registerDefaults(null);
+            /*
+             * Format name and MIME types checks on the PNG reader.
+             * A more realist test would be on the TIFF reader, but
+             * the PNG has more chance to be present in every JDK.
+             */
+            final ImageReaderSpi pngSpi = XImageIO.getReaderSpiByFormatName("png" + NAME_SUFFIX);
+            final String[] names = pngSpi.getFormatNames();
+            assertFalse(XArrays.contains(names, "png"));
+            assertFalse(XArrays.contains(names, "PNG"));
+            assertTrue (XArrays.contains(names, "png" + NAME_SUFFIX));
+            assertTrue (XArrays.contains(names, "PNG-WF"));
+            final String[] MIMETypes = pngSpi.getMIMETypes();
+            assertFalse(XArrays.contains(MIMETypes, "image/png"));
+            assertFalse(XArrays.contains(MIMETypes, "image/x-png"));
+            assertTrue (XArrays.contains(MIMETypes, "image/png" + NAME_SUFFIX));
+            assertTrue (XArrays.contains(MIMETypes, "image/x-png" + NAME_SUFFIX));
+            /*
+             * Opportunist test, because it involves a lot of operations,
+             * some of them may thrown an exception.
+             */
             assertNotNull(ImageIO.read(file));
             /*
              * When using the XImageIO methods, the WorldFileImageReader plugin
@@ -162,14 +195,14 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
              * Test again, but now using a file which have a TFW file.
              */
             file = TestData.file(this, "matrix.txt");
-            reader = XImageIO.getReaderByFormatName("matrix", file, true, null);
+            reader = XImageIO.getReaderBySuffix("txt", file, true, null);
             assertTrue(reader instanceof WorldFileImageReader);
             reader.dispose();
             /*
              * Test again, but now ignoring metadata. XImageIO should avoid
              * the usage of WorldFileImageReader.
              */
-            reader = XImageIO.getReaderByFormatName("matrix", file, true, true);
+            reader = XImageIO.getReaderBySuffix("txt", file, true, true);
             assertFalse(reader instanceof WorldFileImageReader);
             reader.dispose();
             /*
@@ -177,7 +210,7 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
              */
             final ImageInputStream in = ImageIO.createImageInputStream(file);
             try {
-                reader = XImageIO.getReaderByFormatName("matrix", in, true, true);
+                reader = XImageIO.getReaderBySuffix("txt", in, true, true);
                 assertTrue(reader instanceof TextMatrixImageReader);
                 // Don't botter to read the image. The purpose of
                 // this test is not to test the Matrix ImageReader.
@@ -186,8 +219,11 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
                 in.close();
             }
         } finally {
-            Locale.setDefault(locale);
             WorldFileImageReader.Spi.unregisterDefaults(null);
+            for (final ImageReaderSpi spi : disabledSpi) {
+                registry.registerServiceProvider(spi);
+            }
+            Locale.setDefault(locale);
         }
     }
 }

@@ -28,6 +28,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.opengis.util.LocalName;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.datum.PixelInCell;
@@ -75,7 +76,7 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * finished, in order to close the underlying input stream.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.10
  * @module
@@ -97,7 +98,16 @@ final class GridCoverageLoader extends ImageCoverageReader {
     transient GridCoverageLoader nextInUse;
 
     /**
-     * Metadata created when first needed.
+     * The coverage names to be returned by {@link #getCoverageNames()}, created when first needed.
+     * This field <strong>must</strong> be cleared by {@link #clearCache()} when a new input is set.
+     *
+     * @since 3.20
+     */
+    private transient List<LocalName> coverageNames;
+
+    /**
+     * Metadata created when first needed. Those fields <strong>must</strong> be cleared
+     * by {@link #clearCache()} when a new input is set.
      *
      * @since 3.15
      */
@@ -245,8 +255,11 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * assumes that there is exactly one coverage per entry.
      */
     @Override
-    public List<String> getCoverageNames() throws CoverageStoreException {
-        return Collections.singletonList(ensureInputSet().getName());
+    public List<LocalName> getCoverageNames() throws CoverageStoreException {
+        if (coverageNames == null) {
+            coverageNames = Collections.singletonList(nameFactory.createLocalName(null, ensureInputSet().getName()));
+        }
+        return coverageNames;
     }
 
     /**
@@ -510,6 +523,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     private void clearCache() {
         entry          = null;
+        coverageNames  = null;
         streamMetadata = null;
         imageMetadata  = null;
     }

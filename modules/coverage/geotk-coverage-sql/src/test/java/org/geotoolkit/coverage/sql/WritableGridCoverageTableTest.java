@@ -227,8 +227,8 @@ public final strictfp class WritableGridCoverageTableTest extends CatalogTestBas
         /*
          * Verify the format.
          */
-        assertEquals("matrix",    format.identifier);
-        assertEquals("matrix",    format.imageFormat);
+        assertEquals("matrix", format.identifier);
+        assertEquals("matrix", format.imageFormat);
         assertEquals("grayscale", format.paletteName);
         assertEquals(ViewType.GEOPHYSICS, format.viewType);
         final MeasurementRange<?>[] range = format.getSampleValueRanges();

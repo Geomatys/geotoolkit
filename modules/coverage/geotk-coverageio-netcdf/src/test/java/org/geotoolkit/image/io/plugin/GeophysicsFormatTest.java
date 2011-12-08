@@ -156,7 +156,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
     public void testCoverageReader() throws IOException, CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(createImageReader());
-        assertEquals(Collections.singletonList("temp"), reader.getCoverageNames());
+        assertEquals("temp", getSingleton(reader.getCoverageNames()).toString());
         final GridCoverage2D coverage = reader.read(0, null);
         reader.dispose(); // Dispose also the NetcdfImageReader.
         //

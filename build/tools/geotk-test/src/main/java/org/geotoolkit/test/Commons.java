@@ -20,6 +20,7 @@ package org.geotoolkit.test;
 import java.io.*;
 import java.text.Format;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.zip.CRC32;
 import java.awt.image.Raster;
@@ -40,7 +41,7 @@ import static org.junit.Assert.*;
  * Provides shared methods and constants for Geotk tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -62,6 +63,28 @@ public strictfp class Commons {
      * For subclass constructor only.
      */
     protected Commons() {
+    }
+
+    /**
+     * Returns the string representation of all elements in the given collection, in iteration
+     * order. If a collection element is {@code null}, then the corresponding array element will
+     * be {@code null} too.
+     *
+     * @param  collection The collection from which to get the string representation of each elements.
+     * @return The string representation of collection elements. May contain null values.
+     *
+     * @since 3.20
+     */
+    public static String[] toStringArray(final Collection<?> collection) {
+        final String[] strings = new String[collection.size()];
+        int i=0; for (final Object element : collection) {
+            if (element != null) {
+                strings[i] = element.toString();
+            }
+            i++;
+        }
+        assertEquals("Premature end of iteration.", strings.length, i);
+        return strings;
     }
 
     /**

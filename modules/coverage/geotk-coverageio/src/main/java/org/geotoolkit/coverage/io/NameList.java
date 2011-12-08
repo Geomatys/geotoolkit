@@ -18,39 +18,63 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.AbstractList;
+import java.util.List;
+import org.opengis.util.LocalName;
+import org.opengis.util.NameFactory;
 
 
 /**
  * A list where each element is some base name completed by the index + 1.
  *
- * @todo In a future version, we should provide the capability to increase the size
- *       only when we more to the next image (for supporting the image format where
- *       getting the image count is costly). <code>IOException</code> will need to
- *       be wrapped in <code>BackingStoreException</code>.
- *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.20
  *
  * @since 3.09
  * @module
  */
-final class NameList extends AbstractList<String> {
+final class NameList extends AbstractList<LocalName> {
+    /**
+     * The name factory.
+     */
+    private final NameFactory factory;
+
     /**
      * The base name.
      */
     private final String base;
 
     /**
-     * The size of the list.
+     * The names, created when first needed.
      */
-    private final int size;
+    private final LocalName[] names;
+
+    /**
+     * The image names, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    private final List<String> imageNames;
+
+    /**
+     * Creates a new list wrapping the given list of image names.
+     *
+     * @since 3.20
+     */
+    NameList(final NameFactory factory, final List<String> imageNames) {
+        this.factory    = factory;
+        this.base       = null;
+        this.names      = new LocalName[imageNames.size()];
+        this.imageNames = imageNames;
+    }
 
     /**
      * Creates a new list for the given base name repeated the given amount of time.
      */
-    NameList(final String base, final int size) {
-        this.base = base;
-        this.size = size;
+    NameList(final NameFactory factory, final String base, final int size) {
+        this.factory    = factory;
+        this.base       = base;
+        this.names      = new LocalName[size];
+        this.imageNames = null;
     }
 
     /**
@@ -58,17 +82,30 @@ final class NameList extends AbstractList<String> {
      */
     @Override
     public int size() {
-        return size;
+        return names.length;
     }
 
     /**
-     * Returns the element at the given index.
+     * Returns the element at the given index, or {@code null} if none.
      */
     @Override
-    public String get(final int index) {
-        if (index >= 0 && index < size) {
-            return base + " [" + (index + 1) + ']';
+    public LocalName get(final int index) {
+        if (index < 0 || index >= names.length) {
+            throw new IndexOutOfBoundsException(String.valueOf(index));
         }
-        throw new IndexOutOfBoundsException(String.valueOf(index));
+        LocalName name = names[index];
+        if (name == null) {
+            final String imageName;
+            if (imageNames != null) {
+                imageName = imageNames.get(index);
+            } else {
+                imageName = base + " [" + (index + 1) + ']';
+            }
+            if (imageName != null) {
+                name = factory.createLocalName(null, imageName);
+                names[index] = name;
+            }
+        }
+        return name;
     }
 }

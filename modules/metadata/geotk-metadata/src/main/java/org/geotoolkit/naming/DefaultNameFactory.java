@@ -113,32 +113,34 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     /**
      * Creates a namespace having the given name. Despite the "create" name, this method tries
      * to returns an existing instance when possible.
-     *
-     * @param name
-     *          The name of the namespace to be returned. This argument can be created using
-     *          <code>{@linkplain #createGenericName createGenericName}(null, parsedNames)</code>.
-     * @param properties
-     *          An optional map of properties to be assigned to the namespace. Recognized entries
-     *          are:
+     * <p>
+     * This method can receive an optional map of properties. Recognized entries are:
+     * <p>
      * <table border='1'>
      *   <tr bgcolor="#CCCCFF" class="TableHeadingColor">
      *     <th nowrap>Property name</th>
      *     <th nowrap>Purpose</th>
      *   </tr>
      *   <tr>
-     *     <td nowrap>&nbsp;{@code "separator"}&nbsp;</td>
-     *     <td nowrap>&nbsp;The separator to insert between {@linkplain GenericName#getParsedNames
+     *     <td valign="top" nowrap>&nbsp;{@code "separator"}&nbsp;</td>
+     *     <td>&nbsp;The separator to insert between {@linkplain GenericName#getParsedNames()
      *     parsed names} in that namespace. For HTTP namespace, it is {@code "."}. For URN namespace,
      *     it is typically {@code ":"}.</td>
      *   </tr>
      *   <tr>
-     *     <td nowrap>&nbsp;{@code "separator.head"}&nbsp;</td>
-     *     <td nowrap>&nbsp;The separator to insert between the namespace and the
-     *     {@linkplain GenericName#head head}. For HTTP namespace, it is {@code "://"}.
+     *     <td valign="top" nowrap>&nbsp;{@code "separator.head"}&nbsp;</td>
+     *     <td>&nbsp;The separator to insert between the namespace and the
+     *     {@linkplain GenericName#head() head}. For HTTP namespace, it is {@code "://"}.
      *     For URN namespace, it is typically {@code ":"}. If this entry is omitted, then
      *     the default is the same value than the {@code "separator"} entry.</td>
      *   </tr>
      * </table>
+     *
+     * @param name
+     *          The name of the namespace to be returned. This argument can be created using
+     *          <code>{@linkplain #createGenericName createGenericName}(null, parsedNames)</code>.
+     * @param properties
+     *          An optional map of properties to be assigned to the namespace, or {@code null} if none.
      *
      * @return A namespace having the given name and separator.
      *
@@ -172,14 +174,17 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * @return A namespace having the given name and separator.
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@link #createNameSpace(GenericName, Map)}.
      */
+    @Deprecated
     public NameSpace createNameSpace(final GenericName name) {
         return createNameSpace(name, null);
     }
 
     /**
      * Creates a member name from the given character sequence and attribute type.
-     * The default implementation returns a new or an existing {@linkplain DefaultMemberName}
+     * The default implementation returns a new or an existing {@link DefaultMemberName}
      * instance.
      *
      * @param  scope The {@linkplain GenericName#scope scope} of the type
@@ -197,7 +202,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
 
     /**
      * Creates a type name from the given character sequence. The default implementation
-     * returns a new or an existing {@linkplain DefaultTypeName} instance.
+     * returns a new or an existing {@link DefaultTypeName} instance.
      *
      * @param  scope The {@linkplain GenericName#scope scope} of the type
      *         name to be created, or {@code null} for a global namespace.
@@ -214,7 +219,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
 
     /**
      * Creates a local name from the given character sequence. The default implementation
-     * returns a new or an existing {@linkplain DefaultLocalName} instance.
+     * returns a new or an existing {@link DefaultLocalName} instance.
      *
      * @param  scope The {@linkplain GenericName#scope scope} of the local
      *         name to be created, or {@code null} for a global namespace.

@@ -263,7 +263,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.12
+     * @version 3.20
      *
      * @see WorldFileImageWriter.Spi
      *
@@ -272,12 +272,19 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      */
     public static class Spi extends ImageReaderAdapter.Spi {
         /**
+         * The suffix added to format names and MIME types.
+         *
+         * @since 3.20
+         */
+        static final String NAME_SUFFIX = "-wf";
+
+        /**
          * Creates a provider which will use the given format for reading pixel values.
          *
          * @param main The provider of the readers to use for reading the pixel values.
          */
         public Spi(final ImageReaderSpi main) {
-            super(main);
+            super(main, NAME_SUFFIX);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();

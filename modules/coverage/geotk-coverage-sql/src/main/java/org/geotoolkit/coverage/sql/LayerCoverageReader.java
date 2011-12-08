@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 import java.sql.SQLException;
 import java.awt.geom.Dimension2D;
 
+import org.opengis.util.LocalName;
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.TransformException;
@@ -41,6 +42,7 @@ import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
 
 
@@ -62,7 +64,7 @@ import org.geotoolkit.resources.Errors;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @see CoverageDatabase#createGridCoverageReader(String)
  * @see CoverageDatabase#readSlice(CoverageQuery)
@@ -87,7 +89,7 @@ public class LayerCoverageReader extends GridCoverageReader {
     /**
      * The list of coverage names, computed when first needed.
      */
-    private List<String> names;
+    private List<LocalName> names;
 
     /**
      * The most frequently used grid geometry.
@@ -203,10 +205,11 @@ public class LayerCoverageReader extends GridCoverageReader {
      * Returns the layer name.
      */
     @Override
-    public List<String> getCoverageNames() throws CoverageStoreException {
+    public List<LocalName> getCoverageNames() throws CoverageStoreException {
         ensureInputSet();
         if (names == null) {
-            names = Collections.singletonList(getInput().getName());
+            names = Collections.singletonList(FactoryFinder.getNameFactory(null)
+                            .createLocalName(null, getInput().getName()));
         }
         return names;
     }

@@ -30,6 +30,7 @@ import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
+import org.opengis.util.NameFactory;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.Identifier;
@@ -226,7 +227,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * @category Generic name
      */
     private GenericName createName(final Citation authority, final CharSequence code) {
-        final DefaultNameFactory factory = getNameFactory();
+        final NameFactory factory = getNameFactory();
         if (authority == null) {
             return factory.createLocalName(null, code);
         }
@@ -240,7 +241,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
         synchronized (SCOPES) {
             scope = SCOPES.get(title);
             if (scope == null) {
-                scope = factory.createNameSpace(factory.createLocalName(null, title));
+                scope = factory.createNameSpace(factory.createLocalName(null, title), null);
                 SCOPES.put(title, scope);
             }
         }
