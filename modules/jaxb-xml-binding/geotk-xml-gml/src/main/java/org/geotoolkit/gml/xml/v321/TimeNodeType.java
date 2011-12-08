@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "position"
 })
 public class TimeNodeType
-    extends AbstractTimeTopologyPrimitiveType
+    extends AbstractTimeTopologyPrimitiveType implements Serializable
 {
 
     private List<TimeEdgePropertyType> previousEdge;

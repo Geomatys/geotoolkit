@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeInstantPropertyType", propOrder = {
     "timeInstant"
 })
-public class TimeInstantPropertyType {
+public class TimeInstantPropertyType implements Serializable {
 
     @XmlElement(name = "TimeInstant")
     protected TimeInstantType timeInstant;

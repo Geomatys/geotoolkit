@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -62,7 +63,7 @@ import javax.xml.datatype.Duration;
     "timeInterval"
 })
 @XmlRootElement(name="TimePeriod")
-public class TimePeriodType extends AbstractTimeGeometricPrimitiveType {
+public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implements Serializable{
 
     private TimePositionType beginPosition;
     private TimeInstantPropertyType begin;

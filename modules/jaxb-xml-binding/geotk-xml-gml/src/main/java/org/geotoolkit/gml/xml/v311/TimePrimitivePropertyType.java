@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.io.Serializable;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     RelatedTimeType.class
 })
-public class TimePrimitivePropertyType {
+public class TimePrimitivePropertyType implements Serializable {
 
     @XmlElementRef(name = "AbstractTimePrimitive", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     protected JAXBElement<? extends AbstractTimePrimitiveType> abstractTimePrimitive;

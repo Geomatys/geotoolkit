@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeClockPropertyType", propOrder = {
     "timeClock"
 })
-public class TimeClockPropertyType {
+public class TimeClockPropertyType implements Serializable{
 
     @XmlElement(name = "TimeClock")
     private TimeClockType timeClock;

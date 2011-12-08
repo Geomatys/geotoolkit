@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "interval"
 })
 public class TimeCoordinateSystemType
-    extends TimeReferenceSystemType
+    extends TimeReferenceSystemType implements Serializable
 {
 
     private TimePositionType originPosition;

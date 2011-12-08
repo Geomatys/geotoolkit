@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "TimeIntervalLengthType", propOrder = {
     "value"
 })
-public class TimeIntervalLengthType {
+public class TimeIntervalLengthType implements Serializable {
 
     @XmlValue
     protected BigDecimal value;

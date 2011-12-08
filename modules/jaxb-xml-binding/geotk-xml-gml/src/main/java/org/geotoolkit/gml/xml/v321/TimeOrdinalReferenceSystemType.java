@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "component"
 })
 public class TimeOrdinalReferenceSystemType
-    extends TimeReferenceSystemType
+    extends TimeReferenceSystemType implements Serializable
 {
 
     @XmlElement(required = true)

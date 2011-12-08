@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeCSPropertyType", propOrder = {
     "timeCS"
 })
-public class TimeCSPropertyType {
+public class TimeCSPropertyType implements Serializable {
 
     @XmlElement(name = "TimeCS")
     private TimeCSType timeCS;

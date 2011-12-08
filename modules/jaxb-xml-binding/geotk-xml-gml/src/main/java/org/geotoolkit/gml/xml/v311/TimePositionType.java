@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -68,7 +69,7 @@ import org.opengis.util.InternationalString;
 @XmlType(name = "TimePositionType", propOrder = {
     "value"
 })
-public class TimePositionType implements Position {
+public class TimePositionType implements Position, Serializable {
 
     @XmlValue
     private String value;

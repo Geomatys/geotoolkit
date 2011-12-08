@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -48,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "timePosition"
 })
 public class TimeInstantType
-    extends AbstractTimeGeometricPrimitiveType
+    extends AbstractTimeGeometricPrimitiveType implements Serializable
 {
 
     @XmlElement(required = true)

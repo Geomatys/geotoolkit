@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "epochOfUse"
 })
 public class TimeCalendarEraType
-    extends DefinitionType
+    extends DefinitionType implements Serializable
 {
 
     @XmlElement(required = true)

@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "TimePositionType", propOrder = {
     "value"
 })
-public class TimePositionType {
+public class TimePositionType implements Serializable{
 
     @XmlValue
     private List<String> value;

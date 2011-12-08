@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.io.Serializable;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -52,7 +53,7 @@ import org.opengis.temporal.Position;
 @XmlType(name = "TimeInstantType", propOrder = {
     "timePosition"
 })
-public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant {
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant, Serializable {
 
     @XmlElement(required = true)
     private TimePositionType timePosition;

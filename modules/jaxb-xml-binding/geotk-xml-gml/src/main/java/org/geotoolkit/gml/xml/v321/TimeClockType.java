@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -58,7 +59,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "dateBasis"
 })
 public class TimeClockType
-    extends TimeReferenceSystemType
+    extends TimeReferenceSystemType implements Serializable
 {
 
     @XmlElement(required = true)

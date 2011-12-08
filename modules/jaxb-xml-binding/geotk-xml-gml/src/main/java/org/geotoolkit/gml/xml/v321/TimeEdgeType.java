@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "extent"
 })
 public class TimeEdgeType
-    extends AbstractTimeTopologyPrimitiveType
+    extends AbstractTimeTopologyPrimitiveType implements Serializable
 {
 
     @XmlElement(required = true)
