@@ -107,8 +107,10 @@ final class NilObjectHandler implements InvocationHandler {
      *       construction time.</li>
      *   <li>If the invoked method is {@code getIdentifierMap()}, returns a view over the
      *       identifiers given at construction time.</li>
-     *   <li>If the invoked method is any other kind of getter, returns null except if the return
-     *       type is a collection, in which case an empty collection is returned.</li>
+     *   <li>If the invoked method is any other kind of getter, returns null except if:<ul>
+     *       <li>the return type is a collection, in which case an empty collection is returned;</li>
+     *       <li>the return type is a primitive, in which case the nil value for that primitive
+     *           type is returned.</li></ul></li>
      *   <li>If the invoked method is a setter method, throw a {@link UnsupportedOperationException}
      *       since the proxy instance is assumed unmodifiable.</li>
      *   <li>If the invoked method is one of the {@link Object} method, delegate to the

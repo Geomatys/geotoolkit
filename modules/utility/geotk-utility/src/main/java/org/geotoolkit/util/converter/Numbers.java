@@ -58,15 +58,15 @@ public final class Numbers extends Static {
     static {
         new Numbers(BigDecimal.class, true, false, (byte) (DOUBLE+2)); // Undocumented enum.
         new Numbers(BigInteger.class, false, true, (byte) (DOUBLE+1)); // Undocumented enum.
-        new Numbers(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE,    'D');
-        new Numbers(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT,     'F');
-        new Numbers(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG,      'J');
-        new Numbers(Integer  .TYPE, Integer  .class, false, true,  (byte) Integer  .SIZE, INTEGER,   'I');
-        new Numbers(Short    .TYPE, Short    .class, false, true,  (byte) Short    .SIZE, SHORT,     'S');
-        new Numbers(Byte     .TYPE, Byte     .class, false, true,  (byte) Byte     .SIZE, BYTE,      'B');
-        new Numbers(Character.TYPE, Character.class, false, false, (byte) Character.SIZE, CHARACTER, 'C');
-        new Numbers(Boolean  .TYPE, Boolean  .class, false, false, (byte) 1,              BOOLEAN,   'Z');
-        new Numbers(Void     .TYPE, Void     .class, false, false, (byte) 0,              OTHER,     'V');
+        new Numbers(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE,    'D', Double   .valueOf(Double.NaN));
+        new Numbers(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT,     'F', Float    .valueOf(Float .NaN));
+        new Numbers(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG,      'J', Long     .valueOf(        0L));
+        new Numbers(Integer  .TYPE, Integer  .class, false, true,  (byte) Integer  .SIZE, INTEGER,   'I', Integer  .valueOf(        0));
+        new Numbers(Short    .TYPE, Short    .class, false, true,  (byte) Short    .SIZE, SHORT,     'S', Short    .valueOf((short) 0));
+        new Numbers(Byte     .TYPE, Byte     .class, false, true,  (byte) Byte     .SIZE, BYTE,      'B', Byte     .valueOf((byte)  0));
+        new Numbers(Character.TYPE, Character.class, false, false, (byte) Character.SIZE, CHARACTER, 'C', Character.valueOf((char)  0));
+        new Numbers(Boolean  .TYPE, Boolean  .class, false, false, (byte) 1,              BOOLEAN,   'Z', Boolean.FALSE);
+        new Numbers(Void     .TYPE, Void     .class, false, false, (byte) 0,              OTHER,     'V', null);
     }
 
     /** The primitive type.                     */ private final Class<?> primitive;
@@ -76,6 +76,7 @@ public final class Numbers extends Static {
     /** The size in bytes.                      */ private final byte     size;
     /** Constant to be used in switch statement.*/ private final byte     ordinal;
     /** The internal form of the primitive name.*/ private final char     internal;
+    /** The null, NaN, 0 or false value.        */ private final Object   nullValue;
 
     /**
      * Creates an entry for a type which is not a primitive type.
@@ -87,6 +88,7 @@ public final class Numbers extends Static {
         this.size      = -1;
         this.ordinal   = ordinal;
         this.internal  = 'L'; // Defined by Java, and tested elsewhere in this class.
+        this.nullValue = null;
         if (MAPPING.put(type, this) != null) {
             throw new AssertionError(); // Should never happen.
         }
@@ -98,7 +100,7 @@ public final class Numbers extends Static {
     private Numbers(final Class<?> primitive, final Class<?> wrapper,
                     final boolean  isFloat,   final boolean  isInteger,
                     final byte     size,      final byte     ordinal,
-                    final char     internal)
+                    final char     internal,  final Object   nullValue)
     {
         this.primitive = primitive;
         this.wrapper   = wrapper;
@@ -107,6 +109,7 @@ public final class Numbers extends Static {
         this.size      = size;
         this.ordinal   = ordinal;
         this.internal  = internal;
+        this.nullValue = nullValue;
         if (MAPPING.put(primitive, this) != null || MAPPING.put(wrapper, this) != null) {
             throw new AssertionError(); // Should never happen.
         }
@@ -610,20 +613,32 @@ public final class Numbers extends Static {
     }
 
     /**
-     * Returns a {@code NaN}, zero, empty or null value of the given type.
+     * Returns a {@code NaN}, zero, empty or {@code null} value of the given type. This method
+     * tries to return the closest value that can be interpreted as "<cite>none</cite>", which
+     * is usually not the same than "<cite>zero</cite>". More specifically:
      * <p>
      * <ul>
-     *   <li>If the given type is a primitive floating point, then this method returns {@code NaN}.</li>
-     *   <li>Otherwise if the given type is an array, then this method returns an empty array.</li>
-     *   <li>Otherwise if the given type is a collection interface, then this method returns an
-     *       empty collection of the same kind.</li>
-     *   <li>Otherwise this method returns {@code null}. Note that if the given type is a number
-     *       wrapper like {@link Double}, then this method returns {@code null}, not NaN.</li>
+     *   <li>If the given type is a floating point <strong>primitive</strong> type ({code float}
+     *       or {@code double}), then this method returns {@link Float#NaN} or {@link Double#NaN}
+     *       depending on the given type.</li>
+     *
+     *   <li>If the given type is an integer <strong>primitive</strong> type or the character type
+     *       ({@code long}, {@code int}, {@code short}, {@code byte} or {@code char}), then this
+     *       method returns the zero value of the given type.</li>
+     *
+     *   <li>If the given type is the {@code boolean} <strong>primitive</strong> type, then this
+     *       method returns {@link Boolean#FALSE}.</li>
+     *
+     *   <li>If the given type is an array or a collection, then this method returns an empty
+     *       array or collection. The given type is honored on a <cite>best effort</cite> basis.</li>
+     *
+     *   <li>For all other cases, including the wrapper classes of primitive types, this method
+     *       returns {@code null}.</li>
      * </ul>
      *
-     * {@note Despite being defined in the <code>Numbers</code> class, the scope of this method
-     *        has been extended to array and collection types because those types can also be
-     *        seen as "mathematical" objects.}
+     * Despite being defined in the {@code Numbers} class, the scope of this method has been
+     * extended to array and collection types because those types can also be seen as mathematical
+     * objects.
      *
      * @param  <T> The compile-time type of the requested object.
      * @param  type The type of the object for which to get a nil value.
@@ -633,14 +648,9 @@ public final class Numbers extends Static {
      */
     @SuppressWarnings("unchecked")
     public static <T> T valueOfNil(final Class<T> type) {
-        if (type == Double   .TYPE)  return (T) Double   .valueOf(Double.NaN);
-        if (type == Float    .TYPE)  return (T) Float    .valueOf(Float.NaN);
-        if (type == Long     .TYPE)  return (T) Long     .valueOf(0L);
-        if (type == Integer  .TYPE)  return (T) Integer  .valueOf(0);
-        if (type == Short    .TYPE)  return (T) Short    .valueOf((short) 0);
-        if (type == Byte     .TYPE)  return (T) Byte     .valueOf((byte)  0);
-        if (type == Character.TYPE)  return (T) Character.valueOf((char)  0);
-        if (type == Boolean  .TYPE)  return (T) Boolean.FALSE;
+        if (type.isPrimitive()) {
+            return (T) MAPPING.get(type).nullValue;
+        }
         if (type == Map      .class) return (T)  Collections.EMPTY_MAP;
         if (type == List     .class) return (T)  Collections.EMPTY_LIST;
         if (type == Queue    .class) return (T) XCollections.emptyQueue();

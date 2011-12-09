@@ -70,7 +70,7 @@ import static org.geotoolkit.internal.InternalUtilities.floatEpsilonEqual;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -849,7 +849,13 @@ final class PropertyAccessor {
     {
         assert newValues.length == 1;
         Object newValue = newValues[0];
-        if (newValue != null) {
+        if (newValue == null) {
+            // Can't test elementType, because it has been converted to the wrapper class.
+            final Class<?> type = getter.getReturnType();
+            if (type.isPrimitive()) {
+                newValues[0] = Numbers.valueOfNil(type);
+            }
+        } else {
             Class<?> targetType = getter.getReturnType();
             if (!Collection.class.isAssignableFrom(targetType)) {
                 /*
