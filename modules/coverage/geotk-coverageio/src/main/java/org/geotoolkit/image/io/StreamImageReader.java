@@ -34,9 +34,10 @@ import org.geotoolkit.util.converter.Classes;
 
 /**
  * Base class for image readers that expect an {@link InputStream} or channel input source. This
- * class provides a {@link #getInputStream} method, which returns the {@linkplain #input input} as
- * an {@link InputStream} for convenience. The default implementation handles all the following
- * types:
+ * class provides a {@link #getInputStream()} method, which returns the {@linkplain #input input}
+ * as an {@link InputStream} for convenience.
+ * <p>
+ * The default implementation handles all the following types:
  *
  * <blockquote>
  * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},

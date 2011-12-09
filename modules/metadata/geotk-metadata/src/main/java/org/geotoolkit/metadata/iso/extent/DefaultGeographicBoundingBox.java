@@ -54,7 +54,7 @@ import static org.geotoolkit.metadata.iso.extent.DefaultExtent.ensureNonNull;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -112,9 +112,14 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     private double northBoundLatitude;
 
     /**
-     * Constructs an initially empty geographic bounding box.
+     * Constructs an initially {@linkplain #isEmpty() empty} geographic bounding box.
+     * All longitude and latitude values are initialized to {@link Double#NaN}.
      */
     public DefaultGeographicBoundingBox() {
+        westBoundLongitude = Double.NaN;
+        eastBoundLongitude = Double.NaN;
+        southBoundLatitude = Double.NaN;
+        northBoundLatitude = Double.NaN;
     }
 
     /**

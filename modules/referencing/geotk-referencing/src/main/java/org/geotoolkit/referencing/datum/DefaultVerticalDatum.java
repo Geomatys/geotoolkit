@@ -86,7 +86,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
 
     /**
      * The type of this vertical datum. Consider this field as final.
-     * If {@code null}, a value will be set by {@link #afterUnmarshal(Unmarshaller, Object)}.
+     * If {@code null}, a value will be inferred from the name by {@link #type()}.
      */
     private VerticalDatumType type;
 
