@@ -69,7 +69,7 @@ public class GetCapabilitiesTest {
             
             final String expectedMarshalledRequest = 
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                    + "<wps:GetCapabilities service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\">\n"
+                    + "<wps:GetCapabilities service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ins=\"http://www.inspire.org\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ns6=\"http://www.opengis.net/ows\">\n"
                     + "    <wps:AcceptVersions>\n"
                     + "        <ows:Version>1.0.0</ows:Version>\n"
                     + "    </wps:AcceptVersions>\n"
