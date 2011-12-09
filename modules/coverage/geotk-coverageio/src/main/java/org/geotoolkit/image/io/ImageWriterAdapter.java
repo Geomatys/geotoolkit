@@ -849,7 +849,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          *     registry.setOrdering(category, main, this);
          * }
          *
-         * The plugin order matter when an {@linkplain javax.imageio.ImageIO#getImageWriterBySuffix(String)
+         * The plugin order matter when an {@linkplain javax.imageio.ImageIO#getImageWritersBySuffix(String)
          * image writer is selected by file suffix}, because the {@linkplain #getFileSuffixes() file suffixes}
          * of this adapter are the same than the file suffixes of the {@linkplain #main} provider by default.
          *
