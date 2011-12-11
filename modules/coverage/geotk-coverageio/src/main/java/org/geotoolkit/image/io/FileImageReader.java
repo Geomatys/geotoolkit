@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io;
 
-import java.net.URLDecoder;
 import java.net.URL;
 import java.net.URI;
 import java.io.File;
@@ -27,20 +26,40 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import javax.imageio.spi.ImageReaderSpi;
+import java.nio.file.Path;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
+import org.geotoolkit.internal.image.io.Formats;
 
 
 /**
- * Base class for image readers that require {@link File} input source. If the input source
- * is of other kind, then the content will be copied to a temporary file. This class is used
- * for image formats backed by some external API (typically C/C++ libraries) working only with
- * files.
+ * Base class for image readers that require {@link File} input source. This class is used with
+ * image formats backed by some external API (typically C/C++ libraries) working only with files.
+ * <p>
+ * The input type can be any of the types documented in the
+ * {@linkplain org.geotoolkit.image.io.StreamImageReader.Spi provider} javadoc. The {@link File}
+ * object can be obtained by a call to {@link #getInputFile()}, which handles the various input
+ * types as below:
+ * <p>
+ * <ul>
+ *   <li>{@link File} inputs are returned as-is.</li>
+ *   <li>{@link String} inputs are converted to {@code File} objects by a call to the
+ *       {@link File#File(String)} constructor.</li>
+ *   <li>{@link Path} inputs are converted to {@code File} objects by a call to
+ *       {@link Path#toFile()} method.</li>
+ *   <li>{@link URL} and {@link URI} inputs are converted to {@code File} objects by a call to the
+ *       {@link File#File(URI)} constructor only if the protocol is {@code "file"}. In the particular
+ *       case of {@code URL}s, the encoding is specified by {@link #getURLEncoding()}.</li>
+ *   <li>For all other cases, the input content is copied to a temporary file and the corresponding
+ *       {@code File} object is returned. The temporary file is deleted by the {@link #close()}
+ *       method.</li>
+ * </ul>
  *
  * @author Antoine Hnawia (IRD)
- * @author Martin Desruisseaux (IRD)
- * @version 3.03
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -48,7 +67,8 @@ import org.geotoolkit.internal.io.TemporaryFile;
 public abstract class FileImageReader extends StreamImageReader {
     /**
      * The file to read. This is the same reference than {@link #input} if the later was
-     * already a {@link File} object, or a temporary file otherwise.
+     * already a {@link File} object. Otherwise this is a {@code File} derived from the
+     * input URL, URI or Path if possible, or a temporary file otherwise.
      */
     private File inputFile;
 
@@ -69,7 +89,7 @@ public abstract class FileImageReader extends StreamImageReader {
     /**
      * Returns the encoding used for {@linkplain URL} {@linkplain #input input}s.
      * The default implementation returns {@code "UTF-8"} in all cases. Subclasses
-     * should override this method if {@link #getInputFile} should converts {@link URL}
+     * can override this method if {@link #getInputFile()} should convert {@link URL}
      * to {@link File} objects using a different encoding.
      *
      * @return The encoding used for URL inputs.
@@ -113,10 +133,15 @@ public abstract class FileImageReader extends StreamImageReader {
             ensureFileExists(inputFile);
             return inputFile;
         }
+        if (input instanceof Path) {
+            inputFile = ((Path) input).toFile();
+            ensureFileExists(inputFile);
+            return inputFile;
+        }
         if (input instanceof URI) {
             final URI sourceURI = (URI) input;
             if (sourceURI.getScheme().equalsIgnoreCase("file")) {
-                inputFile = new File(sourceURI.getPath());
+                inputFile = new File(sourceURI);
                 ensureFileExists(inputFile);
                 return inputFile;
             }
@@ -124,7 +149,7 @@ public abstract class FileImageReader extends StreamImageReader {
         if (input instanceof URL) {
             final URL sourceURL = (URL) input;
             if (sourceURL.getProtocol().equalsIgnoreCase("file")) {
-                inputFile = new File(URLDecoder.decode(sourceURL.getPath(), getURLEncoding()));
+                inputFile = IOUtilities.toFile(sourceURL, getURLEncoding());
                 ensureFileExists(inputFile);
                 return inputFile;
             }
@@ -132,41 +157,22 @@ public abstract class FileImageReader extends StreamImageReader {
         /*
          * Can not convert the input directly to a file. Asks the input stream
          * before to create the temporary file in case an exception is thrown.
+         * Then creates a temporary file using the first declared image suffix
+         * (e.g. "png"), or "tmp" if there is no declared suffix. The "FIR"
+         * prefix stands for "FileImageReader".
          */
         try (InputStream in = getInputStream()) {
-            /*
-             * Creates a temporary file using the first declared image suffix
-             * (e.g. "png"), or "tmp" if there is no suffix declared.
-             */
-            String suffix = "tmp";
-            if (originatingProvider != null) {
-                final String[] suffixes = originatingProvider.getFileSuffixes();
-                if (suffixes != null && suffixes.length != 0) {
-                    // We assume that the first file suffix is the
-                    // most representative of this file format.
-                    suffix = suffixes[0];
-                }
-            }
-            inputFile = TemporaryFile.createTempFile("FIR", suffix, null);
+            inputFile = TemporaryFile.createTempFile("FIR", Formats.getFileSuffix(originatingProvider), null);
             isTemporary = true;
-            /*
-             * Copy the content of the specified input stream to the temporary file.
-             * Note that there is no need to use instance of BufferedInputStream or
-             * BufferedOutputStream since we already use a 8 kb buffer.
-             */
             try (OutputStream out = new FileOutputStream(inputFile)) {
-                final byte[] buffer = new byte[8192];
-                int length;
-                while ((length=in.read(buffer)) >= 0) {
-                    out.write(buffer, 0, length);
-                }
+                IOUtilities.copy(in, out);
             }
         }
         return inputFile;
     }
 
     /**
-     * Returns {@code true} if the file given by {@link #getInputFile} is a temporary file.
+     * Returns {@code true} if the file given by {@link #getInputFile()} is a temporary file.
      *
      * @return {@code true} if the input file is a temporary one.
      */
@@ -187,7 +193,10 @@ public abstract class FileImageReader extends StreamImageReader {
 
     /**
      * Closes the stream {@linkplain StreamImageReader#close() as documented in the super-class},
-     * then deletes the temporary file (if any).
+     * then deletes the temporary file (if any). This method is invoked automatically by
+     * {@link #setInput(Object, boolean, boolean) setInput(...)}, {@link #reset() reset()},
+     * {@link #dispose() dispose()} or {@link #finalize()} methods and doesn't need to be
+     * invoked explicitly.
      *
      * @throws IOException If an error occurred while disposing resources.
      */

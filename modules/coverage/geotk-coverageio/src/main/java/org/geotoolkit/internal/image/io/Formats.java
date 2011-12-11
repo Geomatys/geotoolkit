@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Vocabulary;
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.01
  * @module
@@ -403,6 +403,33 @@ attmpt: while (true) {
             return fallback;
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_IMAGE_FORMAT_$1, format));
+    }
+
+    /**
+     * Returns the first suffix declared in the given provider, with a leading dot.
+     * We presume that the first file suffix is the most representative one for the
+     * file format.
+     *
+     * @param  provider The provider for which to get the first file suffix.
+     * @return The first file suffix, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public static String getFileSuffix(final ImageReaderWriterSpi provider) {
+        if (provider != null) {
+            final String[] suffixes = provider.getFileSuffixes();
+            if (suffixes != null) {
+                for (String suffix : suffixes) {
+                    if (suffix != null && !(suffix = suffix.trim()).isEmpty()) {
+                        if (suffix.charAt(0) != '.') {
+                            suffix = '.' + suffix;
+                        }
+                        return suffix;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
