@@ -25,6 +25,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.geom.AffineTransform;
@@ -88,8 +89,8 @@ import org.geotoolkit.resources.Errors;
  * GridCoverage[], Map) create} variant. Developers can override this method if they
  * want to intercept the creation of all {@link GridCoverage2D} objects in this factory.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -406,6 +407,19 @@ public class GridCoverageFactory extends Factory {
     }
 
     /**
+     * Creates default bands for the given raster.
+     *
+     * @param  name   The sample dimension name, or {@code null} if none.
+     * @param  raster The raster for which sample dimensions are being built.
+     * @return The sample dimensions.
+     */
+    private static GridSampleDimension[] createDefaultBands(final CharSequence name, final Raster raster) {
+        final GridSampleDimension[] bands = new GridSampleDimension[raster.getNumBands()];
+        RenderedSampleDimension.create(name, null, raster, raster.getSampleModel(), null, bands);
+        return bands;
+    }
+
+    /**
      * Constructs a grid coverage from the specified {@linkplain WritableRaster raster}
      * and {@linkplain Envelope envelope}. This convenience constructor performs the same
      * assumptions on axis order than the {@linkplain #create(CharSequence, RenderedImage,
@@ -429,11 +443,14 @@ public class GridCoverageFactory extends Factory {
      *
      * @since 2.2
      */
-    public GridCoverage2D create(final CharSequence              name,
-                                 final WritableRaster            raster,
-                                 final Envelope                  envelope,
-                                 final GridSampleDimension[]     bands)
+    public GridCoverage2D create(final CharSequence           name,
+                                 final WritableRaster         raster,
+                                 final Envelope               envelope,
+                                       GridSampleDimension... bands)
     {
+        if (bands == null) {
+            bands = createDefaultBands(name, raster);
+        }
         final ColorModel    model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
         final RenderedImage image = new BufferedImage(model, raster, false, null);
         return create(name, image, envelope, bands, null, null);
@@ -464,8 +481,11 @@ public class GridCoverageFactory extends Factory {
                                  final WritableRaster            raster,
                                  final CoordinateReferenceSystem crs,
                                  final MathTransform             gridToCRS,
-                                 final GridSampleDimension[]     bands)
+                                       GridSampleDimension...    bands)
     {
+        if (bands == null) {
+            bands = createDefaultBands(name, raster);
+        }
         final ColorModel    model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
         final RenderedImage image = new BufferedImage(model, raster, false, null);
         return create(name, image, crs, gridToCRS, bands, null, null);
