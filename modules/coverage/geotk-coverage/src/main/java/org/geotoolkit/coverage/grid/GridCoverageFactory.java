@@ -448,7 +448,7 @@ public class GridCoverageFactory extends Factory {
                                  final Envelope               envelope,
                                        GridSampleDimension... bands)
     {
-        if (bands == null) {
+        if (bands == null || bands.length == 0) {
             bands = createDefaultBands(name, raster);
         }
         final ColorModel    model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
@@ -483,7 +483,7 @@ public class GridCoverageFactory extends Factory {
                                  final MathTransform             gridToCRS,
                                        GridSampleDimension...    bands)
     {
-        if (bands == null) {
+        if (bands == null || bands.length == 0) {
             bands = createDefaultBands(name, raster);
         }
         final ColorModel    model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
