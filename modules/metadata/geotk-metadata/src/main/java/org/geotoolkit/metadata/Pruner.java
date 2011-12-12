@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.IdentityHashMap;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedContainer;
+import org.opengis.util.CodeList;
 
 
 /**
@@ -146,7 +147,9 @@ final class Pruner extends ThreadLocal<Map<Object,Boolean>> {
                          * metadata element. If so, invoke the isEmpty() method recursively.
                          */
                         final boolean e;
-                        if (element instanceof AbstractMetadata) {
+                        if (element instanceof Enum<?> || element instanceof CodeList<?>) {
+                            e = false;
+                        } else if (element instanceof AbstractMetadata) {
                             final AbstractMetadata md = (AbstractMetadata) element;
                             if (prune) md.prune();
                             e = md.isEmpty();
@@ -184,8 +187,10 @@ final class Pruner extends ThreadLocal<Map<Object,Boolean>> {
                 // If all elements were empty, set the whole property to 'null'.
                 if (allEmpty) {
                     tested.put(value, Boolean.TRUE);
-                    if (prune) {
+                    if (prune) try {
                         entry.setValue(null);
+                    } catch (UnsupportedOperationException e) {
+                        // Entry is read only - ignore.
                     }
                 } else {
                     isEmpty = false;
