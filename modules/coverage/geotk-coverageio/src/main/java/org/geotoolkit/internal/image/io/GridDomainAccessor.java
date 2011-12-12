@@ -122,7 +122,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
     public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell,
             final CellGeometry cellGeometry, final int axisToReverse)
     {
-        final GridEnvelope gridEnvelope = geometry.getGridRange();
+        final GridEnvelope gridEnvelope = geometry.getExtent();
         if (gridEnvelope != null) {
             final int gridDimension = gridEnvelope.getDimension();
             final int[] lower = new int[gridDimension];

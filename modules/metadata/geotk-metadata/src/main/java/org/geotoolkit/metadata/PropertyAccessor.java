@@ -98,12 +98,12 @@ final class PropertyAccessor {
     private static final String SET = "set";
 
     /**
-     * Methods to exclude from {@link #getGetters}. They are method inherited from {@link Object}
-     * which may be declared explicitly in interfaces with a formal contract. Only no-argument
-     * methods having a non-void return value need to be declared in this list.
+     * Methods to exclude from {@link #getGetters}. They are mostly methods inherited from
+     * {@link Object} which may be declared explicitly in interfaces with a formal contract.
+     * Only no-argument methods having a non-void return value need to be declared in this list.
      */
     private static final String[] EXCLUDES = {
-        "clone", "getClass", "hashCode", "toString"
+        "clone", "getClass", "hashCode", "toString", "toWKT"
     };
 
     /**
@@ -757,13 +757,12 @@ final class PropertyAccessor {
      * @param  value The new value.
      * @param  getOld {@code true} if this method should first fetches the old value.
      * @return The old value, or {@code null} if {@code getOld} was {@code false}.
-     * @throws IllegalArgumentException if the specified property can't be set.
+     * @throws UnsupportedOperationException if the attribute for the given key is read-only.
      * @throws ClassCastException if the given value is not of the expected type.
      */
     final Object set(final int index, final Object metadata, final Object value, final boolean getOld)
-            throws IllegalArgumentException, ClassCastException
+            throws UnsupportedOperationException, ClassCastException
     {
-        String key;
         if (index >= 0 && index < standardCount && setters != null) {
             final Method getter = getters[index];
             final Method setter = setters[index];
@@ -783,14 +782,9 @@ final class PropertyAccessor {
                 converter = convert(getter, metadata, newValues, elementTypes[index], converter);
                 set(setter, metadata, newValues);
                 return old;
-            } else {
-                key = getter.getName();
-                key = key.substring(prefix(key).length());
             }
-        } else {
-            key = String.valueOf(index);
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, key));
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.CANT_SET_ATTRIBUTE_VALUE_$1, names[index]));
     }
 
     /**

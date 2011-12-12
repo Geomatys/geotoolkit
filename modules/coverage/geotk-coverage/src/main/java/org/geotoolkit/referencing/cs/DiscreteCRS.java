@@ -57,7 +57,7 @@ import org.geotoolkit.lang.Decorator;
  * because the threshold for determining if an axis is regular or not is at caller choice.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.15
  * @module
@@ -183,6 +183,12 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
      * by the number of discrete ordinates for each axes.
      */
     @Override
+    public final GridEnvelope getExtent() {
+        return cs.getExtent();
+    }
+
+    @Override
+    @Deprecated
     public final GridEnvelope getGridRange() {
         return cs.getGridRange();
     }

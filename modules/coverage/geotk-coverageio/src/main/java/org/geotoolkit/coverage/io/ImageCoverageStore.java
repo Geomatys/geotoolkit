@@ -177,7 +177,7 @@ final class ImageCoverageStore extends Static {
          * of the coverage, if a subregion has been supplied in the ImageWriteParam.
          * The 'actualSize' argument allows to specify the dimension actually written.
          */
-        final GridEnvelope ge = coverage.getGridGeometry().getGridRange();
+        final GridEnvelope ge = coverage.getGridGeometry().getExtent();
         final int dimension = ge.getDimension();
         final StringBuilder buffer = new StringBuilder();
         for (int i=0; i<dimension; i++) {

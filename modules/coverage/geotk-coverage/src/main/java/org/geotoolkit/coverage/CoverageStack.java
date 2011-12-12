@@ -991,7 +991,7 @@ public class CoverageStack extends AbstractCoverage {
         final Element element = elements[index];
         final GridGeometry geometry = element.getGridGeometry();
         if (geometry != null) {
-            final GridEnvelope  range     = geometry.getGridRange();
+            final GridEnvelope  range     = geometry.getExtent();
             final MathTransform transform = geometry.getGridToCRS();
             final int           dimension = transform.getSourceDimensions();
             DirectPosition position = new GeneralDirectPosition(dimension);

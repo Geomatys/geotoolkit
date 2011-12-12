@@ -112,4 +112,24 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
         this.crs = crs;
         checkCoordinateReferenceSystemDimension(crs, getDimension());
     }
+
+    /**
+     * Returns the given envelope as an {@code ImmutableEnvelope} instance. If the given envelope
+     * is already an instance of {@code ImmutableEnvelope}, then it is returned unchanged.
+     * Otherwise the coordinate values and the CRS of the given envelope are copied in a
+     * new envelope.
+     *
+     * @param  envelope The envelope to cast, or {@code null}.
+     * @return The values of the given envelope as an {@code ImmutableEnvelope} instance.
+     *
+     * @see GeneralEnvelope#castOrCopy(Envelope)
+     *
+     * @since 3.20
+     */
+    public static ImmutableEnvelope castOrCopy(final Envelope envelope) {
+        if (envelope == null || envelope instanceof AbstractEnvelope) {
+            return (ImmutableEnvelope) envelope;
+        }
+        return new ImmutableEnvelope(envelope);
+    }
 }

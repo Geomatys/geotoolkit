@@ -110,9 +110,9 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int APPLY = 10;
 
         /**
-         * Attribut
+         * Attribute
          */
-        public static final int ATTRIBUT = 11;
+        public static final int ATTRIBUTE = 11;
 
         /**
          * Authority
@@ -798,6 +798,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Hue
          */
         public static final int HUE = 144;
+
+        /**
+         * {0}-{1}
+         */
+        public static final int HYPHEN_$2 = 354;
 
         /**
          * Identification

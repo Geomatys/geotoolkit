@@ -66,7 +66,7 @@ public final strictfp class GridToEnvelopeMapperTest {
         assertFalse(mapper.getSwapXY());
         assertNull (mapper.getReverseAxis());
         try {
-            mapper.getGridRange();
+            mapper.getGridExtent();
             fail();
         } catch (IllegalStateException e) {
             // This is the expected exception.
@@ -92,8 +92,8 @@ public final strictfp class GridToEnvelopeMapperTest {
         GeneralEnvelope envelope;
         gridEnvelope = new GeneralGridEnvelope(new int[] {10, 20}, new int[] {110, 220}, false);
         envelope  = new GeneralEnvelope(new double[] {1, 4, 6}, new double[] {11, 44, 66});
-        mapper.setGridRange(gridEnvelope);
-        assertSame(gridEnvelope, mapper.getGridRange());
+        mapper.setGridExtent(gridEnvelope);
+        assertSame(gridEnvelope, mapper.getGridExtent());
         try {
             mapper.getEnvelope();
             fail();

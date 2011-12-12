@@ -373,8 +373,8 @@ final class SpatialRefSysEntry {
         }
         upper[0] = size.width;
         upper[1] = size.height;
-        final GridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
-        return new GeneralGridGeometry(gridRange, pixelInCell, mtFactory.createAffineTransform(matrix), crs);
+        final GridEnvelope gridExtent = new GeneralGridEnvelope(lower, upper, false);
+        return new GeneralGridGeometry(gridExtent, pixelInCell, mtFactory.createAffineTransform(matrix), crs);
     }
 
     /**

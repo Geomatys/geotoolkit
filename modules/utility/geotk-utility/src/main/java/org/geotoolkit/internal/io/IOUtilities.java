@@ -40,12 +40,18 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @author Johann Sorel (Geomatys)
+ * @version 3.20
  *
  * @since 3.00
  * @module
  */
 public final class IOUtilities extends Static {
+    /**
+     * The default buffer size for copy operations.
+     */
+    private static final int BUFFER_SIZE = 8192;
+
     /**
      * The writer to the console (if possible) or standard output stream otherwise.
      * This is created when first needed.
@@ -184,8 +190,7 @@ public final class IOUtilities extends Static {
 
     /**
      * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()} followed by a call to the {@link File#File(URI)} constructor.
-     * However this method adds the following functionalities:
+     * to {@link URL#toURI()}. However this method adds the following functionalities:
      * <p>
      * <ul>
      *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
@@ -194,14 +199,14 @@ public final class IOUtilities extends Static {
      *
      * @param  url The URL (may be {@code null}).
      * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
-     *         MIME format, the character encoding (normally {@code "UTF-8"}. If the URL is
+     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
      *         not encoded, then {@code null}.
-     * @return The file for the given URL, or {@code null} if the given URL was null.
-     * @throws IOException if the URL can not be converted to a file.
+     * @return The URI for the given URL, or {@code null} if the given URL was null.
+     * @throws IOException if the URL can not be converted to a URI.
      *
-     * @since 3.05
+     * @since 3.20 (derived from 3.05)
      */
-    public static File toFile(final URL url, final String encoding) throws IOException {
+    public static URI toURI(final URL url, final String encoding) throws IOException {
         if (url == null) {
             return null;
         }
@@ -217,9 +222,8 @@ public final class IOUtilities extends Static {
             path = URLDecoder.decode(path, encoding);
         }
         path = encodeURI(path);
-        URI uri;
         try {
-            uri = new URI(path);
+            return new URI(path);
         } catch (URISyntaxException cause) {
             /*
              * Occurs only if the URL is not compliant with RFC 2396. Otherwise every URL
@@ -230,6 +234,32 @@ public final class IOUtilities extends Static {
             e.initCause(cause);
             throw e;
         }
+    }
+
+    /**
+     * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
+     * to {@link URL#toURI()} followed by a call to the {@link File#File(URI)} constructor.
+     * However this method adds the following functionalities:
+     * <p>
+     * <ul>
+     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
+     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
+     * </ul>
+     *
+     * @param  url The URL (may be {@code null}).
+     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
+     *         MIME format, the character encoding (normally {@code "UTF-8"}). If the URL is
+     *         not encoded, then {@code null}.
+     * @return The file for the given URL, or {@code null} if the given URL was null.
+     * @throws IOException if the URL can not be converted to a file.
+     *
+     * @since 3.05
+     */
+    public static File toFile(final URL url, final String encoding) throws IOException {
+        if (url == null) {
+            return null;
+        }
+        final URI uri = toURI(url, encoding);
         /*
          * We really want to call the File constructor expecting a URI argument,
          * not the constructor expecting a String argument, because the one for
@@ -244,10 +274,34 @@ public final class IOUtilities extends Static {
              * the fragment part can not represent an existing file.
              */
             final MalformedURLException e = new MalformedURLException(concatenate(
-                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path), cause));
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", url), cause));
             e.initCause(cause);
             throw e;
         }
+    }
+
+    /**
+     * Returns {@code true} if the given string seems to be an ordinary file.
+     * If {@code false}, then the path is more likely to be a URL.
+     *
+     * @param  path The path to check.
+     * @return {@code true} if the path seems to be an ordinary file path.
+     *
+     * @since 3.20 (derived from 3.00)
+     */
+    private static boolean isFile(final String path) {
+        if (path.indexOf('?') < 0 && path.indexOf('#') < 0) {
+            final int split = path.indexOf(':');
+            /*
+             * If the ':' character is found, the part before it is probably a protocol in a URL,
+             * except in the particular case where there is just one letter before ':'. In such
+             * case, it may be the drive letter of a Windows file.
+             */
+            if (split<0 || (split==1 && isLetter(path.charAt(0)) && !path.regionMatches(2, "//", 0, 2))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -258,16 +312,8 @@ public final class IOUtilities extends Static {
      * @throws IOException If the given path is not a file and can't be parsed as a URL.
      */
     public static Object toFileOrURL(final String path) throws IOException {
-        if (path.indexOf('?') < 0 && path.indexOf('#') < 0) {
-            final int split = path.indexOf(':');
-            /*
-             * If the ':' character is found, the part before it is probably a protocol in a URL,
-             * except in the particular case where there is just one letter before ':'. In such
-             * case, it may be the drive letter of a Windows file.
-             */
-            if (split<0 || (split==1 && isLetter(path.charAt(0)) && !path.regionMatches(2, "//", 0, 2))) {
-                return new File(path);
-            }
+        if (isFile(path)) {
+            return new File(path);
         }
         final URL url = new URL(path);
         if (url.getProtocol().equalsIgnoreCase("file")) {
@@ -282,7 +328,7 @@ public final class IOUtilities extends Static {
      * {@link CharSequence}, {@link URL} or {@link URI}.
      * <p>
      * If a conversion from a {@link URL} object was necessary, then the URL is assumed
-     * to not be encoded.
+     * to <strong>not</strong> be encoded.
      *
      * @param  path The path to convert to a {@link File} if possible.
      * @return The path as a {@link File} if this conversion was possible.
@@ -433,7 +479,12 @@ public final class IOUtilities extends Static {
 
     /**
      * Opens an input stream from the given {@link String}, {@link File}, {@link URL} or
-     * {@link URI}.
+     * {@link URI}. The stream will not be buffered, and is not required to support the mark or
+     * reset methods.
+     * <p>
+     * It is the caller responsibility to close the given stream. This method does not accept
+     * pre-existing streams because they would usually require a different handling by the
+     * caller (e.g. in many case, the caller will not want to close such pre-existing streams).
      *
      * @param  path The file to open,
      * @return The input stream for the given file.
@@ -582,16 +633,29 @@ public final class IOUtilities extends Static {
     }
 
     /**
+     * Concatenates the given message with the message of the given exception, if any.
+     * This is used when an exception is catch and rethrow, in order to provide more
+     * useful message.
+     */
+    private static String concatenate(String message, final Exception exception) {
+        final String cause = exception.getLocalizedMessage();
+        if (cause != null) {
+            message = message + ' ' + cause;
+        }
+        return message;
+    }
+
+    /**
      * Unzip the given stream to the given target directory.
      * This convenience method does not report the progress.
      *
-     * @param  in The input stream to unzip. The stream will be closed.
+     * @param  in The input stream to unzip. <strong>The stream will be closed.</strong>
      * @param  target The destination directory.
      * @throws IOException If an error occurred while unzipping the entries.
      */
     public static void unzip(final InputStream in, final File target) throws IOException {
         final ZipInputStream def = new ZipInputStream(in);
-        final byte[] buffer = new byte[4096];
+        final byte[] buffer = new byte[BUFFER_SIZE];
         ZipEntry entry;
         while ((entry = def.getNextEntry()) != null) {
             final File file = new File(target, entry.getName());
@@ -617,15 +681,20 @@ public final class IOUtilities extends Static {
     }
 
     /**
-     * Concatenates the given message with the message of the given exception, if any.
-     * This is used when an exception is catch and rethrow, in order to provide more
-     * useful message.
+     * Copies the content from the given input stream to the given output stream.
+     * This method does not close the given streams.
+     *
+     * @param input  The source of bytes to copy.
+     * @param output The destination where to copy.
+     * @throws IOException If an error occurred while performing the copy operation.
+     *
+     * @since 3.20
      */
-    private static String concatenate(String message, final Exception exception) {
-        final String cause = exception.getLocalizedMessage();
-        if (cause != null) {
-            message = message + ' ' + cause;
+    public static void copy(final InputStream input, final OutputStream output) throws IOException {
+        final byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) >= 0) {
+            output.write(buffer, 0, bytesRead);
         }
-        return message;
     }
 }

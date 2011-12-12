@@ -211,7 +211,7 @@ public abstract class TileManager implements Serializable {
      *         {@linkplain Tile#getImageReader reader} and this operation failed.
      */
     Rectangle getRegion() throws IOException {
-        return getGridGeometry().getGridRange();
+        return getGridGeometry().getExtent();
     }
 
     /**
@@ -315,7 +315,7 @@ public abstract class TileManager implements Serializable {
         if (geometry == null) {
             tile = new LargeTile(provider, input, imageIndex, getRegion());
         } else {
-            tile = new LargeTile(provider, input, imageIndex, geometry.getGridRange());
+            tile = new LargeTile(provider, input, imageIndex, geometry.getExtent());
             tile.setGridToCRS(geometry.getGridToCRS());
         }
         return tile;

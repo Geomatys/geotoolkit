@@ -115,7 +115,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @see org.geotoolkit.image.io.plugin.NetcdfImageReader
  *
@@ -441,9 +441,18 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *
      * @return The valid coordinate range of a grid coverage.
      *
-     * @since 3.09
+     * @since 3.20 (derived from 3.09)
      */
     @Override
+    public synchronized GridEnvelope getExtent() {
+        return getGridRange();
+    }
+
+    /**
+     * @deprecated Renamed {@link #getExtent()}.
+     */
+    @Override
+    @Deprecated
     public synchronized GridEnvelope getGridRange() {
         if (gridEnvelope == null) {
             final int[] lower = new int[axes.length];

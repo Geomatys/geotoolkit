@@ -123,7 +123,7 @@ public final strictfp class WarpFactoryTest extends ReferencingTestBase {
             throws TransformException
     {
         final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper();
-        mapper.setGridRange(imageBounds);
+        mapper.setGridExtent(imageBounds);
         mapper.setEnvelope(domain);
         final MathTransform2D pre = (MathTransform2D)
                 MathTransforms.linear(mapper.createAffineTransform());

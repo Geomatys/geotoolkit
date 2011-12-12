@@ -351,7 +351,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
         for (final TileManager manager : managers) {
             final ImageGeometry geom = manager.getGridGeometry();
             if (geom != null) {
-                final Rectangle candidate = geom.getGridRange();
+                final Rectangle candidate = geom.getExtent();
                 if (bounds == null) {
                     bounds = candidate;
                 } else {

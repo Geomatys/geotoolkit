@@ -53,7 +53,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
  * because the threshold for determining if an axis is regular or not is at caller choice.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.15
  * @module
@@ -63,7 +63,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = -4078252991316521062L;
+    private static final long serialVersionUID = -6368259804288288946L;
 
     /**
      * The wrapped coordinate system.
@@ -79,7 +79,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
     /**
      * The grid envelope, created only when first needed.
      */
-    private transient GridEnvelope gridRange;
+    private transient GridEnvelope extent;
 
     /**
      * The grid to CRS transform, created only when first needed.
@@ -197,17 +197,28 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      * Returns the grid range. The {@linkplain GridEnvelope#getLow() lower} values are
      * always 0, and the {@linkplain GridEnvelope#getHigh() upper} values are determined
      * by the number of discrete ordinates for each axes.
+     *
+     * @since 3.20 (derived from 3.15)
      */
     @Override
-    public final synchronized GridEnvelope getGridRange() {
-        if (gridRange == null) {
+    public final synchronized GridEnvelope getExtent() {
+        if (extent == null) {
             final int[] upper = new int[axes.length];
             for (int i=0; i<upper.length; i++) {
                 upper[i] = axes[i].length();
             }
-            gridRange = new GeneralGridEnvelope(new int[upper.length], upper, false);
+            extent = new GeneralGridEnvelope(new int[upper.length], upper, false);
         }
-        return gridRange;
+        return extent;
+    }
+
+    /**
+     * @deprecated Renamed {@link #getExtent()}.
+     */
+    @Override
+    @Deprecated
+    public final GridEnvelope getGridRange() {
+        return getExtent();
     }
 
     /**

@@ -21,7 +21,6 @@ import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import javax.imageio.spi.ImageReaderSpi;
@@ -34,9 +33,10 @@ import org.geotoolkit.util.converter.Classes;
 
 /**
  * Base class for image readers that expect an {@link InputStream} or channel input source. This
- * class provides a {@link #getInputStream()} method, which returns the {@linkplain #input input}
+ * class provides a {@link #getInputStream()} method, which return the {@linkplain #input input}
  * as an {@link InputStream} for convenience.
  * <p>
+ * Different kinds of outputs are automatically handled.
  * The default implementation handles all the following types:
  *
  * <blockquote>
@@ -48,7 +48,7 @@ import org.geotoolkit.util.converter.Classes;
  * {@code InputStream} into a {@link java.io.BufferedReader} using some character encoding.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @see StreamImageWriter
  *
@@ -57,19 +57,19 @@ import org.geotoolkit.util.converter.Classes;
  */
 public abstract class StreamImageReader extends SpatialImageReader {
     /**
-     * The stream to {@linkplain #close close} on {@link #setInput(Object,boolean,boolean)
-     * setInput(...)}, {@link #reset} or {@link #dispose} method invocation. This stream is
-     * typically an {@linkplain InputStream input stream} or a {@linkplain Reader reader}
-     * created by {@link #getInputStream} or similar methods in subclasses.
+     * The stream to {@linkplain #close() close} on {@link #setInput(Object,boolean,boolean)
+     * setInput(...)}, {@link #reset()} or {@link #dispose()} method invocation. This stream
+     * is typically an {@linkplain InputStream input stream} or a {@linkplain Reader reader}
+     * created by {@link #getInputStream()} or similar methods in subclasses.
      * <p>
      * This field is never equal to the user-specified {@linkplain #input input}, since the
      * usual {@link javax.imageio.ImageReader} contract is to <strong>not</strong> close the
      * user-provided stream. It is set to a non-null value only if a stream has been created
      * from an other user object like {@link File} or {@link URL}.
      *
-     * @see #getInputStream
-     * @see TextImageReader#getReader
-     * @see #close
+     * @see #getInputStream()
+     * @see TextImageReader#getReader()
+     * @see #close()
      */
     protected Closeable closeOnReset;
 
@@ -81,12 +81,12 @@ public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * {@link #input} as an input stream, or {@code null} if none.
      *
-     * @see #getInputStream
+     * @see #getInputStream()
      */
     private InputStream stream;
 
     /**
-     * The stream position when {@link #setInput} is invoked.
+     * The stream position when {@link #setInput(Object, boolean, boolean)} has been invoked.
      */
     private long streamOrigin;
 
@@ -101,10 +101,13 @@ public abstract class StreamImageReader extends SpatialImageReader {
     }
 
     /**
-     * Sets the input source to use. Input may be one of the following object:
-     * {@link File}, {@link URL}, {@link Reader} (for ASCII data), {@link InputStream} or
-     * {@link ImageInputStream}. If {@code input} is {@code null}, then any currently
-     * set input source will be removed.
+     * Sets the input source to use. Input may be one of the object documented in the
+     * <a href="#overview">class javadoc</a>, namely {@link String}, {@link File},
+     * {@link URI}, {@link URL}, {@link URLConnection}, {@link InputStream}, {@link ImageInputStream}
+     * or {@link ReadableByteChannel}.
+     * <p>
+     * If the given {@code input} is {@code null}, then any currently set input source will be
+     * removed.
      *
      * @param input           The input object to use for future decoding.
      * @param seekForwardOnly If {@code true}, images and metadata may only be read
@@ -132,8 +135,8 @@ public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * Returns the stream length in bytes, or {@code -1} if unknown. This method checks the
      * {@linkplain #input input} type and invokes one of {@link File#length()},
-     * {@link ImageInputStream#length()} ou {@link URLConnection#getContentLength()} method
-     * accordingly.
+     * {@link ImageInputStream#length()} or {@link URLConnection#getContentLength()}
+     * method accordingly.
      *
      * @return The stream length, or -1 is unknown.
      * @throws IOException if an I/O error occurred.
@@ -163,8 +166,9 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * Returns the {@linkplain #input input} as an {@linkplain InputStream input stream} object.
      * If the input is already an input stream, it is returned unchanged. Otherwise this method
      * creates a new {@linkplain InputStream input stream} (usually <strong>not</strong>
-     * {@linkplain BufferedInputStream buffered}) from {@link File}, {@link URI}, {@link URL},
-     * {@link URLConnection}, {@link ImageInputStream} or {@link ReadableByteChannel} inputs.
+     * {@linkplain BufferedInputStream buffered}) from {@link File}, {@link URI},
+     * {@link URL}, {@link URLConnection}, {@link ImageInputStream} or {@link ReadableByteChannel}
+     * inputs.
      * <p>
      * This method creates a new {@linkplain InputStream input stream} only when first invoked.
      * All subsequent calls will return the same instance. Consequently, the returned stream
@@ -312,8 +316,9 @@ public abstract class StreamImageReader extends SpatialImageReader {
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #inputTypes}&nbsp;</td>
-     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
-     *               {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL},
+     *               {@link URLConnection}, {@link InputStream}, {@link ImageInputStream},
+     *               {@link ReadableByteChannel}&nbsp;</td>
      *   </tr><tr>
      *     <td colspan="2" align="center">See {@linkplain SpatialImageReader.Spi super-class javadoc}
      *     for remaining fields</td>
@@ -324,7 +329,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.07
+     * @version 3.20
      *
      * @see StreamImageWriter.Spi
      *

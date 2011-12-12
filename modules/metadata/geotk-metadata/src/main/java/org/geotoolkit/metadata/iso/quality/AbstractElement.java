@@ -351,21 +351,23 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Sets the date or range of dates on which a data quality measure was applied.
      * The collection size is 1 for a single date, or 2 for a range.
      *
-     * @param newValues The new dates.
+     * @param newValues The new dates, or {@code null}.
      *
      * @since 2.4
      */
     public synchronized void setDates(final Collection<Date> newValues) {
         checkWritePermission();
         date1 = date2 = Long.MIN_VALUE;
-        final Iterator<Date> it = newValues.iterator();
-        if (it.hasNext()) {
-            date1 = it.next().getTime();
+        if (newValues != null) {
+            final Iterator<Date> it = newValues.iterator();
             if (it.hasNext()) {
-                date2 = it.next().getTime();
+                date1 = it.next().getTime();
                 if (it.hasNext()) {
-                    throw new IllegalArgumentException(
-                            Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+                    date2 = it.next().getTime();
+                    if (it.hasNext()) {
+                        throw new IllegalArgumentException(
+                                Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+                    }
                 }
             }
         }

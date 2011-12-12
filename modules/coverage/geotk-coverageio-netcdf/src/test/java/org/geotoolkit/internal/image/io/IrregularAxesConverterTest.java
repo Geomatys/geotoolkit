@@ -255,7 +255,7 @@ public final strictfp class IrregularAxesConverterTest {
          */
         assertTrue(result.getClass().getName(), result instanceof GridGeometry);
         final GridGeometry geometry = (GridGeometry) result;
-        final GridEnvelope range = geometry.getGridRange();
+        final GridEnvelope range = geometry.getExtent();
         assertArrayEquals("GridEnvelope low",  new int[] {  0,   0}, range.getLow ().getCoordinateValues());
         assertArrayEquals("GridEnvelope high", new int[] {719, 498}, range.getHigh().getCoordinateValues());
         final Matrix3 gridToCRS = (Matrix3) ((LinearTransform) geometry.getGridToCRS()).getMatrix();

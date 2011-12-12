@@ -629,8 +629,8 @@ public class ImageCoverageReader extends GridCoverageReader {
             Arrays.fill(upper, 1);
             upper[X_DIMENSION] = width;
             upper[Y_DIMENSION] = height;
-            final GridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
-            gridGeometry = new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
+            final GridEnvelope gridExtent = new GeneralGridEnvelope(lower, upper, false);
+            gridGeometry = new GridGeometry2D(gridExtent, pointInPixel, gridToCRS, crs, null);
             Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry = setCached(gridGeometry, gridGeometries, index);
             gridGeometries = entry.getKey();
             gridGeometry = entry.getValue();
@@ -1006,13 +1006,13 @@ public class ImageCoverageReader extends GridCoverageReader {
                 matrix.setElement(yi, gridDimension, change.getTranslateY() - ymin);
                 newGridToCRS = MathTransforms.concatenate(MathTransforms.linear(matrix), gridToCRS);
             }
-            final GridEnvelope gridRange = gridGeometry.getGridRange();
-            final int[] low  = gridRange.getLow ().getCoordinateValues();
-            final int[] high = gridRange.getHigh().getCoordinateValues();
+            final GridEnvelope gridExtent = gridGeometry.getExtent();
+            final int[] low  = gridExtent.getLow ().getCoordinateValues();
+            final int[] high = gridExtent.getHigh().getCoordinateValues();
             low[xi] = xmin; high[xi] = xmin + image.getWidth()  - 1;
             low[yi] = ymin; high[yi] = ymin + image.getHeight() - 1;
             final GridEnvelope newGridRange = new GeneralGridEnvelope(low, high, true);
-            if (newGridToCRS != gridToCRS || !newGridRange.equals(gridRange)) {
+            if (newGridToCRS != gridToCRS || !newGridRange.equals(gridExtent)) {
                 gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
             }

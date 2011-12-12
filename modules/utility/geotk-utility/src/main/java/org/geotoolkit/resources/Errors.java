@@ -255,7 +255,12 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_SEPARATE_CRS_$1 = 38;
 
         /**
-         * Can’t set a value to the parameter “{0}”.
+         * Can’t set a value for attribute “{0}”.
+         */
+        public static final int CANT_SET_ATTRIBUTE_VALUE_$1 = 190;
+
+        /**
+         * Can’t set a value for parameter “{0}”.
          */
         public static final int CANT_SET_PARAMETER_VALUE_$1 = 39;
 

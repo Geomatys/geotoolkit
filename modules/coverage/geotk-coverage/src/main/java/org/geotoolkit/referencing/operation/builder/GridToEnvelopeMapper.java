@@ -49,14 +49,14 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * A helper class for building <var>n</var>-dimensional {@linkplain AffineTransform affine transform}
  * mapping {@linkplain GridEnvelope grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
  * The affine transform will be computed automatically from the information specified by the
- * {@link #setGridRange(GridEnvelope)} and {@link #setEnvelope(Envelope)} methods, which are
+ * {@link #setGridExtent(GridEnvelope)} and {@link #setEnvelope(Envelope)} methods, which are
  * mandatory. All other setter methods are optional hints about the affine transform to be created.
  * <p>
  * This builder is convenient when the following conditions are meet:
  *
  * <ul>
  *   <li><p>Pixels coordinates (usually (<var>x</var>,<var>y</var>) integer values inside
- *       the rectangle specified by the grid envelope) are expressed in some
+ *       the rectangle specified by the grid extent) are expressed in some
  *       {@linkplain CoordinateReferenceSystem coordinate reference system} known at compile
  *       time. This is often the case. For example the CRS attached to {@link BufferedImage}
  *       has always ({@linkplain AxisDirection#COLUMN_POSITIVE column},
@@ -91,7 +91,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 2.3
  * @module
@@ -124,12 +124,12 @@ public class GridToEnvelopeMapper {
     /**
      * The grid envelope, or {@code null} if not yet specified.
      */
-    private GridEnvelope gridEnvelope;
+    private GridEnvelope gridExtent;
 
     /**
-     * The envelope, or {@code null} if not yet specified.
+     * The geodetic envelope, or {@code null} if not yet specified.
      */
-    private Envelope userEnvelope;
+    private Envelope envelope;
 
     /**
      * Whatever the {@code gridToCRS} transform will maps pixel center or corner.
@@ -162,46 +162,45 @@ public class GridToEnvelopeMapper {
     /**
      * Creates a new instance for the specified grid envelope and georeferenced envelope.
      *
-     * @param  gridEnvelope The valid coordinate range of a grid coverage.
-     * @param  userEnvelope The corresponding coordinate range in user coordinate. This envelope must
+     * @param  gridExtent The extent of grid coordinates in a grid coverage.
+     * @param  envelope The corresponding domain in user coordinate. This envelope must
      *         contains entirely all pixels, i.e. the envelope upper left corner must coincide
      *         with the upper left corner of the first pixel and the envelope lower right corner
      *         must coincide with the lower right corner of the last pixel.
      * @throws MismatchedDimensionException if the two envelopes don't have consistent dimensions.
      */
-    public GridToEnvelopeMapper(final GridEnvelope gridEnvelope, final Envelope userEnvelope)
+    public GridToEnvelopeMapper(final GridEnvelope gridExtent, final Envelope envelope)
             throws MismatchedDimensionException
     {
-        ensureNonNull("gridEnvelope", gridEnvelope);
-        ensureNonNull("userEnvelope", userEnvelope);
-        final int gridDim = gridEnvelope.getDimension();
-        final int userDim = userEnvelope.getDimension();
+        ensureNonNull("gridExtent", gridExtent);
+        ensureNonNull("envelope",   envelope);
+        final int gridDim = gridExtent.getDimension();
+        final int userDim = envelope.getDimension();
         if (userDim != gridDim) {
             throw new MismatchedDimensionException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$2, gridDim, userDim));
         }
-        this.gridEnvelope = gridEnvelope;
-        this.userEnvelope = userEnvelope;
+        this.gridExtent = gridExtent;
+        this.envelope   = envelope;
     }
 
     /**
      * Makes sure that the specified objects have the same dimension.
      */
-    private static void ensureDimensionMatch(final GridEnvelope gridEnvelope,
-                                             final Envelope userEnvelope,
-                                             final boolean checkingRange)
+    private static void ensureDimensionMatch(final GridEnvelope gridExtent,
+            final Envelope envelope, final boolean checkingRange)
     {
-        if (gridEnvelope != null && userEnvelope != null) {
+        if (gridExtent != null && envelope != null) {
             final String label;
             final int dim1, dim2;
             if (checkingRange) {
-                label = "gridEnvelope";
-                dim1  = gridEnvelope.getDimension();
-                dim2  = userEnvelope .getDimension();
+                label = "gridExtent";
+                dim1  = gridExtent.getDimension();
+                dim2  = envelope  .getDimension();
             } else {
-                label = "userEnvelope";
-                dim1  = userEnvelope .getDimension();
-                dim2  = gridEnvelope.getDimension();
+                label = "envelope";
+                dim1  = envelope .getDimension();
+                dim2  = gridExtent.getDimension();
             }
             if (dim1 != dim2) {
                 throw new MismatchedDimensionException(Errors.format(
@@ -254,30 +253,47 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns the grid envelope. For performance reason, this method does not
-     * clone the grid envelope. So the returned object should not be modified.
+     * Returns the The extent of grid coordinates in a grid coverage.
      *
-     * @return The grid envelope.
+     * @return The The extent of grid coordinates in a grid coverage.
      * @throws IllegalStateException if the grid envelope has not yet been defined.
      */
-    public GridEnvelope getGridRange() throws IllegalStateException {
-        if (gridEnvelope == null) {
-            throw new IllegalStateException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_VALUE_$1, "gridEnvelope"));
-        }
-        return gridEnvelope;
+    public GridEnvelope getGridExtent() throws IllegalStateException {
+        return getGridRange();
     }
 
     /**
-     * Sets the grid envelope.
-     *
-     * @param gridEnvelope The new grid envelope.
+     * @deprecated Renamed {@link #getGridExtent()}.
      */
-    public void setGridRange(final GridEnvelope gridEnvelope) {
-        ensureNonNull("gridEnvelope", gridEnvelope);
-        ensureDimensionMatch(gridEnvelope, userEnvelope, true);
-        if (!Utilities.equals(this.gridEnvelope, gridEnvelope)) {
-            this.gridEnvelope = gridEnvelope;
+    @Deprecated
+    public GridEnvelope getGridRange() throws IllegalStateException {
+        if (gridExtent == null) {
+            throw new IllegalStateException(Errors.format(
+                    Errors.Keys.MISSING_PARAMETER_VALUE_$1, "gridEnvelope"));
+        }
+        return gridExtent;
+    }
+
+    /**
+     * Sets the The extent of grid coordinates in a grid coverage.
+     *
+     * @param extent The new grid envelope.
+     *
+     * @since 3.20 (derived from 2.3)
+     */
+    public void setGridExtent(final GridEnvelope extent) {
+        setGridRange(extent);
+    }
+
+    /**
+     * @deprecated Renamed {@link #setGridExtent(GridEnvelope)}.
+     */
+    @Deprecated
+    public void setGridRange(final GridEnvelope extent) {
+        ensureNonNull("extent", extent);
+        ensureDimensionMatch(extent, envelope, true);
+        if (!Utilities.equals(gridExtent, extent)) {
+            gridExtent = extent;
             reset();
         }
     }
@@ -285,37 +301,53 @@ public class GridToEnvelopeMapper {
     /**
      * Sets the grid envelope as a two-dimensional rectangle. This convenience method
      * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
-     * {@link #setGridRange(GridEnvelope)} method.
+     * {@link #setGridExtent(GridEnvelope)} method.
      *
-     * @param gridEnvelope The new grid envelope.
+     * @param extent The new grid envelope.
      *
-     * @since 3.15
+     * @since 3.20 (derived from 3.15)
      */
-    public void setGridRange(final Rectangle gridEnvelope) {
+    public void setGridExtent(final Rectangle extent) {
+        setGridRange(extent);
+    }
+
+    /**
+     * @deprecated Renamed {@link #setGridExtent(GridEnvelope)}.
+     */
+    @Deprecated
+    public void setGridRange(final Rectangle extent) {
         final GridEnvelope ge;
-        if (gridEnvelope instanceof GridEnvelope) {
-            ge = (GridEnvelope) gridEnvelope;
+        if (extent instanceof GridEnvelope) {
+            ge = (GridEnvelope) extent;
         } else {
-            ensureNonNull("gridEnvelope", gridEnvelope);
-            ge = new GridEnvelope2D(gridEnvelope);
+            ensureNonNull("gridEnvelope", extent);
+            ge = new GridEnvelope2D(extent);
         }
-        setGridRange(ge);
+        setGridExtent(ge);
     }
 
     /**
      * Sets the grid envelope as a two-dimensional rectangle. This convenience method
      * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
-     * {@link #setGridRange(GridEnvelope)} method.
+     * {@link #setGridExtent(GridEnvelope)} method.
      *
      * @param x The minimal <var>x</var> ordinate.
      * @param y The minimal <var>y</var> ordinate.
      * @param width  The number of valid ordinates along the <var>x</var> axis.
      * @param height The number of valid ordinates along the <var>y</var> axis.
      *
-     * @since 3.15
+     * @since 3.20 (derived from 3.15)
      */
+    public void setGridExtent(final int x, final int y, final int width, final int height) {
+        setGridRange(x, y, width, height);
+    }
+
+    /**
+     * @deprecated Renamed {@link #setGridExtent(GridEnvelope)}.
+     */
+    @Deprecated
     public void setGridRange(final int x, final int y, final int width, final int height) {
-        setGridRange((GridEnvelope) new GridEnvelope2D(x, y, width, height));
+        setGridExtent((GridEnvelope) new GridEnvelope2D(x, y, width, height));
     }
 
     /**
@@ -326,11 +358,11 @@ public class GridToEnvelopeMapper {
      * @throws IllegalStateException if the envelope has not yet been defined.
      */
     public Envelope getEnvelope() throws IllegalStateException {
-        if (userEnvelope == null) {
+        if (envelope == null) {
             throw new IllegalStateException(Errors.format(
                     Errors.Keys.MISSING_PARAMETER_VALUE_$1, "envelope"));
         }
-        return userEnvelope;
+        return envelope;
     }
 
     /**
@@ -341,9 +373,9 @@ public class GridToEnvelopeMapper {
      */
     public void setEnvelope(final Envelope envelope) {
         ensureNonNull("envelope", envelope);
-        ensureDimensionMatch(gridEnvelope, envelope, false);
-        if (!Utilities.equals(this.userEnvelope, envelope)) {
-            this.userEnvelope = envelope;
+        ensureDimensionMatch(gridExtent, envelope, false);
+        if (!Utilities.equals(this.envelope, envelope)) {
+            this.envelope = envelope;
             reset();
         }
     }
@@ -480,10 +512,10 @@ public class GridToEnvelopeMapper {
                 // No coordinate system. Reverse the second axis unconditionally
                 // (except if there is not enough dimensions).
                 int length = 0;
-                if (gridEnvelope != null) {
-                    length = gridEnvelope.getDimension();
-                } else if (userEnvelope != null) {
-                    length = userEnvelope.getDimension();
+                if (gridExtent != null) {
+                    length = gridExtent.getDimension();
+                } else if (envelope != null) {
+                    length = envelope.getDimension();
                 }
                 if (length >= 2) {
                     reverseAxis = new boolean[length];
@@ -523,11 +555,11 @@ public class GridToEnvelopeMapper {
     public void reverseAxis(final int dimension) {
         if (reverseAxis == null) {
             final int length;
-            if (gridEnvelope != null) {
-                length = gridEnvelope.getDimension();
+            if (gridExtent != null) {
+                length = gridExtent.getDimension();
             } else {
-                ensureNonNull("envelope", userEnvelope);
-                length = userEnvelope.getDimension();
+                ensureNonNull("envelope", envelope);
+                length = envelope.getDimension();
             }
             reverseAxis = new boolean[length];
         }
@@ -565,9 +597,8 @@ public class GridToEnvelopeMapper {
      * Returns the coordinate system in use with the envelope.
      */
     private CoordinateSystem getCoordinateSystem() {
-        if (userEnvelope != null) {
-            final CoordinateReferenceSystem crs;
-            crs = userEnvelope.getCoordinateReferenceSystem();
+        if (envelope != null) {
+            final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
             if (crs != null) {
                 return crs.getCoordinateSystem();
             }
@@ -585,7 +616,7 @@ public class GridToEnvelopeMapper {
      */
     public MathTransform createTransform() throws IllegalStateException {
         if (transform == null) {
-            final GridEnvelope gridEnvelope = getGridRange();
+            final GridEnvelope gridEnvelope = getGridExtent();
             final Envelope     userEnvelope = getEnvelope();
             final boolean      swapXY       = getSwapXY();
             final boolean[]    reverse      = getReverseAxis();

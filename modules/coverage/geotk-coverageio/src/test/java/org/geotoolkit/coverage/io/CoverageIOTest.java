@@ -115,7 +115,7 @@ public final strictfp class CoverageIOTest extends ImageTestBase {
         assertEquals("translateX", -179.5, gridToCRS.getTranslateX(), 0);
         assertEquals("translateY", ty-0.5, gridToCRS.getTranslateY(), 0);
 
-        final GridEnvelope range = geom.getGridRange();
+        final GridEnvelope range = geom.getExtent();
         assertEquals("Width",  width,  range.getSpan(0));
         assertEquals("Height", height, range.getSpan(1));
     }

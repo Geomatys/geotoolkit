@@ -185,7 +185,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 /*
                  * Format the grid envelope and the geographic bounding box.
                  */
-                final GridEnvelope envelope = geometry.getGridRange();
+                final GridEnvelope envelope = geometry.getExtent();
                 final int dimension = envelope.getDimension();
                 for (int i=0; i<dimension; i++) {
                     if (i != 0) {

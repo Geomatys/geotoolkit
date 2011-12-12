@@ -871,7 +871,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                         assert gridToCRS.getElement(timeDimension, timeDimension) != 0 : gridToCRS;
                         gridToCRS.setElement(timeDimension, timeDimension, interval);
                         gridToCRS.setElement(timeDimension, dimension, min);
-                        GridEnvelope env = gg.getGridRange();
+                        GridEnvelope env = gg.getExtent();
                         final int[] lower = env.getLow ().getCoordinateValues();
                         final int[] upper = env.getHigh().getCoordinateValues();
                         lower[timeDimension] = 0;

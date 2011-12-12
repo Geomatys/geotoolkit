@@ -19,7 +19,6 @@ package org.geotoolkit.image.io.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import org.opengis.coverage.grid.GridEnvelope;
@@ -196,11 +195,11 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
         // Check the grid geometry.
         //
         final GridGeometry2D gridGeometry = coverage.getGridGeometry();
-        final GridEnvelope gridRange = gridGeometry.getGridRange();
-        assertEquals("GridEnvelope.getDimension()", 4, gridRange.getDimension());
-        assertArrayEquals("GridEnvelope.getLow()",  new int[4], gridRange.getLow().getCoordinateValues());
+        final GridEnvelope gridExtent = gridGeometry.getExtent();
+        assertEquals("GridEnvelope.getDimension()", 4, gridExtent.getDimension());
+        assertArrayEquals("GridEnvelope.getLow()",  new int[4], gridExtent.getLow().getCoordinateValues());
         assertArrayEquals("GridEnvelope.getHigh()", new int[] {128, 65, 0, 0}, // TODO: last value should be 107.
-                gridRange.getHigh().getCoordinateValues());
+                gridExtent.getHigh().getCoordinateValues());
         final Matrix gridToCRS = ((LinearTransform) gridGeometry.getGridToCRS()).getMatrix();
         assertEquals("Scale X",      0.5, gridToCRS.getElement(0, 0), 0.0);
         assertEquals("Scale Y",     -0.2, gridToCRS.getElement(1, 1), 0.0);

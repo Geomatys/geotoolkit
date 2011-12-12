@@ -143,9 +143,9 @@ public final strictfp class LayerEntryTest extends CatalogTestBase {
         assertEquals("Expected exactly one grid geometry.", 1, geometries.size());
         final GeneralGridGeometry geom = geometries.first();
         assertArrayEquals("GridEnvelope check (lower)", new int[3],
-                geom.getGridRange().getLow().getCoordinateValues());
+                geom.getExtent().getLow().getCoordinateValues());
         assertArrayEquals("GridEnvelope check (upper)", new int[] {4095, 2047, 6},
-                geom.getGridRange().getHigh().getCoordinateValues());
+                geom.getExtent().getHigh().getCoordinateValues());
         final Matrix matrix = ((LinearTransform) geom.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
         assertEquals("X translation",   -180, matrix.getElement(0, 3), EPS);
         assertEquals("Y translation",     90, matrix.getElement(1, 3), EPS);
@@ -173,9 +173,9 @@ public final strictfp class LayerEntryTest extends CatalogTestBase {
         final GeneralGridGeometry geom = geometries.first();
         assertTrue(geom.getCoordinateReferenceSystem() instanceof GeographicCRS);
         assertArrayEquals("GridEnvelope check (lower)", new int[2],
-                geom.getGridRange().getLow().getCoordinateValues());
+                geom.getExtent().getLow().getCoordinateValues());
         assertArrayEquals("GridEnvelope check (upper)", new int[] {2879, 1439},
-                geom.getGridRange().getHigh().getCoordinateValues());
+                geom.getExtent().getHigh().getCoordinateValues());
         final Matrix matrix = ((LinearTransform) geom.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
         assertEquals("X translation", -180, matrix.getElement(0, 2), EPS);
         assertEquals("Y translation",   90, matrix.getElement(1, 2), EPS);

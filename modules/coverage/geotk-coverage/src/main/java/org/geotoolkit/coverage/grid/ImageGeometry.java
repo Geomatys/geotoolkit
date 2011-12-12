@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
  * {@link RenderedImage} instances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @see GridGeometry2D
  * @see GeneralGridGeometry
@@ -64,12 +64,12 @@ public class ImageGeometry implements GridGeometry, Serializable {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = 1985363181119389264L;
+    private static final long serialVersionUID = -6578330391565232607L;
 
     /**
-     * The grid envelope. This is called "grid range" for legacy reasons.
+     * The extent of grid coordinates in the grid coverage.
      */
-    private final GridEnvelope2D gridRange;
+    private final GridEnvelope2D extent;
 
     /**
      * The <cite>grid to CRS</cite> affine transform.
@@ -84,7 +84,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
      * @param gridToCRS The affine transform from pixel coordinates to "real world" coordinates.
      */
     public ImageGeometry(final Rectangle bounds, AffineTransform gridToCRS) {
-        this.gridRange = new GridEnvelope2D(bounds);
+        this.extent = new GridEnvelope2D(bounds);
         if (gridToCRS.getClass() == AffineTransform2D.class) {
             // Cast only if this is exactly the AffineTransform2D class,
             // not a subclass (otherwise it could be mutable).
@@ -96,10 +96,21 @@ public class ImageGeometry implements GridGeometry, Serializable {
 
     /**
      * Returns the image bounds in pixel coordinates.
+     *
+     * @since 3.20 (derived from 2.5)
      */
     @Override
+    public GridEnvelope2D getExtent() {
+        return getGridRange();
+    }
+
+    /**
+     * @deprecated Renamed {@link #getExtent()}.
+     */
+    @Override
+    @Deprecated
     public GridEnvelope2D getGridRange() {
-        return gridRange.clone();
+        return extent.clone();
     }
 
     /**
@@ -112,7 +123,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
 
     /**
      * Returns the georeferenced image envelope in "real world" coordinates. This is the
-     * {@linkplain #getGridRange grid envelope} transformed using the {@link #getGridToCRS
+     * {@linkplain #getExtent grid extent} transformed using the {@link #getGridToCRS
      * grid to CRS} transform. The transform may maps pixel center or a corner, depending
      * on the value of the {@code orientation} argument.
      * <p>
@@ -130,7 +141,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
     public Rectangle2D getEnvelope(final PixelOrientation orientation) {
         // Reminder: this algorithm must be consistent with GeneralEnvelope(GridEnvelope, ...).
         final PixelTranslation pt = PixelTranslation.getPixelTranslation(orientation);
-        final Rectangle gr = gridRange;
+        final Rectangle gr = extent;
         final Rectangle2D.Double envelope = new Rectangle2D.Double(
                 gr.x - (pt.dx + 0.5), gr.y - (pt.dy + 0.5), gr.width, gr.height);
         return XAffineTransform.transform(gridToCRS, envelope, envelope);
@@ -142,7 +153,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
      */
     @Override
     public String toString() {
-        return Classes.getShortClassName(this) + '[' + gridRange + ", " + gridToCRS + ']';
+        return Classes.getShortClassName(this) + '[' + extent + ", " + gridToCRS + ']';
     }
 
     /**
@@ -150,7 +161,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
      */
     @Override
     public int hashCode() {
-        return gridRange.hashCode() ^ gridToCRS.hashCode();
+        return extent.hashCode() ^ gridToCRS.hashCode();
     }
 
     /**
@@ -166,7 +177,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
         }
         if (object != null && object.getClass() == getClass()) {
             final ImageGeometry that = (ImageGeometry) object;
-            return Utilities.equals(gridRange, that.gridRange) &&
+            return Utilities.equals(extent,    that.extent) &&
                    Utilities.equals(gridToCRS, that.gridToCRS);
         }
         return false;

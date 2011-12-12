@@ -115,12 +115,12 @@ final class PropertyMap extends MetadataMap<Object> {
     /**
      * Associates the specified value with the specified key in this map.
      *
-     * @throws IllegalArgumentException if the specified property can't be set.
+     * @throws UnsupportedOperationException if the attribute for the given key is read-only.
      * @throws ClassCastException if the given value is not of the expected type.
      */
     @Override
     public Object put(final String key, final Object value)
-            throws IllegalArgumentException, ClassCastException
+            throws UnsupportedOperationException, ClassCastException
     {
         return accessor.set(accessor.requiredIndexOf(key), metadata, value, true);
     }
@@ -128,9 +128,11 @@ final class PropertyMap extends MetadataMap<Object> {
     /**
      * Puts every entries from the given map. This method is overloaded for performance
      * reasons since we are not interested in the return value of the {@link #put} method.
+     *
+     * @throws UnsupportedOperationException if at least one attribute is read-only.
      */
     @Override
-    public void putAll(final Map<? extends String, ?> map) {
+    public void putAll(final Map<? extends String, ?> map) throws UnsupportedOperationException {
         for (final Map.Entry<? extends String, ?> e : map.entrySet()) {
             accessor.set(accessor.requiredIndexOf(e.getKey()), metadata, e.getValue(), false);
         }
@@ -138,9 +140,11 @@ final class PropertyMap extends MetadataMap<Object> {
 
     /**
      * Removes the mapping for a key from this map if it is present.
+     *
+     * @throws UnsupportedOperationException if the attribute for the given key is read-only.
      */
     @Override
-    public Object remove(final Object key) {
+    public Object remove(final Object key) throws UnsupportedOperationException {
         if (key instanceof String) {
             return put((String) key, null);
         } else {
@@ -238,10 +242,11 @@ final class PropertyMap extends MetadataMap<Object> {
         /**
          * Replaces the value corresponding to this entry with the specified value.
          *
+         * @throws UnsupportedOperationException if the attribute for this entry is read-only.
          * @throws ClassCastException if the given value is not of the expected type.
          */
         @Override
-        public Object setValue(Object value) throws ClassCastException {
+        public Object setValue(Object value) throws UnsupportedOperationException, ClassCastException {
             return accessor.set(index, metadata, value, true);
         }
 
@@ -375,9 +380,11 @@ final class PropertyMap extends MetadataMap<Object> {
 
         /**
          * Removes from the underlying collection the last element returned by the iterator.
+         *
+         * @throws UnsupportedOperationException if the attribute for this entry is read-only.
          */
         @Override
-        public void remove() {
+        public void remove() throws UnsupportedOperationException {
             if (current != null) {
                 current.setValue(null);
                 current = null;

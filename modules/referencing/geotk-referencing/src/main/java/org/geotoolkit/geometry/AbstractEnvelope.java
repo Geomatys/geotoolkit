@@ -116,6 +116,7 @@ public abstract class AbstractEnvelope implements Envelope {
      * @return The values of the given envelope as an {@code AbstractEnvelope} instance.
      *
      * @see GeneralEnvelope#castOrCopy(Envelope)
+     * @see ImmutableEnvelope#castOrCopy(Envelope)
      *
      * @since 3.20
      */
@@ -471,6 +472,61 @@ public abstract class AbstractEnvelope implements Envelope {
             }
         }
         return value;
+    }
+
+    /**
+     * Determines whether or not this envelope is empty. An envelope is non-empty only if it has
+     * at least one {@linkplain #getDimension() dimension}, and the {@linkplain #getSpan(int) span}
+     * is greater than 0 along all dimensions. Note that a non-empty envelope is always
+     * non-{@linkplain #isNull() null}, but the converse is not always true.
+     *
+     * @return {@code true} if this envelope is empty.
+     *
+     * @since 3.20 (derived from 1.2)
+     */
+    public boolean isEmpty() {
+        final int dimension = getDimension();
+        if (dimension == 0) {
+            return true;
+        }
+        for (int i=0; i<dimension; i++) {
+            final double span = getSpan(i);
+            if (!(span > 0)) { // Use '!' in order to catch NaN
+                return true;
+            }
+        }
+        assert !isNull() : this;
+        return false;
+    }
+
+    /**
+     * Returns {@code false} if at least one ordinate value is not {@linkplain Double#NaN NaN}. The
+     * {@code isNull()} check is a little bit different than {@link #isEmpty()} since it returns
+     * {@code false} for a partially initialized envelope, while {@code isEmpty()} returns
+     * {@code false} only after all dimensions have been initialized. More specifically, the
+     * following rules apply:
+     * <p>
+     * <ul>
+     *   <li>If <code>isNull() == true</code>, then <code>{@linkplain #isEmpty()} == true</code></li>
+     *   <li>If <code>{@linkplain #isEmpty()} == false</code>, then <code>isNull() == false</code></li>
+     *   <li>The converse of the above-cited rules are not always true.</li>
+     * </ul>
+     *
+     * @return {@code true} if this envelope has NaN values.
+     *
+     * @see GeneralEnvelope#setToNull()
+     *
+     * @since 3.20 (derived from 2.2)
+     */
+    public boolean isNull() {
+        final int dimension = getDimension();
+        for (int i=0; i<dimension; i++) {
+            if (!Double.isNaN(getLower(i)) || !Double.isNaN(getUpper(i))) {
+                return false;
+            }
+        }
+        assert isEmpty() : this;
+        return true;
     }
 
     /**
