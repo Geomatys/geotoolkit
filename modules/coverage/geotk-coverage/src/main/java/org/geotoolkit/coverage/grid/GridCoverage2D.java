@@ -76,12 +76,17 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * Basic access to grid data values backed by a two-dimensional
  * {@linkplain RenderedImage rendered image}. Each band in an image is represented as a
  * {@linkplain GridSampleDimension sample dimension}.
- * <p>
+ *
+ * {@section Two-dimensional slice in a <var>n</var>-dimensional space}
  * Grid coverages are usually two-dimensional. However, {@linkplain #getEnvelope their envelope}
- * may have more than two dimensions. For example, a remote sensing image may be valid only over
+ * may have more than two dimensions.
+ *
+ * <blockquote><font size="-1"><b>Example:</b> a remote sensing image may be valid only over
  * some time range (the time of satellite pass over the observed area). Envelopes for such grid
  * coverage can have three dimensions: the two usual ones (horizontal extent along <var>x</var>
  * and <var>y</var>), and a third one for start time and end time (time extent along <var>t</var>).
+ * </font></blockquote>
+ *
  * However, the {@linkplain GeneralGridEnvelope grid envelope} for all extra-dimension
  * <strong>must</strong> have a {@linkplain GeneralGridEnvelope#getSpan span} not greater than 1.
  * In other words, a {@code GridCoverage2D} can be a slice in a 3 dimensional grid coverage. Each
@@ -97,6 +102,10 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
+ *
+ * @see GridGeometry2D
+ * @see GridSampleDimension
+ * @see GridCoverageBuilder
  *
  * @since 1.2
  * @module
@@ -191,9 +200,15 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * (including the {@linkplain CoordinateReferenceSystem coordinate reference system}) is
      * inferred from the grid geometry.
      * <p>
-     * This constructor accepts an optional set of properties. Keys are {@link String} objects
-     * ({@link javax.media.jai.util.CaselessStringKey} are accepted as well), while values may
-     * be any {@link Object}.
+     * This constructor accepts an optional map of user properties. This map is
+     * useful for storing user-values like statistics. Keys shall be {@link String} or
+     * {@link javax.media.jai.util.CaselessStringKey} instances, while values can be any
+     * {@link Object}. The property values can be fetched by the methods defined in the
+     * {@link javax.media.jai.PropertySource} interface.
+     * <p>
+     * Note that {@link GridCoverageBuilder} provides more convenient ways to create
+     * {@code GridCoverage2D} instances. But all those convenience methods will ultimately
+     * delegate to this constructor.
      *
      * @param name
      *          The grid coverage name.
@@ -205,7 +220,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      *          system} and a "{@linkplain GridGeometry2D#getGridToCRS grid to CRS}" transform).
      * @param bands
      *          Sample dimensions for each image band, or {@code null} for default sample dimensions.
-     *          If non-null, then this array's length must matches the number of bands in {@code image}.
+     *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @param sources
      *          The sources for this grid coverage, or {@code null} if none.
      * @param properties
@@ -217,13 +232,13 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      *
      * @since 2.5
      */
-    protected GridCoverage2D(final CharSequence             name,
-                             final PlanarImage             image,
-                                   GridGeometry2D   gridGeometry,
-                             final GridSampleDimension[]   bands,
-                             final GridCoverage[]        sources,
-                             final Map<?,?>           properties,
-                             final Hints                   hints)
+    public GridCoverage2D(final CharSequence             name,
+                          final PlanarImage             image,
+                                GridGeometry2D   gridGeometry,
+                          final GridSampleDimension[]   bands,
+                          final GridCoverage[]        sources,
+                          final Map<?,?>           properties,
+                          final Hints                   hints)
             throws IllegalArgumentException
     {
         super(name, gridGeometry.getCoordinateReferenceSystem(), sources, image, properties);
@@ -244,7 +259,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * non-empty and its dimension must matches the coordinate reference system's dimension.
          */
         final int dimension = crs.getCoordinateSystem().getDimension();
-        if (!gridGeometry.isDefined(GridGeometry2D.GRID_RANGE)) {
+        if (!gridGeometry.isDefined(GridGeometry2D.GRID_ENVELOPE)) {
             final GridEnvelope r = new GeneralGridEnvelope(image, dimension);
             if (gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 gridGeometry = new GridGeometry2D(r, PIXEL_IN_CELL,
@@ -267,7 +282,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         this.gridGeometry = gridGeometry;
         assert gridGeometry.isDefined(GridGeometry2D.CRS        |
                                       GridGeometry2D.ENVELOPE   |
-                                      GridGeometry2D.GRID_RANGE |
+                                      GridGeometry2D.GRID_ENVELOPE |
                                       GridGeometry2D.GRID_TO_CRS);
         /*
          * Last argument checks. The image size must be consistent with the grid envelope
@@ -297,7 +312,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * method will thrown an {@link IllegalStateException} in this case.
      */
     private static String checkConsistency(final RenderedImage image, final GridGeometry2D grid) {
-        final GridEnvelope range = grid.getGridRange();
+        final GridEnvelope range = grid.getExtent();
         final int dimension = range.getDimension();
         for (int i=0; i<dimension; i++) {
             final int min, span;

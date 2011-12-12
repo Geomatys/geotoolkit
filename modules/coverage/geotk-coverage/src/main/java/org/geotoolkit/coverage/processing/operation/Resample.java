@@ -323,7 +323,7 @@ public class Resample extends Operation2D {
                 // Will use the grid envelope from the original geometry,
                 // which will result in keeping the same image size.
             }
-            gridEnvelope = gridGeometry.getGridRange();
+            gridEnvelope = gridGeometry.getExtent();
             gridGeometry = new GridGeometry2D(gridEnvelope, target);
         }
         return gridGeometry;

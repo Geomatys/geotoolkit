@@ -132,7 +132,7 @@ public final strictfp class MosaicImageViewer extends JPanel implements ChangeLi
      */
     protected MosaicImageViewer(final TileManager tiles) throws IOException {
         this.tiles = tiles;
-        bounds = tiles.getGridGeometry().getGridRange();
+        bounds = tiles.getGridGeometry().getExtent();
         view   = new Rectangle(bounds);
         reader = new MosaicImageReader();
         reader.setInput(tiles);

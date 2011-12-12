@@ -211,7 +211,7 @@ public final strictfp class NetcdfCRSTest {
          */
         assertTrue("Expected a grid geometry.", crs instanceof GridGeometry);
         final GridGeometry gg = (GridGeometry) crs;
-        final GridEnvelope ge = gg.getGridRange();
+        final GridEnvelope ge = gg.getExtent();
         final int[] high = GRID_SIZE.clone();
         for (int i=0; i<high.length; i++) {
             high[i]--;

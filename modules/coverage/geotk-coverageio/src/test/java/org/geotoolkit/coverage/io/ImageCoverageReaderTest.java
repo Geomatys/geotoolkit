@@ -135,13 +135,13 @@ public final strictfp class ImageCoverageReaderTest extends ImageTestBase {
          * Check the grid geometry before to attempt to read the image.
          */
         final GridGeometry2D gridGeometry = reader.getGridGeometry(0);
-        final GridEnvelope gridEnvelope = gridGeometry.getGridRange();
+        final GridEnvelope gridEnvelope = gridGeometry.getExtent();
         assertEquals("Grid dimension", 2, gridEnvelope.getDimension());
         assertEquals("Image columns",  0, gridEnvelope.getLow(0));
         assertEquals("Image rows",     0, gridEnvelope.getLow(1));
         assertEquals("Image columns", 19, gridEnvelope.getHigh(0)); // Inclusive
         assertEquals("Image rows",    41, gridEnvelope.getHigh(1)); // Inclusive
-        assertTrue("Image bounds", new Rectangle(20,42).equals(gridGeometry.getGridRange2D()));
+        assertTrue("Image bounds", new Rectangle(20,42).equals(gridGeometry.getExtent2D()));
         assertTrue("Grid to CRS (Java2D)", new AffineTransform(1000, 0, 0, -1000, -10000, 21000)
                 .equals(gridGeometry.getGridToCRS(PixelOrientation.UPPER_LEFT)));
         assertTrue("Grid to CRS (OGC)", new AffineTransform(1000, 0, 0, -1000, -9500, 20500)

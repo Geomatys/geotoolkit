@@ -111,12 +111,12 @@ public class RequestGenerator {
         this.domain    = domain;
         this.gridToCRS = (XMatrix) ((LinearTransform) domain.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
         this.domainResolution = getResolution(domain);
-        final GridEnvelope gridRange = domain.getGridRange();
-        final int dimension = gridRange.getDimension();
+        final GridEnvelope gridExtent = domain.getExtent();
+        final int dimension = gridExtent.getDimension();
         minimalGridSize = new int[dimension];
         maximalGridSize = new int[dimension];
         for (int i=0; i<dimension; i++) {
-            final int max = Math.min(maxSize, gridRange.getSpan(i));
+            final int max = Math.min(maxSize, gridExtent.getSpan(i));
             maximalGridSize[i] = max;
             minimalGridSize[i] = Math.min(minSize, max);
         }
@@ -208,10 +208,10 @@ public class RequestGenerator {
      */
     private void updateScale() {
         double maxScale = Double.POSITIVE_INFINITY;
-        final GridEnvelope gridRange = domain.getGridRange();
-        final int dimension = gridRange.getDimension();
+        final GridEnvelope gridExtent = domain.getExtent();
+        final int dimension = gridExtent.getDimension();
         for (int i=0; i<dimension; i++) {
-            final double scale = gridRange.getSpan(i) / (double) minimalGridSize[i];
+            final double scale = gridExtent.getSpan(i) / (double) minimalGridSize[i];
             if (scale < maxScale) {
                 maxScale = scale;
             }
@@ -261,8 +261,8 @@ public class RequestGenerator {
         scale = (scale * scale) + 1;
         assert (scale >= 1 && scale <= maximumScale) : scale;
 
-        final GridEnvelope gridRange = domain.getGridRange();
-        final int dimension = gridRange.getDimension();
+        final GridEnvelope gridExtent = domain.getExtent();
+        final int dimension = gridExtent.getDimension();
         final int[] lower = new int[dimension];
         final int[] upper = new int[dimension];
         final XMatrix mx  = gridToCRS.clone();
@@ -277,8 +277,8 @@ public class RequestGenerator {
              */
             int span = minimalGridSize[i];
             span += random.nextInt(maximalGridSize[i] - span + 1);
-            int min = (int) Math.ceil ( gridRange.getLow (i)      / scale);
-            int max = (int) Math.floor((gridRange.getHigh(i) + 1) / scale);
+            int min = (int) Math.ceil ( gridExtent.getLow (i)      / scale);
+            int max = (int) Math.floor((gridExtent.getHigh(i) + 1) / scale);
             final int remainingSpace = (max - min) - span;
             if (remainingSpace > 0) {
                 min += random.nextInt(remainingSpace + 1);

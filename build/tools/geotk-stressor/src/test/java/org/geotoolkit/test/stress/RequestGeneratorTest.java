@@ -72,7 +72,7 @@ public final strictfp class RequestGeneratorTest {
 
         for (int t=0; t<5000; t++) {
             final GeneralGridGeometry sg = generator.getRandomGrid();
-            final GridEnvelope        sr = sg.getGridRange();
+            final GridEnvelope        sr = sg.getExtent();
             final Envelope            se = sg.getEnvelope();
             assertTrue("Grid envelope out of bounds.", range.contains(sr.getLow(0), sr.getLow(1), sr.getSpan(0), sr.getSpan(1)));
             assertTrue("Geodetic envelope out of bounds.", envelope.contains(se, true));

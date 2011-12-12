@@ -910,7 +910,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             if (geom != null) {
                 final SpatialMetadata sp = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
-                accessor.setAll(geom.getGridToCRS(), geom.getGridRange(), null, PixelOrientation.UPPER_LEFT);
+                accessor.setAll(geom.getGridToCRS(), geom.getExtent(), null, PixelOrientation.UPPER_LEFT);
                 /*
                  * Add the CRS, if the tile manager has been created from a directory or a file
                  * is associated with a PRJ file.

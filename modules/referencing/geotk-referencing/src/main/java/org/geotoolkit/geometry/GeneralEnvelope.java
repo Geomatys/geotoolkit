@@ -744,63 +744,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * {@linkplain #getCoordinateReferenceSystem coordinate reference system} (if any) stay
      * unchanged.
      *
+     * @see #isNull()
+     *
      * @since 2.2
      */
     public void setToNull() {
         Arrays.fill(ordinates, Double.NaN);
         assert isNull() : this;
-    }
-
-    /**
-     * Returns {@code false} if at least one ordinate value is not {@linkplain Double#NaN NaN}. The
-     * {@code isNull()} check is a little bit different than {@link #isEmpty()} since it returns
-     * {@code false} for a partially initialized envelope, while {@code isEmpty()} returns
-     * {@code false} only after all dimensions have been initialized. More specifically, the
-     * following rules apply:
-     * <p>
-     * <ul>
-     *   <li>If <code>isNull() == true</code>, then <code>{@linkplain #isEmpty()} == true</code></li>
-     *   <li>If <code>{@linkplain #isEmpty()} == false</code>, then <code>isNull() == false</code></li>
-     *   <li>The converse of the above-cited rules are not always true.</li>
-     * </ul>
-     *
-     * @return {@code true} if this envelope has NaN values.
-     *
-     * @since 2.2
-     */
-    public boolean isNull() {
-        for (int i=0; i<ordinates.length; i++) {
-            if (!Double.isNaN(ordinates[i])) {
-                return false;
-            }
-        }
-        assert isEmpty() : this;
-        return true;
-    }
-
-    /**
-     * Determines whether or not this envelope is empty. An envelope is non-empty only if it has
-     * at least one {@linkplain #getDimension() dimension}, and the {@linkplain #getSpan(int) span}
-     * is greater than 0 along all dimensions. Note that a non-empty envelope is always
-     * non-{@linkplain #isNull() null}, but the converse is not always true.
-     *
-     * @return {@code true} if this envelope is empty.
-     */
-    public boolean isEmpty() {
-        final int dimension = ordinates.length >>> 1;
-        if (dimension == 0) {
-            return true;
-        }
-        for (int i=0; i<dimension; i++) {
-            final double span = ordinates[i+dimension] - ordinates[i];
-            if (!(span > 0)) { // Use '!' in order to catch NaN
-                if (!(isNegative(span) && isWrapAround(crs, i))) {
-                    return true;
-                }
-            }
-        }
-        assert !isNull() : this;
-        return false;
     }
 
     /**

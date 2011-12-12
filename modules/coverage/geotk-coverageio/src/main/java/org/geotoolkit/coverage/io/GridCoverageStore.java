@@ -440,9 +440,9 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final IIOParam                  imageParam)
             throws InvalidGridGeometryException, TransformException, FactoryException, CoverageStoreException
     {
-        final Rectangle       gridRange = gridGeometry.getGridRange2D();
-        final MathTransform2D gridToCRS = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        final MathTransform2D crsToGrid = gridToCRS.inverse();
+        final Rectangle       gridExtent = gridGeometry.getExtent2D();
+        final MathTransform2D gridToCRS  = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final MathTransform2D crsToGrid  = gridToCRS.inverse();
         /*
          * Get the full coverage envelope in the coverage CRS. The returned shape is likely
          * (but not guaranteed) to be an instance of Rectangle2D. It can be freely modified.
@@ -454,7 +454,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * than the CRS.transform(MathTransform, ...) method, in order to handle the cases
          * where the requested region is over a geographic pole.
          */
-        Shape shapeToRead = gridToCRS.createTransformedShape(gridRange); // Will be clipped later.
+        Shape shapeToRead = gridToCRS.createTransformedShape(gridExtent); // Will be clipped later.
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
                 (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
         ensureNonEmpty(geodeticBounds);
@@ -517,8 +517,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         final RectangularShape imageRegion = (shapeToRead instanceof RectangularShape) ?
                 (RectangularShape) shapeToRead : shapeToRead.getBounds2D();
         // 'shapeToRead' and 'imageRegion' now contain coordinates in units of source grid.
-        int width  = gridRange.width;
-        int height = gridRange.height;
+        int width  = gridExtent.width;
+        int height = gridExtent.height;
         final int xSubsampling;
         final int ySubsampling;
         if (resolution != null) {

@@ -181,8 +181,8 @@ public class GridCoverageFactory extends Factory {
      * @param function
      *          The image function.
      * @param gridGeometry
-     *          The grid geometry. The {@linkplain GridGeometry2D#getGridRange grid
-     *          range} must contains the expected image size (width and height).
+     *          The grid geometry. The {@linkplain GridGeometry2D#getExtent() grid extent}
+     *          must contains the expected image size (width and height).
      * @param bands
      *          Sample dimensions for each image band, or {@code null} for default sample dimensions.
      * @param properties
@@ -213,11 +213,11 @@ public class GridCoverageFactory extends Factory {
         final double yScale =  at.getScaleY();
         final double xTrans = -at.getTranslateX() / xScale;
         final double yTrans = -at.getTranslateY() / yScale;
-        final GridEnvelope range = gridGeometry.getGridRange();
+        final GridEnvelope extent = gridGeometry.getExtent();
         final ParameterBlock param = new ParameterBlock()
                 .add(function)
-                .add(range.getSpan(0)) // width
-                .add(range.getSpan(1)) // height
+                .add(extent.getSpan(0)) // width
+                .add(extent.getSpan(1)) // height
                 .add((float) xScale)
                 .add((float) yScale)
                 .add((float) xTrans)

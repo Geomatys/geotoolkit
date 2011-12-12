@@ -420,6 +420,39 @@ scanNumber: while (++i < length) {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public boolean isEmpty() {
+        final int dimension = ordinates.length >>> 1;
+        if (dimension == 0) {
+            return true;
+        }
+        for (int i=0; i<dimension; i++) {
+            final double span = ordinates[i+dimension] - ordinates[i];
+            if (!(span > 0)) { // Use '!' in order to catch NaN
+                if (!(isNegative(span) && isWrapAround(crs, i))) {
+                    return true;
+                }
+            }
+        }
+        assert !isNull() : this;
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isNull() {
+        for (int i=0; i<ordinates.length; i++) {
+            if (!Double.isNaN(ordinates[i])) {
+                return false;
+            }
+        }
+        assert isEmpty() : this;
+        return true;
+    }
+
+    /**
      * Returns a hash value for this envelope.
      */
     @Override

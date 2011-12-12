@@ -239,7 +239,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
     @Override
     public GridEnvelope getGridEnvelope(final int imageIndex) throws IOException {
         try {
-            return reader.getGridGeometry(imageIndex).getGridRange();
+            return reader.getGridGeometry(imageIndex).getExtent();
         } catch (CoverageStoreException e) {
             throw convert(e);
         }
@@ -264,7 +264,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
-            final GridEnvelope range = geometry.getGridRange();
+            final GridEnvelope range = geometry.getExtent();
             size = new Dimension(range.getSpan(X_DIMENSION), range.getSpan(Y_DIMENSION));
             imageSizes.put(key, size);
         }
@@ -395,7 +395,7 @@ public class ImageReaderAdapter extends SpatialImageReader {
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
-            final GridEnvelope range = geometry.getGridRange();
+            final GridEnvelope range = geometry.getExtent();
             final Rectangle srcRect = new Rectangle();
             final Rectangle dstRect = new Rectangle(); // Required but ignored.
             computeRegions(param, range.getSpan(X_DIMENSION), range.getSpan(Y_DIMENSION), null, srcRect, dstRect);

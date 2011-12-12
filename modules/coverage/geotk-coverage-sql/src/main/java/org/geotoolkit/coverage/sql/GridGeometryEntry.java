@@ -300,20 +300,20 @@ final class GridGeometryEntry extends DefaultEntry {
     }
 
     /**
-     * Convenience method returning the two first dimensions of the grid range.
+     * Convenience method returning the two first dimensions of the grid extent.
      */
     public Dimension getImageSize() {
-        final GridEnvelope gridRange = spatialGeometry.getGridRange();
-        return new Dimension(gridRange.getSpan(0), gridRange.getSpan(1));
+        final GridEnvelope extent = spatialGeometry.getExtent();
+        return new Dimension(extent.getSpan(0), extent.getSpan(1));
     }
 
     /**
-     * Convenience method returning the two first dimensions of the grid range.
+     * Convenience method returning the two first dimensions of the grid extent.
      */
     public Rectangle getImageBounds() {
-        final GridEnvelope gridRange = spatialGeometry.getGridRange();
-        return new Rectangle(gridRange.getLow (0), gridRange.getLow (1),
-                             gridRange.getSpan(0), gridRange.getSpan(1));
+        final GridEnvelope extent = spatialGeometry.getExtent();
+        return new Rectangle(extent.getLow (0), extent.getLow (1),
+                             extent.getSpan(0), extent.getSpan(1));
     }
 
     /**
@@ -356,10 +356,10 @@ final class GridGeometryEntry extends DefaultEntry {
      * (but not guaranteed) to be an instance of {@link Rectangle2D}. It can be freely modified.
      */
     private Shape getHorizontalEnvelope() {
-        final GridEnvelope gridRange = spatialGeometry.getGridRange();
+        final GridEnvelope extent = spatialGeometry.getExtent();
         Shape shape = new Rectangle2D.Double(
-                gridRange.getLow (0), gridRange.getLow (1),
-                gridRange.getSpan(0), gridRange.getSpan(1));
+                extent.getLow (0), extent.getLow (1),
+                extent.getSpan(0), extent.getSpan(1));
         shape = AffineTransform2D.transform(gridToCRS, shape, true);
         return shape;
     }
@@ -368,20 +368,20 @@ final class GridGeometryEntry extends DefaultEntry {
      * Returns the coordinates (in coverage CRS) at the center of the image.
      */
     private Point2D getHorizontalCenter() {
-        final GridEnvelope gridRange = spatialGeometry.getGridRange();
+        final GridEnvelope extent = spatialGeometry.getExtent();
         Point2D center = new Point2D.Double(
-                gridRange.getLow(0) + 0.5*gridRange.getSpan(0),
-                gridRange.getLow(1) + 0.5*gridRange.getSpan(1));
+                extent.getLow(0) + 0.5*extent.getSpan(0),
+                extent.getLow(1) + 0.5*extent.getSpan(1));
         return gridToCRS.transform(center, center);
     }
 
     /**
      * Returns the vertical ordinate values, or {@code null} if none. If non-null,
-     * then the array length must be equals to the {@code gridRange.getLength(2)}.
+     * then the array length must be equals to the {@code extent.getLength(2)}.
      */
     public double[] getVerticalOrdinates() {
         if (verticalOrdinates != null) {
-            assert geometry.getGridRange().getSpan(2) == verticalOrdinates.length : geometry;
+            assert geometry.getExtent().getSpan(2) == verticalOrdinates.length : geometry;
             return verticalOrdinates.clone();
         }
         return null;

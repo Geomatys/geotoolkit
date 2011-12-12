@@ -98,10 +98,10 @@ public final strictfp class GridGeometryTableTest extends CatalogTestBase {
         assertEquals("horizontal SRID", 3395, entry.getHorizontalSRID());
         assertEquals("vertical SRID",   5714, entry.getVerticalSRID());
 
-        final GridEnvelope gridRange = entry.geometry.getGridRange();
-        assertEquals("Image width",  720, gridRange.getSpan(0));
-        assertEquals("Image height", 499, gridRange.getSpan(1));
-        assertEquals("Num. depths",   59, gridRange.getSpan(2));
+        final GridEnvelope gridExtent = entry.geometry.getExtent();
+        assertEquals("Image width",  720, gridExtent.getSpan(0));
+        assertEquals("Image height", 499, gridExtent.getSpan(1));
+        assertEquals("Num. depths",   59, gridExtent.getSpan(2));
 
         final GeographicBoundingBox box = entry.getGeographicBoundingBox();
         assertEquals("West bound",  -180, box.getWestBoundLongitude(), 1E-10);

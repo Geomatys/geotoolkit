@@ -22,9 +22,8 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * Thrown by {@link GeneralGridGeometry} when a grid geometry is in an invalid state. For example
- * this exception is thrown when {@link GeneralGridGeometry#getGridRange() getGridRange()} is
- * invoked while the grid geometry were built with a null
- * {@link org.opengis.coverage.grid.GridEnvelope}.
+ * this exception is thrown when {@link GeneralGridGeometry#getExtent()} is invoked while the grid
+ * geometry were built with a null {@link org.opengis.coverage.grid.GridEnvelope}.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

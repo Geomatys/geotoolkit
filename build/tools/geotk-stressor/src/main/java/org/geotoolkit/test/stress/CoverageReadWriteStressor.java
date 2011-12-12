@@ -156,7 +156,7 @@ public class CoverageReadWriteStressor extends Stressor {
      */
     private static GeneralGridGeometry clip(GeneralGridGeometry geometry) {
         if (false) {
-            GridEnvelope range = geometry.getGridRange();
+            GridEnvelope range = geometry.getExtent();
             final int[] lower = range.getLow().getCoordinateValues();
             final int[] upper = range.getHigh().getCoordinateValues();
             for (int i=range.getDimension(); --i>=0;) {

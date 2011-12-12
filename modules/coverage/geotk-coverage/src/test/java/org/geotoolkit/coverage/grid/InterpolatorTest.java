@@ -64,7 +64,7 @@ public final strictfp class InterpolatorTest extends GridCoverageTestBase {
         double[] buffer = null;
         final Raster          data = coverage.getRenderedImage().getData();
         final Envelope    envelope = coverage.getEnvelope();
-        final GridEnvelope   range = coverage.getGridGeometry().getGridRange();
+        final GridEnvelope   range = coverage.getGridGeometry().getExtent();
         final double          left = envelope.getMinimum(0);
         final double         upper = envelope.getMaximum(1);
         final Point2D.Double point = new Point2D.Double(); // Will maps to pixel upper-left corner
