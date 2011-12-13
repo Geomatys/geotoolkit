@@ -259,7 +259,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * non-empty and its dimension must matches the coordinate reference system's dimension.
          */
         final int dimension = crs.getCoordinateSystem().getDimension();
-        if (!gridGeometry.isDefined(GridGeometry2D.GRID_ENVELOPE)) {
+        if (!gridGeometry.isDefined(GridGeometry2D.EXTENT)) {
             final GridEnvelope r = new GeneralGridEnvelope(image, dimension);
             if (gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 gridGeometry = new GridGeometry2D(r, PIXEL_IN_CELL,
@@ -282,7 +282,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
         this.gridGeometry = gridGeometry;
         assert gridGeometry.isDefined(GridGeometry2D.CRS        |
                                       GridGeometry2D.ENVELOPE   |
-                                      GridGeometry2D.GRID_ENVELOPE |
+                                      GridGeometry2D.EXTENT |
                                       GridGeometry2D.GRID_TO_CRS);
         /*
          * Last argument checks. The image size must be consistent with the grid envelope
@@ -297,6 +297,9 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                              || !(gridGeometry.envelope.getSpan(gridGeometry.axisDimensionY) > 0))
         {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
+        }
+        if (hints != null) {
+            tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
         }
     }
 

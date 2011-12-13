@@ -21,6 +21,7 @@ import java.io.Serializable;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
@@ -69,6 +70,30 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
     }
 
     /**
+     * Creates an immutable envelope with the ordinate values of the given envelope but
+     * a different CRS. This method does <strong>not</strong> reproject the given envelope.
+     * It just assign the given CRS to this envelope without any check, except for the CRS
+     * dimension.
+     * <p>
+     * The main purpose of this method is to assign a non-null CRS when the envelope to
+     * copy has a null CRS.
+     *
+     * @param crs      The CRS to assign to this envelope, or {@code null}.
+     * @param envelope The envelope from which to copy ordinate values.
+     * @throws MismatchedDimensionException If the dimension of the given CRS is not equals
+     *         to the dimension of the given envelope.
+     *
+     * @since 3.20
+     */
+    public ImmutableEnvelope(final CoordinateReferenceSystem crs, final Envelope envelope)
+            throws MismatchedDimensionException
+    {
+        super(envelope);
+        this.crs = crs;
+        checkCoordinateReferenceSystemDimension(crs, getDimension());
+    }
+
+    /**
      * Builds a two-dimensional envelope with the specified bounds.
      *
      * @param crs  The coordinate reference system, or {@code null} if none.
@@ -76,9 +101,11 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
      * @param xmax The maximal value for the first ordinate.
      * @param ymin The minimal value for the second ordinate.
      * @param ymax The maximal value for the second ordinate.
+     * @throws MismatchedDimensionException If the dimension of the given CRS is not equals to 2.
      */
     public ImmutableEnvelope(final CoordinateReferenceSystem crs, final double xmin,
                              final double xmax, final double ymin, final double ymax)
+            throws MismatchedDimensionException
     {
         super(xmin, xmax, ymin, ymax);
         this.crs = crs;
@@ -102,11 +129,13 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
      * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.
      * @throws NumberFormatException If a number can not be parsed.
      * @throws IllegalArgumentException If the parenthesis are not balanced.
+     * @throws MismatchedDimensionException If the dimension of the given CRS is not equals
+     *         to the dimension of the parsed envelope.
      *
      * @since 3.20
      */
     public ImmutableEnvelope(final CoordinateReferenceSystem crs, final String wkt)
-            throws NumberFormatException, IllegalArgumentException
+            throws NumberFormatException, IllegalArgumentException, MismatchedDimensionException
     {
         super(wkt);
         this.crs = crs;
@@ -127,7 +156,7 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
      * @since 3.20
      */
     public static ImmutableEnvelope castOrCopy(final Envelope envelope) {
-        if (envelope == null || envelope instanceof AbstractEnvelope) {
+        if (envelope == null || envelope instanceof ImmutableEnvelope) {
             return (ImmutableEnvelope) envelope;
         }
         return new ImmutableEnvelope(envelope);

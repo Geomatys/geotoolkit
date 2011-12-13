@@ -57,6 +57,8 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
         variable.addNodataValue("No data", 0);
         builder.setSampleRange(0, 40000);
         builder.setImageSize(360, 180);
+        builder.setEnvelope(-180, -90, 180, 90);
+        builder.setCoordinateReferenceSystem("CRS:84");
         builder.setBufferedImage(random);
         final WritableRaster raster = builder.getBufferedImage().getRaster();
         raster.setSample(0,0,0,0); // For testing NaN value.
@@ -87,6 +89,8 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
         variable.addNodataValue("No data", 32767);
         builder.setSampleRange(-20000, 23000);
         builder.setImageSize(360, 180);
+        builder.setEnvelope(-180, -90, 180, 90);
+        builder.setCoordinateReferenceSystem("CRS:84");
         builder.setBufferedImage(random);
         final WritableRaster raster = builder.getBufferedImage().getRaster();
         raster.setSample(0,0,0,32767); // For testing NaN value.

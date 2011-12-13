@@ -20,7 +20,10 @@ package org.geotoolkit.lang;
 
 /**
  * Base class of all classes that are builder for other objects.
- * This base class is defined mostly for documentation purpose.
+ * Subclasses provides an arbitrary amount of setter, together with a single {@link #build()}
+ * method implementation which create the object using the values previously set.
+ *
+ * @param  <T> The type of objects to build.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -28,10 +31,17 @@ package org.geotoolkit.lang;
  * @since 3.20
  * @module
  */
-public class Builder {
+public abstract class Builder<T> {
     /**
-     * For subclasses constructor only.
+     * Creates an empty builder. The default values of all fields are implementation dependent.
      */
     protected Builder() {
     }
+
+    /**
+     * Creates the objects from the value previously set.
+     *
+     * @return The new object created from the user values.
+     */
+    public abstract T build();
 }

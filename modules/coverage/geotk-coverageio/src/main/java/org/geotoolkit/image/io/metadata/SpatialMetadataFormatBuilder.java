@@ -100,14 +100,14 @@ import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUT
  * @since 3.20 (derived from 3.05)
  * @module
  */
-public class SpatialMetadataFormatBuilder extends Builder {
+public class SpatialMetadataFormatBuilder extends Builder<SpatialMetadataFormat> {
     /**
      * The instance being built.
      */
     private final SpatialMetadataFormat metadata;
 
     /**
-     * Sets to {@code true} after {@link #getInstance()} has been invoked,
+     * Sets to {@code true} after {@link #build()} has been invoked,
      * in order to ensure that we do not modify a published metadata.
      */
     private boolean done;
@@ -958,7 +958,8 @@ public class SpatialMetadataFormatBuilder extends Builder {
      *
      * @return The metadata format instance.
      */
-    public SpatialMetadataFormat getInstance() {
+    @Override
+    public SpatialMetadataFormat build() {
         done = true;
         return metadata;
     }

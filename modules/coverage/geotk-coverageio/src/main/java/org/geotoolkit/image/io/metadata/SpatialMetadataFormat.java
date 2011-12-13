@@ -298,7 +298,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         static {
             final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(ISO_FORMAT_NAME);
             builder.addTreeForISO19115(null);
-            INSTANCE = builder.getInstance();
+            INSTANCE = builder.build();
         }
     }
 
@@ -315,7 +315,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         static {
             SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(FORMAT_NAME);
             builder.addTreeForStream(null);
-            STREAM = builder.getInstance();
+            STREAM = builder.build();
         }
 
         /** The default instance for <cite>image</cite> metadata format. */
@@ -324,7 +324,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(FORMAT_NAME);
             builder.addTreeForImage(null);
             builder.addTreeForCRS("RectifiedGridDomain");
-            IMAGE = builder.getInstance();
+            IMAGE = builder.build();
         }
     }
 

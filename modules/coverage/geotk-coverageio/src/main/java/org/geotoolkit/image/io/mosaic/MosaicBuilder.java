@@ -39,6 +39,7 @@ import org.geotoolkit.math.Fraction;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
@@ -81,7 +82,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
  * @module
  */
 @ThreadSafe
-public class MosaicBuilder extends Builder implements LogProducer {
+public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
     /**
      * The default tile size in pixels.
      */
@@ -175,7 +176,7 @@ public class MosaicBuilder extends Builder implements LogProducer {
      */
     public MosaicBuilder(final TileManagerFactory factory) {
         this.factory = (factory != null) ? factory : TileManagerFactory.DEFAULT;
-        layout = TileLayout.CONSTANT_TILE_SIZE;
+        layout    = TileLayout.CONSTANT_TILE_SIZE;
         formatter = new FilenameFormatter();
         listeners = new IIOListeners();
     }
@@ -586,6 +587,25 @@ public class MosaicBuilder extends Builder implements LogProducer {
         // Delegates to setSubsamplings(Dimension[]) instead of performing the same work in-place
         // (which would have been more efficient) because the user may have overridden the former.
         setSubsamplings(newSubsamplings);
+    }
+
+    /**
+     * Creates a tile manager from the informations supplied in above setters.
+     * The default implementation delegates to {@link #createTileManager()},
+     * wrapping any potential {@link IOException} into a {@link BackingStoreException}.
+     *
+     * @return The tile manager created from the information returned by getter methods.
+     * @throws BackingStoreException if {@link #createTileManager()} threw {@link IOException}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public TileManager build() throws BackingStoreException {
+        try {
+            return createTileManager();
+        } catch (IOException e) {
+            throw new BackingStoreException(e);
+        }
     }
 
     /**
