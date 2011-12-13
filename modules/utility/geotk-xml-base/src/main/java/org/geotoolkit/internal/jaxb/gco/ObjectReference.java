@@ -121,7 +121,7 @@ final class ObjectReference {
                 // Failed to find an existing metadata instance.
                 // Creates an empty instance with the identifiers.
                 int count = 0;
-                SpecializedIdentifier<?>[] identifiers  = new SpecializedIdentifier<>[2];
+                SpecializedIdentifier<?>[] identifiers  = new SpecializedIdentifier<?>[2];
                 if (uuid  != null) identifiers[count++] = new SpecializedIdentifier<>(IdentifierSpace.UUID,  uuid);
                 if (xlink != null) identifiers[count++] = new SpecializedIdentifier<>(IdentifierSpace.XLINK, xlink);
                 identifiers = XArrays.resize(identifiers, count);

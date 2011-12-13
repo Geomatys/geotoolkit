@@ -221,7 +221,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
-     *     <td>&nbsp;{@link String}, {@linj Path}, {@link File}, {@link URI}, {@link URL},
+     *     <td>&nbsp;{@link String}, {@link Path}, {@link File}, {@link URI}, {@link URL},
      *               {@link URLConnection}, {@link OutputStream}, {@link ImageOutputStream},
      *               {@link WritableByteChannel}&nbsp;</td>
      *   </tr><tr>
