@@ -281,12 +281,15 @@ public final class ArgumentChecks extends Static {
 
     /**
      * Ensures that the given integer value is between the given bounds, inclusive.
+     * This method is used for checking values that are <strong>not</strong> index.
      *
      * @param  name  The name of the argument to be checked. Used only in case an exception is thrown.
      * @param  min   The minimal value, inclusive.
      * @param  max   The maximal value, inclusive.
      * @param  value The value to be tested.
      * @throws IllegalArgumentException if the given value is not in the given range.
+     *
+     * @see #ensureValidIndex(int, int)
      */
     public static void ensureBetween(final String name, final int min, final int max, final int value)
             throws IllegalArgumentException

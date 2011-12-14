@@ -183,28 +183,10 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     }
 
     /**
-     * Creates a member name from the given character sequence and attribute type.
-     * The default implementation returns a new or an existing {@link DefaultMemberName}
-     * instance.
-     *
-     * @param  scope The {@linkplain GenericName#scope scope} of the type
-     *         name to be created, or {@code null} for a global namespace.
-     * @param  name The type name as a string or an international string.
-     * @param  attributeType The type of the data associated with the record member.
-     * @return The type name for the given character sequence.
-     * @throws NullArgumentException If the {@code name} or {@code attributeType} argument is null.
-     *
-     * @since 3.17
-     */
-    public MemberName createMemberName(final NameSpace scope, final CharSequence name, final TypeName attributeType) {
-        return pool.unique(new DefaultMemberName(scope, name, attributeType));
-    }
-
-    /**
      * Creates a type name from the given character sequence. The default implementation
      * returns a new or an existing {@link DefaultTypeName} instance.
      *
-     * @param  scope The {@linkplain GenericName#scope scope} of the type
+     * @param  scope The {@linkplain GenericName#scope() scope} of the type
      *         name to be created, or {@code null} for a global namespace.
      * @param  name The type name as a string or an international string.
      * @return The type name for the given character sequence.
@@ -215,6 +197,25 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     @Override
     public TypeName createTypeName(final NameSpace scope, final CharSequence name) {
         return pool.unique(new DefaultTypeName(scope, name));
+    }
+
+    /**
+     * Creates a member name from the given character sequence and attribute type.
+     * The default implementation returns a new or an existing {@link DefaultMemberName}
+     * instance.
+     *
+     * @param  scope The {@linkplain GenericName#scope() scope} of the member
+     *         name to be created, or {@code null} for a global namespace.
+     * @param  name The member name as a string or an international string.
+     * @param  attributeType The type of the data associated with the record member.
+     * @return The member name for the given character sequence.
+     * @throws NullArgumentException If the {@code name} or {@code attributeType} argument is null.
+     *
+     * @since 3.17
+     */
+    @Override
+    public MemberName createMemberName(final NameSpace scope, final CharSequence name, final TypeName attributeType) {
+        return pool.unique(new DefaultMemberName(scope, name, attributeType));
     }
 
     /**

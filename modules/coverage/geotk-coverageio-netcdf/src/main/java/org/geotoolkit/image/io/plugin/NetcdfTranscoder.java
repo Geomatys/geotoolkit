@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.metadata;
+package org.geotoolkit.image.io.plugin;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -67,15 +67,15 @@ import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.util.InternationalString;
+import org.opengis.util.NameFactory;
 
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.image.io.WarningProducer;
-import org.geotoolkit.naming.DefaultNameFactory;
+import org.geotoolkit.image.io.metadata.MetadataTranscoder;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
@@ -145,7 +145,7 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * @since 3.20
  * @module
  */
-public class NetcdfISO {
+public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     /**
      * The {@value} attribute name for a short description of the dataset
      * (<em>Highly Recommended</em>).
@@ -184,7 +184,7 @@ public class NetcdfISO {
      * {@link DataIdentification#getCitation() citation}.
      * {@link Citation#getIdentifiers() identifier}</li></ul>
      *
-     * @see #createIdentifier()
+     * @see #getFileIdentifier()
      * @see NetcdfFile#getId()
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#id_Attribute">UCAR reference</a>
      */
@@ -203,7 +203,7 @@ public class NetcdfISO {
      * {@link Citation#getIdentifiers() identifier}</li></ul>
      *
      * @see #IDENTIFIER
-     * @see #createIdentifier()
+     * @see #getFileIdentifier()
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#id_Attribute">UCAR reference</a>
      */
     public static final String NAMING_AUTHORITY = "naming_authority";
@@ -368,9 +368,9 @@ public class NetcdfISO {
      * <p>
      * <table border="1" cellspacing="0"><tr bgcolor="lightblue">
      *   <th>Attribute</th>
-     *   <th>{@link NetcdfISO#CREATOR}</th>
-     *   <th>{@link NetcdfISO#CONTRIBUTOR}</th>
-     *   <th>{@link NetcdfISO#PUBLISHER}</th>
+     *   <th>{@link NetcdfTranscoder#CREATOR}</th>
+     *   <th>{@link NetcdfTranscoder#CONTRIBUTOR}</th>
+     *   <th>{@link NetcdfTranscoder#PUBLISHER}</th>
      * </tr><tr>
      *   <td>{@link #NAME}</td>
      *   <td>{@code "creator_name"}</td>
@@ -404,15 +404,13 @@ public class NetcdfISO {
      * </tr></table>
      *
      * {@note The member names in this class are upper-cases because they should be considered
-     *        as constants. For example <code>NetcdfISO.CREATOR.EMAIL</code> maps exactly to the
+     *        as constants. For example <code>NetcdfTranscoder.CREATOR.EMAIL</code> maps exactly to the
      *        <code>"creator_email"</code> string and nothing else. A lower-case <code>email</code>
      *        member name could be misleading since it would suggest that the field contains the
      *        actual name value rather than the key by which the value is identified in a NetCDF file.}
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.20
-     *
-     * @see NetcdfISO#createResponsibleParty(Group, Responsible)
      *
      * @since 3.20
      * @module
@@ -601,10 +599,10 @@ public class NetcdfISO {
      * <p>
      * <table border="1" cellspacing="0"><tr bgcolor="lightblue">
      *   <th>Attributes</th>
-     *   <th>{@link NetcdfISO#LATITUDE}</th>
-     *   <th>{@link NetcdfISO#LONGITUDE}</th>
-     *   <th>{@link NetcdfISO#VERTICAL}</th>
-     *   <th>{@link NetcdfISO#TIME}</th>
+     *   <th>{@link NetcdfTranscoder#LATITUDE}</th>
+     *   <th>{@link NetcdfTranscoder#LONGITUDE}</th>
+     *   <th>{@link NetcdfTranscoder#VERTICAL}</th>
+     *   <th>{@link NetcdfTranscoder#TIME}</th>
      * </tr><tr>
      *   <td>{@link #MINIMUM}</td>
      *   <td>{@code "geospatial_lat_min"}</td>
@@ -644,7 +642,7 @@ public class NetcdfISO {
      * </tr></table>
      *
      * {@note The member names in this class are upper-cases because they should be considered
-     *        as constants. For example <code>NetcdfISO.LATITUDE.MINIMUM</code> maps exactly to
+     *        as constants. For example <code>NetcdfTranscoder.LATITUDE.MINIMUM</code> maps exactly to
      *        the <code>"geospatial_lat_min"</code> string and nothing else. A lower-case
      *        <code>minimum</code> member name could be misleading since it would suggest that
      *        the field contains the actual name value rather than the key by which the value
@@ -887,16 +885,9 @@ public class NetcdfISO {
     private final Group[] groups;
 
     /**
-     * Were to send the warnings, or {@code null} if none.
-     */
-    private final WarningProducer owner;
-
-    /**
      * The name factory, created when first needed.
-     *
-     * @todo Use the GeoAPI interface after a {@code createMemberName(...)} method has been added.
      */
-    private transient DefaultNameFactory nameFactory;
+    private transient NameFactory nameFactory;
 
     /**
      * The creator, used at metadata creation time for avoiding to declare
@@ -910,13 +901,14 @@ public class NetcdfISO {
      * necessary in order to get coordinate system information.
      *
      * @param file  The NetCDF file from which to parse metadata.
-     * @param owner The caller, or {@code null} if it does not implement the
-     *              {@code WarningProducer} interface.
+     * @param owner Typically the {@link org.geotoolkit.image.io.SpatialImageReader} or
+     *              {@link org.geotoolkit.image.io.SpatialImageWriter} object using this
+     *              transcoder, or {@code null}.
      */
-    public NetcdfISO(final NetcdfFile file, final WarningProducer owner) {
+    public NetcdfTranscoder(final NetcdfFile file, final WarningProducer owner) {
+        super(owner);
         ArgumentChecks.ensureNonNull("file", file);
         this.file  = file;
-        this.owner = owner;
         final Group[] groups = new Group[GROUP_NAMES.length];
         int count = 0;
         for (final String name : GROUP_NAMES) {
@@ -939,7 +931,7 @@ public class NetcdfISO {
      * @param exception The exception to log.
      */
     private void warning(final String method, final Exception exception) {
-        Warnings.log(owner, Level.WARNING, NetcdfISO.class, method, exception);
+        Warnings.log(this, Level.WARNING, NetcdfTranscoder.class, method, exception);
     }
 
     /**
@@ -1214,8 +1206,8 @@ public class NetcdfISO {
     }
 
     /**
-     * Creates a globally unique identifier for the current NetCDF {@linkplain #file}.
-     * The default implementation build the identifier from the following attributes:
+     * Returns a globally unique identifier for the current NetCDF {@linkplain #file}.
+     * The default implementation builds the identifier from the following attributes:
      * <p>
      * <ul>
      *   <li>{@value #NAMING_AUTHORITY} used as the {@linkplain Identifier#getAuthority() authority}.</li>
@@ -1227,7 +1219,7 @@ public class NetcdfISO {
      * @return The globally unique identifier, or {@code null} if none.
      * @throws IOException If an I/O operation was necessary but failed.
      */
-    protected Identifier createIdentifier() throws IOException {
+    public Identifier getFileIdentifier() throws IOException {
         String identifier = getStringValue(IDENTIFIER);
         if (identifier == null) {
             identifier = file.getId();
@@ -1241,8 +1233,10 @@ public class NetcdfISO {
 
     /**
      * Creates a {@code ResponsibleParty} element if at least one of the name, email or URL
-     * attributes is defined. Subclasses can override this method if they need to complete
-     * the information.
+     * attributes is defined.
+     * <p>
+     * Implementation note: this method tries to reuse the existing {@link #creator} instance,
+     * or part of it, if it is suitable.
      *
      * @param  keys  The group of attribute names to use for fetching the values.
      * @param  group The group in which to read the attributes values.
@@ -1253,11 +1247,7 @@ public class NetcdfISO {
      * @see #CONTRIBUTOR
      * @see #PUBLISHER
      */
-    /*
-     * Implementation note: this method tries to reuse the existing {@link #creator} instance,
-     * or part of it, if it is suitable.
-     */
-    protected ResponsibleParty createResponsibleParty(final Group group, final Responsible keys)
+    private ResponsibleParty createResponsibleParty(final Group group, final Responsible keys)
             throws IOException
     {
         final String individualName   = getStringValue(group, keys.NAME);
@@ -1683,8 +1673,7 @@ public class NetcdfISO {
         final String name = variable.getShortName();
         if (name != null) {
             if (nameFactory == null) {
-                nameFactory = (DefaultNameFactory) FactoryFinder.getNameFactory(
-                        new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class));
+                nameFactory = FactoryFinder.getNameFactory(null);
             }
             final StringBuilder type = new StringBuilder(variable.getDataType().getPrimitiveClassType().getSimpleName());
             for (int i=variable.getShape().length; --i>=0;) {
@@ -1705,8 +1694,6 @@ public class NetcdfISO {
 
     /**
      * Creates a {@code <gmd:rangeElementDescription>} elements from the given information.
-     * Subclasses can override this method if they need to complete the information provided
-     * in the returned object.
      * <p>
      * <b>Note:</b> ISO 19115 range elements are approximatively equivalent to
      * {@link org.geotoolkit.coverage.Category} in the {@code geotk-coverage} module.
@@ -1719,7 +1706,7 @@ public class NetcdfISO {
      * @return The sample dimension information or {@code null} if none.
      * @throws IOException If an I/O operation was necessary but failed.
      */
-    protected RangeElementDescription createRangeElementDescription(final VariableSimpleIF variable,
+    private RangeElementDescription createRangeElementDescription(final VariableSimpleIF variable,
             final String name, final String meaning, final Number mask, final Number value) throws IOException
     {
         if (name != null && meaning != null) {
@@ -1739,11 +1726,12 @@ public class NetcdfISO {
      * @return The ISO metadata object.
      * @throws IOException If an I/O operation was necessary but failed.
      */
-    public Metadata createMetadata() throws IOException {
+    @Override
+    public Metadata readMetadata() throws IOException {
         final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
         metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
-        final Identifier identifier = createIdentifier();
+        final Identifier identifier = getFileIdentifier();
         if (identifier != null) {
             metadata.setFileIdentifier(identifier.getCode());
         }

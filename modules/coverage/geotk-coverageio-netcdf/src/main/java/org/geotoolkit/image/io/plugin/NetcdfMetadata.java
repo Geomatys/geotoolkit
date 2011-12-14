@@ -52,7 +52,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
-import org.geotoolkit.image.io.metadata.NetcdfISO;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DiscoveryAccessor;
@@ -579,7 +578,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
                 final Metadata metadata;
                 try {
-                    metadata = new NetcdfISO((NetcdfFile) isoMetadata, this).createMetadata();
+                    metadata = new NetcdfTranscoder((NetcdfFile) isoMetadata, this).readMetadata();
                 } catch (IOException e) {
                     throw new BackingStoreException(e); // Will be handled by GridCoverageReader.
                 }

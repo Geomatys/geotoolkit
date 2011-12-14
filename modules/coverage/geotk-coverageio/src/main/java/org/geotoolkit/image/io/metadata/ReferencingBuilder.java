@@ -68,9 +68,9 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  *        metadata and the referencing objects is more indirect. For example the kind of object
  *        to create depends on the value of the <code>"type"</code> attribute.}
  *
- * The main methods in this class are {@link #getOptionalCRS()} for reading, and
- * {@link #setCoordinateReferenceSystem setCoordinateReferenceSystem(...)} for writing.
- * The other getter methods are provided mostly as hooks that subclasses can override.
+ * The main methods in this class are {@link #build()} for reading, and
+ * {@link #setCoordinateReferenceSystem(CoordinateReferenceSystem) setCoordinateReferenceSystem(...)}
+ * for writing. The other getter methods are provided mostly as hooks that subclasses can override.
  * The table below summarizes them:
  * <p>
  * <table border="1" cellspacing="0">
@@ -80,7 +80,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  *     <th nowrap>&nbsp;Setter&nbsp;</th>
  *   </tr><tr>
  *     <td>&nbsp;{@link CoordinateReferenceSystem}&nbsp;</td>
- *     <td>&nbsp;{@link #getOptionalCRS()}&nbsp;</td>
+ *     <td>&nbsp;{@link #build()}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link CoordinateReferenceSystem}&nbsp;</td>
@@ -106,12 +106,12 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * </table>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.20
  *
  * @since 3.08 (derived from 3.07)
  * @module
  */
-public class ReferencingBuilder extends Builder {
+public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Small tolerance factor for comparisons of floating point numbers.
      */
@@ -252,8 +252,11 @@ public class ReferencingBuilder extends Builder {
      * {@linkplain MetadataAccessor#warningOccurred logged} and this method returns {@code null}.
      *
      * @return The CRS, or {@code null} if none.
+     *
+     * @since 3.20 (derived from 3.07)
      */
-    public CoordinateReferenceSystem getOptionalCRS() {
+    @Override
+    public CoordinateReferenceSystem build() {
         Exception failure;
         try {
             return getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
@@ -268,6 +271,14 @@ public class ReferencingBuilder extends Builder {
         }
         accessor.warning(null, getClass(), "getOptionalCRS", failure);
         return null;
+    }
+
+    /**
+     * @deprecated Renamed {@link #build()}.
+     */
+    @Deprecated
+    public CoordinateReferenceSystem getOptionalCRS() {
+        return build();
     }
 
     /**

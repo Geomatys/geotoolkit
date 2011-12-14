@@ -371,7 +371,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
                 } catch (NoSuchElementException e) {
                     return null; // As of method contract.
                 }
-                object = type.cast(builder.getOptionalCRS());
+                object = type.cast(builder.build());
             } else {
                 /*
                  * For the general case (typically ISO 19115-2 metadata), create
@@ -427,7 +427,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             return null; // As of method contract.
         }
         if (isCRS) {
-            return type.cast(new ReferencingBuilder(accessor).getOptionalCRS());
+            return type.cast(new ReferencingBuilder(accessor).build());
         } else {
             return getInstanceForType(type, accessor);
         }

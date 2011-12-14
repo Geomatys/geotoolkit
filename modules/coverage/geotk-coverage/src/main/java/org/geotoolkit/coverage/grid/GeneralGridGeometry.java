@@ -119,15 +119,15 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @since 3.20 (derived from 2.2)
      */
-    public static final int GRID_ENVELOPE = 4;
+    public static final int EXTENT = 4;
 
     /**
-     * @deprecated Renamed {@link #GRID_ENVELOPE}.
+     * @deprecated Renamed {@link #EXTENT}.
      *
      * @since 2.2
      */
     @Deprecated
-    public static final int GRID_RANGE = GRID_ENVELOPE;
+    public static final int GRID_RANGE = EXTENT;
 
     /**
      * A bitmask to specify the validity of the {@linkplain #getGridToCRS() grid to CRS}
@@ -202,9 +202,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         extent       = gm.extent;  // Do not clone; we assume it is safe to share.
         gridToCRS    = gm.gridToCRS;
         cornerToCRS  = gm.cornerToCRS;
-        final GeneralEnvelope env = new GeneralEnvelope(gm.envelope);
-        env.setCoordinateReferenceSystem(crs);
-        envelope = new ImmutableEnvelope(env);
+        envelope     = new ImmutableEnvelope(crs, gm.envelope);
     }
 
     /**
@@ -527,7 +525,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *
      * @return The grid envelope (never {@code null}).
      * @throws InvalidGridGeometryException if this grid geometry has no grid envelope (i.e.
-     *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #GRID_ENVELOPE})</code>
+     *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #EXTENT})</code>
      *         returned {@code false}).
      *
      * @see GridGeometry2D#getGridRange2D()
@@ -546,10 +544,10 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     @Deprecated
     public GridEnvelope getGridRange() throws InvalidGridGeometryException {
         if (extent != null) {
-            assert isDefined(GRID_ENVELOPE);
+            assert isDefined(EXTENT);
             return clone(extent);
         }
-        assert !isDefined(GRID_ENVELOPE);
+        assert !isDefined(EXTENT);
         throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
     }
 
@@ -649,7 +647,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     /**
      * Returns {@code true} if all the parameters specified by the argument are set.
      *
-     * @param  bitmask Any combination of {@link #CRS}, {@link #ENVELOPE}, {@link #GRID_ENVELOPE}
+     * @param  bitmask Any combination of {@link #CRS}, {@link #ENVELOPE}, {@link #EXTENT}
      *         and {@link #GRID_TO_CRS}.
      * @return {@code true} if all specified attributes are defined (i.e. invoking the
      *         corresponding method will not thrown an {@link InvalidGridGeometryException}).
@@ -661,13 +659,13 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * @see javax.media.jai.ImageLayout#isValid
      */
     public boolean isDefined(final int bitmask) throws IllegalArgumentException {
-        if ((bitmask & ~(CRS | ENVELOPE | GRID_ENVELOPE | GRID_TO_CRS)) != 0) {
+        if ((bitmask & ~(CRS | ENVELOPE | EXTENT | GRID_TO_CRS)) != 0) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "bitmask", bitmask));
         }
         return ((bitmask & CRS)         == 0 || (envelope  != null && envelope.getCoordinateReferenceSystem() != null))
             && ((bitmask & ENVELOPE)    == 0 || (envelope  != null && !envelope.isNull()))
-            && ((bitmask & GRID_ENVELOPE)  == 0 || (extent != null))
+            && ((bitmask & EXTENT)  == 0 || (extent != null))
             && ((bitmask & GRID_TO_CRS) == 0 || (gridToCRS != null));
     }
 

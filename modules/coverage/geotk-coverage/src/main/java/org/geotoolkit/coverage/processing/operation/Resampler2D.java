@@ -236,7 +236,7 @@ final class Resampler2D extends GridCoverage2D {
             automaticGG = true;
             automaticGR = true;
         } else {
-            automaticGR = !targetGG.isDefined(GridGeometry2D.GRID_ENVELOPE);
+            automaticGR = !targetGG.isDefined(GridGeometry2D.EXTENT);
             if (!automaticGR || targetGG.isDefined(GridGeometry2D.GRID_TO_CRS)) {
                 automaticGG = false;
             } else {
@@ -343,7 +343,7 @@ final class Resampler2D extends GridCoverage2D {
                 step2    = MathTransforms.identity(step1.getTargetDimensions());
                 step3    = sourceGG.getGridToCRS(CORNER).inverse();
                 allSteps = mtFactory.createConcatenatedTransform(step1, step3);
-                if (!targetGG.isDefined(GridGeometry2D.GRID_ENVELOPE)) {
+                if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
                     /*
                      * If the target grid envelope was not explicitly specified, a grid envelope
                      * will be automatically computed in such a way that it will maps to the same
@@ -396,7 +396,7 @@ final class Resampler2D extends GridCoverage2D {
                 step1    = targetGG.getGridToCRS(CORNER);
             } else {
                 step1 = targetGG.getGridToCRS(CORNER);
-                if (!targetGG.isDefined(GridGeometry2D.GRID_ENVELOPE)) {
+                if (!targetGG.isDefined(GridGeometry2D.EXTENT)) {
                     final GeneralEnvelope gridEnvelope = Envelopes.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
                     targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
@@ -827,8 +827,8 @@ final class Resampler2D extends GridCoverage2D {
         if (targetGG == null || targetGG.equals(sourceGG)) {
             return true;
         }
-        if (targetGG.isDefined(GridGeometry2D.GRID_ENVELOPE) &&
-            sourceGG.isDefined(GridGeometry2D.GRID_ENVELOPE))
+        if (targetGG.isDefined(GridGeometry2D.EXTENT) &&
+            sourceGG.isDefined(GridGeometry2D.EXTENT))
         {
             if (!targetGG.getExtent().equals(sourceGG.getExtent())) {
                 return false;

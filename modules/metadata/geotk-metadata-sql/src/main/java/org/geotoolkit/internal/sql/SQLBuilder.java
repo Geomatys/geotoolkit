@@ -32,7 +32,7 @@ import org.geotoolkit.lang.Builder;
  * @since 3.03
  * @module
  */
-public final class SQLBuilder extends Builder {
+public final class SQLBuilder extends Builder<String> {
     /**
      * The database dialect. This is used for a few database-dependent syntax.
      */
@@ -304,6 +304,14 @@ public final class SQLBuilder extends Builder {
      */
     public static String doubleQuotes(final Object value) {
         return value.toString().replace("'", "''");
+    }
+
+    /**
+     * Returns the SQL statement.
+     */
+    @Override
+    public String build() {
+        return toString();
     }
 
     /**

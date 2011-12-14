@@ -807,7 +807,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @return The grid envelope (never {@code null}).
      * @throws InvalidGridGeometryException if this grid geometry has no grid envelope (i.e.
-     *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #GRID_ENVELOPE GRID_ENVELOPE})</code>
+     *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #EXTENT EXTENT})</code>
      *         returned {@code false}).
      *
      * @see #getExtent()
@@ -825,13 +825,13 @@ public class GridGeometry2D extends GeneralGridGeometry {
     public GridEnvelope2D getGridRange2D() throws InvalidGridGeometryException {
         final GridEnvelope extent = this.extent;
         if (extent != null) {
-            assert isDefined(GRID_ENVELOPE);
+            assert isDefined(EXTENT);
             return new GridEnvelope2D(extent.getLow (gridDimensionX),
                                       extent.getLow (gridDimensionY),
                                       extent.getSpan(gridDimensionX),
                                       extent.getSpan(gridDimensionY));
         }
-        assert !isDefined(GRID_ENVELOPE);
+        assert !isDefined(EXTENT);
         throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
     }
 

@@ -243,7 +243,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         /*
          * Following is the purpose of this test suite.
          */
-        CoordinateReferenceSystem crs = builder.getOptionalCRS();
+        CoordinateReferenceSystem crs = builder.build();
         assertEquals(DefaultGeographicCRS.class, crs.getClass());
         GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
 
@@ -252,7 +252,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         assertSame(DefaultGeodeticDatum.WGS84,       builder.getDatum(Datum.class));
 
         builder.setIgnoreUserObject(true);
-        crs = builder.getOptionalCRS();
+        crs = builder.build();
         assertEquals(DefaultGeographicCRS.class, crs.getClass());
         datum = ((GeographicCRS) crs).getDatum();
 
@@ -284,7 +284,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         /*
          * Following is the purpose of this test suite.
          */
-        CoordinateReferenceSystem crs = builder.getOptionalCRS();
+        CoordinateReferenceSystem crs = builder.build();
         assertEquals(DefaultProjectedCRS.class, crs.getClass());
         GeodeticDatum datum = ((ProjectedCRS) crs).getDatum();
 
@@ -293,7 +293,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         assertSame(originalCRS.getDatum(),            builder.getDatum(Datum.class));
 
         builder.setIgnoreUserObject(true);
-        crs = builder.getOptionalCRS();
+        crs = builder.build();
         assertEquals(DefaultProjectedCRS.class, crs.getClass());
         datum = ((ProjectedCRS) crs).getDatum();
 
