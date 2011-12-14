@@ -22,8 +22,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.Dimension;
 import java.awt.image.ColorModel;
+import java.awt.image.SampleModel;
+import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.IndexColorModel;
@@ -48,6 +51,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
@@ -85,7 +89,7 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td>&nbsp;{@link #extent}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setExtent(GridEnvelope) Grid envelope instance} or
- *               {@linkplain #setExtent(int[]) spans} (typically width and height)&nbsp;</td>
+ *               {@linkplain #setExtent(int[]) spans} (typically image width and height)&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #pixelAnchor}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setPixelAnchor(PixelInCell) Code list value}&nbsp;</td>
@@ -96,6 +100,10 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridGeometry}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setGridGeometry(GridGeometry) Grid geometry instance}&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link #sampleRanges}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain #setSampleRange(int, NumberRange) range instance} or
+ *               {@linkplain #setSampleRange(int, int, int) lower and upper values}&nbsp;</td>
  *   </tr>
  * </table>
  *
@@ -132,9 +140,17 @@ import org.geotoolkit.resources.Errors;
  */
 public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
-     * The default {@linkplain #range}.
+     * The default {@linkplain #sampleRange}.
      */
     private static final NumberRange<Integer> DEFAULT_RANGE = NumberRange.create(0, true, 256, false);
+
+    /**
+     * The initial length of arrays in this class. Those arrays are created only when first needed.
+     * A value of 4 is a good match for ARGB images - few images need more bands.
+     *
+     * @since 3.20
+     */
+    private static final int INITIAL_ARRAY_LENGTH = 4;
 
     /**
      * The coordinate reference system, or {@code null} if unspecified. This field is non-null only
@@ -142,8 +158,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * explicitely specified} by the user. The values inferred from other attributes are not stored
      * in the field.
      *
-     * @see GridCoverage2D#getCoordinateReferenceSystem()
-     * @see GridGeometry2D#getCoordinateReferenceSystem()
+     * @see #getCoordinateReferenceSystem()
+     * @see #setCoordinateReferenceSystem(CoordinateReferenceSystem)
+     * @see #setCoordinateReferenceSystem(String)
      *
      * @since 3.20
      */
@@ -154,8 +171,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * field is non-null only if the envelope has been {@linkplain #setEnvelope(Envelope) explicitely
      * specified} by the user. The values inferred from other attributes are not stored in the field.
      *
-     * @see GridCoverage2D#getEnvelope()
-     * @see GridGeometry2D#getEnvelope()
+     * @see #getEnvelope()
+     * @see #setEnvelope(Envelope)
+     * @see #setEnvelope(double[])
      *
      * @since 3.20 (derived from 2.5)
      */
@@ -166,8 +184,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * has been {@linkplain #setExtent(GridEnvelope) explicitely specified} by the user. The values
      * inferred from other attributes are not stored in the field.
      *
-     * @see org.opengis.coverage.grid.Grid#getExtent()
-     * @see GridGeometry2D#getExtent()
+     * @see #getExtent()
+     * @see #setExtent(GridEnvelope)
+     * @see #setExtent(int[])
      *
      * @since 3.20
      */
@@ -178,7 +197,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * only if the transform has been {@linkplain #setGridToCRS(MathTransform) explicitely specified}
      * by the user. The values inferred from other attributes are not stored in the field.
      *
-     * @see GridGeometry2D#getGridToCRS()
+     * @see #getGridToCRS()
+     * @see #setGridToCRS(MathTransform)
+     * @see #setGridToCRS(double, double, double, double, double, double)
      *
      * @since 3.20
      */
@@ -186,8 +207,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Whatever the {@link #gridToCRS} transform maps pixel center or pixel corner. This field is
-     * non-null only if it has has been {@linkplain #setPixelAnchor(PixelInCell) explicitely specified}
+     * non-null only if it has been {@linkplain #setPixelAnchor(PixelInCell) explicitely specified}
      * by the user. The values inferred from other attributes are not stored in the field.
+     *
+     * @see #getPixelAnchor()
+     * @see #setPixelAnchor(PixelInCell)
      *
      * @since 3.20
      */
@@ -198,7 +222,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely specified} by the
      * user. The values inferred from other attributes are not stored in the field.
      *
-     * @see GridCoverage2D#getGridGeometry()
+     * @see #getGridGeometry()
+     * @see #setGridGeometry(GridGeometry)
      *
      * @since 3.20
      */
@@ -212,13 +237,32 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     private transient GridGeometry cachedGridGeometry;
 
     /**
-     * The range of sample values.
+     * Number of sample dimensions (bands), or 0 if unspecified. This field is non-zero only if
+     * the number of sample dimensions has been {@linkplain #setNumSampleDimensions(int) explicitely
+     * specified} by the user. The values inferred from other attributes are not stored in the field.
+     *
+     * @see #getNumSampleDimensions()
+     * @see #setNumSampleDimensions(int)
      */
-    private NumberRange<?> range;
+    protected int numSampleDimensions;
 
     /**
-     * The list of variables created. Each variable will be mapped to a
-     * {@linkplain GridSampleDimension sample dimension}. Will be created when first needed.
+     * The range of sample values, or {@code null} if unspecified. This array can have any length,
+     * but only the {@link #numSampleDimensions} first elements are valid. Each element can be non-null
+     * only if the range has been {@linkplain #setSampleRange(int, NumberRange) explicitely specified}
+     * by the user. The values inferred from other attributes are not stored in the field.
+     *
+     * @see #getSampleRange(int)
+     * @see #setSampleRange(int, NumberRange)
+     * @see #setSampleRange(int, int, int)
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    protected NumberRange<?>[] sampleRanges;
+
+    /**
+     * The list of variables created by the user. Each variable will be mapped to a
+     * {@linkplain GridSampleDimension sample dimension}. The list is created when first needed.
      *
      * @see #newVariable(CharSequence, Unit)
      */
@@ -291,6 +335,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #crs
      * @see Envelope#getCoordinateReferenceSystem()
+     * @see GridGeometry2D#getCoordinateReferenceSystem()
+     * @see GridCoverage2D#getCoordinateReferenceSystem()
      */
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         final CoordinateReferenceSystem crs = this.crs;
@@ -376,6 +422,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #envelope
      * @see GridGeometry2D#getEnvelope()
+     * @see GridCoverage2D#getEnvelope()
      */
     public Envelope getEnvelope() {
         final Envelope envelope = this.envelope;
@@ -397,7 +444,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@linkplain #setCoordinateReferenceSystem(CoordinateReferenceSystem) explicitely defined},
      * then the given envelope will be reprojected to that CRS.
      *
-     * @param  envelope The new envelope to use.
+     * @param  envelope The new envelope to use, or {@code null}.
      * @throws IllegalArgumentException if the envelope is illegal for the CRS.
      *
      * @see #envelope
@@ -464,6 +511,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see #extent
      * @see GridGeometry2D#getExtent()
+     * @see org.opengis.coverage.grid.Grid#getExtent()
      *
      * @since 3.20
      */
@@ -490,7 +538,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * Sets the grid extent to the specified value.
      *
-     * @param  extent The new grid extent to use.
+     * @param  extent The new grid extent to use, or {@code null}.
      * @throws IllegalArgumentException if the extent is illegal.
      *
      * @since 3.20
@@ -566,7 +614,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@linkplain MathTransform#getTargetDimensions() target dimensions} shall matches the
      * {@linkplain #crs} and {@linkplain #envelope} dimensions (if any).
      *
-     * @param  gridToCRS The new <cite>grid to CRS</cite> transform.
+     * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
      * @throws IllegalArgumentException If the given transform is invalid, for example if the
      *         dimensions don't match.
      *
@@ -617,6 +665,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @return The "pixel in cell" policy. If unspecified, default value is
      *         {@link PixelInCell#CELL_CENTER}.
      *
+     * @see #pixelAnchor
+     * @see GeneralGridGeometry#GeneralGridGeometry(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem)
+     *
      * @since 3.20
      */
     public PixelInCell getPixelAnchor() {
@@ -628,7 +679,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * Sets the whatever the {@linkplain #gridToCRS grid to CRS} transform maps pixel center
      * or pixel corner.
      *
-     * @param anchor The new "pixel in cell" policy.
+     * @param anchor The new "pixel in cell" policy, or {@code null}.
      *
      * @since 3.20
      */
@@ -689,7 +740,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * the {@linkplain #crs}, {@linkplain #envelope}, {@linkplain #extent}, {@linkplain #gridToCRS
      * grid to CRS} and {@linkplain #pixelAnchor pixel anchor} attributes.
      *
-     * @param geom The new grid geometry.
+     * @param geom The new grid geometry, or {@code null}.
      *
      * @since 3.20
      */
@@ -699,7 +750,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Invoked when a property used for computing the grid geometry changed.
+     * Invoked when a property used for computing the grid geometry has been changed.
      *
      * @since 3.20
      */
@@ -710,33 +761,183 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Returns the range of sample values. If no range has been {@linkplain #setSampleRange
-     * explicitly defined}, then the default is a range from 0 inclusive to 256 exclusive.
+     * Invoked when a property used for computing the sample dimensions has been changed.
      *
-     * @return The current range of sample values.
+     * @since 3.20
      */
-    public NumberRange<?> getSampleRange() {
-        return (range != null) ? range : DEFAULT_RANGE;
-    }
-
-    /**
-     * Sets the range of sample values.
-     *
-     * @param range The new range of sample values.
-     */
-    public void setSampleRange(final NumberRange<?> range) {
-        this.range = range;
+    private void sampleDimensionsChanged() {
         coverage = null;
     }
 
     /**
-     * Sets the range of sample values.
+     * Returns the number of sample dimensions (bands). If this number has not been
+     * {@linkplain #setNumSampleDimensions(int) explicitly defined}, then this method
+     * returns the number of bands in the {@link #image}, if any. If there is no image
+     * neither, then the default value is 1.
      *
+     * @return The number of sample dimensions (bands).
+     *
+     * @see #numSampleDimensions
+     *
+     * @since 3.20
+     */
+    public int getNumSampleDimensions() {
+        int n = numSampleDimensions;
+        if (n == 0) {
+            final RenderedImage image = this.image;
+            if (image != null) {
+                final SampleModel sampleModel = image.getSampleModel();
+                if (sampleModel != null) {
+                    return sampleModel.getNumBands();
+                }
+            }
+            n = 1;
+        }
+        return n;
+    }
+
+    /**
+     * Sets the number of sample dimensions (bands).
+     *
+     * @param n Number of sample dimensions, or 0 to unspecify.
+     *
+     * @since 3.20
+     */
+    public void setNumSampleDimensions(final int n) {
+        ArgumentChecks.ensurePositive("n", n);
+        numSampleDimensions = n;
+        sampleDimensionsChanged();
+    }
+
+    /**
+     * Returns the last non-null element at the given index or in a previous index
+     * in the given array.
+     *
+     * @param  <E>   The type of array elements.
+     * @param  array The array from which to get an element, or {@code null}.
+     * @param  band  The index of the sample dimension for which to get the element.
+     * @return The array element for the given sample dimension, or {@code null}.
+     * @throws IndexOutOfBoundsException If the given {@code band} index is out of bounds.
+     *
+     * @since 3.20
+     */
+    private <E> E getArrayElement(final E[] array, int band) throws IndexOutOfBoundsException {
+        ArgumentChecks.ensureValidIndex(getNumSampleDimensions(), band);
+        if (band >= array.length) {
+            band = array.length - 1;
+        }
+        for (; band >= 0; band--) {
+            final E element = array[band];
+            if (element != null) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value at the given index in the given array. If the given index is equals or
+     * greater than the {@linkplain #getNumSampleDimensions() number of sample dimensions},
+     * then the later will be increased as needed.
+     *
+     * @param  <E>   The type of array elements.
+     * @param  array The array in which to set an element.
+     * @param  band  The index of the sample dimension for which to set the element.
+     * @param  value The new element value, or {@code null}.
+     * @return The array, or a copy of the array if we needed to increase its size.
+     * @throws IndexOutOfBoundsException If the given {@code band} index is negative.
+     *
+     * @since 3.20
+     */
+    private <E> E[] setArrayElement(E[] array, final int band, final E value) throws IndexOutOfBoundsException {
+        if (band >= numSampleDimensions) {
+            numSampleDimensions = band+1;
+        }
+        ArgumentChecks.ensureValidIndex(getNumSampleDimensions(), band);
+        final boolean expand = (band >= array.length);
+        if (value != null || !expand) {
+            if (expand) {
+                array = Arrays.copyOf(array, Math.max(array.length*2, band+1));
+            }
+            array[band] = value;
+        }
+        return array;
+    }
+
+    /**
+     * Returns the range of sample values for the given sample dimension. If no range has been
+     * {@linkplain #setSampleRange(int, NumberRange) explicitly defined}, then this method
+     * searches backward in previous sample dimensions until a range is found. If no range
+     * is found, then the default is a range from 0 inclusive to 256 exclusive.
+     *
+     * @param  band The index of the sample dimension for which to get the range of sample values.
+     * @return The current range of sample values for the given index.
+     * @throws IndexOutOfBoundsException If the given {@code band} index is out of bounds.
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    public NumberRange<?> getSampleRange(final int band) throws IndexOutOfBoundsException {
+        final NumberRange<?> sampleRange = getArrayElement(sampleRanges, band);
+        return (sampleRange != null) ? sampleRange : DEFAULT_RANGE;
+    }
+
+    /**
+     * Sets the range of sample values for the given sample dimension. If the given index is equals
+     * or greater than the {@linkplain #getNumSampleDimensions() number of sample dimensions}, then
+     * the later will be increased as needed.
+     *
+     * @param  band  The index of the sample dimension for which to set the range.
+     * @param  range The new range of sample values, or {@code null}.
+     * @throws IndexOutOfBoundsException If the given {@code band} index is negative.
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    public void setSampleRange(final int band, final NumberRange<?> range) throws IndexOutOfBoundsException {
+        if (sampleRanges == null) {
+            sampleRanges = new NumberRange<?>[INITIAL_ARRAY_LENGTH];
+        }
+        sampleRanges = setArrayElement(sampleRanges, band, range);
+        sampleDimensionsChanged();
+    }
+
+    /**
+     * Sets the range of sample values for the given sample dimension. If the given index is equals
+     * or greater than the {@linkplain #getNumSampleDimensions() number of sample dimensions}, then
+     * the later will be increased as needed.
+     *
+     * @param  band  The index of the sample dimension for which to set the range.
      * @param  lower The lower sample value (inclusive), typically 0.
      * @param  upper The upper sample value (exclusive), typically 256.
+     * @throws IndexOutOfBoundsException If the given {@code band} index is negative.
+     *
+     * @since 3.20 (derived from 2.5)
      */
+    public void setSampleRange(final int band, final int lower, final int upper) throws IndexOutOfBoundsException {
+        setSampleRange(band, NumberRange.create(lower, true, upper, false));
+    }
+
+    /**
+     * @deprecated Replaced by {@link #getSampleRange(int)}.
+     */
+    @Deprecated
+    public NumberRange<?> getSampleRange() {
+        return getSampleRange(0);
+    }
+
+    /**
+     * @deprecated Replaced by {@link #getSampleRange(int)}.
+     */
+    @Deprecated
+    public void setSampleRange(final NumberRange<?> range) {
+        setSampleRange(0, range);
+    }
+
+    /**
+     * @deprecated Replaced by {@link #getSampleRange(int, int, int)}.
+     */
+    @Deprecated
     public void setSampleRange(final int lower, final int upper) {
-        setSampleRange(NumberRange.create(lower, true, upper, false));
+        setSampleRange(0, lower, upper);
     }
 
     /**
@@ -1056,7 +1257,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (sampleDimension == null) {
                 NumberRange<?> range = getSampleRange();
                 int lower = (int) Math.floor(range.getMinimum(true));
-                int upper = (int) Math.ceil(range.getMaximum(false));
+                int upper = (int) Math.ceil (range.getMaximum(false));
                 final Category[] categories = new Category[nodata.size() + 1];
                 int i = 0;
                 for (final Map.Entry<Integer,CharSequence> entry : nodata.entrySet()) {
