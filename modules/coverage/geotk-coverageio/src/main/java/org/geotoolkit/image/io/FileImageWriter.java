@@ -44,8 +44,6 @@ import org.geotoolkit.internal.image.io.Formats;
  *   <li>{@link File} outputs are returned as-is.</li>
  *   <li>{@link String} outputs are converted to {@code File} objects by a call to the
  *       {@link File#File(String)} constructor.</li>
- *   <li>{@link Path} outputs are converted to {@code File} objects by a call to
- *       {@link Path#toFile()} method.</li>
  *   <li>{@link URL} and {@link URI} inputs are converted to {@code File} objects by a call to the
  *       {@link File#File(URI)} constructor only if the protocol is {@code "file"}. In the particular
  *       case of {@code URL}s, the encoding is specified by {@link #getURLEncoding()}.</li>
