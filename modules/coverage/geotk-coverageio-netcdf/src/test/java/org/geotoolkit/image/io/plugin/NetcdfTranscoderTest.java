@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.metadata;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.List;
 import java.io.File;
@@ -38,7 +38,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.Role;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.io.plugin.NetcdfImageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
@@ -48,14 +47,14 @@ import static org.geotoolkit.test.Commons.getSingleton;
 
 
 /**
- * Tests using the {@link NetcdfISO} class.
+ * Tests using the {@link NetcdfTranscoder} class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 3.20
  */
-public final strictfp class NetcdfISOTest {
+public final strictfp class NetcdfTranscoderTest {
     /**
      * The THREDDS XML test file.
      */
@@ -82,8 +81,8 @@ public final strictfp class NetcdfISOTest {
         final Metadata metadata;
         try (InputStream in = TestData.openStream(NetcdfImageReader.class, THREDDS_FILE)) {
             final NetcdfFile file = NcMLReader.readNcML(in, null);
-            final NetcdfISO ncISO = new NetcdfISO(file, null);
-            metadata = ncISO.createMetadata();
+            final NetcdfTranscoder ncISO = new NetcdfTranscoder(file, null);
+            metadata = ncISO.readMetadata();
             file.close();
         }
         assertEquals("crm_v1", metadata.getFileIdentifier());
@@ -117,8 +116,8 @@ public final strictfp class NetcdfISOTest {
     @Test
     public void testNC() throws IOException {
         final File file = TestData.file(NetcdfImageReader.class, BINARY_FILE);
-        final NetcdfISO ncISO = new NetcdfISO(NetcdfFile.open(file.getPath()), null);
-        final Metadata metadata = ncISO.createMetadata();
+        final NetcdfTranscoder ncISO = new NetcdfTranscoder(NetcdfFile.open(file.getPath()), null);
+        final Metadata metadata = ncISO.readMetadata();
         ncISO.file.close();
         checkSST(metadata);
     }
