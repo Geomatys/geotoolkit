@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.csw.xml.CSWResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -129,9 +129,9 @@ public class AcknowledgementType implements CSWResponse {
         }
         if (object instanceof AcknowledgementType) {
             final AcknowledgementType that = (AcknowledgementType) object;
-            return Utilities.equals(this.echoedRequest, that.echoedRequest) &&
-                   Utilities.equals(this.requestId,     that.requestId)     &&
-                   Utilities.equals(this.timeStamp,     that.timeStamp);
+            return Objects.equals(this.echoedRequest, that.echoedRequest) &&
+                   Objects.equals(this.requestId,     that.requestId)     &&
+                   Objects.equals(this.timeStamp,     that.timeStamp);
         }
         return false;
     }

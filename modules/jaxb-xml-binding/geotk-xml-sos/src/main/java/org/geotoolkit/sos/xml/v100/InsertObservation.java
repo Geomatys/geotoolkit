@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -105,8 +105,8 @@ public class InsertObservation extends RequestBaseType {
         }
         if (object instanceof InsertObservation && super.equals(object)) {
             final InsertObservation that = (InsertObservation) object;
-            return Utilities.equals(this.assignedSensorId, that.assignedSensorId) &&
-                   Utilities.equals(this.observation,      that.observation);
+            return Objects.equals(this.assignedSensorId, that.assignedSensorId) &&
+                   Objects.equals(this.observation,      that.observation);
         } 
         return false;
     }

@@ -18,6 +18,7 @@ package org.geotoolkit.ebrim.xml.v250;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ebrim.xml.RegistryObject;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -356,15 +356,15 @@ public class RegistryObjectType implements RegistryObject {
         }
         if (obj instanceof RegistryObjectType) {
             final RegistryObjectType that = (RegistryObjectType) obj;
-            return Utilities.equals(this.classification,     that.classification) &&
-                   Utilities.equals(this.description,        that.description) &&
-                   Utilities.equals(this.externalIdentifier, that.externalIdentifier) &&
-                   Utilities.equals(this.home,               that.home) &&
-                   Utilities.equals(this.id,                 that.id) &&
-                   Utilities.equals(this.name,               that.name) &&
-                   Utilities.equals(this.objectType,         that.objectType) &&
-                   Utilities.equals(this.slot,               that.slot) &&
-                   Utilities.equals(this.status,             that.status);
+            return Objects.equals(this.classification,     that.classification) &&
+                   Objects.equals(this.description,        that.description) &&
+                   Objects.equals(this.externalIdentifier, that.externalIdentifier) &&
+                   Objects.equals(this.home,               that.home) &&
+                   Objects.equals(this.id,                 that.id) &&
+                   Objects.equals(this.name,               that.name) &&
+                   Objects.equals(this.objectType,         that.objectType) &&
+                   Objects.equals(this.slot,               that.slot) &&
+                   Objects.equals(this.status,             that.status);
         }
         return false;
     }

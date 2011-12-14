@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Objects;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.IndeterminateValue;
 import org.opengis.temporal.TemporalReferenceSystem;
@@ -71,7 +71,7 @@ public class DefaultClockTime extends DefaultTemporalPosition implements ClockTi
         if (object instanceof DefaultClockTime && super.equals(object)) {
             final DefaultClockTime that = (DefaultClockTime) object;
 
-            return Utilities.equals(this.clockTime, that.clockTime);
+            return Objects.equals(this.clockTime, that.clockTime);
         }
         return false;
     }

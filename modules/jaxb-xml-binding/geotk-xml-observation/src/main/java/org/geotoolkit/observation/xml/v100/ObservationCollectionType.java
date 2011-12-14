@@ -18,6 +18,7 @@ package org.geotoolkit.observation.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.observation.Observation;
 import org.opengis.observation.ObservationCollection;
 
@@ -100,7 +100,7 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
             }
             int i = 0;
             for (ObservationPropertyType thisOp: this.member) {
-                if (!Utilities.equals(thisOp.getObservation(), that.member.get(i).getObservation()))
+                if (!Objects.equals(thisOp.getObservation(), that.member.get(i).getObservation()))
                      return false ;  
                 i++;        
             }

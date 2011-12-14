@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractEventList;
 import org.geotoolkit.sml.xml.AbstractEventListMember;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -163,8 +163,8 @@ public class EventList implements AbstractEventList {
         if (object instanceof EventList) {
             final EventList that = (EventList) object;
 
-            return Utilities.equals(this.member, that.member)
-                    && Utilities.equals(this.id, that.id);
+            return Objects.equals(this.member, that.member)
+                    && Objects.equals(this.id, that.id);
         }
         return false;
     }

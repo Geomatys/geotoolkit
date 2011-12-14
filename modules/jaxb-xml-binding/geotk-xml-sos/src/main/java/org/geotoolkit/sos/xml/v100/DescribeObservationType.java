@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -87,7 +87,7 @@ public class DescribeObservationType extends RequestBaseType {
         }
         if (object instanceof DescribeObservationType && super.equals(object)) {
             final DescribeObservationType that = (DescribeObservationType) object;
-            return Utilities.equals(this.observedProperty, that.observedProperty);
+            return Objects.equals(this.observedProperty, that.observedProperty);
         } 
         return false;
     }

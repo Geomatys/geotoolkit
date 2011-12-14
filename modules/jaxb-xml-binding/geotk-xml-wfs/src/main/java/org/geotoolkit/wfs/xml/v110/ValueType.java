@@ -19,6 +19,7 @@ package org.geotoolkit.wfs.xml.v110;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,7 +37,6 @@ import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -125,7 +125,7 @@ public class ValueType {
         }
         if (object instanceof ValueType) {
             final ValueType that = (ValueType) object;
-            return  Utilities.equals(this.getValue(), that.getValue());
+            return  Objects.equals(this.getValue(), that.getValue());
         }
         return false;
     }

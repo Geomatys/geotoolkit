@@ -18,19 +18,13 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
@@ -84,7 +78,7 @@ public abstract class AbstractMapItem implements MapItem {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
+            if (Objects.equals(oldName, name)) {
                 return;
             }
             this.name = name;

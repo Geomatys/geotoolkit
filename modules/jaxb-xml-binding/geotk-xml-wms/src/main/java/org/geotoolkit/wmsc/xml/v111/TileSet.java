@@ -20,13 +20,13 @@ package org.geotoolkit.wmsc.xml.v111;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 
 
@@ -255,14 +255,14 @@ public class TileSet {
         }
         if (object instanceof TileSet) {
             final TileSet that = (TileSet) object;
-            return Utilities.equals(this.boundingBox, that.boundingBox) &&
-                   Utilities.equals(this.format,     that.format)     &&
-                   Utilities.equals(this.height,   that.height)   &&
-                   Utilities.equals(this.layers,   that.layers)   &&
-                   Utilities.equals(this.srs,   that.srs)   &&
-                   Utilities.equals(this.styles,   that.styles)   &&
-                   Utilities.equals(this.width,   that.width)   &&
-                   Utilities.equals(this.resolutions,   that.resolutions);
+            return Objects.equals(this.boundingBox, that.boundingBox) &&
+                   Objects.equals(this.format,     that.format)     &&
+                   Objects.equals(this.height,   that.height)   &&
+                   Objects.equals(this.layers,   that.layers)   &&
+                   Objects.equals(this.srs,   that.srs)   &&
+                   Objects.equals(this.styles,   that.styles)   &&
+                   Objects.equals(this.width,   that.width)   &&
+                   Objects.equals(this.resolutions,   that.resolutions);
         }
         return false;
     }

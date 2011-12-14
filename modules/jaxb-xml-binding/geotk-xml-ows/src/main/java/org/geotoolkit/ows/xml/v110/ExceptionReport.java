@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.ExceptionResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -124,8 +124,8 @@ public class ExceptionReport implements ExceptionResponse, Serializable {
         if (object instanceof ExceptionReport) {
             final ExceptionReport that = (ExceptionReport) object;
 
-            return Utilities.equals(this.exception, that.exception)    &&
-                   Utilities.equals(this.version,   that.version);
+            return Objects.equals(this.exception, that.exception)    &&
+                   Objects.equals(this.version,   that.version);
         }
         return false;
     }

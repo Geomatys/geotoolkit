@@ -18,13 +18,13 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractConnection;
 import org.geotoolkit.sml.xml.AbstractConnectionList;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -118,7 +118,7 @@ public class ConnectionList implements AbstractConnectionList {
 
         if (object instanceof ConnectionList) {
             final ConnectionList that = (ConnectionList) object;
-            return Utilities.equals(this.connection, that.connection)  ;
+            return Objects.equals(this.connection, that.connection)  ;
         }
         return false;
     }

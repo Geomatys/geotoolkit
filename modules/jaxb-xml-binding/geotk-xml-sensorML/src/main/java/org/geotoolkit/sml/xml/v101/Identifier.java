@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractIdentifier;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -147,8 +147,8 @@ public class Identifier implements AbstractIdentifier {
         if (object instanceof Identifier) {
             final Identifier that = (Identifier) object;
 
-            return Utilities.equals(this.name, that.name)
-                    && Utilities.equals(this.term, that.term);
+            return Objects.equals(this.name, that.name)
+                    && Objects.equals(this.term, that.term);
         }
         return false;
     }

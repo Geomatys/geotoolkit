@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml.v101;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.swe.xml.Quantity;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -191,12 +191,12 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         }
         if (object instanceof QuantityType && super.equals(object, mode)) {
         final QuantityType that = (QuantityType) object;
-        return Utilities.equals(this.axisID,     that.axisID)     &&
-               Utilities.equals(this.referenceFrame, that.referenceFrame) &&
-               Utilities.equals(this.uom,            that.uom)            &&
-               Utilities.equals(this.quality,        that.quality)        &&
-               Utilities.equals(this.constraint,     that.constraint)     &&
-               Utilities.equals(this.value,          that.value);
+        return Objects.equals(this.axisID,     that.axisID)     &&
+               Objects.equals(this.referenceFrame, that.referenceFrame) &&
+               Objects.equals(this.uom,            that.uom)            &&
+               Objects.equals(this.quality,        that.quality)        &&
+               Objects.equals(this.constraint,     that.constraint)     &&
+               Objects.equals(this.value,          that.value);
         }
         return false;
     }

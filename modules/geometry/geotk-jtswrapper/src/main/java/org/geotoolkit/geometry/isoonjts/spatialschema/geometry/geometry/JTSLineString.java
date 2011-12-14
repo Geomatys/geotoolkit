@@ -13,19 +13,19 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 
 import java.util.List;
-
+import java.util.Objects;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
-import org.geotoolkit.util.Utilities;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.Composite;
@@ -366,7 +366,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
 
         if (object instanceof JTSLineString & super.equals(object)) {
             JTSLineString that = (JTSLineString) object;
-            return Utilities.equals(this.controlPoints, that.controlPoints);
+            return Objects.equals(this.controlPoints, that.controlPoints);
         }
         return false;
     }

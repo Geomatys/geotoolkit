@@ -19,7 +19,7 @@ package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
 import java.util.Date;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.util.InternationalString;
 
@@ -104,11 +104,11 @@ public class DefaultOrdinalEra implements OrdinalEra {
         if (object instanceof DefaultOrdinalEra) {
             final DefaultOrdinalEra that = (DefaultOrdinalEra) object;
 
-            return Utilities.equals(this.beginning, that.beginning) &&
-                    Utilities.equals(this.end, that.end) &&
-                    Utilities.equals(this.composition, that.composition) &&
-                    Utilities.equals(this.group, that.group) &&
-                    Utilities.equals(this.name, that.name);
+            return Objects.equals(this.beginning, that.beginning) &&
+                    Objects.equals(this.end, that.end) &&
+                    Objects.equals(this.composition, that.composition) &&
+                    Objects.equals(this.group, that.group) &&
+                    Objects.equals(this.name, that.name);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -139,10 +139,10 @@ public class SlotType {
             if (this.valueList == null && that.valueList == null) {
                 vl = true;
             } else if (this.valueList != null && that.valueList != null) {
-                vl = Utilities.equals(this.valueList.getValue(), that.valueList.getValue());
+                vl = Objects.equals(this.valueList.getValue(), that.valueList.getValue());
             }
-            return Utilities.equals(this.name, that.name) &&
-                   Utilities.equals(this.slotType,   that.slotType)   &&
+            return Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.slotType,   that.slotType)   &&
                    vl;
         }
         return false;

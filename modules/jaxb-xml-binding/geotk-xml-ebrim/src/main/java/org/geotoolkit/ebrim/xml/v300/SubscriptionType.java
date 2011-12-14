@@ -18,6 +18,7 @@ package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -28,7 +29,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -209,10 +209,10 @@ public class SubscriptionType extends RegistryObjectType {
                     }
                 }
             }
-            return Utilities.equals(this.endTime,              that.endTime) &&
-                   Utilities.equals(this.notificationInterval, that.notificationInterval) &&
-                   Utilities.equals(this.selector,             that.selector) &&
-                   Utilities.equals(this.startTime,            that.startTime) &&
+            return Objects.equals(this.endTime,              that.endTime) &&
+                   Objects.equals(this.notificationInterval, that.notificationInterval) &&
+                   Objects.equals(this.selector,             that.selector) &&
+                   Objects.equals(this.startTime,            that.startTime) &&
                    eq;
         }
         return false;

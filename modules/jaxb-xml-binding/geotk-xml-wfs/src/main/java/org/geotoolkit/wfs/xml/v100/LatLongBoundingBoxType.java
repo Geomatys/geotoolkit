@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.wfs.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -178,10 +178,10 @@ public class LatLongBoundingBoxType {
         }
         if (object instanceof LatLongBoundingBoxType) {
             final LatLongBoundingBoxType that = (LatLongBoundingBoxType) object;
-            return Utilities.equals(this.minx        , that.minx)         &&
-                   Utilities.equals(this.maxx , that.maxx)  &&
-                   Utilities.equals(this.miny, that.miny) &&
-                   Utilities.equals(this.maxy, that.maxy);
+            return Objects.equals(this.minx        , that.minx)         &&
+                   Objects.equals(this.maxx , that.maxx)  &&
+                   Objects.equals(this.miny, that.miny) &&
+                   Objects.equals(this.maxy, that.maxy);
         }
         return false;
     }

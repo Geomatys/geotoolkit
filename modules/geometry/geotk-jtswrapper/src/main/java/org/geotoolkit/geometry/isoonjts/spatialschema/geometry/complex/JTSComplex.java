@@ -9,12 +9,7 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -183,7 +178,7 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
 
         if (object instanceof JTSComplex && super.equals(object)) {
             JTSComplex that = (JTSComplex) object;
-            return Utilities.equals(this.elements, that.elements);
+            return Objects.equals(this.elements, that.elements);
         }
         return false;
     }

@@ -19,9 +19,9 @@ package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.temporal.object.DefaultCalendarDate;
 import org.geotoolkit.temporal.object.DefaultDateAndTime;
 import org.geotoolkit.temporal.object.DefaultJulianDate;
@@ -278,8 +278,8 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         if (object instanceof DefaultCalendar && super.equals(object)) {
             final DefaultCalendar that = (DefaultCalendar) object;
 
-            return Utilities.equals(this.basis, that.basis) &&
-                    Utilities.equals(this.timeBasis, that.timeBasis);
+            return Objects.equals(this.basis, that.basis) &&
+                    Objects.equals(this.timeBasis, that.timeBasis);
         }
         return false;
     }

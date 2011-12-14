@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sld;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
@@ -84,8 +84,8 @@ class DefaultCoverageConstraint implements CoverageConstraint{
 
         DefaultCoverageConstraint other = (DefaultCoverageConstraint) obj;
 
-        return Utilities.equals(this.coverageName, other.coverageName)
-                && Utilities.equals(this.extent, other.extent);
+        return Objects.equals(this.coverageName, other.coverageName)
+                && Objects.equals(this.extent, other.extent);
 
     }
 

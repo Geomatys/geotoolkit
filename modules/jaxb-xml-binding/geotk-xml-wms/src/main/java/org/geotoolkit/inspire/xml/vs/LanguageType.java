@@ -16,9 +16,9 @@
  */
 package org.geotoolkit.inspire.xml.vs;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -83,8 +83,8 @@ public class LanguageType {
         }
         if (object instanceof LanguageType) {
             final LanguageType that = (LanguageType) object;
-            return Utilities.equals(this.default_, that.default_) &&
-                   Utilities.equals(this.value,    that.value) ;
+            return Objects.equals(this.default_, that.default_) &&
+                   Objects.equals(this.value,    that.value) ;
         }
         return false;
     }

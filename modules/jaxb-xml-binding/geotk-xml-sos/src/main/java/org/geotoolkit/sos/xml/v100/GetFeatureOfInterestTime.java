@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -83,7 +83,7 @@ public class GetFeatureOfInterestTime extends RequestBaseType {
         }
         if (object instanceof GetFeatureOfInterestTime && super.equals(object)) {
             final GetFeatureOfInterestTime that = (GetFeatureOfInterestTime) object;
-            return Utilities.equals(this.featureOfInterestId, that.featureOfInterestId);
+            return Objects.equals(this.featureOfInterestId, that.featureOfInterestId);
         } 
         return false;
     }

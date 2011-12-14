@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -101,8 +101,8 @@ public class EmailAddressType {
         }
         if (obj instanceof EmailAddressType) {
             final EmailAddressType that = (EmailAddressType) obj;
-            return Utilities.equals(this.address, that.address) &&
-                   Utilities.equals(this.type,    that.type);
+            return Objects.equals(this.address, that.address) &&
+                   Objects.equals(this.type,    that.type);
         }
         return false;
     }

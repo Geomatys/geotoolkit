@@ -17,12 +17,12 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -98,7 +98,7 @@ public class CurveType extends AbstractCurveType {
         }
         if (object instanceof CurveType && super.equals(object,mode)) {
             final CurveType that = (CurveType) object;
-            return  Utilities.equals(this.segments, that.segments);
+            return Objects.equals(this.segments, that.segments);
         }
         return false;
     }

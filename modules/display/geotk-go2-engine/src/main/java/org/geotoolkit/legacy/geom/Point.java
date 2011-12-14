@@ -29,10 +29,9 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 
@@ -337,7 +336,7 @@ public class Point extends Geometry {
             // May still null. Its ok.
         }
 
-        if (Utilities.equals(coordinateSystem, getCoordinateReferenceSystem())) {
+        if (Objects.equals(coordinateSystem, getCoordinateReferenceSystem())) {
             return;
         }
 
@@ -368,7 +367,7 @@ public class Point extends Geometry {
             ct.getMathTransform().transform(src, 0, transformedPoint, 0, 1);
         }
 
-        assert Utilities.equals(coordinateSystem, getCoordinateReferenceSystem());
+        assert Objects.equals(coordinateSystem, getCoordinateReferenceSystem());
     }
 
     /**

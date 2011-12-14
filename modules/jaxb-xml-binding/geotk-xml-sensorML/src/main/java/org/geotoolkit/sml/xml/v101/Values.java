@@ -16,21 +16,16 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 import org.geotoolkit.sml.xml.AbstractValues;
-import org.w3c.dom.Element;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -102,8 +97,8 @@ public class Values implements AbstractValues {
         }
         if (object instanceof Values) {
             final Values that = (Values) object;
-            return Utilities.equals(this.any,          that.any)   &&
-                   Utilities.equals(this.otherAttributes,    that.otherAttributes) ;
+            return Objects.equals(this.any,          that.any)   &&
+                   Objects.equals(this.otherAttributes,    that.otherAttributes) ;
         }
         return false;
     }

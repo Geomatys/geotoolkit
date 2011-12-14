@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.ScalarCapabilities;
@@ -132,9 +132,9 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
        if (object instanceof ScalarCapabilitiesType) {
            final ScalarCapabilitiesType that = (ScalarCapabilitiesType) object;
        
-            return Utilities.equals(this.logicalOperators, that.logicalOperators) &&
-                   Utilities.equals(this.arithmeticOperators, that.arithmeticOperators) &&
-                   Utilities.equals(this.comparisonOperators, that.comparisonOperators);
+            return Objects.equals(this.logicalOperators, that.logicalOperators) &&
+                   Objects.equals(this.arithmeticOperators, that.arithmeticOperators) &&
+                   Objects.equals(this.comparisonOperators, that.comparisonOperators);
         }
         return false;
     }

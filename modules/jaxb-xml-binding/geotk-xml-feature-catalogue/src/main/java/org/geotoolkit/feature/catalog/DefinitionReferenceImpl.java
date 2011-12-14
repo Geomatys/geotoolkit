@@ -3,12 +3,12 @@
 
 package org.geotoolkit.feature.catalog;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.DefinitionReference;
 import org.opengis.feature.catalog.DefinitionSource;
 
@@ -129,8 +129,8 @@ public class DefinitionReferenceImpl implements DefinitionReference {
         if (object instanceof DefinitionReferenceImpl) {
             final DefinitionReferenceImpl that = (DefinitionReferenceImpl) object;
          
-            return Utilities.equals(this.definitionSource, that.definitionSource) &&
-                   Utilities.equals(this.sourceIdentifier, that.sourceIdentifier);
+            return Objects.equals(this.definitionSource, that.definitionSource) &&
+                   Objects.equals(this.sourceIdentifier, that.sourceIdentifier);
         }
         return false;
     }

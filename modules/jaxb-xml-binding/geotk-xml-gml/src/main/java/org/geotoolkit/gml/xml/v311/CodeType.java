@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -151,8 +151,8 @@ public class CodeType {
         if (object instanceof CodeType) {
             final CodeType that = (CodeType) object;
 
-            return Utilities.equals(this.codeSpace, that.codeSpace) &&
-                   Utilities.equals(this.value,     that.value);
+            return Objects.equals(this.codeSpace, that.codeSpace) &&
+                   Objects.equals(this.value,     that.value);
         }
         return false;
     }

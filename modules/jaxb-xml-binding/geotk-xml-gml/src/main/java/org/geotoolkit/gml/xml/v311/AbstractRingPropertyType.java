@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -151,7 +151,7 @@ public class AbstractRingPropertyType {
         if (object instanceof AbstractRingPropertyType) {
             final AbstractRingPropertyType that = (AbstractRingPropertyType) object;
 
-            return Utilities.equals(this.getAbstractRing(), that.getAbstractRing());
+            return Objects.equals(this.getAbstractRing(), that.getAbstractRing());
         }
         return false;
     }

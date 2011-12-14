@@ -22,12 +22,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
@@ -42,7 +38,6 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -571,7 +566,7 @@ final class LineString implements Serializable {
                 assert j==0 || !points[j].equals(points[j-1]) : scan;
             }
         }
-        assert Utilities.equals(getFirstPoint(scan, null), points[0]) : scan;
+        assert Objects.equals(getFirstPoint(scan, null), points[0]) : scan;
     }
 
     /**
@@ -649,7 +644,7 @@ final class LineString implements Serializable {
             }
         }
         assert !it.hasNext();
-        assert Utilities.equals(getLastPoint(scan, null), points[points.length-1]) : scan;
+        assert Objects.equals(getLastPoint(scan, null), points[points.length-1]) : scan;
     }
 
     /**
@@ -976,7 +971,7 @@ final class LineString implements Serializable {
             final CoordinateReferenceSystem targetCRS = transformation.getTargetCRS();
             xUnit = targetCRS.getCoordinateSystem().getAxis(0).getUnit();
             yUnit = targetCRS.getCoordinateSystem().getAxis(1).getUnit();
-            if (!Utilities.equals(xUnit, yUnit)) {
+            if (!Objects.equals(xUnit, yUnit)) {
                 throw new IllegalArgumentException(Errors.format(
                           Errors.Keys.NON_CARTESIAN_COORDINATE_SYSTEM_$1,
                           targetCRS.getName().toString()));
@@ -1066,7 +1061,7 @@ final class LineString implements Serializable {
         if (transformation != null) {
             final CoordinateReferenceSystem targetCRS = transformation.getTargetCRS();
             if (CRSUtilities.getHeadGeoEllipsoid(targetCRS)!=null ||
-                !Utilities.equals(targetCRS.getCoordinateSystem().getAxis(0).getUnit(), 
+                !Objects.equals(targetCRS.getCoordinateSystem().getAxis(0).getUnit(), 
                 targetCRS.getCoordinateSystem().getAxis(1).getUnit()))
             {
                 throw new IllegalArgumentException(Errors.format(
@@ -1381,7 +1376,7 @@ final class LineString implements Serializable {
             for (int arrayID=FIRST_ARRAY; arrayID<=LAST_ARRAY; arrayID++) {
                 final PointArray array1 = poly1.getArray(arrayID);
                 final PointArray array2 = poly2.getArray(arrayID);
-                if (!Utilities.equals(array1, array2)) {
+                if (!Objects.equals(array1, array2)) {
                     return false;
                 }
             }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordsResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -151,10 +151,10 @@ public class GetRecordsResponseType implements GetRecordsResponse {
         }
         if (object instanceof GetRecordsResponseType) {
             final GetRecordsResponseType that = (GetRecordsResponseType) object;
-            return Utilities.equals(this.requestId,     that.requestId)     &&
-                   Utilities.equals(this.searchResults, that.searchResults) &&
-                   Utilities.equals(this.searchStatus,  that.searchStatus)  &&
-                   Utilities.equals(this.version,       that.version);
+            return Objects.equals(this.requestId,     that.requestId)     &&
+                   Objects.equals(this.searchResults, that.searchResults) &&
+                   Objects.equals(this.searchStatus,  that.searchStatus)  &&
+                   Objects.equals(this.version,       that.version);
         }
         return false;
     }

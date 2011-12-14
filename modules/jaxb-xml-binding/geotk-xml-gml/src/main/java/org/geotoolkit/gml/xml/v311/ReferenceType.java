@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.internal.sql.table.Entry;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -341,17 +341,17 @@ public class ReferenceType implements Reference, Entry {
         if (object instanceof ReferenceType) {
             final ReferenceType that = (ReferenceType) object;
 
-            return Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.nilReason,          that.nilReason)        &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title)            &&
+            return Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.nilReason,          that.nilReason)        &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title)            &&
                  //  Utilities.equals(this.id,                 that.id)               && because its transient
-                   Utilities.equals(this.owns,               that.owns);
+                   Objects.equals(this.owns,               that.owns);
         }
         return false;
     }

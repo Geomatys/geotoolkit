@@ -18,11 +18,11 @@ package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -130,8 +130,8 @@ public class FeatureTypeListType {
         if (object instanceof FeatureTypeListType) {
             final FeatureTypeListType that = (FeatureTypeListType) object;
 
-            return Utilities.equals(this.featureType, that.featureType) &&
-                   Utilities.equals(this.operations,  that.operations);
+            return Objects.equals(this.featureType, that.featureType) &&
+                   Objects.equals(this.operations,  that.operations);
             }
         return false;
     }

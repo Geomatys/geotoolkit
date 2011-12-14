@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +32,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -150,7 +150,7 @@ public class AllowedTimes {
                     for (int i = 0; i < this.intervalOrValueList.size(); i++) {
                         JAXBElement<List<String>> thisJB = this.intervalOrValueList.get(i);
                         JAXBElement<List<String>> thatJB = that.intervalOrValueList.get(i);
-                        if (!Utilities.equals(thisJB.getValue(), thatJB.getValue())) {
+                        if (!Objects.equals(thisJB.getValue(), thatJB.getValue())) {
                             intervalOrValue = false;
                         }
                     }
@@ -158,9 +158,9 @@ public class AllowedTimes {
             } else if (this.intervalOrValueList == null && that.intervalOrValueList == null) {
                 intervalOrValue = true;
             }
-            return Utilities.equals(this.id,  that.id) &&
-                   Utilities.equals(this.max, that.max) &&
-                   Utilities.equals(this.min, that.min) &&
+            return Objects.equals(this.id,  that.id) &&
+                   Objects.equals(this.max, that.max) &&
+                   Objects.equals(this.min, that.min) &&
                    intervalOrValue;
         }
         return false;

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractInterfaceDefinition;
 import org.geotoolkit.swe.xml.v100.Category;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -346,16 +346,16 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
         if (object instanceof InterfaceDefinition) {
             final InterfaceDefinition that = (InterfaceDefinition) object;
 
-            return Utilities.equals(this.applicationLayer,  that.applicationLayer) &&
-                   Utilities.equals(this.dataLinkLayer,     that.dataLinkLayer)    &&
-                   Utilities.equals(this.id,                that.id)               &&
-                   Utilities.equals(this.mechanicalLayer,   that.mechanicalLayer)  &&
-                   Utilities.equals(this.networkLayer,      that.networkLayer)     &&
-                   Utilities.equals(this.physicalLayer,     that.physicalLayer)    &&
-                   Utilities.equals(this.presentationLayer, that.presentationLayer)&&
-                   Utilities.equals(this.serviceLayer,      that.serviceLayer)     &&
-                   Utilities.equals(this.sessionLayer,      that.sessionLayer)     &&
-                   Utilities.equals(this.transportLayer,    that.transportLayer);
+            return Objects.equals(this.applicationLayer,  that.applicationLayer) &&
+                   Objects.equals(this.dataLinkLayer,     that.dataLinkLayer)    &&
+                   Objects.equals(this.id,                that.id)               &&
+                   Objects.equals(this.mechanicalLayer,   that.mechanicalLayer)  &&
+                   Objects.equals(this.networkLayer,      that.networkLayer)     &&
+                   Objects.equals(this.physicalLayer,     that.physicalLayer)    &&
+                   Objects.equals(this.presentationLayer, that.presentationLayer)&&
+                   Objects.equals(this.serviceLayer,      that.serviceLayer)     &&
+                   Objects.equals(this.sessionLayer,      that.sessionLayer)     &&
+                   Objects.equals(this.transportLayer,    that.transportLayer);
         }
         return false;
     }

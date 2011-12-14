@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AbstractVectorOrSquareMatrixProperty;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -120,8 +120,8 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
         }
         if (object instanceof VectorOrSquareMatrixPropertyType) {
             final VectorOrSquareMatrixPropertyType that = (VectorOrSquareMatrixPropertyType) object;
-            return Utilities.equals(this.squareMatrix, that.squareMatrix) &&
-                   Utilities.equals(this.vector,       that.vector);
+            return Objects.equals(this.squareMatrix, that.squareMatrix) &&
+                   Objects.equals(this.vector,       that.vector);
 
         }
         return false;

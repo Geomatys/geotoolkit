@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.ContrastMethod;
@@ -88,8 +88,8 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
 
         DefaultContrastEnhancement other = (DefaultContrastEnhancement) obj;
 
-        return Utilities.equals(this.gamma, other.gamma)
-                && Utilities.equals(this.type, other.type);
+        return Objects.equals(this.gamma, other.gamma)
+                && Objects.equals(this.type, other.type);
     }
 
     /**

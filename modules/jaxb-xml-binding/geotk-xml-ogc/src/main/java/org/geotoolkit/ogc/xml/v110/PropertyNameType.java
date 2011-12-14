@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
@@ -125,7 +125,7 @@ public class PropertyNameType implements PropertyName {
         if (object instanceof PropertyNameType) {
             final PropertyNameType that = (PropertyNameType) object;
             
-            return  Utilities.equals(this.content, that.content);
+            return  Objects.equals(this.content, that.content);
         }
         return false;
     }

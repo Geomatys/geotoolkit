@@ -17,10 +17,10 @@
 package org.geotoolkit.filter.function.other;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.geotoolkit.filter.function.AbstractFunction;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
@@ -128,7 +128,7 @@ public class PropertyExistsFunction extends AbstractFunction {
             final Expression otherPropNameExpr = (Expression) other.getParameters().get(0);
             final String otherPropName = getPropertyName(otherPropNameExpr);
 
-            return Utilities.equals(propName, otherPropName);
+            return Objects.equals(propName, otherPropName);
         } else {
             return true;
         }

@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -103,8 +103,8 @@ public class VersionInfoType {
         }
         if (obj instanceof VersionInfoType) {
             final VersionInfoType that = (VersionInfoType) obj;
-            return Utilities.equals(this.getVersionName(), that.getVersionName()) &&
-                   Utilities.equals(this.comment,    that.comment);
+            return Objects.equals(this.getVersionName(), that.getVersionName()) &&
+                   Objects.equals(this.comment,    that.comment);
         }
         return false;
     }

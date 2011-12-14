@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 // xerces dependencies
-import org.geotoolkit.util.Utilities;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -118,8 +118,8 @@ public class RecordPropertyType {
         }
         if (object instanceof RecordPropertyType) {
             final RecordPropertyType that = (RecordPropertyType) object;
-            return Utilities.equals(this.name,  that.name) &&
-                   Utilities.equals(this.value, that.value);
+            return Objects.equals(this.name,  that.name) &&
+                   Objects.equals(this.value, that.value);
         }
         return false;
     }

@@ -18,7 +18,7 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.temporal.OrdinalEra;
@@ -58,7 +58,7 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
         if (object instanceof DefaultOrdinalReferenceSystem && super.equals(object)) {
             final DefaultOrdinalReferenceSystem that = (DefaultOrdinalReferenceSystem) object;
 
-            return Utilities.equals(this.ordinalEraSequence, that.ordinalEraSequence);
+            return Objects.equals(this.ordinalEraSequence, that.ordinalEraSequence);
         }
         return false;
     }

@@ -18,13 +18,13 @@ package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -167,10 +167,10 @@ public class SpecificationLinkType extends RegistryObjectType {
         }
         if (obj instanceof SpecificationLinkType) {
             final SpecificationLinkType that = (SpecificationLinkType) obj;
-            return Utilities.equals(this.serviceBinding,      that.serviceBinding) &&
-                   Utilities.equals(this.specificationObject, that.specificationObject) &&
-                   Utilities.equals(this.usageDescription,    that.usageDescription) &&
-                   Utilities.equals(this.usageParameter,      that.usageParameter);
+            return Objects.equals(this.serviceBinding,      that.serviceBinding) &&
+                   Objects.equals(this.specificationObject, that.specificationObject) &&
+                   Objects.equals(this.usageDescription,    that.usageDescription) &&
+                   Objects.equals(this.usageParameter,      that.usageParameter);
         }
         return false;
     }

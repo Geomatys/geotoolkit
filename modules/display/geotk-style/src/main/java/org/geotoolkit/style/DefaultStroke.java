@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import java.util.Objects;
 import org.geotoolkit.util.Utilities;
 
 import org.opengis.filter.expression.Expression;
@@ -244,9 +245,9 @@ public class DefaultStroke implements Stroke{
         DefaultStroke other = (DefaultStroke) obj;
 
         return 
-            Utilities.deepEquals(this.dashes, other.dashes)
-            && Utilities.equals(this.stroke, other.stroke)
-            && Utilities.equals(this.fill, other.fill)
+            Objects.deepEquals(this.dashes, other.dashes)
+            && Objects.equals(this.stroke, other.stroke)
+            && Objects.equals(this.fill, other.fill)
             && this.color.equals(other.color)
             && this.cap.equals(other.cap)
             && this.join.equals(other.join)

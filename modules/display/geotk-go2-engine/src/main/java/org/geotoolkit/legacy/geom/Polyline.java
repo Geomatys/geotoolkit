@@ -30,18 +30,11 @@ import java.io.ObjectInputStream;
 import java.io.Writer;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-
+import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
 import org.geotoolkit.legacy.array.ArrayData;
 import org.geotoolkit.legacy.array.PointArray;
 import org.geotoolkit.math.Statistics;
@@ -55,7 +48,7 @@ import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.Utilities;
+
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CRSFactory;
@@ -67,7 +60,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.OperationNotFoundException;
-import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -518,7 +510,7 @@ public class Polyline extends Geometry {
             coordinateSystem = getInternalCRS();
             // May still null. Its ok.
         }
-        if (Utilities.equals(coordinateSystem, getCoordinateReferenceSystem())) {
+        if (Objects.equals(coordinateSystem, getCoordinateReferenceSystem())) {
             return;
         }
         CoordinateOperation transformCandidate =
@@ -540,7 +532,7 @@ public class Polyline extends Geometry {
         this.coordinateTransform = transformCandidate;
         this.cache = null;
         refreshFlattenedShape();
-        assert Utilities.equals(coordinateSystem, getCoordinateReferenceSystem());
+        assert Objects.equals(coordinateSystem, getCoordinateReferenceSystem());
     }
 
     /**
@@ -990,7 +982,7 @@ public class Polyline extends Geometry {
             // has already successfully projected every point.
             unexpectedException("getFirstPoints", exception);
         }
-        assert points.length==0 || Utilities.equals(getFirstPoint(null), points[0]);
+        assert points.length==0 || Objects.equals(getFirstPoint(null), points[0]);
     }
 
     /**
@@ -1015,7 +1007,7 @@ public class Polyline extends Geometry {
             // has already successfully projected every point.
             unexpectedException("getLastPoints", exception);
         }
-        assert points.length==0 || Utilities.equals(getLastPoint(null), points[points.length-1]);
+        assert points.length==0 || Objects.equals(getLastPoint(null), points[points.length-1]);
     }
 
 
@@ -2098,7 +2090,7 @@ public class Polyline extends Geometry {
         if (super.equals(object)) {
             final Polyline that = (Polyline) object;
             return                  this.isClosed        ==   that.isClosed             &&
-                   Utilities.equals(this.coordinateTransform, that.coordinateTransform) &&
+                   Objects.equals(this.coordinateTransform, that.coordinateTransform) &&
                   LineString.equals(this.data,                that.data);
         }
         return false;

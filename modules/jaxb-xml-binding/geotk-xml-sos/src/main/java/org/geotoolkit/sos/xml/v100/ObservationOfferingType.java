@@ -18,8 +18,8 @@ package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,7 +37,6 @@ import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -241,14 +240,14 @@ public class ObservationOfferingType extends AbstractFeatureType {
         }
         if (object instanceof ObservationOfferingType && super.equals(object, mode)) {
             final ObservationOfferingType that = (ObservationOfferingType) object;
-            return Utilities.equals(this.time,                that.time)                &&
-                   Utilities.equals(this.featureOfInterest,   that.featureOfInterest)   &&
-                   Utilities.equals(this.intendedApplication, that.intendedApplication) && 
-                   Utilities.equals(this.observedProperty,    that.observedProperty)    &&
-                   Utilities.equals(this.procedure,           that.procedure)           &&
-                   Utilities.equals(this.responseFormat,      that.responseFormat)      &&
-                   Utilities.equals(this.responseMode,        that.responseMode)        &&
-                   Utilities.equals(this.resultModel,         that.resultModel);
+            return Objects.equals(this.time,                that.time)                &&
+                   Objects.equals(this.featureOfInterest,   that.featureOfInterest)   &&
+                   Objects.equals(this.intendedApplication, that.intendedApplication) && 
+                   Objects.equals(this.observedProperty,    that.observedProperty)    &&
+                   Objects.equals(this.procedure,           that.procedure)           &&
+                   Objects.equals(this.responseFormat,      that.responseFormat)      &&
+                   Objects.equals(this.responseMode,        that.responseMode)        &&
+                   Objects.equals(this.resultModel,         that.resultModel);
         }
         return false;
     }

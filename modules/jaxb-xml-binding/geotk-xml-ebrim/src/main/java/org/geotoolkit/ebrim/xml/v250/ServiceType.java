@@ -18,12 +18,12 @@ package org.geotoolkit.ebrim.xml.v250;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -102,7 +102,7 @@ public class ServiceType extends RegistryEntryType {
         }
         if (obj instanceof ServiceType && super.equals(obj)) {
             final ServiceType that = (ServiceType) obj;
-            return Utilities.equals(this.serviceBinding, that.serviceBinding);
+            return Objects.equals(this.serviceBinding, that.serviceBinding);
         }
         return false;
     }

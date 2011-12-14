@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.csw.xml.Harvest;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -208,11 +208,11 @@ public class HarvestType extends RequestBaseType implements Harvest {
         }
         if (object instanceof HarvestType && super.equals(object)) {
             final HarvestType that = (HarvestType) object;
-            return Utilities.equals(this.harvestInterval,  that.harvestInterval) &&
-                   Utilities.equals(this.resourceFormat,   that.resourceFormat)  &&
-                   Utilities.equals(this.resourceType,     that.resourceType)    &&
-                   Utilities.equals(this.responseHandler,  that.responseHandler) &&
-                   Utilities.equals(this.source,           that.source);
+            return Objects.equals(this.harvestInterval,  that.harvestInterval) &&
+                   Objects.equals(this.resourceFormat,   that.resourceFormat)  &&
+                   Objects.equals(this.resourceType,     that.resourceType)    &&
+                   Objects.equals(this.responseHandler,  that.responseHandler) &&
+                   Objects.equals(this.source,           that.source);
         }
         return false;
     }

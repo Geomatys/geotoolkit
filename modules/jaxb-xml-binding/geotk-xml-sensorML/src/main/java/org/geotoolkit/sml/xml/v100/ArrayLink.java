@@ -18,11 +18,11 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.AbstractArrayLink;
 import org.geotoolkit.sml.xml.AbstractConnection;
 import org.geotoolkit.sml.xml.AbstractLinkRef;
@@ -208,11 +208,11 @@ public class ArrayLink implements AbstractArrayLink {
 
         if (object instanceof ArrayLink) {
             final ArrayLink that = (ArrayLink) object;
-            return Utilities.equals(this.connection, that.connection)             &&
-                   Utilities.equals(this.destinationArray, that.destinationArray) &&
-                   Utilities.equals(this.sourceArray, that.sourceArray)           &&
-                   Utilities.equals(this.sourceIndex, that.sourceIndex) &&
-                   Utilities.equals(this.destinationIndex, that.destinationIndex);
+            return Objects.equals(this.connection, that.connection)             &&
+                   Objects.equals(this.destinationArray, that.destinationArray) &&
+                   Objects.equals(this.sourceArray, that.sourceArray)           &&
+                   Objects.equals(this.sourceIndex, that.sourceIndex) &&
+                   Objects.equals(this.destinationIndex, that.destinationIndex);
 
 
         }

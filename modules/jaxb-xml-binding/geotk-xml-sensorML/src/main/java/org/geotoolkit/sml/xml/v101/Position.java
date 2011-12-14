@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,7 +38,6 @@ import org.geotoolkit.sml.xml.AbstractProcessModel;
 import org.geotoolkit.sml.xml.ComponentArray;
 import org.geotoolkit.swe.xml.v101.PositionType;
 import org.geotoolkit.swe.xml.v101.VectorType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -498,23 +498,23 @@ public class Position implements AbstractPosition {
 
             boolean proc = false;
             if (this.process != null && that.process != null) {
-                proc = Utilities.equals(this.process.getValue(), that.process.getValue());
+                proc = Objects.equals(this.process.getValue(), that.process.getValue());
             } else if (this.process == null && that.process == null) {
                 proc = true;
             }
 
-            return Utilities.equals(this.actuate, that.actuate)           &&
-                   Utilities.equals(this.href, that.href)                 &&
-                   Utilities.equals(this.name, that.name)                 &&
-                   Utilities.equals(this.position, that.position)         &&
-                   Utilities.equals(this.vector, that.vector)             &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
-                   Utilities.equals(this.role, that.role)                 &&
-                   Utilities.equals(this.show, that.show)                 &&
-                   Utilities.equals(this.title, that.title)               &&
-                   Utilities.equals(this.type, that.type)                 &&
+            return Objects.equals(this.actuate, that.actuate)           &&
+                   Objects.equals(this.href, that.href)                 &&
+                   Objects.equals(this.name, that.name)                 &&
+                   Objects.equals(this.position, that.position)         &&
+                   Objects.equals(this.vector, that.vector)             &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema) &&
+                   Objects.equals(this.role, that.role)                 &&
+                   Objects.equals(this.show, that.show)                 &&
+                   Objects.equals(this.title, that.title)               &&
+                   Objects.equals(this.type, that.type)                 &&
                    proc                                                   &&
-                   Utilities.equals(this.arcrole, that.arcrole);
+                   Objects.equals(this.arcrole, that.arcrole);
         }
         return false;
     }

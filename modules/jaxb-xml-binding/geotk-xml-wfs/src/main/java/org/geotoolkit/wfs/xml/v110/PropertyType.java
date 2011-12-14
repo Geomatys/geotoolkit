@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for PropertyType complex type.
@@ -117,8 +117,8 @@ public class PropertyType {
         }
         if (object instanceof PropertyType) {
             final PropertyType that = (PropertyType) object;
-            return  Utilities.equals(this.name, that.name) &&
-                    Utilities.equals(this.value, that.value);
+            return  Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.value, that.value);
         }
         return false;
     }

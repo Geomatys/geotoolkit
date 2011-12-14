@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -281,21 +282,21 @@ public class CoordinateSystemRefType {
 
             boolean proc = false;
             if (this.coordinateSystem != null && that.coordinateSystem != null) {
-                proc = Utilities.equals(this.coordinateSystem.getValue(), that.coordinateSystem.getValue());
+                proc = Objects.equals(this.coordinateSystem.getValue(), that.coordinateSystem.getValue());
             } else if (this.coordinateSystem == null && that.coordinateSystem == null) {
                 proc = true;
             }
 
-            return Utilities.equals(this.actuate, that.actuate)           &&
-                   Utilities.equals(this.href, that.href)                 &&
+            return Objects.equals(this.actuate, that.actuate)           &&
+                   Objects.equals(this.href, that.href)                 &&
                    proc                                                   &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
-                   Utilities.equals(this.role, that.role)                 &&
-                   Utilities.equals(this.show, that.show)                 &&
-                   Utilities.equals(this.title, that.title)               &&
-                   Utilities.equals(this.type, that.type)                 &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema) &&
+                   Objects.equals(this.role, that.role)                 &&
+                   Objects.equals(this.show, that.show)                 &&
+                   Objects.equals(this.title, that.title)               &&
+                   Objects.equals(this.type, that.type)                 &&
                    proc                                                   &&
-                   Utilities.equals(this.arcrole, that.arcrole);
+                   Objects.equals(this.arcrole, that.arcrole);
         }
         return false;
     }

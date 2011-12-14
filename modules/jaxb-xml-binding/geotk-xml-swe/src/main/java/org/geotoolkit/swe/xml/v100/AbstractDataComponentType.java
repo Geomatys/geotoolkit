@@ -17,6 +17,7 @@
 package org.geotoolkit.swe.xml.v100;
 
 import java.net.URI;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -148,8 +148,8 @@ public abstract class AbstractDataComponentType extends AbstractGMLType implemen
         if (object instanceof AbstractDataComponentType && super.equals(object, mode)) {
             final AbstractDataComponentType that = (AbstractDataComponentType) object;
 
-            return Utilities.equals(this.definition, that.definition) &&
-                   Utilities.equals(this.fixed,      that.fixed);
+            return Objects.equals(this.definition, that.definition) &&
+                   Objects.equals(this.fixed,      that.fixed);
         }
         return false;
     }

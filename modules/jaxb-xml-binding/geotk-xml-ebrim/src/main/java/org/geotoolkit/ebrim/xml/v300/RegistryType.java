@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -177,11 +177,11 @@ public class RegistryType extends RegistryObjectType {
         }
         if (obj instanceof RegistryType && super.equals(obj)) {
             final RegistryType that = (RegistryType) obj;
-            return Utilities.equals(this.catalogingLatency,      that.catalogingLatency) &&
-                   Utilities.equals(this.conformanceProfile,     that.conformanceProfile) &&
-                   Utilities.equals(this.operator,               that.operator) &&
-                   Utilities.equals(this.replicationSyncLatency, that.replicationSyncLatency) &&
-                   Utilities.equals(this.specificationVersion,   that.specificationVersion);
+            return Objects.equals(this.catalogingLatency,      that.catalogingLatency) &&
+                   Objects.equals(this.conformanceProfile,     that.conformanceProfile) &&
+                   Objects.equals(this.operator,               that.operator) &&
+                   Objects.equals(this.replicationSyncLatency, that.replicationSyncLatency) &&
+                   Objects.equals(this.specificationVersion,   that.specificationVersion);
         }
         return false;
     }

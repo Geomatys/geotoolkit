@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -181,12 +181,12 @@ public class PostalAddressType {
         }
         if (obj instanceof PostalAddressType) {
             final PostalAddressType that = (PostalAddressType) obj;
-            return Utilities.equals(this.city,             that.city) &&
-                    Utilities.equals(this.country,         that.country) &&
-                    Utilities.equals(this.postalCode,      that.postalCode) &&
-                    Utilities.equals(this.stateOrProvince, that.stateOrProvince) &&
-                    Utilities.equals(this.street,          that.street) &&
-                   Utilities.equals(this.streetNumber,     that.streetNumber);
+            return Objects.equals(this.city,             that.city) &&
+                    Objects.equals(this.country,         that.country) &&
+                    Objects.equals(this.postalCode,      that.postalCode) &&
+                    Objects.equals(this.stateOrProvince, that.stateOrProvince) &&
+                    Objects.equals(this.street,          that.street) &&
+                   Objects.equals(this.streetNumber,     that.streetNumber);
         }
         return false;
     }

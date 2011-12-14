@@ -18,13 +18,13 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractMethodProperty;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for methodPropertyType complex type.
@@ -289,16 +289,16 @@ public class MethodPropertyType implements AbstractMethodProperty {
         if (object instanceof MethodPropertyType) {
             final MethodPropertyType that = (MethodPropertyType) object;
 
-            return Utilities.equals(this.actuate, that.actuate)
-                    && Utilities.equals(this.href, that.href)
-                    && Utilities.equals(this.processMethod, that.processMethod)
-                    && Utilities.equals(this.nilReason, that.nilReason)
-                    && Utilities.equals(this.remoteSchema, that.remoteSchema)
-                    && Utilities.equals(this.role, that.role)
-                    && Utilities.equals(this.show, that.show)
-                    && Utilities.equals(this.title, that.title)
-                    && Utilities.equals(this.type, that.type)
-                    && Utilities.equals(this.arcrole, that.arcrole);
+            return Objects.equals(this.actuate, that.actuate)
+                    && Objects.equals(this.href, that.href)
+                    && Objects.equals(this.processMethod, that.processMethod)
+                    && Objects.equals(this.nilReason, that.nilReason)
+                    && Objects.equals(this.remoteSchema, that.remoteSchema)
+                    && Objects.equals(this.role, that.role)
+                    && Objects.equals(this.show, that.show)
+                    && Objects.equals(this.title, that.title)
+                    && Objects.equals(this.type, that.type)
+                    && Objects.equals(this.arcrole, that.arcrole);
         }
         return false;
     }

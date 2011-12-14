@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -33,7 +34,6 @@ import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
-import org.geotoolkit.util.Utilities;
 
 
 
@@ -438,20 +438,20 @@ public class Characteristics implements AbstractCharacteristics {
         if (object instanceof Characteristics) {
             final Characteristics that = (Characteristics) object;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
-                record = Utilities.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());
+                record = Objects.equals(this.abstractDataRecord.getValue(), that.abstractDataRecord.getValue());
             } else if (this.abstractDataRecord == null && that.abstractDataRecord == null) {
                 record = true;
             }
             
-            return Utilities.equals(this.actuate,      that.actuate)       &&
-                   Utilities.equals(this.arcrole,      that.arcrole)       &&
-                   Utilities.equals(this.href,         that.href)          &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
-                   Utilities.equals(this.role,         that.role)          &&
-                   Utilities.equals(this.show,         that.show)          &&
-                   Utilities.equals(this.title,        that.title)         &&
+            return Objects.equals(this.actuate,      that.actuate)       &&
+                   Objects.equals(this.arcrole,      that.arcrole)       &&
+                   Objects.equals(this.href,         that.href)          &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema)  &&
+                   Objects.equals(this.role,         that.role)          &&
+                   Objects.equals(this.show,         that.show)          &&
+                   Objects.equals(this.title,        that.title)         &&
                    record                                                  &&
-                   Utilities.equals(this.type,         that.type);
+                   Objects.equals(this.type,         that.type);
         }
         return false;
     }

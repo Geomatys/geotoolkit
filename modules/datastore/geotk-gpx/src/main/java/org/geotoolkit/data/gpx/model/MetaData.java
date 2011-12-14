@@ -23,9 +23,9 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -186,7 +186,7 @@ public class MetaData {
             return false;
         }
 
-        if(!Utilities.equals(this.links, other.links)){
+        if(!Objects.equals(this.links, other.links)){
             return false;
         }
         

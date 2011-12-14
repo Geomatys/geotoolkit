@@ -19,6 +19,7 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ows.xml.ExceptionResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -125,9 +125,9 @@ public class ExceptionReport implements ExceptionResponse {
         }
         if (object instanceof ExceptionReport) {
             final ExceptionReport that = (ExceptionReport) object;
-            return Utilities.equals(this.exception, that.exception) &&
-                   Utilities.equals(this.language,  that.language)   &&
-                   Utilities.equals(this.version,   that.version);
+            return Objects.equals(this.exception, that.exception) &&
+                   Objects.equals(this.language,  that.language)   &&
+                   Objects.equals(this.version,   that.version);
         }
         return false;
     }

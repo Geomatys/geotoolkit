@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractConnections;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -102,7 +102,7 @@ public class Connections implements AbstractConnections {
 
         if (object instanceof Connections) {
             final Connections that = (Connections) object;
-            return Utilities.equals(this.connectionList, that.connectionList)  ;
+            return Objects.equals(this.connectionList, that.connectionList)  ;
         }
         return false;
     }

@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -104,8 +104,8 @@ public class Import extends Annotated {
         }
         if (object instanceof Import && super.equals(object)) {
             final Import that = (Import) object;
-            return Utilities.equals(this.namespace,      that.namespace)     &&
-                   Utilities.equals(this.schemaLocation, that.schemaLocation);
+            return Objects.equals(this.namespace,      that.namespace)     &&
+                   Objects.equals(this.schemaLocation, that.schemaLocation);
         }
         return false;
     }

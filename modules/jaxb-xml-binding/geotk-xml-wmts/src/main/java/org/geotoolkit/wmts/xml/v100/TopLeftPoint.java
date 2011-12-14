@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmts.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -81,7 +81,7 @@ public class TopLeftPoint {
             if (this.topLeftPoint == null && that.topLeftPoint == null) {
                 return true;
             } else if (this.topLeftPoint != null && that.topLeftPoint != null) {
-                return Utilities.equals(this.topLeftPoint.getValue(), that.topLeftPoint.getValue());
+                return Objects.equals(this.topLeftPoint.getValue(), that.topLeftPoint.getValue());
             }
         }
         return false;

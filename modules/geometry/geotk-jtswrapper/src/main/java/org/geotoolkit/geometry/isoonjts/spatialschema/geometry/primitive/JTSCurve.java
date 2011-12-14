@@ -9,22 +9,19 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayList;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
-
 import org.geotoolkit.internal.jaxb.CurveArrayType;
-import org.geotoolkit.util.Utilities;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
@@ -381,7 +378,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
 
         if (object instanceof JTSCurve && super.equals(object)) {
             JTSCurve that = (JTSCurve) object;
-            return Utilities.equals(this.curveSegments, that.curveSegments);
+            return Objects.equals(this.curveSegments, that.curveSegments);
         }
         return false;
     }

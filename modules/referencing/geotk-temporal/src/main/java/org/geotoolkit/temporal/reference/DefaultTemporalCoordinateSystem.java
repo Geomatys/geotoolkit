@@ -18,8 +18,8 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Date;
+import java.util.Objects;
 
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
 
 import org.opengis.metadata.extent.Extent;
@@ -157,8 +157,8 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
             if (object instanceof DefaultTemporalCoordinateSystem) {
                 final DefaultTemporalCoordinateSystem that = (DefaultTemporalCoordinateSystem) object;
 
-                return Utilities.equals(this.interval, that.interval) &&
-                        Utilities.equals(this.origin, that.origin);
+                return Objects.equals(this.interval, that.interval) &&
+                        Objects.equals(this.origin, that.origin);
             }
         }
         return false;

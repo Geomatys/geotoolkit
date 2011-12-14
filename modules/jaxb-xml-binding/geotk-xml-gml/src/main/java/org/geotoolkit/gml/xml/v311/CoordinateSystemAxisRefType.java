@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -266,15 +266,15 @@ public class CoordinateSystemAxisRefType {
         if (object instanceof CoordinateSystemAxisRefType) {
             final CoordinateSystemAxisRefType that = (CoordinateSystemAxisRefType) object;
 
-            return Utilities.equals(this.actuate, that.actuate)           &&
-                   Utilities.equals(this.href, that.href)                 &&
-                   Utilities.equals(this.coordinateSystemAxis, that.coordinateSystemAxis) &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
-                   Utilities.equals(this.role, that.role)                 &&
-                   Utilities.equals(this.show, that.show)                 &&
-                   Utilities.equals(this.title, that.title)               &&
-                   Utilities.equals(this.type, that.type)                 &&
-                   Utilities.equals(this.arcrole, that.arcrole);
+            return Objects.equals(this.actuate, that.actuate)           &&
+                   Objects.equals(this.href, that.href)                 &&
+                   Objects.equals(this.coordinateSystemAxis, that.coordinateSystemAxis) &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema) &&
+                   Objects.equals(this.role, that.role)                 &&
+                   Objects.equals(this.show, that.show)                 &&
+                   Objects.equals(this.title, that.title)               &&
+                   Objects.equals(this.type, that.type)                 &&
+                   Objects.equals(this.arcrole, that.arcrole);
         }
         return false;
     }

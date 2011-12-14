@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -308,15 +308,15 @@ public class MultiCurvePropertyType {
         if (object instanceof MultiCurvePropertyType) {
             final MultiCurvePropertyType that = (MultiCurvePropertyType) object;
 
-            return Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title)            &&
-                   Utilities.equals(this.multiCurve,         that.multiCurve);
+            return Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title)            &&
+                   Objects.equals(this.multiCurve,         that.multiCurve);
         }
         return false;
     }

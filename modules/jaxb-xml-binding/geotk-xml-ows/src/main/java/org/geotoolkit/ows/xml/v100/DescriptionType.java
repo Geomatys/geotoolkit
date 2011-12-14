@@ -19,13 +19,13 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractDescription;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -149,9 +149,9 @@ public class DescriptionType implements AbstractDescription {
         }
         if (object instanceof DescriptionType) {
             final DescriptionType that = (DescriptionType) object;
-            return Utilities.equals(this._abstract, that._abstract) &&
-                   Utilities.equals(this.keywords,  that.keywords)   &&
-                   Utilities.equals(this.title,     that.title);
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.keywords,  that.keywords)   &&
+                   Objects.equals(this.title,     that.title);
         }
         return false;
     }

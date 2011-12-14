@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.opengis.style.Description;
 import org.opengis.style.StyleVisitor;
 import org.opengis.util.InternationalString;
@@ -84,8 +84,8 @@ public class DefaultDescription implements Description{
 
         DefaultDescription other = (DefaultDescription) obj;
 
-        return Utilities.equals(this.title, other.title)
-                && Utilities.equals(this.desc, other.desc);
+        return Objects.equals(this.title, other.title)
+                && Objects.equals(this.desc, other.desc);
 
     }
 

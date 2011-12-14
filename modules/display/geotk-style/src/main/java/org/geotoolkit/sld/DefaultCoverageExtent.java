@@ -19,9 +19,9 @@ package org.geotoolkit.sld;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.geotoolkit.util.StringUtilities;
+import java.util.Objects;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.StringUtilities;
 
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.RangeAxis;
@@ -84,8 +84,8 @@ class DefaultCoverageExtent implements CoverageExtent{
 
         DefaultCoverageExtent  other = (DefaultCoverageExtent) obj;
 
-        return Utilities.equals(this.timePeriod, other.timePeriod)
-                && Utilities.equals(this.ranges, other.ranges);
+        return Objects.equals(this.timePeriod, other.timePeriod)
+                && Objects.equals(this.ranges, other.ranges);
 
     }
 

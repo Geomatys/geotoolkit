@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
@@ -319,12 +319,12 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         if (object instanceof DefaultPeriodDuration) {
             final DefaultPeriodDuration that = (DefaultPeriodDuration) object;
 
-            return Utilities.equals(this.days, that.days) &&
-                    Utilities.equals(this.hours, that.hours) &&
-                    Utilities.equals(this.minutes, that.minutes) &&
-                    Utilities.equals(this.months, that.months) &&
-                    Utilities.equals(this.seconds, that.seconds) &&
-                    Utilities.equals(this.years, that.years);
+            return Objects.equals(this.days, that.days) &&
+                    Objects.equals(this.hours, that.hours) &&
+                    Objects.equals(this.minutes, that.minutes) &&
+                    Objects.equals(this.months, that.months) &&
+                    Objects.equals(this.seconds, that.seconds) &&
+                    Objects.equals(this.years, that.years);
         }
         return false;
     }

@@ -17,8 +17,7 @@
 package org.geotoolkit.style;
 
 import java.net.URI;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.metadata.citation.OnLineFunction;
 import org.opengis.metadata.citation.OnlineResource;
@@ -124,12 +123,12 @@ public class DefaultOnlineResource implements OnlineResource{
 
         DefaultOnlineResource other = (DefaultOnlineResource) obj;
 
-        return Utilities.equals(this.desc, other.desc)
-                && Utilities.equals(this.function, other.function)
-                && Utilities.equals(this.title, other.title)
-                && Utilities.equals(this.profil, other.profil)
-                && Utilities.equals(this.protocol, other.protocol)
-                && Utilities.equals(this.href, other.href);
+        return Objects.equals(this.desc, other.desc)
+                && Objects.equals(this.function, other.function)
+                && Objects.equals(this.title, other.title)
+                && Objects.equals(this.profil, other.profil)
+                && Objects.equals(this.protocol, other.protocol)
+                && Objects.equals(this.href, other.href);
 
     }
 

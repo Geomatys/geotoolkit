@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.TemporalCRSType;
 import org.geotoolkit.sml.xml.AbstractTemporalReferenceFrame;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -105,7 +105,7 @@ public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
         if (object instanceof TemporalReferenceFrame) {
             final TemporalReferenceFrame that = (TemporalReferenceFrame) object;
 
-            return Utilities.equals(this.temporalCRS,  that.temporalCRS);
+            return Objects.equals(this.temporalCRS,  that.temporalCRS);
         }
         return false;
     }

@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -215,9 +215,9 @@ public class TransactionType extends BaseRequestType {
         }
         if (object instanceof TransactionType && super.equals(object)) {
             final TransactionType that = (TransactionType) object;
-            return  Utilities.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
-                    Utilities.equals(this.lockId, that.lockId) &&
-                    Utilities.equals(this.releaseAction, that.releaseAction);
+            return  Objects.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
+                    Objects.equals(this.lockId, that.lockId) &&
+                    Objects.equals(this.releaseAction, that.releaseAction);
         }
         return false;
     }

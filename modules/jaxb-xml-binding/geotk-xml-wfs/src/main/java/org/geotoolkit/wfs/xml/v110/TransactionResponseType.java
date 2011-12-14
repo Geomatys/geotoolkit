@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 
@@ -210,10 +210,10 @@ public class TransactionResponseType implements WFSResponse {
         }
         if (object instanceof TransactionResponseType) {
             final TransactionResponseType that = (TransactionResponseType) object;
-            return Utilities.equals(this.insertResults,      that.insertResults)        &&
-                   Utilities.equals(this.transactionResults, that.transactionResults)   &&
-                   Utilities.equals(this.transactionSummary, that.transactionSummary)   &&
-                   Utilities.equals(this.version,            that.version) ;
+            return Objects.equals(this.insertResults,      that.insertResults)        &&
+                   Objects.equals(this.transactionResults, that.transactionResults)   &&
+                   Objects.equals(this.transactionSummary, that.transactionSummary)   &&
+                   Objects.equals(this.version,            that.version) ;
         }
         return false;
     }

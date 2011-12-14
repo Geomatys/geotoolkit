@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.AbstractLink;
 
 /**
@@ -154,9 +154,9 @@ public class Link implements AbstractLink {
         }
         if (object instanceof Link) {
             final Link that = (Link) object;
-            return Utilities.equals(this.destination, that.destination) &&
-                   Utilities.equals(this.source, that.source)           &&
-                   Utilities.equals(this.type, that.type);
+            return Objects.equals(this.destination, that.destination) &&
+                   Objects.equals(this.source, that.source)           &&
+                   Objects.equals(this.type, that.type);
 
         }
         return false;

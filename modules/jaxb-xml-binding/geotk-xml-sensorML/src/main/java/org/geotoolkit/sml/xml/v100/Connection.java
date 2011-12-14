@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.sml.xml.AbstractConnection;
 
 
@@ -148,9 +148,9 @@ public class Connection implements AbstractConnection {
 
         if (object instanceof Connection) {
             final Connection that = (Connection) object;
-            return Utilities.equals(this.arrayLink, that.arrayLink) &&
-                   Utilities.equals(this.link, that.link)           &&
-                   Utilities.equals(this.name, that.name);
+            return Objects.equals(this.arrayLink, that.arrayLink) &&
+                   Objects.equals(this.link, that.link)           &&
+                   Objects.equals(this.name, that.name);
 
         }
         return false;

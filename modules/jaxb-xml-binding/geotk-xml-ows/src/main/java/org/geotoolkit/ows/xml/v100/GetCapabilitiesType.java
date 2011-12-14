@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.ows.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractGetCapabilities;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
 
 
@@ -223,10 +223,10 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         }
         if (object instanceof GetCapabilitiesType) {
             final GetCapabilitiesType that = (GetCapabilitiesType) object;
-            return Utilities.equals(this.acceptFormats,  that.acceptFormats)  &&
-                   Utilities.equals(this.acceptVersions, that.acceptVersions) &&
-                   Utilities.equals(this.sections,       that.sections)       &&
-                   Utilities.equals(this.updateSequence, that.updateSequence);
+            return Objects.equals(this.acceptFormats,  that.acceptFormats)  &&
+                   Objects.equals(this.acceptVersions, that.acceptVersions) &&
+                   Objects.equals(this.sections,       that.sections)       &&
+                   Objects.equals(this.updateSequence, that.updateSequence);
         }
         return false;
     }

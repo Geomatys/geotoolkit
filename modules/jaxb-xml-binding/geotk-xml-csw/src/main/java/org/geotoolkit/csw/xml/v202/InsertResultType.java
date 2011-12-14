@@ -17,15 +17,14 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -101,8 +100,8 @@ public class InsertResultType {
         }
         if (object instanceof InsertResultType) {
             final InsertResultType that = (InsertResultType) object;
-            return Utilities.equals(this.briefRecord, that.briefRecord) &&
-                   Utilities.equals(this.handleRef,   that.handleRef);
+            return Objects.equals(this.briefRecord, that.briefRecord) &&
+                   Objects.equals(this.handleRef,   that.handleRef);
         }
         return false;
     }

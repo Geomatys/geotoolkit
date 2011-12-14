@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -107,8 +107,8 @@ public class NotifyActionType extends ActionType {
         }
         if (obj instanceof NotifyActionType) {
             final NotifyActionType that = (NotifyActionType) obj;
-            return Utilities.equals(this.endPoint,           that.endPoint) &&
-                   Utilities.equals(this.notificationOption, that.notificationOption);
+            return Objects.equals(this.endPoint,           that.endPoint) &&
+                   Objects.equals(this.notificationOption, that.notificationOption);
         }
         return false;
     }

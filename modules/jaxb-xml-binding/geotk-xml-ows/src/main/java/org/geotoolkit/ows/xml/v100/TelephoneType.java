@@ -19,12 +19,12 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.AbstractTelephone;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -117,8 +117,8 @@ public class TelephoneType implements AbstractTelephone {
         }
         if (object instanceof TelephoneType) {
             final TelephoneType that = (TelephoneType) object;
-            return Utilities.equals(this.facsimile, that.facsimile) &&
-                   Utilities.equals(this.voice,     that.voice);
+            return Objects.equals(this.facsimile, that.facsimile) &&
+                   Objects.equals(this.voice,     that.voice);
         }
         return false;
     }

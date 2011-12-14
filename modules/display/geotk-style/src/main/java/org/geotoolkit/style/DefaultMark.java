@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.style;
 
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExternalMark;
@@ -135,10 +135,10 @@ public class DefaultMark implements Mark{
 
         DefaultMark other = (DefaultMark) obj;
 
-        return Utilities.equals(this.external, other.external)
-                && Utilities.equals(this.wkn, other.wkn)
-                && Utilities.equals(this.fill, other.fill)
-                && Utilities.equals(this.stroke, other.stroke);
+        return Objects.equals(this.external, other.external)
+                && Objects.equals(this.wkn, other.wkn)
+                && Objects.equals(this.fill, other.fill)
+                && Objects.equals(this.stroke, other.stroke);
 
     }
 

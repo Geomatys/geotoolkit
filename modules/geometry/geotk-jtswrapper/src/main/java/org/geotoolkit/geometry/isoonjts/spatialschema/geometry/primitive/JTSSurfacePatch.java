@@ -17,15 +17,13 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.SurfaceInterpolation;
 import org.opengis.geometry.primitive.SurfacePatch;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.AbstractJTSGenericSurface;
 import org.geotoolkit.internal.jaxb.SurfaceBoundaryAdapter;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Defines a homogeneous portion of a {@linkplain Surface surface}.
@@ -146,9 +144,9 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
 
         if (object instanceof JTSSurfacePatch) {
             JTSSurfacePatch that = (JTSSurfacePatch) object;
-            return Utilities.equals(this.boundary,      that.boundary)      &&
-                   Utilities.equals(this.interpolation, that.interpolation) &&
-                   Utilities.equals(this.surface,       that.surface);
+            return Objects.equals(this.boundary,      that.boundary)      &&
+                   Objects.equals(this.interpolation, that.interpolation) &&
+                   Objects.equals(this.surface,       that.surface);
         }
         return false;
      }

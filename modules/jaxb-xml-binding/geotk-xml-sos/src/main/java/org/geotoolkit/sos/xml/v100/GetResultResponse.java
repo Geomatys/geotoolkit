@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.sos.xml.SOSResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -95,7 +95,7 @@ public class GetResultResponse implements SOSResponse {
         }
         if (object instanceof GetResultResponse) {
             final GetResultResponse that = (GetResultResponse) object;
-            return Utilities.equals(this.result, that.result);
+            return Objects.equals(this.result, that.result);
         }
         return false;
     }
@@ -174,8 +174,8 @@ public class GetResultResponse implements SOSResponse {
             }
             if (object instanceof Result) {
                 final Result that = (Result) object;
-                return Utilities.equals(this.rs,    that.rs) &&
-                       Utilities.equals(this.value, that.value);
+                return Objects.equals(this.rs,    that.rs) &&
+                       Objects.equals(this.value, that.value);
             }
             return false;
         }

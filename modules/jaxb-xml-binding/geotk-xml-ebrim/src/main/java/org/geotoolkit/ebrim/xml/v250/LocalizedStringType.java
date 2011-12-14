@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ebrim.xml.v250;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ebrim.xml.LocalizedString;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -134,9 +134,9 @@ public class LocalizedStringType implements LocalizedString {
         }
         if (obj instanceof LocalizedStringType) {
             final LocalizedStringType that = (LocalizedStringType) obj;
-            return Utilities.equals(this.getCharset(), that.getCharset()) &&
-                   Utilities.equals(this.getLang(), that.getLang()) &&
-                   Utilities.equals(this.value,   that.value);
+            return Objects.equals(this.getCharset(), that.getCharset()) &&
+                   Objects.equals(this.getLang(), that.getLang()) &&
+                   Objects.equals(this.value,   that.value);
         }
         return false;
     }

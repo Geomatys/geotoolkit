@@ -12,11 +12,12 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.geotoolkit.internal.jaxb.RingAdapter;
-import org.geotoolkit.util.Utilities;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -76,8 +77,8 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
 
         if (object instanceof JTSSurfaceBoundary && super.equals(object)) {
             JTSSurfaceBoundary that = (JTSSurfaceBoundary) object;
-            return Utilities.equals(this.exterior, that.exterior) &&
-                   Utilities.equals(this.interior, that.interior);
+            return Objects.equals(this.exterior, that.exterior) &&
+                   Objects.equals(this.interior, that.interior);
         }
         return false;
     }

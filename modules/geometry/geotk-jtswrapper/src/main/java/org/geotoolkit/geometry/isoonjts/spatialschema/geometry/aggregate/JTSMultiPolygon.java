@@ -2,11 +2,7 @@
 
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -19,7 +15,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolyg
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSRing;
 import org.geotoolkit.internal.jaxb.PolygonPropertyAdapter;
-import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.Position;
@@ -101,7 +96,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
             return true;
         if (object instanceof JTSMultiPolygon && super.equals(object)) {
             JTSMultiPolygon that = (JTSMultiPolygon) object;
-            return Utilities.equals(this.elements, that.elements);
+            return Objects.equals(this.elements, that.elements);
         }
         return false;
     }

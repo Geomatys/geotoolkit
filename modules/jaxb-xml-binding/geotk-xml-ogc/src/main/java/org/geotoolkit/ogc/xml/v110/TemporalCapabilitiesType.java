@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -112,8 +112,8 @@ public class TemporalCapabilitiesType {
        if (object instanceof TemporalCapabilitiesType) {
            final TemporalCapabilitiesType that = (TemporalCapabilitiesType) object;
        
-            return Utilities.equals(this.temporalOperands, that.temporalOperands) &&
-                   Utilities.equals(this.temporalOperators, that.temporalOperators);
+            return Objects.equals(this.temporalOperands, that.temporalOperands) &&
+                   Objects.equals(this.temporalOperators, that.temporalOperators);
         }
         return false;
     }

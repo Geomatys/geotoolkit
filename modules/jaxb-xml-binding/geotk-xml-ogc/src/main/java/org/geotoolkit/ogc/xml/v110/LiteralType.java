@@ -19,12 +19,12 @@ package org.geotoolkit.ogc.xml.v110;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
@@ -178,7 +178,7 @@ public class LiteralType implements Literal {
             final LiteralType that = (LiteralType) object;
 
 
-            return Utilities.equals(this.content,   that.content);
+            return Objects.equals(this.content,   that.content);
         }
         return false;
     }

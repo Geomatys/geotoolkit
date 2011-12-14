@@ -22,17 +22,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Utilities;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -572,7 +567,7 @@ public class Polygon extends Polyline {
         }
         if (super.equals(object)) {
             final Polygon that = (Polygon) object;
-            return Utilities.equals(this.name,  that.name ) &&
+            return Objects.equals(this.name,  that.name ) &&
                       Arrays.equals(this.holes, that.holes);
         }
         return false;

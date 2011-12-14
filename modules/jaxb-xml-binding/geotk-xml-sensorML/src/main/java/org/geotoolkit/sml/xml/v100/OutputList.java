@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +31,6 @@ import org.geotoolkit.sml.xml.AbstractOutputList;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.swe.xml.v100.ObservableProperty;
 import org.geotoolkit.swe.xml.v100.QuantityType;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -164,8 +164,8 @@ public class OutputList implements AbstractOutputList {
         if (object instanceof OutputList) {
             final OutputList that = (OutputList) object;
 
-            return Utilities.equals(this.output, that.output) &&
-                    Utilities.equals(this.id, that.id);
+            return Objects.equals(this.output, that.output) &&
+                    Objects.equals(this.id, that.id);
         }
         return false;
     }

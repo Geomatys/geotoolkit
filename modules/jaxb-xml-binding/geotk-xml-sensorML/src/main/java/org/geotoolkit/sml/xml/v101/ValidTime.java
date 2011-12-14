@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +26,6 @@ import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sml.xml.AbstractValidTime;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -161,8 +161,8 @@ public class ValidTime implements AbstractValidTime {
         if (object instanceof ValidTime) {
             final ValidTime that = (ValidTime) object;
 
-            return Utilities.equals(this.timeInstant, that.timeInstant) &&
-                   Utilities.equals(this.timePeriod,  that.timePeriod);
+            return Objects.equals(this.timeInstant, that.timeInstant) &&
+                   Objects.equals(this.timePeriod,  that.timePeriod);
         }
         return false;
     }

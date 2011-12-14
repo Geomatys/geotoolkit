@@ -18,8 +18,8 @@
 package org.geotoolkit.feature;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 import org.opengis.feature.type.Name;
 
 
@@ -152,10 +152,10 @@ public class DefaultName implements Name,Serializable {
 
         if (obj instanceof Name) {
             final DefaultName other = (DefaultName) obj;
-            if (!Utilities.equals(this.namespace, other.getNamespaceURI())) {
+            if (!Objects.equals(this.namespace, other.getNamespaceURI())) {
                 return false;
             }
-            if (!Utilities.equals(this.local, other.getLocalPart())) {
+            if (!Objects.equals(this.local, other.getLocalPart())) {
                 return false;
             }
             return true;

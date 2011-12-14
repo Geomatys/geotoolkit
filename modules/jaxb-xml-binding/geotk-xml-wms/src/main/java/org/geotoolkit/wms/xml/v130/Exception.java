@@ -19,12 +19,12 @@ package org.geotoolkit.wms.xml.v130;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -102,7 +102,7 @@ public class Exception {
         if (object instanceof Exception) {
             final Exception that = (Exception) object;
 
-            return Utilities.equals(this.format, that.format);
+            return Objects.equals(this.format, that.format);
         }
         return false;
     }

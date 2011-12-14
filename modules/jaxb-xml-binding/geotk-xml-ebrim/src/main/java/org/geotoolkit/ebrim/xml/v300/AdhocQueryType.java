@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -88,7 +88,7 @@ public class AdhocQueryType extends RegistryObjectType {
         }
         if (obj instanceof AdhocQueryType && super.equals(obj)) {
             final AdhocQueryType that = (AdhocQueryType) obj;
-            return Utilities.equals(this.queryExpression, that.queryExpression);
+            return Objects.equals(this.queryExpression, that.queryExpression);
         }
         return false;
     }

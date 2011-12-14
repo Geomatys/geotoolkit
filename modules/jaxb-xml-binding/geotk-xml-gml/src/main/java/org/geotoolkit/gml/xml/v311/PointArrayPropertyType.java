@@ -18,11 +18,11 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -94,7 +94,7 @@ public class PointArrayPropertyType {
         if (object instanceof PointArrayPropertyType) {
             final PointArrayPropertyType that = (PointArrayPropertyType) object;
 
-            return Utilities.equals(this.point,  that.point);
+            return Objects.equals(this.point,  that.point);
         }
         return false;
     }

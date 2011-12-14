@@ -17,8 +17,7 @@
 package org.geotoolkit.feature;
 
 import java.io.Serializable;
-
-import org.geotoolkit.util.Utilities;
+import java.util.Objects;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.type.Name;
@@ -78,15 +77,15 @@ public abstract class AbstractProperty implements Property,Serializable {
         Property other = (Property) obj;
 
         final PropertyDescriptor descriptor = getDescriptor();
-        if (!Utilities.equals(descriptor, other.getDescriptor())) {
+        if (!Objects.equals(descriptor, other.getDescriptor())) {
             return false;
         }
         final PropertyType type = getType();
-        if (!Utilities.equals(type, other.getType())) {
+        if (!Objects.equals(type, other.getType())) {
             return false;
         }
         final Object value = getValue();
-        if (!Utilities.deepEquals(value, other.getValue())) {
+        if (!Objects.deepEquals(value, other.getValue())) {
             return false;
         }
 

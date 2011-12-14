@@ -18,8 +18,8 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
-import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.temporal.TemporalReferenceSystem;
@@ -115,13 +115,13 @@ public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
         if (object instanceof DefaultTemporalReferenceSystem) {
             final DefaultTemporalReferenceSystem that = (DefaultTemporalReferenceSystem) object;
 
-            return Utilities.equals(this.alias, that.alias) &&
-                    Utilities.equals(this.domainOfValidity, that.domainOfValidity) &&
-                    Utilities.equals(this.identifiers, that.identifiers) &&
-                    Utilities.equals(this.name, that.name) &&
-                    Utilities.equals(this.scope, that.scope) &&
-                    Utilities.equals(this.validArea, that.validArea) &&
-                    Utilities.equals(this.remarks, that.remarks);
+            return Objects.equals(this.alias, that.alias) &&
+                    Objects.equals(this.domainOfValidity, that.domainOfValidity) &&
+                    Objects.equals(this.identifiers, that.identifiers) &&
+                    Objects.equals(this.name, that.name) &&
+                    Objects.equals(this.scope, that.scope) &&
+                    Objects.equals(this.validArea, that.validArea) &&
+                    Objects.equals(this.remarks, that.remarks);
         }
         return false;
     }

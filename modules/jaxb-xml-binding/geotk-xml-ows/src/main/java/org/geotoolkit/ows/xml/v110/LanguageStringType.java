@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -101,8 +101,8 @@ public class LanguageStringType {
         if (object instanceof LanguageStringType) {
             final LanguageStringType that = (LanguageStringType) object;
 
-            return Utilities.equals(this.lang,  that.lang)  &&
-                   Utilities.equals(this.value, that.value);
+            return Objects.equals(this.lang,  that.lang)  &&
+                   Objects.equals(this.value, that.value);
         }
         return false;
     }

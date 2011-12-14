@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.swe.xml.AbstractCategory;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -227,12 +227,12 @@ public class Category extends AbstractDataComponentType  implements AbstractCate
         if (object instanceof Category && super.equals(object, mode)) {
             final Category that = (Category) object;
 
-            return Utilities.equals(this.axisID,           that.axisID)         &&
-                   Utilities.equals(this.getConstraint(), that.getConstraint())     &&
-                   Utilities.equals(this.quality,          that.quality)        &&
-                   Utilities.equals(this.referenceFrame,   that.referenceFrame) &&
-                   Utilities.equals(this.codeSpace,        that.codeSpace)      &&
-                   Utilities.equals(this.value,            that.value);
+            return Objects.equals(this.axisID,           that.axisID)         &&
+                   Objects.equals(this.getConstraint(), that.getConstraint())     &&
+                   Objects.equals(this.quality,          that.quality)        &&
+                   Objects.equals(this.referenceFrame,   that.referenceFrame) &&
+                   Objects.equals(this.codeSpace,        that.codeSpace)      &&
+                   Objects.equals(this.value,            that.value);
         }
         return false;
     }

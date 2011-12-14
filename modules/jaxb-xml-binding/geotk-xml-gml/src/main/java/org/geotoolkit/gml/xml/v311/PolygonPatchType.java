@@ -18,13 +18,13 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -269,9 +269,9 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
         if (object instanceof PolygonPatchType) {
             final PolygonPatchType that = (PolygonPatchType) object;
 
-            return Utilities.equals(this.getExterior(),    that.getExterior()) &&
-                   Utilities.equals(this.getInterior(),    that.getInterior()) &&
-                   Utilities.equals(this.interpolation,    that.interpolation);
+            return Objects.equals(this.getExterior(),    that.getExterior()) &&
+                   Objects.equals(this.getInterior(),    that.getInterior()) &&
+                   Objects.equals(this.interpolation,    that.interpolation);
         }
         return false;
     }

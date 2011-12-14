@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -183,7 +184,7 @@ public class CurveArrayPropertyType {
                     AbstractCurveType thisGeom = this.abstractCurve.get(i).getValue();
                     AbstractCurveType thatGeom = that.abstractCurve.get(i).getValue();
 
-                    if (!Utilities.equals(thisGeom,   thatGeom))
+                    if (!Objects.equals(thisGeom,   thatGeom))
                         return false;
                 }
                 return true;

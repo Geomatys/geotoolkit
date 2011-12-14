@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -80,7 +81,7 @@ public class OpenAttrs {
         }
         if (object instanceof OpenAttrs) {
             final OpenAttrs that = (OpenAttrs) object;
-            return Utilities.equals(this.otherAttributes, that.otherAttributes);
+            return Objects.equals(this.otherAttributes, that.otherAttributes);
         }
         return false;
     }

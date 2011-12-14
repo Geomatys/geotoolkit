@@ -18,12 +18,12 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -167,7 +167,7 @@ public class SurfaceArrayPropertyType {
         }
         if (object instanceof SurfaceArrayPropertyType) {
             final SurfaceArrayPropertyType that = (SurfaceArrayPropertyType) object;
-            return Utilities.equals(this.getAbstractSurface(), that.getAbstractSurface());
+            return Objects.equals(this.getAbstractSurface(), that.getAbstractSurface());
         }
         return false;
     }

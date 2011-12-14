@@ -18,10 +18,7 @@
 
 package org.geotoolkit.internal.jaxb;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,7 +27,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.Position;
@@ -323,11 +319,11 @@ public class DirectPositionType implements DirectPosition {
         }
         if (object instanceof DirectPositionType) {
             final DirectPositionType that = (DirectPositionType) object;
-            return  Utilities.equals(this.axisLabels, that.axisLabels)     &&
-                    Utilities.equals(this.srsDimension, that.srsDimension) &&
-                    Utilities.equals(this.srsName, that.srsName)           &&
-                    Utilities.equals(this.uomLabels, that.uomLabels)       &&
-                    Utilities.equals(this.value, that.value);
+            return  Objects.equals(this.axisLabels, that.axisLabels)     &&
+                    Objects.equals(this.srsDimension, that.srsDimension) &&
+                    Objects.equals(this.srsName, that.srsName)           &&
+                    Objects.equals(this.uomLabels, that.uomLabels)       &&
+                    Objects.equals(this.value, that.value);
         }
         return false;
     }

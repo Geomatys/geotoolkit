@@ -18,12 +18,12 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -129,7 +129,7 @@ public class RingType extends AbstractRingType {
         if (object instanceof RingType && super.equals(object, mode)) {
             final RingType that = (RingType) object;
 
-            return Utilities.equals(this.curveMember, that.curveMember);
+            return Objects.equals(this.curveMember, that.curveMember);
         }
         return false;
     }

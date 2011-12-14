@@ -19,12 +19,12 @@ package org.geotoolkit.ows.xml.v100;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -116,9 +116,9 @@ public class ExceptionType {
         }
         if (object instanceof ExceptionType) {
             final ExceptionType that = (ExceptionType) object;
-            return Utilities.equals(this.exceptionCode, that.exceptionCode) &&
-                   Utilities.equals(this.exceptionText, that.exceptionText) &&
-                   Utilities.equals(this.locator,       that.locator);
+            return Objects.equals(this.exceptionCode, that.exceptionCode) &&
+                   Objects.equals(this.exceptionText, that.exceptionText) &&
+                   Objects.equals(this.locator,       that.locator);
         }
         return false;
     }

@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml.v202;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.dublincore.xml.v2.elements.SimpleLiteral;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -204,14 +204,14 @@ public class BriefRecordType extends AbstractRecordType {
                 for (int i = 0; i < this.boundingBox.size(); i++) {
                     JAXBElement<? extends BoundingBoxType> thisJB = this.boundingBox.get(i);
                     JAXBElement<? extends BoundingBoxType> thatJB = that.boundingBox.get(i);
-                    if (!Utilities.equals(thisJB.getValue(), thatJB.getValue())) {
+                    if (!Objects.equals(thisJB.getValue(), thatJB.getValue())) {
                         bbox = false;
                     }
                 }
             }
-            return Utilities.equals(this.type,       that.type)       &&
-                   Utilities.equals(this.identifier, that.identifier) &&
-                   Utilities.equals(this.title,      that.title)      &&
+            return Objects.equals(this.type,       that.type)       &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.title,      that.title)      &&
                    bbox;
         }
         return false;

@@ -17,15 +17,11 @@
 package org.geotoolkit.skos.xml;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -112,7 +108,7 @@ public class RDF implements Serializable {
         if (object instanceof RDF) {
             final RDF that = (RDF) object;
 
-            return Utilities.equals(this.concept, that.concept);
+            return Objects.equals(this.concept, that.concept);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for DeleteElementType complex type.
@@ -178,9 +178,9 @@ public class DeleteElementType {
         
         if (obj instanceof DeleteElementType) {
             DeleteElementType that = (DeleteElementType) obj;
-            return Utilities.equals(this.filter, that.filter) &&
-                   Utilities.equals(this.typeName, that.typeName) &&
-                   Utilities.equals(this.handle, that.handle);
+            return Objects.equals(this.filter, that.filter) &&
+                   Objects.equals(this.typeName, that.typeName) &&
+                   Objects.equals(this.handle, that.handle);
         }
         return false;
     }

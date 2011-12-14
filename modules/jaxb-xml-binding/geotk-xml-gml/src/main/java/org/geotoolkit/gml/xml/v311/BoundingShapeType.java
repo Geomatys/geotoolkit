@@ -18,13 +18,13 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -140,10 +140,10 @@ public class BoundingShapeType {
             
             final BoundingShapeType that = (BoundingShapeType) object;
 
-            return Utilities.equals(this.getNull(),              that.getNull())              &&
-                   Utilities.equals(this.envelope,               that.envelope)               &&
-                   Utilities.equals(this.envelopeWithTimePeriod, that.envelopeWithTimePeriod) &&
-                   Utilities.equals(this.getNilReason(),         that.getNilReason());
+            return Objects.equals(this.getNull(),              that.getNull())              &&
+                   Objects.equals(this.envelope,               that.envelope)               &&
+                   Objects.equals(this.envelopeWithTimePeriod, that.envelopeWithTimePeriod) &&
+                   Objects.equals(this.getNilReason(),         that.getNilReason());
         }
         return false;
     }

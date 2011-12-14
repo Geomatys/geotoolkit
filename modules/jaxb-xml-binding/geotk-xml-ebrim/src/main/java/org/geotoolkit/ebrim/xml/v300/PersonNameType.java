@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ebrim.xml.v300;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -121,9 +121,9 @@ public class PersonNameType {
         }
         if (obj instanceof PersonNameType) {
             final PersonNameType that = (PersonNameType) obj;
-            return Utilities.equals(this.firstName,  that.firstName) &&
-                   Utilities.equals(this.lastName,   that.lastName) &&
-                   Utilities.equals(this.middleName, that.middleName);
+            return Objects.equals(this.firstName,  that.firstName) &&
+                   Objects.equals(this.lastName,   that.lastName) &&
+                   Objects.equals(this.middleName, that.middleName);
         }
         return false;
     }

@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponents;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -315,16 +315,16 @@ public class Components implements AbstractComponents {
         if (object instanceof Components) {
             final Components that = (Components) object;
 
-            return Utilities.equals(this.actuate, that.actuate)             &&
-                   Utilities.equals(this.href, that.href)                   &&
-                   Utilities.equals(this.componentList, that.componentList) &&
-                   Utilities.equals(this.nilReason, that.nilReason)         &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema)   &&
-                   Utilities.equals(this.role, that.role)                   &&
-                   Utilities.equals(this.show, that.show)                   &&
-                   Utilities.equals(this.title, that.title)                 &&
-                   Utilities.equals(this.getType(), that.getType())         &&
-                   Utilities.equals(this.arcrole, that.arcrole);
+            return Objects.equals(this.actuate, that.actuate)             &&
+                   Objects.equals(this.href, that.href)                   &&
+                   Objects.equals(this.componentList, that.componentList) &&
+                   Objects.equals(this.nilReason, that.nilReason)         &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema)   &&
+                   Objects.equals(this.role, that.role)                   &&
+                   Objects.equals(this.show, that.show)                   &&
+                   Objects.equals(this.title, that.title)                 &&
+                   Objects.equals(this.getType(), that.getType())         &&
+                   Objects.equals(this.arcrole, that.arcrole);
         }
         return false;
     }

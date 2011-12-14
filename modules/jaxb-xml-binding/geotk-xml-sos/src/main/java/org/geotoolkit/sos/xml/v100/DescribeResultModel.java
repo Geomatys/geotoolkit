@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -87,7 +87,7 @@ public class DescribeResultModel extends RequestBaseType {
         }
         if (object instanceof DescribeResultModel && super.equals(object)) {
             final DescribeResultModel that = (DescribeResultModel) object;
-            return Utilities.equals(this.resultName, that.resultName);
+            return Objects.equals(this.resultName, that.resultName);
         }
         return false;
     }

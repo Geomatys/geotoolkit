@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -170,9 +170,9 @@ public class TransactionSummaryType {
         }
         if (object instanceof TransactionSummaryType) {
             final TransactionSummaryType that = (TransactionSummaryType) object;
-            return Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
-                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
-                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+            return Objects.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Objects.equals(this.totalInserted,  that.totalInserted) &&
+                   Objects.equals(this.totalUpdated,   that.totalUpdated);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml.v202;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -123,9 +123,9 @@ public class DeleteType {
         }
         if (object instanceof DeleteType) {
             final DeleteType that = (DeleteType) object;
-            return Utilities.equals(this.constraint, that.constraint) &&
-                   Utilities.equals(this.handle,     that.handle)     &&
-                   Utilities.equals(this.typeName,   that.typeName);
+            return Objects.equals(this.constraint, that.constraint) &&
+                   Objects.equals(this.handle,     that.handle)     &&
+                   Objects.equals(this.typeName,   that.typeName);
         }
         return false;
     }

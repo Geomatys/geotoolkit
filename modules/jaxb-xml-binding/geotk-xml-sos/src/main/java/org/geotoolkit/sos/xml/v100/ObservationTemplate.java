@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -86,7 +86,7 @@ public class ObservationTemplate {
         }
         if (object instanceof ObservationTemplate && super.equals(object)) {
             final ObservationTemplate that = (ObservationTemplate) object;
-            return Utilities.equals(this.observation, that.observation);
+            return Objects.equals(this.observation, that.observation);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -221,10 +222,10 @@ public class CoordinatesType {
             final CoordinatesType that = (CoordinatesType) object;
 
 
-            return Utilities.equals(this.cs,      that.cs) &&
-                   Utilities.equals(this.ts,      that.ts) &&
-                   Utilities.equals(this.value,   that.value) &&
-                   Utilities.equals(this.decimal, that.decimal);
+            return Objects.equals(this.cs,      that.cs) &&
+                   Objects.equals(this.ts,      that.ts) &&
+                   Objects.equals(this.value,   that.value) &&
+                   Objects.equals(this.decimal, that.decimal);
         }
         return false;
     }

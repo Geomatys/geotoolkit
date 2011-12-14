@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Objects;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
 import org.opengis.temporal.IndeterminateValue;
@@ -90,8 +90,8 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
         if (object instanceof DefaultCalendarDate && super.equals(object)) {
             final DefaultCalendarDate that = (DefaultCalendarDate) object;
 
-            return Utilities.equals(this.calendarDate, that.calendarDate) &&
-                    Utilities.equals(this.calendarEraName, that.calendarEraName);
+            return Objects.equals(this.calendarDate, that.calendarDate) &&
+                    Objects.equals(this.calendarEraName, that.calendarEraName);
         }
         return false;
     }

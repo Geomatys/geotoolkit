@@ -18,11 +18,11 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractPhone;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -166,8 +166,8 @@ public class PhoneType implements AbstractPhone {
 
         if (object instanceof PhoneType) {
             final PhoneType that = (PhoneType) object;
-            return Utilities.equals(this.facsimile, that.facsimile) &&
-                   Utilities.equals(this.voice,     that.voice);
+            return Objects.equals(this.facsimile, that.facsimile) &&
+                   Objects.equals(this.voice,     that.voice);
         }
         return false;
     }

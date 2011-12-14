@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -122,8 +122,8 @@ public class Annotation extends OpenAttrs {
         }
         if (object instanceof Annotation && super.equals(object)) {
             final Annotation that = (Annotation) object;
-            return Utilities.equals(this.appinfoOrDocumentation, that.appinfoOrDocumentation) &&
-                   Utilities.equals(this.id,                     that.id);
+            return Objects.equals(this.appinfoOrDocumentation, that.appinfoOrDocumentation) &&
+                   Objects.equals(this.id,                     that.id);
         }
         return false;
     }

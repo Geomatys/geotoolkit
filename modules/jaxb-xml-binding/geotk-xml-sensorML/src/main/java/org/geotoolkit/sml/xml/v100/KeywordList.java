@@ -19,6 +19,7 @@ package org.geotoolkit.sml.xml.v100;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractKeywordList;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -186,9 +186,9 @@ public class KeywordList implements AbstractKeywordList {
 
         if (object instanceof KeywordList) {
             final KeywordList that = (KeywordList) object;
-            return Utilities.equals(this.codeSpace, that.codeSpace) &&
-                    Utilities.equals(this.id, that.id) &&
-                    Utilities.equals(this.getKeyword(), that.getKeyword());
+            return Objects.equals(this.codeSpace, that.codeSpace) &&
+                    Objects.equals(this.id, that.id) &&
+                    Objects.equals(this.getKeyword(), that.getKeyword());
         }
         return false;
     }

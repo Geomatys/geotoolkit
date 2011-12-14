@@ -2,6 +2,7 @@
 
 package org.geotoolkit.util;
 
+import java.util.Objects;
 import org.geotoolkit.resources.jaxb.feature.catalog.UnlimitedIntegerAdapter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -113,7 +114,7 @@ public class MultiplicityRange {
         }
         if (object instanceof MultiplicityRange) {
             final MultiplicityRange that = (MultiplicityRange) object;
-            return Utilities.equals(this.lower, that.lower);
+            return Objects.equals(this.lower, that.lower);
                 //&& Utilities.equals(this.upper, that.upper);
             // temporary patch TODO fix it  && Utilities.equals(this.upper, that.upper);
         }

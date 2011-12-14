@@ -16,15 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ComparisonOperators;
 import org.opengis.filter.capability.Operator;
 
@@ -132,7 +128,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
         if (object instanceof ComparisonOperatorsType) {
             final ComparisonOperatorsType that = (ComparisonOperatorsType) object;
 
-            return Utilities.equals(this.comparisonOperator, that.comparisonOperator);
+            return Objects.equals(this.comparisonOperator, that.comparisonOperator);
         }
         return false;
     }

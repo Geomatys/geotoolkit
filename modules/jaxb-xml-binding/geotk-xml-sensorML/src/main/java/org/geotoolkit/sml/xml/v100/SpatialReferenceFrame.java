@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +24,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.EngineeringCRSType;
 import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -102,7 +102,7 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
         if (object instanceof SpatialReferenceFrame) {
             final SpatialReferenceFrame that = (SpatialReferenceFrame) object;
-            return Utilities.equals(this.engineeringCRS, that.engineeringCRS);
+            return Objects.equals(this.engineeringCRS, that.engineeringCRS);
 
         }
         return false;

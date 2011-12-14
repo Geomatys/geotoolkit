@@ -19,6 +19,7 @@ package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v212.AbstractFeatureType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -138,8 +138,8 @@ public class InsertElementType {
         
         if (obj instanceof InsertElementType) {
             InsertElementType that = (InsertElementType) obj;
-            return Utilities.equals(this.feature, that.feature) &&
-                   Utilities.equals(this.handle, that.handle);
+            return Objects.equals(this.feature, that.feature) &&
+                   Objects.equals(this.handle, that.handle);
         }
         return false;
     }

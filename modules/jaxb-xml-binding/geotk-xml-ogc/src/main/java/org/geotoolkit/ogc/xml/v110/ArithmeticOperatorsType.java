@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.Functions;
 
@@ -119,8 +119,8 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
        if (object instanceof ArithmeticOperatorsType) {
            final ArithmeticOperatorsType that = (ArithmeticOperatorsType) object;
        
-            return Utilities.equals(this.functions, that.functions) &&
-                   Utilities.equals(this.simpleArithmetic, that.simpleArithmetic);
+            return Objects.equals(this.functions, that.functions) &&
+                   Objects.equals(this.simpleArithmetic, that.simpleArithmetic);
         }
         return false;
     }

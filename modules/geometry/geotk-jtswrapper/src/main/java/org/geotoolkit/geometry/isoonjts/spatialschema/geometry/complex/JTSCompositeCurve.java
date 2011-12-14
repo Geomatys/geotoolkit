@@ -10,6 +10,7 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlType;
@@ -172,7 +173,7 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
             return true;
         if (object instanceof JTSCompositeCurve && super.equals(object)) {
             JTSCompositeCurve that = (JTSCompositeCurve) object;
-            return Utilities.equals(this.parent, that.parent);
+            return Objects.equals(this.parent, that.parent);
         }
         return false;
     }

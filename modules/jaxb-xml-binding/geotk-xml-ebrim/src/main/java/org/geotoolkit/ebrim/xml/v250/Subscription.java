@@ -18,6 +18,7 @@ package org.geotoolkit.ebrim.xml.v250;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,6 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -190,11 +190,11 @@ public class Subscription extends RegistryObjectType {
         }
         if (obj instanceof Subscription && super.equals(obj)) {
             final Subscription that = (Subscription) obj;
-            return Utilities.equals(this.action,               that.action) &&
-                   Utilities.equals(this.endDate,              that.endDate) &&
-                   Utilities.equals(this.notificationInterval, that.notificationInterval) &&
-                   Utilities.equals(this.selector,             that.selector) &&
-                   Utilities.equals(this.startDate,            that.startDate);
+            return Objects.equals(this.action,               that.action) &&
+                   Objects.equals(this.endDate,              that.endDate) &&
+                   Objects.equals(this.notificationInterval, that.notificationInterval) &&
+                   Objects.equals(this.selector,             that.selector) &&
+                   Objects.equals(this.startDate,            that.startDate);
         }
         return false;
     }

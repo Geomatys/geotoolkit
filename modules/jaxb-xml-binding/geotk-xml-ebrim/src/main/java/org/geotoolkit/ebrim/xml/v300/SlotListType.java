@@ -18,11 +18,11 @@ package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -101,7 +101,7 @@ public class SlotListType {
         }
         if (obj instanceof SlotListType) {
             final SlotListType that = (SlotListType) obj;
-            return Utilities.equals(this.slot, that.slot);
+            return Objects.equals(this.slot, that.slot);
         }
         return false;
     }

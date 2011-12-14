@@ -18,12 +18,12 @@ package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -136,10 +136,10 @@ public class ReferenceType extends AbstractReferenceBaseType {
         }
         if (object instanceof ReferenceType && super.equals(object)) {
             final ReferenceType that = (ReferenceType) object;
-            return Utilities.equals(this._abstract,  that._abstract)  &&
-                   Utilities.equals(this.format,     that.format)     &&
-                   Utilities.equals(this.identifier, that.identifier) &&
-                   Utilities.equals(this.metadata,   that.metadata);
+            return Objects.equals(this._abstract,  that._abstract)  &&
+                   Objects.equals(this.format,     that.format)     &&
+                   Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.metadata,   that.metadata);
         }
         return false;
     }

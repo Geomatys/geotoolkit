@@ -18,6 +18,7 @@ package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.DomainValues;
 import org.geotoolkit.csw.xml.GetDomainResponse;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -120,7 +120,7 @@ public class GetDomainResponseType implements GetDomainResponse {
         if (object instanceof GetDomainResponseType) {
             final GetDomainResponseType that = (GetDomainResponseType) object;
 
-            return  Utilities.equals(this.domainValues, that.domainValues);
+            return  Objects.equals(this.domainValues, that.domainValues);
         }
         return false;
     }

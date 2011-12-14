@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractKeywords;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -344,15 +344,15 @@ public class Keywords implements AbstractKeywords {
 
         if (object instanceof Keywords) {
             final Keywords that = (Keywords) object;
-            return Utilities.equals(this.actuate,      that.actuate)      &&
-                   Utilities.equals(this.arcrole,      that.arcrole)      &&
-                   Utilities.equals(this.href,         that.href)         &&
-                   Utilities.equals(this.keywordList,  that.keywordList)  &&
-                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
-                   Utilities.equals(this.role,         that.role)         &&
-                   Utilities.equals(this.show,         that.show)         &&
-                   Utilities.equals(this.title,        that.title)        &&
-                   Utilities.equals(this.type,         that.type);
+            return Objects.equals(this.actuate,      that.actuate)      &&
+                   Objects.equals(this.arcrole,      that.arcrole)      &&
+                   Objects.equals(this.href,         that.href)         &&
+                   Objects.equals(this.keywordList,  that.keywordList)  &&
+                   Objects.equals(this.remoteSchema, that.remoteSchema) &&
+                   Objects.equals(this.role,         that.role)         &&
+                   Objects.equals(this.show,         that.show)         &&
+                   Objects.equals(this.title,        that.title)        &&
+                   Objects.equals(this.type,         that.type);
         }
         return false;
     }

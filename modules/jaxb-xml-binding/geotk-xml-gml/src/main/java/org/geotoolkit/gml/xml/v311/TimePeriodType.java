@@ -18,13 +18,13 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
 import org.opengis.temporal.Position;
@@ -372,12 +372,12 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
         }
         final TimePeriodType that = (TimePeriodType) object;
 
-        return Utilities.equals(this.begin,         that.begin)         &&
-               Utilities.equals(this.beginPosition, that.beginPosition) &&
-               Utilities.equals(this.duration,      that.duration)      &&
-               Utilities.equals(this.endPosition,   that.endPosition)   &&
-               Utilities.equals(this.timeInterval,  that.timeInterval)  &&
-               Utilities.equals(this.end,           that.end);
+        return Objects.equals(this.begin,         that.begin)         &&
+               Objects.equals(this.beginPosition, that.beginPosition) &&
+               Objects.equals(this.duration,      that.duration)      &&
+               Objects.equals(this.endPosition,   that.endPosition)   &&
+               Objects.equals(this.timeInterval,  that.timeInterval)  &&
+               Objects.equals(this.end,           that.end);
     }
 
     @Override

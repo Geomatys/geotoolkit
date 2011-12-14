@@ -18,13 +18,13 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractContactInfo;
 import org.geotoolkit.sml.xml.AbstractOnlineResource;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -236,11 +236,11 @@ public class ContactInfo implements AbstractContactInfo {
 
         if (object instanceof ContactInfo) {
             final ContactInfo that = (ContactInfo) object;
-            return Utilities.equals(this.address,             that.address)             &&
-                   Utilities.equals(this.contactInstructions, that.contactInstructions) &&
-                   Utilities.equals(this.hoursOfService,      that.hoursOfService)      &&
-                   Utilities.equals(this.getOnlineResource(), that.getOnlineResource()) &&
-                   Utilities.equals(this.phone,               that.phone);
+            return Objects.equals(this.address,             that.address)             &&
+                   Objects.equals(this.contactInstructions, that.contactInstructions) &&
+                   Objects.equals(this.hoursOfService,      that.hoursOfService)      &&
+                   Objects.equals(this.getOnlineResource(), that.getOnlineResource()) &&
+                   Objects.equals(this.phone,               that.phone);
         }
         return false;
     }

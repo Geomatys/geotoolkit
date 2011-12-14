@@ -19,13 +19,13 @@ package org.geotoolkit.swe.xml.v100;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.DataComponentProperty;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -184,7 +184,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
 
         if (object instanceof DataRecordType && super.equals(object, mode)) {
             final DataRecordType that = (DataRecordType) object;
-            return Utilities.equals(this.field, that.field);
+            return Objects.equals(this.field, that.field);
         }
         return false;
     }

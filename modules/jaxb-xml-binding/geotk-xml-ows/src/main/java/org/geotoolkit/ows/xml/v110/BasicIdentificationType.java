@@ -18,12 +18,12 @@ package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -100,8 +100,8 @@ public class BasicIdentificationType extends DescriptionType {
         }
         if (object instanceof BasicIdentificationType && super.equals(object)) {
              final BasicIdentificationType that = (BasicIdentificationType) object;
-            return Utilities.equals(this.identifier, that.identifier) &&
-                   Utilities.equals(this.metadata,   that.metadata);
+            return Objects.equals(this.identifier, that.identifier) &&
+                   Objects.equals(this.metadata,   that.metadata);
         }
         return false;
     }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,7 +39,6 @@ import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.swe.xml.Position;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
 import org.geotoolkit.swe.xml.Vector;
-import org.geotoolkit.util.Utilities;
 
 /**
  *
@@ -445,29 +445,29 @@ public class DataComponentPropertyType implements DataComponentProperty {
             boolean eq = false;
             final DataComponentPropertyType that = (DataComponentPropertyType) object;
             if (this.abstractDataRecord != null && that.abstractDataRecord != null) {
-                eq = Utilities.equals(this.abstractDataRecord.getValue(),that.abstractDataRecord.getValue());
+                eq = Objects.equals(this.abstractDataRecord.getValue(),that.abstractDataRecord.getValue());
             } else {
                 eq = (this.abstractDataRecord == null && that.abstractDataRecord == null);
             }
 
             return eq                                                             &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.title,              that.title)            &&
-                   Utilities.equals(this.getBoolean(), that.getBoolean())               &&
-                   Utilities.equals(this.getCategory(), that.getCategory())      &&
-                   Utilities.equals(this.getCount(), that.getCount())         &&
-                   Utilities.equals(this.getCountRange(), that.getCountRange())    &&
-                   Utilities.equals(this.name,         that.name)          &&
-                   Utilities.equals(this.getQuantity(), that.getQuantity())      &&
-                   Utilities.equals(this.getQuantityRange(), that.getQuantityRange()) &&
-                   Utilities.equals(this.getTime(), that.getTime())          &&
-                   Utilities.equals(this.getTimeRange(), that.getTimeRange());
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.title,              that.title)            &&
+                   Objects.equals(this.getBoolean(), that.getBoolean())               &&
+                   Objects.equals(this.getCategory(), that.getCategory())      &&
+                   Objects.equals(this.getCount(), that.getCount())         &&
+                   Objects.equals(this.getCountRange(), that.getCountRange())    &&
+                   Objects.equals(this.name,         that.name)          &&
+                   Objects.equals(this.getQuantity(), that.getQuantity())      &&
+                   Objects.equals(this.getQuantityRange(), that.getQuantityRange()) &&
+                   Objects.equals(this.getTime(), that.getTime())          &&
+                   Objects.equals(this.getTimeRange(), that.getTimeRange());
         }
         return false;
     }

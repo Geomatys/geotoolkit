@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.swe.xml.AbstractEncoding;
-import org.geotoolkit.util.Utilities;
 
 /**
  * Cette classe n'as pas vraiment lieu d'etre.
@@ -97,7 +97,7 @@ public class AbstractEncodingType implements AbstractEncoding, Entry {
         }
         if (object instanceof AbstractEncodingType) {
             final AbstractEncodingType that = (AbstractEncodingType) object;
-            return Utilities.equals(this.id, that.id);
+            return Objects.equals(this.id, that.id);
         }
         return false;
     }

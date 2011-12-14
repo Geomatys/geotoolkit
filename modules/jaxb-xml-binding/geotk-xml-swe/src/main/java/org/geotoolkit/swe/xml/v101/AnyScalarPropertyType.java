@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +31,6 @@ import org.geotoolkit.swe.xml.AbstractText;
 import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.Quantity;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -289,19 +289,19 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         if (object instanceof AnyScalarPropertyType) {
             final AnyScalarPropertyType that = (AnyScalarPropertyType) object;
 
-            return Utilities.equals(this._boolean,           that._boolean)         &&
-                   Utilities.equals(this.abstractDataComponent, that.abstractDataComponent)          &&
-                   Utilities.equals(this.quantity,           that.quantity)         &&
-                   Utilities.equals(this.time,               that.time)             &&
-                   Utilities.equals(this.actuate,            that.actuate)          &&
-                   Utilities.equals(this.arcrole,            that.arcrole)          &&
-                   Utilities.equals(this.type,               that.type)             &&
-                   Utilities.equals(this.href,               that.href)             &&
-                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Utilities.equals(this.show,               that.show)             &&
-                   Utilities.equals(this.role,               that.role)             &&
-                   Utilities.equals(this.name,               that.name)             &&
-                   Utilities.equals(this.title,              that.title);
+            return Objects.equals(this._boolean,           that._boolean)         &&
+                   Objects.equals(this.abstractDataComponent, that.abstractDataComponent)          &&
+                   Objects.equals(this.quantity,           that.quantity)         &&
+                   Objects.equals(this.time,               that.time)             &&
+                   Objects.equals(this.actuate,            that.actuate)          &&
+                   Objects.equals(this.arcrole,            that.arcrole)          &&
+                   Objects.equals(this.type,               that.type)             &&
+                   Objects.equals(this.href,               that.href)             &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Objects.equals(this.show,               that.show)             &&
+                   Objects.equals(this.role,               that.role)             &&
+                   Objects.equals(this.name,               that.name)             &&
+                   Objects.equals(this.title,              that.title);
             }
         return false;
     }

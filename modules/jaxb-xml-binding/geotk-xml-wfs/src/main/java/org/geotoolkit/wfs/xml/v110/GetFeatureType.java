@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import org.geotoolkit.util.Utilities;
 
 /**
  * A GetFeature element contains one or more Query elements that describe a query operation on one feature type.  
@@ -323,13 +323,13 @@ public class GetFeatureType extends BaseRequestType {
         
         if (obj instanceof GetFeatureType && super.equals(obj)) {
             GetFeatureType that = (GetFeatureType) obj;
-            return Utilities.equals(this.featureId, that.featureId) &&
-                   Utilities.equals(this.maxFeatures, that.maxFeatures) &&
-                   Utilities.equals(this.outputFormat, that.outputFormat) &&
-                   Utilities.equals(this.query, that.query) &&
-                   Utilities.equals(this.resultType, that.resultType) &&
-                   Utilities.equals(this.traverseXlinkDepth, that.traverseXlinkDepth) &&
-                   Utilities.equals(this.traverseXlinkExpiry, that.traverseXlinkExpiry);
+            return Objects.equals(this.featureId, that.featureId) &&
+                   Objects.equals(this.maxFeatures, that.maxFeatures) &&
+                   Objects.equals(this.outputFormat, that.outputFormat) &&
+                   Objects.equals(this.query, that.query) &&
+                   Objects.equals(this.resultType, that.resultType) &&
+                   Objects.equals(this.traverseXlinkDepth, that.traverseXlinkDepth) &&
+                   Objects.equals(this.traverseXlinkExpiry, that.traverseXlinkExpiry);
         }
         return false;
     }

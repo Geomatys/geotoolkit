@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ogc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.capability.IdCapabilities;
 
 
@@ -121,8 +121,8 @@ public class IdCapabilitiesType implements IdCapabilities {
        if (object instanceof IdCapabilitiesType) {
            final IdCapabilitiesType that = (IdCapabilitiesType) object;
        
-            return Utilities.equals(this.eid, that.eid) &&
-                   Utilities.equals(this.fid, that.fid);
+            return Objects.equals(this.eid, that.eid) &&
+                   Objects.equals(this.fid, that.fid);
         }
         return false;
     }

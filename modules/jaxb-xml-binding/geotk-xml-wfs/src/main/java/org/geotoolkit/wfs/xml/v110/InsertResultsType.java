@@ -18,11 +18,11 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -100,7 +100,7 @@ public class InsertResultsType {
         }
         if (object instanceof InsertResultsType) {
             final InsertResultsType that = (InsertResultsType) object;
-            return Utilities.equals(this.feature,   that.feature);
+            return Objects.equals(this.feature,   that.feature);
         }
         return false;
     }

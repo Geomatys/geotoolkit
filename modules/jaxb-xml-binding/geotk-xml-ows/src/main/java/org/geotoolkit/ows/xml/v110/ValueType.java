@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -81,7 +81,7 @@ public class ValueType {
         }
         if (object instanceof ValueType) {
             final ValueType that = (ValueType) object;
-            return Utilities.equals(this.value, that.value);
+            return Objects.equals(this.value, that.value);
         }
         return false;
     }

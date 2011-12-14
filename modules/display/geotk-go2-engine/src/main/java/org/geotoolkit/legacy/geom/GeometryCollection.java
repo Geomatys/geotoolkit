@@ -28,18 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.AbstractCollection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -288,7 +277,7 @@ public class GeometryCollection extends Geometry implements Comparable {
             throw new UnmodifiableGeometryException((Locale)null);
         }
         final CoordinateReferenceSystem oldCoordinateSystem = this.coordinateReferenceSystem;
-        if (count==0 || Utilities.equals(oldCoordinateSystem, crs)) {
+        if (count==0 || Objects.equals(oldCoordinateSystem, crs)) {
             return;
         }
         final Geometry[] projected = getModifiableGeometries();
@@ -617,7 +606,7 @@ public class GeometryCollection extends Geometry implements Comparable {
             final Geometry toClip  = geometries[i];
             final Geometry clipped = toClip.clip(clipper);
             if (clipped!=null && !clipped.isEmpty()) {
-                assert Utilities.equals(toClip.getUserObject(), clipped.getUserObject()) : clipped;
+                assert Objects.equals(toClip.getUserObject(), clipped.getUserObject()) : clipped;
                 clips[clipCount++] = clipped;
                 if (toClip != clipped) {
                     changed = true;
@@ -1381,9 +1370,9 @@ public class GeometryCollection extends Geometry implements Comparable {
         }
         if (super.equals(object)) {
             final GeometryCollection that = (GeometryCollection) object;
-            if (this.count==that.count && Utilities.equals(this.value, that.value)) {
+            if (this.count==that.count && Objects.equals(this.value, that.value)) {
                 for (int i=count; --i>=0;) {
-                    if (Utilities.equals(this.geometries[i], that.geometries[i])) {
+                    if (Objects.equals(this.geometries[i], that.geometries[i])) {
                         return false;
                     }
                 }

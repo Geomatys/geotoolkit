@@ -18,13 +18,13 @@ package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -203,10 +203,10 @@ public class PersonType extends RegistryObjectType {
         }
         if (obj instanceof PersonType && super.equals(obj)) {
             final PersonType that = (PersonType) obj;
-            return Utilities.equals(this.address,         that.address) &&
-                   Utilities.equals(this.emailAddress,    that.emailAddress) &&
-                   Utilities.equals(this.personName,      that.personName) &&
-                   Utilities.equals(this.telephoneNumber, that.telephoneNumber);
+            return Objects.equals(this.address,         that.address) &&
+                   Objects.equals(this.emailAddress,    that.emailAddress) &&
+                   Objects.equals(this.personName,      that.personName) &&
+                   Objects.equals(this.telephoneNumber, that.telephoneNumber);
         }
         return false;
     }

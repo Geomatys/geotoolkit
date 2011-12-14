@@ -18,11 +18,11 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractAddress;
-import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -233,12 +233,12 @@ public class AddressType implements AbstractAddress {
 
         if (object instanceof AddressType) {
             final AddressType that = (AddressType) object;
-            return Utilities.equals(this.administrativeArea, that.administrativeArea) &&
-                    Utilities.equals(this.city, that.city) &&
-                    Utilities.equals(this.country, that.country) &&
-                    Utilities.equals(this.deliveryPoint, that.deliveryPoint) &&
-                    Utilities.equals(this.postalCode, that.postalCode) &&
-                    Utilities.equals(this.electronicMailAddress, that.electronicMailAddress);
+            return Objects.equals(this.administrativeArea, that.administrativeArea) &&
+                    Objects.equals(this.city, that.city) &&
+                    Objects.equals(this.country, that.country) &&
+                    Objects.equals(this.deliveryPoint, that.deliveryPoint) &&
+                    Objects.equals(this.postalCode, that.postalCode) &&
+                    Objects.equals(this.electronicMailAddress, that.electronicMailAddress);
         }
         return false;
     }

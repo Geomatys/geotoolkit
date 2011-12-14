@@ -7,15 +7,12 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -26,7 +23,6 @@ import org.geotoolkit.internal.jaxb.CoordinateReferenceSystemAdapter;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Cloneable;
 
-import org.geotoolkit.util.Utilities;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -693,9 +689,9 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
 
         if (object instanceof AbstractJTSGeometry) {
             AbstractJTSGeometry that = (AbstractJTSGeometry) object;
-            return Utilities.equals(this.coordinateReferenceSystem, that.coordinateReferenceSystem) &&
-                   Utilities.equals(this.parent,                    that.parent)                    &&
-                   Utilities.equals(this.precision,                 that.precision);
+            return Objects.equals(this.coordinateReferenceSystem, that.coordinateReferenceSystem) &&
+                   Objects.equals(this.parent,                    that.parent)                    &&
+                   Objects.equals(this.precision,                 that.precision);
         }
         return false;
     }

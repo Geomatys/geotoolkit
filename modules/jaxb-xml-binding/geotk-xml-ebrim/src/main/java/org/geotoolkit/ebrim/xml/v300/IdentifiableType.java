@@ -18,6 +18,7 @@ package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,7 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -155,9 +155,9 @@ public class IdentifiableType {
         }
         if (obj instanceof IdentifiableType) {
             final IdentifiableType that = (IdentifiableType) obj;
-            return Utilities.equals(this.home, that.home) &&
-                   Utilities.equals(this.id,   that.id)   &&
-                   Utilities.equals(this.slot, that.slot);
+            return Objects.equals(this.home, that.home) &&
+                   Objects.equals(this.id,   that.id)   &&
+                   Objects.equals(this.slot, that.slot);
         }
         return false;
     }

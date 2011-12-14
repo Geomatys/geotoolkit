@@ -18,11 +18,11 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -110,7 +110,7 @@ public class MultiLineStringType extends AbstractGeometricAggregateType {
         if (object instanceof MultiLineStringType && super.equals(object, mode)) {
             final MultiLineStringType that = (MultiLineStringType) object;
 
-            return Utilities.equals(this.lineStringMember, that.lineStringMember);
+            return Objects.equals(this.lineStringMember, that.lineStringMember);
         }
         return false;
     }

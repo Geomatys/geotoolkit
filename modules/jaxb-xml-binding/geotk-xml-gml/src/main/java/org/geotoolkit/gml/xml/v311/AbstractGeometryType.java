@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,8 +28,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.ComparisonMode;
 
@@ -385,10 +386,10 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         if (object != null && getClass().equals(object.getClass())) {
             final AbstractGeometryType that = (AbstractGeometryType) object;
 
-            return Utilities.equals(this.axisLabels,   that.axisLabels)   &&
-                   Utilities.equals(this.srsDimension, that.srsDimension) &&
-                   Utilities.equals(this.srsName,      that.srsName)      &&
-                   Utilities.equals(this.uomLabels,    that.uomLabels);
+            return Objects.equals(this.axisLabels,   that.axisLabels)   &&
+                   Objects.equals(this.srsDimension, that.srsDimension) &&
+                   Objects.equals(this.srsName,      that.srsName)      &&
+                   Objects.equals(this.uomLabels,    that.uomLabels);
         }
         return false;
     }
