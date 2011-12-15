@@ -26,6 +26,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
@@ -68,6 +69,7 @@ public class Copy extends AbstractProcess {
         final Boolean eraseParam    = Parameters.value(CopyDescriptor.ERASE,                inputParameters);
         final Boolean createParam   = Parameters.value(CopyDescriptor.CREATE,               inputParameters);
         final String typenameParam  = Parameters.value(CopyDescriptor.TYPE_NAME,            inputParameters);
+        final Query queryParam      = Parameters.value(CopyDescriptor.QUERY,                inputParameters);
         
         final DataStore sourceDS;
         DataStore targetDS = null;
@@ -148,7 +150,7 @@ public class Copy extends AbstractProcess {
         for(Name n : names){
             fireProgressEvent(new ProcessEvent(this, "Copying "+n+".",(int)((inc*100f)/size), null));
             try {
-                insert(n, sourceDS, targetDS, eraseParam);
+                insert(n, sourceDS, targetDS, eraseParam, queryParam);
             } catch (DataStoreException ex) {
                 fireFailEvent(new ProcessEvent(this, null,50, ex));
                 return outputParameters;
@@ -160,11 +162,11 @@ public class Copy extends AbstractProcess {
         return outputParameters;
     }
     
-    private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
+    private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase, final Query query) throws DataStoreException{
         
         final FeatureType type = source.getFeatureType(name);        
         final Session session = source.createSession(false);
-        final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
+        final FeatureCollection collection = session.getFeatureCollection((query == null) ? QueryBuilder.all(name) : query);
         
         if(target.getNames().contains(name)){
             if(erase){

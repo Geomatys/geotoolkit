@@ -18,12 +18,12 @@ package org.geotoolkit.process.datastore.copy;
 
 import java.util.Map;
 
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.vector.VectorDescriptor;
-
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -87,13 +87,19 @@ public final class CopyDescriptor extends VectorDescriptor {
             new DefaultParameterDescriptor("type_name", "Name of the feature type to copy. '*' for all.", 
             String.class, "*", true);
     
+    /**
+     * Mandatory - Query to use to retrieve FeatureCollection during the process.
+     */
+    public static final ParameterDescriptor<Query> QUERY =
+            new DefaultParameterDescriptor("query", "Query used to get the FeatureCollection during the process.", 
+            Query.class, null, true);
     
     /** 
      * Input Parameters 
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_STORE_PARAMS, TARGET_STORE_PARAMS,CREATE,ERASE,TYPE_NAME});
+            new GeneralParameterDescriptor[]{SOURCE_STORE_PARAMS, TARGET_STORE_PARAMS,CREATE,ERASE,TYPE_NAME, QUERY});
 
     /** 
      * Output Parameters 
