@@ -88,11 +88,11 @@ public final class CopyDescriptor extends VectorDescriptor {
             String.class, "*", true);
     
     /**
-     * Mandatory - Query to use to retrieve FeatureCollection during the process.
+     * Optional - Query to use to retrieve FeatureCollection during the process.
      */
     public static final ParameterDescriptor<Query> QUERY =
             new DefaultParameterDescriptor("query", "Query used to get the FeatureCollection during the process.", 
-            Query.class, null, true);
+            Query.class, null, false);
     
     /** 
      * Input Parameters 

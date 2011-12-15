@@ -122,6 +122,16 @@ public class Copy extends AbstractProcess {
         }
         
         final Set<Name> names;
+        if(queryParam != null){
+            //if a query is given, ignore type name parameter
+            try {
+                insert(queryParam, sourceDS, targetDS, eraseParam);
+            } catch (DataStoreException ex) {
+                fireFailEvent(new ProcessEvent(this, null,50, ex));
+                return outputParameters;
+            }
+        }
+        
         if("*".equals(typenameParam)){
             //all values
             try {
@@ -150,7 +160,7 @@ public class Copy extends AbstractProcess {
         for(Name n : names){
             fireProgressEvent(new ProcessEvent(this, "Copying "+n+".",(int)((inc*100f)/size), null));
             try {
-                insert(n, sourceDS, targetDS, eraseParam, queryParam);
+                insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
                 fireFailEvent(new ProcessEvent(this, null,50, ex));
                 return outputParameters;
@@ -162,11 +172,11 @@ public class Copy extends AbstractProcess {
         return outputParameters;
     }
     
-    private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase, final Query query) throws DataStoreException{
+    private void insert(final Name name, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
         
         final FeatureType type = source.getFeatureType(name);        
         final Session session = source.createSession(false);
-        final FeatureCollection collection = session.getFeatureCollection((query == null) ? QueryBuilder.all(name) : query);
+        final FeatureCollection collection = session.getFeatureCollection(QueryBuilder.all(name));
         
         if(target.getNames().contains(name)){
             if(erase){
@@ -181,6 +191,27 @@ public class Copy extends AbstractProcess {
         hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
         target.addFeatures(name, collection, hints);
         
+    }
+    
+    private void insert(final Query query, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
+        
+        final Name name = query.getTypeName();
+        final FeatureType type = source.getFeatureType(name);        
+        final Session session = source.createSession(false);
+        final FeatureCollection collection = session.getFeatureCollection(query);
+        
+        if(target.getNames().contains(name)){
+            if(erase){
+                target.deleteSchema(name);
+                target.createSchema(name, type);
+            }
+        }else{
+            target.createSchema(name, type);
+        }
+        
+        final Hints hints = new Hints();
+        hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
+        target.addFeatures(name, collection, hints);        
     }
     
 }
