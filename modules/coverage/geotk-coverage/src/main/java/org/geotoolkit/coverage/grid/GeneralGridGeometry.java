@@ -524,7 +524,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      * maximum of 512, with 511 as the highest valid index.
      *
      * @return The grid envelope (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no grid envelope (i.e.
+     * @throws InvalidGridGeometryException if this grid geometry has no extent (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #EXTENT})</code>
      *         returned {@code false}).
      *

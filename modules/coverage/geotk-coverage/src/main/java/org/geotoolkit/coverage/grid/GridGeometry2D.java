@@ -806,7 +806,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * as a rectangle. Note that the returned object is a {@link Rectangle} subclass.
      *
      * @return The grid envelope (never {@code null}).
-     * @throws InvalidGridGeometryException if this grid geometry has no grid envelope (i.e.
+     * @throws InvalidGridGeometryException if this grid geometry has no extent (i.e.
      *         <code>{@linkplain #isDefined(int) isDefined}({@linkplain #EXTENT EXTENT})</code>
      *         returned {@code false}).
      *

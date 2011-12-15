@@ -55,7 +55,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 /**
  * Describes the data values for a coverage as a list of {@linkplain Category categories}. For
  * a grid coverage a sample dimension is a band. Sample values in a band may be organized in
- * categories. This {@code GridSampleDimension} implementation is capable to differenciate
+ * categories. This {@code GridSampleDimension} implementation is capable to differentiate
  * <em>qualitative</em> and <em>quantitative</em> categories. For example an image of sea surface
  * temperature (SST) could very well defines the following categories:
  *
@@ -68,7 +68,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * In this example, sample values in range {@code [10..210]} defines a quantitative category,
  * while all others categories are qualitative. The difference between those two kinds of category
- * is that the {@link Category#getSampleToGeophysics} method returns a non-null transform if and
+ * is that the {@link Category#getSampleToGeophysics()} method returns a non-null transform if and
  * only if the category is quantitative.
  * <p>
  * While this class can be used with arbitrary {@linkplain org.opengis.coverage.Coverage coverage},
@@ -93,8 +93,8 @@ public class GridSampleDimension implements SampleDimension, Serializable {
 
     /**
      * A sample dimension wrapping the list of categories {@code CategoryList.inverse}.
-     * This object is constructed and returned by {@link #geophysics}. Constructed when first
-     * needed, but serialized anyway because it may be a user-supplied object.
+     * This object is constructed and returned by {@link #geophysics(boolean)}. Constructed
+     * when first needed, but serialized anyway because it may be a user-supplied object.
      */
     private GridSampleDimension inverse;
 
@@ -139,17 +139,17 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     private final boolean hasQuantitative;
 
     /**
-     * The {@link Category#getSampleToGeophysics sampleToGeophysics} transform used by every
+     * The {@link Category#getSampleToGeophysics() sampleToGeophysics} transform used by every
      * quantitative {@link Category}, or {@code null}. This field may be null for two reasons:
      *
      * <ul>
      *   <li>There is no quantitative category in this sample dimension.</li>
      *   <li>There is more than one quantitative category, and all of them don't use the same
-     *       {@link Category#getSampleToGeophysics sampleToGeophysics} transform.</li>
+     *       {@link Category#getSampleToGeophysics() sampleToGeophysics} transform.</li>
      * </ul>
      *
-     * This field is used by {@link #getOffset} and {@link #getScale}. The
-     * {@link #getSampleToGeophysics} method may also returns directly this
+     * This field is used by {@link #getOffset()} and {@link #getScale()}. The
+     * {@link #getSampleToGeophysics()} method may also returns directly this
      * value in some conditions.
      */
     private final MathTransform1D sampleToGeophysics;
@@ -166,7 +166,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *
      * @param description
      *          The sample dimension title or description, or {@code null} if
-     *          none. This is the value to be returned by {@link #getDescription}.
+     *          none. This is the value to be returned by {@link #getDescription()}.
      *
      * @since 2.3
      */
@@ -184,7 +184,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * @param description
      *          The sample dimension title or description, or {@code null} for the default
      *          (the name of what looks like the "main" category). This is the value to be
-     *          returned by {@link #getDescription}.
+     *          returned by {@link #getDescription()}.
      * @param categoriesNames
      *          Sequence of category names for the values contained in a sample dimension,
      *          as {@link String} or {@link InternationalString} objects.
@@ -222,7 +222,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * @param description
      *          The sample dimension title or description, or {@code null} for the default
      *          (the name of what looks like the "main" category). This is the value to be
-     *          returned by {@link #getDescription}.
+     *          returned by {@link #getDescription()}.
      * @param names
      *          Sequence of category names for the values contained in a sample dimension,
      *          as {@link String} or {@link InternationalString} objects.
@@ -592,13 +592,13 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * @param description
      *          The sample dimension title or description, or {@code null} for the default
      *          (the name of what looks like the "main" category). This is the value to be
-     *          returned by {@link #getDescription}.
+     *          returned by {@link #getDescription()}.
      * @param categories
      *          The list of categories, or {@code null} if none.
      * @param units
      *          The unit information for this sample dimension. May be {@code null} if
      *          no category has units. This unit apply to values obtained after the
-     *          {@link #getSampleToGeophysics sampleToGeophysics} transformation.
+     *          {@link #getSampleToGeophysics() sampleToGeophysics} transformation.
      * @throws IllegalArgumentException
      *          if {@code categories} contains incompatible categories. If
      *          may be the case for example if two or more categories have
@@ -631,7 +631,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * @param description
      *            The sample dimension title or description, or {@code null} for the default
      *            (the name of what looks like the "main" category). This is the value to be
-     *            returned by {@link #getDescription}.
+     *            returned by {@link #getDescription()}.
      * @param list
      *            The list of categories, or {@code null} if none.
      */
@@ -850,7 +850,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * example reprojected in an other coordinate system) and the resampled image do not
      * fit in a rectangular area. It can also be used in various situation where a reasonable
      * "no data" category is needed. The default implementation try to returns one
-     * of the {@linkplain #getNoDataValues no data values}. If no suitable category is found,
+     * of the {@linkplain #getNoDataValues() no data values}. If no suitable category is found,
      * then a {@linkplain Category#NODATA default} one is returned.
      *
      * @return A category to use as background for the "Resample" operation. Never {@code null}.
@@ -865,11 +865,11 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * at construction time. The rules are:
      * <p>
      * <ul>
-     *   <li>If {@link #getSampleToGeophysics} returns {@code null}, then {@code getNoDataValues()}
+     *   <li>If {@link #getSampleToGeophysics()} returns {@code null}, then {@code getNoDataValues()}
      *       returns {@code null} as well. This means that this sample dimension contains no category
      *       or contains only qualitative categories (e.g. a band from a classified image).</li>
      *
-     *   <li>If {@link #getSampleToGeophysics} returns an identity transform, then
+     *   <li>If {@link #getSampleToGeophysics()} returns an identity transform, then
      *       {@code getNoDataValues()} returns {@code null}. This means that sample value in this
      *       sample dimension are already expressed in geophysics values and that all "no data"
      *       values (if any) have already been converted into {@code NaN} values.</li>
@@ -883,7 +883,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * <p>
      * Together with {@link #getOffset()} and {@link #getScale()}, this method provides a limited
      * way to transform sample values into geophysics values. However, the recommended way is to
-     * use the {@link #getSampleToGeophysics sampleToGeophysics} transform instead, which is more
+     * use the {@link #getSampleToGeophysics() sampleToGeophysics} transform instead, which is more
      * general and take care of converting automatically "no data" values into {@code NaN}.
      *
      * @return The values to indicate no data values for this sample dimension,
@@ -951,7 +951,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * implementation fetches this value from the categories supplied at construction time. If the
      * minimum value can't be computed, then this method returns {@link Double#NEGATIVE_INFINITY}.
      *
-     * @see #getRange
+     * @see #getRange()
      */
     @Override
     public double getMinimumValue() {
@@ -969,7 +969,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * implementation fetches this value from the categories supplied at construction time. If the
      * maximum value can't be computed, then this method returns {@link Double#POSITIVE_INFINITY}.
      *
-     * @see #getRange
+     * @see #getRange()
      */
     @Override
     public double getMaximumValue() {
@@ -987,26 +987,27 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     /**
      * Returns the range of values in this sample dimension. This is the union of the range of
      * values of every categories, excluding {@code NaN} values. A {@link NumberRange} object
-     * gives more informations than {@link #getMinimumValue} and {@link #getMaximumValue} methods
+     * gives more informations than {@link #getMinimumValue()} and {@link #getMaximumValue()} methods
      * since it contains also the data type (integer, float, etc.) and inclusion/exclusion
      * informations.
      *
      * @return The range of values. May be {@code null} if this sample dimension has no
      *         non-{@code NaN} value.
      *
-     * @see Category#getRange
-     * @see #getMinimumValue
-     * @see #getMaximumValue
+     * @see Category#getRange()
+     * @see #getMinimumValue()
+     * @see #getMaximumValue()
      *
      * @todo We should do a better job in {@code CategoryList.getRange()} when selecting the
-     *       appropriate data type. {@link TypeMap#getSampleDimensionType} may be of some help.
+     *       appropriate data type. {@link TypeMap#getSampleDimensionType(Range)} may be of
+     *       some help.
      */
     public NumberRange<?> getRange() {
         return (categories != null) ? categories.getRange() : null;
     }
 
     /**
-     * Returns {@code true} if the {@linkplain #getRange range} includes negative values. If
+     * Returns {@code true} if the {@linkplain #getRange() range} includes negative values. If
      * this sample dimension does not declare any quantitative category, then this method
      * returns {@code false}.
      * <p>
@@ -1014,7 +1015,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * For such color models, any {@code SampleDimension} for which this method return
      * {@code true} will require special handling.
      *
-     * @return {@code true} if the {@linkplain #getRange range} includes negative values.
+     * @return {@code true} if the {@linkplain #getRange() range} includes negative values.
      *
      * @since 3.11
      */
@@ -1045,7 +1046,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *
      * <ul>
      *   <li>If {@code value} maps a qualitative category, then the
-     *       category name is returned as of {@link Category#getName}.</li>
+     *       category name is returned as of {@link Category#getName()}.</li>
      *
      *   <li>Otherwise, if {@code value} maps a quantitative category, then the value is
      *       transformed into a geophysics value as with the {@link #getSampleToGeophysics()
@@ -1078,9 +1079,9 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     /**
      * Returns the unit information for this sample dimension. May returns {@code null}
      * if this dimension has no units. This unit apply to values obtained after the
-     * {@link #getSampleToGeophysics sampleToGeophysics} transformation.
+     * {@link #getSampleToGeophysics() sampleToGeophysics} transformation.
      *
-     * @see #getSampleToGeophysics
+     * @see #getSampleToGeophysics()
      */
     @Override
     public Unit<?> getUnits() {
@@ -1098,7 +1099,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *
      * Together with {@link #getScale()} and {@link #getNoDataValues()}, this method provides a
      * limited way to transform sample values into geophysics values. However, the recommended
-     * way is to use the {@link #getSampleToGeophysics sampleToGeophysics} transform instead,
+     * way is to use the {@link #getSampleToGeophysics() sampleToGeophysics} transform instead,
      * which is more general and take care of converting automatically "no data" values
      * into {@code NaN}.
      *
@@ -1125,7 +1126,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *
      * Together with {@link #getOffset()} and {@link #getNoDataValues()}, this method provides a
      * limited way to transform sample values into geophysics values. However, the recommended
-     * way is to use the {@link #getSampleToGeophysics sampleToGeophysics} transform instead,
+     * way is to use the {@link #getSampleToGeophysics() sampleToGeophysics} transform instead,
      * which is more general and take care of converting automatically "no data" values
      * into {@code NaN}.
      *
@@ -1213,9 +1214,9 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * Returns the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS geophysics} or
      * {@linkplain org.geotoolkit.coverage.grid.ViewType#PACKED packed} view of this sample dimension.
      * By definition, a <cite>geophysics sample dimension</cite> is a sample dimension with a
-     * {@linkplain #getRange range of sample values} transformed in such a way that the
-     * {@linkplain #getSampleToGeophysics sample to geophysics} transform is always the
-     * {@linkplain MathTransform1D#isIdentity identity} transform, or {@code null} if no such
+     * {@linkplain #getRange() range of sample values} transformed in such a way that the
+     * {@linkplain #getSampleToGeophysics() sample to geophysics} transform is always the
+     * {@linkplain MathTransform1D#isIdentity() identity} transform, or {@code null} if no such
      * transform existed in the first place. In other words, the range of sample values in all
      * {@linkplain Category categories} maps directly the "<cite>real world</cite>" values
      * without the need for any transformation.
@@ -1228,8 +1229,8 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * packed instance of the pair.
      *
      * @param  geo {@code true} to get a sample dimension with an identity
-     *         {@linkplain #getSampleToGeophysics transform} and a {@linkplain #getRange range of
-     *         values} matching the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
+     *         {@linkplain #getSampleToGeophysics() transform} and a {@linkplain #getRange() range
+     *         of values} matching the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
      *         geophysics} values, or {@code false} to get back the
      *         {@linkplain org.geotoolkit.coverage.grid.ViewType#PACKED packed} sample dimension.
      * @return The sample dimension. Never {@code null}, but may be {@code this}.
@@ -1322,18 +1323,18 @@ public class GridSampleDimension implements SampleDimension, Serializable {
 
     /**
      * Returns a color model for this sample dimension. The default implementation creates a color
-     * model with 1 band using each category's colors as returned by {@link Category#getColors}.
+     * model with 1 band using each category colors as returned by {@link Category#getColors()}.
      * The returned color model will typically use {@link DataBuffer#TYPE_FLOAT} if this sample
      * dimension is {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS geophysics}, or
      * an integer data type otherwise.
      * <p>
-     * Note that {@link org.geotoolkit.coverage.grid.GridCoverage2D#getSampleDimension} returns
-     * special implementations of {@code GridSampleDimension}. In this particular case,
-     * the color model created by this {@code getColorModel()} method will have the same number of
-     * bands than the grid coverage {@link java.awt.image.RenderedImage}.
+     * Note that {@link org.geotoolkit.coverage.grid.GridCoverage2D#getSampleDimension(int)}
+     * returns special implementations of {@code GridSampleDimension}. In this particular case,
+     * the color model created by this {@code getColorModel()} method will have the same number
+     * of bands than the grid coverage {@link java.awt.image.RenderedImage}.
      *
      * @return The requested color model, suitable for {@link java.awt.image.RenderedImage} objects
-     *         with values in the <code>{@link #getRange}</code> range. May be {@code null} if this
+     *         with values in the {@link #getRange()} range. May be {@code null} if this
      *         sample dimension has no category.
      */
     public ColorModel getColorModel() {
@@ -1346,7 +1347,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
 
     /**
      * Returns a color model for this sample dimension. The default implementation create the
-     * color model using each category's colors as returned by {@link Category#getColors}. The
+     * color model using each category colors as returned by {@link Category#getColors()}. The
      * returned color model will typically use {@link DataBuffer#TYPE_FLOAT} if this sample
      * dimension is {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS geophysics},
      * or an integer data type otherwise.
@@ -1358,7 +1359,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *         the existence of all {@code numBands} will be at least tolerated. Supplemental
      *         bands, even invisible, are useful for processing with Java Advanced Imaging.
      * @return The requested color model, suitable for {@link java.awt.image.RenderedImage} objects
-     *         with values in the <code>{@link #getRange}</code> range. May be {@code null} if this
+     *         with values in the {@link #getRange()} range. May be {@code null} if this
      *         sample dimension has no category.
      *
      * @todo This method may be deprecated in a future version. It it strange to use
@@ -1378,7 +1379,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
 
     /**
      * Returns a color model for this sample dimension. The default implementation create the
-     * color model using each category's colors as returned by {@link Category#getColors}.
+     * color model using each category colors as returned by {@link Category#getColors()}.
      *
      * @param  visibleBand The band to be made visible (usually 0). All other bands, if any
      *         will be ignored.
@@ -1388,7 +1389,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *         bands, even invisible, are useful for processing with Java Advanced Imaging.
      * @param  type The data type that has to be used for the sample model.
      * @return The requested color model, suitable for {@link java.awt.image.RenderedImage} objects
-     *         with values in the <code>{@link #getRange}</code> range. May be {@code null} if this
+     *         with values in the {@link #getRange()} range. May be {@code null} if this
      *         sample dimension has no category.
      *
      * @todo This method may be deprecated in a future version. It it strange to use
@@ -1403,9 +1404,9 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     }
 
     /**
-     * Returns a sample dimension using new {@link #getScale scale} and {@link #getOffset offset}
-     * coefficients. Other properties like the {@linkplain #getRange sample value range},
-     * {@linkplain #getNoDataValues no data values} and {@linkplain #getColorModel colors}
+     * Returns a sample dimension using new {@link #getScale() scale} and {@link #getOffset() offset}
+     * coefficients. Other properties like the {@linkplain #getRange() sample value range},
+     * {@linkplain #getNoDataValues() no data values} and {@linkplain #getColorModel() colors}
      * are unchanged.
      *
      * @param scale  The value which is multiplied to grid values for the new sample dimension.

@@ -17,13 +17,12 @@
  */
 package org.geotoolkit.coverage.grid;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
@@ -39,6 +38,7 @@ import javax.media.jai.PlanarImage;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.FactoryException;
+import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -52,8 +52,8 @@ import org.geotoolkit.lang.Builder;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.geometry.Envelopes;
@@ -74,36 +74,71 @@ import org.geotoolkit.resources.Errors;
  * <p>
  * The builder supports the following properties:
  * <p>
- * <table border="1" cellspacing="0" cellpadding="4">
+ * <table border="1" cellspacing="0" cellpadding="1">
  *   <tr bgcolor="lightblue">
  *     <th>Properties</th>
  *     <th>Can be set from</th>
+ *     <th>Default value</th>
  *   </tr><tr>
  *     <td>&nbsp;{@link #crs}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setCoordinateReferenceSystem(CoordinateReferenceSystem) CRS instance} or
  *               {@linkplain #setCoordinateReferenceSystem(String) authority code}&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #envelope}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setEnvelope(Envelope) Envelope instance} or
  *               {@linkplain #setEnvelope(double[]) ordinate values}&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #extent}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setExtent(GridEnvelope) Grid envelope instance} or
- *               {@linkplain #setExtent(int[]) spans} (typically image width and height)&nbsp;</td>
+ *               {@linkplain #setExtent(int[]) spans} (image width and height)&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #pixelAnchor}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setPixelAnchor(PixelInCell) Code list value}&nbsp;</td>
+ *     <td>&nbsp;&nbsp;{@link PixelInCell#CELL_CENTER}</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridToCRS}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setGridToCRS(MathTransform) transform instance} or
+ *     <td>&nbsp;{@linkplain #setGridToCRS(MathTransform) Transform instance} or
  *               {@linkplain #setGridToCRS(double, double, double, double, double, double) affine transform coefficients}&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridGeometry}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setGridGeometry(GridGeometry) Grid geometry instance}&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link #sampleRanges}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setSampleRange(int, NumberRange) range instance} or
- *               {@linkplain #setSampleRange(int, int, int) lower and upper values}&nbsp;</td>
+ *     <td>&nbsp;{@link #numBands}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain #setNumBands(int) Positive integer}&nbsp;</td>
+ *     <td>&nbsp;1&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link Variable#name}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setName(CharSequence) Character sequence}&nbsp;</td>
+ *     <td>&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link Variable#unit}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setUnit(Unit) Unit instance} or
+ *               {@linkplain Variable#setUnit(String) unit symbol}&nbsp;</td>
+ *     <td>&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link Variable#sampleRange}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setSampleRange(NumberRange) Range instance} or
+ *               {@linkplain Variable#setSampleRange(int, int) lower and upper values}&nbsp;</td>
+ *     <td>&nbsp;[0&hellip;256[&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link Variable#transform}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setTransform(MathTransform1D) Transform instance} or
+ *               {@linkplain Variable#setLinearTransform(double, double) coefficients}&nbsp;</td>
+ *     <td>&nbsp;{@link LinearTransform1D#IDENTITY}&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link Variable#sampleDimension}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setSampleDimension(SampleDimension) Sample dimension instance} or
+ *               {@linkplain #setSampleDimensions(SampleDimension[]) array}&nbsp;</td>
+ *     <td>&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@code image}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain #setRenderedImage(RenderedImage) Rendered image instance}&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr>
  * </table>
  *
@@ -112,19 +147,18 @@ import org.geotoolkit.resources.Errors;
  *     GridCoverageBuilder builder = new GridCoverageBuilder();
  *     builder.setCoordinateReferenceSystem("EPSG:4326");
  *     builder.setEnvelope(-60, 40, -50, 50);
- *
- *     // Will use sample value in the range 0 inclusive to 20000 exclusive.
- *     builder.setSampleRange(0, 20000);
- *
- *     // Defines elevation (m) = sample / 10
- *     GridCoverageBuilder.Variable elevation = builder.newVariable("Elevation", SI.METRE);
- *     elevation.setLinearTransform(0.1, 0);
- *     elevation.addNodataValue("No data", 32767);
- *
- *     // Gets a 600×400 pixels image, then draw something on it.
  *     builder.setExtent(600, 400);
- *     BufferedImage image = builder.getBufferedImage();
- *     Graphics2D gr = image.createGraphics();
+ *
+ *     // Use sample values in the range 0 inclusive to 20000 exclusive
+ *     // and define elevation in metres as sample / 10.
+ *     builder.variable(0).setName("Elevation");
+ *     builder.variable(0).setUnit(SI.METRE);
+ *     builder.variable(0).setSampleRange(0, 20000);
+ *     builder.variable(0).setLinearTransform(0.1, 0);
+ *     builder.variable(0).addNodataValue("No data", 32767);
+ *
+ *     // Gets a 600×400 pixels (the extent) image, then draw something on it.
+ *     Graphics2D gr = ((BufferedImage) builder.getRenderedImage()).createGraphics();
  *     gr.draw(...);
  *     gr.dispose();
  *
@@ -140,23 +174,27 @@ import org.geotoolkit.resources.Errors;
  */
 public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
-     * The default {@linkplain #sampleRange}.
+     * The default {@linkplain Variable#sampleRange}.
      */
-    private static final NumberRange<Integer> DEFAULT_RANGE = NumberRange.create(0, true, 256, false);
+    static final NumberRange<Integer> DEFAULT_RANGE = NumberRange.create(0, true, 256, false);
 
     /**
-     * The initial length of arrays in this class. Those arrays are created only when first needed.
-     * A value of 4 is a good match for ARGB images - few images need more bands.
+     * The coverage name, or {@code null} if unspecified. This field is non-null only if the name
+     * has been {@linkplain #setName(CharSequence) explicitely specified} by the user. The values
+     * inferred from other attributes are not stored in this field.
+     *
+     * @see #getName()
+     * @see #setName(CharSequence)
      *
      * @since 3.20
      */
-    private static final int INITIAL_ARRAY_LENGTH = 4;
+    protected CharSequence name;
 
     /**
      * The coordinate reference system, or {@code null} if unspecified. This field is non-null only
      * if the CRS has been {@linkplain #setCoordinateReferenceSystem(CoordinateReferenceSystem)
      * explicitely specified} by the user. The values inferred from other attributes are not stored
-     * in the field.
+     * in this field.
      *
      * @see #getCoordinateReferenceSystem()
      * @see #setCoordinateReferenceSystem(CoordinateReferenceSystem)
@@ -169,7 +207,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * The envelope, including coordinate reference system, or {@code null} if unspecified. This
      * field is non-null only if the envelope has been {@linkplain #setEnvelope(Envelope) explicitely
-     * specified} by the user. The values inferred from other attributes are not stored in the field.
+     * specified} by the user. The values inferred from other attributes are not stored in this field.
      *
      * @see #getEnvelope()
      * @see #setEnvelope(Envelope)
@@ -182,7 +220,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * The grid extent, or {@code null} if unspecified. This field is non-null only if the extent
      * has been {@linkplain #setExtent(GridEnvelope) explicitely specified} by the user. The values
-     * inferred from other attributes are not stored in the field.
+     * inferred from other attributes are not stored in this field.
      *
      * @see #getExtent()
      * @see #setExtent(GridEnvelope)
@@ -195,7 +233,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * The <cite>grid to CRS</cite> transform, or {@code null} if unspecified. This field is non-null
      * only if the transform has been {@linkplain #setGridToCRS(MathTransform) explicitely specified}
-     * by the user. The values inferred from other attributes are not stored in the field.
+     * by the user. The values inferred from other attributes are not stored in this field.
      *
      * @see #getGridToCRS()
      * @see #setGridToCRS(MathTransform)
@@ -208,7 +246,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * Whatever the {@link #gridToCRS} transform maps pixel center or pixel corner. This field is
      * non-null only if it has been {@linkplain #setPixelAnchor(PixelInCell) explicitely specified}
-     * by the user. The values inferred from other attributes are not stored in the field.
+     * by the user. The values inferred from other attributes are not stored in this field.
      *
      * @see #getPixelAnchor()
      * @see #setPixelAnchor(PixelInCell)
@@ -220,7 +258,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * The grid geometry, or {@code null} if unspecified. This field is non-null only if the grid
      * geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely specified} by the
-     * user. The values inferred from other attributes are not stored in the field.
+     * user. The values inferred from other attributes are not stored in this field.
      *
      * @see #getGridGeometry()
      * @see #setGridGeometry(GridGeometry)
@@ -237,41 +275,44 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     private transient GridGeometry cachedGridGeometry;
 
     /**
-     * Number of sample dimensions (bands), or 0 if unspecified. This field is non-zero only if
-     * the number of sample dimensions has been {@linkplain #setNumSampleDimensions(int) explicitely
-     * specified} by the user. The values inferred from other attributes are not stored in the field.
+     * Number of bands (sample dimensions), or 0 if unspecified. This field is non-zero only if
+     * the number of bands has been {@linkplain #setNumBands(int) explicitely specified} by the
+     * user, or {@linkplain #variable(int) variables were created}. The values inferred from other
+     * attributes are not stored in this field.
      *
-     * @see #getNumSampleDimensions()
-     * @see #setNumSampleDimensions(int)
+     * @see #getNumBands()
+     * @see #setNumBands(int)
+     *
+     * @since 3.20
      */
-    protected int numSampleDimensions;
+    protected int numBands;
 
     /**
-     * The range of sample values, or {@code null} if unspecified. This array can have any length,
-     * but only the {@link #numSampleDimensions} first elements are valid. Each element can be non-null
-     * only if the range has been {@linkplain #setSampleRange(int, NumberRange) explicitely specified}
-     * by the user. The values inferred from other attributes are not stored in the field.
+     * The list of variables created by the user, or {@code null} if unspecified. If non-null,
+     * each element in this list will determine a {@linkplain GridSampleDimension grid sample
+     * dimension} in the coverage to create.
      *
-     * @see #getSampleRange(int)
-     * @see #setSampleRange(int, NumberRange)
-     * @see #setSampleRange(int, int, int)
+     * @see #variable(int)
      *
      * @since 3.20 (derived from 2.5)
      */
-    protected NumberRange<?>[] sampleRanges;
+    private Variable[] variables;
 
     /**
-     * The list of variables created by the user. Each variable will be mapped to a
-     * {@linkplain GridSampleDimension sample dimension}. The list is created when first needed.
+     * The sample dimensions created from the {@link #variables} array, or {@code null}
+     * if none or not yet computed. If every sample dimensions are actually instances of
+     * {@link GridSampleDimension}, then the array type is {@code GridSampleDimension[]}.
      *
-     * @see #newVariable(CharSequence, Unit)
+     * @see #getSampleDimensions()
+     *
+     * @since 3.20
      */
-    private List<Variable> variables;
+    private transient SampleDimension[] sampleDimensions;
 
     /**
      * The image. Will be created only when first needed.
      */
-    private BufferedImage image;
+    private RenderedImage image;
 
     /**
      * The grid coverage. Will be created only when first needed.
@@ -279,16 +320,48 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     private GridCoverage2D coverage;
 
     /**
-     * Optional hints, or {@code null} if none.
-     *
-     * @since 3.20
-     */
-    protected Hints hints;
-
-    /**
      * Creates a uninitialized builder. All fields values are {@code null}.
      */
     public GridCoverageBuilder() {
+    }
+
+    /**
+     * Returns the coverage name. If no name has been {@linkplain #setName(CharSequence) explicitly
+     * defined}, then this method returns the first non-null name of a {@linkplain #variable(int)},
+     * if any.
+     *
+     * @return The coverage name, or {@code null}.
+     *
+     * @see GridCoverage2D#getName()
+     *
+     * @since 3.20
+     */
+    public CharSequence getName() {
+        CharSequence value = name;
+        if (value == null) {
+            final Variable[] variables = this.variables;
+            for (int i=0; i<numBands; i++) {
+                final Variable var = variables[i];
+                if (var != null) {
+                    value = var.getName();
+                    if (value != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Sets the coverage name.
+     *
+     * @param name The new name, or {@code null}.
+     *
+     * @since 3.20
+     */
+    public void setName(final CharSequence name) {
+        this.name = name;
     }
 
     /**
@@ -415,7 +488,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Returns the current envelope. If no envelope has been {@linkplain #setEnvelope(Envelope)
-     * explicitly defined}, then this method returns the {@link #gridGeometry grid geometry}
+     * explicitly defined}, then this method returns the {@linkplain #gridGeometry grid geometry}
      * envelope.
      *
      * @return A copy of the current envelope, or {@code null} if unspecified and can not be inferred.
@@ -505,7 +578,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Returns the current grid extent. If no extent has been {@linkplain #setExtent(GridEnvelope)
-     * explicitly defined}, then this method returns the {@link #gridGeometry grid geometry} extent.
+     * explicitly defined}, then this method returns the {@linkplain #gridGeometry grid geometry}
+     * extent.
      *
      * @return The current grid extent, or {@code null} if unspecified and can not be inferred.
      *
@@ -557,7 +631,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Sets the grid extent to a grid envelope having the given span.
-     * The {@link GridEnvelope#getLow() low ordinate values} are set to 0.
+     * The {@linkplain GridEnvelope#getLow() low ordinate values} are set to 0.
      * <p>
      * This method is typically invoked for defining image dimension as below:
      *
@@ -577,7 +651,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * Returns the current <cite>grid to CRS</cite> transform. If no transform has been
      * {@linkplain #setGridToCRS(MathTransform) explicitly defined}, then this method
-     * returns the {@link #gridGeometry grid geometry} transform. Whatever the returned
+     * returns the {@linkplain #gridGeometry grid geometry} transform. Whatever the returned
      * transform maps pixel centers or pixel corners depends on the {@link #pixelAnchor} value.
      *
      * @return The <cite>grid to CRS</cite> transform, or {@code null} if unspecified and can not
@@ -725,9 +799,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final MathTransform gridToCRS = getGridToCRS();
                 if (gridToCRS != null) {
                     geom = new GridGeometry2D(extent, getPixelAnchor(),
-                            gridToCRS, getCoordinateReferenceSystem(), hints);
+                            gridToCRS, getCoordinateReferenceSystem(), getHints());
                 } else {
-                    geom = new GridGeometry2D(extent, getEnvelope());
+                    final Envelope envelope = getEnvelope();
+                    if (extent != null || envelope != null) { // Its okay to have 1 null value.
+                        geom = new GridGeometry2D(extent, envelope);
+                    }
                 }
                 cachedGridGeometry = geom;
             }
@@ -765,24 +842,26 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @since 3.20
      */
-    private void sampleDimensionsChanged() {
-        coverage = null;
+    final void sampleDimensionsChanged() {
+        sampleDimensions = null;
+        coverage         = null;
     }
 
     /**
      * Returns the number of sample dimensions (bands). If this number has not been
-     * {@linkplain #setNumSampleDimensions(int) explicitly defined}, then this method
-     * returns the number of bands in the {@link #image}, if any. If there is no image
-     * neither, then the default value is 1.
+     * {@linkplain #setNumBands(int) explicitly defined} or increased by calls to the
+     * {@link #variable(int)} method, then this method returns the number of bands in
+     * the {@link #image}, if any. If there is no image neither, then the default value is 1.
      *
      * @return The number of sample dimensions (bands).
      *
-     * @see #numSampleDimensions
+     * @see #numBands
+     * @see SampleModel#getNumBands()
      *
      * @since 3.20
      */
-    public int getNumSampleDimensions() {
-        int n = numSampleDimensions;
+    public int getNumBands() {
+        int n = numBands;
         if (n == 0) {
             final RenderedImage image = this.image;
             if (image != null) {
@@ -797,147 +876,205 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Sets the number of sample dimensions (bands).
+     * Sets the number of sample dimensions (bands). If any {@linkplain #variable(int) variable}
+     * existed at the index <var>n</var> or greater, they will be discarded.
      *
      * @param n Number of sample dimensions, or 0 to unspecify.
+     * @throws IllegalArgumentException If the given value is negative.
      *
      * @since 3.20
      */
-    public void setNumSampleDimensions(final int n) {
+    public void setNumBands(final int n) throws IllegalArgumentException {
         ArgumentChecks.ensurePositive("n", n);
-        numSampleDimensions = n;
+        final Variable[] variables = this.variables;
+        if (variables != null && n < variables.length) {
+            Arrays.fill(variables, numBands, variables.length, null);
+        }
+        numBands = n;
         sampleDimensionsChanged();
     }
 
     /**
-     * Returns the last non-null element at the given index or in a previous index
-     * in the given array.
+     * Returns the {@linkplain GridSampleDimension sample dimension} builder for the given
+     * band index. If a {@code Variable} instance exists at the given index, it will be
+     * returned. Otherwise a new instance will be created.
+     * <p>
+     * If the given band index is equals or greater than the {@linkplain #getNumBands() number
+     * of sample dimensions}, then the later will be increased as needed.
      *
-     * @param  <E>   The type of array elements.
-     * @param  array The array from which to get an element, or {@code null}.
-     * @param  band  The index of the sample dimension for which to get the element.
-     * @return The array element for the given sample dimension, or {@code null}.
-     * @throws IndexOutOfBoundsException If the given {@code band} index is out of bounds.
+     * @param  band The index of the sample dimension for which to get the variable.
+     * @return The builder for the given sample dimension.
+     * @throws IllegalArgumentException If the given band index is negative.
      *
      * @since 3.20
      */
-    private <E> E getArrayElement(final E[] array, int band) throws IndexOutOfBoundsException {
-        ArgumentChecks.ensureValidIndex(getNumSampleDimensions(), band);
-        if (band >= array.length) {
-            band = array.length - 1;
+    public Variable variable(final int band) throws IllegalArgumentException {
+        ArgumentChecks.ensurePositive("band", band);
+        Variable[] v = this.variables;
+        if (v == null) {
+            // A length of 4 is a good match for ARGB images - few images need more bands.
+            variables = v = new Variable[Math.max(4, band+1)];
+        } else if (band >= v.length) {
+            variables = v = Arrays.copyOf(v, Math.max(v.length*2, band+1));
         }
-        for (; band >= 0; band--) {
-            final E element = array[band];
-            if (element != null) {
-                return element;
+        Variable var = v[band];
+        if (var == null) {
+            v[band] = var = newVariable(band);
+        }
+        if (band >= numBands) {
+            numBands = band+1;
+        }
+        return var;
+    }
+
+    /**
+     * Invoked by {@link #variable(int)} when a new variable need to be created. This method is
+     * a hook for subclasses that wish to instantiate their own {@link Variable} subclasses.
+     * The default implementation is:
+     *
+     * {@preformat java
+     *     return new Variable(band);
+     * }
+     *
+     * @param  band The index of the sample dimension for which to get the new variable.
+     * @return The new variable.
+     *
+     * @since 3.20
+     */
+    protected Variable newVariable(final int band) {
+        return new Variable(band);
+    }
+
+    /**
+     * @deprecated Replaced by {@link Variable#getSampleRange()}.
+     *
+     * @return The current range of sample values.
+     */
+    @Deprecated
+    public NumberRange<?> getSampleRange() {
+        return variable(0).getSampleRange();
+    }
+
+    /**
+     * @deprecated Replaced by {@link Variable#setSampleRange(NumberRange)}.
+     *
+     * @param  range The new range of sample values, or {@code null}.
+     */
+    @Deprecated
+    public void setSampleRange(final NumberRange<?> range) {
+        variable(0).setSampleRange(range);
+    }
+
+    /**
+     * @deprecated Replaced by {@link Variable#getSampleRange(int, int)}.
+     *
+     * @param  lower The lower sample value (inclusive), typically 0.
+     * @param  upper The upper sample value (exclusive), typically 256.
+     */
+    @Deprecated
+    public void setSampleRange(final int lower, final int upper) {
+        variable(0).setSampleRange(lower, upper);
+    }
+
+    /**
+     * Returns the sample dimensions, or {@code null} if none. If all sample dimensions
+     * are actually instances of {@link GridSampleDimension}, then the array type is
+     * {@code GridSampleDimension[]}.
+     *
+     * @return The sample dimensions, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public SampleDimension[] getSampleDimensions() {
+        SampleDimension[] bands = sampleDimensions;
+        if (bands == null) {
+            final int numBands = this.numBands;
+            for (int i=numBands; --i>=0;) {
+                final SampleDimension band = variable(i).getSampleDimension();
+                if (band != null) {
+                    if (band instanceof GridSampleDimension) {
+                        if (bands == null) {
+                            bands = new GridSampleDimension[numBands];
+                        }
+                    } else {
+                        if (bands == null) {
+                            bands = new SampleDimension[numBands];
+                        } else if (bands instanceof GridSampleDimension[]) {
+                            final SampleDimension[] old = bands;
+                            bands = new SampleDimension[numBands];
+                            System.arraycopy(old, 0, bands, 0, numBands);
+                        }
+                    }
+                    bands[i] = band;
+                }
+            }
+            sampleDimensions = bands;
+        }
+        return (bands != null) ? bands.clone() : null;
+    }
+
+    /**
+     * Sets all sample dimensions. This convenience method {@linkplain #setNumBands(int)
+     * sets the number of bands} to the number of given arguments, then invokes
+     * {@link Variable#setSampleDimension(SampleDimension)} for each element.
+     *
+     * @param bands The new sample dimensions, or {@code null}.
+     *
+     * @since 3.20
+     */
+    public void setSampleDimensions(final SampleDimension... bands) {
+        setNumBands(bands != null ? bands.length : 0);
+        if (bands != null) {
+            for (int i=0; i<bands.length; i++) {
+                variable(i).setSampleDimension(bands[i]);
+            }
+        }
+    }
+
+    /**
+     * Returns a color model from the {@linkplain #getSampleDimensions() sample dimensions}.
+     * The default implementation delegates to {@link GridSampleDimension#getColorModel(int, int)}
+     * on the first {@code GridSampleDimension} found.
+     *
+     * @return The color model, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public ColorModel getColorModel() {
+        final SampleDimension[] bands = getSampleDimensions();
+        if (bands != null) {
+            for (int i=0; i<bands.length; i++) {
+                final SampleDimension band = bands[i];
+                if (band instanceof GridSampleDimension) {
+                    return ((GridSampleDimension) band).getColorModel(i, bands.length);
+                }
             }
         }
         return null;
     }
 
     /**
-     * Sets the value at the given index in the given array. If the given index is equals or
-     * greater than the {@linkplain #getNumSampleDimensions() number of sample dimensions},
-     * then the later will be increased as needed.
+     * Returns the image bounds.The default implementation fetches this information from
+     * the {@linkplain #getGridGeometry() grid geometry}.
+     * <p>
+     * Note that the ({@linkplain Rectangle#x x},{@linkplain Rectangle#y y}) origin must be
+     * (0,0) for building a {@link BufferedImage}, but can be different for other kinds of
+     * {@link RenderedImage}.
      *
-     * @param  <E>   The type of array elements.
-     * @param  array The array in which to set an element.
-     * @param  band  The index of the sample dimension for which to set the element.
-     * @param  value The new element value, or {@code null}.
-     * @return The array, or a copy of the array if we needed to increase its size.
-     * @throws IndexOutOfBoundsException If the given {@code band} index is negative.
+     * @return The current image bounds, or {@code null} if none.
+     * @throws InvalidGridGeometryException if there is no {@linkplain #getGridGeometry()
+     *         grid geometry} or no extent associated to that grid geometry.
+     *
+     * @see GridGeometry2D#getExtent2D()
      *
      * @since 3.20
      */
-    private <E> E[] setArrayElement(E[] array, final int band, final E value) throws IndexOutOfBoundsException {
-        if (band >= numSampleDimensions) {
-            numSampleDimensions = band+1;
+    public Rectangle getImageBounds() throws InvalidGridGeometryException {
+        final GridGeometry2D g = GridGeometry2D.castOrCopy(getGridGeometry());
+        if (g != null) {
+            return g.getExtent2D();
         }
-        ArgumentChecks.ensureValidIndex(getNumSampleDimensions(), band);
-        final boolean expand = (band >= array.length);
-        if (value != null || !expand) {
-            if (expand) {
-                array = Arrays.copyOf(array, Math.max(array.length*2, band+1));
-            }
-            array[band] = value;
-        }
-        return array;
-    }
-
-    /**
-     * Returns the range of sample values for the given sample dimension. If no range has been
-     * {@linkplain #setSampleRange(int, NumberRange) explicitly defined}, then this method
-     * searches backward in previous sample dimensions until a range is found. If no range
-     * is found, then the default is a range from 0 inclusive to 256 exclusive.
-     *
-     * @param  band The index of the sample dimension for which to get the range of sample values.
-     * @return The current range of sample values for the given index.
-     * @throws IndexOutOfBoundsException If the given {@code band} index is out of bounds.
-     *
-     * @since 3.20 (derived from 2.5)
-     */
-    public NumberRange<?> getSampleRange(final int band) throws IndexOutOfBoundsException {
-        final NumberRange<?> sampleRange = getArrayElement(sampleRanges, band);
-        return (sampleRange != null) ? sampleRange : DEFAULT_RANGE;
-    }
-
-    /**
-     * Sets the range of sample values for the given sample dimension. If the given index is equals
-     * or greater than the {@linkplain #getNumSampleDimensions() number of sample dimensions}, then
-     * the later will be increased as needed.
-     *
-     * @param  band  The index of the sample dimension for which to set the range.
-     * @param  range The new range of sample values, or {@code null}.
-     * @throws IndexOutOfBoundsException If the given {@code band} index is negative.
-     *
-     * @since 3.20 (derived from 2.5)
-     */
-    public void setSampleRange(final int band, final NumberRange<?> range) throws IndexOutOfBoundsException {
-        if (sampleRanges == null) {
-            sampleRanges = new NumberRange<?>[INITIAL_ARRAY_LENGTH];
-        }
-        sampleRanges = setArrayElement(sampleRanges, band, range);
-        sampleDimensionsChanged();
-    }
-
-    /**
-     * Sets the range of sample values for the given sample dimension. If the given index is equals
-     * or greater than the {@linkplain #getNumSampleDimensions() number of sample dimensions}, then
-     * the later will be increased as needed.
-     *
-     * @param  band  The index of the sample dimension for which to set the range.
-     * @param  lower The lower sample value (inclusive), typically 0.
-     * @param  upper The upper sample value (exclusive), typically 256.
-     * @throws IndexOutOfBoundsException If the given {@code band} index is negative.
-     *
-     * @since 3.20 (derived from 2.5)
-     */
-    public void setSampleRange(final int band, final int lower, final int upper) throws IndexOutOfBoundsException {
-        setSampleRange(band, NumberRange.create(lower, true, upper, false));
-    }
-
-    /**
-     * @deprecated Replaced by {@link #getSampleRange(int)}.
-     */
-    @Deprecated
-    public NumberRange<?> getSampleRange() {
-        return getSampleRange(0);
-    }
-
-    /**
-     * @deprecated Replaced by {@link #getSampleRange(int)}.
-     */
-    @Deprecated
-    public void setSampleRange(final NumberRange<?> range) {
-        setSampleRange(0, range);
-    }
-
-    /**
-     * @deprecated Replaced by {@link #getSampleRange(int, int, int)}.
-     */
-    @Deprecated
-    public void setSampleRange(final int lower, final int upper) {
-        setSampleRange(0, lower, upper);
+        throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
     }
 
     /**
@@ -945,14 +1082,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @return The current image size.
      *
-     * @deprecated Replaced by {@link #getExtent()}.
+     * @deprecated Replaced by {@link #getImageBounds()}.
      */
     @Deprecated
     public Dimension getImageSize() {
-        if (extent != null) {
-            return new Dimension(extent.getSpan(0), extent.getSpan(1));
+        try {
+            return getImageBounds().getSize();
+        } catch (InvalidGridGeometryException e) {
+            return null; // To preserve the contract of previous implementation.
         }
-        return null;
     }
 
     /**
@@ -981,18 +1119,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Returns the variables array, creating it if needed.
-     *
-     * @since 3.20
-     */
-    private List<Variable> variables() {
-        if (variables == null) {
-            variables = new ArrayList<>();
-        }
-        return variables;
-    }
-
-    /**
      * Creates a new variable, which will be mapped to a {@linkplain GridSampleDimension sample
      * dimension}. Additional information like scale, offset and nodata values can be provided
      * by invoking setters on the returned variable.
@@ -1000,52 +1126,92 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @param  name  The variable name, or {@code null} for a default name.
      * @param  units The variable units, or {@code null} if unknown.
      * @return A new variable.
+     *
+     * @deprecated Replaced by {@link #variable(int)}.
      */
+    @Deprecated
     public Variable newVariable(final CharSequence name, final Unit<?> units) {
-        final Variable variable = new Variable(name, units);
-        variables().add(variable);
+        final Variable variable = variable(numBands);
+        variable.setName(name);
+        variable.setUnit(units);
         return variable;
     }
 
     /**
-     * Returns the buffered image to be wrapped by {@link GridCoverage2D}. If no image has been
-     * {@linkplain #setBufferedImage explicitly defined}, a new one is created the first time
-     * this method is invoked. Users can write in this image before to create the grid coverage.
+     * Returns the rendered image to be wrapped by {@link GridCoverage2D}. If no image has been
+     * {@linkplain #setRenderedImage(RenderedImage) explicitly defined}, a new one is created the
+     * first time this method is invoked. Users can modify the pixel values in this image before
+     * to create the grid coverage.
+     * <p>
+     * In the common case where the {@linkplain GridEnvelope#getLow() lower corner} of the grid
+     * extent is zero, this method returns an instance of {@link BufferedImage}.
      *
-     * @return The buffered image to be wrapped by {@code GridCoverage2D}.
+     * @return The rendered image to be wrapped by {@code GridCoverage2D}.
+     *
+     * @since 3.20 (derived from 2.5)
      */
-    public BufferedImage getBufferedImage() {
+    public RenderedImage getRenderedImage() {
         if (image == null) {
-            final Dimension size = getImageSize();
-            if (XCollections.isNullOrEmpty(variables)) {
-                image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_BYTE_GRAY);
-            } else {
-                final List<Variable> variables = variables();
-                final int numBands = variables.size();
-                final GridSampleDimension sd = variables.get(0).build();
-                final ColorModel cm;
-                if (numBands == 1) {
-                    cm = sd.getColorModel();
+            final Rectangle bounds = getImageBounds();
+            if (bounds.x == 0 && bounds.y == 0) {
+                final ColorModel cm = getColorModel();
+                if (cm == null) {
+                    image = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_BYTE_GRAY);
                 } else {
-                    cm = sd.getColorModel(0, numBands);
+                    image = new BufferedImage(cm,
+                            cm.createCompatibleWritableRaster(bounds.width, bounds.height), false, null);
                 }
-                final WritableRaster raster = cm.createCompatibleWritableRaster(size.width, size.height);
-                image = new BufferedImage(cm, raster, false, null);
+            } else {
+                throw new UnsupportedOperationException("Not yet implemented"); // TODO
             }
         }
         return image;
     }
 
     /**
-     * Sets the buffered image. Invoking this method overwrite the
-     * {@linkplain #getImageSize() image size} with the given image size.
+     * Sets the rendered image. Invoking this method overwrites the
+     * {@linkplain #getExtent() extent} with the size and location of the given image.
+     * <p>
+     * It is preferable to set the {@linkplain #setGridGeometry(GridGeometry) grid geometry} or
+     * {@linkplain #setGridToCRS(MathTransform) grid to CRS} attribute before to set the image,
+     * if possible.
+     *
+     * @param image The rendered image to be wrapped by {@code GridCoverage2D}.
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    public void setRenderedImage(final RenderedImage image) {
+        int dim = 2; // Default value.
+        if (gridGeometry instanceof GeneralGridGeometry) {
+            dim = ((GeneralGridGeometry) gridGeometry).getDimension();
+        } else if (gridToCRS != null) {
+            dim = gridToCRS.getSourceDimensions();
+        } else if (extent != null) {
+            dim = extent.getDimension();
+        }
+        setExtent(new GeneralGridEnvelope(image, dim));
+        this.image = image; // Stores only if the above line succeed.
+        coverage = null;
+    }
+
+    /**
+     * @deprecated Replaced by {@link #getRenderedImage()}.
+     *
+     * @return The buffered image to be wrapped by {@code GridCoverage2D}.
+     */
+    @Deprecated
+    public BufferedImage getBufferedImage() {
+        return (BufferedImage) getRenderedImage();
+    }
+
+    /**
+     * @deprecated Replaced by {@link #setRenderedImage(RenderedImage)}.
      *
      * @param image The buffered image to be wrapped by {@code GridCoverage2D}.
      */
+    @Deprecated
     public void setBufferedImage(final BufferedImage image) {
-        setImageSize(image.getWidth(), image.getHeight());
-        this.image = image; // Stores only if the above line succeed.
-        coverage = null;
+        setRenderedImage(image);
     }
 
     /**
@@ -1091,15 +1257,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      */
     public GridCoverage2D getGridCoverage2D() {
         if (coverage == null) {
-            final BufferedImage image = getBufferedImage();
+            final RenderedImage image = getRenderedImage();
+            final SampleDimension[] sd = getSampleDimensions();
             final GridSampleDimension[] bands;
-            if (XCollections.isNullOrEmpty(variables)) {
-                bands = null;
+            if (sd == null || sd instanceof GridSampleDimension[]) {
+                bands = (GridSampleDimension[]) sd;
             } else {
-                final List<Variable> variables = variables();
-                bands = new GridSampleDimension[variables.size()];
+                bands = new GridSampleDimension[sd.length];
                 for (int i=0; i<bands.length; i++) {
-                    bands[i] = variables.get(i).build();
+                    bands[i] = GridSampleDimension.castOrCopy(sd[i]);
                 }
             }
             coverage = new GridCoverage2D(
@@ -1108,10 +1274,34 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     GridGeometry2D.castOrCopy(getGridGeometry()),
                     bands,
                     null,
-                    null,
-                    hints);
+                    getProperties(),
+                    getHints());
         }
         return coverage;
+    }
+
+    /**
+     * Returns optional hints to be given to the coverage, or {@code null} if none.
+     * The default implementation returns {@code null} in all cases.
+     *
+     * @return Optional map of coverage properties, or {@code null}.
+     *
+     * @since 3.20
+     */
+    public Map<?,?> getProperties() {
+        return null;
+    }
+
+    /**
+     * Returns optional hints for fetching factories, or {@code null} if none.
+     * The default implementation returns {@code null} in all cases.
+     *
+     * @return Optional hints for fetching factories, or {@code null}.
+     *
+     * @since 3.20
+     */
+    public Hints getHints() {
+        return null;
     }
 
     /**
@@ -1127,73 +1317,310 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
 
     /**
+     * Helper class for the creation of {@link SampleDimension} instances.
      * A variable to be mapped to a {@linkplain GridSampleDimension sample dimension}.
-     * Variables are created by {@link GridCoverageBuilder#newVariable(CharSequence, Unit)}.
+     *
+     * {@note This class is named <cite>variable</cite> because it is usually not needed for
+     * Red/Green/Blue bands. <code>Variable</code> is typically used for describing the
+     * measurement of a single phenomenon, like temperature (°C) or elevation (m). The
+     * <cite>variable</cite> name is used for this purpose in NetCDF files for instance.}
+     *
+     * Variables are obtained by calls to {@link GridCoverageBuilder#variable(int)}.
+     * See {@linkplain GridCoverageBuilder outer class javadoc} for usage examples.
+     *
+     * {@section Subclassing}
+     * Implementors who wish to create their own {@code Variable} subclass will probably
+     * need to override the {@link GridCoverageBuilder#newVariable(int)} method as well.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.20
      *
+     * @see GridCoverageBuilder#variable(int)
+     * @see ucar.nc2.Variable
+     *
      * @since 2.5
      * @module
      */
-    public class Variable extends Builder<GridSampleDimension> {
+    public class Variable {
         /**
-         * The variable name, or {@code null} for a default name.
-         */
-        private final CharSequence name;
-
-        /**
-         * The variable units, or {@code null} for a default units.
-         */
-        private final Unit<?> units;
-
-        /**
-         * The "nodata" values.
-         */
-        private final Map<Integer,CharSequence> nodata;
-
-        /**
-         * The "<cite>sample to geophysics</cite>" transform.
-         */
-        private MathTransform1D transform;
-
-        /**
-         * The sample dimension. Will be created when first needed. May be reset to {@code null}
-         * after creation if a new sample dimension need to be computed.
-         */
-        private GridSampleDimension sampleDimension;
-
-        /**
-         * Creates a new variable of the given name and units.
+         * The band index for this variable. This is the {@code band} argument given
+         * to the {@link GridCoverageBuilder#variable(int)} method.
          *
-         * @param name  The variable name, or {@code null} for a default name.
-         * @param units The variable units, or {@code null} if unknown.
-         *
-         * @see GridCoverageBuilder#newVariable
+         * @since 3.20
          */
-        protected Variable(final CharSequence name, final Unit<?> units) {
-            this.name   = name;
-            this.units  = units;
-            this.nodata = new TreeMap<>();
+        protected final int band;
+
+        /**
+         * The variable name, or {@code null} if unspecified. This field is non-null only if the
+         * name has been {@linkplain #setName(CharSequence) explicitely specified} by the user.
+         * The values inferred from other attributes are not stored in this field.
+         *
+         * @see #getName()
+         * @see #setName(CharSequence)
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        protected CharSequence name;
+
+        /**
+         * The units of measurement, or {@code null} if unspecified. This field is non-null only
+         * if the unit has been {@linkplain #setUnit(Unit) explicitely specified} by the user.
+         * The values inferred from other attributes are not stored in this field.
+         *
+         * @see #getUnit()
+         * @see #setUnit(Unit)
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        protected Unit<?> unit;
+
+        /**
+         * The range of sample values, or {@code null} if unspecified. This field is non-null only
+         * if the range has been {@linkplain #setSampleRange(NumberRange) explicitely specified}
+         * by the user. The values inferred from other attributes are not stored in this field.
+         *
+         * @see #getSampleRange()
+         * @see #setSampleRange(NumberRange)
+         * @see #setSampleRange(int, int)
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        protected NumberRange<?> sampleRange;
+
+        /**
+         * The "nodata" values, or {@code null} if none. This map is created when first needed.
+         *
+         * @see #addNodataValue(CharSequence, int)
+         */
+        private Map<Integer,CharSequence> nodata;
+
+        /**
+         * The "<cite>sample to geophysics</cite>" transform, or {@code null} if unspecified. This
+         * field is non-null only if the transform has been {@linkplain #setTransform(MathTransform1D)
+         * explicitely specified} by the user (potentially as transform coefficients). The values
+         * inferred from other attributes are not stored in this field.
+         *
+         * @see #getTransform()
+         * @see #setTransform(MathTransform1D)
+         * @see #setLinearTransform(double, double)
+         * @see #setLogarithmicTransform(double, double)
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        protected MathTransform1D transform;
+
+        /**
+         * The sample dimension, or {@code null} if unspecified. This field is non-null only if the
+         * sample dimension has been {@linkplain #setSampleDimension(SampleDimension) explicitely
+         * specified} by the user. The values inferred from other attributes are not stored in this
+         * field.
+         *
+         * @see #getSampleDimension()
+         * @see #setSampleDimension(SampleDimension)
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        protected SampleDimension sampleDimension;
+
+        /**
+         * The sample dimension calculated from other attributes. Will be created when first
+         * needed and cleared when attributes change.
+         *
+         * @since 3.20
+         */
+        private transient SampleDimension cached;
+
+        /**
+         * Creates an initially empty variable.
+         *
+         * @param band The band index for this variable. This is the {@code band} argument given
+         *        to the {@link GridCoverageBuilder#variable(int)} method.
+         *
+         * @see GridCoverageBuilder#variable(int)
+         * @see GridCoverageBuilder#newVariable(int)
+         *
+         * @since 3.20
+         */
+        protected Variable(final int band) {
+            this.band = band;
         }
 
         /**
-         * Returns the "<cite>sample to units</cite>" transform, or {@code null} if none.
+         * Invoked when this sample dimension changed. Note: we keep the plural form in the
+         * method name (despite modifying only this single dimension) for making sure that
+         * we don't invoke by accident the method from the outer class instead than this one.
+         */
+        private void sampleDimensionsChanged() {
+            cached = null;
+            GridCoverageBuilder.this.sampleDimensionsChanged();
+        }
+
+        /**
+         * Returns the name of this variable (or bands or sample dimension). If no name has been
+         * {@linkplain #setName(CharSequence) explicitly defined}, then this method returns the
+         * {@linkplain #sampleDimension sample dimension} description. If this description is not
+         * defined neither, then this method returns the {@linkplain GridCoverageBuilder#name
+         * coverge name}.
          *
-         * @return The "<cite>sample to units</cite>" transform, or {@code null}.
+         * @return The variable name, or {@code null}.
+         *
+         * @see Category#getName()
+         * @see SampleDimension#getDescription()
+         *
+         * @since 3.20
+         */
+        public CharSequence getName() {
+            CharSequence value = name;
+            if (value == null) {
+                final SampleDimension sampleDimension = this.sampleDimension;
+                if (sampleDimension != null) {
+                    value = sampleDimension.getDescription();
+                    if (value == null) {
+                        value = GridCoverageBuilder.this.name;
+                    }
+                }
+            }
+            return value;
+        }
+
+        /**
+         * Sets the name of this variable (or bands or sample dimension). This name will be
+         * given to the geophysics category (if any) and to the sample dimension as a whole.
+         *
+         * @param name The new name, or {@code null}.
+         *
+         * @since 3.20
+         */
+        public void setName(final CharSequence name) {
+            this.name = name;
+            sampleDimensionsChanged();
+        }
+
+        /**
+         * Returns the units of measurement, or {@code null} if none. If no unit has been
+         * {@linkplain #setUnit(Unit) explicitly defined}, then this method returns the
+         * {@linkplain #sampleDimension sample dimension} unit.
+         *
+         * @return The units of measurement of geophysics values, or {@code null}.
+         *
+         * @see SampleDimension#getUnits()
+         *
+         * @since 3.20
+         */
+        public Unit<?> getUnit() {
+            Unit<?> value = unit;
+            if (value == null) {
+                final SampleDimension sampleDimension = this.sampleDimension;
+                if (sampleDimension != null) {
+                    value = sampleDimension.getUnits();
+                }
+            }
+            return value;
+        }
+
+        /**
+         * Sets the units of measurement, or {@code null} if none. This is the unit of geophysics
+         * values <em>after</em> the {@linkplain #getTransform() sample to unit transform}.
+         *
+         * @param unit The new units of measurement of geophysics values, or {@code null}.
+         *
+         * @since 3.20
+         */
+        public void setUnit(final Unit<?> unit) {
+            this.unit = unit;
+            sampleDimensionsChanged();
+        }
+
+        /**
+         * Sets the units of measurement from the given symbol. The default implementation parses
+         * the given symbol using the {@link Units#valueOf(String)} method, then passes the result
+         * to {@link #setUnits(String)}.
+         *
+         * @param symbol The new units symbol, or {@code null}.
+         *
+         * @since 3.20
+         */
+        public void setUnits(final String symbol) {
+            setUnit(Units.valueOf(symbol));
+        }
+
+        /**
+         * Returns the range of sample values. If no range has been
+         * {@linkplain #setSampleRange(int, NumberRange) explicitly defined}, then this method
+         * returns the {@linkplain #sampleDimension sample dimension} range. If no such range
+         * is defined neither, then the default is a range from 0 inclusive to 256 exclusive.
+         *
+         * @return The range of sample values, or {@code null}.
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        public NumberRange<?> getSampleRange() {
+            NumberRange<?> range = sampleRange;
+            if (range == null) {
+                final SampleDimension sampleDimension = this.sampleDimension;
+                if (sampleDimension instanceof GridSampleDimension) {
+                    range = ((GridSampleDimension) sampleDimension).getRange();
+                }
+            }
+            return (range != null) ? range : DEFAULT_RANGE;
+        }
+
+        /**
+         * Sets the range of sample values. We allow only one range of values per {@code Variable}
+         * instance, because sample dimensions with multi-ranges of values are very rare. If such
+         * case happen, a {@link GridSampleDimension} instances will need to be created from outside
+         * this helper class.
+         *
+         * @param range The new range of sample values, or {@code null}.
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        public void setSampleRange(final NumberRange<?> range) {
+            sampleRange = range;
+            sampleDimensionsChanged();
+        }
+
+        /**
+         * Sets the range of sample values from the given lower and upper values.
+         * This convenience methods creates a {@link NumberRange} objects from the
+         * given values and delegates to {@link #setSampleRange(NumberRange)}.
+         *
+         * @param  lower The lower sample value (inclusive), typically 0.
+         * @param  upper The upper sample value (exclusive), typically 256.
+         *
+         * @since 3.20 (derived from 2.5)
+         */
+        public void setSampleRange(final int lower, final int upper) {
+            setSampleRange(NumberRange.create(lower, true, upper, false));
+        }
+
+        /**
+         * Returns the "<cite>sample to units</cite>" transform. If no transform has been
+         * {@linkplain #setTransform(MathTransform1D) explicitly defined}, then this method
+         * returns the {@linkplain #sampleDimension sample dimension} transform. If no such
+         * transform is defined neither, then the default is {@link LinearTransform1D#IDENTITY}.
+         *
+         * @return The "<cite>sample to units</cite>" transform.
          */
         public MathTransform1D getTransform() {
-            return transform;
+            MathTransform1D value = transform;
+            if (value == null) {
+                final SampleDimension sampleDimension = this.sampleDimension;
+                if (sampleDimension != null) {
+                    value = sampleDimension.getSampleToGeophysics();
+                }
+            }
+            return (value != null) ? value : LinearTransform1D.IDENTITY;
         }
 
         /**
          * Sets the "<cite>sample to units</cite>" transform.
          *
-         * @param transform The new "<cite>sample to units</cite>" transform.
+         * @param transform The new "<cite>sample to units</cite>" transform, or {@code null}.
          */
         public void setTransform(final MathTransform1D transform) {
             this.transform = transform;
-            sampleDimension = null;
+            sampleDimensionsChanged();
         }
 
         /**
@@ -1236,6 +1663,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         public void addNodataValue(final CharSequence name, final int value)
                 throws IllegalArgumentException
         {
+            if (nodata == null) {
+                nodata = new TreeMap<>();
+            }
             final Integer key = value;
             final CharSequence old = nodata.put(key, name);
             if (old != null) {
@@ -1243,52 +1673,68 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 throw new IllegalArgumentException(Errors.format(
                         Errors.Keys.ILLEGAL_ARGUMENT_$2, "value", key));
             }
-            sampleDimension = null;
+            sampleDimensionsChanged();
         }
 
         /**
-         * Returns a sample dimension for the current
-         * {@linkplain GridCoverageBuilder#getSampleRange range of sample values}.
+         * Returns the sample dimension. If no dimension has been
+         * {@linkplain #setSampleDimension(SampleDimension) explicitly defined}, then this method
+         * builds a new dimension from the other attributes defined in this class.
          *
-         * @return The sample dimension for the current range of sample values.
+         * @return The sample dimension for this {@code Variable} object.
          */
-        @Override
-        public GridSampleDimension build() {
-            if (sampleDimension == null) {
-                NumberRange<?> range = getSampleRange();
-                int lower = (int) Math.floor(range.getMinimum(true));
-                int upper = (int) Math.ceil (range.getMaximum(false));
-                final Category[] categories = new Category[nodata.size() + 1];
-                int i = 0;
-                for (final Map.Entry<Integer,CharSequence> entry : nodata.entrySet()) {
-                    final int sample = entry.getKey();
-                    if (sample >= lower && sample < upper) {
-                        if (sample - lower <= upper - sample) {
-                            lower = sample + 1;
-                        } else {
-                            upper = sample;
+        public SampleDimension getSampleDimension() {
+            SampleDimension sd = sampleDimension;
+            if (sd == null) {
+                sd = cached;
+                if (sd == null) {
+                    NumberRange<?> range = getSampleRange();
+                    int lower = (int) Math.floor(range.getMinimum(true));
+                    int upper = (int) Math.ceil (range.getMaximum(false));
+                    final Map<Integer,CharSequence> nodata = this.nodata;
+                    final Category[] categories;
+                    int count = 0;
+                    if (nodata == null) {
+                        categories = new Category[1];
+                    } else {
+                        categories = new Category[nodata.size() + 1];
+                        for (final Map.Entry<Integer,CharSequence> entry : nodata.entrySet()) {
+                            final int sample = entry.getKey();
+                            if (sample >= lower && sample < upper) {
+                                if (sample - lower <= upper - sample) {
+                                    lower = sample + 1;
+                                } else {
+                                    upper = sample;
+                                }
+                            }
+                            categories[count++] = new Category(entry.getValue(), null, sample);
                         }
                     }
-                    categories[i++] = new Category(entry.getValue(), null, sample);
+                    final CharSequence name = getName();
+                    range = NumberRange.create(lower, true, upper, false);
+                    categories[count] = new Category(name, null, range, getTransform());
+                    cached = sd = new GridSampleDimension(name, categories, getUnit());
                 }
-                range = NumberRange.create(lower, true, upper, false);
-                categories[i] = new Category(name, null, range, (transform != null) ?
-                        transform : LinearTransform1D.IDENTITY);
-                sampleDimension = new GridSampleDimension(name, categories, units);
             }
-            return sampleDimension;
+            return sd;
         }
 
         /**
-         * @deprecated Renamed {@link #build()}.
+         * Sets the sample dimension. If non-null, the given value will have precedence over
+         * all other attributes specified in this class.
+         *
+         * @param dim The new sample dimension, or {@code null}.
+         *
+         * @since 3.20
          */
-        @Deprecated
-        public GridSampleDimension getSampleDimension() {
-            return build();
+        public void setSampleDimension(final SampleDimension dim) {
+            sampleDimension = dim;
+            sampleDimensionsChanged();
         }
 
         /**
          * Returns a string representation of this variable.
+         * This string is for debugging purpose only and may change in any future version.
          */
         @Override
         public String toString() {
@@ -1296,12 +1742,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             buffer.append('[');
             if (name != null) {
                 buffer.append('"').append(name).append('"');
-                if (units != null) {
+                if (unit != null) {
                     buffer.append(' ');
                 }
             }
-            if (units != null) {
-                buffer.append('(').append(units).append(')');
+            if (unit != null) {
+                buffer.append('(').append(unit).append(')');
             }
             return buffer.append(']').toString();
         }

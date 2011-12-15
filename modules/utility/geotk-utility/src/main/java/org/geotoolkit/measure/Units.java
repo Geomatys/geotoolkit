@@ -398,6 +398,11 @@ public final class Units extends Static {
      * hands especially a few symbols found in WKT parsing or in XML files. The list of symbols
      * handled especially is implementation-dependent and may change in future Geotk versions.
      *
+     * {@section Parsing authority codes}
+     * As a special case, if the given {@code uom} arguments is of the form {@code "EPSG:xxx"}
+     * (ignoring case and whitespaces), then {@code "xxx"} is parsed as an integer and given to
+     * {@link #valueOfEPSG(int)}.
+     *
      * @todo The <code>org.geotoolkit.image.io.plugin.NetcdfMetadataTranscoder</code> class needs
      *       that we parse the {@code "degrees_west"} symbol in such a way that the conversion from
      *       {@code "degrees_west"} to {@code "degrees_east"} reverse the sign of the values.
@@ -414,13 +419,23 @@ public final class Units extends Static {
             return null;
         }
         uom = Strings.toASCII(uom.trim()).toString();
+        int s = uom.indexOf(':');
+        if (s >= 0) {
+            final String authority = uom.substring(0, s).trim();
+            if (authority.equalsIgnoreCase("EPSG")) try {
+                return valueOfEPSG(Integer.parseInt(uom.substring(s+1).trim()));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), e);
+            }
+        }
         if (uom.length() >= 3) {
             if (uom.regionMatches(true, 0, "deg", 0, 3)) {
                 if (uom.length() == 3) {
                     return NonSI.DEGREE_ANGLE; // "deg"
                 }
                 boolean isTemperature = false;
-                int s = uom.indexOf(' ', 3);
+                s = uom.indexOf(' ', 3);
                 if (s < 0) {
                     s = uom.indexOf('_', 3);
                 }
