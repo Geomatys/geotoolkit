@@ -157,10 +157,10 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
      * Constructs a multi-dimensional grid envelope defined by a {@link Rectangle}.
      * The two first dimensions are set to the
-     * [{@linkplain Rectangle#x x} .. x+{@linkplain Rectangle#width width}-1] and
-     * [{@linkplain Rectangle#y y} .. y+{@linkplain Rectangle#height height}-1]
+     * [{@linkplain Rectangle#x x} &hellip; x+{@linkplain Rectangle#width width}-1] and
+     * [{@linkplain Rectangle#y y} &hellip; y+{@linkplain Rectangle#height height}-1]
      * inclusive ranges respectively.
-     * Extra dimensions (if any) are set to the [0..0] inclusive range.
+     * Extra dimensions (if any) are set to the [0&hellip;0] inclusive range.
      *
      * @param rect The grid coordinates as a rectangle.
      * @param dimension Number of dimensions for this grid envelope.
@@ -173,10 +173,10 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
      * Constructs multi-dimensional grid envelope defined by a {@link Raster}.
      * The two first dimensions are set to the
-     * [{@linkplain Raster#getMinX x} .. x+{@linkplain Raster#getWidth width}-1] and
-     * [{@linkplain Raster#getMinY y} .. y+{@linkplain Raster#getHeight height}-1]
+     * [{@linkplain Raster#getMinX x} &hellip; x+{@linkplain Raster#getWidth width}-1] and
+     * [{@linkplain Raster#getMinY y} &hellip; y+{@linkplain Raster#getHeight height}-1]
      * inclusive ranges respectively.
-     * Extra dimensions (if any) are set to the [0..0] inclusive range.
+     * Extra dimensions (if any) are set to the [0&hellip;0] inclusive range.
      *
      * @param raster The raster for which to construct a grid envelope.
      * @param dimension Number of dimensions for this grid envelope.
@@ -189,10 +189,10 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
      * Constructs multi-dimensional grid envelope defined by a {@link RenderedImage}.
      * The two first dimensions are set to the
-     * [{@linkplain RenderedImage#getMinX x} .. x+{@linkplain RenderedImage#getWidth width}-1] and
-     * [{@linkplain RenderedImage#getMinY y} .. y+{@linkplain RenderedImage#getHeight height}-1]
+     * [{@linkplain RenderedImage#getMinX x} &hellip; x+{@linkplain RenderedImage#getWidth width}-1] and
+     * [{@linkplain RenderedImage#getMinY y} &hellip; y+{@linkplain RenderedImage#getHeight height}-1]
      * inclusive ranges respectively.
-     * Extra dimensions (if any) are set to the [0..0] inclusive range.
+     * Extra dimensions (if any) are set to the [0&hellip;0] inclusive range.
      *
      * @param image The image for which to construct a grid envelope.
      * @param dimension Number of dimensions for this grid envelope.
@@ -234,8 +234,8 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      * fully the envelope - like what Java2D does when converting {@link java.awt.geom.Rectangle2D}
      * to {@link Rectangle}). But this approach may increase by 1 or 2 units the image
      * {@linkplain RenderedImage#getWidth width} or {@linkplain RenderedImage#getHeight height}. For
-     * example the range {@code [-0.25 ... 99.75]} (which is exactly 101 units wide) would be casted
-     * to {@code [-1 ... 100]}, which is 102 units wide. This leads to unexpected results when using
+     * example the range <code>[-0.25 &hellip; 99.75]</code> (which is exactly 101 units wide) would be casted
+     * to <code>[-1 &hellip; 100]</code>, which is 102 units wide. This leads to unexpected results when using
      * grid envelope with image operations like "{@link javax.media.jai.operator.AffineDescriptor
      * Affine}". For avoiding such changes in size, it is necessary to use the same rounding mode
      * for both minimal and maximal values. The selected rounding mode is {@linkplain Math#round
@@ -458,7 +458,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
             if (i != 0) {
                 buffer.append(", ");
             }
-            buffer.append(envelope.getLow(i)).append("..").append(envelope.getHigh(i));
+            buffer.append(envelope.getLow(i)).append('…').append(envelope.getHigh(i));
         }
         return buffer.append(']').toString();
     }

@@ -244,4 +244,17 @@ public final strictfp class UnitsTest {
         assertSame(CELSIUS,      Units.valueOf("degree Celsius"));
         assertSame(CELSIUS,      Units.valueOf("degree_Celcius"));
     }
+
+    /**
+     * Tests {@link Units#valueOfEPSG}.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testValueOfEPSG() {
+        assertSame(METRE,        Units.valueOfEPSG(9001));
+        assertSame(DEGREE_ANGLE, Units.valueOfEPSG(9102));
+        assertSame(METRE,        Units.valueOf("EPSG:9001"));
+        assertSame(DEGREE_ANGLE, Units.valueOf(" epsg : 9102"));
+    }
 }

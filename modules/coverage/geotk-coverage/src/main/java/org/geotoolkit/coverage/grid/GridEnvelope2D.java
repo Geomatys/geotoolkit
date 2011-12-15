@@ -149,7 +149,7 @@ public class GridEnvelope2D extends Rectangle implements GridEnvelope, Cloneable
     // don't want to change this behavior in order to stay consistent with Java2D.
 
     /**
-     * Returns a string représentation of this grid envelope. The returned string is
+     * Returns a string representation of this grid envelope. The returned string is
      * implementation dependent. It is usually provided for debugging purposes.
      */
     @Override
