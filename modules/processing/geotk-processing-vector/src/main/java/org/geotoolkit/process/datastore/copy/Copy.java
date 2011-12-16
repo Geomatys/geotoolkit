@@ -128,8 +128,8 @@ public class Copy extends AbstractProcess {
                 insert(queryParam, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
                 fireFailEvent(new ProcessEvent(this, null,50, ex));
-                return outputParameters;
             }
+            return outputParameters;
         }
         
         if("*".equals(typenameParam)){
@@ -164,7 +164,7 @@ public class Copy extends AbstractProcess {
             } catch (DataStoreException ex) {
                 fireFailEvent(new ProcessEvent(this, null,50, ex));
                 return outputParameters;
-            }
+            } 
             inc++;
         }
         
