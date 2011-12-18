@@ -47,6 +47,7 @@ import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
+import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -98,6 +99,20 @@ import org.geotoolkit.resources.Errors;
 @ThreadSafe
 public class GridCoverageFactory extends Factory {
     /**
+     * Whatever we should use {@link GridCoverageBuilder}. As of Geotk 3.20, we use the builder
+     * for testing purpose on the JDK7 branch but conservatively keep the old algorithms on the
+     * default branch.
+     *
+     * @since 3.20
+     */
+    private static final boolean USE_BUILDER = true;
+
+    /**
+     * The hints to be given to {@link GridCoverageBuilder}, or {@code null} if none.
+     */
+    private final Hints builderHints;
+
+    /**
      * The hints to be given to coverage constructor.
      *
      * @todo Put there only the hints we need.
@@ -144,6 +159,9 @@ public class GridCoverageFactory extends Factory {
         }
         hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, defaultCRS);
         hints.put(Hints.TILE_ENCODING, tileEncoding);
+        final Hints copy = new Hints(EMPTY_HINTS);
+        FactoryUtilities.addValidEntries(hints, copy, true);
+        builderHints = copy.isEmpty() ? null : copy;
     }
 
     /**
@@ -651,6 +669,16 @@ public class GridCoverageFactory extends Factory {
                                  final GridCoverage[]        sources,
                                  final Map<?,?>              properties)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setGridGeometry(gridGeometry);
+            builder.setRenderedImage(image); // Needs to be after the grid geometry.
+            builder.setSampleDimensions(bands);
+            builder.setSources(sources);
+            builder.setProperties(properties);
+            return builder.getGridCoverage2D();
+        }
         /*
          * Makes sure that the specified grid geometry has a CRS.
          * If no CRS were specified, a default one is used.

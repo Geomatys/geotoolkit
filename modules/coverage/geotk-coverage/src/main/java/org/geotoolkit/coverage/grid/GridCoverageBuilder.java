@@ -21,19 +21,26 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.Arrays;
+import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.DataBuffer;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.IndexColorModel;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
 import javax.media.jai.PlanarImage;
+import javax.media.jai.TiledImage;
+import javax.media.jai.RenderedImageAdapter;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -60,9 +67,11 @@ import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -112,31 +121,36 @@ import org.geotoolkit.resources.Errors;
  *     <td>&nbsp;{@linkplain #setNumBands(int) Positive integer}&nbsp;</td>
  *     <td>&nbsp;1&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link Variable#name}&nbsp;</td>
+ *     <td>&nbsp;{@link Variable#name Variable.name}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setName(CharSequence) Character sequence}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link Variable#unit}&nbsp;</td>
+ *     <td>&nbsp;{@link Variable#unit Variable.unit}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setUnit(Unit) Unit instance} or
  *               {@linkplain Variable#setUnit(String) unit symbol}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link Variable#sampleRange}&nbsp;</td>
+ *     <td>&nbsp;{@link Variable#sampleRange Variable.sampleRange}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setSampleRange(NumberRange) Range instance} or
  *               {@linkplain Variable#setSampleRange(int, int) lower and upper values}&nbsp;</td>
- *     <td>&nbsp;[0&hellip;256[&nbsp;</td>
+ *     <td>&nbsp;[0&hellip;255]&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link Variable#transform}&nbsp;</td>
+ *     <td>&nbsp;{@link Variable#transform Variable.transform}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setTransform(MathTransform1D) Transform instance} or
  *               {@linkplain Variable#setLinearTransform(double, double) coefficients}&nbsp;</td>
  *     <td>&nbsp;{@link LinearTransform1D#IDENTITY}&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link Variable#sampleDimension}&nbsp;</td>
+ *     <td>&nbsp;{@link Variable#sampleDimension Variable.sampleDimension}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setSampleDimension(SampleDimension) Sample dimension instance} or
  *               {@linkplain #setSampleDimensions(SampleDimension[]) array}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@code image}&nbsp;</td>
+ *     <td>&nbsp;Tile layout&nbsp;</td>
+ *     <td>&nbsp;{@linkplain #setTileSize(Dimension) Tile size} and/or
+ *               {@linkplain #setTileGridOffset(Point) tile grid offset}&nbsp;</td>
+ *     <td>&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link #image}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setRenderedImage(RenderedImage) Rendered image instance}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr>
@@ -158,7 +172,7 @@ import org.geotoolkit.resources.Errors;
  *     builder.variable(0).addNodataValue("No data", 32767);
  *
  *     // Gets a 600×400 pixels (the extent) image, then draw something on it.
- *     Graphics2D gr = ((BufferedImage) builder.getRenderedImage()).createGraphics();
+ *     Graphics2D gr = (Graphics2D) builder.createGraphics();
  *     gr.draw(...);
  *     gr.dispose();
  *
@@ -310,9 +324,109 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     private transient SampleDimension[] sampleDimensions;
 
     /**
-     * The image. Will be created only when first needed.
+     * The {@linkplain #image} tile size and grid offset, or {@code null} if the image is untiled.
+     * This field is non-null only if the tile size or grid offset has been explicitely specified
+     * by the user. The values inferred from other attributes are not stored in this field.
+     * <p>
+     * The rectangle can be understood as the bounds of tile at index (0,0). Note that this tile
+     * doesn't need to exist.
+     *
+     * @see #getTileSize()
+     * @see #setTileSize(Dimension)
+     * @see #getTileGridOffset()
+     * @see #setTileGridOffset(Point)
+     *
+     * @since 3.20
      */
-    private RenderedImage image;
+    private TileLayout tileLayout;
+
+    /**
+     * The aggregation of tile size and tile grid offset. This can be understood as the bounds
+     * of the tile at tile index (0,0). Note that this tile doesn't need to exist.
+     *
+     * @since 3.20
+     */
+    @SuppressWarnings("serial")
+    private static final class TileLayout extends Rectangle {
+        /**
+         * {@code true} if the grid offset is defined. If {@code false}, the
+         * {@linkplain #x x} and {@linkplain #y y} ordinate values shall be ignored.
+         */
+        private boolean hasOffset;
+
+        /**
+         * Creates a new tile layout initialized to the given grid tile offset.
+         */
+        TileLayout(final Point location) {
+            super(location);
+            hasOffset = true;
+        }
+
+        /**
+         * Creates a new tile layout initialized to the given tile size.
+         */
+        TileLayout(final Dimension size) {
+            super(size);
+        }
+
+        /**
+         * Returns the tile grid offset only if defined, or {@code null} otherwise.
+         */
+        @Override
+        public Point getLocation() {
+            return hasOffset ? super.getLocation() : null;
+        }
+
+        /**
+         * Sets the tile grid offset to the given location. If the given argument is null,
+         * unset the grid offset.
+         */
+        @Override
+        public void setLocation(final Point location) {
+            if (hasOffset = (location != null)) {
+                super.setLocation(location);
+            }
+        }
+
+        /**
+         * Returns the tile size only if non-empty, or {@code null} otherwise.
+         */
+        @Override
+        public Dimension getSize() {
+            return (width > 0 && height > 0) ? super.getSize() : null;
+        }
+
+        /**
+         * Sets the size to the given dimension. If the given argument is null,
+         * then unset the tile size.
+         */
+        @Override
+        public void setSize(final Dimension size) {
+            if (size != null) {
+                ArgumentChecks.ensureStrictlyPositive("width",  size.width);
+                ArgumentChecks.ensureStrictlyPositive("height", size.height);
+                super.setSize(size);
+            } else {
+                width  = 0;
+                height = 0;
+            }
+        }
+    }
+
+    /**
+     * The rendered image, or {@code null} if not yet computed. This image can either be
+     * {@linkplain #setRenderedImage(RenderedImage) specified explicitely} by the user or
+     * created from other properties.
+     * <p>
+     * The preferred implementation class is {@link BufferedImage}. However in some cases this
+     * builder may instantiate other kind of images, like {@link javax.media.jai.TiledImage}.
+     *
+     * @see #getRenderedImage()
+     * @see #setRenderedImage(RenderedImage)
+     *
+     * @since 3.20 (derived from 2.5)
+     */
+    protected RenderedImage image;
 
     /**
      * The grid coverage. Will be created only when first needed.
@@ -320,15 +434,66 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     private GridCoverage2D coverage;
 
     /**
+     * An optional array of sources to be associated with the grid coverage,
+     * or {@code null} if none. This builder just passes those sources to the
+     * {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
+     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
+     * any processing.
+     *
+     * @see #getSources()
+     * @see #setSources(GridCoverage[])
+     *
+     * @since 3.20
+     */
+    protected GridCoverage[] sources;
+
+    /**
+     * An optional map of properties to be associated with the grid coverage,
+     * or {@code null} if none. This builder just passes those properties to the
+     * {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
+     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor} without
+     * any processing.
+     *
+     * @see #getProperties()
+     * @see #setProperties(Map)
+     *
+     * @since 3.20
+     */
+    protected Map<?,?> properties;
+
+    /**
+     * Optional hints for fetching factories, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    protected final Hints hints;
+
+    /**
      * Creates a uninitialized builder. All fields values are {@code null}.
      */
     public GridCoverageBuilder() {
+        this.hints = null;
+    }
+
+    /**
+     * Creates a uninitialized builder using the given hints
+     *
+     * @param hints Optional hints for fetching factories, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public GridCoverageBuilder(final Hints hints) {
+        this.hints = hints;
     }
 
     /**
      * Returns the coverage name. If no name has been {@linkplain #setName(CharSequence) explicitly
-     * defined}, then this method returns the first non-null name of a {@linkplain #variable(int)},
-     * if any.
+     * defined}, then this method iterates over the {@linkplain Variable variables} (if any) and
+     * returns the first non-null {@linkplain Variable#getName() name}.
+     * <p>
+     * As a consequence of the above, the {@linkplain GridCoverage2D#getName() coverage name} will
+     * be the name of the first {@linkplain #getSampleDimensions() sample dimension}, unless a name
+     * is explicitely given.
      *
      * @return The coverage name, or {@code null}.
      *
@@ -354,7 +519,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Sets the coverage name.
+     * Sets the coverage name. The given name is typically (but not restricted to) a
+     * {@link String} or {@link org.opengis.util.InternationalString} instance.
      *
      * @param name The new name, or {@code null}.
      *
@@ -427,12 +593,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Sets the coordinate reference system to the specified value. If an
-     * {@linkplain #setEnvelope(Envelope) envelope was previously defined},
-     * then it will be reprojected to the new CRS.
+     * Sets the coordinate reference system to the specified value. If an envelope
+     * has been {@linkplain #setEnvelope(Envelope) explicitely defined},
+     * it will be reprojected to the new CRS.
      *
      * @param  crs The new CRS to use, or {@code null}.
-     * @throws IllegalArgumentException if the CRS is illegal for the
+     * @throws IllegalArgumentException if the given CRS is illegal for the
      *         {@linkplain #getEnvelope() current envelope}.
      *
      * @see #crs
@@ -467,7 +633,13 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Sets the coordinate reference system to the specified authority code. This convenience
-     * method gives a preference to axis in (<var>longitude</var>, <var>latitude</var>) order.
+     * method is equivalent to the following code (omitting exception handling):
+     *
+     * {@preformat java
+     *     setCoordinateReferenceSystem(CRS.decode(code, true));
+     * }
+     *
+     * This method gives a preference to axes in (<var>longitude</var>, <var>latitude</var>) order.
      *
      * @param  code The authority code of the CRS to use.
      * @throws IllegalArgumentException if the given authority code is illegal.
@@ -613,11 +785,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * Sets the grid extent to the specified value.
      *
      * @param  extent The new grid extent to use, or {@code null}.
-     * @throws IllegalArgumentException if the extent is illegal.
+     * @throws MismatchedDimensionException If the extent dimension is not equal to the
+     *         <cite>grid to CRS</cite> source dimensions.
      *
      * @since 3.20
      */
-    public void setExtent(final GridEnvelope extent) throws IllegalArgumentException {
+    public void setExtent(final GridEnvelope extent) throws MismatchedDimensionException {
         GridEnvelope newValue = extent;
         if (extent != null) {
             final MathTransform gridToCRS = this.gridToCRS;
@@ -640,11 +813,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * }
      *
      * @param  span The span values for all dimensions.
-     * @throws IllegalArgumentException if the extent is illegal.
+     * @throws MismatchedDimensionException If the arguments contain negative span values, or the
+     *         number of values is not equal to the <cite>grid to CRS</cite> source dimensions.
      *
      * @since 3.20
      */
-    public void setExtent(final int... span) throws IllegalArgumentException {
+    public void setExtent(final int... span) throws MismatchedDimensionException {
         setExtent(new GeneralGridEnvelope(new int[span.length], span, false));
     }
 
@@ -683,18 +857,20 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * or pixel corners depends on the {@link #pixelAnchor} value.
      *
      * {@section Restrictions}
-     * The number of {@linkplain MathTransform#getSourceDimensions() source dimensions} shall
-     * match the grid {@linkplain #extent} dimensions (if any), and the number of
-     * {@linkplain MathTransform#getTargetDimensions() target dimensions} shall matches the
-     * {@linkplain #crs} and {@linkplain #envelope} dimensions (if any).
+     * <ul>
+     *   <li>The number of {@linkplain MathTransform#getSourceDimensions() source dimensions}
+     *       shall matches the grid {@linkplain #extent} dimensions (if any)</li>
+     *   <li>The number of {@linkplain MathTransform#getTargetDimensions() target dimensions}
+     *       shall matches the {@linkplain #crs} and {@linkplain #envelope} dimensions (if any).</li>
+     * </ul>
      *
      * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
-     * @throws IllegalArgumentException If the given transform is invalid, for example if the
+     * @throws MismatchedDimensionException If the given transform is invalid, for example if the
      *         dimensions don't match.
      *
      * @since 3.20
      */
-    public void setGridToCRS(final MathTransform gridToCRS) throws IllegalArgumentException {
+    public void setGridToCRS(final MathTransform gridToCRS) throws MismatchedDimensionException {
         if (gridToCRS != null) {
             final CoordinateReferenceSystem crs = this.crs;
             final GridEnvelope extent = this.extent;
@@ -712,6 +888,20 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * Sets the <cite>grid to CRS</cite> transform. Whatever the transform maps pixel centers
+     * or pixel corners depends on the {@link #pixelAnchor} value.
+     *
+     * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
+     * @throws MismatchedDimensionException If the current {@linkplain #extent} and
+     *         {@linkplain #envelope} (if any) are not two-dimensional.
+     *
+     * @since 3.20
+     */
+    public void setGridToCRS(final AffineTransform gridToCRS) throws MismatchedDimensionException {
+        setGridToCRS(gridToCRS != null ? MathTransforms.linear(gridToCRS) : null);
+    }
+
+    /**
      * Sets the <cite>grid to CRS</cite> transform from the given affine transform coefficients.
      * Whatever the transform maps pixel centers or pixel corners depends on the {@link #pixelAnchor}
      * value.
@@ -725,10 +915,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * @see AffineTransform2D
      *
+     * @throws MismatchedDimensionException If the current {@linkplain #extent} and
+     *         {@linkplain #envelope} (if any) are not two-dimensional.
+     *
      * @since 3.20
      */
-    public void setGridToCRS(double m00, double m10, double m01, double m11, double m02, double m12) {
-        setGridToCRS(new AffineTransform2D(m00, m10, m01, m11, m02, m12));
+    public void setGridToCRS(double m00, double m10, double m01, double m11, double m02, double m12)
+            throws MismatchedDimensionException
+    {
+        setGridToCRS((MathTransform) new AffineTransform2D(m00, m10, m01, m11, m02, m12));
     }
 
     /**
@@ -768,20 +963,24 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * method builds a default instance from the values returned <u>one</u> of the
      * following set of getter methods:
      * <p>
-     * <table><tr><td><ul>
+     * <table>
+     * <tr><th>Recommended</th><th>&nbsp;</th><th>Alternative</th></tr>
+     * <tr><td valign="top"><ul>
      *   <li>{@link #getExtent()}</li>
      *   <li>{@link #getPixelAnchor()}</li>
      *   <li>{@link #getGridToCRS()}</li>
      *   <li>{@link #getCoordinateReferenceSystem()}</li>
      * </ul>
-     * </td><td><b>or</b></td><td>
+     * </td><td><b>or</b></td><td valign="top">
      * <ul>
      *   <li>{@link #getExtent()}</li>
      *   <li>{@link #getEnvelope()}</li>
      * </ul></td></tr></table>
      * <p>
-     * Note that the grid geometry build from an envelope uses heuristic rules documented in
-     * {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,Envelope) here}.
+     * Note that creation of grid geometries from the parameters listed in the right column use heuristic
+     * rules documented {@linkplain GeneralGridGeometry#GeneralGridGeometry(GridEnvelope,Envelope) here}.
+     * In order to keep grid geometry creations more determinist, specify the parameters listed in the
+     * left column instead.
      *
      * @return The grid geometry, or {@code null} if unspecified and can not be inferred.
      *
@@ -799,7 +998,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final MathTransform gridToCRS = getGridToCRS();
                 if (gridToCRS != null) {
                     geom = new GridGeometry2D(extent, getPixelAnchor(),
-                            gridToCRS, getCoordinateReferenceSystem(), getHints());
+                            gridToCRS, getCoordinateReferenceSystem(), hints);
                 } else {
                     final Envelope envelope = getEnvelope();
                     if (extent != null || envelope != null) { // Its okay to have 1 null value.
@@ -851,7 +1050,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * Returns the number of sample dimensions (bands). If this number has not been
      * {@linkplain #setNumBands(int) explicitly defined} or increased by calls to the
      * {@link #variable(int)} method, then this method returns the number of bands in
-     * the {@link #image}, if any. If there is no image neither, then the default value is 1.
+     * the {@linkplain #image}, if any. If there is no image neither, then the default
+     * value is 1.
      *
      * @return The number of sample dimensions (bands).
      *
@@ -928,9 +1128,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Invoked by {@link #variable(int)} when a new variable need to be created. This method is
-     * a hook for subclasses that wish to instantiate their own {@link Variable} subclasses.
-     * The default implementation is:
+     * Invoked by the {@link #variable(int)} method when a new variable need to be created.
+     * This method is a hook for subclasses that wish to instantiate their own
+     * {@link Variable Variable} subclasses. The default implementation is:
      *
      * {@preformat java
      *     return new Variable(band);
@@ -966,7 +1166,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * @deprecated Replaced by {@link Variable#getSampleRange(int, int)}.
+     * @deprecated Replaced by {@link Variable#setSampleRange(int, int)}.
      *
      * @param  lower The lower sample value (inclusive), typically 0.
      * @param  upper The upper sample value (exclusive), typically 256.
@@ -1016,7 +1216,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * Sets all sample dimensions. This convenience method {@linkplain #setNumBands(int)
      * sets the number of bands} to the number of given arguments, then invokes
-     * {@link Variable#setSampleDimension(SampleDimension)} for each element.
+     * {@link Variable#setSampleDimension(SampleDimension) setSampleDimension(...)}
+     * for each element.
      *
      * @param bands The new sample dimensions, or {@code null}.
      *
@@ -1054,6 +1255,35 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * Creates a graphics which can be used to draw into the {@linkplain #getRenderedImage()
+     * rendered image}. It is caller responsibility to invoke {@link Graphics#dispose()} after
+     * the drawing has been completed.
+     * <p>
+     * The returned value can usually be casted to {@link java.awt.Graphics2D}.
+     *
+     * @return A graphics (usually a {@link java.awt.Graphics2D}) for drawing into the image.
+     * @throws UnsupportedOperationException If the rendered image does not support drawing.
+     *
+     * @since 3.20
+     */
+    public Graphics createGraphics() throws UnsupportedOperationException {
+        RenderedImage image = getRenderedImage();
+        while (image instanceof RenderedImageAdapter) {
+            image = ((RenderedImageAdapter) image).getWrappedImage();
+        }
+        if (image instanceof Image) {
+            return ((Image) image).getGraphics();
+        }
+        Throwable cause = null;
+        if (image instanceof PlanarImage) try {
+            return ((PlanarImage) image).getGraphics();
+        } catch (IllegalAccessError e) {
+            cause = e;
+        }
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_IMAGE_TYPE), cause);
+    }
+
+    /**
      * Returns the image bounds.The default implementation fetches this information from
      * the {@linkplain #getGridGeometry() grid geometry}.
      * <p>
@@ -1061,7 +1291,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * (0,0) for building a {@link BufferedImage}, but can be different for other kinds of
      * {@link RenderedImage}.
      *
-     * @return The current image bounds, or {@code null} if none.
+     * @return The current image bounds. Never {@code null} since no image can be built
+     *         without this information.
      * @throws InvalidGridGeometryException if there is no {@linkplain #getGridGeometry()
      *         grid geometry} or no extent associated to that grid geometry.
      *
@@ -1073,6 +1304,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         final GridGeometry2D g = GridGeometry2D.castOrCopy(getGridGeometry());
         if (g != null) {
             return g.getExtent2D();
+        }
+        if (image != null) {
+            return ImageUtilities.getBounds(image);
         }
         throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);
     }
@@ -1138,13 +1372,103 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * Returns the tile size, or {@code null} if the image is untiled. If the tile size has not
+     * been {@linkplain #setTileSize(Dimension) explicitely specified}, then this method fetches
+     * the tile size from the {@linkplain #image} (if any).
+     *
+     * @return The tile size, or {@code null} if the image is untiled.
+     *
+     * @see RenderedImage#getTileWidth()
+     * @see RenderedImage#getTileHeight()
+     *
+     * @since 3.20
+     */
+    public Dimension getTileSize() {
+        final TileLayout layout = tileLayout;
+        if (layout != null) {
+            final Dimension size = layout.getSize();
+            if (size != null) {
+                return size;
+            }
+        }
+        final RenderedImage image = this.image;
+        if (image != null) {
+            final int width  = image.getTileWidth();
+            final int height = image.getTileHeight();
+            if (width < image.getWidth() || height < image.getHeight()) {
+                return new Dimension(width, height);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the tile size.
+     *
+     * @param size The new tile size, or {@code null} for untiled image.
+     *
+     * @since 3.20
+     */
+    public void setTileSize(final Dimension size) {
+        final TileLayout layout = tileLayout;
+        if (layout != null) {
+            layout.setSize(size);
+        } else if (size != null) {
+            tileLayout = new TileLayout(size);
+        }
+    }
+
+    /**
+     * Returns the tile grid offset, or {@code null} if the image is untiled. If the offset has not
+     * been {@linkplain #setTileGridOffset(Point) explicitely specified}, then this method fetches
+     * the offset from the {@linkplain #image} (if any).
+     *
+     * @return The tile grid offset, or {@code null} if the image is untiled.
+     *
+     * @see RenderedImage#getTileGridXOffset()
+     * @see RenderedImage#getTileGridYOffset()
+     *
+     * @since 3.20
+     */
+    public Point getTileGridOffset() {
+        final TileLayout layout = tileLayout;
+        if (layout != null) {
+            return layout.getLocation();
+        }
+        final RenderedImage image = this.image;
+        if (image != null && ImageUtilities.isTiled(image)) {
+            return new Point(image.getTileGridXOffset(),
+                             image.getTileGridYOffset());
+        }
+        return null;
+    }
+
+    /**
+     * Sets the tile offset.
+     *
+     * @param offset The new tile offset, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public void setTileGridOffset(final Point offset) {
+        final TileLayout layout = tileLayout;
+        if (layout != null) {
+            layout.setLocation(offset);
+        } else if (offset != null) {
+            tileLayout = new TileLayout(offset);
+        }
+    }
+
+    /**
      * Returns the rendered image to be wrapped by {@link GridCoverage2D}. If no image has been
      * {@linkplain #setRenderedImage(RenderedImage) explicitly defined}, a new one is created the
      * first time this method is invoked. Users can modify the pixel values in this image before
      * to create the grid coverage.
      * <p>
-     * In the common case where the {@linkplain GridEnvelope#getLow() lower corner} of the grid
-     * extent is zero, this method returns an instance of {@link BufferedImage}.
+     * In the common case of untiled image having a {@linkplain GridEnvelope#getLow() lower corner}
+     * located at (0,0), this method returns an instance of {@link BufferedImage}. If the builder
+     * settings do not allow the creation of a {@code BufferedImage} instance, then the default
+     * implementation fallbacks on a {@link TiledImage} instance.
      *
      * @return The rendered image to be wrapped by {@code GridCoverage2D}.
      *
@@ -1152,9 +1476,23 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      */
     public RenderedImage getRenderedImage() {
         if (image == null) {
-            final Rectangle bounds = getImageBounds();
-            if (bounds.x == 0 && bounds.y == 0) {
-                final ColorModel cm = getColorModel();
+            final Rectangle bounds = getImageBounds(); // Can not be null.
+            Dimension tileSize = getTileSize();
+            if (tileSize        != null &&
+                tileSize.width  >= bounds.width &&
+                tileSize.height >= bounds.height)
+            {
+                tileSize = null; // Tile size not smaller than image size: untiled image.
+            }
+            Point offset = getTileGridOffset();
+            if (offset != null &&
+                offset.x == bounds.x &&
+                offset.y == bounds.y)
+            {
+                offset = null; // Grid offset == image origin: no tile offset.
+            }
+            ColorModel cm = getColorModel();
+            if (tileSize == null && offset == null && bounds.x == 0 && bounds.y == 0) {
                 if (cm == null) {
                     image = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_BYTE_GRAY);
                 } else {
@@ -1162,7 +1500,21 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                             cm.createCompatibleWritableRaster(bounds.width, bounds.height), false, null);
                 }
             } else {
-                throw new UnsupportedOperationException("Not yet implemented"); // TODO
+                /*
+                 * The code in the above block created a untiled image, which is the most common case.
+                 * The code in this block is a fallback used only if the user want to create a tiled
+                 * image, or if the origin is not (0,0). We have to use the more generic JAI image
+                 * rather than the JDK one.
+                 */
+                if (cm == null) {
+                    cm = PlanarImage.getDefaultColorModel(DataBuffer.TYPE_BYTE, 1);
+                }
+                image = new TiledImage(bounds.x, bounds.y, bounds.width, bounds.height,
+                        (offset != null) ? offset.x : bounds.x,
+                        (offset != null) ? offset.y : bounds.y,
+                        cm.createCompatibleSampleModel(
+                                (tileSize != null) ? tileSize.width  : bounds.width,
+                                (tileSize != null) ? tileSize.height : bounds.height), cm);
             }
         }
         return image;
@@ -1273,35 +1625,87 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     PlanarImage.wrapRenderedImage(image),
                     GridGeometry2D.castOrCopy(getGridGeometry()),
                     bands,
-                    null,
+                    getSources(),
                     getProperties(),
-                    getHints());
+                    hints);
         }
         return coverage;
     }
 
     /**
-     * Returns optional hints to be given to the coverage, or {@code null} if none.
-     * The default implementation returns {@code null} in all cases.
+     * Returns the optional sources to be associated with the coverage.
+     * If there is no sources, then this method returns {@code null}.
+     *
+     * {@section Implementation note}
+     * This method returns a direct reference to the {@linkplain #sources} field.
+     * The array is not cloned because it is not used for any calculation in this
+     * class. {@code GridCoverageBuilder} users are responsible for the content of
+     * this array.
+     *
+     * @return Optional grid coverage sources, or {@code null} if none.
+     *
+     * @see #sources
+     * @see GridCoverage2D#getSources()
+     *
+     * @since 3.20
+     */
+    public GridCoverage[] getSources() {
+        return sources;
+    }
+
+    /**
+     * Sets the optional sources to be associated with the coverage.
+     *
+     * {@section Implementation note}
+     * The given array is not cloned at this method invocation time. The array will be cloned by
+     * the {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
+     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
+     * does nothing but passing the array to that constructor.
+     *
+     * @param sources Optional grid coverage sources, or {@code null} or an empty array if none.
+     *
+     * @since 3.20
+     */
+    public void setSources(GridCoverage... sources) {
+        if (sources != null && sources.length == 0) {
+            sources = null;
+        }
+        this.sources = sources; // NOSONAR
+    }
+
+    /**
+     * Returns optional properties to be given to the coverage, or {@code null} if none.
+     *
+     * {@section Implementation note}
+     * This method returns a direct reference to the {@linkplain #properties} field.
+     * The map is not cloned because it is not used for any calculation in this class.
+     * {@code GridCoverageBuilder} users are responsible for the content of this map.
      *
      * @return Optional map of coverage properties, or {@code null}.
+     *
+     * @see #properties
      *
      * @since 3.20
      */
     public Map<?,?> getProperties() {
-        return null;
+        return properties;
     }
 
     /**
-     * Returns optional hints for fetching factories, or {@code null} if none.
-     * The default implementation returns {@code null} in all cases.
+     * Sets the optional hints to be given to the coverage.
      *
-     * @return Optional hints for fetching factories, or {@code null}.
+     * {@section Reference to the given map}
+     * The given map is not cloned at this method invocation time. The map will be cloned by
+     * the {@linkplain GridCoverage2D#GridCoverage2D(CharSequence, PlanarImage, GridGeometry2D,
+     * GridSampleDimension[], GridCoverage[], Map, Hints) grid coverage constructor}. This builder
+     * does nothing but passing the map to that constructor.
+     *
+     * @param properties Optional map of coverage properties, or {@code null}.
      *
      * @since 3.20
      */
-    public Hints getHints() {
-        return null;
+    public void setProperties(final Map<?,?> properties) {
+        this.properties = properties; // NOSONAR
     }
 
     /**
@@ -1534,19 +1938,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         /**
          * Sets the units of measurement from the given symbol. The default implementation parses
          * the given symbol using the {@link Units#valueOf(String)} method, then passes the result
-         * to {@link #setUnits(String)}.
+         * to {@link #setUnit(Unit)}.
          *
          * @param symbol The new units symbol, or {@code null}.
          *
          * @since 3.20
          */
-        public void setUnits(final String symbol) {
+        public void setUnit(final String symbol) {
             setUnit(Units.valueOf(symbol));
         }
 
         /**
          * Returns the range of sample values. If no range has been
-         * {@linkplain #setSampleRange(int, NumberRange) explicitly defined}, then this method
+         * {@linkplain #setSampleRange(NumberRange) explicitly defined}, then this method
          * returns the {@linkplain #sampleDimension sample dimension} range. If no such range
          * is defined neither, then the default is a range from 0 inclusive to 256 exclusive.
          *
