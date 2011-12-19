@@ -80,12 +80,22 @@ public class SessionCommitAction extends AbstractAction implements StorageListen
 
     @Override
     public void actionPerformed(final ActionEvent event) {
+        
         if (layer != null ) {
-            try {
-                layer.getCollection().getSession().commit();
-            } catch (DataStoreException ex) {
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-            }
+            putValue(SMALL_ICON, IconBundle.getIcon("16_wait"));
+            final Thread t = new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        layer.getCollection().getSession().commit();
+                    } catch (DataStoreException ex) {
+                        LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                    }finally{
+                        putValue(SMALL_ICON, IconBundle.getIcon("16_session_commit"));
+                    }
+                }
+            };
+            t.start();
         }
     }
 

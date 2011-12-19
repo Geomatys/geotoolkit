@@ -74,8 +74,20 @@ public class SessionRollbackAction extends AbstractAction implements StorageList
 
     @Override
     public void actionPerformed(final ActionEvent event) {
+        
         if (layer != null ) {
-            layer.getCollection().getSession().rollback();
+            putValue(SMALL_ICON, IconBundle.getIcon("16_wait"));
+            final Thread t = new Thread(){
+                @Override
+                public void run() {
+                    try {
+                        layer.getCollection().getSession().rollback();
+                    }finally{
+                        putValue(SMALL_ICON, IconBundle.getIcon("16_session_rollback"));
+                    }
+                }
+            };
+            t.start();
         }
     }
 
