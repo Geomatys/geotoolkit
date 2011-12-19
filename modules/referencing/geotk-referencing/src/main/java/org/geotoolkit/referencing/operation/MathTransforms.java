@@ -35,6 +35,8 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * Utility methods related to {@link MathTransform}s. This class centralizes in one place some of
@@ -76,6 +78,7 @@ public final class MathTransforms extends Static {
      * @return An identity transform of the specified dimension.
      */
     public static LinearTransform identity(final int dimension) {
+        ensureStrictlyPositive("dimension", dimension);
         return ProjectiveTransform.identity(dimension);
     }
 
@@ -92,6 +95,7 @@ public final class MathTransforms extends Static {
      * @return The linear transform for the given scale and offset.
      */
     public static LinearTransform linear(final int dimension, final double scale, final double offset) {
+        ensureStrictlyPositive("dimension", dimension);
         if (offset == 0 && scale == 1) {
             return identity(dimension);
         }
@@ -122,6 +126,7 @@ public final class MathTransforms extends Static {
      * @see org.opengis.referencing.operation.MathTransformFactory#createAffineTransform(Matrix)
      */
     public static LinearTransform linear(final Matrix matrix) {
+        ensureNonNull("matrix", matrix);
         return ProjectiveTransform.create(matrix);
     }
 
@@ -134,6 +139,7 @@ public final class MathTransforms extends Static {
      * @return The affine transform.
      */
     public static LinearTransform linear(final AffineTransform matrix) {
+        ensureNonNull("matrix", matrix);
         if (matrix instanceof AffineTransform2D) {
             return (AffineTransform2D) matrix;
         }
@@ -169,6 +175,8 @@ public final class MathTransforms extends Static {
      * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
      */
     public static MathTransform concatenate(MathTransform tr1, MathTransform tr2) {
+        ensureNonNull("tr1", tr1);
+        ensureNonNull("tr2", tr2);
         return ConcatenatedTransform.create(tr1, tr2);
     }
 
@@ -208,6 +216,9 @@ public final class MathTransforms extends Static {
      * @return    The concatenated transform.
      */
     public static MathTransform concatenate(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
+        ensureNonNull("tr1", tr1);
+        ensureNonNull("tr2", tr2);
+        ensureNonNull("tr3", tr3);
         return concatenate(concatenate(tr1, tr2), tr3);
     }
 

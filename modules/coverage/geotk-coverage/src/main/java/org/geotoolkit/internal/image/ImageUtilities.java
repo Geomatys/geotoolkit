@@ -205,6 +205,19 @@ public final class ImageUtilities extends Static {
     }
 
     /**
+     * Returns {@code true} if the given image is tiled.
+     *
+     * @param  image The image to test.
+     * @return {@code true} if the given image is tiled.
+     *
+     * @since 3.20
+     */
+    public static boolean isTiled(final RenderedImage image) {
+        return (image.getTileWidth()  < image.getWidth()) ||
+               (image.getTileHeight() < image.getHeight());
+    }
+
+    /**
      * Suggests a tile size for the specified image size. On input, {@code size} is the image
      * size. On output, it is the tile size. This method write the result directly in the supplied
      * object and returns {@code size} for convenience.

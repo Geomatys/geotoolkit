@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.grid;
 
 import java.util.Map;
+import java.util.Arrays;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.ColorModel;
@@ -46,6 +47,7 @@ import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
+import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -98,6 +100,20 @@ import org.geotoolkit.util.Utilities;
 @ThreadSafe
 public class GridCoverageFactory extends Factory {
     /**
+     * Whatever we should use {@link GridCoverageBuilder}. As of Geotk 3.20, we use the builder
+     * for testing purpose on the JDK7 branch but conservatively keep the old algorithms on the
+     * default branch.
+     *
+     * @since 3.20
+     */
+    private static final boolean USE_BUILDER = false;
+
+    /**
+     * The hints to be given to {@link GridCoverageBuilder}, or {@code null} if none.
+     */
+    private final Hints builderHints;
+
+    /**
      * The hints to be given to coverage constructor.
      *
      * @todo Put there only the hints we need.
@@ -144,6 +160,9 @@ public class GridCoverageFactory extends Factory {
         }
         hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, defaultCRS);
         hints.put(Hints.TILE_ENCODING, tileEncoding);
+        final Hints copy = new Hints(EMPTY_HINTS);
+        FactoryUtilities.addValidEntries(hints, copy, true);
+        builderHints = copy.isEmpty() ? null : copy;
     }
 
     /**
@@ -346,8 +365,11 @@ public class GridCoverageFactory extends Factory {
                                  final Color[][]      colors,
                                  final RenderingHints hints)
     {
+        final int numBands = raster.getNumBands();
+        final Unit<?>[] unitsArray = new Unit<?>[numBands]; Arrays.fill(unitsArray, units);
+        final CharSequence[] names = new CharSequence[numBands]; Arrays.fill(names, name);
         final GridSampleDimension[] bands =
-                RenderedSampleDimension.create(name, raster, minValues, maxValues, units, colors, hints);
+                RenderedSampleDimension.create(names, raster, minValues, maxValues, unitsArray, colors, hints);
         final ColorModel model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
         final RenderedImage image = new BufferedImage(model, raster, false, null);
         return create(name, image, envelope, bands, null, null);
@@ -399,8 +421,11 @@ public class GridCoverageFactory extends Factory {
                                  final Color[][]                 colors,
                                  final RenderingHints            hints)
     {
+        final int numBands = raster.getNumBands();
+        final Unit<?>[] unitsArray = new Unit<?>[numBands]; Arrays.fill(unitsArray, units);
+        final CharSequence[] names = new CharSequence[numBands]; Arrays.fill(names, name);
         final GridSampleDimension[] bands =
-            RenderedSampleDimension.create(name, raster, minValues, maxValues, units, colors, hints);
+            RenderedSampleDimension.create(names, raster, minValues, maxValues, unitsArray, colors, hints);
         final ColorModel    model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
         final RenderedImage image = new BufferedImage(model, raster, false, null);
         return create(name, image, crs, gridToCRS, bands, null, null);
@@ -512,6 +537,13 @@ public class GridCoverageFactory extends Factory {
                                  final RenderedImage image,
                                  final Envelope      envelope)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setRenderedImage(image);
+            return builder.getGridCoverage2D();
+        }
         return create(name, image, envelope, null, null, null);
     }
 
@@ -564,6 +596,16 @@ public class GridCoverageFactory extends Factory {
                                  final GridCoverage[]        sources,
                                  final Map<?,?>              properties)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setRenderedImage(image); // It is safer to define after the grid geometry.
+            builder.setSampleDimensions(bands);
+            builder.setSources(sources);
+            builder.setProperties(properties);
+            return builder.getGridCoverage2D();
+        }
         /*
          * Makes sure that the specified envelope has a CRS.
          * If no CRS were specified, a default one is used.
@@ -609,6 +651,17 @@ public class GridCoverageFactory extends Factory {
                                  final GridCoverage[]            sources,
                                  final Map<?,?>                  properties)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setCoordinateReferenceSystem(crs);
+            builder.setGridToCRS(gridToCRS);
+            builder.setRenderedImage(image); // It is safer to define after the grid geometry.
+            builder.setSampleDimensions(bands);
+            builder.setSources(sources);
+            builder.setProperties(properties);
+            return builder.getGridCoverage2D();
+        }
         final GridGeometry2D gm = new GridGeometry2D(new GeneralGridEnvelope(image,
                 crs.getCoordinateSystem().getDimension()), gridToCRS, crs);
         return create(name, image, gm, bands, sources, properties);
@@ -651,6 +704,16 @@ public class GridCoverageFactory extends Factory {
                                  final GridCoverage[]        sources,
                                  final Map<?,?>              properties)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setGridGeometry(gridGeometry);
+            builder.setRenderedImage(image); // It is safer to define after the grid geometry.
+            builder.setSampleDimensions(bands);
+            builder.setSources(sources);
+            builder.setProperties(properties);
+            return builder.getGridCoverage2D();
+        }
         /*
          * Makes sure that the specified grid geometry has a CRS.
          * If no CRS were specified, a default one is used.
