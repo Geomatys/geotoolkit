@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.grid;
 
 import java.util.Map;
+import java.util.Arrays;
 import java.util.Objects;
 import java.awt.Color;
 import java.awt.RenderingHints;
@@ -364,8 +365,11 @@ public class GridCoverageFactory extends Factory {
                                  final Color[][]      colors,
                                  final RenderingHints hints)
     {
+        final int numBands = raster.getNumBands();
+        final Unit<?>[] unitsArray = new Unit<?>[numBands]; Arrays.fill(unitsArray, units);
+        final CharSequence[] names = new CharSequence[numBands]; Arrays.fill(names, name);
         final GridSampleDimension[] bands =
-                RenderedSampleDimension.create(name, raster, minValues, maxValues, units, colors, hints);
+                RenderedSampleDimension.create(names, raster, minValues, maxValues, unitsArray, colors, hints);
         final ColorModel model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
         final RenderedImage image = new BufferedImage(model, raster, false, null);
         return create(name, image, envelope, bands, null, null);
@@ -417,8 +421,11 @@ public class GridCoverageFactory extends Factory {
                                  final Color[][]                 colors,
                                  final RenderingHints            hints)
     {
+        final int numBands = raster.getNumBands();
+        final Unit<?>[] unitsArray = new Unit<?>[numBands]; Arrays.fill(unitsArray, units);
+        final CharSequence[] names = new CharSequence[numBands]; Arrays.fill(names, name);
         final GridSampleDimension[] bands =
-            RenderedSampleDimension.create(name, raster, minValues, maxValues, units, colors, hints);
+            RenderedSampleDimension.create(names, raster, minValues, maxValues, unitsArray, colors, hints);
         final ColorModel    model = bands[0].getColorModel(0, bands.length, raster.getDataBuffer().getDataType());
         final RenderedImage image = new BufferedImage(model, raster, false, null);
         return create(name, image, crs, gridToCRS, bands, null, null);
@@ -530,6 +537,13 @@ public class GridCoverageFactory extends Factory {
                                  final RenderedImage image,
                                  final Envelope      envelope)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setRenderedImage(image);
+            return builder.getGridCoverage2D();
+        }
         return create(name, image, envelope, null, null, null);
     }
 
@@ -582,6 +596,16 @@ public class GridCoverageFactory extends Factory {
                                  final GridCoverage[]        sources,
                                  final Map<?,?>              properties)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setRenderedImage(image); // It is safer to define after the grid geometry.
+            builder.setSampleDimensions(bands);
+            builder.setSources(sources);
+            builder.setProperties(properties);
+            return builder.getGridCoverage2D();
+        }
         /*
          * Makes sure that the specified envelope has a CRS.
          * If no CRS were specified, a default one is used.
@@ -627,6 +651,17 @@ public class GridCoverageFactory extends Factory {
                                  final GridCoverage[]            sources,
                                  final Map<?,?>                  properties)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setCoordinateReferenceSystem(crs);
+            builder.setGridToCRS(gridToCRS);
+            builder.setRenderedImage(image); // It is safer to define after the grid geometry.
+            builder.setSampleDimensions(bands);
+            builder.setSources(sources);
+            builder.setProperties(properties);
+            return builder.getGridCoverage2D();
+        }
         final GridGeometry2D gm = new GridGeometry2D(new GeneralGridEnvelope(image,
                 crs.getCoordinateSystem().getDimension()), gridToCRS, crs);
         return create(name, image, gm, bands, sources, properties);
@@ -673,7 +708,7 @@ public class GridCoverageFactory extends Factory {
             final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
             builder.setName(name);
             builder.setGridGeometry(gridGeometry);
-            builder.setRenderedImage(image); // Needs to be after the grid geometry.
+            builder.setRenderedImage(image); // It is safer to define after the grid geometry.
             builder.setSampleDimensions(bands);
             builder.setSources(sources);
             builder.setProperties(properties);

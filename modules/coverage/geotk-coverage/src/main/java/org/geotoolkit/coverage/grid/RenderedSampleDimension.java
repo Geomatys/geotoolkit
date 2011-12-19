@@ -141,7 +141,12 @@ final class RenderedSampleDimension extends GridSampleDimension {
                  */
                 if (defaultSD == null) {
                     defaultSD = new GridSampleDimension[numBands];
-                    create(name, (image != null) ? RectIterFactory.create(image,  null)
+                    CharSequence[] names = null;
+                    if (name != null) {
+                        names = new CharSequence[numBands];
+                        Arrays.fill(names, name);
+                    }
+                    create(names, (image != null) ? RectIterFactory.create(image,  null)
                                                  : RectIterFactory.create(raster, null),
                             model, null, null, null, null, defaultSD, null);
                 }
@@ -162,9 +167,45 @@ final class RenderedSampleDimension extends GridSampleDimension {
     }
 
     /**
+     * Creates a set of sample dimensions for the given rendered image.
+     *
+     * @param  names The name for each bands (e.g. "Elevation"), or {@code null} if none.
+     * @param  image The rendered image.
+     * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
+     * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
+     * @param  units The units of sample values, or {@code null} if unknown.
+     * @param  colors The colors to use for values from {@code min} to {@code max} for each
+     *         bands, or {@code null} for a default color palette. If non-null, each arrays
+     *         {@code colors[b]} may have any length; colors will be interpolated as needed.
+     * @param  hints An optional set of rendering hints, or {@code null} if none. Those hints will
+     *         not affect the sample dimensions to be created. However, they may affect the sample
+     *         dimensions to be returned by <code>{@link #geophysics geophysics}(false)</code>, i.e.
+     *         the view to be used at rendering time. The optional hint
+     *         {@link Hints#SAMPLE_DIMENSION_TYPE} specifies the {@link SampleDimensionType}
+     *         to be used at rendering time, which can be one of
+     *         {@link SampleDimensionType#UBYTE UBYTE} or
+     *         {@link SampleDimensionType#USHORT USHORT}.
+     * @return The sample dimension for the given image.
+     */
+    static GridSampleDimension[] create(final CharSequence[] names,
+                                        final RenderedImage  image,
+                                        final double[]       min,
+                                        final double[]       max,
+                                        final Unit<?>[]      units,
+                                        final Color[][]      colors,
+                                        final RenderingHints hints)
+    {
+        final SampleModel model = image.getSampleModel();
+        final GridSampleDimension[] dst = new GridSampleDimension[model.getNumBands()];
+        create(names, (min == null || max == null) ? RectIterFactory.create(image, null) : null,
+               model, min, max, units, colors, dst, hints);
+        return dst;
+    }
+
+    /**
      * Creates a set of sample dimensions for the given raster.
      *
-     * @param  name The name for data (e.g. "Elevation"), or {@code null} if none.
+     * @param  names The name for each bands (e.g. "Elevation"), or {@code null} if none.
      * @param  raster The raster.
      * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
      * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
@@ -182,16 +223,16 @@ final class RenderedSampleDimension extends GridSampleDimension {
      *         {@link SampleDimensionType#USHORT USHORT}.
      * @return The sample dimension for the given raster.
      */
-    static GridSampleDimension[] create(final CharSequence   name,
+    static GridSampleDimension[] create(final CharSequence[] names,
                                         final Raster         raster,
                                         final double[]       min,
                                         final double[]       max,
-                                        final Unit<?>        units,
+                                        final Unit<?>[]      units,
                                         final Color[][]      colors,
                                         final RenderingHints hints)
     {
         final GridSampleDimension[] dst = new GridSampleDimension[raster.getNumBands()];
-        create(name, (min == null || max == null) ? RectIterFactory.create(raster, null) : null,
+        create(names, (min == null || max == null) ? RectIterFactory.create(raster, null) : null,
                raster.getSampleModel(), min, max, units, colors, dst, hints);
         return dst;
     }
@@ -199,7 +240,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * Creates a set of sample dimensions for the data backing the given iterator.
      *
-     * @param  name The name for data (e.g. "Elevation"), or {@code null} if none.
+     * @param  names The name for each band (e.g. "Elevation"), or {@code null} if none.
      * @param  iterator The iterator through the raster data, or {@code null}.
      * @param  model The image or raster sample model.
      * @param  min The minimal value, or {@code null} for computing it automatically.
@@ -220,12 +261,12 @@ final class RenderedSampleDimension extends GridSampleDimension {
      *         {@link SampleDimensionType#UBYTE UBYTE} or
      *         {@link SampleDimensionType#USHORT USHORT}.
      */
-    private static void create(      CharSequence          name,
+    private static void create(final CharSequence[]        names,
                                final RectIter              iterator,
                                final SampleModel           model,
                                double[]                    min,
                                double[]                    max,
-                               final Unit<?>               units,
+                               final Unit<?>[]             units,
                                final Color[][]             colors,
                                final GridSampleDimension[] dst,
                                final RenderingHints        hints)
@@ -330,22 +371,28 @@ final class RenderedSampleDimension extends GridSampleDimension {
          * if the user plan to have NaN values. Even if the current image doesn't have NaN values,
          * it could have NaN later if the image uses a writable raster.
          */
-        if (name == null) {
-            name = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
-        }
+        CharSequence untitled = null;
         for (int b=0; b<numBands; b++) {
-            final CharSequence bandName = (numBands == 1) ? name :
-                    Vocabulary.formatInternational(Vocabulary.Keys.HYPHEN_$2, name, (numBands+1));
+            CharSequence name = (names != null) ? names[b] : null;
+            if (name == null) {
+                if (untitled == null) {
+                    untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                }
+                name = untitled;
+                if (numBands != 1) {
+                    name = Vocabulary.formatInternational(Vocabulary.Keys.HYPHEN_$2, name, (numBands+1));
+                }
+            }
             NumberRange<?> sourceRange = TypeMap.getRange(sourceType);
-            final Color[] c = colors!=null ? colors[b] : null;
+            final Color[] c = (colors != null) ? colors[b] : null;
             if (needScaling) {
                 final NumberRange<Double> range = NumberRange.create(min[b], max[b]);
                 sourceRange = range.castTo(sourceRange.getElementClass());
-                categories[0] = new Category(bandName, c, targetRange, sourceRange);
+                categories[0] = new Category(name, c, targetRange, sourceRange);
             } else {
-                categories[0] = new Category(bandName, c, targetRange, LinearTransform1D.IDENTITY);
+                categories[0] = new Category(name, c, targetRange, LinearTransform1D.IDENTITY);
             }
-            dst[b] = new GridSampleDimension(name, categories, units).geophysics(true);
+            dst[b] = new GridSampleDimension(name, categories, (units != null) ? units[b] : null).geophysics(true);
         }
     }
 
