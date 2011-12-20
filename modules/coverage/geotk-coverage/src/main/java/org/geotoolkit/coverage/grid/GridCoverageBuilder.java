@@ -62,6 +62,7 @@ import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.coverage.Category;
@@ -75,6 +76,7 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
 
 
@@ -109,7 +111,7 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td>&nbsp;{@link #pixelAnchor}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setPixelAnchor(PixelInCell) Code list value}&nbsp;</td>
- *     <td>&nbsp;&nbsp;{@link PixelInCell#CELL_CENTER}</td>
+ *     <td>&nbsp;&nbsp;{@linkplain PixelInCell#CELL_CENTER Pixel center}</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridToCRS}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setGridToCRS(MathTransform) Transform instance} or
@@ -141,7 +143,12 @@ import org.geotoolkit.resources.Errors;
  *     <td>&nbsp;{@link Variable#transform Variable.transform}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setTransform(MathTransform1D) Transform instance} or
  *               {@linkplain Variable#setLinearTransform(double, double) coefficients}&nbsp;</td>
- *     <td>&nbsp;{@link LinearTransform1D#IDENTITY}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain LinearTransform1D#IDENTITY Identity}&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link Variable#colors Variable.colors}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setColors(Color[]) Colors array} or
+ *               {@linkplain Variable#setColors(String) palette name}&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link Variable#sampleDimension Variable.sampleDimension}&nbsp;</td>
  *     <td>&nbsp;{@linkplain Variable#setSampleDimension(SampleDimension) Sample dimension instance} or
@@ -159,11 +166,11 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td>&nbsp;{@link #sources}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setSources(GridCoverage[]) Array of grid coverages}&nbsp;</td>
- *     <td>&nbsp;Empty array&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #properties}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setProperties(Map) Map of properties}&nbsp;</td>
- *     <td>&nbsp;Empty map&nbsp;</td>
+ *     <td>&nbsp;</td>
  *   </tr>
  * </table>
  *
@@ -179,10 +186,10 @@ import org.geotoolkit.resources.Errors;
  * axis order.
  * <p>
  * An exception to the above rule applies for CRS using exactly the following axis order:
- * ({@link AxisDirection#NORTH NORTH}|{@link AxisDirection#SOUTH SOUTH},
- * {@link AxisDirection#EAST EAST}|{@link AxisDirection#WEST WEST}). An example of such CRS is
- * {@code EPSG:4326}. This builder will interchange automatically the (<var>y</var>,<var>x</var>)
- * axes for those CRS.
+ * ({@link org.opengis.referencing.cs.AxisDirection#NORTH NORTH}|{@link org.opengis.referencing.cs.AxisDirection#SOUTH SOUTH},
+ * {@link org.opengis.referencing.cs.AxisDirection#EAST EAST}|{@link org.opengis.referencing.cs.AxisDirection#WEST WEST}).
+ * An example of such CRS is {@code EPSG:4326}. This builder will interchange automatically the
+ * (<var>y</var>,<var>x</var>) axes for those CRS.
  * <p>
  * See {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper} for more information
  * about the heuristic rules. If more control on axis order and direction reversal is wanted, specify
@@ -235,7 +242,7 @@ import org.geotoolkit.resources.Errors;
  *     builder.variable(0).setUnit(SI.METRE);
  *     builder.variable(0).setSampleRange(1, 256);
  *     builder.variable(0).setLinearTransform(0.1, 0);
- *     builder.variable(0).addNodataValue("No data", 0);
+ *     builder.variable(0).addNodataValue("No data", 0, Color.GRAY);
  *
  *     // Gets a 600×400 pixels (the extent) image, then draw something on it.
  *     Graphics2D gr = (Graphics2D) builder.createGraphics();
@@ -793,7 +800,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * {@linkplain #setCoordinateReferenceSystem(CoordinateReferenceSystem) explicitely defined},
      * then the given envelope will be reprojected to that CRS.
      * <p>
-     * <strong>This method is not recommended</cite>, since the creation of a grid coverage from
+     * <strong>This method is not recommended</strong>, since the creation of a grid coverage from
      * an envelope implies some arbitrary choices. Those arbitrary choices are implemented as
      * heuristic rules documented in this <a href="#overview">class javadoc</a>. The recommended
      * usage is to {@linkplain #setGridToCRS(MathTransform) specify the grid to CRS transform} or
@@ -1140,7 +1147,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>{@link #getGridToCRS()}</li>
      *   <li>{@link #getCoordinateReferenceSystem()}</li>
      * </ul>
-     * </td><td><b>or</b></td><td valign="top">
+     * </td><td valign="top"><b>or</b></td><td valign="top">
      * <ul>
      *   <li>{@link #getExtent()}</li>
      *   <li>{@link #getEnvelope()}</li>
@@ -2082,6 +2089,22 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
     }
 
+    /**
+     * A structure for "no data" value stored in {@link Variable}.
+     */
+    private static final class NoData {
+        /** The name of the "no data" value, or {@code null}. */
+        final CharSequence name;
+
+        /** The color of the "no data" value, or {@code null}. */
+        final Color color;
+
+        /** Creates a new structure for the given values. */
+        NoData(final CharSequence name, final Color color) {
+            this.name  = name;
+            this.color = color;
+        }
+    }
 
     /**
      * Helper class for the creation of {@link SampleDimension} instances.
@@ -2108,7 +2131,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 2.5
      * @module
      */
-    public class Variable {
+    public class Variable extends Builder<SampleDimension> {
         /**
          * The band index for this variable. This is the {@code band} argument given
          * to the {@link GridCoverageBuilder#variable(int)} method.
@@ -2157,9 +2180,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         /**
          * The "nodata" values, or {@code null} if none. This map is created when first needed.
          *
-         * @see #addNodataValue(CharSequence, int)
+         * @see #addNodataValue(CharSequence, int, Color)
          */
-        private Map<Integer,CharSequence> nodata;
+        private Map<Integer,NoData> nodata;
 
         /**
          * The "<cite>sample to geophysics</cite>" transform, or {@code null} if unspecified. This
@@ -2432,16 +2455,17 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          *
          * @param  name  The name for the "nodata" value.
          * @param  value The pixel value to assign to "nodata".
+         * @param  color The color to assign to the "nodata" value, or {@code null} for a default color.
          * @throws IllegalArgumentException if the given pixel value is already assigned.
          */
-        public void addNodataValue(final CharSequence name, final int value)
+        public void addNodataValue(final CharSequence name, final int value, final Color color)
                 throws IllegalArgumentException
         {
             if (nodata == null) {
                 nodata = new TreeMap<>();
             }
             final Integer key = value;
-            final CharSequence old = nodata.put(key, name);
+            final NoData old = nodata.put(key, new NoData(name, color));
             if (old != null) {
                 nodata.put(key, old);
                 throw new IllegalArgumentException(Errors.format(
@@ -2475,6 +2499,26 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
 
         /**
+         * Sets the colors associated to the values in the {@linkplain #getSampleRange()
+         * sample range}. The {@code palette} argument can be any of the
+         * <a href="../../image/io/doc-files/palettes.html">build-in palettes</a>,
+         * or any additional palette defined by the extension mechanism.
+         *
+         * @param palette The name of the new colors ramp.
+         *
+         * @see PaletteFactory#getColors(String)
+         *
+         * @since 3.20
+         */
+        public void setColors(final String palette) {
+            try {
+                setColors(PaletteFactory.getDefault().getColors(palette));
+            } catch (IOException e) {
+                throw new BackingStoreException(e);
+            }
+        }
+
+        /**
          * Returns the sample dimension. If no dimension has been
          * {@linkplain #setSampleDimension(SampleDimension) explicitly defined}, then this method
          * builds a new dimension from the other attributes defined in this class.
@@ -2490,14 +2534,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     if (range != null) {
                         int lower = (int) Math.floor(range.getMinimum(true));
                         int upper = (int) Math.ceil (range.getMaximum(false));
-                        final Map<Integer,CharSequence> nodata = this.nodata;
+                        final Map<Integer,NoData> nodata = this.nodata;
                         final Category[] categories;
                         int count = 0;
                         if (nodata == null) {
                             categories = new Category[1];
                         } else {
                             categories = new Category[nodata.size() + 1];
-                            for (final Map.Entry<Integer,CharSequence> entry : nodata.entrySet()) {
+                            for (final Map.Entry<Integer,NoData> entry : nodata.entrySet()) {
                                 final int sample = entry.getKey();
                                 if (sample >= lower && sample < upper) {
                                     if (sample - lower <= upper - sample) {
@@ -2506,7 +2550,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                                         upper = sample;
                                     }
                                 }
-                                categories[count++] = new Category(entry.getValue(), null, sample);
+                                final NoData n = entry.getValue();
+                                categories[count++] = new Category(n.name, n.color, sample);
                             }
                         }
                         final CharSequence name = getName();
@@ -2530,6 +2575,17 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         public void setSampleDimension(final SampleDimension dim) {
             sampleDimension = dim;
             sampleDimensionsChanged();
+        }
+
+        /**
+         * Builds the sample dimension from the parameter defined in this class.
+         * The default implementation delegates to {@link #getSampleDimension()}.
+         *
+         * @return The sample dimension.
+         */
+        @Override
+        public SampleDimension build() {
+            return getSampleDimension();
         }
 
         /**
