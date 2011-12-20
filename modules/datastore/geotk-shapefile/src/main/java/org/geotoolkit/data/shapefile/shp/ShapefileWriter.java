@@ -28,6 +28,7 @@ import org.geotoolkit.storage.DataStoreException;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import org.geotoolkit.io.Closeable;
 
 /**
  * ShapefileWriter allows for the storage of geometries in esris shp format.
@@ -49,7 +50,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  * @author Ian Schneider
  * @module pending
  */
-public class ShapefileWriter {
+public class ShapefileWriter implements Closeable{
 
     final ShxWriter shx;
 
@@ -230,6 +231,7 @@ public class ShapefileWriter {
     /**
      * Close the underlying Channels.
      */
+    @Override
     public void close() throws IOException {
         try {
             if (shpChannel != null && shpChannel.isOpen()) {
@@ -243,6 +245,14 @@ public class ShapefileWriter {
         shapeBuffer = null;
     }
 
+    @Override
+    public boolean isClosed() {
+        if(shpChannel != null){
+            return !shpChannel.isOpen();
+        }        
+        return true;
+    }
+    
     /**
      * Bulk write method for writing a collection of (hopefully) like geometries
      * of the given ShapeType.

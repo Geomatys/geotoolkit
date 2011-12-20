@@ -24,19 +24,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.After;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.ShapeTestData;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+
+import static org.junit.Assert.*;
 
 /**
  * Base class for test suite. This class is not abstract for the purpose of
@@ -51,29 +50,19 @@ import com.vividsolutions.jts.io.WKTReader;
  * @author Martin Desruisseaux
  * @module pending
  */
-public abstract class AbstractTestCaseSupport extends TestCase {
-    /**
-     * Set to {@code true} if {@code println} are wanted during normal
-     * execution. It doesn't apply to message displayed in case of errors.
-     */
-    // protected static boolean verbose = false;
+public abstract class AbstractTestCaseSupport {
+    
     /**
      * Stores all temporary files here - delete on tear down.
      */
     private final List<File> tmpFiles = new ArrayList<File>();
 
     /**
-     * Creates a new instance of {@code TestCaseSupport} with the given name.
-     */
-    protected AbstractTestCaseSupport(final String name) throws IOException {
-        super(name);
-    }
-
-    /**
      * Deletes all temporary files created by {@link #getTempFile}. This method
      * is automatically run after each test.
      */
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         
         Runtime.getRuntime().runFinalization();
         // it seems that not all files marked as temp will get erased, perhaps
@@ -97,7 +86,6 @@ public abstract class AbstractTestCaseSupport extends TestCase {
 
             f.remove();
         }
-        super.tearDown();
     }
 
     private void dieDieDIE(final File file) {
@@ -230,10 +218,4 @@ public abstract class AbstractTestCaseSupport extends TestCase {
         return copy;
     }
 
-    /**
-     * Returns the test suite for the given class.
-     */
-    public static Test suite(final Class<?> c) {
-        return new TestSuite(c);
-    }
 }

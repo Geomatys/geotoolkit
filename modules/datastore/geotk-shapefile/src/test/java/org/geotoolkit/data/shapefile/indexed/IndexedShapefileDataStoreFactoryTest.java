@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.junit.Test;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,17 +31,18 @@ import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.test.TestData;
 
+import org.junit.Before;
+import static org.junit.Assert.*;
+
 /**
  * @module pending
  */
 public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSupport {
+    
     private ShapefileDataStoreFactory factory;
 
-    public IndexedShapefileDataStoreFactoryTest() throws IOException {
-        super("IndexedShapefileDataStoreFactoryTest");
-    }
-
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         factory = new ShapefileDataStoreFactory();
     }
 
@@ -48,6 +50,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(Map)'
      */
+    @Test
     public void testCanProcessMap() throws Exception {
         Map map = new HashMap();
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
@@ -59,6 +62,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(Map)'
      */
+    @Test
     public void testCreateDataStoreMap() throws Exception {
         testCreateDataStore(true);
 
@@ -76,6 +80,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         return testCreateDataStore(true, createIndex);
     }
 
+    @Test
     public void testNamespace() throws Exception {
         ShapefileDataStoreFactory factory = new ShapefileDataStoreFactory();
         Map map = new HashMap();
@@ -128,6 +133,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createNewDataStore(Map)'
      */
+    @Test
     public void testCreateNewDataStore() throws Exception {
         ShapefileDataStore ds1 = testCreateDataStore(true, false);
         ShapefileDataStore ds2 = testCreateDataStore(true, true);
@@ -139,6 +145,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.isAvailable()'
      */
+    @Test
     public void testIsAvailable() {
         assertTrue(factory.availability().pass());
     }
@@ -147,6 +154,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getParametersInfo()'
      */
+    @Test
     public void testGetParametersInfo() {
         //check that we have those two parameters descriptors.
         factory.getParametersDescriptor().descriptor(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString());
@@ -157,6 +165,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getFileExtensions()'
      */
+    @Test
     public void testGetFileExtensions() {
         List ext = Arrays.asList(factory.getFileExtensions());
         assertTrue(ext.contains(".shp"));
@@ -166,6 +175,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(URL)'
      */
+    @Test
     public void testCanProcessURL() throws FileNotFoundException {
         factory.canProcess(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP));
     }
@@ -174,6 +184,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
      * Test method for
      * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(URL)'
      */
+    @Test
     public void testCreateDataStoreURL() throws DataStoreException,IOException {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         DataStore ds = factory.createDataStore(TestData.url(AbstractTestCaseSupport.class,

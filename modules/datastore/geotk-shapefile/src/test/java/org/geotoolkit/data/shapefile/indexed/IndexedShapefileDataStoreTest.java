@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
-import org.geotoolkit.data.shapefile.ShpFileType;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
@@ -79,6 +80,8 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
+import static org.junit.Assert.*;
+
 /**
  * 
  * @version $Id$
@@ -93,10 +96,6 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String DANISH = "shapes/danish_point.shp";
 
     static final String CHINESE = "shapes/chinese_poly.shp";
-
-    public IndexedShapefileDataStoreTest(final String testName) throws IOException {
-        super(testName);
-    }
 
     protected FeatureCollection<SimpleFeature> loadFeatures(final String resource, final Query q)
             throws Exception {
@@ -137,10 +136,12 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return s.createSession(false).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
 
+    @Test
     public void testLoad() throws Exception {
         loadFeatures(STATE_POP, null);
     }
 
+    @Test
     public void testLoadDanishChars() throws Exception {
         FeatureCollection<SimpleFeature> fc = loadFeatures(DANISH, null);
         SimpleFeature first = firstFeature(fc);
@@ -148,6 +149,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         assertEquals("Charl\u00F8tte", first.getAttribute("TEKST1"));
     }
 
+    @Test
     public void testLoadChineseChars() throws Exception {
         try {
             FeatureCollection<SimpleFeature> fc = loadFeatures(CHINESE, Charset.forName("GB18030"), null);
@@ -160,6 +162,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testSchema() throws Exception {
         URL url = ShapeTestData.url(STATE_POP);
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(url);
@@ -169,6 +172,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         assertNotNull(schema.getCoordinateReferenceSystem());
     }
 
+    @Test
     public void testSpacesInPath() throws Exception {
         URL u = TestData.url(AbstractTestCaseSupport.class, "folder with spaces/pointtest.shp");
         File f = new File(URLDecoder.decode(u.getFile(), "UTF-8"));
@@ -182,6 +186,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     /**
      * Test envelope versus old DataSource
      */
+    @Test
     public void testEnvelope() throws Exception {
         FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, null);
         testEnvelope(features, IndexType.QIX);
@@ -199,9 +204,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         s.dispose();
     }
 
+    @Test
     public void testCreateAndReadQIX() throws Exception {
         File shpFile = copyShapefiles(STATE_POP);
-        URL url = shpFile.toURL();
+        URL url = shpFile.toURI().toURL();
         String filename = url.getFile();
         filename = filename.substring(0, filename.lastIndexOf("."));
 
@@ -252,9 +258,10 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         ds2.dispose();
     }
 
+    @Test
     public void testFidFilter() throws Exception {
         File shpFile = copyShapefiles(STATE_POP);
-        URL url = shpFile.toURL();
+        URL url = shpFile.toURI().toURL();
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.NONE,null);
         FeatureCollection<SimpleFeature> features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
         FeatureIterator<SimpleFeature> indexIter = features.iterator();
@@ -338,6 +345,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return indexedFeatures;
     }
 
+    @Test
     public void testLoadAndVerify() throws Exception {
         FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, null);
 
@@ -360,7 +368,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Collection<SimpleFeature> fc = createFeatureCollection();
         f.createNewFile();
 
-        IndexedShapefileDataStore sds = new IndexedShapefileDataStore(f.toURL());
+        IndexedShapefileDataStore sds = new IndexedShapefileDataStore(f.toURI().toURL());
         writeFeatures(sds, fc);
 
         return sds;
@@ -374,6 +382,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      * Create a set of features, then remove every other one, updating the
      * remaining. Test for removal and proper update after reloading...
      */
+    @Test
     public void testUpdating() throws Throwable {
         IndexedShapefileDataStore sds = createDataStore();
         loadFeatures(sds);
@@ -415,6 +424,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      * Create a test file, then continue removing the first entry until there
      * are no features left.
      */
+    @Test
     public void testRemoveFromFrontAndClose() throws Throwable {
         IndexedShapefileDataStore sds = createDataStore();
 
@@ -443,6 +453,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      * Create a test file, then continue removing the first entry until there
      * are no features left.
      */
+    @Test
     public void testRemoveFromFrontAndCloseTransaction() throws Throwable {
         IndexedShapefileDataStore sds = createDataStore();
 
@@ -469,6 +480,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      * Create a test file, then continue removing the last entry until there are
      * no features left.
      */
+    @Test
     public void testRemoveFromBackAndClose() throws Throwable {
         IndexedShapefileDataStore sds = createDataStore();
 
@@ -497,6 +509,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         sds.dispose();
     }
 
+    @Test
     public void testTestTransaction() throws Exception {
         final IndexedShapefileDataStore sds = createDataStore();
         final long idx = sds.getCount(QueryBuilder.all(sds.getName()));
@@ -566,16 +579,18 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return features;
     }
 
+    @Test
     public void testAttributesWriting() throws Exception {
         Collection<SimpleFeature> features = createFeatureCollection();
         File tmpFile = getTempFile();
         tmpFile.createNewFile();
 
-        IndexedShapefileDataStore s = new IndexedShapefileDataStore(tmpFile.toURL());
+        IndexedShapefileDataStore s = new IndexedShapefileDataStore(tmpFile.toURI().toURL());
         writeFeatures(s, features);
         s.dispose();
     }
 
+    @Test
     public void testGeometriesWriting() throws Exception {
         String[] wktResources = new String[] { "point", "multipoint", "line",
                 "multiline", "polygon", "multipolygon" };
@@ -644,14 +659,14 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         // write features
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(tmpFile
-                .toURL());
+                .toURI().toURL());
         s.createSchema(type.getName(),type);
         writeFeatures(s, features);
 
         s.dispose();
 
         // read features
-        s = new IndexedShapefileDataStore(tmpFile.toURL());
+        s = new IndexedShapefileDataStore(tmpFile.toURI().toURL());
 
         FeatureCollection<SimpleFeature> fc = loadFeatures(s);
         FeatureIterator<SimpleFeature> fci = fc.iterator();
@@ -692,6 +707,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testIndexOutOfDate() throws Exception {
         File shpFile = copyShapefiles(STATE_POP);
         ShpFileType fix = ShpFileType.FIX;
@@ -718,6 +734,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      *
      * @throws FileException
      */
+    @Test
     public void testWipesOutInvalidFidsFromFilters() throws Exception {
         final IndexedShapefileDataStore ds = createDataStore();
         final Session session = ds.createSession(true);
@@ -773,7 +790,4 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return count;
     }
 
-    public static void main(final java.lang.String[] args) throws Exception {
-        junit.textui.TestRunner.run(suite(IndexedShapefileDataStoreTest.class));
-    }
 }

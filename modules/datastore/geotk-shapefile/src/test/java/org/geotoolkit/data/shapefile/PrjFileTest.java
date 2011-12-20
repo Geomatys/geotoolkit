@@ -17,6 +17,9 @@
 package org.geotoolkit.data.shapefile;
 
 import java.io.IOException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * 
@@ -29,18 +32,16 @@ public class PrjFileTest extends AbstractTestCaseSupport {
 
     static final String TEST_FILE = "wkt/cntbnd01.prj";
 
-
-    public PrjFileTest(final String testName) throws IOException {
-        super(testName);
+    @Before
+    public void setUp() throws Exception {
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
     }
 
+    @Test
     public void testIgnoreEmptyTestCaseWarning() {
     }
 }

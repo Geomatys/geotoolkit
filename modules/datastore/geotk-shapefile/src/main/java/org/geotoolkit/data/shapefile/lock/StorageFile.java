@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile;
+package org.geotoolkit.data.shapefile.lock;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,10 +28,9 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
 
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
-import static org.geotoolkit.data.shapefile.ShpFiles.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFiles.*;
 
 /**
  * Encapsulates the idea of a file for writing data to and then later updating the original.
@@ -44,7 +43,7 @@ public final class StorageFile implements Comparable<StorageFile> {
     private final File tempFile;
     private final ShpFileType type;
 
-    public StorageFile(final ShpFiles shpFiles, final File tempFile, final ShpFileType type) {
+    StorageFile(final ShpFiles shpFiles, final File tempFile, final ShpFileType type) {
         this.shpFiles = shpFiles;
         this.tempFile = tempFile;
         this.type = type;
@@ -70,7 +69,7 @@ public final class StorageFile implements Comparable<StorageFile> {
      * @see #replaceOriginals(StorageFile...)
      * @throws IOException
      */
-    public void replaceOriginal() throws IOException {
+    void replaceOriginal() throws IOException {
         replaceOriginals(this);
     }
 
@@ -83,24 +82,19 @@ public final class StorageFile implements Comparable<StorageFile> {
      * @param storageFiles files to execute the replace functionality.
      * @throws IOException
      */
-    public static void replaceOriginals( final StorageFile... storageFiles ) throws IOException {
+    static void replaceOriginals( final StorageFile... storageFiles ) throws IOException {
         SortedSet<StorageFile> files = new TreeSet<StorageFile>(Arrays.asList(storageFiles));
 
         ShpFiles currentShpFiles = null;
-        URL shpURL = null;
-        StorageFile locker = null;
         for( StorageFile storageFile : files ) {
             if (currentShpFiles != storageFile.shpFiles) {
                 // there's a new set of files so unlock old and lock new.
-                unlock(currentShpFiles, shpURL, locker);
-                locker = storageFile;
                 currentShpFiles = storageFile.shpFiles;
-                shpURL = currentShpFiles.acquireWrite(ShpFileType.SHP, storageFile);
             }
 
-            File storage = storageFile.getFile();
+            final File storage = storageFile.getFile();
 
-            URL url = storageFile.getSrcURLForWrite();
+            final URL url = storageFile.getSrcURLForWrite();
             try {
                 File dest = toFile(url);
 
@@ -110,11 +104,6 @@ public final class StorageFile implements Comparable<StorageFile> {
                 if (dest.exists()) {
                     if (!dest.delete()){
                         LOGGER.severe("Unable to delete the file: "+dest+" when attempting to replace with temporary copy.");
-                        if( storageFile.shpFiles.numberOfLocks()>0 ){
-                            LOGGER.severe("The problem is almost certainly caused by the fact that there are still locks being held on the shapefiles.  Probably a reader or writer was left unclosed");
-                            storageFile.shpFiles.logCurrentLockers(Level.SEVERE);
-                        }
-//                        throw new IOException("Unable to delete original file: " + url);
                     }
                 }
 
@@ -127,14 +116,11 @@ public final class StorageFile implements Comparable<StorageFile> {
                     }
                 }
             } finally {
-                storageFile.unlockWriteURL(url);
-
                 if (storage.exists()) {
                     storage.delete();
                 }
             }
         }
-        unlock(currentShpFiles, shpURL, locker);
 
     }
 
@@ -164,20 +150,7 @@ public final class StorageFile implements Comparable<StorageFile> {
     }
 
     private URL getSrcURLForWrite() {
-        return shpFiles.acquireWrite(type, this);
-    }
-
-    private void unlockWriteURL( final URL url ) {
-        shpFiles.unlockWrite(url, this);
-    }
-
-    private static void unlock( final ShpFiles currentShpFiles, final URL shpURL, final StorageFile locker ) {
-        // no lock to be unlocked
-        if (currentShpFiles == null) {
-            return;
-        }
-
-        currentShpFiles.unlockWrite(shpURL, locker);
+        return shpFiles.getURL(type);
     }
 
     /**

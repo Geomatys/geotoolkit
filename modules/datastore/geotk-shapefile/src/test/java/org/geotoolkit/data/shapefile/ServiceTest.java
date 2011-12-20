@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import org.junit.Test;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,6 +26,8 @@ import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.storage.DataStoreException;
+
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -36,13 +39,10 @@ public class ServiceTest extends AbstractTestCaseSupport {
 
     final String TEST_FILE = "shapes/statepop.shp";
 
-    public ServiceTest(final String testName) throws IOException {
-        super(testName);
-    }
-
     /**
      * Make sure that the loading mechanism is working properly.
      */
+    @Test
     public void testIsAvailable() {
         Iterator list = DataStoreFinder.getAvailableDataStores();
         boolean found = false;
@@ -60,6 +60,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
     /**
      * Ensure that we can create a DataStore using url OR string url.
      */
+    @Test
     public void testShapefileDataStore() throws Exception {
         HashMap params = new HashMap();
         params.put("url", ShapeTestData.url(TEST_FILE));
@@ -69,6 +70,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
         assertNotNull(ds);
     }
 
+    @Test
     public void testBadURL() {
         HashMap params = new HashMap();
         params.put("url", "aaa://bbb.ccc");

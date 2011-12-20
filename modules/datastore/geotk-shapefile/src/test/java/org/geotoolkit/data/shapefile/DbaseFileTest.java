@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +29,12 @@ import org.geotoolkit.data.dbf.DbaseFieldFormatter;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.dbf.DbaseFileWriter;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+
+import org.junit.After;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -47,36 +54,32 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
 
     private ShpFiles shpFiles;
 
-    public DbaseFileTest(final String testName) throws IOException {
-        super(testName);
-    }
-
-    public static void main(final String[] args) {
-        // verbose = true;
-        junit.textui.TestRunner.run(suite(DbaseFileTest.class));
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         shpFiles = new ShpFiles(ShapeTestData.url(TEST_FILE));
-        dbf = ShpDBF.reader(shpFiles, false,
-                ShapefileDataStore.DEFAULT_STRING_CHARSET);
+        final AccessManager locker = shpFiles.createLocker();
+        dbf = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
     }
 
+    @Test
     public void testNumberofColsLoaded() {
         assertEquals("Number of attributes found incorect", 252, dbf
                 .getHeader().getNumFields());
     }
 
-    protected void tearDown() throws Exception {
+    @Override
+    @After
+    public void tearDown() throws Exception {
         dbf.close();
         super.tearDown();
     }
 
+    @Test
     public void testNumberofRowsLoaded() {
         assertEquals("Number of rows", 49, dbf.getHeader().getNumRecords());
     }
 
+    @Test
     public void testDataLoaded() throws Exception {
         Object[] attrs = new Object[dbf.getHeader().getNumFields()];
         dbf.readEntry(attrs);
@@ -85,10 +88,11 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
                 ((Double) attrs[4]).doubleValue(), 0.001);
     }
 
+    @Test
     public void testRowVsEntry() throws Exception {
         Object[] attrs = new Object[dbf.getHeader().getNumFields()];
-        DbaseFileReader dbf2 = ShpDBF.reader(shpFiles, false,
-                ShapefileDataStore.DEFAULT_STRING_CHARSET);
+        final AccessManager locker = shpFiles.createLocker();
+        DbaseFileReader dbf2 = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
         while (dbf.hasNext()) {
             dbf.readEntry(attrs);
             DbaseFileReader.Row r = dbf2.readRow();
@@ -101,6 +105,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         dbf2.close();
     }
 
+    @Test
     public void testHeader() throws Exception {
         DbaseFileHeader header = new DbaseFileHeader();
 
@@ -126,6 +131,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testAddColumn() throws Exception {
         DbaseFileHeader header = new DbaseFileHeader();
 
@@ -145,6 +151,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testEmptyFields() throws Exception {
         DbaseFileHeader header = new DbaseFileHeader();
         header.addColumn("emptyString", 'C', 20, 0);
@@ -163,9 +170,9 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
             dbf.write(new Object[6]);
         }
         dbf.close();
-        ShpFiles tempShpFiles = new ShpFiles(f);
-        DbaseFileReader r = ShpDBF.reader(tempShpFiles, false,
-                ShapefileDataStore.DEFAULT_STRING_CHARSET);
+        final ShpFiles tempShpFiles = new ShpFiles(f);
+        final AccessManager locker = tempShpFiles.createLocker();
+        DbaseFileReader r = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
         int cnt = 0;
         while (r.hasNext()) {
             cnt++;
@@ -177,6 +184,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         f.delete();
     }
 
+    @Test
     public void testFieldFormatter() throws Exception {
         DbaseFieldFormatter formatter = new DbaseFieldFormatter(Charset.defaultCharset());
 

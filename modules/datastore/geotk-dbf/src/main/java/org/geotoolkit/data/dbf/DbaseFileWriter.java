@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.Date;
+import org.geotoolkit.io.Closeable;
 
 
 /**
@@ -43,7 +44,7 @@ import java.util.Date;
  * @author Ian Schneider
  * @module pending
  */
-public class DbaseFileWriter {
+public class DbaseFileWriter implements Closeable{
 
     private DbaseFileHeader header;
     private DbaseFieldFormatter formatter;
@@ -148,6 +149,7 @@ public class DbaseFileWriter {
      * @throws IOException
      *                 If errors occur.
      */
+    @Override
     public void close() throws IOException {
         // IANS - GEOT 193, bogus 0x00 written. According to dbf spec, optional
         // eof 0x1a marker is, well, optional. Since the original code wrote a
@@ -163,6 +165,11 @@ public class DbaseFileWriter {
         buffer = null;
         channel = null;
         formatter = null;
+    }
+
+    @Override
+    public boolean isClosed() {
+        return !channel.isOpen();
     }
 
 }

@@ -20,14 +20,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Jesse
@@ -42,29 +48,35 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
     private Iterator iterator;
     private CoordinateReferenceSystem crs;
 
-    public LineLazySearchCollectionTest() throws IOException {
-        super("LazySearchIteratorTest");
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         file = copyShapefiles("shapes/streams.shp");
-        ds = new IndexedShapefileDataStore(file.toURL());
+        ds = new IndexedShapefileDataStore(file.toURI().toURL());
         ds.buildQuadTree(0);
         final Object[] v = openQuadTree(file);
         tree = (QuadTree) v[0];
         dr = (DataReader) v[1];
         crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
     }
-
+    
+    @After
+    public void tearDown() throws Exception {
+        if (iterator != null)
+            tree.close(iterator);
+        tree.close();
+        super.tearDown();
+        file.getParentFile().delete();
+    }
+    
     public static Object[] openQuadTree(final File file) throws StoreException {
         File qixFile = sibling(file, "qix");
         FileSystemIndexStore store = new FileSystemIndexStore(qixFile);
         try {
-            ShpFiles shpFiles = new ShpFiles(qixFile);
+            final ShpFiles shpFiles = new ShpFiles(qixFile);
+            final AccessManager locker = shpFiles.createLocker();
 
-            ShxReader indexFile = new ShxReader(shpFiles, false);
-            DataReader dr = new IndexDataReader(indexFile);
+            final ShxReader indexFile = locker.getSHXReader(false);
+            final DataReader dr = new IndexDataReader(indexFile);
             return new Object[]{store.load(),dr};
 
         } catch (IOException e) {
@@ -72,14 +84,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
         }
     }
 
-    protected void tearDown() throws Exception {
-        if (iterator != null)
-            tree.close(iterator);
-        tree.close();
-        super.tearDown();
-        file.getParentFile().delete();
-    }
-
+    @Test
     public void testGetAllFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(585000, 610000,
                 4910000, 4930000, crs);
@@ -87,6 +92,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
         assertEquals(116, collection.size());
     }
 
+    @Test
     public void testGetOneFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(588993, 589604,
                 4927443, 4927443, crs);
@@ -95,6 +101,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
 
     }
 
+    @Test
     public void testGetNoFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(592211, 597000,
                 4910947, 4913500, crs);

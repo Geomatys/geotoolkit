@@ -16,31 +16,34 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.geotoolkit.ShapeTestData;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.test.TestData;
 
+import org.opengis.feature.type.Name;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.Collection;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.test.TestData;
-import org.opengis.feature.type.Name;
 
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -58,25 +61,25 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public final String HOLETOUCHEDGE = "shapes/holeTouchEdge.shp";
     public final String EXTRAATEND = "shapes/extraAtEnd.shp";
 
-    public ShapefileTest(final String testName) throws IOException {
-        super(testName);
-    }
-
+    @Test
     public void testLoadingStatePop() throws Exception {
         loadShapes(STATEPOP, 49);
         loadMemoryMapped(STATEPOP, 49);
     }
 
+    @Test
     public void testLoadingSamplePointFile() throws Exception {
         loadShapes(POINTTEST, 10);
         loadMemoryMapped(POINTTEST, 10);
     }
 
+    @Test
     public void testLoadingSamplePolygonFile() throws Exception {
         loadShapes(POLYGONTEST, 2);
         loadMemoryMapped(POLYGONTEST, 2);
     }
 
+    @Test
     public void testLoadingTwice() throws Exception {
         loadShapes(POINTTEST, 10);
         loadShapes(POINTTEST, 10);
@@ -90,6 +93,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
      * It is posible for a point in a hole to touch the edge of its containing
      * shell This test checks that such polygons can be loaded ok.
      */
+    @Test
     public void testPolygonHoleTouchAtEdge() throws Exception {
         loadShapes(HOLETOUCHEDGE, 1);
         loadMemoryMapped(HOLETOUCHEDGE, 1);
@@ -100,22 +104,22 @@ public class ShapefileTest extends AbstractTestCaseSupport {
      * the normal feature area, this tests checks that this situation is delt
      * with ok.
      */
+    @Test
     public void testExtraAtEnd() throws Exception {
         loadShapes(EXTRAATEND, 3);
         loadMemoryMapped(EXTRAATEND, 3);
     }
 
+    @Test
     public void testIndexFile() throws Exception {
         copyShapefiles(STATEPOP);
         copyShapefiles(STATEPOP_IDX);
         final URL url1 = ShapeTestData.url(STATEPOP); // Backed by InputStream
         final URL url2 = TestData.url(AbstractTestCaseSupport.class, STATEPOP); // Backed by File
         final URL url3 = TestData.url(AbstractTestCaseSupport.class, STATEPOP_IDX);
-        final ShapefileReader reader1 = new ShapefileReader(new ShpFiles(url1),
-                false, false, true);
-        final ShapefileReader reader2 = new ShapefileReader(new ShpFiles(url2),
-                false, false, true);
-        final ShxReader index = new ShxReader(new ShpFiles(url3), false);
+        final ShapefileReader reader1 = new ShpFiles(url1).createLocker().getSHPReader(false, false, true, null);
+        final ShapefileReader reader2 = new ShpFiles(url2).createLocker().getSHPReader(false, false, true, null);
+        final ShxReader index = new ShpFiles(url3).createLocker().getSHXReader(false);
         try {
             for (int i = 0; i < index.getRecordCount(); i++) {
                 if (reader1.hasNext()) {
@@ -137,6 +141,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testHolyPolygons() throws Exception {
         SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:MultiPolygon");
@@ -147,7 +152,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         // write features
         ShapefileDataStoreFactory make = new ShapefileDataStoreFactory();
-        DataStore s = make.createNewDataStore(Collections.singletonMap("url", tmpFile.toURL()));
+        DataStore s = make.createNewDataStore(Collections.singletonMap("url", tmpFile.toURI().toURL()));
         s.createSchema(type.getName(),type);
         Name typeName = type.getName();
 
@@ -155,17 +160,19 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         session.addFeatures(typeName,features);
         session.commit();
 
-        s = new ShapefileDataStore(tmpFile.toURL());
+        s = new ShapefileDataStore(tmpFile.toURI().toURL());
         typeName = s.getNames().iterator().next();
         FeatureCollection<SimpleFeature> fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileReadWriteTest.compare(features, fc);
     }
 
+    @Test
     public void testSkippingRecords() throws Exception {
         final URL url = ShapeTestData.url(STATEPOP);
-        final ShapefileReader r = new ShapefileReader(new ShpFiles(url), false,
-                false, true);
+        final ShpFiles shpFiles = new ShpFiles(url);
+        final AccessManager locker = shpFiles.createLocker();
+        ShapefileReader r = locker.getSHPReader(false, false, true, null);
         try {
             int idx = 0;
             while (r.hasNext()) {
@@ -178,19 +185,22 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testDuplicateColumnNames() throws Exception {
         File file = TestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
-        ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
+        ShapefileDataStore dataStore = new ShapefileDataStore(file.toURI().toURL());
         SimpleFeatureType schema = (SimpleFeatureType) dataStore.getFeatureType(dataStore.getNames().iterator().next());
 
         assertEquals(6, schema.getAttributeCount());
         assertTrue(dataStore.getCount(QueryBuilder.all(schema.getName())) > 0);
     }
 
+    @Test
     public void testShapefileReaderRecord() throws Exception {
         final URL c1 = ShapeTestData.url(STATEPOP);
-        ShapefileReader reader = new ShapefileReader(new ShpFiles(c1), false,
-                false, true);
+        final ShpFiles shpFiles = new ShpFiles(c1);
+        final AccessManager locker = shpFiles.createLocker();
+        ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         URL c2;
         try {
             ArrayList offsets = new ArrayList();
@@ -205,7 +215,9 @@ public class ShapefileTest extends AbstractTestCaseSupport {
             copyShapefiles(STATEPOP);
             reader.close();
             c2 = TestData.url(AbstractTestCaseSupport.class, STATEPOP);
-            reader = new ShapefileReader(new ShpFiles(c2), false, false, true);
+            final ShpFiles shpFiles2 = new ShpFiles(c2);
+            final AccessManager locker2 = shpFiles.createLocker();
+            reader = locker.getSHPReader(false, false, true, null);
             for (int i = 0, ii = offsets.size(); i < ii; i++) {
                 reader.shapeAt(((Integer) offsets.get(i)).intValue());
             }
@@ -216,8 +228,9 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
     protected void loadShapes(final String resource, final int expected) throws Exception {
         final URL url = ShapeTestData.url(resource);
-        ShapefileReader reader = new ShapefileReader(new ShpFiles(url), false,
-                false, true);
+        final ShpFiles shpFiles = new ShpFiles(url);
+        final AccessManager locker = shpFiles.createLocker();
+        final ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         int cnt = 0;
         try {
             while (reader.hasNext()) {
@@ -234,8 +247,9 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     protected void loadMemoryMapped(final String resource, final int expected)
             throws Exception {
         final URL url = ShapeTestData.url(resource);
-        ShapefileReader reader = new ShapefileReader(new ShpFiles(url), false,
-                false, true);
+        final ShpFiles shpFiles = new ShpFiles(url);
+        final AccessManager locker = shpFiles.createLocker();
+        final ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         int cnt = 0;
         try {
             while (reader.hasNext()) {

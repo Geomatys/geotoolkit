@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.index.quadtree;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -23,7 +24,11 @@ import java.util.Iterator;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.junit.After;
+import org.junit.Before;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Jesse
@@ -38,14 +43,10 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
     private Iterator iterator;
     private CoordinateReferenceSystem crs;
 
-    public PointLazySearchCollectionTest() throws IOException {
-        super("LazySearchIteratorTest");
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         file = copyShapefiles("shapes/archsites.shp");
-        ds = new IndexedShapefileDataStore(file.toURL());
+        ds = new IndexedShapefileDataStore(file.toURI().toURL());
         ds.buildQuadTree(0);
         final Object[] v = LineLazySearchCollectionTest.openQuadTree(file);
         tree = (QuadTree) v[0];
@@ -53,7 +54,8 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
         crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (iterator != null)
             tree.close(iterator);
         tree.close();
@@ -61,6 +63,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
         file.getParentFile().delete();
     }
 
+    @Test
     public void testGetAllFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(585000, 610000,
                 4910000, 4930000, crs);
@@ -68,6 +71,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
         assertEquals(25, collection.size());
     }
 
+    @Test
     public void testGetOneFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(597867, 598068,
                 4918863, 4919031, crs);
@@ -76,6 +80,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
 
     }
 
+    @Test
     public void testGetNoFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(592211, 597000,
                 4910947, 4913500, crs);

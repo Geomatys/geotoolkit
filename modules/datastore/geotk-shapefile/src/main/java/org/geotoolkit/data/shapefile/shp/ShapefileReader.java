@@ -23,14 +23,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.util.logging.Level;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
-
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import org.geotoolkit.io.Closeable;
 
 /**
  * The general use of this class is: <CODE><PRE>
@@ -49,7 +45,7 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * @author Ian Schneider
  * @module pending
  */
-public class ShapefileReader{
+public class ShapefileReader implements Closeable{
     
     /**
      *  Used to mark the current shape is not known, either because someone moved the reader
@@ -132,8 +128,10 @@ public class ShapefileReader{
     /**
      * Creates a new instance of ShapeFile.
      *
-     * @param shapefileFiles
+     * @param shpChannel
      *                The ReadableByteChannel this reader will use.
+     * @param shxChannel
+     *                The ReadableByteChannel for shx reader.
      * @param strict
      *                True to make the header parsing throw Exceptions if the
      *                version or magic number are incorrect.
@@ -142,36 +140,17 @@ public class ShapefileReader{
      * @throws ShapefileException
      *                 If for some reason the file contains invalid records.
      */
-    public ShapefileReader(final ShpFiles shapefileFiles, final boolean strict,
-            final boolean useMemoryMapped, final boolean read3D) throws IOException, DataStoreException {
-        this(shapefileFiles,strict,useMemoryMapped,read3D,null);
-    }
-
-    /**
-     * Creates a new instance of ShapeFile.
-     *
-     * @param shapefileFiles
-     *                The ReadableByteChannel this reader will use.
-     * @param strict
-     *                True to make the header parsing throw Exceptions if the
-     *                version or magic number are incorrect.
-     * @throws IOException
-     *                 If problems arise.
-     * @throws ShapefileException
-     *                 If for some reason the file contains invalid records.
-     */
-    public ShapefileReader(final ShpFiles shapefileFiles, final boolean strict,final boolean useMemoryMapped, 
-            final boolean read3D, final double[] resample) throws IOException, DataStoreException {
-        this.channel = shapefileFiles.getReadChannel(ShpFileType.SHP, this);
+    public ShapefileReader(final ReadableByteChannel shpChannel, final ReadableByteChannel shxChannel, 
+            final boolean strict,final boolean useMemoryMapped, final boolean read3D, 
+            final double[] resample) throws IOException, DataStoreException {
+        this.channel = shpChannel;
         this.randomAccessEnabled = channel instanceof FileChannel;
 
         header = readHeader(channel, strict);
 
-        try {
-            shxReader = new ShxReader(shapefileFiles, true);
-        } catch(Exception e) {
-            LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
-                        "assuming the .shp file is not sparse", e);
+        if(shxChannel != null){
+            shxReader = new ShxReader(shxChannel, true);
+        }else{
             currentShape = UNKNOWN;
         }
         
@@ -302,8 +281,9 @@ public class ShapefileReader{
      * @throws IOException
      *                 If errors occur while closing the channel.
      */
+    @Override
     public void close() throws IOException {
-        if (channel.isOpen()) {
+        if (channel!= null && channel.isOpen()) {
             channel.close();
         }
         if(shxReader != null){
@@ -312,7 +292,15 @@ public class ShapefileReader{
         shxReader = null;
         channel = null;
     }
-
+    
+    @Override
+    public boolean isClosed() {
+        if(channel != null){
+            return !channel.isOpen();
+        }        
+        return true;
+    }
+    
     public boolean supportsRandomAccess() {
         return randomAccessEnabled;
     }

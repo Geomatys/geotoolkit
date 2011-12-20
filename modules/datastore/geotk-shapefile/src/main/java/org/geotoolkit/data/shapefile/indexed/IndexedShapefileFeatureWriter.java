@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +29,9 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.ShpFiles;
-import org.geotoolkit.data.shapefile.StorageFile;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -60,13 +60,14 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
              final Charset charset)
             throws DataStoreException,IOException {
         super(typeName, shpFiles, attsReader, featureReader, charset);
+        
         this.indexedShapefileDataStore = datastore;
         if (!datastore.indexUseable(FIX)) {
             this.fidWriter = IndexedFidWriter.EMPTY_WRITER;
         } else {
-            StorageFile storageFile = shpFiles.getStorageFile(FIX);
+            final StorageFile storageFile = getLocker().getStorageFile(FIX);
             storageFiles.put(FIX, storageFile);
-            this.fidWriter = new IndexedFidWriter(shpFiles, storageFile);
+            this.fidWriter = getLocker().getFIXWriter(storageFile);
         }
     }
 
@@ -158,7 +159,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     }
     
     private void deleteFile(final ShpFileType shpFileType) {
-        URL url = shpFiles.acquireWrite(shpFileType, this);
+        final URL url = shpFiles.getURL(shpFileType);
         try {
             File toDelete = IOUtilities.toFile(url, ENCODING);
 
@@ -168,8 +169,6 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         } catch(IOException ex){
             //should not happen
             throw new RuntimeException(ex);
-        } finally {
-            shpFiles.unlockWrite(url, this);
         }
     }
 

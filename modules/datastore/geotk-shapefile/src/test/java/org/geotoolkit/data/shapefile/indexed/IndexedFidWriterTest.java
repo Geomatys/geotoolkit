@@ -16,55 +16,60 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
-import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+
 public class IndexedFidWriterTest extends FIDTestCase {
+    
+    private AccessManager locker;
     private ShxReader indexFile;
     private IndexedFidWriter writer;
-
-    public IndexedFidWriterTest() throws IOException {
-        super("IndexedFidWriterTest");
-    }
     
-    protected void setUp() throws Exception {
+    @Override
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
     }
 
-    private void initWriter() throws IOException, MalformedURLException {
-        close();
-        indexFile = new ShxReader(shpFiles, false);
-        writer = new IndexedFidWriter(shpFiles);
-    }
-
-    protected void tearDown() throws Exception {
+    @Override
+    @After
+    public void tearDown() throws Exception {
         close();
         super.tearDown();
     }
 
+    private void initWriter() throws IOException, MalformedURLException {
+        close();
+        locker = shpFiles.createLocker();
+        indexFile = locker.getSHXReader(false);
+        writer = locker.getFIXWriter(locker.getStorageFile(ShpFileType.FIX));
+    }
+     
     private void close() throws IOException {
-        if ((writer != null) && !writer.isClosed()) {
-            writer.close();
-        }
-
-        try {
-            if (indexFile != null) {
-                indexFile.close();
-            }
-        } catch (Exception e) {
-            // fine if already closed
+        //will close index reader and writer
+        if(locker != null){
+            locker.dispose();
+            locker.replaceStorageFiles();
         }
     }
 
     /*
      * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.hasNext()'
      */
+    @Test
     public void testHasNext() throws MalformedURLException, IOException {
-        IndexedFidWriter.generate(backshp.toURL());
+        IndexedFidWriter.generate(backshp.toURI().toURL());
         initWriter();
 
         for( int i = 1, j = indexFile.getRecordCount(); i < j; i++ ) {
@@ -76,8 +81,9 @@ public class IndexedFidWriterTest extends FIDTestCase {
     /*
      * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.remove()'
      */
+    @Test
     public void testRemove() throws MalformedURLException, IOException {
-        IndexedFidWriter.generate(backshp.toURL());
+        IndexedFidWriter.generate(backshp.toURI().toURL());
         initWriter();
         writer.next();
         writer.remove();
@@ -98,8 +104,11 @@ public class IndexedFidWriterTest extends FIDTestCase {
         }
     }
 
+    @Test
     public void testRemoveCounting() throws Exception {
-        IndexedFidWriter.generate(backshp.toURL());
+        final AccessManager locker = shpFiles.createLocker();
+        
+        IndexedFidWriter.generate(backshp.toURI().toURL());
         initWriter();
         writer.next();
         writer.remove();
@@ -114,7 +123,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
         }
 
         close();
-        IndexedFidReader reader = new IndexedFidReader(shpFiles);
+        IndexedFidReader reader = locker.getFIXReader(null);
         try {
             assertEquals(3, reader.getRemoves());
         } finally {
@@ -140,7 +149,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
 
         close();
 
-        reader = new IndexedFidReader(shpFiles);
+        reader = locker.getFIXReader(null);
         try {
             assertEquals(6, reader.getRemoves());
         } finally {
@@ -152,6 +161,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
     /*
      * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.write()'
      */
+    @Test
     public void testWrite() throws IOException {
         initWriter();
 

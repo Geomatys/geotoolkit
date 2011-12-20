@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,16 +24,23 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.geotoolkit.data.shapefile.lock.StorageFile;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.junit.Before;
+import org.junit.Test;
 
-public class StorageFileTest extends TestCase {
+import static org.junit.Assert.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+
+public class StorageFileTest {
 
     private ShpFiles shpFiles1;
     private ShpFiles shpFiles2;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         Map<ShpFileType, File> files1 = ShpFilesTest.createFiles("Files1",
                 ShpFileType.values(), false);
         Map<ShpFileType, File> files2 = ShpFilesTest.createFiles("Files2",
@@ -44,16 +50,18 @@ public class StorageFileTest extends TestCase {
         shpFiles2 = new ShpFiles(files2.get(SHP));
     }
 
+    @Test
     public void testReplaceOriginal() throws Exception {
-        ShpFiles files1 = shpFiles1;
-        ShpFileType type = PRJ;
-        StorageFile storagePRJ1 = files1.getStorageFile(type);
+        final ShpFiles files1 = shpFiles1;
+        final AccessManager locker = files1.createLocker();
+        final ShpFileType type = PRJ;
+        StorageFile storagePRJ1 = locker.getStorageFile(type);
         String writtenToStorageFile = "Copy";
 
         writeData(storagePRJ1, writtenToStorageFile);
 
-        storagePRJ1.replaceOriginal();
-        assertEquals(0, files1.numberOfLocks());
+        locker.disposeReaderAndWriters();
+        locker.replaceStorageFiles();
 
         assertCorrectData(files1, type, writtenToStorageFile);
     }
@@ -72,7 +80,7 @@ public class StorageFileTest extends TestCase {
 
     private void assertCorrectData(final ShpFiles files1, final ShpFileType type,
             final String writtenToStorageFile) throws IOException {
-        ReadableByteChannel channel = files1.getReadChannel(type, this);
+        ReadableByteChannel channel = files1.getReadChannel(type);
         try {
             ByteBuffer buffer = ByteBuffer.allocate(20);
             channel.read(buffer);
@@ -84,12 +92,16 @@ public class StorageFileTest extends TestCase {
         }
     }
 
+    @Test
     public void testReplaceOriginals() throws Exception {
 
-        StorageFile storagePRJ1 = shpFiles1.getStorageFile(PRJ);
-        StorageFile storageSHP1 = shpFiles1.getStorageFile(SHP);
-        StorageFile storagePRJ2 = shpFiles2.getStorageFile(PRJ);
-        StorageFile storageSHP2 = shpFiles2.getStorageFile(SHP);
+        final AccessManager locker1 = shpFiles1.createLocker();
+        final AccessManager locker2 = shpFiles2.createLocker();
+        
+        StorageFile storagePRJ1 = locker1.getStorageFile(PRJ);
+        StorageFile storageSHP1 = locker1.getStorageFile(SHP);
+        StorageFile storagePRJ2 = locker2.getStorageFile(PRJ);
+        StorageFile storageSHP2 = locker2.getStorageFile(SHP);
 
         String sPRJ1 = "storagePRJ1";
         String sSHP1 = "storageSHP1";
@@ -101,30 +113,29 @@ public class StorageFileTest extends TestCase {
         writeData(storagePRJ2, sPRJ2);
         writeData(storageSHP2, sSHP2);
 
-        StorageFile.replaceOriginals(storagePRJ1, storagePRJ2, storageSHP1,
-                storageSHP2, storageSHP2);
+        
+        locker1.disposeReaderAndWriters();
+        locker2.disposeReaderAndWriters();
+        locker1.replaceStorageFiles();
+        locker2.replaceStorageFiles();
 
         this.assertCorrectData(shpFiles1, PRJ, sPRJ1);
         this.assertCorrectData(shpFiles1, SHP, sSHP1);
         this.assertCorrectData(shpFiles2, PRJ, sPRJ2);
         this.assertCorrectData(shpFiles2, SHP, sSHP2);
 
-        assertEquals(0, shpFiles1.numberOfLocks());
-        assertEquals(0, shpFiles2.numberOfLocks());
-
     }
 
-    public void testReplaceOriginalsEmptyArgs() throws Exception {
-
-        StorageFile.replaceOriginals(new StorageFile[0]);
-
-    }
-
+    @Test
     public void testCompareTo() throws IOException {
-        StorageFile storagePRJ1 = shpFiles1.getStorageFile(PRJ);
-        StorageFile storageSHP1 = shpFiles1.getStorageFile(SHP);
-        StorageFile storagePRJ2 = shpFiles2.getStorageFile(PRJ);
-        StorageFile storageSHP2 = shpFiles2.getStorageFile(SHP);
+        
+        final AccessManager locker1 = shpFiles1.createLocker();
+        final AccessManager locker2 = shpFiles2.createLocker();
+        
+        StorageFile storagePRJ1 = locker1.getStorageFile(PRJ);
+        StorageFile storageSHP1 = locker1.getStorageFile(SHP);
+        StorageFile storagePRJ2 = locker2.getStorageFile(PRJ);
+        StorageFile storageSHP2 = locker2.getStorageFile(SHP);
 
         assertFalse(storagePRJ1.compareTo(storageSHP1) == 0);
         assertFalse(storagePRJ1.compareTo(storagePRJ2) == 0);

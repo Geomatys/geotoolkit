@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;

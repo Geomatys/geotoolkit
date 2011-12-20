@@ -17,17 +17,20 @@
 package org.geotoolkit.data.shapefile.fix;
 
 import java.net.URL;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.util.logging.Level;
 
-import org.geotoolkit.data.shapefile.ShpFiles;
-import org.geotoolkit.data.shapefile.StorageFile;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import org.geotoolkit.io.Closeable;
 
 /**
  * The Writer writes out the fid and record number of features to the fid index file.
@@ -35,7 +38,7 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * @author Jesse
  * @module pending
  */
-public class IndexedFidWriter {
+public class IndexedFidWriter implements Closeable {
     public static final int HEADER_SIZE = 13;
     public static final int RECORD_SIZE = 12;
     private FileChannel channel;
@@ -49,19 +52,6 @@ public class IndexedFidWriter {
 
     private long position;
     private int removes;
-    private StorageFile storageFile;
-
-    /**
-     * Creates a new instance and writes the fids to a storage file which is replaces the original
-     * on close().
-     * 
-     * @param shpFiles The shapefiles to used
-     * @throws IOException
-     */
-    public IndexedFidWriter( final ShpFiles shpFiles ) throws IOException {
-        storageFile = shpFiles.getStorageFile(FIX);
-        init(shpFiles, storageFile);
-    }
 
     /**
      * Create a new instance<br>
@@ -71,27 +61,15 @@ public class IndexedFidWriter {
      * @param storageFile the storage file that will be written to.  It will NOT be closed.
      * @throws IOException
      */
-    public IndexedFidWriter( final ShpFiles shpFiles, final StorageFile storageFile ) throws IOException {
+    public IndexedFidWriter(final URL fixUrl, final ReadableByteChannel readfixChannel, 
+            final FileChannel writeChannel ) throws IOException {
         // Note do NOT assign storageFile so that it is closed because this method method requires that
         // the caller close the storage file.
         // Call the single argument constructor instead
-        init(shpFiles, storageFile);
-    }
-
-    private void init( final ShpFiles shpFiles, final StorageFile storageFile ) throws IOException {
-        if (!shpFiles.isLocal()) {
-            throw new IllegalArgumentException(
-                    "Currently only local files are supported for writing");
-        }
-
-
-        try {
-            reader = new IndexedFidReader(shpFiles);
-        } catch (FileNotFoundException e) {
-            reader = new IndexedFidReader(shpFiles, storageFile.getWriteChannel());
-        }
-
-        this.channel = storageFile.getWriteChannel();
+        
+        reader = new IndexedFidReader(fixUrl,readfixChannel,null);
+        
+        this.channel = writeChannel;
         allocateBuffers();
         removes = reader.getRemoves();
         writeBuffer.position(HEADER_SIZE);
@@ -162,22 +140,19 @@ public class IndexedFidWriter {
         return fidIndex;
     }
 
+    @Override
     public void close() throws IOException {
         if (closed) {
             return;
         }
 
         try {
-
             finishLastWrite();
         } finally {
             try {
                 reader.close();
             } finally {
                 closeWriterChannels();
-            }
-            if (storageFile != null) {
-                storageFile.replaceOriginal();
             }
         }
 
@@ -251,6 +226,7 @@ public class IndexedFidWriter {
         current = -1;
     }
 
+    @Override
     public boolean isClosed() {
         return closed;
     }
@@ -266,17 +242,19 @@ public class IndexedFidWriter {
      * Generates the FID index file for the shpFiles
      */
     public static void generate(final ShpFiles shpFiles) throws IOException {
-        LOGGER.fine("Generating fids for " + shpFiles.get(SHP));
+        LOGGER.log(Level.FINE, "Generating fids for {0}", shpFiles.get(SHP));
 
+        final AccessManager locker = shpFiles.createLocker();
+        
         ShxReader indexFile = null;
-        StorageFile file = shpFiles.getStorageFile(FIX);
+        StorageFile file = locker.getStorageFile(FIX);
         IndexedFidWriter writer = null;
 
         try {
-            indexFile = new ShxReader(shpFiles, false);
+            indexFile = locker.getSHXReader(false);
 
             // writer closes channel for you.
-            writer = new IndexedFidWriter(shpFiles, file);
+            writer = locker.getFIXWriter(file);
 
             for (int i = 0, j = indexFile.getRecordCount(); i < j; i++) {
                 writer.next();
@@ -287,7 +265,8 @@ public class IndexedFidWriter {
                 if (writer != null) {
                     writer.close();
                 }
-                file.replaceOriginal();
+                locker.disposeReaderAndWriters();
+                locker.replaceStorageFiles();
             } finally {
                 if (indexFile != null) {
                     indexFile.close();

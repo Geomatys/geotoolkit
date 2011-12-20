@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.index.rtree.memory;
 
-import junit.framework.TestCase;
 import org.geotoolkit.index.DataDefinition;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.rtree.PageStore;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * DOCUMENT ME!
@@ -27,19 +29,12 @@ import org.geotoolkit.index.rtree.PageStore;
  * @author Tommaso Nolli
  * @module pending
  */
-public class MemoryPageStoreTest extends TestCase {
-    /**
-     * Constructor for MemoryPageStoreTest.
-     * 
-     * @param arg0
-     */
-    public MemoryPageStoreTest(final String arg0) {
-        super(arg0);
-    }
+public class MemoryPageStoreTest {
 
     /*
      * Test for void MemoryPageStoreTest(DataDefinition)
      */
+    @Test
     public void testMemoryPageStoreTestDataDefinition() throws Exception {
         DataDefinition dd = new DataDefinition("US-ASCII");
 
@@ -59,6 +54,7 @@ public class MemoryPageStoreTest extends TestCase {
     /*
      * Test for void MemoryPageStore(DataDefinition, int, int, short)
      */
+    @Test
     public void testMemoryPageStoreDataDefinitionintintshort() throws Exception {
         DataDefinition dd = new DataDefinition("US-ASCII");
         dd.addField(Integer.class);

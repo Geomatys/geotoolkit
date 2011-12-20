@@ -26,14 +26,14 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.io.IOException;
-import java.util.List;
+import java.nio.charset.Charset;
 
-import org.geotoolkit.data.dbf.DbaseFileReader;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
-import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator.Buffered;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -66,10 +66,25 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private boolean hasNext = false;
     private int geomAttIndex = 0;
 
-    public IndexedBBoxShapefileAttributeReader(final List<? extends PropertyDescriptor> properties,
-            final ShapefileReader shpReader, final DbaseFileReader dbfR, final CloseableCollection<ShpData> goodRec,
-            final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox, final boolean loose, final double[] estimateRes, final double[] minRes) {
-        super(properties, shpReader, dbfR, goodRec, ite,estimateRes);
+    /**
+     * 
+     * @param locker - to aquiere different readers and writers.
+     * @param atts - the attributes that we are going to read.
+     * @param read3D - for shp reader, read 3d coordinate or not.
+     * @param memoryMapper - for shp and dbf reader
+     * @param resample - for shp reader, decimate coordinates while reading
+     * @param readDBF - true to open a dbf reader
+     * @param charset - for dbf reader
+     * @param estimateRes - avoid reading geometry if under this resolution, 
+     *                      while return an approximate geometry
+     */
+    public IndexedBBoxShapefileAttributeReader(final AccessManager locker,            
+            final PropertyDescriptor[] atts, final boolean read3D, final boolean memoryMapped,
+            final double[] resample, final boolean readDBF, final Charset charset,
+            final double[] estimateRes, final CloseableCollection<ShpData> goodRec,
+            final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox, 
+            final boolean loose, final double[] minRes) throws IOException, DataStoreException {
+        super(locker,atts,read3D,memoryMapped,resample,readDBF,charset,estimateRes,goodRec,ite);
         this.bboxMinX = bbox.getMinX();
         this.bboxMinY = bbox.getMinY();
         this.bboxMaxX = bbox.getMaxX();
@@ -86,8 +101,8 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
         this.loose = loose;
         this.boundingGeometry = toGeometry(bbox);
 
-        for (int i = 0, n = properties.size(); i < n; i++) {
-            if (properties.get(i) instanceof GeometryDescriptor) {
+        for (int i=0; i<atts.length; i++) {
+            if (atts[i] instanceof GeometryDescriptor) {
                 geomAttIndex = i;
                 break;
             }

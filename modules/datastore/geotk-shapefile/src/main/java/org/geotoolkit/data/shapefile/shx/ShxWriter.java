@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
+import org.geotoolkit.io.Closeable;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 
@@ -30,7 +31,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class ShxWriter {
+public class ShxWriter implements Closeable{
 
     private final FileChannel channel;
     private final ByteBuffer buffer;
@@ -95,12 +96,18 @@ public class ShxWriter {
     /**
      * Close the underlying Channels.
      */
+    @Override
     public void close() throws IOException {
         if (channel.isOpen()) {
             channel.close();
         }
     }
 
+    @Override
+    public boolean isClosed() {
+        return !channel.isOpen();
+    }
+    
     /**
      * Drain buffer into underlying channel.
      */

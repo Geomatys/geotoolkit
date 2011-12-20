@@ -18,7 +18,6 @@
 package org.geotoolkit.data.shapefile.fix;
 
 
-import org.geotoolkit.data.shapefile.FeatureIDReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -28,12 +27,13 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.FeatureIDReader;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.io.Closeable;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
@@ -43,7 +43,7 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class IndexedFidReader implements FeatureIDReader {
+public class IndexedFidReader implements FeatureIDReader, Closeable {
     private ReadableByteChannel readChannel;
     private ByteBuffer buffer;
     private long count;
@@ -61,30 +61,25 @@ public class IndexedFidReader implements FeatureIDReader {
      */
     private long bufferStart = Long.MIN_VALUE;
 
-    public IndexedFidReader(final ShpFiles shpFiles) throws IOException {
-        init( shpFiles, shpFiles.getReadChannel(FIX, this) );
-    }
-
-    public IndexedFidReader(final ShpFiles shpFiles, final RecordNumberTracker reader)
-            throws IOException {
-        this(shpFiles);
+    public IndexedFidReader(final URL fixUrl, final ReadableByteChannel fixChannel,
+            final RecordNumberTracker reader) throws IOException {
         this.reader = reader;
-    }
-
-    public IndexedFidReader( final ShpFiles shpFiles, final ReadableByteChannel in ) throws IOException {
-        init(shpFiles, in);
-    }
-
-    private void init( final ShpFiles shpFiles, final ReadableByteChannel in ) throws IOException {
-        this.typeName = shpFiles.getTypeName() + ".";
-        this.readChannel = in;
-        getHeader(shpFiles);
+        
+        final String path = ShpFileType.FIX.toBase(fixUrl);
+        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
+        int dot = path.indexOf('.', slash);
+        if (dot < 0) {
+            dot = path.length();
+        }        
+        this.typeName = path.substring(slash, dot) + ".";
+        this.readChannel = fixChannel;
+        getHeader(fixUrl);
 
         buffer = ByteBuffer.allocateDirect(IndexedFidWriter.RECORD_SIZE * 1024);
         buffer.position(buffer.limit());
     }
 
-    private void getHeader(final ShpFiles shpFiles) throws IOException {
+    private void getHeader(final URL fixUrl) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(IndexedFidWriter.HEADER_SIZE);
         ShapefileReader.fill(buffer, readChannel);
 
@@ -105,12 +100,10 @@ public class IndexedFidReader implements FeatureIDReader {
 
         this.count = buffer.getLong();
         this.removes = buffer.getInt();
-        if (removes > getCount() / 2) {
-            URL url = shpFiles.acquireRead(FIX, this);
+        if (removes > count/2 ) {
             try {
-                IOUtilities.toFile(url, ENCODING).deleteOnExit();
+                IOUtilities.toFile(fixUrl, ENCODING).deleteOnExit();
             } finally {
-                shpFiles.unlockRead(url, this);
             }
         }
     }
@@ -255,6 +248,7 @@ public class IndexedFidReader implements FeatureIDReader {
         }
     }
 
+    @Override
     public void close() throws DataStoreRuntimeException {
         try {
             if (reader != null){
@@ -272,7 +266,13 @@ public class IndexedFidReader implements FeatureIDReader {
             }
         }
     }
-
+        
+    @Override
+    public boolean isClosed() {
+        return !readChannel.isOpen();
+    }
+    
+    @Override
     public boolean hasNext() throws DataStoreRuntimeException {
         if (done) {
             return false;
@@ -299,6 +299,7 @@ public class IndexedFidReader implements FeatureIDReader {
         return buffer.remaining() != 0;
     }
 
+    @Override
     public String next() throws DataStoreRuntimeException {
         if (reader != null) {
             try {

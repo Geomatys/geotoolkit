@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-
-import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
@@ -40,6 +39,8 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
+import static org.junit.Assert.*;
+
 /**
  * 
  * @version $Id$
@@ -50,32 +51,33 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     final String[] files = { "shapes/statepop.shp", "shapes/polygontest.shp",
             "shapes/pointtest.shp", "shapes/holeTouchEdge.shp",
             "shapes/stream.shp", "shapes/chinese_poly.shp" };
-
-    /** Creates a new instance of ShapefileReadWriteTest */
-    public ShapefileReadWriteTest(final String name) throws IOException {
-        super(name);
-    }
     
+    @Test
     public void testReadWriteStatePop() throws Exception {
         test("shapes/statepop.shp");
     }
     
+    @Test
     public void testReadWritePolygonTest() throws Exception {
         test("shapes/polygontest.shp");
     }
     
+    @Test
     public void testReadWritePointTest() throws Exception {
         test("shapes/pointtest.shp");
     }
     
+    @Test
     public void testReadWriteHoleTouchEdge() throws Exception {
         test("shapes/holeTouchEdge.shp");
     }
     
+    @Test
     public void testReadWriteChinese() throws Exception {
         test("shapes/chinese_poly.shp", Charset.forName("GB18030"));
     }
     
+    @Test
     public void testReadDanishPoint() throws Exception {
         test("shapes/danish_point.shp");
     }
@@ -104,6 +106,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
     Exception exception = null;
 
+    @Test
     public void testConcurrentReadWrite() throws Exception {
         System.gc();
         System.runFinalization(); // If some streams are still open, it may
@@ -166,8 +169,8 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test(files[0]);
     }
 
-    private static void fail(final String message, final Throwable cause) {
-        AssertionFailedError fail = new AssertionFailedError(message);
+    private static void fail(final String message, final Throwable cause) throws Throwable {
+        Throwable fail = new Exception(message);
         fail.initCause(cause);
         throw fail;
     }
@@ -201,7 +204,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         ShapefileDataStore shapefile;
         Name typeName = type.getName();
         Map params = new HashMap();
-        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), tmp.toURL());
+        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), tmp.toURI().toURL());
         params.put(ShapefileDataStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);
         params.put(ShapefileDataStoreFactory.DBFCHARSET.getName().toString(), charset);
 
@@ -220,7 +223,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         if (true) {
             // review open
-            ShapefileDataStore review = new ShapefileDataStore(tmp.toURL(), tmp.toString(), memorymapped, charset);
+            ShapefileDataStore review = new ShapefileDataStore(tmp.toURI().toURL(), tmp.toString(), memorymapped, charset);
             typeName = review.getNames().iterator().next();
             FeatureCollection<SimpleFeature> again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
@@ -290,8 +293,4 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
     }
 
-    public static final void main(final String[] args) throws Exception {
-        // verbose = true;
-        junit.textui.TestRunner.run(suite(ShapefileReadWriteTest.class));
-    }
 }

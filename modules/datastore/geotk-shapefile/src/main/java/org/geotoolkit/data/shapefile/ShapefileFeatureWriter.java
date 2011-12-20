@@ -16,9 +16,11 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
-import static org.geotoolkit.data.shapefile.ShpFileType.SHP;
-import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
+import org.geotoolkit.data.shapefile.lock.StorageFile;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.DBF;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHX;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -46,6 +48,8 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -109,9 +113,9 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         this.attReader = attsReader;
         this.featureReader = featureReader;
 
-        storageFiles.put(SHP, shpFiles.getStorageFile(SHP));
-        storageFiles.put(SHX, shpFiles.getStorageFile(SHX));
-        storageFiles.put(DBF, shpFiles.getStorageFile(DBF));
+        storageFiles.put(SHP, getLocker().getStorageFile(SHP));
+        storageFiles.put(SHX, getLocker().getStorageFile(SHX));
+        storageFiles.put(DBF, getLocker().getStorageFile(DBF));
 
         this.featureType = featureReader.getFeatureType();
 
@@ -151,6 +155,10 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         }
     }
 
+    public final AccessManager getLocker(){
+        return attReader.getLocker();
+    }
+    
     /**
      * Go back and update the headers with the required info.
      * 
@@ -201,7 +209,8 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * @throws IOException DOCUMENT ME!
      */
     protected void clean() throws IOException {
-        StorageFile.replaceOriginals(storageFiles.values().toArray(new StorageFile[storageFiles.size()]));
+        getLocker().disposeReaderAndWriters();
+        getLocker().replaceStorageFiles();
     }
 
     /**

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.data.shapefile.ShpFileType;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
 
 /**
  * Enumerates the different types of Shapefile geometry indices there are.

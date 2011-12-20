@@ -24,8 +24,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,7 +51,7 @@ public class ShpXmlFileReader {
         DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
         DocumentBuilder constructeur = fabrique.newDocumentBuilder();
 
-        InputStream inputStream = shapefileFiles.getInputStream(ShpFileType.SHP_XML, this);
+        InputStream inputStream = shapefileFiles.getInputStream(ShpFileType.SHP_XML);
 
         try {
             dom = constructeur.parse(inputStream);

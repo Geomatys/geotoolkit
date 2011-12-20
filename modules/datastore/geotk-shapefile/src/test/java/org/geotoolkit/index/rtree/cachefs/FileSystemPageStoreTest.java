@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.index.rtree.cachefs;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.security.SecureRandom;
-
-import junit.framework.TestCase;
 
 import org.geotoolkit.index.DataDefinition;
 import org.geotoolkit.index.TreeException;
+
+import static org.junit.Assert.*;
 
 /**
  * DOCUMENT ME!
@@ -32,19 +32,12 @@ import org.geotoolkit.index.TreeException;
  * @author Tommaso Nolli
  * @module pending
  */
-public class FileSystemPageStoreTest extends TestCase {
-    /**
-     * Constructor for FileSystemPageStoreTest.
-     * 
-     * @param arg0
-     */
-    public FileSystemPageStoreTest(final String arg0) {
-        super(arg0);
-    }
+public class FileSystemPageStoreTest {
 
     /*
      * Test for void FileSystemPageStore(File)
      */
+    @Test
     public void testFileSystemPageStoreFile() throws Exception {
         File file = File.createTempFile("geotoolkit2a", ".grx");
         file.deleteOnExit();
@@ -62,6 +55,7 @@ public class FileSystemPageStoreTest extends TestCase {
     /*
      * Test for void FileSystemPageStore(File, DataDefinition)
      */
+    @Test
     public void testFileSystemPageStoreFileDataDefinition() throws Exception {
         File file = File.createTempFile("geotoolkit2b", ".grx");
         file.deleteOnExit();
@@ -83,6 +77,7 @@ public class FileSystemPageStoreTest extends TestCase {
     /*
      * Test for void FileSystemPageStore(File, DataDefinition, int, int, short)
      */
+    @Test
     public void testFileSystemPageStoreFileDataDefinitionintintshort()
             throws Exception {
         File file = File.createTempFile("geotoolkit2c", ".grx");
