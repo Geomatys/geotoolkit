@@ -17,27 +17,18 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.VolatileImage;
 import java.util.logging.Level;
-
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
-
+import org.geotoolkit.factory.Hints;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -52,8 +43,8 @@ import org.opengis.referencing.operation.TransformException;
 public class J2DCanvasVolatile extends J2DCanvas{
 
     private final GraphicsConfiguration GC;
-    private final DrawingThread thread;
-    private final DelayedController controller = new DelayedController(this);
+    private final J2DCanvasVolatile.DrawingThread thread;
+    private final J2DCanvasVolatile.DelayedController controller = new J2DCanvasVolatile.DelayedController(this);
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
@@ -68,7 +59,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     
     public J2DCanvasVolatile(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
-        thread = new DrawingThread();
+        thread = new J2DCanvasVolatile.DrawingThread();
         thread.start();
         
         //we might not know our dimension until it is painted by a swing component for exemple.
@@ -205,10 +196,15 @@ public class J2DCanvasVolatile extends J2DCanvas{
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
 
-        final AbstractContainer renderer         = getContainer();
-        if(renderer != null && renderer instanceof AbstractContainer2D){
-            final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
-            render(context2D, renderer2D.getSortedGraphics());
+        try{
+            final AbstractContainer renderer         = getContainer();
+            if(renderer != null && renderer instanceof AbstractContainer2D){
+                final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
+                render(context2D, renderer2D.getSortedGraphics());
+            }
+        }catch(Exception ex){
+            //volatile canvas must never lock itself.
+            monitor.exceptionOccured(ex, Level.WARNING);
         }
         
         //End painting
