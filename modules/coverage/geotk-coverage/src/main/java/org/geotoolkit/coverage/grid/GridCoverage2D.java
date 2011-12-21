@@ -251,7 +251,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
          * is thrown.
          */
         sampleDimensions = new GridSampleDimension[image.getNumBands()];
-        RenderedSampleDimension.create(name, image, null, image.getSampleModel(), bands, sampleDimensions);
+        RenderedSampleDimension.create(name, image, bands, sampleDimensions);
         /*
          * Computes the grid envelope if it was not explicitly provided. The range will be inferred
          * from the image size, if needed. The envelope computation (if needed) requires a valid

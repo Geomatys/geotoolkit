@@ -54,8 +54,8 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
         // Initialize...
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         final GridCoverageBuilder.Variable variable = builder.newVariable("Elevation", SI.METRE);
-        variable.addNodataValue("No data", 0);
-        builder.setSampleRange(0, 40000);
+        variable.addNodataValue("No data", 0, null);
+        builder.setSampleRange(1, 40000);
         builder.setImageSize(360, 180);
         builder.setEnvelope(-180, -90, 180, 90);
         builder.setCoordinateReferenceSystem("CRS:84");
@@ -86,7 +86,7 @@ public final strictfp class ViewsManagerTest extends GridCoverageTestBase {
         // Initialize...
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         final GridCoverageBuilder.Variable variable = builder.newVariable("Temperature", SI.CELSIUS);
-        variable.addNodataValue("No data", 32767);
+        variable.addNodataValue("No data", 32767, null);
         builder.setSampleRange(-20000, 23000);
         builder.setImageSize(360, 180);
         builder.setEnvelope(-180, -90, 180, 90);

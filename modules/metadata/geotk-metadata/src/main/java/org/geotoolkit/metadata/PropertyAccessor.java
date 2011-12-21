@@ -431,8 +431,7 @@ final class PropertyAccessor {
                 getters = type.getMethods();
                 boolean hasExtraGetter = false;
                 int count = 0;
-                for (int i=0; i<getters.length; i++) {
-                    final Method candidate = getters[i];
+                for (final Method candidate : getters) {
                     if (candidate.isAnnotationPresent(Deprecated.class)) {
                         // Ignores deprecated methods.
                         continue;

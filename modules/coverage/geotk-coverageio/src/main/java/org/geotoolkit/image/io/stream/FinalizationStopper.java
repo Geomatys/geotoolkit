@@ -22,12 +22,12 @@ import java.util.TimerTask;
 
 
 /**
- * Stops execution of {@link System#runFinalization} when a timeout is reach. This timer is
+ * Stops execution of {@link System#runFinalization()} when a timeout is reach. This timer is
  * used in order to prevent system freeze that occurs sometime when waiting for finalization
  * in {@link UrlInputSpi#createInputStreamInstance}. If a {@code finalize()} method is blocked
  * in an I/O operation upon an interruptible channel, the channel will be closed and the finalize
  * method will receive a {@link java.nio.channels.ClosedByInterruptException}.
- * See {@link Thread#interrupt} javadoc for more details.
+ * See {@link Thread#interrupt()} javadoc for more details.
  * <p>
  * Most of the time, interruptions are never performed.
  *
@@ -39,12 +39,12 @@ import java.util.TimerTask;
  */
 final class FinalizationStopper extends TimerTask {
     /**
-     * Timer for stopping execution of {@link System#runFinalization}.
+     * Timer for stopping execution of {@link System#runFinalization()}.
      */
     private static final Timer TIMER = new Timer("Finalization stopper", true);
 
     /**
-     * The processus to stop.
+     * The process to stop.
      */
     private final Thread toStop;
 

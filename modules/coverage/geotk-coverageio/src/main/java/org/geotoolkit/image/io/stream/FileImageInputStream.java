@@ -35,7 +35,7 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
  *       argument, so no reference to the channel exists outside this class.</li>
  *   <li>The {@link #close()} method closes also the channel. This is allowed because
  *       this class "own" the channel.</li>
- *   <li>The file given to the constructor is keept for information purpose.</li>
+ *   <li>The file given to the constructor is keep for information purpose.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)

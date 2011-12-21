@@ -92,20 +92,28 @@ final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * Creates a set of sample dimensions for the given image. The array length of both
      * arguments must matches the number of bands in the supplied {@code image}.
-     * <p>
-     * This method can work either with {@code image} or {@code raster}. Exactly one of those
-     * arguments shall be non-null, and the other one shall be null.
      *
      * @param  name   The name for data (e.g. "Elevation"), or {@code null} if none.
      * @param  image  The image for which to create a set of sample dimensions, or {@code null}.
-     * @param  raster The raster for which to create a set of sample dimensions, or {@code null}.
-     * @param  model  The sample model of {@code image} or {@code raster} (the one which is not null).
      * @param  src    User-provided sample dimensions, or {@code null} if none.
      * @param  dst    The array where to put sample dimensions.
      * @return {@code true} if all sample dimensions are geophysics (quantitative), or
      *         {@code false} if all sample dimensions are non-geophysics (qualitative).
      * @throws IllegalArgumentException if geophysics and non-geophysics dimensions are mixed.
      */
+    static boolean create(final CharSequence  name,
+                          final RenderedImage image,
+                          final GridSampleDimension[] src,
+                          final GridSampleDimension[] dst)
+    {
+        return create(name, image, null, image.getSampleModel(), src, dst);
+    }
+
+    /**
+     * @deprecated Remove after we deleted {@link GridCoverageFactory}.
+     *             Move the body in the above un-deprecated method.
+     */
+    @Deprecated
     static boolean create(final CharSequence        name,
                           final RenderedImage       image,
                           final Raster              raster,

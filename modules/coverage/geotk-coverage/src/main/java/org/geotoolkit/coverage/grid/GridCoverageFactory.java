@@ -264,6 +264,13 @@ public class GridCoverageFactory extends Factory {
                                  final float[][]    matrix,
                                  final Envelope     envelope)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setRenderedImage(matrix);
+            return builder.getGridCoverage2D();
+        }
         int width  = 0;
         int height = matrix.length;
         for (int j=0; j<height; j++) {
@@ -365,6 +372,16 @@ public class GridCoverageFactory extends Factory {
                                  final Color[][]      colors,
                                  final RenderingHints hints)
     {
+        if (USE_BUILDER) {
+            final Hints merge = new Hints(builderHints);
+            if (hints != null) merge.putAll(hints);
+            final GridCoverageBuilder builder = new GridCoverageBuilder(merge);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setSampleDimensions(minValues, maxValues, units, colors);
+            builder.setRenderedImage(raster);
+            return builder.getGridCoverage2D();
+        }
         final int numBands = raster.getNumBands();
         final Unit<?>[] unitsArray = new Unit<?>[numBands]; Arrays.fill(unitsArray, units);
         final CharSequence[] names = new CharSequence[numBands]; Arrays.fill(names, name);
@@ -421,6 +438,17 @@ public class GridCoverageFactory extends Factory {
                                  final Color[][]                 colors,
                                  final RenderingHints            hints)
     {
+        if (USE_BUILDER) {
+            final Hints merge = new Hints(builderHints);
+            if (hints != null) merge.putAll(hints);
+            final GridCoverageBuilder builder = new GridCoverageBuilder(merge);
+            builder.setName(name);
+            builder.setCoordinateReferenceSystem(crs);
+            builder.setGridToCRS(gridToCRS);
+            builder.setSampleDimensions(minValues, maxValues, units, colors);
+            builder.setRenderedImage(raster);
+            return builder.getGridCoverage2D();
+        }
         final int numBands = raster.getNumBands();
         final Unit<?>[] unitsArray = new Unit<?>[numBands]; Arrays.fill(unitsArray, units);
         final CharSequence[] names = new CharSequence[numBands]; Arrays.fill(names, name);
@@ -473,6 +501,14 @@ public class GridCoverageFactory extends Factory {
                                  final Envelope               envelope,
                                        GridSampleDimension... bands)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setEnvelope(envelope);
+            builder.setSampleDimensions(bands);
+            builder.setRenderedImage(raster);
+            return builder.getGridCoverage2D();
+        }
         if (bands == null || bands.length == 0) {
             bands = createDefaultBands(name, raster);
         }
@@ -508,6 +544,15 @@ public class GridCoverageFactory extends Factory {
                                  final MathTransform             gridToCRS,
                                        GridSampleDimension...    bands)
     {
+        if (USE_BUILDER) {
+            final GridCoverageBuilder builder = new GridCoverageBuilder(builderHints);
+            builder.setName(name);
+            builder.setCoordinateReferenceSystem(crs);
+            builder.setGridToCRS(gridToCRS);
+            builder.setSampleDimensions(bands);
+            builder.setRenderedImage(raster);
+            return builder.getGridCoverage2D();
+        }
         if (bands == null || bands.length == 0) {
             bands = createDefaultBands(name, raster);
         }

@@ -253,7 +253,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
 
     /**
      * Constructs an authority factory using a set of factories created from the specified hints.
-     * Hints of special interrest are:
+     * Hints of special interest are:
      * <p>
      * <ul>
      *   <li>{@link Hints#EPSG_DATA_SOURCE}</li>

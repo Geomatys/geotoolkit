@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ImagingOpException;
+import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -275,7 +276,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
         }
         final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
         try {
-            Class.forName("org.geotoolkit.gui.swing.OperationTreeBrowser")
+            Class.forName("org.geotoolkit.gui.swing.image.OperationTreeBrowser")
                  .getMethod("show", new Class<?>[] {RenderedImage.class})
                  .invoke(null, new Object[]{image});
         } catch (RuntimeException e) {
