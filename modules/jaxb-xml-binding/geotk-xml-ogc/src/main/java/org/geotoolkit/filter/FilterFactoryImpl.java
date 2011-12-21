@@ -682,24 +682,24 @@ public class FilterFactoryImpl implements FilterFactory2 {
     public Object GeometryToGML(final Object geom) {
         Object result = null;
         if (geom instanceof Polygon) {
-            Polygon p          = (Polygon) geom;
-            Coordinate[] coord = p.getCoordinates();
+            final Polygon p          = (Polygon) geom;
+            final Coordinate[] coord = p.getCoordinates();
 
             // an envelope
             if (coord.length == 5) {
-                DirectPositionType lowerCorner = new DirectPositionType(coord[0].x, coord[1].y);
-                DirectPositionType upperCorner = new DirectPositionType(coord[2].x, coord[0].y);
+                final DirectPositionType lowerCorner = new DirectPositionType(coord[0].x, coord[1].y);
+                final DirectPositionType upperCorner = new DirectPositionType(coord[2].x, coord[0].y);
                 result = new EnvelopeType(null, lowerCorner, upperCorner, "EPSG:4326");
             }
         } else if (geom instanceof Point){
-            Point p = (Point) geom;
-            Coordinate[] coord = p.getCoordinates();
-            result = new PointType(null, new DirectPositionType(coord[0].x, coord[0].y));
+            final Point p = (Point) geom;
+            final Coordinate[] coord = p.getCoordinates();
+            result = new PointType(null, new DirectPositionType(coord[0].x, coord[0].y, coord[0].z));
             ((PointType)result).setSrsName("EPSG:4326");
 
         } else if (geom instanceof LineString){
-            LineString ls = (LineString) geom;
-            Coordinate[] coord = ls.getCoordinates();
+            final LineString ls = (LineString) geom;
+            final Coordinate[] coord = ls.getCoordinates();
             result = new LineStringType(new CoordinatesType(coord[0].x + "," + coord[0].y + " " + coord[1].x + "," + coord[1].y ));
             ((LineStringType)result).setSrsName("EPSG:4326");
 
