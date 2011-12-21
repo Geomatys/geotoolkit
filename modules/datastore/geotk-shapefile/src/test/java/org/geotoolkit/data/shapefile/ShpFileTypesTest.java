@@ -46,6 +46,20 @@ public class ShpFileTypesTest {
         }
 
     }
+    
+    /**
+     * Check special caracters are not erased.
+     */
+    @Test
+    public void testToURLBase2() throws MalformedURLException {
+
+        final File file = new File("++t--++est.shp");
+        final URL url = file.toURI().toURL();
+        
+        final String str = ShpFileType.SHP.toBase(url);
+        assertTrue(str.contains("++t--++est"));
+    }
+    
 
     private void assertToURLBase(final ShpFileType type) throws MalformedURLException {
         String urlString = "file://c:/shapefiles/file1." + type.extension;

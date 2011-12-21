@@ -17,19 +17,8 @@
  */
 package org.geotoolkit.data.shapefile.lock;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -40,16 +29,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.ENCODING;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.LOGGER;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.QIX;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.internal.io.IOUtilities;
-
-import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.WeakHashSet;
 
 /**
@@ -282,7 +271,7 @@ public final class ShpFiles {
      * @return true if local, false if remote
      */
     public boolean isLocal() {
-        return urls.get(ShpFileType.SHP).toExternalForm().toLowerCase().startsWith("file:");
+        return isLocal(urls.get(ShpFileType.SHP));
     }
 
     /**
@@ -566,39 +555,45 @@ public final class ShpFiles {
         return null;
     }
 
-    public static File toFile(final URL url){
+    public static File toFile(final URL url) {
         try {
-            return IOUtilities.toFile(url, ENCODING);
-        } catch (IOException ex) {
-            //should not happen, in case try the old way
-            //throw new RuntimeException(ex);
-
-            String string = url.toExternalForm();
+            return new File(url.toURI());
+        } catch (URISyntaxException exp) {
             try {
-                string = URLDecoder.decode(string, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                // Shouldn't happen
-            }
+                return IOUtilities.toFile(url, ENCODING);
+            } catch (IOException ex) {
+                //should not happen, in case try the old way
+                //throw new RuntimeException(ex);
 
-            final String path3;
-            final String simplePrefix = "file:/";
-            final String standardPrefix = simplePrefix + "/";
-
-            if (string.startsWith(standardPrefix)) {
-                path3 = string.substring(standardPrefix.length());
-            } else if (string.startsWith(simplePrefix)) {
-                path3 = string.substring(simplePrefix.length() - 1);
-            } else {
-                final String auth = url.getAuthority();
-                final String path2 = url.getPath().replace("%20", " ");
-                if (auth != null && !auth.equals("")) {
-                    path3 = "//" + auth + path2;
-                } else {
-                    path3 = path2;
+                String string = url.toExternalForm();
+                if(!ShpFiles.isLocal(url)){
+                    try {
+                        string = URLDecoder.decode(string, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        // Shouldn't happen
+                    }
                 }
-            }
 
-            return new File(path3);
+                final String path3;
+                final String simplePrefix = "file:/";
+                final String standardPrefix = simplePrefix + "/";
+
+                if (string.startsWith(standardPrefix)) {
+                    path3 = string.substring(standardPrefix.length());
+                } else if (string.startsWith(simplePrefix)) {
+                    path3 = string.substring(simplePrefix.length() - 1);
+                } else {
+                    final String auth = url.getAuthority();
+                    final String path2 = url.getPath().replace("%20", " ");
+                    if (auth != null && !auth.equals("")) {
+                        path3 = "//" + auth + path2;
+                    } else {
+                        path3 = path2;
+                    }
+                }
+
+                return new File(path3);
+            }
         }
     }
 
@@ -659,4 +654,8 @@ public final class ShpFiles {
         return Trees.toString("ShpFiles", urls.entrySet());
     }
 
+    public static boolean isLocal(final URL url){
+        return url.toExternalForm().toLowerCase().startsWith("file:");
+    }
+    
 }
