@@ -43,7 +43,7 @@
  *         This implies the use of a character encoding, which may be local-dependent.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.FileImageReader}</td>
- *     <td>&nbsp;</td>
+ *     <td>{@link org.geotoolkit.image.io.FileImageWriter}</td>
  *     <td>Base class for readers/writers that require {@link java.io.File} input or output.
  *         Other kind of input/output are copied in a temporary file. This is used for wrapping
  *         native libraries which doesn't work with Java streams.</td>
@@ -168,7 +168,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.18
+ * @version 3.20
  *
  * @see org.geotoolkit.image.io.plugin
  *

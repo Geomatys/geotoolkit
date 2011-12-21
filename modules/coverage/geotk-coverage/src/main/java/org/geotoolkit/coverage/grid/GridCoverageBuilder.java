@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferFloat;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
@@ -40,14 +41,18 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.measure.unit.Unit;
-import javax.media.jai.PlanarImage;
 import javax.media.jai.TiledImage;
+import javax.media.jai.PlanarImage;
+import javax.media.jai.ImageFunction;
+import javax.media.jai.RasterFactory;
 import javax.media.jai.RenderedImageAdapter;
+import javax.media.jai.operator.ImageFunctionDescriptor;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.SampleDimension;
+import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -97,7 +102,7 @@ import org.geotoolkit.resources.Errors;
  *     <td>&nbsp;{@link #crs}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setCoordinateReferenceSystem(CoordinateReferenceSystem) CRS instance} or
  *               {@linkplain #setCoordinateReferenceSystem(String) authority code}&nbsp;</td>
- *     <td>&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Hints#DEFAULT_COORDINATE_REFERENCE_SYSTEM From hints}&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #envelope}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setEnvelope(Envelope) Envelope instance} or
@@ -140,8 +145,8 @@ import org.geotoolkit.resources.Errors;
  *               {@linkplain Variable#setSampleRange(int, int) lower and upper values}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
- *     <td>&nbsp;{@link Variable#transform Variable.transform}&nbsp;</td>
- *     <td>&nbsp;{@linkplain Variable#setTransform(MathTransform1D) Transform instance} or
+ *     <td>&nbsp;{@link Variable#sampleToUnit Variable.sampleToUnit}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain Variable#setSampleToUnit(MathTransform1D) Transform instance} or
  *               {@linkplain Variable#setLinearTransform(double, double) coefficients}&nbsp;</td>
  *     <td>&nbsp;{@linkplain LinearTransform1D#IDENTITY Identity}&nbsp;</td>
  *   </tr><tr>
@@ -161,7 +166,10 @@ import org.geotoolkit.resources.Errors;
  *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #image}&nbsp;</td>
- *     <td>&nbsp;{@linkplain #setRenderedImage(RenderedImage) Rendered image instance}&nbsp;</td>
+ *     <td>&nbsp;{@linkplain #setRenderedImage(RenderedImage) Image},
+ *               {@linkplain #setRenderedImage(WritableRaster) raster},
+ *               {@linkplain #setRenderedImage(float[][]) matrix} or
+ *               {@linkplain #setRenderedImage(ImageFunction) function}&nbsp;</td>
  *     <td>&nbsp;Empty image&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #sources}&nbsp;</td>
@@ -557,7 +565,18 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Creates a uninitialized builder using the given hints
+     * Creates a uninitialized builder using the given hints.
+     * Hints of special interest are:
+     * <p>
+     * <ul>
+     *   <li>{@link Hints#DEFAULT_COORDINATE_REFERENCE_SYSTEM} - The CRS to use when none is
+     *       {@linkplain #setCoordinateReferenceSystem(CoordinateReferenceSystem) explicitely set}.</li>
+     *   <li>{@link Hints#SAMPLE_DIMENSION_TYPE} - specifies the {@link SampleDimensionType} to be
+     *       used at rendering time, which can be one of {@link SampleDimensionType#UNSIGNED_8BITS
+     *       UNSIGNED_8BITS} or {@link SampleDimensionType#UNSIGNED_16BITS UNSIGNED_16BITS}.</li>
+     *   <li>{@link Hints#TILE_ENCODING} - controls the compression to use for the serialization
+     *       of {@link GridCoverage2D} instances.</li>
+     * </ul>
      *
      * @param hints Optional hints for fetching factories, or {@code null} if none.
      *
@@ -668,6 +687,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *   <li>The value defined by the last call to {@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)}.</li>
      *   <li>The {@linkplain #envelope} CRS.</li>
      *   <li>The {@linkplain #gridGeometry grid geometry} CRS.</li>
+     *   <li>The value of {@link Hints#DEFAULT_COORDINATE_REFERENCE_SYSTEM}.</li>
      * </ul>
      *
      * @return The current CRS, or {@code null} if unspecified and can not be inferred.
@@ -689,6 +709,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (isDefined(GeneralGridGeometry.CRS)) {
                 return ((GeneralGridGeometry) gridGeometry).getCoordinateReferenceSystem();
             }
+            if (hints != null) {
+                return (CoordinateReferenceSystem) hints.get(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM);
+            }
         }
         return crs;
     }
@@ -700,7 +723,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getCoordinateReferenceSystem() defines a CRS}, then
+     * and {@linkplain GeneralGridGeometry#getCoordinateReferenceSystem() contains a CRS}, then
      * that later CRS will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  crs The new CRS to use, or {@code null}.
@@ -809,7 +832,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getEnvelope() defines an envelope}, then that later
+     * and {@linkplain GeneralGridGeometry#getEnvelope() contains an envelope}, then that later
      * envelope will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  envelope The new envelope to use, or {@code null}.
@@ -916,7 +939,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getExtent() defines an extent}, then that later extent
+     * and {@linkplain GeneralGridGeometry#getExtent() contains an extent}, then that later extent
      * will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  extent The new grid extent to use, or {@code null}.
@@ -1032,7 +1055,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * {@section Precedence}
      * If a grid geometry has been {@linkplain #setGridGeometry(GridGeometry) explicitely set}
-     * and {@linkplain GeneralGridGeometry#getGridToCRS() defines a transform}, then that later
+     * and {@linkplain GeneralGridGeometry#getGridToCRS() contains a transform}, then that later
      * transform will have precedence for the creation of {@link GridCoverage2D} instances.
      *
      * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
@@ -1357,8 +1380,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Gets the given image property as an array of double values, or {@code null} if none.
+     *
+     * @param  name The image property name, typically {@code "minimum"} or {@code "maximum"}.
+     * @return The property value, or {@code null} if none or not a {@code double[]} type.
      */
-    private double[] getArrayProperty(final String name) {
+    final double[] getArrayProperty(final String name) {
         final RenderedImage image = this.image;
         if (image != null) {
             final Object property = image.getProperty(name);
@@ -1371,7 +1397,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
     /**
      * Creates defaults sample dimensions. This method should be invoked only when no sample
-     * dimensions can be built from the {@linkplain #variables}.
+     * dimensions can be built from the {@linkplain #variables}. This may happen in any of the
+     * following cases:
+     * <p>
+     * <ul>
+     *   <li>There is no {@linkplain #variables}.</li>
+     *   <li>The variables do not contain "no data" value or range of sample values.
+     *       Note however that they may contain name, units and colors information.</li>
+     *   <li>The user overrode the {@link Variable#getSampleDimension()} method and returns
+     *       {@code null} for whatever raison of his choice.</li>
+     * </ul>
+     * <p>
+     * This method gets the names, colors, ranges of sample values and units for each band
+     * (if available), then delegates the actual work to {@link RenderedSampleDimension}.
      *
      * @param raster The raster for which to build sample dimensions, or {@code null} for
      *               using the {@linkplain #image} instead.
@@ -1379,8 +1417,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     private SampleDimension[] getDefaultSampleDimensions(final Raster raster) {
-        double[]     minimum = null;
-        double[]     maximum = null;
         Color[][]     colors = null;
         Unit<?>[]      units = null;
         CharSequence[] names = null;
@@ -1388,17 +1424,6 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         for (int i=0; i<numBands; i++) {
             final Variable variable = variables[i];
             if (variable != null) {
-                final NumberRange<?> range = variable.getSampleRange();
-                if (range != null) {
-                    if (minimum == null) {
-                        minimum = new double[numBands];
-                        maximum = new double[numBands];
-                        Arrays.fill(minimum, Double.NEGATIVE_INFINITY);
-                        Arrays.fill(maximum, Double.POSITIVE_INFINITY);
-                    }
-                    minimum[i] = range.getMinimum(true);
-                    maximum[i] = range.getMaximum(true);
-                }
                 final Unit<?> unit = variable.getUnit();
                 if (unit != null) {
                     if (units == null) {
@@ -1422,9 +1447,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 }
             }
         }
-        // If we can't find the minimum or maximum from sample values, queries JAI properties.
-        if (minimum == null) minimum = getArrayProperty("minimum");
-        if (maximum == null) maximum = getArrayProperty("maximum");
+        final double[] minimum = getArrayProperty("minimum");
+        final double[] maximum = getArrayProperty("maximum");
         if (raster != null) {
             return RenderedSampleDimension.create(names, raster, minimum, maximum, units, colors, hints);
         } else {
@@ -1490,6 +1514,46 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             for (int i=0; i<bands.length; i++) {
                 variable(i).setSampleDimension(bands[i]);
             }
+        }
+    }
+
+    /**
+     * Sets all variables information to the given ranges, units and colors. This convenience method
+     * {@linkplain #setNumBands(int) sets the number of bands} to the maximal length of the non-null
+     * arrays, then invokes {@link Variable#setSampleRange(NumberRange) setSampleRange(NumberRange)},
+     * {@link Variable#setUnit(Unit) setUnit(Unit)} and {@link Variable#setColors(Color[])
+     * setColors(Color[])} methods for each variable.
+     *
+     * @param minValues The minimal value for each band in the raster, or {@code null}.
+     * @param maxValues The maximal value for each band in the raster, or {@code null}.
+     * @param units     The units, or {@code null} if unknown.
+     * @param colors    The colors to use for values from {@code minValues} to {@code maxValues}
+     *                  for each bands, or {@code null}. Can contains null elements.
+     *
+     * @since 3.20
+     */
+    public void setSampleDimensions(final double[]   minValues,
+                                    final double[]   maxValues,
+                                    final Unit<?>    units,
+                                    final Color[]... colors)
+    {
+        int length = 0;
+        if (minValues != null) length = minValues.length;
+        if (maxValues != null) length = Math.max(length, maxValues.length);
+        if (colors    != null) length = Math.max(length, colors.length);
+        for (int i=0; i<length; i++) {
+            double minimum = Double.NEGATIVE_INFINITY;
+            double maximum = Double.POSITIVE_INFINITY;
+            final Variable variable = variable(i);
+            if (minValues != null && i < minValues.length) minimum = minValues[i];
+            if (maxValues != null && i < maxValues.length) maximum = maxValues[i];
+            if (minimum != Double.NEGATIVE_INFINITY || maximum != Double.POSITIVE_INFINITY) {
+                variable.setSampleRange(NumberRange.create(minimum, maximum));
+            }
+            if (colors != null && i < colors.length) {
+                variable.setColors(colors[i]);
+            }
+            variable.setUnit(units);
         }
     }
 
@@ -1870,6 +1934,88 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * Creates a rendered image from the given matrix. This method copies the values from the
+     * given matrix to a new raster, then invokes {@link #setRenderedImage(WritableRaster)}.
+     * {@linkplain Float#NaN NaN} values are mapped to a transparent color by default.
+     * <p>
+     * The {@linkplain RenderedImage#getHeight() image height} will be the length of the
+     * {@code matrix} argument. The {@linkplain RenderedImage#getWidth() image width} will
+     * be the length of the largest row. If some rows or missing ({@code null}) or shorter
+     * than the image width, then the missing values will be padded with {@code NaN}.
+     *
+     * @param matrix The matrix data in a {@code [row][column]} layout.
+     *        Can contains {@code null} elements (missing rows).
+     *
+     * @since 3.20 (derived from 2.2)
+     */
+    public void setRenderedImage(final float[][] matrix) {
+        int width  = 0;
+        int height = matrix.length;
+        for (final float[] row : matrix) {
+            if (row != null) {
+                if (row.length > width) {
+                    width = row.length;
+                }
+            }
+        }
+        final float[] buffer = new float[width * height];
+        int offset = 0;
+        for (final float[] row : matrix) {
+            int length = 0;
+            if (row != null) {
+                length = row.length;
+                System.arraycopy(row, 0, buffer, offset, length);
+            }
+            Arrays.fill(buffer, offset + length, offset += width, Float.NaN);
+        }
+        // Need to use JAI raster factory, since WritableRaster
+        // does not supports TYPE_FLOAT as of J2SE 1.5.0_06.
+        final int[] zero = new int[1];
+        setRenderedImage(RasterFactory.createBandedRaster(
+                new DataBufferFloat(buffer, buffer.length), width, height, width, zero, zero, null));
+    }
+
+    /**
+     * Creates a rendered image from the given {@linkplain ImageFunction image function}.
+     * The {@link #getGridGeometry()} method must return a fully defined value before
+     * this method can be invoked.
+     *
+     * @param function The image function.
+     *
+     * @see ImageFunctionDescriptor
+     *
+     * @since 3.20 (derived from 2.2)
+     */
+    public void setRenderedImage(final ImageFunction function) {
+        final MathTransform transform = GridGeometry2D.castOrCopy(getGridGeometry()).getGridToCRS2D();
+        if (!(transform instanceof AffineTransform)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+        }
+        final AffineTransform at = (AffineTransform) transform;
+        if (at.getShearX()!=0 || at.getShearY()!=0) {
+            // TODO: We may support that in a future version.
+            //       1) Create a copy with shear[X/Y] set to 0. Use the copy.
+            //       2) Compute the residu with createInverse() and concatenate().
+            //       3) Apply the residu with JAI.create("Affine").
+            throw new IllegalArgumentException("Shear and rotation not supported");
+        }
+        final double xScale =  at.getScaleX();
+        final double yScale =  at.getScaleY();
+        final double xTrans = -at.getTranslateX() / xScale;
+        final double yTrans = -at.getTranslateY() / yScale;
+        final GridEnvelope extent = gridGeometry.getExtent();
+        setRenderedImage(ImageFunctionDescriptor.create(
+                function,
+                extent.getSpan(0), // width
+                extent.getSpan(1), // height
+                (float) xScale,
+                (float) yScale,
+                (float) xTrans,
+                (float) yTrans,
+                hints));
+    }
+
+    /**
      * @deprecated Replaced by {@link #getRenderedImage()}.
      *
      * @return The buffered image to be wrapped by {@code GridCoverage2D}.
@@ -1989,7 +2135,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public GridCoverage[] getSources() {
-        return sources;
+        return sources; // NOSONAR
     }
 
     /**
@@ -2029,7 +2175,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public Map<?,?> getProperties() {
-        return properties;
+        return properties; // NOSONAR
     }
 
     /**
@@ -2178,6 +2324,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         protected NumberRange<?> sampleRange;
 
         /**
+         * The range of geophysics values, or {@code null} if unspecified. This field is non-null only
+         * if the range has been {@linkplain #setGeophysicsRange(NumberRange) explicitely specified}
+         * by the user. The values inferred from other attributes are not stored in this field.
+         *
+         * @see #getGeophysicsRange()
+         * @see #setGeophysicsRange(NumberRange)
+         * @see #setGeophysicsRange(double, double)
+         *
+         * @since 3.20
+         */
+        protected NumberRange<?> geophysicsRange;
+
+        /**
          * The "nodata" values, or {@code null} if none. This map is created when first needed.
          *
          * @see #addNodataValue(CharSequence, int, Color)
@@ -2185,19 +2344,19 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         private Map<Integer,NoData> nodata;
 
         /**
-         * The "<cite>sample to geophysics</cite>" transform, or {@code null} if unspecified. This
-         * field is non-null only if the transform has been {@linkplain #setTransform(MathTransform1D)
+         * The "<cite>sample to unit</cite>" transform, or {@code null} if unspecified. This field
+         * is non-null only if the transform has been {@linkplain #setSampleToUnit(MathTransform1D)
          * explicitely specified} by the user (potentially as transform coefficients). The values
          * inferred from other attributes are not stored in this field.
          *
-         * @see #getTransform()
-         * @see #setTransform(MathTransform1D)
+         * @see #getSampleToUnit()
+         * @see #setSampleToUnit(MathTransform1D)
          * @see #setLinearTransform(double, double)
          * @see #setLogarithmicTransform(double, double)
          *
          * @since 3.20 (derived from 2.5)
          */
-        protected MathTransform1D transform;
+        protected MathTransform1D sampleToUnit;
 
         /**
          * The colors to associate to values in the {@linkplain #sampleRange sample range}, or
@@ -2318,7 +2477,8 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
 
         /**
          * Sets the units of measurement, or {@code null} if none. This is the unit of geophysics
-         * values <em>after</em> the {@linkplain #getTransform() sample to unit transform}.
+         * values <em>after</em> the {@linkplain #getSampleToUnit() sample to unit transform} has
+         * been applied on sample values.
          *
          * @param unit The new units of measurement of geophysics values, or {@code null}.
          *
@@ -2343,9 +2503,20 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
 
         /**
-         * Returns the range of sample values. If no range has been
-         * {@linkplain #setSampleRange(NumberRange) explicitly defined}, then this method
-         * returns the {@linkplain #sampleDimension sample dimension} range.
+         * Returns the range of sample values. This is the range of values as they are stored
+         * in the image, <em>before</em> the {@linkplain #getSampleToUnit() sample to unit}
+         * transform has been applied.
+         * <p>
+         * This method returns the first defined value in the above choices, in preference order:
+         * <p>
+         * <ul>
+         *   <li>The value defined by the last call to {@link #setSampleRange(NumberRange)}.</li>
+         *   <li>The {@linkplain #sampleDimension sample dimension} range.</li>
+         *   <li>A range built from the {@code "minimum"} and {@code "maximum"} properties of the
+         *       {@linkplain GridCoverageBuilder#image image}, if such properties are defined and
+         *       are of type {@code double[]}. Those properties can be created by the JAI
+         *       "{@link javax.media.jai.operator.ExtremaDescriptor Extrema}" operation.</li>
+         * </ul>
          *
          * @return The range of sample values, or {@code null}.
          *
@@ -2357,16 +2528,28 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final SampleDimension sampleDimension = this.sampleDimension;
                 if (sampleDimension instanceof GridSampleDimension) {
                     range = ((GridSampleDimension) sampleDimension).getRange();
+                    if (range == null) {
+                        final double[] minimum = getArrayProperty("minimum");
+                        if (minimum != null && minimum.length > band) {
+                            final double[] maximum = getArrayProperty("maximum");
+                            if (maximum != null && maximum.length > band) {
+                                range = NumberRange.create(minimum[band], maximum[band]);
+                                // TODO: would be nice to cast to the type actually used.
+                            }
+                        }
+                    }
                 }
             }
             return range;
         }
 
         /**
-         * Sets the range of sample values. We allow only one range of values per {@code Variable}
-         * instance, because sample dimensions with multi-ranges of values are very rare. If such
-         * case happen, a {@link GridSampleDimension} instances will need to be created from outside
-         * this helper class.
+         * Sets the range of sample values.
+         *
+         * {@note We allow only one range of values per <code>Variable</code> instance, because
+         * sample dimensions with multi-ranges of values are very rare. If such case happen, a
+         * <code>GridSampleDimension</code> instance will need to be created from outside this
+         * helper class.}
          *
          * @param range The new range of sample values, or {@code null}.
          *
@@ -2392,36 +2575,101 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         }
 
         /**
-         * Returns the "<cite>sample to units</cite>" transform. If no transform has been
-         * {@linkplain #setTransform(MathTransform1D) explicitly defined}, then this method
-         * returns the {@linkplain #sampleDimension sample dimension} transform. If no such
-         * transform is defined neither, then the default is {@link LinearTransform1D#IDENTITY}.
+         * Returns the range of geophysics values. This is the range of values <em>after</em> the
+         * {@linkplain #getSampleToUnit() sample to unit} transform has been applied.
+         * <p>
+         * This method returns the first defined value in the above choices, in preference order:
+         * <p>
+         * <ul>
+         *   <li>The value defined by the last call to {@link #setGeophysicsRange(NumberRange)}.</li>
+         *   <li>The {@linkplain #sampleDimension sample dimension} geophysics range.</li>
+         * </ul>
          *
-         * @return The "<cite>sample to units</cite>" transform.
+         * @return The range of geophysics values, or {@code null}.
+         *
+         * @since 3.20
          */
-        public MathTransform1D getTransform() {
-            MathTransform1D value = transform;
+        public NumberRange<?> getGeophysicsRange() {
+            NumberRange<?> range = geophysicsRange;
+            if (range == null) {
+                final SampleDimension sampleDimension = this.sampleDimension;
+                if (sampleDimension instanceof GridSampleDimension) {
+                    range = ((GridSampleDimension) sampleDimension).geophysics(true).getRange();
+                }
+            }
+            return range;
+        }
+
+        /**
+         * Sets the range of geophysics values.
+         *
+         * {@note We allow only one range of values per <code>Variable</code> instance, because
+         * sample dimensions with multi-ranges of values are very rare. If such case happen, a
+         * <code>GridSampleDimension</code> instance will need to be created from outside this
+         * helper class.}
+         *
+         * {@section Precedence}
+         * If a <cite>sample to unit</cite> transform has been {@linkplain #setSampleToUnit(MathTransform1D)
+         * explicitely set}, then that later transform will have precedence for the creation of
+         * {@link SampleDimension} instances.
+         *
+         * @param range The new range of geophysics values, or {@code null}.
+         *
+         * @since 3.20
+         */
+        public void setGeophysicsRange(final NumberRange<?> range) {
+            geophysicsRange = range;
+            sampleDimensionsChanged();
+        }
+
+        /**
+         * Sets the range of geophysics values from the given minimum and maximum values.
+         * This convenience methods creates a {@link NumberRange} objects from the
+         * given values and delegates to {@link #setGeophysicsRange(NumberRange)}.
+         *
+         * @param  minimum The minimum value (inclusive).
+         * @param  maximum The maximum value (exclusive).
+         *
+         * @since 3.20
+         */
+        public void setGeophysicsRange(final double minimum, final double maximum) {
+            setGeophysicsRange(NumberRange.create(minimum, true, maximum, false));
+        }
+
+        /**
+         * Returns the "<cite>sample to unit</cite>" transform.
+         * This method returns the first defined value in the above choices, in preference order:
+         * <p>
+         * <ul>
+         *   <li>The value defined by the last call to {@link #setSampleToUnit(MathTransform1D)}.</li>
+         *   <li>The {@linkplain #sampleDimension sample dimension} transform.</li>
+         * </ul>
+         *
+         * @return The "<cite>sample to unit</cite>" transform, or {@code null}.
+         */
+        public MathTransform1D getSampleToUnit() {
+            MathTransform1D value = sampleToUnit;
             if (value == null) {
                 final SampleDimension sampleDimension = this.sampleDimension;
                 if (sampleDimension != null) {
                     value = sampleDimension.getSampleToGeophysics();
                 }
             }
-            return (value != null) ? value : LinearTransform1D.IDENTITY;
+            return value;
         }
 
         /**
-         * Sets the "<cite>sample to units</cite>" transform.
+         * Sets the "<cite>sample to unit</cite>" transform.
          *
-         * @param transform The new "<cite>sample to units</cite>" transform, or {@code null}.
+         * @param sampleToUnit The new "<cite>sample to unit</cite>" transform, or {@code null}.
          */
-        public void setTransform(final MathTransform1D transform) {
-            this.transform = transform;
+        public void setSampleToUnit(final MathTransform1D sampleToUnit) {
+            this.sampleToUnit = sampleToUnit;
             sampleDimensionsChanged();
         }
 
         /**
-         * Sets the "<cite>sample to units</cite>" transform from a scale and an offset.
+         * Sets the "<cite>sample to unit</cite>" transform from a scale and an offset.
          * The transformation formula will be:
          *
          * <blockquote>
@@ -2432,11 +2680,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @param offset The {@code offset} term in the linear equation.
          */
         public void setLinearTransform(final double scale, final double offset) {
-            setTransform(LinearTransform1D.create(scale, offset));
+            setSampleToUnit(LinearTransform1D.create(scale, offset));
         }
 
         /**
-         * Sets the "<cite>sample to units</cite>" logarithmic transform
+         * Sets the "<cite>sample to unit</cite>" logarithmic transform
          * from a scale and an offset. The transformation formula will be:
          *
          * <blockquote>
@@ -2447,7 +2695,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * @param offset The offset to add to the logarithm.
          */
         public void setLogarithmicTransform(final double base, final double offset) {
-            setTransform(LogarithmicTransform1D.create(base, offset));
+            setSampleToUnit(LogarithmicTransform1D.create(base, offset));
         }
 
         /**
@@ -2469,7 +2717,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (old != null) {
                 nodata.put(key, old);
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "value", key));
+                        Errors.Keys.VALUE_ALREADY_DEFINED_$1, key));
             }
             sampleDimensionsChanged();
         }
@@ -2478,24 +2726,39 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * Returns the colors associated to the values in the {@linkplain #getSampleRange()
          * sample range}, or {@code null} if none.
          *
+         * {@section Implementation note}
+         * This method returns a direct reference to the {@linkplain #colors} field.
+         * The array is not cloned because it is not used for any calculation in this
+         * class. {@code GridCoverageBuilder} users are responsible for the content of
+         * this array.
+         *
          * @return The colors ramp, or {@code null} if none.
          *
          * @since 3.20
          */
         public Color[] getColors() {
-            final Color[] colors = this.colors;
-            return (colors != null) ? colors.clone() : null;
+            return colors; // NOSONAR
         }
 
         /**
          * Sets the colors associated to the values in the {@linkplain #getSampleRange() sample range}.
+         * The given color array can have any length; colors will be interpolated as needed.
          *
-         * @param colors The new colors ramp, or {@code null} if none.
+         * {@section Implementation note}
+         * The given array is not cloned at this method invocation time. The array will be cloned by
+         * the {@linkplain Category#Category(CharSequence, Color[], NumberRange, MathTransform1D)
+         * category constructor}. This builder does nothing but passing the array to that constructor.
+         *
+         * @param colors The new colors ramp (any length), or {@code null} if none.
          *
          * @since 3.20
          */
-        public void setColors(final Color[] colors) {
-            this.colors = (colors != null) ? colors.clone() : null;
+        public void setColors(Color... colors) {
+            if (colors != null && colors.length == 0) {
+                colors = null;
+            }
+            this.colors = colors; // NOSONAR
+            sampleDimensionsChanged();
         }
 
         /**
@@ -2523,41 +2786,68 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
          * {@linkplain #setSampleDimension(SampleDimension) explicitly defined}, then this method
          * builds a new dimension from the other attributes defined in this class.
          *
-         * @return The sample dimension for this {@code Variable} object.
+         * @return The sample dimension for this {@code Variable} object, or {@code null}.
          */
         public SampleDimension getSampleDimension() {
             SampleDimension sd = sampleDimension;
             if (sd == null) {
                 sd = cached;
                 if (sd == null) {
-                    NumberRange<?> range = getSampleRange();
-                    if (range != null) {
-                        int lower = (int) Math.floor(range.getMinimum(true));
-                        int upper = (int) Math.ceil (range.getMaximum(false));
-                        final Map<Integer,NoData> nodata = this.nodata;
-                        final Category[] categories;
-                        int count = 0;
-                        if (nodata == null) {
-                            categories = new Category[1];
-                        } else {
-                            categories = new Category[nodata.size() + 1];
-                            for (final Map.Entry<Integer,NoData> entry : nodata.entrySet()) {
-                                final int sample = entry.getKey();
-                                if (sample >= lower && sample < upper) {
-                                    if (sample - lower <= upper - sample) {
-                                        lower = sample + 1;
-                                    } else {
-                                        upper = sample;
-                                    }
+                    Category[] categories;
+                    int count = 0; // Number of categories.
+                    final CharSequence bandName = getName();
+                    final NumberRange<?> range = getSampleRange();
+                    final Map<Integer,NoData> nodata = this.nodata;
+                    /*
+                     * Creates the categories for "no data" values, if any. We may keep an empty
+                     * slot at the end of the category array for the "quantitative" category.
+                     */
+                    if (XCollections.isNullOrEmpty(nodata)) {
+                        categories = (range != null) ? new Category[1] : null;
+                    } else {
+                        categories = new Category[nodata.size() + (range != null ? 1 : 0)];
+                        for (final Map.Entry<Integer,NoData> entry : nodata.entrySet()) {
+                            final int sample = entry.getKey();
+                            if (range != null) {
+                                final Comparable<?> w = sample;
+                                if (range.contains(w)) {
+                                    throw new IllegalStateException(Errors.format(
+                                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, w));
                                 }
-                                final NoData n = entry.getValue();
-                                categories[count++] = new Category(n.name, n.color, sample);
+                            }
+                            final NoData n = entry.getValue();
+                            categories[count++] = new Category(n.name, n.color, sample);
+                        }
+                    }
+                    /*
+                     * Creates the quantitative category. We use the "sample to unit" transform
+                     * if provided, and the geophysics range as a fallback only if there is no
+                     * transform.
+                     */
+                    if (range != null) {
+                        final Color[] colors = getColors();
+                        MathTransform1D sampleToUnit = getSampleToUnit();
+                        if (sampleToUnit == null) {
+                            final NumberRange<?> target = getGeophysicsRange();
+                            if (target == null) {
+                                sampleToUnit = LinearTransform1D.IDENTITY;
+                            } else {
+                                // Let the Category constructor create a "sample to unit" transform.
+                                categories[count] = new Category(bandName, colors, range, target);
                             }
                         }
-                        final CharSequence name = getName();
-                        range = NumberRange.create(lower, true, upper, false);
-                        categories[count] = new Category(name, getColors(), range, getTransform());
-                        cached = sd = new GridSampleDimension(name, categories, getUnit());
+                        if (sampleToUnit != null) {
+                            categories[count] = new Category(bandName, colors, range, sampleToUnit);
+                        }
+                    }
+                    /*
+                     * Creates the sample dimension only if there is at least one attribute set.
+                     * Note that the units are ignored if there is not at least one category, so
+                     * we don't need to test it. We test the name field (not the local variable)
+                     * because the local variable may contain a generated name.
+                     */
+                    if (categories != null || this.name != null) {
+                        cached = sd = new GridSampleDimension(bandName, categories, getUnit());
                     }
                 }
             }

@@ -31,7 +31,10 @@ import javax.media.jai.operator.ErrorDiffusionDescriptor;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Deprecated together with {@link ImageWorker}.
  */
+@Deprecated
 public enum ColorQuantization {
     /**
      * Color quantization by finding the nearest color to each pixel in a color map and

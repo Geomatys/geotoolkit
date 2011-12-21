@@ -59,7 +59,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
  * <p>
  * <ul>
  *   <li>This class is both an {@link InputStream} and an {@link ImageInputStream}.</li>
- *   <li>It delegates most of the work to the underlying {@link ByteBuffer} (by constrast,
+ *   <li>It delegates most of the work to the underlying {@link ByteBuffer} (by contrast,
  *       the standard {@link javax.imageio.stream.ImageInputStreamImpl} performs many work
  *       itself, including the {@linkplain ByteOrder byte order} handling).</li>
  *   <li>This class can uses an existing {@link ByteBuffer} supplied by the caller.</li>

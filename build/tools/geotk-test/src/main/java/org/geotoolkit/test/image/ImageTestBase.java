@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ImagingOpException;
+import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -68,7 +69,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
             Class.forName("org.geotoolkit.image.jai.Registry")
                  .getMethod("setDefaultCodecPreferences", (Class<?>[]) null)
                  .invoke(null, (Object[]) null);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             System.err.println(e);
         }
     }
@@ -129,7 +130,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
         try {
             final Class<?> c = Class.forName("org.geotoolkit.internal.io.Installation");
             file = (File) c.getMethod("directory", Boolean.TYPE).invoke(c.getField("TESTS").get(null), Boolean.TRUE);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
             throw new AssertionError(e);
         }
         if (filename != null) {
@@ -257,7 +258,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
                         v.addImage(image, String.valueOf(title));
                     }
                 });
-            } catch (Exception e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 throw new AssertionError(e);
             }
         }
@@ -275,7 +276,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
         }
         final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
         try {
-            Class.forName("org.geotoolkit.gui.swing.OperationTreeBrowser")
+            Class.forName("org.geotoolkit.gui.swing.image.OperationTreeBrowser")
                  .getMethod("show", new Class<?>[] {RenderedImage.class})
                  .invoke(null, new Object[]{image});
         } catch (RuntimeException e) {
