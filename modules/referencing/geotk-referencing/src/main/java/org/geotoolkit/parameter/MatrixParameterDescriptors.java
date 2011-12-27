@@ -394,13 +394,8 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
                         cause = exception;
                     }
                 }
-                final InvalidParameterNameException exception;
-                exception = new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), name);
-                if (cause != null) {
-                    exception.initCause(cause);
-                }
-                throw exception;
+                throw new InvalidParameterNameException(Errors.format(
+                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), cause, name);
             }
         }
         return matrix;

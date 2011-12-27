@@ -116,7 +116,7 @@ import org.geotoolkit.resources.Errors;
  *   </tr><tr>
  *     <td>&nbsp;{@link #pixelAnchor}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setPixelAnchor(PixelInCell) Code list value}&nbsp;</td>
- *     <td>&nbsp;&nbsp;{@linkplain PixelInCell#CELL_CENTER Pixel center}</td>
+ *     <td>&nbsp;{@linkplain PixelInCell#CELL_CENTER Pixel center}</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link #gridToCRS}&nbsp;</td>
  *     <td>&nbsp;{@linkplain #setGridToCRS(MathTransform) Transform instance} or

@@ -448,10 +448,8 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             key = REMARKS_KEY;
             this.remarks = (InternationalString) (value = remarks);
         } catch (ClassCastException exception) {
-            InvalidParameterValueException e = new InvalidParameterValueException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, key, value), key, value);
-            e.initCause(exception);
-            throw e;
+            throw new InvalidParameterValueException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, key, value), exception, key, value);
         }
         ensureNonNull(NAME_KEY, name);
         ensureNonNull(NAME_KEY, name.toString());
