@@ -198,4 +198,39 @@ public class GmlXMLBindingTest {
         }
         assertEquals(expResult, result);
     }
+    
+    @Test
+    public void timePeriodUmarshallingTest() throws Exception {
+        TimePositionType begin = new TimePositionType("2002-08-01");
+        TimePositionType end = new TimePositionType("2003-08-01");
+        TimePeriodType expResult = new TimePeriodType(begin, end);
+        
+
+        String xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+                     "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
+                     "    <gml:endPosition>2003-08-01</gml:endPosition>" + '\n' +
+                     "</gml:TimePeriod>" + '\n' ;
+
+        Object result = unmarshaller.unmarshal(new StringReader(xml));
+
+        if (result instanceof JAXBElement) {
+            result = ((JAXBElement)result).getValue();
+        }
+        assertEquals(expResult, result);
+        
+        expResult = new TimePeriodType(begin, null);
+        
+
+        xml = "<gml:TimePeriod xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+              "    <gml:beginPosition>2002-08-01</gml:beginPosition>" + '\n' +
+              "</gml:TimePeriod>" + '\n' ;
+
+        result = unmarshaller.unmarshal(new StringReader(xml));
+
+        if (result instanceof JAXBElement) {
+            result = ((JAXBElement)result).getValue();
+        }
+        assertEquals(expResult, result);
+
+    }
 }
