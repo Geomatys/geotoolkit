@@ -1,0 +1,25 @@
+# Use regular expression syntax, since it
+# works better than glob with NetBeans.
+syntax: regexp
+
+\.project$
+\.classpath$
+\.settings$
+\.DS_Store
+^tmp$
+.log
+
+# old svn files
+\.svn$
+
+# Maven files
+target$
+
+# Netbeans files
+nbactions.xml
+nbproject
+
+# Intellij files
+.iml
+.ipr
+.iws
