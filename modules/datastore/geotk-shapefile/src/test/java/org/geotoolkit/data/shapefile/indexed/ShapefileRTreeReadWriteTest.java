@@ -16,11 +16,10 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-
-import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.storage.DataStoreException;
@@ -39,6 +38,8 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
+import static org.junit.Assert.*;
+
 /**
  * @version $Id: ShapefileRTreeReadWriteTest.java 27228 2007-09-29 20:24:08Z
  *          jgarnett $
@@ -52,15 +53,9 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     boolean readStarted = false;
     Exception exception = null;
 
-    /**
-     * Creates a new instance of ShapefileReadWriteTest
-     */
-    public ShapefileRTreeReadWriteTest(final String name) throws IOException {
-        super(name);
-    }
-
+    @Test
     public void testAll() throws Throwable {
-        StringBuffer errors = new StringBuffer();
+        final StringBuilder errors = new StringBuilder();
         Exception bad = null;
 
         for (int i = 0, ii = files.length; i < ii; i++) {
@@ -79,11 +74,12 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     }
 
     public void fail(final String message, final Throwable cause) throws Throwable {
-        Throwable fail = new AssertionFailedError(message);
+        Throwable fail = new Exception(message);
         fail.initCause(cause);
         throw fail;
     }
 
+    @Test
     public void testWriteTwice() throws Exception {
         copyShapefiles("shapes/stream.shp");
         IndexedShapefileDataStore s1 = new IndexedShapefileDataStore(TestData
@@ -102,7 +98,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     private void doubleWrite(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one,
             final File tmp, final boolean memorymapped) throws IOException, MalformedURLException, DataStoreException {
         IndexedShapefileDataStore s;
-        s = new IndexedShapefileDataStore(tmp.toURL(), memorymapped, true);
+        s = new IndexedShapefileDataStore(tmp.toURI().toURL(), memorymapped, true);
 
         s.createSchema(type.getName(),type);
 
@@ -111,7 +107,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         session.addFeatures(type.getName(),one);
         session.commit();
 
-        s = new IndexedShapefileDataStore(tmp.toURL());
+        s = new IndexedShapefileDataStore(tmp.toURI().toURL());
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
         
         s.dispose();
@@ -133,7 +129,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
             throws IOException, MalformedURLException, Exception {
         IndexedShapefileDataStore s;
         Name typeName;
-        s = (IndexedShapefileDataStore) new IndexedShapefileDataStore(tmp.toURL(),
+        s = (IndexedShapefileDataStore) new IndexedShapefileDataStore(tmp.toURI().toURL(),
                 memorymapped, true);
 
         s.createSchema(type.getName(),type);
@@ -144,7 +140,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         
         s.dispose();
 
-        s = new IndexedShapefileDataStore(tmp.toURL());
+        s = new IndexedShapefileDataStore(tmp.toURI().toURL());
         typeName = s.getName();
 
         FeatureCollection<SimpleFeature> two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));

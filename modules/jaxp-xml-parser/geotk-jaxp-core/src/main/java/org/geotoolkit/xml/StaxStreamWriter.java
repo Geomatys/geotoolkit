@@ -90,13 +90,13 @@ public abstract class StaxStreamWriter {
      * The underlying stax writer will be closed.
      */
     public void reset() throws IOException, XMLStreamException{
-        if(targetStream != null){
-            targetStream.close();
-            targetStream = null;
-        }
         if(writer != null){
             writer.close();
             writer = null;
+        }
+        if(targetStream != null){
+            targetStream.close();
+            targetStream = null;
         }
     }
 
@@ -166,7 +166,7 @@ public abstract class StaxStreamWriter {
         XMLfactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
 
         if(output instanceof OutputStream){
-            return XMLfactory.createXMLStreamWriter((OutputStream)output);
+            return XMLfactory.createXMLStreamWriter((OutputStream)output,"UTF-8");
         }else if(output instanceof Result){
             return XMLfactory.createXMLStreamWriter((Result)output);
         }else if(output instanceof Writer){

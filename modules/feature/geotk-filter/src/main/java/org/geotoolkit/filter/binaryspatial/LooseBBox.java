@@ -73,13 +73,16 @@ public class LooseBBox extends DefaultBBox{
                 try {
                     candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
                 } catch (MismatchedDimensionException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
                     return false;
                 } catch (TransformException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
                     return false;
                 } catch (FactoryException ex) {
-                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
+                    return false;
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.FINE, null, ex);
                     return false;
                 }
             }

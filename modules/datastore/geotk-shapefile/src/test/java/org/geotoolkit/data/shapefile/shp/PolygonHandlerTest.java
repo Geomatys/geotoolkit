@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -28,6 +29,8 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import java.util.List;
 
+import static org.junit.Assert.*;
+
 /**
  * 
  * @version $Id$
@@ -36,14 +39,7 @@ import java.util.List;
  */
 public class PolygonHandlerTest extends AbstractTestCaseSupport {
 
-    public PolygonHandlerTest(final String testName) throws IOException {
-        super(testName);
-    }
-
-    public static void main(final java.lang.String[] args) {
-        junit.textui.TestRunner.run(suite(PolygonHandlerTest.class));
-    }
-
+    @Test
     public void testPolygonHandler() {
         Coordinate[] c = new Coordinate[3];
         c[0] = new Coordinate(0, 0, 0);
@@ -56,6 +52,7 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
         }
     }
 
+    @Test
     public void testHoleAssignment() {
         java.awt.Dimension ps = new java.awt.Dimension(500, 500);
         PrecisionModel precision = new PrecisionModel();

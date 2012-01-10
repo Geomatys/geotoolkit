@@ -24,11 +24,10 @@ import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import org.geotoolkit.io.Closeable;
 
 /**
  * ShxReader parser for .shx files.<br>
@@ -42,7 +41,7 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class ShxReader {
+public final class ShxReader implements Closeable{
 
     private static final int RECS_IN_BUFFER = 2000;
 
@@ -65,10 +64,10 @@ public final class ShxReader {
      * @param shpFiles The channel to read from.
      * @throws IOException If an error occurs.
      */
-    public ShxReader(final ShpFiles shpFiles, final boolean useMemoryMappedBuffer)
+    public ShxReader(final ReadableByteChannel shxChannel, final boolean useMemoryMappedBuffer)
             throws IOException {
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
-        final ReadableByteChannel byteChannel = shpFiles.getReadChannel(ShpFileType.SHX, this);
+        final ReadableByteChannel byteChannel = shxChannel;
 
         try {
             header = readHeader(byteChannel);
@@ -163,6 +162,7 @@ public final class ShxReader {
         lastIndex = index;
     }
 
+    @Override
     public void close() throws IOException {
 
         closed = true;
@@ -172,6 +172,11 @@ public final class ShxReader {
         this.content = null;
     }
 
+    @Override
+    public boolean isClosed() {
+        return closed;
+    }
+    
     /**
      * {@inheritDoc }
      */

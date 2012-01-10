@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.data.shapefile.FeatureIDReader;
-import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -46,13 +44,13 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
-import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.dbf.DbaseFileReader;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.data.shapefile.FeatureIDReader;
+import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
@@ -72,6 +70,7 @@ import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
@@ -92,8 +91,8 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
-import static org.geotoolkit.data.shapefile.ShpFiles.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFiles.*;
 
 
 /**
@@ -184,7 +183,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
         try {
             if (shpFiles.isLocal() && needsGeneration(FIX)) {
-                generateFidIndex();
+                //regenerate index
+                IndexedFidWriter.generate(shpFiles);
             }
         } catch (IOException e) {
             ShapefileDataStoreFactory.LOGGER.log(Level.WARNING, e
@@ -340,25 +340,17 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         if (!indexUseable(FIX)) {
             fidReader = new ShapeFIDReader(getName().getLocalPart(), r);
         } else {
-            fidReader = new IndexedFidReader(shpFiles, r);
+            fidReader = r.getLocker().getFIXReader(r);
         }
 
         return ShapefileFeatureReader.create(r, fidReader, featureType, hints);
     }
 
-    /**
-     * Forces the FID index to be regenerated
-     * 
-     * @throws IOException
-     */
-    public final void generateFidIndex() throws IOException {
-        IndexedFidWriter.generate(shpFiles);
-    }
-
     private IndexedShapefileAttributeReader getAttributesReader(final List<? extends PropertyDescriptor> properties, 
             final Filter filter, final boolean read3D, final double[] resample) throws DataStoreException{
 
-
+        final AccessManager locker = shpFiles.createLocker();
+        
         CloseableCollection<ShpData> goodRecs = null;
         if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
             final Id fidFilter = (Id) filter;
@@ -390,7 +382,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
             if (!bbox.isNull() && this.useIndex) {
                 try {
-                    goodRecs = this.queryQuadTree(bbox);
+                    goodRecs = this.queryQuadTree(locker,bbox);
                 } catch (TreeException e) {
                     throw new DataStoreException("Error querying index: " + e.getMessage());
                 } catch (IOException e) {
@@ -399,29 +391,30 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
         }
 
-        final DbaseFileReader dbfR;
-        //check if we need to open the dbf reader, no need when only geometry
-        if(properties.size() == 1 && properties.get(0) instanceof GeometryDescriptor){
-            dbfR = null;
-        }else{
-            dbfR = openDbfReader();
+        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor);        
+        final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
+        try {
+            return new IndexedShapefileAttributeReader(locker,atts, 
+                    read3D, useMemoryMappedBuffer,resample, 
+                    readDBF, dbfCharset, resample,
+                    goodRecs, ((goodRecs!=null)?goodRecs.iterator():null));
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
-        
-        return new IndexedShapefileAttributeReader(properties, openShapeReader(read3D,resample), dbfR,
-                goodRecs, ((goodRecs!=null)?goodRecs.iterator():null),resample);
     }
 
 
     protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<PropertyDescriptor> properties, 
             final Envelope bbox, final boolean loose, final Hints hints, final boolean read3D, final double[] res) throws DataStoreException {
 
+        final AccessManager locker = shpFiles.createLocker();
         final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
 
         CloseableCollection<ShpData> goodCollec = null;
         
         final ShxReader shx;
         try {
-            shx = openIndexFile();
+            shx = locker.getSHXReader(useMemoryMappedBuffer);
         } catch (IOException ex) {
             throw new DataStoreException("Error opening Shx file: " + ex.getMessage(), ex);
         }
@@ -439,16 +432,17 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         final LazySearchCollection<ShpData> col = (LazySearchCollection) goodCollec;
         
         //check if we need to open the dbf reader, no need when only geometry
-        final DbaseFileReader dbfR;
-        if(properties.size() == 1 && properties.get(0) instanceof GeometryDescriptor){
-            dbfR = null;
-        }else{
-            dbfR = openDbfReader();
+        final boolean readDBF = !(properties.size()==1 && properties.get(0) instanceof GeometryDescriptor); 
+        final PropertyDescriptor[] atts = properties.toArray(new PropertyDescriptor[properties.size()]);
+        try {
+            return new IndexedBBoxShapefileAttributeReader(locker,atts, 
+                    read3D, useMemoryMappedBuffer,res, 
+                    readDBF, dbfCharset, minRes,
+                    col, (LazyTyleSearchIterator.Buffered<ShpData>)col.bboxIterator(),
+                    bbox,loose,minRes);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
-
-        return new IndexedBBoxShapefileAttributeReader(properties, 
-                openShapeReader(read3D,res), dbfR, col,
-                (LazyTyleSearchIterator.Buffered<ShpData>)col.bboxIterator(),bbox,loose,res, minRes);
     }
 
     /**
@@ -467,11 +461,13 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             return null;
         }
 
-        final IndexedFidReader reader = new IndexedFidReader(shpFiles);
+        final AccessManager locker = shpFiles.createLocker();
+        
+        final IndexedFidReader reader = locker.getFIXReader(null);
         final CloseableCollection<ShpData> records = new CloseableArrayList(idsSet.size());
 
         try {
-            final ShxReader shx = openIndexFile();
+            final ShxReader shx = locker.getSHXReader(useMemoryMappedBuffer);
             try {
 
                 for (Identifier identifier : idsSet) {
@@ -522,7 +518,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
             ReadableByteChannel read = null;
             try {
-                read = shpFiles.getReadChannel(indexType, this);
+                read = shpFiles.getReadChannel(indexType);
             } catch (IOException e) {
                 return false;
             } finally {
@@ -542,37 +538,29 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     }
 
     final boolean needsGeneration(final ShpFileType indexType) {
-        if (!shpFiles.isLocal())
+        if (!shpFiles.isLocal()){
             throw new IllegalStateException(
                     "This method only applies if the files are local and the file can be created");
-
-        final URL indexURL = shpFiles.acquireRead(indexType, this);
-        final URL shpURL = shpFiles.acquireRead(SHP, this);
-        try {
-
-            if (indexURL == null) {
-                return true;
-            }
-            // indexes require both the SHP and SHX so if either or missing then
-            // you don't need to index
-            if (!shpFiles.exists(SHX) || !shpFiles.exists(SHP)) {
-                return false;
-            }
-
-            final File indexFile = toFile(indexURL);
-            final File shpFile = toFile(shpURL);
-            final long indexLastModified = indexFile.lastModified();
-            final long shpLastModified = shpFile.lastModified();
-            final boolean shpChangedMoreRecently = indexLastModified < shpLastModified;
-            return !indexFile.exists() || shpChangedMoreRecently;
-        } finally {
-            if (shpURL != null) {
-                shpFiles.unlockRead(shpURL, this);
-            }
-            if (indexURL != null) {
-                shpFiles.unlockRead(indexURL, this);
-            }
         }
+
+        final URL indexURL = shpFiles.getURL(indexType);
+        final URL shpURL = shpFiles.getURL(SHP);
+
+        if (indexURL == null) {
+            return true;
+        }
+        // indexes require both the SHP and SHX so if either or missing then
+        // you don't need to index
+        if (!shpFiles.exists(SHX) || !shpFiles.exists(SHP)) {
+            return false;
+        }
+
+        final File indexFile = toFile(indexURL);
+        final File shpFile = toFile(shpURL);
+        final long indexLastModified = indexFile.lastModified();
+        final long shpLastModified = shpFile.lastModified();
+        final boolean shpChangedMoreRecently = indexLastModified < shpLastModified;
+        return !indexFile.exists() || shpChangedMoreRecently;
     }
 
     /**
@@ -598,13 +586,13 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      * @throws TreeException DOCUMENT ME!
      */
-    private CloseableCollection<ShpData> queryQuadTree(final Envelope bbox)
+    private CloseableCollection<ShpData> queryQuadTree(final AccessManager locker, final Envelope bbox)
             throws DataStoreException, IOException, TreeException {
         CloseableCollection<ShpData> tmp = null;
-
+        
         try {
             final QuadTree quadTree = openQuadTree();
-            final DataReader dr = new IndexDataReader(openIndexFile());
+            final DataReader dr = new IndexDataReader(locker.getSHXReader(useMemoryMappedBuffer));
             if ((quadTree != null) && !bbox.contains(quadTree.getRoot().getBounds(new Envelope()))) {
                 tmp = quadTree.search(dr,bbox);
 
@@ -619,28 +607,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         return null;
-    }
-
-    /**
-     * Convenience method for opening a DbaseFileReader.
-     * 
-     * @return A new DbaseFileReader
-     * @throws DataStoreException If an error occurs during creation.
-     */
-    @Override
-    protected DbaseFileReader openDbfReader() throws DataStoreException {
-        if (shpFiles.get(DBF) == null) {
-            return null;
-        }
-
-        if (shpFiles.isLocal() && !shpFiles.exists(DBF)) {
-            return null;
-        }
-        try {
-            return ShpDBF.reader(shpFiles, false, dbfCharset);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
     }
 
     /**
@@ -709,9 +675,11 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
         if (records.isEmpty()) return null;
 
+        final AccessManager locker = shpFiles.createLocker();
+        
         ShapefileReader reader = null;
         try {
-            reader = new ShapefileReader(shpFiles, false, false,false);
+            reader = locker.getSHPReader(false, false, false, null);
 
             final JTSEnvelope2D ret = new JTSEnvelope2D(getFeatureType(getNames().iterator().next()).getCoordinateReferenceSystem());
             for(final Iterator iter = records.iterator(); iter.hasNext();) {

@@ -16,16 +16,19 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.junit.Test;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+
+import static org.junit.Assert.*;
 
 /**
  * @version $Id$
@@ -35,14 +38,14 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 
-    public ShapefileTest(final String testName) throws IOException {
-        super(testName);
-    }
-
+    @Override
+    @Test
     public void testShapefileReaderRecord() throws Exception {
-        File file = copyShapefiles(STATEPOP);
-        ShpFiles shpFiles = new ShpFiles(file.toURI().toURL());
-        ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
+        final File file = copyShapefiles(STATEPOP);
+        final ShpFiles shpFiles = new ShpFiles(file.toURI().toURL());
+        final AccessManager locker = shpFiles.createLocker();
+        
+        ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         ArrayList offsets = new ArrayList();
 
         while (reader.hasNext()) {
@@ -56,7 +59,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
         }
         reader.close();
         copyShapefiles(STATEPOP);
-        reader = new ShapefileReader(shpFiles, false, false, true);
+        reader = locker.getSHPReader(false, false, true, null);
 
         for (int i = 0, ii = offsets.size(); i < ii; i++) {
             reader.shapeAt(((Integer) offsets.get(i)).intValue());
@@ -65,9 +68,11 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 
     }
 
+    @Override
     protected void loadShapes(final String resource, final int expected) throws Exception {
-        ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
-        ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
+        final ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
+        final AccessManager locker = shpFiles.createLocker();
+        ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         int cnt = 0;
         try {
             while (reader.hasNext()) {
@@ -81,10 +86,12 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
                 expected, cnt);
     }
 
+    @Override
     protected void loadMemoryMapped(final String resource, final int expected)
             throws Exception {
-        ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
-        ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
+        final ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
+        final AccessManager locker = shpFiles.createLocker();
+        ShapefileReader reader = locker.getSHPReader(false, false, true, null);
         int cnt = 0;
         try {
             while (reader.hasNext()) {

@@ -16,10 +16,11 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
-import static org.geotoolkit.data.shapefile.ShpFileType.PRJ;
-import static org.geotoolkit.data.shapefile.ShpFileType.SHP;
-import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.DBF;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.PRJ;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHP;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.SHX;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +31,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import junit.framework.TestCase;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.junit.Test;
 
-public class ShpFilesTest extends TestCase{
+import static org.junit.Assert.*;
 
+public class ShpFilesTest {
+
+    @Test
     public void testCaseURL() throws Exception {
         assertCorrectCase(true);
         assertCorrectCase(false);
@@ -56,22 +61,15 @@ public class ShpFilesTest extends TestCase{
         
         ShpFiles files = new ShpFiles(base+shp);
         
-        Object requestor = "testCaseURL";
-        URL shpURL = files.acquireRead(SHP, requestor);
-        URL dbfURL = files.acquireRead(DBF, requestor);
-        URL shxURL = files.acquireRead(SHX, requestor);
-        try{
-            assertEquals(base+shp, shpURL.toExternalForm());
-            assertEquals(base+dbf, dbfURL.toExternalForm());
-            assertEquals(base+shx, shxURL.toExternalForm());
-        }finally{
-            files.unlockRead(shpURL, requestor);
-            files.unlockRead(dbfURL, requestor);
-            files.unlockRead(shxURL, requestor);
-        }
+        URL shpURL = files.getURL(SHP);
+        URL dbfURL = files.getURL(DBF);
+        URL shxURL = files.getURL(SHX);
+        assertEquals(base+shp, shpURL.toExternalForm());
+        assertEquals(base+dbf, dbfURL.toExternalForm());
+        assertEquals(base+shx, shxURL.toExternalForm());
     }
     
-
+    @Test
     public void testCaseFile() throws Exception {
         Map<ShpFileType, File> files = createFiles("testCaseFile", ShpFileType.values(), true);
         
@@ -79,24 +77,15 @@ public class ShpFilesTest extends TestCase{
         fileName = fileName.substring(0, fileName.length()-4)+".shp";
         ShpFiles shpFiles = new ShpFiles(fileName);
 
-        Object requestor = "testCaseFile";
-        URL shpURL = shpFiles.acquireRead(SHP, requestor);
-        URL dbfURL = shpFiles.acquireRead(DBF, requestor);
-        URL shxURL = shpFiles.acquireRead(SHX, requestor);
-        try{
-            assertEquals(files.get(SHP).toURI().toURL().toExternalForm(), shpURL.toExternalForm());
-            assertEquals(files.get(DBF).toURI().toURL().toExternalForm(), dbfURL.toExternalForm());
-            assertEquals(files.get(SHX).toURI().toURL().toExternalForm(), shxURL.toExternalForm());
-        }finally{
-            shpFiles.unlockRead(shpURL, requestor);
-            shpFiles.unlockRead(dbfURL, requestor);
-            shpFiles.unlockRead(shxURL, requestor);
-        }
-        
-        
+        URL shpURL = shpFiles.getURL(SHP);
+        URL dbfURL = shpFiles.getURL(DBF);
+        URL shxURL = shpFiles.getURL(SHX);
+        assertEquals(files.get(SHP).toURI().toURL().toExternalForm(), shpURL.toExternalForm());
+        assertEquals(files.get(DBF).toURI().toURL().toExternalForm(), dbfURL.toExternalForm());
+        assertEquals(files.get(SHX).toURI().toURL().toExternalForm(), shxURL.toExternalForm());
     }
     
-    public static Map<ShpFileType, File> createFiles(final String string,
+    protected static Map<ShpFileType, File> createFiles(final String string,
             final ShpFileType[] values, final boolean uppercase) throws IOException {
         Map<ShpFileType, File> files = new HashMap<ShpFileType, File>();
 
@@ -122,6 +111,7 @@ public class ShpFilesTest extends TestCase{
         return files;
     }
 
+    @Test
     public void testShapefileFilesAll() throws Exception {
         Map<ShpFileType, File> expected = createFiles("testShapefileFilesAll",
                 ShpFileType.values(), false);
@@ -132,6 +122,7 @@ public class ShpFilesTest extends TestCase{
         assertEqualMaps(expected, shapefiles.getFileNames());
     }
 
+    @Test
     public void testURLStringConstructor() throws Exception {
         Map<ShpFileType, File> expected = createFiles(
                 "testURLStringConstructor", ShpFileType.values(), false);
@@ -143,6 +134,7 @@ public class ShpFilesTest extends TestCase{
         assertEqualMaps(expected, shapefiles.getFileNames());
     }
 
+    @Test
     public void testFileStringConstructor() throws Exception {
         Map<ShpFileType, File> expected = createFiles(
                 "testFileStringConstructor", ShpFileType.values(), false);
@@ -153,6 +145,7 @@ public class ShpFilesTest extends TestCase{
         assertEqualMaps(expected, shapefiles.getFileNames());
     }
 
+    @Test
     public void testShapefileFilesSome() throws Exception {
         Map<ShpFileType, File> expected = createFiles("testShapefileFilesSome",
                 new ShpFileType[] { SHP, DBF, SHX, PRJ }, false);
@@ -164,6 +157,7 @@ public class ShpFilesTest extends TestCase{
         assertEqualMaps(expected, shapefiles.getFileNames());
     }
 
+    @Test
     public void testBadFormat() throws Exception {
         try {
             new ShpFiles("SomeName.woo");
@@ -173,6 +167,7 @@ public class ShpFilesTest extends TestCase{
         }
     }
 
+    @Test
     public void testFileInNonExistingDirectory() throws Exception {
         try {
             new ShpFiles(new File("nowhere/test.shp"));
@@ -182,6 +177,7 @@ public class ShpFilesTest extends TestCase{
         }
     }
 
+    @Test
     public void testNonFileURLs() throws IOException {
         Map<ShpFileType, URL> expected = new HashMap<ShpFileType, URL>();
         String base = "http://www.geotoolkit.org/testFile";
@@ -201,6 +197,7 @@ public class ShpFilesTest extends TestCase{
         }
     }
 
+    @Test
     public void testFileURLs() throws Exception {
         Map<ShpFileType, File> expected = createFiles("testShapefileFilesAll",
                 ShpFileType.values(), false);

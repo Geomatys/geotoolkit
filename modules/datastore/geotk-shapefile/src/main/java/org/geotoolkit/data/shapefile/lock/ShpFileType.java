@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile;
+package org.geotoolkit.data.shapefile.lock;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -103,9 +103,13 @@ public enum ShpFileType {
      * return c:\shapefiles\file1 but all other will return null.
      */
     public String toBase(final URL url) {
-        try {
-            return toBase(java.net.URLDecoder.decode(url.toExternalForm(),"US-ASCII"));
-        } catch (UnsupportedEncodingException e) {
+        if(!ShpFiles.isLocal(url)){
+            try {
+                return toBase(java.net.URLDecoder.decode(url.toExternalForm(),"US-ASCII"));
+            } catch (UnsupportedEncodingException e) {
+                return toBase(url.toExternalForm());
+            }
+        }else{
             return toBase(url.toExternalForm());
         }
     }

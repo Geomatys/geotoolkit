@@ -18,14 +18,14 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Iterator;
-import java.util.List;
 
 import org.geotoolkit.data.shapefile.ShapefileAttributeReader;
-import org.geotoolkit.data.dbf.DbaseFileReader;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
-import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.type.PropertyDescriptor;
 
@@ -43,31 +43,26 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
     private int recno;
     private ShpData next;
 
-    public IndexedShapefileAttributeReader( final List<? extends PropertyDescriptor> attributes,
-            final ShapefileReader shp, final DbaseFileReader dbf, final CloseableCollection<ShpData> col,
-            final T goodRecs) {
-        this(attributes, shp, dbf, col, goodRecs,null);
-    }
-
-    public IndexedShapefileAttributeReader( final List<? extends PropertyDescriptor> attributes,
-            final ShapefileReader shp, final DbaseFileReader dbf, final CloseableCollection<ShpData> col,
-            final T goodRecs, final double[] estimateRes) {
-        this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs,estimateRes);
-    }
-
     /**
      * Create the shape reader
      * 
+     * @param locker - to aquiere different readers and writers.
      * @param atts - the attributes that we are going to read.
-     * @param shp - the shape reader, required
-     * @param dbf - the dbf file reader. May be null, in this case no
-     *              attributes will be read from the dbf file
+     * @param read3D - for shp reader, read 3d coordinate or not.
+     * @param memoryMapper - for shp and dbf reader
+     * @param resample - for shp reader, decimate coordinates while reading
+     * @param readDBF - true to open a dbf reader
+     * @param charset - for dbf reader
+     * @param estimateRes - avoid reading geometry if under this resolution, 
+     *                      while return an approximate geometry
      * @param goodRecs Collection of good indexes that match the query.
      */
-    public IndexedShapefileAttributeReader(final PropertyDescriptor[] atts,
-            final ShapefileReader shp, final DbaseFileReader dbf,
-            final CloseableCollection<ShpData> col, final T goodRecs, final double[] estimateRes) {
-        super(atts, shp, dbf,estimateRes);
+    public IndexedShapefileAttributeReader(final AccessManager locker,            
+            final PropertyDescriptor[] atts, final boolean read3D, final boolean memoryMapped,
+            final double[] resample, final boolean readDBF, final Charset charset,
+            final double[] estimateRes, final CloseableCollection<ShpData> col, final T goodRecs) 
+            throws IOException, DataStoreException {
+        super(locker,atts,read3D,memoryMapped,resample,readDBF,charset,estimateRes);
         this.goodRecs = goodRecs;
         this.closeableCollection = col;
         this.recno = 0;

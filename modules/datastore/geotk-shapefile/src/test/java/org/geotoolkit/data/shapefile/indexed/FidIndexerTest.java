@@ -16,35 +16,34 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import java.io.IOException;
+import org.junit.Test;
 
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+
+import static org.junit.Assert.*;
 
 public class FidIndexerTest extends FIDTestCase {
-    public  FidIndexerTest( ) throws IOException {
-        super("FidIndexerTest");
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+    
 
     /*
      * Test method for 'org.geotoolkit.index.fid.FidIndexer.generate(URL)'
      */
+    @Test
     public void testGenerate() throws Exception {
-        ShpFiles shpFiles = new ShpFiles(backshp.toURL());
+        final ShpFiles shpFiles = new ShpFiles(backshp.toURI().toURL());
         IndexedFidWriter.generate(shpFiles);
+        final AccessManager locker = shpFiles.createLocker();
 
-        IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp
-                .toURL(), null, false, false, IndexType.NONE,null);
+        final IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp
+                .toURI().toURL(), null, false, false, IndexType.NONE,null);
 
         long features = ds.getCount(QueryBuilder.all(ds.getNames().iterator().next()));
 
-        IndexedFidReader reader = new IndexedFidReader(shpFiles);
+        final IndexedFidReader reader = locker.getFIXReader(null);
 
         try {
             assertEquals(features, reader.getCount());

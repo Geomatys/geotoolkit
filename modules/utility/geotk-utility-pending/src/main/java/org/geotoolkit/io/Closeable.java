@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,28 +14,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.indexed;
+package org.geotoolkit.io;
 
-import org.geotoolkit.data.shapefile.lock.ShpFileType;
 
 /**
- * Enumerates the different types of Shapefile geometry indices there are.
+ * Extend java.io.Closeable with method isClosed.
+ * This allows to log messages when objects are not properly disposed.
  * 
- * @author jesse
+ * @author Johann Sorel (Geomatys)
+ * @module pending
  */
-public enum IndexType {
+public interface Closeable extends java.io.Closeable{
+    
     /**
-     * Don't use indexing
+     * @return true if object has already been closed.
      */
-    NONE(null),
-    /**
-     * The same index as mapserver. Its the most reliable and is the default
-     */
-    QIX(ShpFileType.QIX);
-
-    public final ShpFileType shpFileType;
-
-    private IndexType(final ShpFileType shpFileType) {
-        this.shpFileType = shpFileType;
-    }
+    public boolean isClosed();
+    
 }

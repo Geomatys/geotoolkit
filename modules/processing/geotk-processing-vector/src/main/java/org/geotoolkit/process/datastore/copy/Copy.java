@@ -26,6 +26,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
@@ -68,6 +69,7 @@ public class Copy extends AbstractProcess {
         final Boolean eraseParam    = Parameters.value(CopyDescriptor.ERASE,                inputParameters);
         final Boolean createParam   = Parameters.value(CopyDescriptor.CREATE,               inputParameters);
         final String typenameParam  = Parameters.value(CopyDescriptor.TYPE_NAME,            inputParameters);
+        final Query queryParam      = Parameters.value(CopyDescriptor.QUERY,                inputParameters);
         
         final DataStore sourceDS;
         DataStore targetDS = null;
@@ -120,6 +122,16 @@ public class Copy extends AbstractProcess {
         }
         
         final Set<Name> names;
+        if(queryParam != null){
+            //if a query is given, ignore type name parameter
+            try {
+                insert(queryParam, sourceDS, targetDS, eraseParam);
+            } catch (DataStoreException ex) {
+                fireFailEvent(new ProcessEvent(this, null,50, ex));
+            }
+            return outputParameters;
+        }
+        
         if("*".equals(typenameParam)){
             //all values
             try {
@@ -152,7 +164,7 @@ public class Copy extends AbstractProcess {
             } catch (DataStoreException ex) {
                 fireFailEvent(new ProcessEvent(this, null,50, ex));
                 return outputParameters;
-            }
+            } 
             inc++;
         }
         
@@ -179,6 +191,27 @@ public class Copy extends AbstractProcess {
         hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
         target.addFeatures(name, collection, hints);
         
+    }
+    
+    private void insert(final Query query, final DataStore source, final DataStore target, final boolean erase) throws DataStoreException{
+        
+        final Name name = query.getTypeName();
+        final FeatureType type = source.getFeatureType(name);        
+        final Session session = source.createSession(false);
+        final FeatureCollection collection = session.getFeatureCollection(query);
+        
+        if(target.getNames().contains(name)){
+            if(erase){
+                target.deleteSchema(name);
+                target.createSchema(name, type);
+            }
+        }else{
+            target.createSchema(name, type);
+        }
+        
+        final Hints hints = new Hints();
+        hints.put(HintsPending.UPDATE_ID_ON_INSERT, Boolean.FALSE);
+        target.addFeatures(name, collection, hints);        
     }
     
 }

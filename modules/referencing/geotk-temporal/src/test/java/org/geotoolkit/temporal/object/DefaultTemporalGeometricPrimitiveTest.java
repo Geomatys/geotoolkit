@@ -103,7 +103,7 @@ public class DefaultTemporalGeometricPrimitiveTest {
     @Test
     public void testLength() {
         Calendar cal = Calendar.getInstance();
-        cal.set(2012, 0, 1);
+        cal.set(2013, 0, 1);
         temporalGeomericPrimitive1 = new DefaultPeriod(new DefaultInstant(position1), new DefaultInstant(position2));
         temporalGeomericPrimitive2 = new DefaultPeriod(new DefaultInstant(position2), new DefaultInstant(new DefaultPosition(cal.getTime())));
         Duration result = temporalGeomericPrimitive1.length();

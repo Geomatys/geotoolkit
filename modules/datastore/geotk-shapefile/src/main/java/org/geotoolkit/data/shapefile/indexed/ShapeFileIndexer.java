@@ -21,25 +21,25 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.shapefile.ShpFiles;
-import org.geotoolkit.data.shapefile.StorageFile;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.StorageFile;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
+import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.quadtree.fs.IndexHeader;
 import org.geotoolkit.index.rtree.PageStore;
 import org.geotoolkit.util.NullProgressListener;
-
 import org.geotoolkit.process.ProgressController;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.index.quadtree.DataReader;
 
 /**
  * Utility class for Shapefile spatial indexing
@@ -84,20 +84,20 @@ public class ShapeFileIndexer {
             throw new IOException("You have to set a shape file name!");
         }
 
+        final AccessManager locker = shpFiles.createLocker();        
         int cnt = 0;
 
-        ShapefileReader reader = null;
-
         // Temporary file for building...
-        StorageFile storage = shpFiles.getStorageFile(this.idxType.shpFileType);
-        File treeFile = storage.getFile();
+        final StorageFile storage = locker.getStorageFile(this.idxType.shpFileType);
+        final File treeFile = storage.getFile();
 
+        ShapefileReader reader = null;
         try {
-            reader = new ShapefileReader(shpFiles, true, false,false);
+            reader = locker.getSHPReader(true, false, false, null);
 
             switch (idxType) {
             case QIX:
-                cnt = this.buildQuadTree(reader, treeFile, verbose);
+                cnt = this.buildQuadTree(locker,reader, treeFile, verbose);
                 break;
             default:
                 throw new IllegalArgumentException("NONE is not a legal index choice");
@@ -110,12 +110,14 @@ public class ShapeFileIndexer {
         }
 
         // Final index file
-        storage.replaceOriginal();
+        locker.disposeReaderAndWriters();
+        locker.replaceStorageFiles();
 
         return cnt;
     }
 
-    private int buildQuadTree(final ShapefileReader reader, final File file, final boolean verbose)
+    private int buildQuadTree(final AccessManager locker, final ShapefileReader reader, 
+            final File file, final boolean verbose)
             throws IOException, StoreException {
         byte order = 0;
 
@@ -127,8 +129,8 @@ public class ShapeFileIndexer {
             throw new StoreException("Asked byte order '" + this.byteOrder
                     + "' must be 'NL' or 'NM'!");
         }
-
-        ShxReader shpIndex = new ShxReader(shpFiles, false);
+        
+        final ShxReader shpIndex = locker.getSHXReader(false);
         QuadTree tree = null;
         int cnt = 0;
         int numRecs = shpIndex.getRecordCount();

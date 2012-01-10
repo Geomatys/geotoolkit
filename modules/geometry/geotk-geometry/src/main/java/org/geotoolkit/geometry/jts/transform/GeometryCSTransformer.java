@@ -17,17 +17,7 @@
  */
 package org.geotoolkit.geometry.jts.transform;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.*;
 import org.geotoolkit.geometry.jts.JTS;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -139,10 +129,11 @@ public class GeometryCSTransformer implements GeometryTransformer{
      */
     public LineString transformLineString(final LineString ls, final GeometryFactory gf)
         throws TransformException {
-        final CoordinateSequence cs = projectCoordinateSequence(ls.getCoordinateSequence());
+        CoordinateSequence cs = projectCoordinateSequence(ls.getCoordinateSequence());
         final LineString transformed;
         
         if (ls instanceof LinearRing) {
+            cs = ensureClosed(cs);
             transformed = gf.createLinearRing(cs);
         } else {
             transformed = gf.createLineString(cs);
@@ -197,4 +188,18 @@ public class GeometryCSTransformer implements GeometryTransformer{
     public CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints) throws TransformException {
         return csTransformer.transform(sequence,minpoints);
     }
+    
+    private CoordinateSequence ensureClosed(final CoordinateSequence sequence){
+        final Coordinate first = sequence.getCoordinate(0);
+        final int lastIndex = sequence.size()-1;
+        if(!first.equals2D(sequence.getCoordinate(lastIndex))){
+            sequence.setOrdinate(lastIndex, 0, first.x);
+            sequence.setOrdinate(lastIndex, 1, first.y);
+            if(sequence.getDimension()>2){
+                sequence.setOrdinate(lastIndex, 2, first.z);
+            }
+        }
+        return sequence;
+    }
+    
 }

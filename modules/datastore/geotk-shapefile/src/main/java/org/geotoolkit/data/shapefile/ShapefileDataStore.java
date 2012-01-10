@@ -18,6 +18,9 @@
 
 package org.geotoolkit.data.shapefile;
 
+import org.geotoolkit.data.shapefile.lock.StorageFile;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -84,7 +87,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
 
 /**
  *
@@ -225,7 +228,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             try {
                 final ByteBuffer buffer = ByteBuffer.allocate(100);
 
-                in = shpFiles.getReadChannel(SHP, "Shapefile Datastore's getBounds Method");
+                in = shpFiles.getReadChannel(SHP);
                 try {
                     in.read(buffer);
                     buffer.flip();
@@ -399,6 +402,8 @@ public class ShapefileDataStore extends AbstractDataStore{
 
         //delete the files
         shpFiles.delete();
+        
+        final AccessManager locker = shpFiles.createLocker();
 
         //update schema and name
         name = typeName;
@@ -422,10 +427,10 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         try{
-            final StorageFile shpStoragefile = shpFiles.getStorageFile(SHP);
-            final StorageFile shxStoragefile = shpFiles.getStorageFile(SHX);
-            final StorageFile dbfStoragefile = shpFiles.getStorageFile(DBF);
-            final StorageFile prjStoragefile = shpFiles.getStorageFile(PRJ);
+            final StorageFile shpStoragefile = locker.getStorageFile(SHP);
+            final StorageFile shxStoragefile = locker.getStorageFile(SHX);
+            final StorageFile dbfStoragefile = locker.getStorageFile(DBF);
+            final StorageFile prjStoragefile = locker.getStorageFile(PRJ);
 
             final FileChannel shpChannel = shpStoragefile.getWriteChannel();
             final FileChannel shxChannel = shxStoragefile.getWriteChannel();
@@ -486,7 +491,8 @@ public class ShapefileDataStore extends AbstractDataStore{
                 getLogger().warning("PRJ file not generated for null CoordinateReferenceSystem");
             }
 
-            StorageFile.replaceOriginals(shpStoragefile, shxStoragefile, dbfStoragefile, prjStoragefile);
+            locker.disposeReaderAndWriters();
+            locker.replaceStorageFiles();
         }catch(IOException ex){
             throw new DataStoreException(ex);
         }
@@ -519,18 +525,26 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return The FeatureType that this DataStore contains.
      * @throws IOException If a type by the requested name is not present.
      */
-    private SimpleFeatureType buildSchema(final String namespace) throws DataStoreException {
+    private synchronized SimpleFeatureType buildSchema(final String namespace) throws DataStoreException {
 
         //read all attributes///////////////////////////////////////////////////
-        final ShapefileReader shp = openShapeReader(true,null);
-        final DbaseFileReader dbf = openDbfReader();
+        final AccessManager locker = shpFiles.createLocker();
+        
+        final ShapefileReader shp;
+        final DbaseFileReader dbf;
+        try {
+            shp = locker.getSHPReader(true, useMemoryMappedBuffer, true, null);
+            dbf = locker.getDBFReader(useMemoryMappedBuffer, dbfCharset);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
 
         CoordinateReferenceSystem crs = null;
         ReadableByteChannel channel = null;
 
         //read the projection
         try{
-            channel = shpFiles.getReadChannel(PRJ, new Object());
+            channel = shpFiles.getReadChannel(PRJ);
             crs = PrjFiles.read(channel, true);
         }catch(IOException ex){
             crs = null;
@@ -559,21 +573,8 @@ public class ShapefileDataStore extends AbstractDataStore{
                 attributes.addAll(header.createDescriptors(namespace));
             }
         } finally {
-            //todo replace by ARM in JDK 1.7
-            try {
-                if (dbf != null) {
-                    dbf.close();
-                }
-            } catch (IOException ioe) {
-                // do nothing
-            }
-            try {
-                if (shp != null) {
-                    shp.close();
-                }
-            } catch (IOException ioe) {
-                // do nothing
-            }
+            //we have finish readring what we want, dispose everything
+            locker.disposeReaderAndWriters();
         }
         
         //create the feature type //////////////////////////////////////////////
@@ -609,82 +610,28 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param readDbf - if true, the dbf fill will be opened and read
      * @throws IOException
      */
-    protected ShapefileAttributeReader getAttributesReader(final boolean readDbf, final boolean read3D, final double[] resample)
-            throws DataStoreException {
+    protected ShapefileAttributeReader getAttributesReader(final boolean readDbf, 
+            final boolean read3D, final double[] resample) throws DataStoreException {
 
+        final AccessManager locker = shpFiles.createLocker();
         final SimpleFeatureType schema = getFeatureType();
 
-        if (!readDbf) {
+        final PropertyDescriptor[] descs;
+        if(readDbf){
+            final List<? extends PropertyDescriptor> lst = schema.getAttributeDescriptors();
+            descs =  lst.toArray(new PropertyDescriptor[lst.size()]);
+        }else{
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
-            final AttributeDescriptor[] desc = new AttributeDescriptor[]{schema.getGeometryDescriptor()};
-            return new ShapefileAttributeReader(desc, openShapeReader(read3D,resample), null);
+            descs = new PropertyDescriptor[]{schema.getGeometryDescriptor()};
         }
-
-        final List<AttributeDescriptor> atts =  schema.getAttributeDescriptors();
-        return new ShapefileAttributeReader(atts, openShapeReader(read3D,resample), openDbfReader());
-    }
-
-    /**
-     * Convenience method for opening a ShapefileReader.
-     *
-     * @return A new ShapefileReader.
-     * @throws IOException If an error occurs during creation.
-     */
-    protected ShapefileReader openShapeReader(final boolean read3D, final double[] res) throws DataStoreException {
         try {
-            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,read3D,res);
-        } catch (IOException se) {
-            throw new DataStoreException("Error creating ShapefileReader", se);
+            return new ShapefileAttributeReader(locker, descs, read3D, 
+                    useMemoryMappedBuffer,resample, readDbf, dbfCharset,null);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
     }
-
-    /**
-     * Convenience method for opening a DbaseFileReader.
-     *
-     * @return A new DbaseFileReader
-     * @throws IOException If an error occurs during creation.
-     */
-    protected DbaseFileReader openDbfReader() throws DataStoreException {
-
-        if (shpFiles.get(ShpFileType.DBF) == null) {
-            return null;
-        }
-
-        if (shpFiles.isLocal() && !shpFiles.exists(DBF)) {
-            return null;
-        }
-
-        try {
-            return ShpDBF.reader(shpFiles, useMemoryMappedBuffer, dbfCharset);
-        } catch (IOException e) {
-            // could happen if dbf file does not exist
-            return null;
-        }
-    }
-    
-    /**
-     * Convenience method for opening an index file.
-     *
-     * @return An IndexFile
-     * @throws IOException
-     */
-    protected ShxReader openIndexFile() throws IOException {
-        if (shpFiles.get(SHX) == null) {
-            return null;
-        }
-
-        if (shpFiles.isLocal() && !shpFiles.exists(SHX)) {
-            return null;
-        }
-
-        try {
-            return new ShxReader(shpFiles, this.useMemoryMappedBuffer);
-        } catch (IOException e) {
-            // could happen if shx file does not exist remotely
-            return null;
-        }
-    }
-    
+        
     ////////////////////////////////////////////////////////////////////////////
     //Fallback on iterative reader and writer //////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

@@ -30,6 +30,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import org.geotoolkit.io.Closeable;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
@@ -59,7 +60,7 @@ import java.nio.charset.CharsetDecoder;
  * @author Ian Schneider
  * @module pending
  */
-public class DbaseFileReader {
+public class DbaseFileReader implements Closeable{
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 
@@ -206,12 +207,18 @@ public class DbaseFileReader {
      * 
      * @throws IOException If an error occurs.
      */
+    @Override
     public void close() throws IOException {
         if (channel.isOpen()) {
             channel.close();
         }
     }
 
+    @Override
+    public boolean isClosed() {
+        return !channel.isOpen();
+    }
+    
     /**
      * Query the reader as to whether there is another record.
      * 

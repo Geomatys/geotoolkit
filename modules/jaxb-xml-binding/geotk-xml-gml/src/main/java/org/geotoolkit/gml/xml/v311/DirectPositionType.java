@@ -147,7 +147,9 @@ public class DirectPositionType implements DirectPosition {
     public DirectPositionType(final double... values) {
         this.value = new ArrayList<Double>();
         for (Double pt: values) {
-            this.value.add(pt);
+            if (pt != null && !pt.equals(Double.NaN)) {
+                this.value.add(pt);
+            }
         }
         this.srsDimension = null;
     }

@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.data.shapefile;
 
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import java.io.IOException;
-import java.util.List;
 
+import java.nio.charset.Charset;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.type.PropertyDescriptor;
@@ -35,6 +38,8 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 public class ShapefileAttributeReader {
 
+    private final AccessManager locker;
+    
     protected final PropertyDescriptor[] metaData;
     protected final boolean[] narrowing;
     protected final int[] attributIndex;
@@ -42,43 +47,35 @@ public class ShapefileAttributeReader {
     protected DbaseFileReader dbf;
     protected DbaseFileReader.Row row;
     protected ShapefileReader.Record record;
+    private boolean closed = false;
 
     //feature bbox must be bigger than this, otherwise shape geometry is only estimated
     private final boolean estimateRes;
     private final double estimateX;
     private final double estimateY;
 
-    public ShapefileAttributeReader(final List<? extends PropertyDescriptor> atts,
-            final ShapefileReader shp, final DbaseFileReader dbf) {
-        this(atts.toArray(new PropertyDescriptor[atts.size()]), shp, dbf);
-    }
-
     /**
-     * Create the shapefile reader
-     *
-     * @param atts - the attributes that we are going to read.
-     * @param shp - the shapefile reader, required
-     * @param dbf - the dbf file reader. May be null, in this case no
-     *              attributes will be read from the dbf file
-     */
-    public ShapefileAttributeReader(final PropertyDescriptor[] atts,
-            final ShapefileReader shp, final DbaseFileReader dbf) {
-        this(atts,shp,dbf,null);
-    }
-
-    /**
-     * Create the shapefile reader
+     * Create the shapefile attribute reader
      * 
+     * @param locker - to aquiere different readers and writers.
      * @param atts - the attributes that we are going to read.
-     * @param shp - the shapefile reader, required
-     * @param dbf - the dbf file reader. May be null, in this case no
-     *              attributes will be read from the dbf file
+     * @param read3D - for shp reader, read 3d coordinate or not.
+     * @param memoryMapper - for shp and dbf reader
+     * @param resample - for shp reader, decimate coordinates while reading
+     * @param readDBF - true to open a dbf reader
+     * @param charset - for dbf reader
+     * @param estimateRes - avoid reading geometry if under this resolution, 
+     *                      while return an approximate geometry
      */
-    public ShapefileAttributeReader(final PropertyDescriptor[] atts,
-            final ShapefileReader shp, final DbaseFileReader dbf, final double[] estimateRes) {
+    public ShapefileAttributeReader(final AccessManager locker,
+            final PropertyDescriptor[] atts, final boolean read3D, final boolean memoryMapped,
+            final double[] resample, final boolean readDBF, final Charset charset,
+            final double[] estimateRes) throws IOException, DataStoreException {
+        ArgumentChecks.ensureNonNull("locker", locker);
+        this.locker = locker;
         this.metaData = atts;
-        this.shp = shp;
-        this.dbf = dbf;
+        this.shp = locker.getSHPReader(true, memoryMapped, read3D, resample);
+        this.dbf = locker.getDBFReader(memoryMapped, charset);
         if(estimateRes != null){
             this.estimateRes = true;
             this.estimateX = estimateRes[0];
@@ -119,23 +116,24 @@ public class ShapefileAttributeReader {
         }
     }
 
+    public AccessManager getLocker() {
+        return locker;
+    }
+
     /**
      * {@inheritDoc }
      */
     public void close() throws IOException {
-        try {
-            if (shp != null) {
-                shp.close();
+        if(!closed){
+            closed = true;
+            try {
+                locker.disposeReaderAndWriters();
+            } finally {
+                row = null;
+                record = null;
+                shp = null;
+                dbf = null;
             }
-
-            if (dbf != null) {
-                dbf.close();
-            }
-        } finally {
-            row = null;
-            record = null;
-            shp = null;
-            dbf = null;
         }
     }
 

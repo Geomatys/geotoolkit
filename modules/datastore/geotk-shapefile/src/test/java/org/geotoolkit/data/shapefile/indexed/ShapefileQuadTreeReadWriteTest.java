@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,8 +24,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
@@ -53,6 +52,8 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.test.TestData;
 import org.opengis.feature.type.Name;
 
+import static org.junit.Assert.*;
+
 /**
  * @version $Id$
  * @author Ian Schneider
@@ -64,13 +65,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     boolean readStarted = false;
     Exception exception = null;
 
-    /**
-     * Creates a new instance of ShapefileReadWriteTest
-     */
-    public ShapefileQuadTreeReadWriteTest( final String name ) throws IOException {
-        super(name);
-    }
-
+    @Test
     public void testAll() throws Throwable {
         StringBuffer errors = new StringBuffer();
         Exception bad = null;
@@ -92,11 +87,12 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     }
 
     public void fail( final String message, final Throwable cause ) throws Throwable {
-        Throwable fail = new AssertionFailedError(message);
+        Throwable fail = new Exception(message);
         fail.initCause(cause);
         throw fail;
     }
 
+    @Test
     public void testWriteTwice() throws Exception {
         copyShapefiles("shapes/stream.shp");
         ShapefileDataStoreFactory fac = new ShapefileDataStoreFactory();
@@ -125,7 +121,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
             MalformedURLException,
             DataStoreException {
         DataStore s;
-        s = createDataStore(maker, tmp.toURL(), memorymapped);
+        s = createDataStore(maker, tmp.toURI().toURL(), memorymapped);
 
         s.createSchema(type.getName(),type);
 
@@ -134,7 +130,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         session.addFeatures(type.getName(),one);
         session.commit();
 
-        s = createDataStore(maker, tmp.toURL(), true);
+        s = createDataStore(maker, tmp.toURI().toURL(), true);
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getNames().iterator().next())));
     }
 
@@ -156,7 +152,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
             final ShapefileDataStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException, Exception {
         DataStore s;
-        s = createDataStore(maker, tmp.toURL(), memorymapped);
+        s = createDataStore(maker, tmp.toURI().toURL(), memorymapped);
 
         s.createSchema(type.getName(),type);
 
@@ -164,7 +160,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         session.addFeatures(type.getName(),one);
         session.commit();
 
-        s = createDataStore(new ShapefileDataStoreFactory(), tmp.toURL(), true);
+        s = createDataStore(new ShapefileDataStoreFactory(), tmp.toURI().toURL(), true);
         Name typeName = s.getNames().iterator().next();
 
         FeatureCollection<SimpleFeature> two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
@@ -225,13 +221,14 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testGetBoundsQuery() throws Exception {
         File file = copyShapefiles("shapes/streams.shp");
 
         ShapefileDataStoreFactory fac = new ShapefileDataStoreFactory();
 
         Map params = new HashMap();
-        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), file.toURL());
+        params.put(ShapefileDataStoreFactory.URLP.getName().toString(), file.toURI().toURL());
         params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
         IndexedShapefileDataStore ds = (IndexedShapefileDataStore) fac.createDataStore(params);
 
@@ -258,7 +255,4 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         assertTrue(result.equals(bounds));
     }
 
-    public static final void main( final String[] args ) throws Exception {
-        junit.textui.TestRunner.run(suite(ShapefileQuadTreeReadWriteTest.class));
-    }
 }

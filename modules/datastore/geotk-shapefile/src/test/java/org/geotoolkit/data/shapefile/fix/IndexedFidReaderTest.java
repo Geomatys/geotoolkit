@@ -21,46 +21,51 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.geotoolkit.data.shapefile.ShpFiles;
-import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.indexed.FIDTestCase;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
-
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import org.geotoolkit.data.shapefile.lock.ShpFiles;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
+import org.junit.After;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 
-
 public class IndexedFidReaderTest extends FIDTestCase {
-    public IndexedFidReaderTest(  ) throws IOException {
-        super("IndexedFidReaderTest");
-    }
-
+    
+    private AccessManager locker;
     private IndexedFidReader reader;
-
     private ShxReader indexFile;
 
-    protected void setUp() throws Exception {
+    @Override
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
-        ShpFiles shpFiles = new ShpFiles(backshp.toURL());
+        final ShpFiles shpFiles = new ShpFiles(backshp.toURI().toURL());
         IndexedFidWriter.generate(shpFiles);
 
-        indexFile = new ShxReader(shpFiles, false);
-        reader = new IndexedFidReader(shpFiles);
+        locker = shpFiles.createLocker();
+        indexFile = locker.getSHXReader(false);
+        reader = locker.getFIXReader(null);
     }
 
-    protected void tearDown() throws Exception {
-        reader.close();
-        indexFile.close();
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        locker.dispose();
         super.tearDown();
     }
 
     /*
      * Test method for 'org.geotoolkit.index.fid.IndexedFidReader.findFid(String)'
      */
+    @Test
     public void testFindFid() throws Exception {
         long offset = reader.findFid(TYPE_NAME + ".4");
         assertEquals(3, offset);
@@ -84,44 +89,43 @@ public class IndexedFidReaderTest extends FIDTestCase {
         assertEquals(-1, offset);
    }
 
+    @Test
     public void testFindAllFids() throws Exception {
         int expectedCount = 0;
-        Set<String> expectedFids = new LinkedHashSet<String>();
-        {
-            IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURL(), null,
-                    true, true, IndexType.NONE,null);
-            FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
-            while (features.hasNext()) {
-                SimpleFeature next = features.next();
-                expectedCount++;
-                expectedFids.add(next.getID());
-            }
-            features.close();
+        final Set<String> expectedFids = new LinkedHashSet<String>();
+        
+        final IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURI().toURL(), null,
+                true, true, IndexType.NONE,null);
+        final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
+        while (features.hasNext()) {
+            final SimpleFeature next = features.next();
+            expectedCount++;
+            expectedFids.add(next.getID());
         }
+        features.close();
 
         assertTrue(expectedCount > 0);
         assertEquals(expectedCount, reader.getCount());
         
         for(String fid : expectedFids){
-            long offset = reader.findFid(fid);
+            final long offset = reader.findFid(fid);
             assertFalse(-1 == offset);
         }
     }
 
+    @Test
     public void testFindAllFidsReverseOrder() throws Exception {
         int expectedCount = 0;
-        Set<String> expectedFids = new TreeSet<String>(Collections.reverseOrder());
-        {
-            IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURL(), null,
-                    true, true, IndexType.NONE,null);
-            FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
-            while (features.hasNext()) {
-                SimpleFeature next = features.next();
-                expectedCount++;
-                expectedFids.add(next.getID());
-            }
-            features.close();
+        final Set<String> expectedFids = new TreeSet<String>(Collections.reverseOrder());
+        final IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp.toURI().toURL(), null,
+                true, true, IndexType.NONE,null);
+        final FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(ds.getNames().iterator().next()));
+        while (features.hasNext()) {
+            final SimpleFeature next = features.next();
+            expectedCount++;
+            expectedFids.add(next.getID());
         }
+        features.close();
 
         assertTrue(expectedCount > 0);
         assertEquals(expectedCount, reader.getCount());
@@ -130,7 +134,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         assertFalse("findFid for archsites.25 returned -1",-1 == reader.findFid("archsites.25"));
 
         for(String fid : expectedFids){
-            long offset = reader.findFid(fid);
+            final long offset = reader.findFid(fid);
             assertNotNull(offset);
 //            System.out.println(fid + "=" + offset + ", ");
             assertFalse("findFid for " + fid + " returned -1", -1 == offset);
@@ -138,11 +142,13 @@ public class IndexedFidReaderTest extends FIDTestCase {
     }
 
     // test if FID no longer exists.
+    @Test
     public void testFindDeletedFID() throws Exception {
         reader.close();
 
-        ShpFiles shpFiles = new ShpFiles(fixFile);
-        IndexedFidWriter writer = new IndexedFidWriter(shpFiles);
+        final ShpFiles shpFiles = new ShpFiles(fixFile);
+        final AccessManager locker = shpFiles.createLocker();
+        final IndexedFidWriter writer = locker.getFIXWriter(locker.getStorageFile(ShpFileType.FIX));
         try {
             writer.next();
             writer.next();
@@ -152,11 +158,11 @@ public class IndexedFidReaderTest extends FIDTestCase {
                 writer.next();
             }
         } finally {
-            writer.close();
-            reader.close();
+            locker.disposeReaderAndWriters();
+            locker.replaceStorageFiles();
         }
 
-        reader = new IndexedFidReader(shpFiles);
+        reader = locker.getFIXReader(null);
 
         long offset = reader.findFid(TYPE_NAME + ".11");
         assertEquals(9, offset);
@@ -167,16 +173,19 @@ public class IndexedFidReaderTest extends FIDTestCase {
         offset = reader.findFid(TYPE_NAME + ".3");
         assertEquals(-1, offset);
 
+        locker.dispose();
     }
 
+    @Test
     public void testHardToFindFid() throws Exception {
-        long offset = reader.search(5, 3, 7, 5);
+        final long offset = reader.search(5, 3, 7, 5);
         assertEquals(4, offset);
     }
 
     /*
      * Test method for 'org.geotoolkit.index.fid.IndexedFidReader.goTo(int)'
      */
+    @Test
     public void testGoTo() throws IOException {
         reader.goTo(10);
         assertEquals(shpFiles.getTypeName() + ".11", reader.next());

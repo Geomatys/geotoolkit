@@ -17,7 +17,6 @@
 package org.geotoolkit.index.rtree;
 
 import com.vividsolutions.jts.geom.Envelope;
-import junit.framework.TestCase;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.DataDefinition;
 import org.geotoolkit.index.rtree.fs.FileSystemPageStore;
@@ -25,6 +24,9 @@ import org.geotoolkit.index.rtree.memory.MemoryPageStore;
 import java.io.File;
 import java.util.Collection;
 import org.geotoolkit.index.DefaultData;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * DOCUMENT ME!
@@ -32,20 +34,13 @@ import org.geotoolkit.index.DefaultData;
  * @author Tommaso Nolli
  * @module pending
  */
-public class RTreeTest extends TestCase {
+public class RTreeTest {
+    
     private static final short FILE = 0;
     private static final short MEMORY = 1;
     private static final short NUM_IMPLEMENTATIONS = 2;
     private DataDefinition dd = null;
 
-    /**
-     * Constructor for RTreeTest.
-     * 
-     * @param arg0
-     */
-    public RTreeTest(final String arg0) {
-        super(arg0);
-    }
 
     private RTree getRTree(final short type) throws Exception {
         dd = new DataDefinition("US-ASCII");
@@ -87,6 +82,7 @@ public class RTreeTest extends TestCase {
         return idx;
     }
 
+    @Test
     public void testRTree() throws Exception {
         for (short ni = 0; ni < NUM_IMPLEMENTATIONS; ni++) {
             this.getRTree(ni).close();
@@ -96,6 +92,7 @@ public class RTreeTest extends TestCase {
     /*
      * Test for Collection search(Envelope)
      */
+    @Test
     public void testSearchEnvelope() throws Exception {
         for (short ni = 0; ni < NUM_IMPLEMENTATIONS; ni++) {
             RTree idx = this.getFullRTree(ni);
@@ -112,10 +109,12 @@ public class RTreeTest extends TestCase {
     /*
      * Test for Collection search(Filter)
      */
+    @Test
     public void testSearchFilter() {
         // TODO Write the test
     }
 
+    @Test
     public void testInsert() throws Exception {
         for (short ni = 0; ni < NUM_IMPLEMENTATIONS; ni++) {
             RTree idx = this.getFullRTree(ni);
@@ -123,6 +122,7 @@ public class RTreeTest extends TestCase {
         }
     }
 
+    @Test
     public void testDelete() throws Exception {
         for (short ni = 0; ni < NUM_IMPLEMENTATIONS; ni++) {
             RTree idx = this.getFullRTree(ni);

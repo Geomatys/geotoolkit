@@ -23,7 +23,12 @@ import java.util.Iterator;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Jesse
@@ -38,14 +43,10 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
     private Iterator iterator;
     private CoordinateReferenceSystem crs;
 
-    public PolygonLazySearchCollectionTest() throws IOException {
-        super("LazySearchIteratorTest");
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         file = copyShapefiles("shapes/statepop.shp");
-        ds = new IndexedShapefileDataStore(file.toURL());
+        ds = new IndexedShapefileDataStore(file.toURI().toURL());
         ds.buildQuadTree(0);
         final Object[] v = LineLazySearchCollectionTest.openQuadTree(file);
         tree = (QuadTree) v[0];
@@ -53,7 +54,8 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
         crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (iterator != null)
             tree.close(iterator);
         tree.close();
@@ -61,6 +63,7 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
         file.getParentFile().delete();
     }
 
+    @Test
     public void testGetAllFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(-125.5, -66, 23.6,
                 53.0, crs);
@@ -68,12 +71,14 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
         assertEquals(49, collection.size());
     }
 
+    @Test
     public void testGetOneFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(-70, -68.2, 44.5, 45.7,crs);
         LazySearchCollection collection = new LazySearchCollection(tree, dr, env);
         assertEquals(22, collection.size());
     }
 
+    @Test
     public void testGetNoFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(0, 10, 0, 10, crs);
         LazySearchCollection collection = new LazySearchCollection(tree, dr, env);
