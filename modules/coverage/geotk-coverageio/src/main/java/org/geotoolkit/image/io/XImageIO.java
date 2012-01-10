@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io;
 
+import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.07
  * @module
@@ -193,7 +194,7 @@ public final class XImageIO extends Static {
     }
 
     /**
-     * Returns a code indication which kind of input/output the given reader/writer accepts.
+     * Returns a code indicating which kind of input/output the given reader/writer accepts.
      * The meaning of the return value are:
      * <p>
      * 0: No input/output fit.<br>
@@ -281,10 +282,9 @@ public final class XImageIO extends Static {
                  * use directly the wrapped reader, which should be somewhere next in the iteration.
                  */
                 if (spi instanceof ImageReaderAdapter.Spi) {
-                    final ImageReaderSpi main = ((ImageReaderAdapter.Spi) spi).main;
-                    if (Arrays.equals(getIdentifiers(spi, mode), getIdentifiers(main, mode))) {
-                        // Actually, don't skip the adapter if it declares a different format
-                        // name, or suffixes, etc., since it could be definition of a new format.
+                    final Set<InformationType> info = ((ImageReaderAdapter.Spi) spi).getModifiedInformation(input);
+                    if (!info.contains(InformationType.RASTER) && !info.contains(InformationType.IMAGE)) {
+                        // Actually, skips the adapter only if it does not modify the pixel values.
                         continue;
                     }
                 }

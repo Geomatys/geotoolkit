@@ -37,8 +37,7 @@ import ucar.unidata.geoloc.projection.ProjectionAdapter;
 
 
 /**
- * Wraps a NetCDF {@link Projection} object in a GeoAPI
- * {@link org.opengis.referencing.operation.Projection}.
+ * Wraps a NetCDF {@link Projection} object as an implementation of GeoAPI interfaces.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -46,13 +45,13 @@ import ucar.unidata.geoloc.projection.ProjectionAdapter;
  * @since 3.20
  * @module
  */
-final class NetcdfProjection extends NetcdfIdentifiedObject implements
+public class NetcdfProjection extends NetcdfIdentifiedObject implements
         org.opengis.referencing.operation.Projection
 {
     /**
      * The NetCDF projection object wrapped in a {@link MathTransform} instance.
      */
-    protected final NetcdfTransform transform;
+    final NetcdfTransform transform;
 
     /**
      * The source coordinate reference system, usually geographic.
@@ -68,6 +67,8 @@ final class NetcdfProjection extends NetcdfIdentifiedObject implements
      * Creates a new wrapper for the given NetCDF projection.
      *
      * @param projection The NetCDF projection object to wrap.
+     * @param sourceCRS  The source CRS to be returned by {@link #getSourceCRS()}, or {@code null}.
+     * @param targetCRS  The target CRS to be returned by {@link #getTargetCRS()}, or {@code null}.
      */
     public NetcdfProjection(final Projection projection,
             final CoordinateReferenceSystem sourceCRS,
@@ -103,6 +104,8 @@ final class NetcdfProjection extends NetcdfIdentifiedObject implements
 
     /**
      * Returns the source coordinate reference system, which is usually geographic.
+     *
+     * @return The source CRS, or {@code null} if not available.
      */
     @Override
     public CoordinateReferenceSystem getSourceCRS() {
@@ -111,6 +114,8 @@ final class NetcdfProjection extends NetcdfIdentifiedObject implements
 
     /**
      * Returns the target coordinate reference system, which is usually projected.
+     *
+     * @return The target CRS, or {@code null} if not available.
      */
     @Override
     public CoordinateReferenceSystem getTargetCRS() {
@@ -126,7 +131,12 @@ final class NetcdfProjection extends NetcdfIdentifiedObject implements
     }
 
     /**
-     * Returns the operation method.
+     * Returns the operation method. The name of the returned method is the NetCDF
+     * {@linkplain Projection#getClassName() projection class name}.
+     *
+     * @return The operation method.
+     *
+     * @see Projection#getClassName()
      */
     @Override
     public OperationMethod getMethod() {
@@ -166,6 +176,7 @@ final class NetcdfProjection extends NetcdfIdentifiedObject implements
             extent.getGeographicElements().add(new DefaultGeographicBoundingBox(
                     domain.getLonMin(), domain.getLonMax(),
                     domain.getLatMin(), domain.getLatMax()));
+            extent.freeze();
             return extent;
         }
         return null;

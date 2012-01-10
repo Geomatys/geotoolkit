@@ -902,15 +902,18 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         }
 
         /**
-         * Returns a wrapper around the NetCDF projection, or {@code null} if none.
+         * Returns a wrapper around the NetCDF projection.
+         *
+         * @throws IllegalStateException If the NetCDF coordinate system does not define a projection.
          */
         @Override
         public synchronized Projection getConversionFromBase() {
             if (projection == null) {
                 final ucar.unidata.geoloc.Projection p = delegate().getProjection();
-                if (p != null) {
-                    projection = new NetcdfProjection(p, getBaseCRS(), this);
+                if (p == null) {
+                    throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
                 }
+                projection = new NetcdfProjection(p, getBaseCRS(), this);
             }
             return projection;
         }

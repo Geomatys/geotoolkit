@@ -150,9 +150,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for a short description of the dataset
      * (<em>Highly Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getCitation() citation}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} /
      * {@link Citation#getTitle() title}</li></ul>
      *
      * @see NetcdfFile#getTitle()
@@ -164,8 +164,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for a paragraph describing the dataset
      * (<em>Highly Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getAbstract() abstract}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#summary_Attribute">UCAR reference</a>
@@ -177,11 +177,11 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The combination of the {@value #NAMING_AUTHORITY} and the {@value}
      * should be a globally unique identifier for the dataset.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getFileIdentifier() fileIdentifier}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getCitation() citation}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} /
      * {@link Citation#getIdentifiers() identifier}</li></ul>
      *
      * @see #getFileIdentifier()
@@ -195,11 +195,11 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The combination of the {@value} and the {@value #IDENTIFIER} should be a globally
      * unique identifier for the dataset.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getFileIdentifier() fileIdentifier}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getCitation() citation}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} /
      * {@link Citation#getIdentifiers() identifier}</li></ul>
      *
      * @see #IDENTIFIER
@@ -213,9 +213,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * vocabulary of variable names. This is actually a {@linkplain VariableSimpleIF variable} attribute,
      * but sometime appears also in {@linkplain NetcdfFile#findGlobalAttribute(String) global attributes}.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
      * {@link Keywords#getKeywords() keyword} with {@link KeywordType#THEME}</li></ul>
      *
      * @see #STANDARD_NAME_VOCABULARY
@@ -228,10 +228,10 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for indicating which controlled list of variable names has been
      * used in the {@value #STANDARD_NAME} attribute.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
-     * {@link Keywords#getThesaurusName() thesaurusName}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
+     * {@link Keywords#getThesaurusName() thesaurusName} /
      * {@link Citation#getTitle() title}</li></ul>
      *
      * @see #STANDARD_NAME
@@ -244,9 +244,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for a comma separated list of key words and phrases
      * (<em>Highly Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
      * {@link Keywords#getKeywords() keyword} with {@link KeywordType#THEME}</li></ul>
      *
      * @see #VOCABULARY
@@ -260,10 +260,10 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for the guideline for the words/phrases in the
      * {@value #KEYWORDS} attribute (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
-     * {@link Keywords#getThesaurusName() thesaurusName}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
+     * {@link Keywords#getThesaurusName() thesaurusName} /
      * {@link Citation#getTitle() title}</li></ul>
      *
      * @see #KEYWORDS
@@ -273,11 +273,13 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     public static final String VOCABULARY = "keywords_vocabulary";
 
     /**
-     * The {@value} attribute name THREDDS data type appropriate for this dataset
-     * (<em>Recommended</em>).
+     * The {@value} attribute name for the THREDDS data type appropriate for this dataset
+     * (<em>Recommended</em>). Examples: {@code "Vector"}, {@code "TextTable"}, {@code "Grid"},
+     * {@code "Image"}, {@code "Video"}, {@code "Tin"}, {@code "StereoModel"}, {@code "Station"},
+     * {@code "Swath"} or {@code "Trajectory"}.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getSpatialRepresentationTypes() spatialRepresentationType}</li></ul>
      *
      * @see SpatialRepresentationType
@@ -289,9 +291,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for providing an audit trail for modifications to the
      * original data (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getDataQualityInfo() dataQualityInfo}.
-     * {@link DataQuality#getLineage() lineage}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getDataQualityInfo() dataQualityInfo} /
+     * {@link DataQuality#getLineage() lineage} /
      * {@link Lineage#getStatement() statement}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#history_Attribute">UCAR reference</a>
@@ -302,8 +304,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for miscellaneous information about the data
      * (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getSupplementalInformation() supplementalInformation}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#comment_Attribute">UCAR reference</a>
@@ -315,7 +317,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * (<em>Suggested</em>). This is actually defined in the "{@code NCISOMetadata}"
      * subgroup.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getDateStamp() dateStamp}</li></ul>
      */
     public static final String METADATA_CREATION = "metadata_creation";
@@ -324,10 +326,10 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for the date on which the data was created
      * (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getCitation() citation}.
-     * {@link Citation#getDates() date}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} /
+     * {@link Citation#getDates() date} /
      * {@link CitationDate#getDate() date} with {@link DateType#CREATION}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#date_created_Attribute">UCAR reference</a>
@@ -338,10 +340,10 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for the date on which this data was last modified
      * (<em>Suggested</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getCitation() citation}.
-     * {@link Citation#getDates() date}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} /
+     * {@link Citation#getDates() date} /
      * {@link CitationDate#getDate() date} with {@link DateType#REVISION}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#date_modified_Attribute">UCAR reference</a>
@@ -352,10 +354,10 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for a date on which this data was formally issued
      * (<em>Suggested</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getCitation() citation}.
-     * {@link Citation#getDates() date}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} /
+     * {@link Citation#getDates() date} /
      * {@link CitationDate#getDate() date} with {@link DateType#PUBLICATION}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#date_issued_Attribute">UCAR reference</a>
@@ -420,7 +422,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
          * The attribute name for the responsible's name. Possible values are
          * {@code "creator_name"}, {@code "contributor_name"} or {@code "publisher_name"}.
          * <p>
-         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty} /
          * {@link ResponsibleParty#getIndividualName() individualName}</li></ul>
          */
         public final String NAME;
@@ -429,7 +431,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
          * The attribute name for the responsible's institution, or {@code null} if none.
          * Possible value is {@code "institution"}.
          * <p>
-         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty} /
          * {@link ResponsibleParty#getOrganisationName() organisationName}</li></ul>
          */
         public final String INSTITUTION;
@@ -438,9 +440,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
          * The attribute name for the responsible's URL. Possible values are
          * {@code "creator_url"}, {@code "contributor_url"} or {@code "publisher_url"}.
          * <p>
-         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
-         * {@link ResponsibleParty#getContactInfo() contactInfo}.
-         * {@link Contact#getOnlineResource() onlineResource}.
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty} /
+         * {@link ResponsibleParty#getContactInfo() contactInfo} /
+         * {@link Contact#getOnlineResource() onlineResource} /
          * {@link OnlineResource#getLinkage() linkage}</li></ul>
          */
         public final String URL;
@@ -449,9 +451,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
          * The attribute name for the responsible's email address. Possible values are
          * {@code "creator_email"}, {@code "contributor_email"} or {@code "publisher_email"}.
          * <p>
-         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
-         * {@link ResponsibleParty#getContactInfo() contactInfo}.
-         * {@link Contact#getAddress() address}.
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty} /
+         * {@link ResponsibleParty#getContactInfo() contactInfo} /
+         * {@link Contact#getAddress() address} /
          * {@link Address#getElectronicMailAddresses() electronicMailAddress}</li></ul>
          */
         public final String EMAIL;
@@ -460,7 +462,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
          * The attribute name for the responsible's role, or {@code null} if none.
          * Possible value is {@code "contributor_role"}.
          * <p>
-         * <b>Path:</b> <ul><li>{@link ResponsibleParty}.
+         * <b>Path:</b> <ul><li>{@link ResponsibleParty} /
          * {@link ResponsibleParty#getRole()}</li></ul>
          *
          * @see Role
@@ -499,8 +501,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     /**
      * The set of attribute names for the creator (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getCitation() citation} with {@link Role#ORIGINATOR}</li></ul>
      *
      * @see #CONTRIBUTOR
@@ -513,8 +515,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     /**
      * The set of attribute names for the contributor (<em>Suggested</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getCitation() citation}</li></ul>
      *
      * @see #CREATOR
@@ -527,13 +529,13 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     /**
      * The set of attribute names for the publisher (<em>Suggested</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getDistributionInfo() distributionInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getDistributionInfo() distributionInfo} /
      * {@link Distribution#getDistributors() distributors}
      * {@link Distributor#getDistributorContact() distributorContact} with {@link Role#PUBLISHER}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
      * {@link Keywords#getKeywords() keyword} with the "dataCenter" {@link KeywordType}</li></ul>
      *
      * @see #CREATOR
@@ -547,9 +549,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for the scientific project that produced the data
      * (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
      * {@link Keywords#getKeywords() keyword} with the "project" {@link KeywordType}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#project_Attribute">UCAR reference</a>
@@ -560,8 +562,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name a textual description of the processing (or quality control)
      * level of the data.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getContentInfo() contentInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getContentInfo() contentInfo} /
      * {@link ImageDescription#getProcessingLevelCode() processingLevelCode}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#processing_level_Attribute">UCAR reference</a>
@@ -572,8 +574,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for a place to acknowledge various type of support for
      * the project that produced this data (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getCredits() credit}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#acknowledgement_Attribute">UCAR reference</a>
@@ -584,8 +586,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for a description of the restrictions to data access
      * and distribution (<em>Recommended</em>).
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getResourceConstraints() resourceConstraints}
      * {@link LegalConstraints#getUseLimitations() useLimitation}</li></ul>
      *
@@ -723,15 +725,15 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * resolution and units. Latitudes are assumed to be in decimal degrees north, unless a
      * units attribute is specified.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getExtents() extent}.
-     * {@link Extent#getGeographicElements() geographicElement}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getExtents() extent} /
+     * {@link Extent#getGeographicElements() geographicElement} /
      * {@link GeographicBoundingBox#getSouthBoundLatitude() southBoundLatitude} or
      * {@link GeographicBoundingBox#getNorthBoundLatitude() northBoundLatitude}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
-     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo} /
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties} /
      * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
      *
      * @see #LONGITUDE
@@ -747,15 +749,15 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * resolution and units. Longitudes are assumed to be in decimal degrees east, unless a
      * units attribute is specified.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getExtents() extent}.
-     * {@link Extent#getGeographicElements() geographicElement}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getExtents() extent} /
+     * {@link Extent#getGeographicElements() geographicElement} /
      * {@link GeographicBoundingBox#getWestBoundLongitude() westBoundLongitude} or
      * {@link GeographicBoundingBox#getEastBoundLongitude() eastBoundLongitude}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
-     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo} /
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties} /
      * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
      *
      * @see #LATITUDE
@@ -771,15 +773,15 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * resolution and units. Elevations are assumed to be in metres above the ground, unless a
      * units attribute is specified.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getExtents() extent}.
-     * {@link Extent#getVerticalElements() verticalElement}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getExtents() extent} /
+     * {@link Extent#getVerticalElements() verticalElement} /
      * {@link VerticalExtent#getMinimumValue() minimumValue} or
      * {@link VerticalExtent#getMaximumValue() maximumValue}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
-     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo} /
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties} /
      * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
      *
      * @see #LATITUDE
@@ -795,14 +797,14 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The set of attribute names for the start and end times of the bounding box, resolution and
      * units. Dates are assumed to be ..., unless a units attribute is specified.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getIdentificationInfo() identificationInfo}.
-     * {@link DataIdentification#getExtents() extent}.
-     * {@link Extent#getTemporalElements() temporalElement}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getExtents() extent} /
+     * {@link Extent#getTemporalElements() temporalElement} /
      * {@link TemporalExtent#getExtent() extent}</li>
-     * <li>{@link Metadata}.
-     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo}.
-     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties}.
+     * <li>{@link Metadata} /
+     * {@link Metadata#getSpatialRepresentationInfo() spatialRepresentationInfo} /
+     * {@link GridSpatialRepresentation#getAxisDimensionProperties() axisDimensionProperties} /
      * {@link org.opengis.metadata.spatial.Dimension#getResolution() resolution}</li></ul>
      *
      * @see #LATITUDE
@@ -819,9 +821,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * specified, they shall be one flag name for each {@linkplain #FLAG_MASKS flag mask},
      * {@linkplain #FLAG_VALUES flag value} and {@linkplain #FLAG_MEANINGS flag meaning}.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getContentInfo() contentInfo}.
-     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getContentInfo() contentInfo} /
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription} /
      * {@link RangeElementDescription#getName() name}</li></ul>
      */
     public static final String FLAG_NAMES = "flag_names";
@@ -830,9 +832,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for bitmask to apply on sample values before to compare
      * them to the {@linkplain #FLAG_VALUES flag values}.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getContentInfo() contentInfo}.
-     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getContentInfo() contentInfo} /
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription} /
      * {@link RangeElementDescription#getRangeElements() rangeElement}</li></ul>
      */
     public static final String FLAG_MASKS = "flag_masks";
@@ -844,9 +846,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * A flagged condition is identified by a bitwise AND of the variable value and each flag masks
      * value; a result that matches the flag values value indicates a true condition.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getContentInfo() contentInfo}.
-     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getContentInfo() contentInfo} /
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription} /
      * {@link RangeElementDescription#getRangeElements() rangeElement}</li></ul>
      */
     public static final String FLAG_VALUES = "flag_values";
@@ -855,9 +857,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * The {@value} attribute name for the meaning of {@linkplain #FLAG_VALUES flag values}.
      * Each flag values and flag masks must coincide with a flag meanings.
      * <p>
-     * <b>Path:</b> <ul><li>{@link Metadata}.
-     * {@link Metadata#getContentInfo() contentInfo}.
-     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription}.
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getContentInfo() contentInfo} /
+     * {@link CoverageDescription#getRangeElementDescriptions() rangeElementDescription} /
      * {@link RangeElementDescription#getDefinition() definition}</li></ul>
      */
     public static final String FLAG_MEANINGS = "flag_meanings";

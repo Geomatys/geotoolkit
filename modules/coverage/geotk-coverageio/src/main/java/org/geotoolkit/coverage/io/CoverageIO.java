@@ -46,7 +46,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.18
  * @module
@@ -128,6 +128,28 @@ public final class CoverageIO extends Static {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(input);
         return reader;
+    }
+
+    /**
+     * Creates a simple writer which does not perform any pyramid or mosaic tiling.
+     * This writer is appropriate if the image is known to be small.
+     * <p>
+     * The output is typically a {@link File}, {@link URL} or {@link String} object, but other types
+     * (especially {@link javax.imageio.stream.ImageOutputStream}) may be accepted as well depending
+     * on the image format. The given output can also be an {@link javax.imageio.ImageWriter} instance
+     * with its output initialized.
+     *
+     * @param  output The output where to write (typically a {@link File}).
+     * @return A coverage writer for the given output.
+     * @throws CoverageStoreException If the writer can not be created for the given file.
+     *
+     * @since 3.20
+     */
+    public static GridCoverageWriter createSimpleWriter(final Object output) throws CoverageStoreException {
+        ensureNonNull("output", output);
+        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        writer.setOutput(output);
+        return writer;
     }
 
     /**

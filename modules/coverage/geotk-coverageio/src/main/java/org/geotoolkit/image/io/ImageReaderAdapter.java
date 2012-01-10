@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Set;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Collections;
 import java.awt.image.Raster;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -208,7 +211,16 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                 }
             }
         }
-        ImageInputStream in = acceptStream ? ImageIO.createImageInputStream(input) : null;
+        ImageInputStream in = null;
+        if (acceptStream) {
+            in = ImageIO.createImageInputStream(input);
+            if (in == null) {
+                final Object alternate = IOUtilities.tryToFile(input);
+                if (alternate != input) {
+                    in = ImageIO.createImageInputStream(alternate);
+                }
+            }
+        }
         assert CheckedImageInputStream.isValid(in = // Intentional side effect.
                CheckedImageInputStream.wrap(in));
         return in;
@@ -1062,6 +1074,11 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         };
 
         /**
+         * The value to be returned by {@link #getModifiedInformation(Object)}.
+         */
+        static final Set<InformationType> INFO = Collections.unmodifiableSet(EnumSet.allOf(InformationType.class));
+
+        /**
          * The provider of the readers to use for reading the pixel values.
          * This is the provider specified at the construction time.
          */
@@ -1104,14 +1121,14 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the readers to use for reading the pixel values.
-         * @param suffix The suffix to append to {@linkplain #getFormatNames() format names} and
-         *               {@linkplain #getMIMETypes() MIME types}.
+         * @param formatNameSuffix The suffix to append to {@linkplain #getFormatNames()
+         *        format names} and {@linkplain #getMIMETypes() MIME types}.
          *
          * @since 3.20
          */
-        protected Spi(final ImageReaderSpi main, String suffix) {
-            ensureNonNull("main",   main);
-            ensureNonNull("prefix", suffix);
+        protected Spi(final ImageReaderSpi main, String formatNameSuffix) {
+            ensureNonNull("main", main);
+            ensureNonNull("formatNameSuffix", formatNameSuffix);
             this.main  = main;
             names      = main.getFormatNames();
             suffixes   = main.getFileSuffixes();
@@ -1134,9 +1151,9 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             }
             this.acceptStream = acceptStream;
             this.acceptOther  = acceptOther;
-            suffix = suffix.trim();
-            if (!suffix.isEmpty()) {
-                addPrefix(names, MIMETypes, suffix);
+            formatNameSuffix = formatNameSuffix.trim();
+            if (!formatNameSuffix.isEmpty()) {
+                addPrefix(names, MIMETypes, formatNameSuffix);
             }
         }
 
@@ -1267,6 +1284,24 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                 }
             }
             return false;
+        }
+
+        /**
+         * Returns the kind of information that this wrapper will add or modify compared to the
+         * {@linkplain #main} reader. If this method returns an empty set, then there is no
+         * raison to use this adapter instead than the main reader.
+         * <p>
+         * The default implementation conservatively returns all of the {@link InformationType}
+         * enum values. Subclasses should return more accurate information when possible.
+         *
+         * @param  source The input (typically a {@link File}) to be decoded.
+         * @return The set of information to be read or modified by this adapter.
+         * @throws IOException If an error occurred while reading the file.
+         *
+         * @since 3.20
+         */
+        public Set<InformationType> getModifiedInformation(final Object source) throws IOException {
+            return INFO;
         }
 
         /**
