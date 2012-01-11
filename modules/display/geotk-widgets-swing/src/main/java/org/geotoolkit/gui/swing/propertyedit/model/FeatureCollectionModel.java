@@ -20,10 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
-import org.geotoolkit.feature.SchemaException;
 
 import org.jdesktop.swingx.JXTable;
 
@@ -36,13 +33,12 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -101,7 +97,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         try {
             fi = (FeatureIterator<SimpleFeature>)  featureCollection.iterator();
             while (fi.hasNext()) {
-                features.add(fi.next());
+                features.add(FeatureUtilities.deepCopy(fi.next()));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -142,6 +138,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         if(!selectIds){
             builder.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
         }
+        builder.setHints(new Hints(HintsPending.FEATURE_DETACHED, Boolean.TRUE));
         query = builder.buildQuery();
         return query;
     }

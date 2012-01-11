@@ -27,12 +27,15 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.StorageListener;
+import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
+import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -50,16 +53,24 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
 
     private final FeatureCollection original;
     private final FeatureType type;
-    private final Map<PropertyDescriptor,Object> defaults;
-    private final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping;
+    private final FeatureMapper mapper;
 
     public GenericMappingFeatureCollection(final FeatureCollection original, final FeatureType newType,
             final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
             final Map<PropertyDescriptor,Object> defaults){
+        this(original,
+                new DefaultFeatureMapper(
+                        (SimpleFeatureType)original.getFeatureType(),
+                        (SimpleFeatureType)newType,
+                        mapping,
+                        defaults)
+                );
+    }
+    
+    public GenericMappingFeatureCollection(final FeatureCollection original, final FeatureMapper mapper){
         this.original = original;
-        this.mapping = mapping;
-        this.defaults = defaults;
-        this.type = newType;
+        this.mapper = mapper;
+        this.type = mapper.getTargetType();
     }
 
     @Override
@@ -104,7 +115,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
 
     @Override
     public FeatureIterator<F> iterator(final Hints hints) throws DataStoreRuntimeException {
-        return new GenericMappingFeatureIterator<F>(original.iterator(), original.getFeatureType(), type, mapping, defaults);
+        return new GenericMappingFeatureIterator<F>(original.iterator(), mapper);
     }
 
     @Override

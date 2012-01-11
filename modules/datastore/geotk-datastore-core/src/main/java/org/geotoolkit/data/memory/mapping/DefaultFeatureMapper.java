@@ -26,6 +26,7 @@ import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -55,6 +56,16 @@ public class DefaultFeatureMapper implements FeatureMapper {
         this.builder = new SimpleFeatureBuilder(typeTarget);
     }
 
+    @Override
+    public FeatureType getSourceType() {
+        return typeSource;
+    }
+
+    @Override
+    public FeatureType getTargetType() {
+        return typeTarget;
+    }
+    
     @Override
     public Feature transform(final Feature feature) {
         builder.reset();
