@@ -86,6 +86,17 @@ public class ReportDemo {
 
         //We map the feature type to the report type ---------------------------------
         final GenericMappingFeatureIterator mapped = new GenericMappingFeatureIterator(ite, new FeatureMapper(){
+            
+            @Override
+            public FeatureType getSourceType() {
+                return countries.getFeatureType();
+            }
+
+            @Override
+            public FeatureType getTargetType() {
+                return type;
+            }
+            
             @Override
             public Feature transform(Feature feature) {
                 final Feature modified = FeatureUtilities.defaultFeature(type, "id");
