@@ -31,14 +31,14 @@ Operations on a Grid Coverage
 
   The full list of available operations can be obtained from the library with:
 
----------------------------------------------------------
++-------------------------------------------------------+
 final DefaultProcessor proc = new DefaultProcessor(null);
 for (Operation o : proc.getOperations() ){
     System.out.println(o.getName());
     System.out.println(o.getDescription());
     System.out.println();
 }
----------------------------------------------------------
++-------------------------------------------------------+
 
 
 * Creating new Operations

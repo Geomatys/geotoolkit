@@ -886,19 +886,22 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         }
 
         /**
-         * Returns the datum, which is assumed WGS84.
+         * Returns the datum, which is assumed the {@linkplain DefaultGeodeticDatum#SPHERE sphere}.
+         * This datum must be the same than the datum of the CRS returned by {@link #getBaseCRS()}.
          */
         @Override
         public GeodeticDatum getDatum() {
-            return DefaultGeodeticDatum.WGS84;
+            return DefaultGeodeticDatum.SPHERE;
         }
 
         /**
-         * Returns the base CRS, which is assumed WGS84.
+         * Returns the base CRS, which is assumed {@linkplain DefaultGeographicCRS#SPHERE sphere}.
+         * We presume a sphere rather than WGS84 because the NetCDF projection framework uses
+         * spherical formulas.
          */
         @Override
         public GeographicCRS getBaseCRS() {
-            return DefaultGeographicCRS.WGS84;
+            return DefaultGeographicCRS.SPHERE;
         }
 
         /**

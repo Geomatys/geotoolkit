@@ -26,9 +26,6 @@ Coverage
   have the same size (not necessarily in spatial coordinates), then we have a <Grid Coverage>. A Grid
   Coverage is like a matrix of values, or an image if a RGB color can be associated to each value.
 
-
-** Grid Coverages
-
   At the most basic level, a <<<GridCoverage>>> is a matrix of numeric values with information about
   the meaning of the numeric values and about the geographic position of the values. So for each
   <<<GridCoverage>>> there will be one data structure, such as an image file, which contains all
@@ -40,7 +37,7 @@ Coverage
   we also need more information to understand what the values mean.
 
 
-*** Categories
+** Categories
 
   Typically, image used in geospatial science have highly structured values. For example, the image
   could have one value, like -9999, used to indicate that the data were not available for that location.
@@ -54,18 +51,18 @@ Coverage
   1 to 5000. The categories define how we want to use the values, what they will map to and provide
   a default color to use for the data when presented in an image. So we have:
 
-*-------------+------------------------+--------------+------------------------+
-|| Data Value || Category type         || Mapping     || Color Scheme         ||
-*-------------*------------------------*--------------*------------------------*
-|  -9999      |  Qualitative Category  | NaN          | new Color(0,0,0,0)     |
-*-------------*------------------------*--------------*------------------------*
-|  -8888      |  Qualitative Category  | NaN          | Color.WHITE            |
-*-------------*------------------------*--------------*------------------------*
-|  1:5000     |  Quantitative Category | -99:400 foot | Color.BLUE:Color.GREEN |
-*-------------*------------------------*--------------*------------------------*
+*-------------+------------------------+----------------+--------------------------+
+|| Data Value || Category type         || Mapping       || Color Scheme           ||
+*-------------*------------------------*----------------*--------------------------*
+|  -9999      |  Qualitative Category  | NaN            | new Color(0,0,0,0)       |
+*-------------*------------------------*----------------*--------------------------*
+|  -8888      |  Qualitative Category  | NaN            | Color.WHITE              |
+*-------------*------------------------*----------------*--------------------------*
+|  1 … 5000   |  Quantitative Category | -99 … 400 foot | Color.BLUE … Color.GREEN |
+*-------------*------------------------*----------------*--------------------------*
 
 
-*** Sample Dimensions
+** Sample Dimensions
 
   A <<<SampleDimension>>> establishes the mapping for each band of the resulting <<<GridCoverage>>>.
   Typically we map each band in the original data to one <<<SampleDimension>>> in the <<<GridCoverage>>>
@@ -78,7 +75,7 @@ Coverage
   to 400 are defined.
 
 
-*** Georeferencing
+** Georeferencing
 
   To build a Geotk <<<GridCoverage>>> we also need information about the mapping between coordinate
   space in the data matrix (row/column) and the real world coordinate space in some geographically
@@ -100,7 +97,7 @@ Coverage
   For more details, see {{{./create.html}Create a Grid Coverage}}.
 
 
-*** GridCoverage views
+** GridCoverage views
 
   With the original data matrix, an array of all the <<<SampleDimension>>> instances and the
   georeferencing information, we can then create the <<<GridCoverage>>> instance.

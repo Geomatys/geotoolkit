@@ -24,7 +24,7 @@
         the wrong CRS by a code that can't be easily fixed - then a new <code>GridCoverage2D</code>
         instance need to be created with the data of the previous coverage:</p>
 
-<blockquote><pre>GridCoverage2D oldGC = ...;
+<source>GridCoverage2D oldGC = ...;
 GridGeometry gridGeom = oldGC.getGridGeometry();
 CoordinateReferenceSystem crs = ...; // <i>Specify the new CRS here</i>
 GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
@@ -35,12 +35,12 @@ GridCoverage2D newGC = factory.create(
     grigGeom.getGridToCRS(),     // <i>The transform from pixel to geodetic coordinates</i>
     oldGC.getSampleDimensions(), // <i>Information about each bands</i>
     null,                        // <i>The sources (not relevant in this example)</i>
-    null);                       // <i>Optional properties</i></pre></blockquote>
-      </answer>
+    null);                       // <i>Optional properties</i></source>
         <p>Note that this FAQ is about fixing a CRS value which was wrong in the first place.
         In order to <cite>reproject</cite> the pixel values to a new CRS, use the
         <a href="../../apidocs/org/geotoolkit/coverage/processing/operation/Resample.html">resample
         operation</a>.</p>
+      </answer>
     </faq>
   </part>
 
@@ -62,7 +62,7 @@ GridCoverage2D newGC = factory.create(
         <code>minValue</code> and <code>maxValue</code> nodes of the above-cited metadata tree.
         A convenient way to access those values is as below:</p>
 
-<blockquote><pre>NetcdfImageReader reader = ...;
+<source>NetcdfImageReader reader = ...;
 SpatialMetadata metadata = reader.getImageMetadata(0);
 
 // <i>From that point, there is a choice. You can explore</i>
@@ -72,14 +72,14 @@ SpatialMetadata metadata = reader.getImageMetadata(0);
 List&lt;SampleDimension&gt; bands = metadata.getListForType(SampleDimension.class);
 SampleDimension firstBand = bands.get(0);
 Double minValue = firstBand.getMinValue(); // <i>WARNING: Can be null!</i>
-Double maxValue = firstBand.getMaxValue(); // <i>WARNING: Can be null!</i></pre></blockquote>
+Double maxValue = firstBand.getMaxValue(); // <i>WARNING: Can be null!</i></source>
 
         <p><b>Tip:</b> If you wish to explore visually the metadata found in the NetCDF file, then the
         <code><a href="../../apidocs/org/geotoolkit/gui/swing/image/ImageFileChooser.html">ImageFileChooser</a></code>
         widget (defined in the <code>geotk-widgets-swing</code> module) may be useful:</p>
 
-<blockquote><pre>ImageFileChooser chooser = new ImageFileChooser("NetCDF", true);
-chooser.showOpenDialog(null);</pre></blockquote>
+<source>ImageFileChooser chooser = new ImageFileChooser("NetCDF", true);
+chooser.showOpenDialog(null);</source>
 
         <p>Select the NetCDF file, click on the "<cite>Metadata</cite>" tabs on the right side
         and select the metadata format in the combo box. The metadata tree should appear just below
@@ -108,7 +108,7 @@ chooser.showOpenDialog(null);</pre></blockquote>
         <p>If the minimal and maximal values do not appear, they can be specified explicitly either
         by using the <code>geotk-coverage-sql</code> module, or by creating a subclass like below:</p>
 
-<blockquote><pre>class MyReader extends NetcdfImageReader {
+<source>class MyReader extends NetcdfImageReader {
     @Override
     protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
         SpatialMetadata metadata = super.createMetadata(imageIndex);
@@ -122,12 +122,12 @@ chooser.showOpenDialog(null);</pre></blockquote>
         }
         return metadata;
     }
-}</pre></blockquote>
+}</source>
       </answer>
     </faq>
     <faq id="specifyCRS">
       <question>
-        How do I declare the actual CRS of coverages in an image file?
+        How do I declare the actual georeferencing of an image file?
       </question>
       <answer>
         <p>The Coordinate Reference System (CRS) in an image file should be detected automatically by
@@ -146,7 +146,7 @@ chooser.showOpenDialog(null);</pre></blockquote>
         <p>Those metadata can be specified explicitely in a manner similar to the way <cite>minimal</cite>
         and <cite>maximal</cite> values were set in the <a href="#gray">above FAQ</a>:</p>
 
-<blockquote><pre>class MyReader extends NetcdfImageReader {
+<source>class MyReader extends NetcdfImageReader {
     @Override
     protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
         SpatialMetadata metadata = super.createMetadata(imageIndex);
@@ -165,7 +165,7 @@ chooser.showOpenDialog(null);</pre></blockquote>
         }
         return metadata;
     }
-}</pre></blockquote>
+}</source>
       </answer>
     </faq>
   </part>
@@ -180,10 +180,10 @@ chooser.showOpenDialog(null);</pre></blockquote>
       </question>
       <answer>
         <p>Some applications tested successfully as a standalone application or in the applet viewer
-        may throw the following exception when executed as an applet in an internet browser:</p>
+        may throw the following exception when executed as an applet in an Internet browser:</p>
 
-<blockquote><pre>org.geotoolkit.coverage.io.CoverageStoreException: Can't read file "world.tiff".
-No suitable image reader for this input.</pre></blockquote>
+<source>org.geotoolkit.coverage.io.CoverageStoreException: Can't read file "world.tiff".
+No suitable image reader for this input.</source>
 
         <p>The reason is that <cite>World file</cite> and GeoTIFF image readers need an other
         "plain" TIFF image reader for reading pixel values. They are basically wrappers around
@@ -195,7 +195,7 @@ No suitable image reader for this input.</pre></blockquote>
         Image I/O registration does not seem to work in applet context. Registration must be forced
         programmatically as below:</p>
 
-<blockquote><pre>import javax.imageio.spi.IIORegistry;
+<source>import javax.imageio.spi.IIORegistry;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
@@ -206,7 +206,7 @@ IIORegistry registry = IIORegistry.getDefaultInstance();
 registry.registerServiceProvider(new TIFFImageReaderSpi(), ImageReaderSpi.class);
 registry.registerServiceProvider(new GeoTiffImageReader.Spi("TIFF"), ImageReaderSpi.class);
 WorldFileImageReader.Spi.registerDefaults(registry);
-</pre></blockquote>
+</source>
       </answer>
     </faq>
   </part>

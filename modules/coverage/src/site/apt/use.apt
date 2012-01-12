@@ -32,9 +32,9 @@ Use a Grid Coverage
 
   To change the view on a <<<GridCoverage2D>>> called <<<myGridCov>>>, we can:
 
----------------------------------------------------------------
++-------------------------------------------------------------+
 GridCoverage2D scicov = myGridCov.getView(ViewType.GEOPHYSICS);
----------------------------------------------------------------
++-------------------------------------------------------------+
 
   and similarly we can get a <<<GridCoverage2D>>> view of one of the other kind even going back
   to the original view.
@@ -47,9 +47,9 @@ GridCoverage2D scicov = myGridCov.getView(ViewType.GEOPHYSICS);
   <<<GridCoverage2D>>>. As a trivial example, we could evaluate the scientific value of the
   <<<GEOPHYSICS>>> view created above at a particular <<<DirectPosition>>> with:
 
-----------------------------------------
++--------------------------------------+
 Object result = scicov.evaluate(somedp);
-----------------------------------------
++--------------------------------------+
 
   with the return value dependent on the contents of our grid coverage. There are a series of such
   evaluate methods which return values in more useful formats.
@@ -63,9 +63,9 @@ Object result = scicov.evaluate(somedp);
   Obviously we can combine two of these steps to go directly from the created grid coverage
   to the final image:
 
----------------------------------------------------------------------------------
++-------------------------------------------------------------------------------+
 RenderedImage ri = myGridCoverage.getView(ViewType.GEOPHYSICS).getRenderedImage()
----------------------------------------------------------------------------------
++-------------------------------------------------------------------------------+
 
   It should be possible, when generating the <<<RenderedImage>>>, to specify the color scheme
   to use for that particular image. Unfortunately, this is currently work in progress and the
@@ -103,17 +103,17 @@ RenderedImage ri = myGridCoverage.getView(ViewType.GEOPHYSICS).getRenderedImage(
 
   Then we can invoke the <<<resample(...)>>> operation.
 
----------------------------------------------------------------------------------------
++--------------------------------------------------------------------------------------+
 GridGeometry mygg = new GridGeometry(...);
 GridCoverage2D covresample = (GridCoverage2D) Operations.DEFAULT.resample(scicov, mygg);
----------------------------------------------------------------------------------------
++--------------------------------------------------------------------------------------+
 
   We can use the <<<resample(...)>>> method to transform any <<<GridCoverage2D>>> to another CRS.
 
------------------------------------------------------------------------------------------------
++---------------------------------------------------------------------------------------------+
 CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:32632");
 GridCoverage2D covtransformed = (GridCoverage2D) Operations.DEFAULT.resample(scicov,targetCRS);
------------------------------------------------------------------------------------------------
++---------------------------------------------------------------------------------------------+
 
   This georeferencing transformation works backwards from what one might naively expect and from
   what happens with vector data. With vector data, tranformations take the positions in the original
@@ -129,13 +129,13 @@ GridCoverage2D covtransformed = (GridCoverage2D) Operations.DEFAULT.resample(sci
   Similarly, we can interpolate an image using the <<<Operations>>> class. In this case we need to
   pick the interpolation method we will use.
 
----------------------------------------------------------------------------------------------
++-------------------------------------------------------------------------------------------+
 import javax.media.jai.Interpolation;
 
 Interpolation interp = Interpolation.getInstance(Interpolation.INTERP_BILINEAR);
 GridCoverage2D covinterpol = (GridCoverage2D) Operations.DEFAULT.interpolate(scicov, interp);
 RenderedImage ri = covinterpol.getRenderedImage();
----------------------------------------------------------------------------------------------
++-------------------------------------------------------------------------------------------+
 
 
 ** CoverageStack
