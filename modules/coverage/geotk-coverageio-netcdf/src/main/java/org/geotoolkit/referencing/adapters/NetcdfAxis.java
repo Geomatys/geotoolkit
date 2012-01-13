@@ -106,9 +106,9 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
 
     /**
      * Returns the axis abbreviation. The default implementation returns
-     * an acronym of the value returned by {@link CoordinateAxis1D#getName()}.
+     * an acronym of the value returned by {@link CoordinateAxis1D#getShortName()}.
      *
-     * @see CoordinateAxis1D#getName()
+     * @see CoordinateAxis1D#getShortName()
      */
     @Override
     public String getAbbreviation() {
@@ -292,6 +292,8 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     /**
      * Returns the number of ordinates in the NetCDF axis. This method delegates to the
      * {@link CoordinateAxis1D#getShape(int)} method.
+     *
+     * @return The number or ordinates in the NetCDF axis.
      *
      * @since 3.15
      */

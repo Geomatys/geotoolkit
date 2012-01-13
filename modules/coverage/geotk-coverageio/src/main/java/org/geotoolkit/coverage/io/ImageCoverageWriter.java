@@ -19,6 +19,8 @@ package org.geotoolkit.coverage.io;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Iterator;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.concurrent.CancellationException;
 import java.awt.Rectangle;
@@ -94,7 +96,8 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * responsibility to close them.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @author Johann Sorel (Geomatys)
+ * @version 3.20
  *
  * @since 3.14
  * @module
@@ -425,37 +428,108 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     }
 
     /**
-     * Converts geodetic parameters to image parameters, gets the image from the coverage and
-     * writes it. First, this method creates an initially empty block of image parameters by
-     * invoking the {@link #createImageWriteParam(RenderedImage)} method. The image parameter
-     * {@linkplain ImageWriteParam#setSourceRegion source region},
-     * {@linkplain ImageWriteParam#setSourceSubsampling source subsampling} and
-     * {@linkplain ImageWriteParam#setSourceBands source bands} are computed from the
-     * parameter given to this {@code write} method.
+     * Writes a single grid coverage using {@link ImageWriter#write(IIOMetadata, IIOImage, ImageWriteParam)}.
+     * The default implementation wraps the given coverage in a {@linkplain Collections#singleton(Object)
+     * singleton set} and delegates to {@link #write(Iterable, GridCoverageWriteParam)}.
      */
     @Override
     public void write(final GridCoverage coverage, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
-        final boolean loggingEnabled = isLoggable();
-        long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
+        write(Collections.singleton(coverage), param);
+    }
+
+    /**
+     * Writes a single or many grid coverages using {@link ImageWriter#write(IIOMetadata, IIOImage,
+     * ImageWriteParam) ImageWriter.write} or {@link ImageWriter#writeToSequence(IIOImage, ImageWriteParam)
+     * writeToSequence(IIOImage, ImageWriteParam)}. For each coverage in the given iterable, this
+     * method performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Get the coverage {@link RenderedImage} and {@linkplain GridGeometry2D}.</li>
+     *   <li>Create an initially empty block of image parameters by
+     *       invoking the {@link #createImageWriteParam(RenderedImage)} method.</li>
+     *   <li>Convert the given {@linkplain GridCoverageWriteParam geodetic parameters} to
+     *       {@linkplain ImageWriteParam image parameters} using the above grid geometry.
+     *       The main properties to be set are:
+     *       <ul>
+     *         <li>{@linkplain ImageWriteParam#setSourceRegion source region}</li>
+     *         <li>{@linkplain ImageWriteParam#setSourceSubsampling source subsampling}</li>
+     *         <li>{@linkplain ImageWriteParam#setSourceBands source bands}</li>
+     *       </ul></li>
+     *   <li>Write the rendered image by invoking the image writer {@code write} or
+     *       {@code writeSequence} method, depending on whatever the given iterable
+     *       contains one or more coverages.</li>
+     * </ul>
+     *
+     * @see ImageWriter#write(IIOMetadata, IIOImage, ImageWriteParam)
+     * @see ImageWriter#writeToSequence(IIOImage, ImageWriteParam)
+     */
+    @Override
+    public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
+            throws CoverageStoreException, CancellationException
+    {
+        abortRequested = false;
+        final long startTime = isLoggable() ? System.nanoTime() : Long.MIN_VALUE;
+        final Iterator<? extends GridCoverage> it = coverages.iterator();
+        if (!it.hasNext()) {
+            throw new CoverageStoreException(Errors.format(Errors.Keys.NO_SUCH_ELEMENT_$1, GridCoverage.class));
+        }
+        boolean hasNext;
+        write(it.next(), param, true, !(hasNext = it.hasNext()), startTime);
+        while (hasNext) { // Happen only if writing many coverages in a sequence.
+            write(it.next(), param, false, !(hasNext = it.hasNext()), startTime);
+        }
+    }
+
+    /**
+     * Writes a single coverage, which may be an element of a sequence. This method needs to be
+     * informed when it is writing the first or the last coverage of a sequence. If there is only
+     * one coverage to write, than both {@code isFirst} and {@code isLast} must be {@code true}.
+     *
+     * @param  coverages The coverages to write.
+     * @param  param     Optional parameters used to control the writing process, or {@code null}.
+     * @param  isFirst   {@code true} if writing the first coverage of a sequence.
+     * @param  isLast    {@code true} if writing the last coverage of a sequence.
+     * @param  startTime Nano time when the writing process started, or {@link Long#MIN_VALUE}
+     *                   if the operation duration is not logged.
+     * @throws IllegalStateException If the output destination has not been set.
+     * @throws CoverageStoreException If the iterable contains an unsupported number of coverages,
+     *         or if an error occurs while writing the information to the output destination.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
+     *
+     * @since 3.20
+     */
+    private void write(final GridCoverage coverage, final GridCoverageWriteParam param,
+            final boolean isFirst, final boolean isLast, final long startTime)
+            throws CoverageStoreException, CancellationException
+    {
         /*
          * Prepares an initially empty ImageWriteParam, to be filled later with the values
          * provided in the GridCoverageWriteParam. In order to get the ImageWriteParam, we
          * need the ImageWriter, which need the RenderedImage, which need the GridGeometry.
          */
-        abortRequested = false;
         GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
         RenderedImage image = coverage.getRenderableImage(gridGeometry.gridDimensionX,
                 gridGeometry.gridDimensionY).createDefaultRendering();
         while (image instanceof RenderedImageAdapter) {
             image = ((RenderedImageAdapter) image).getWrappedImage();
         }
-        final String imageFormat = (param != null) ? param.getFormatName() : null;
-        setImageOutput(image, imageFormat);
+        if (isFirst) {
+            final String imageFormat = (param != null) ? param.getFormatName() : null;
+            setImageOutput(image, imageFormat);
+        }
+        /*
+         * The ImageWriter is created by the call to setImageOutput.
+         * We can verify its validity only at this point.
+         */
         final ImageWriter imageWriter = this.imageWriter; // Protect from changes.
         if (imageWriter == null) {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_OUTPUT));
+        }
+        if (!isLast && !imageWriter.canWriteSequence()) {
+            throw new CoverageStoreException(Errors.format(Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_$1, GridCoverage.class));
         }
         /*
          * Convert the geodetic coordinates to pixel coordinates.
@@ -521,7 +595,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 } catch (TransformException e) {
                     throw new CoverageStoreException(formatErrorMessage(e), e);
                 }
-                if (false) {
+                if (DEBUG) {
                     /*
                      * To be enabled only when debugging.
                      * Simplified output example from the writeSubsampledRegion() test:
@@ -600,7 +674,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
          * request, so we will write that user request in the metadata.
          */
         final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(image);
-        final IIOMetadata streamMetadata = imageWriter.getDefaultStreamMetadata(imageParam);
+        final IIOMetadata streamMetadata = isFirst ? imageWriter.getDefaultStreamMetadata(imageParam) : null;
         final IIOMetadata imageMetadata  = imageWriter.getDefaultImageMetadata(imageType, imageParam);
         if (XArrays.contains(imageMetadata.getMetadataFormatNames(), SpatialMetadataFormat.FORMAT_NAME)) {
             CoordinateReferenceSystem crs = null;
@@ -652,19 +726,41 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             }
         }
         /*
-         * Now process to the coverage writing.
-         * Finally, logs the operation (if logging are enabled).
+         * Now process to the coverage writing. If the coverage is the only image  (i.e. is both
+         * the first and the last image), then we will write everything in a single operation by
+         * a call to ImageWriter.write(...). Otherwise we will need to use the
+         * prepareWriteSequence() - writeSequence(...) - endWriteSequence() cycle.
          */
+        checkAbortState();
         try {
-            completeImageMetadata(streamMetadata, null);
+            if (streamMetadata != null) {
+                completeImageMetadata(streamMetadata, null);
+            }
             completeImageMetadata(imageMetadata, coverage);
-            imageWriter.write(streamMetadata, new IIOImage(image, null, imageMetadata), imageParam);
+            final IIOImage iio = new IIOImage(image, null, imageMetadata);
+            if (isFirst & isLast) {
+                imageWriter.write(streamMetadata, iio, imageParam);
+            } else {
+                if (isFirst) {
+                    imageWriter.prepareWriteSequence(streamMetadata);
+                }
+                imageWriter.writeToSequence(iio, imageParam);
+                if (isLast) {
+                    imageWriter.endWriteSequence();
+                }
+            }
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
-        if (loggingEnabled) {
-            fullTime = System.nanoTime() - fullTime;
-            final Level level = getLogLevel(fullTime);
+        checkAbortState();
+        /*
+         * Finally, logs the operation after the last image if logging are enabled.
+         * The log level will depend on how long it took to write every images in
+         * the sequence.
+         */
+        if (isLast && startTime != Long.MIN_VALUE) {
+            final long time = System.nanoTime() - startTime;
+            final Level level = getLogLevel(time);
             if (LOGGER.isLoggable(level)) {
                 final Dimension size = getImageSize(image, imageParam);
                 CoordinateReferenceSystem crs = null;
@@ -672,7 +768,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                     crs = param.getCoordinateReferenceSystem();
                 }
                 ImageCoverageStore.logOperation(level, locale, ImageCoverageWriter.class, true,
-                        output, 0, coverage, size, crs, destToExtractedGrid, fullTime);
+                        output, 0, coverage, size, crs, destToExtractedGrid, time);
             }
         }
         if (toDispose != null) {

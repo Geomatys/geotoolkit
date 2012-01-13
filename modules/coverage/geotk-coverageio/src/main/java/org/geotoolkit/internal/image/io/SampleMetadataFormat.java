@@ -158,7 +158,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
         final Element element = elements.get(elementName);
         if (element == null) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NO_SUCH_ELEMENT_$1, elementName));
+                    Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, elementName));
         }
         return element;
     }

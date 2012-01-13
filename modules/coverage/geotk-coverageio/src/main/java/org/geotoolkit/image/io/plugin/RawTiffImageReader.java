@@ -518,7 +518,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      */
     private void ensureDefined(final int value, final String name) throws IIOException {
         if (value < 0) {
-            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_$1, name));
+            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, name));
         }
     }
 
@@ -532,7 +532,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      */
     private void ensureDefined(final long[] value, final String name) throws IIOException {
         if (value == null) {
-            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_$1, name));
+            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, name));
         }
     }
 

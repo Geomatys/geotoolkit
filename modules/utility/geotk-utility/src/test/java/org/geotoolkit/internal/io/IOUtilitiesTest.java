@@ -29,7 +29,8 @@ import static org.junit.Assert.*;
  * Tests the {@link IOUtilities} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @author Johann Sorel (Geomatys)
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -53,10 +54,37 @@ public final strictfp class IOUtilitiesTest {
      */
     @Test
     public void testToFile() throws IOException {
+        testToFile(null, "+");
+    }
+
+    /**
+     * Implementation of {@link #testToFile()} using the given encoding.
+     * If the encoding is null, then the {@code URLDecoder} will not be used.
+     *
+     * @param  encoding The encoding, or {@code null} if none.
+     * @param  plus The encoding for the {@code '+'} sign.
+     * @throws IOException Should not happen.
+     */
+    private void testToFile(final String encoding, final String plus) throws IOException {
         assertEquals("Unix absolute path.", new File("/Users/name/Picture.png"),
-                IOUtilities.toFile(new URL("file:/Users/name/Picture.png"), null));
+                IOUtilities.toFile(new URL("file:/Users/name/Picture.png"), encoding));
         assertEquals("Path with space.", new File("/Users/name/Picture with spaces.png"),
-                IOUtilities.toFile(new URL("file:/Users/name/Picture with spaces.png"), null));
+                IOUtilities.toFile(new URL("file:/Users/name/Picture with spaces.png"), encoding));
+
+        assertEquals("Path with + sign.", new File("/Users/name/++t--++est.shp"),
+                IOUtilities.toFile(new URL("file:/Users/name/++t--++est.shp".replace("+", plus)), encoding));
+    }
+
+    /**
+     * Same test than {@link #testToFile()}, but using the UTF-8 encoding.
+     *
+     * @throws IOException Should not happen.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testToFileUTF8() throws IOException {
+        testToFile("UTF-8", "%2B");
     }
 
     /**

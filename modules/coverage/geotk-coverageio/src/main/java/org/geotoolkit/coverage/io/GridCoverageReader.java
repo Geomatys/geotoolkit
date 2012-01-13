@@ -127,8 +127,8 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * </ul>
      *
      * @param  input The input (typically {@link java.io.File} or {@link String}) to be read.
-     * @throws IllegalArgumentException if input is not a valid instance for this reader.
-     * @throws CoverageStoreException if the operation failed.
+     * @throws IllegalArgumentException If the input is not a valid instance for this reader.
+     * @throws CoverageStoreException If the operation failed.
      *
      * @see ImageReader#setInput(Object)
      */
@@ -142,7 +142,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * or {@code null} if none.
      *
      * @return The current input, or {@code null} if none.
-     * @throws CoverageStoreException if the operation failed.
+     * @throws CoverageStoreException If the operation failed.
      *
      * @see ImageReader#getInput()
      */
@@ -175,7 +175,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *
      * @return The names of the coverages.
      * @throws IllegalStateException If the input source has not been set.
-     * @throws CoverageStoreException If an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      *
@@ -189,9 +189,9 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *
      * @param  index The index of the coverage to be queried.
      * @return The grid geometry for the {@link GridCoverage} at the specified index.
-     * @throws IllegalStateException if the input source has not been set.
-     * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws IllegalStateException If the input source has not been set.
+     * @throws IndexOutOfBoundsException If the supplied index is out of bounds.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      *
@@ -209,9 +209,9 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * @return The list of sample dimensions for the {@link GridCoverage} at the specified index,
      *         or {@code null} if none. This list length is equals to the number of bands in the
      *         {@link GridCoverage}.
-     * @throws IllegalStateException if the input source has not been set.
-     * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws IllegalStateException If the input source has not been set.
+     * @throws IndexOutOfBoundsException If the supplied index is out of bounds.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
@@ -227,7 +227,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *
      * @param  index The index of the coverage to be queried.
      * @return The ranges of values for each band, or {@code null} if none.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      *
@@ -293,7 +293,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * "<cite>one-to-one</cite>" relationship, this method works on a best effort basis.
      *
      * @return The ISO 19115 metadata (never {@code null}).
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      *
      * @see <a href="../../image/io/metadata/SpatialMetadataFormat.html#default-formats">Metadata formats</a>
      *
@@ -434,7 +434,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * The default implementation returns {@code null} in every cases.
      *
      * @return The metadata associated with the input source as a whole, or {@code null}.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      *
      * @see ImageReader#getStreamMetadata()
      *
@@ -450,7 +450,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *
      * @param  index The index of the coverage to be queried.
      * @return The metadata associated with the given coverage, or {@code null}.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      *
      * @see ImageReader#getImageMetadata(int)
      *
@@ -471,7 +471,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      *
      * @param  index The index of the coverage to be queried.
      * @return The properties, or {@code null} if none.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
@@ -487,7 +487,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * @return The {@link GridCoverage} at the specified index.
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CoverageStoreException If an error occurs while reading the information from the input source.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      *
@@ -499,7 +499,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
     /**
      * Restores the {@code GridCoverageReader} to its initial state.
      *
-     * @throws CoverageStoreException if an error occurs while restoring to the initial state.
+     * @throws CoverageStoreException If an error occurs while restoring to the initial state.
      *
      * @see ImageReader#reset()
      */
@@ -513,7 +513,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * Allows any resources held by this reader to be released. The result of calling
      * any other method subsequent to a call to this method is undefined.
      *
-     * @throws CoverageStoreException if an error occurs while disposing resources.
+     * @throws CoverageStoreException If an error occurs while disposing resources.
      *
      * @see ImageReader#dispose()
      */

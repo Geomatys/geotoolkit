@@ -141,9 +141,9 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     private final NetcdfAxis[] axes;
 
     /**
-     * The grid envelope, computed when first needed.
+     * The grid envelope extent, computed when first needed.
      */
-    private transient GridEnvelope gridEnvelope;
+    private transient GridEnvelope extent;
 
     /**
      * The grid to CRS transform, computed when first needed.
@@ -160,16 +160,16 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.15
      */
     NetcdfCRS(final NetcdfCRS crs) {
-        this.cs           = crs.cs;
-        this.axes         = crs.axes;
-        this.gridEnvelope = crs.gridEnvelope;
-        this.gridToCRS    = crs.gridToCRS;
+        this.cs        = crs.cs;
+        this.axes      = crs.axes;
+        this.extent    = crs.extent;
+        this.gridToCRS = crs.gridToCRS;
     }
 
     /**
      * Creates a new {@code NetcdfCRS} object wrapping the given NetCDF coordinate system.
      * The {@link CoordinateSystem#getCoordinateAxes()} is invoked at construction time and
-     * every elements are assumed instance of {@link CoordinateAxis1D}.
+     * every elements are assumed instances of {@link CoordinateAxis1D}.
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap.
      * @throws ClassCastException If at least one axis is not an instance of the
@@ -262,7 +262,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         }
         /*
          * Separate the horizontal, vertical and temporal components. We need to iterate
-         * over the Netcdf axes in reverse order (see class javadoc). We don't use the
+         * over the NetCDF axes in reverse order (see class javadoc). We don't use the
          * CoordinateAxis.getTaxis() and similar methods because we want to ensure that
          * the components are build in the same order than axes are found.
          */
@@ -454,15 +454,15 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     @Override
     @Deprecated
     public synchronized GridEnvelope getGridRange() {
-        if (gridEnvelope == null) {
+        if (extent == null) {
             final int[] lower = new int[axes.length];
             final int[] upper = new int[axes.length];
             for (int i=0; i<upper.length; i++) {
                 upper[i] = axes[i].length();
             }
-            gridEnvelope = new GeneralGridEnvelope(lower, upper, false);
+            extent = new GeneralGridEnvelope(lower, upper, false);
         }
-        return gridEnvelope;
+        return extent;
     }
 
     /**
@@ -855,12 +855,18 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * This class assumes that the geodetic datum is {@linkplain DefaultGeodeticDatum#WGS84 WGS84}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.08
+     * @version 3.20
      *
      * @since 3.08
      * @module
      */
     private static final class Projected extends NetcdfCRS implements ProjectedCRS, CartesianCS {
+        /**
+         * The NetCDF projection, or {@code null} if none.
+         * Will be created when first needed.
+         */
+        private transient Projection projection;
+
         /**
          * Wraps the given coordinate system. The given list of axes should in theory contains
          * exactly 2 elements. However a different number of axes may be provided if the
@@ -880,27 +886,39 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         }
 
         /**
-         * Returns the datum, which is assumed WGS84.
+         * Returns the datum, which is assumed the {@linkplain DefaultGeodeticDatum#SPHERE sphere}.
+         * This datum must be the same than the datum of the CRS returned by {@link #getBaseCRS()}.
          */
         @Override
         public GeodeticDatum getDatum() {
-            return DefaultGeodeticDatum.WGS84;
+            return DefaultGeodeticDatum.SPHERE;
         }
 
         /**
-         * Returns the base CRS, which is assumed WGS84.
+         * Returns the base CRS, which is assumed {@linkplain DefaultGeographicCRS#SPHERE sphere}.
+         * We presume a sphere rather than WGS84 because the NetCDF projection framework uses
+         * spherical formulas.
          */
         @Override
         public GeographicCRS getBaseCRS() {
-            return DefaultGeographicCRS.WGS84;
+            return DefaultGeographicCRS.SPHERE;
         }
 
         /**
-         * @todo Not yet implemented.
+         * Returns a wrapper around the NetCDF projection.
+         *
+         * @throws IllegalStateException If the NetCDF coordinate system does not define a projection.
          */
         @Override
-        public Projection getConversionFromBase() {
-            throw new UnsupportedOperationException("Not supported yet.");
+        public synchronized Projection getConversionFromBase() {
+            if (projection == null) {
+                final ucar.unidata.geoloc.Projection p = delegate().getProjection();
+                if (p == null) {
+                    throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
+                }
+                projection = new NetcdfProjection(p, getBaseCRS(), this);
+            }
+            return projection;
         }
     }
 }

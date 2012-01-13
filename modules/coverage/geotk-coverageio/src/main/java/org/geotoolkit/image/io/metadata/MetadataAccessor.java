@@ -558,7 +558,7 @@ public class MetadataAccessor implements WarningProducer {
                 case 0: {
                     if (isReadOnly()) {
                         throw new NoSuchElementException(getErrorResources().getString(
-                                Errors.Keys.NO_SUCH_ELEMENT_$1, parentPath));
+                                Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, parentPath));
                     }
                     parent = appendChild(root, parentPath);
                     break;

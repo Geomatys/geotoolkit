@@ -21,12 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
+import java.util.Set;
 import java.awt.geom.AffineTransform;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOException;
 
@@ -35,6 +37,7 @@ import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.image.io.InformationType;
 import org.geotoolkit.image.io.ImageWriterAdapter;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -264,6 +267,20 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          */
         boolean exclude(final String writerID) {
             return false;
+        }
+
+        /**
+         * Returns the kind of information that this wrapper will add or modify compared to the
+         * {@linkplain #main} writer.
+         *
+         * @param  type The layout of the image to be written.
+         * @return The set of information to be written or modified by this adapter.
+         *
+         * @since 3.20
+         */
+        @Override
+        public Set<InformationType> getModifiedInformation(final ImageTypeSpecifier type) {
+            return WorldFileImageReader.Spi.INFO;
         }
 
         /**

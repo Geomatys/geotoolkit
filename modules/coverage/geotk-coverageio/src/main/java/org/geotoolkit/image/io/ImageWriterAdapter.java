@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Set;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
@@ -202,7 +203,17 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
                 }
             }
         }
-        return acceptStream ? ImageIO.createImageOutputStream(output) : null;
+        ImageOutputStream out = null;
+        if (acceptStream) {
+            out = ImageIO.createImageOutputStream(output);
+            if (out == null) {
+                final Object alternate = IOUtilities.tryToFile(output);
+                if (alternate != output) {
+                    out = ImageIO.createImageOutputStream(alternate);
+                }
+            }
+        }
+        return out;
     }
 
     /**
@@ -737,14 +748,14 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the writers to use for writing the pixel values.
-         * @param suffix The suffix to append to {@linkplain #getFormatNames() format names} and
-         *               {@linkplain #getMIMETypes() MIME types}.
+         * @param formatNameSuffix The suffix to append to {@linkplain #getFormatNames()
+         *        format names} and {@linkplain #getMIMETypes() MIME types}.
          *
          * @since 3.20
          */
-        protected Spi(final ImageWriterSpi main, String suffix) {
+        protected Spi(final ImageWriterSpi main, String formatNameSuffix) {
             ensureNonNull("main", main);
-            ensureNonNull("prefix", suffix);
+            ensureNonNull("formatNameSuffix", formatNameSuffix);
             this.main   = main;
             names       = main.getFormatNames();
             suffixes    = main.getFileSuffixes();
@@ -757,9 +768,9 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             extraStreamMetadataFormatNames       = addSpatialFormat(main.getExtraStreamMetadataFormatNames());
             extraImageMetadataFormatNames        = addSpatialFormat(main.getExtraImageMetadataFormatNames());
             acceptStream = Classes.isAssignableTo(ImageOutputStream.class, main.getOutputTypes());
-            suffix = suffix.trim();
-            if (!suffix.isEmpty()) {
-                addPrefix(names, MIMETypes, suffix);
+            formatNameSuffix = formatNameSuffix.trim();
+            if (!formatNameSuffix.isEmpty()) {
+                addPrefix(names, MIMETypes, formatNameSuffix);
             }
         }
 
@@ -823,6 +834,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * Returns {@code true} if the writer implementation associated with this service provider
          * is able to encode an image with the given layout. The default implementation delegates
          * to the {@linkplain #main} provider.
+         *
+         * @param type The layout of the image to be written.
          */
         @Override
         public boolean canEncodeImage(final ImageTypeSpecifier type) {
@@ -833,10 +846,29 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * Returns {@code true} if the writer implementation associated with this service provider
          * is able to encode the given image. The default implementation delegates to the
          * {@linkplain #main} provider.
+         *
+        * @param image The image to be written.
          */
         @Override
-        public boolean canEncodeImage(final RenderedImage im) {
-            return main.canEncodeImage(im);
+        public boolean canEncodeImage(final RenderedImage image) {
+            return main.canEncodeImage(image);
+        }
+
+        /**
+         * Returns the kind of information that this wrapper will add or modify compared to the
+         * {@linkplain #main} writer. If this method returns an empty set, then there is no
+         * raison to use this adapter instead than the main writer.
+         * <p>
+         * The default implementation conservatively returns all of the {@link InformationType}
+         * enum values. Subclasses should return more accurate information when possible.
+         *
+         * @param  type The layout of the image to be written.
+         * @return The set of information to be written or modified by this adapter.
+         *
+         * @since 3.20
+         */
+        public Set<InformationType> getModifiedInformation(final ImageTypeSpecifier type) {
+            return ImageReaderAdapter.Spi.INFO;
         }
 
         /**

@@ -36,7 +36,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  */
 public final class SetupNetcdf implements SetupService {
     /**
-     * Initializes the Netcdf cache, if it was not already initialized.
+     * Initializes the NetCDF cache, if it was not already initialized.
      */
     @Override
     public void initialize(final Properties properties, final boolean reinit) {
@@ -57,7 +57,7 @@ public final class SetupNetcdf implements SetupService {
     }
 
     /**
-     * Shutdowns the Netcdf cache.
+     * Shutdowns the NetCDF cache.
      */
     @Override
     public void shutdown() {

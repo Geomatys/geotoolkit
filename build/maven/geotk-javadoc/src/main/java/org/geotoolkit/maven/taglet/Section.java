@@ -27,9 +27,9 @@ import com.sun.tools.doclets.Taglet;
  * The <code>@section</code> tag for inserting a new section in a javadoc comment.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @since 3.00
- *
  * @version 3.00
+ *
+ * @since 3.00
  */
 public final class Section implements Taglet {
     /**

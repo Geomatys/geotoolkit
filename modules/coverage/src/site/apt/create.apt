@@ -34,7 +34,7 @@ Create a Grid Coverage
 
   For the example in the previous section, we would create three category objects:
 
------------------------------------------------------------------
++---------------------------------------------------------------+
 Color[] colorramp = {
     Color.BLUE,
     Color.GREEN
@@ -47,7 +47,7 @@ Category[] catset = {
                  NumberRange.create(0, 5000),
                  NumberRange.create(-100.0, 400.0))
 };
------------------------------------------------------------------
++---------------------------------------------------------------+
 
 
 ** Create the SampleDimension
@@ -57,11 +57,11 @@ Category[] catset = {
 
   For the DEM example, we would have:
 
------------------------------------------------------------------
++---------------------------------------------------------------+
 GridSampleDimension[] sampdims = {
     new GridSampleDimension("Elevation data", catset, NonSI.FOOT)
 };
------------------------------------------------------------------
++---------------------------------------------------------------+
 
 
 ** Create the georeferencing information
@@ -72,7 +72,7 @@ GridSampleDimension[] sampdims = {
 
   For our DEM example, we would do:
 
------------------------------------------------------------------
++---------------------------------------------------------------+
 double westmost  =  2.0; //Degrees
 double soutmost  = 51.0;
 double eastmost  =  3.0;
@@ -82,7 +82,7 @@ Envelope env = new Envelope2D(DefaultGeographicCRS.WGS84,
                               soutmost,
                               eastmost-westmost,
                               northmost-soutmost);
------------------------------------------------------------------
++---------------------------------------------------------------+
 
   More complex cases can be handled by having the user create the actual <<<MathTransform>>> which
   should be used to go from the pixel row/column offset to georeferenced space.
@@ -95,13 +95,13 @@ Envelope env = new Envelope2D(DefaultGeographicCRS.WGS84,
 
   For our DEM example, we would do:
 
-----------------------------------------------------------------------------------------------
++--------------------------------------------------------------------------------------------+
 RenderedImage img = myImageReader.read(...);
 
 //Using null for the hints, we get the first factory the finder obtains.
 GridCoverageFactory fac = CoverageFactoryFinder.getGridCoverageFactory(null);
 GridCoverage2D myGridCoverage = fac.create("Paris Elevation", img, env, sampdims, null, null);
-----------------------------------------------------------------------------------------------
++--------------------------------------------------------------------------------------------+
 
   These steps can all be wrapped up into the builder class.
 

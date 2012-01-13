@@ -36,6 +36,8 @@ import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 
+import org.geotoolkit.factory.Factories;
+
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
@@ -141,8 +143,8 @@ attmpt: while (true) {
              * For all other execution, iterate over the providers in our list.
              */
             int index = 0;
-            final Iterator<ImageReaderSpi> it = useProvidersList ? providers.iterator() :
-                    IIORegistry.getDefaultInstance().getServiceProviders(ImageReaderSpi.class, true);
+            final Iterator<ImageReaderSpi> it = orderForClassLoader(useProvidersList ? providers.iterator() :
+                    IIORegistry.getDefaultInstance().getServiceProviders(ImageReaderSpi.class, true));
             while (it.hasNext()) {
                 final ImageReaderSpi provider = it.next();
                 /*
@@ -289,8 +291,10 @@ attmpt: while (true) {
                      * Failed to read the image using the caller input.
                      * Wraps it in an ImageInputStream and try again.
                      */
+                    inputOrStream = stream;
                     if (stream == null) {
                         stream = createImageInputStream(input);
+                        inputOrStream = stream;
                         if (stream == null) {
                             if (!useSuffix) {
                                 break;
@@ -299,7 +303,6 @@ attmpt: while (true) {
                             inputOrStream = input;
                         }
                     }
-                    inputOrStream = stream;
                 }
             }
             useProvidersList = true;
@@ -377,7 +380,7 @@ attmpt: while (true) {
         T fallback = null;
         final boolean preferJAI = format.equalsIgnoreCase("TIFF");
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        final Iterator<T> it=registry.getServiceProviders(type, true);
+        final Iterator<T> it=orderForClassLoader(registry.getServiceProviders(type, true));
         while (it.hasNext()) {
             final T provider = it.next();
             if (exclude != null && exclude.isInstance(provider)) {
@@ -566,8 +569,8 @@ attmpt: while (true) {
      */
     public static ImageInputStream createUncachedImageInputStream(final Object input) throws IOException {
         ImageInputStreamSpi fallback = null;
-        final Iterator<ImageInputStreamSpi> it = IIORegistry.getDefaultInstance()
-                .getServiceProviders(ImageInputStreamSpi.class, true);
+        final Iterator<ImageInputStreamSpi> it = orderForClassLoader(
+                IIORegistry.getDefaultInstance().getServiceProviders(ImageInputStreamSpi.class, true));
         while (it.hasNext()) {
             final ImageInputStreamSpi spi = it.next();
             if (spi.getInputClass().isInstance(input)) {
@@ -601,5 +604,13 @@ attmpt: while (true) {
         assert CheckedImageInputStream.isValid(in = // Intentional side effect.
                CheckedImageInputStream.wrap(in));
         return in;
+    }
+
+    /**
+     * Returns an iterator giving precedence to classes loaded by the Geotk class loader or one
+     * of its children.
+     */
+    private static <T> Iterator<T> orderForClassLoader(final Iterator<T> iterator) {
+        return Factories.orderForClassLoader(Formats.class.getClassLoader(), iterator);
     }
 }

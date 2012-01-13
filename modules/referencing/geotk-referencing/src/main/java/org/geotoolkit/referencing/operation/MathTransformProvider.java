@@ -266,11 +266,8 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
             try {
                 target = copy.parameter(name);
             } catch (ParameterNotFoundException cause) {
-                final InvalidParameterNameException exception =
-                      new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), name);
-                exception.initCause(cause);
-                throw exception;
+                throw new InvalidParameterNameException(Errors.format(
+                            Errors.Keys.UNEXPECTED_PARAMETER_$1, name), cause, name);
             }
             final Object  v    = source.getValue();
             final Unit<?> unit = source.getUnit();

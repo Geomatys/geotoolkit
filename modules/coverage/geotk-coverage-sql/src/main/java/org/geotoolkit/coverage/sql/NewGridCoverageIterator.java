@@ -177,7 +177,7 @@ final class NewGridCoverageIterator {
                     final int[] index = new int[selected.size()];
                     for (final String variable : selected) {
                         if ((index[numSelected++] = variables.indexOf(variable)) < 0) {
-                            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_$1, variable));
+                            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_NAME_$1, variable));
                         }
                     }
                     if (numSelected != 0) {

@@ -487,12 +487,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         if (value == null) {
             throw new IllegalStateException(Errors.format(Errors.Keys.MISSING_PARAMETER_$1, name));
         }
-        final InvalidParameterTypeException exception =
-                new InvalidParameterTypeException(getClassTypeError(), name);
-        if (cause != null) {
-            exception.initCause(cause);
-        }
-        throw exception;
+        throw new InvalidParameterTypeException(getClassTypeError(), cause, name);
     }
 
     /**

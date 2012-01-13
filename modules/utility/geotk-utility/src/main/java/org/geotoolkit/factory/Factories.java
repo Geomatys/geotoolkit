@@ -18,6 +18,7 @@
 package org.geotoolkit.factory;
 
 import java.util.Locale;
+import java.util.Iterator;
 import java.util.Collection;
 import java.io.Writer;
 import java.io.IOException;
@@ -46,9 +47,9 @@ import org.geotoolkit.lang.Debug;
  *   to search using the {@link #addFactoryIteratorProvider addFactoryIteratorProvider} method.</p></li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -178,5 +179,43 @@ public final class Factories extends Static {
             final Writer out, final Locale locale) throws IOException
     {
         new FactoryPrinter(registries).list(out, locale);
+    }
+
+    /**
+     * Returns an iterator giving precedence to classes loaded by the given class loader or one
+     * of its parents/children. This method is used as a safety when there is a risk that many
+     * copies of the same library (for example in a web container) register the same JDK service.
+     *
+     * {@section Example with Image I/O}
+     * The {@code geotk-coverageio} module defines new {@link javax.imageio.ImageReader}
+     * implementations, which are automatically discovered by the standard JDK through the
+     * {@code META-INF/services/} mechanism. If a web container contains two copies of the
+     * Geotoolkit.org library - one for each web application - then all image formats like
+     * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader} will be registered twice,
+     * because the JVM will find two {@code NetcdfImageReader.Spi} classes loaded by two
+     * different class loaders.
+     * <p>
+     * The service provider instance returned by {@link javax.imageio.spi.IIORegistry} may
+     * be somewhat random in the above scenario. This leads to subtle and hard-to-identify
+     * bugs. This method reduces the risk by giving precedence to SPI classes loaded by the
+     * same class loader than the application. However users are still encouraged to load,
+     * for each running JVM, only one copy of the Geotoolkit.org library to be shared by all
+     * applications.
+     *
+     * @param  <T> The type of elements in the iterator.
+     * @param  classLoader The desired class loader, or {@code null} for the bootstrap class loader.
+     * @param  iterator The iterator to wrap.
+     * @return An iterator giving precedences to classes loaded by the given class loader or
+     *         one of its parents/children.
+     *
+     * @since 3.20
+     */
+    public static <T> Iterator<T> orderForClassLoader(final ClassLoader classLoader, final Iterator<T> iterator) {
+        if (classLoader == null || iterator == null || (iterator instanceof OrderedIterator<?> &&
+                ((OrderedIterator<?>) iterator).classLoader == classLoader))
+        {
+            return iterator;
+        }
+        return new OrderedIterator<T>(classLoader, iterator);
     }
 }

@@ -20,6 +20,9 @@ package org.geotoolkit.image.io.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Set;
+import java.util.EnumSet;
+import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
@@ -30,6 +33,7 @@ import java.awt.Rectangle;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.image.io.InformationType;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -279,6 +283,11 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         static final String NAME_SUFFIX = "-wf";
 
         /**
+         * The value to be returned by {@link #getModifiedInformation(Object)}.
+         */
+        static final Set<InformationType> INFO = Collections.unmodifiableSet(EnumSet.of(InformationType.IMAGE_METADATA));
+
+        /**
          * Creates a provider which will use the given format for reading pixel values.
          *
          * @param main The provider of the readers to use for reading the pixel values.
@@ -366,6 +375,21 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                 }
             }
             return super.canDecodeInput(source);
+        }
+
+        /**
+         * Returns the kind of information that this wrapper will add or modify compared to the
+         * {@linkplain #main} reader.
+         *
+         * @param  source The input (typically a {@link File}) to be decoded.
+         * @return The set of information to be read or modified by this adapter.
+         * @throws IOException If an error occurred while reading the file.
+         *
+         * @since 3.20
+         */
+        @Override
+        public Set<InformationType> getModifiedInformation(final Object source) throws IOException {
+            return INFO;
         }
 
         /**

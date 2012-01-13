@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.io;
 
 import java.net.URL;
 import java.io.File;
+import java.util.Collections;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,7 +47,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.18
  * @module
@@ -95,6 +96,28 @@ public final class CoverageIO extends Static {
             throws CoverageStoreException
     {
         ensureNonNull("coverage", coverage);
+        write(Collections.singleton(coverage), formatName, output);
+    }
+
+    /**
+     * Convenience method writing one of many coverages to the given output. The output
+     * is typically a {@link File} or {@link String} object, but other types (especially
+     * {@link javax.imageio.stream.ImageOutputStream}) may be accepted as well depending
+     * on the image format. The given input can also be an {@link javax.imageio.ImageWriter}
+     * instance with its output initialized.
+     *
+     * @param coverages  The coverages to write.
+     * @param formatName The image format as one of the Image I/O plugin name (e.g. {@code "png"}),
+     *                   or {@code null} for auto-detection from the output file suffix.
+     * @param output     The output where to write the image (typically a {@link File}).
+     * @throws CoverageStoreException If the coverages can not be written.
+     *
+     * @since 3.20
+     */
+    public static void write(final Iterable<? extends GridCoverage> coverages,
+            final String formatName, final Object output) throws CoverageStoreException
+    {
+        ensureNonNull("coverages", coverages);
         ensureNonNull("output", output);
         GridCoverageWriteParam param = null;
         if (formatName != null) {
@@ -104,7 +127,7 @@ public final class CoverageIO extends Static {
         final GridCoverageWriter writer = new ImageCoverageWriter();
         try {
             writer.setOutput(output);
-            writer.write(coverage, param);
+            writer.write(coverages, param);
         } finally {
             writer.dispose();
         }
@@ -128,6 +151,28 @@ public final class CoverageIO extends Static {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(input);
         return reader;
+    }
+
+    /**
+     * Creates a simple writer which does not perform any pyramid or mosaic tiling.
+     * This writer is appropriate if the image is known to be small.
+     * <p>
+     * The output is typically a {@link File}, {@link URL} or {@link String} object, but other types
+     * (especially {@link javax.imageio.stream.ImageOutputStream}) may be accepted as well depending
+     * on the image format. The given output can also be an {@link javax.imageio.ImageWriter} instance
+     * with its output initialized.
+     *
+     * @param  output The output where to write (typically a {@link File}).
+     * @return A coverage writer for the given output.
+     * @throws CoverageStoreException If the writer can not be created for the given file.
+     *
+     * @since 3.20
+     */
+    public static GridCoverageWriter createSimpleWriter(final Object output) throws CoverageStoreException {
+        ensureNonNull("output", output);
+        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        writer.setOutput(output);
+        return writer;
     }
 
     /**

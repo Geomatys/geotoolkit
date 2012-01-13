@@ -143,8 +143,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$2, low.length, high.length));
         }
-        index = new int[low.length + high.length];
-        System.arraycopy(low,  0, index, 0,           low.length);
+        index = Arrays.copyOf(low, low.length + high.length);
         System.arraycopy(high, 0, index, low.length, high.length);
         if (isHighIncluded) {
             for (int i=low.length; i<index.length; i++) {
@@ -414,13 +413,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      */
     @Override
     public int hashCode() {
-        int code = (int) serialVersionUID;
-        if (index != null) {
-            for (int i=index.length; --i>=0;) {
-                code = code*31 + index[i];
-            }
-        }
-        return code;
+        return Arrays.hashCode(index) ^ (int) serialVersionUID;
     }
 
     /**

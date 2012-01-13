@@ -187,7 +187,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
             // Slight optimization.
             return true;
         }
-        // We do not require the exact same class because we that that clones of
+        // We do not require the exact same class because we clones of
         // immutable grid coordinates to be equal to their original coordinates.
         if (object instanceof GeneralGridCoordinates) {
             final GeneralGridCoordinates that = (GeneralGridCoordinates) object;
