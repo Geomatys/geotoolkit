@@ -26,9 +26,9 @@ import com.sun.tools.doclets.Taglet;
  * The <code>@note</code> tag for inserting a note in a javadoc comment.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @since 3.00
- *
  * @version 3.00
+ *
+ * @since 3.00
  */
 public final class Note implements Taglet {
     /**

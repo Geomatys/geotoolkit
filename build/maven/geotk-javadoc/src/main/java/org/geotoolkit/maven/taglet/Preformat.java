@@ -29,9 +29,9 @@ import com.sun.tools.doclets.formats.html.ConfigurationImpl;
  * The remaining is the text to format.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @since 3.00
- *
  * @version 3.00
+ *
+ * @since 3.00
  */
 public final class Preformat implements Taglet {
     /**
@@ -239,7 +239,7 @@ all:    while (tk.hasMoreTokens()) {
      * Lists of Java keywords.
      */
     private static final Set<String> KEYWORDS =
-            Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(new String[] {
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(new String[] {
         "abstract", "continue", "for",        "new",        "switch",
         "assert",   "default",  "goto",       "package",    "synchronized",
         "boolean",  "do",       "if",         "private",    "this",

@@ -29,9 +29,9 @@ import com.sun.tools.doclets.Taglet;
  * The <code>@module</code> tag. This tag expects no argument.
  *
  * @author Martin Desruisseaux (IRD)
- * @since 2.2
+ * @version 3.20
  *
- * @version 3.00
+ * @since 2.2
  */
 public final class Module implements Taglet {
     /**
@@ -216,7 +216,6 @@ public final class Module implements Taglet {
              */
             buffer.append("\n<FONT SIZE=\"-2\">(<A HREF=\"").append(MAVEN_REPOSITORY_BASE_URL)
                   .append("org/geotoolkit/").append(module).append('/').append(VERSION).append('/')
-                  .append(module).append('-').append(VERSION).append(".jar")
                   .append("\">download</A>)</FONT>");
             /*
              * Appends the "View source code for this class" link.
