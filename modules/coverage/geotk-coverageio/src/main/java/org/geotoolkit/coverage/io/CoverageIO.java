@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.io;
 
 import java.net.URL;
 import java.io.File;
+import java.util.Collections;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -95,6 +96,28 @@ public final class CoverageIO extends Static {
             throws CoverageStoreException
     {
         ensureNonNull("coverage", coverage);
+        write(Collections.singleton(coverage), formatName, output);
+    }
+
+    /**
+     * Convenience method writing one of many coverages to the given output. The output
+     * is typically a {@link File} or {@link String} object, but other types (especially
+     * {@link javax.imageio.stream.ImageOutputStream}) may be accepted as well depending
+     * on the image format. The given input can also be an {@link javax.imageio.ImageWriter}
+     * instance with its output initialized.
+     *
+     * @param coverages  The coverages to write.
+     * @param formatName The image format as one of the Image I/O plugin name (e.g. {@code "png"}),
+     *                   or {@code null} for auto-detection from the output file suffix.
+     * @param output     The output where to write the image (typically a {@link File}).
+     * @throws CoverageStoreException If the coverages can not be written.
+     *
+     * @since 3.20
+     */
+    public static void write(final Iterable<? extends GridCoverage> coverages,
+            final String formatName, final Object output) throws CoverageStoreException
+    {
+        ensureNonNull("coverages", coverages);
         ensureNonNull("output", output);
         GridCoverageWriteParam param = null;
         if (formatName != null) {
@@ -104,7 +127,7 @@ public final class CoverageIO extends Static {
         final GridCoverageWriter writer = new ImageCoverageWriter();
         try {
             writer.setOutput(output);
-            writer.write(coverage, param);
+            writer.write(coverages, param);
         } finally {
             writer.dispose();
         }

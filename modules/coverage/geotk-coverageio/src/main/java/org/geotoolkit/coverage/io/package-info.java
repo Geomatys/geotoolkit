@@ -32,7 +32,8 @@
  * same {@link org.geotoolkit.coverage.io.ImageCoverageReader} implementation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @author Johann Sorel (Geomatys)
+ * @version 3.20
  *
  * @since 3.09 (derived from 2.4)
  * @module

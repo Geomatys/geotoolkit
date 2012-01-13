@@ -43,6 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
@@ -82,6 +83,13 @@ import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
  * @module
  */
 public abstract class GridCoverageStore implements LogProducer, Localized {
+    /**
+     * Set to {@code true} for allowing debug information to be send to the
+     * {@linkplain System#out standard output stream}.
+     */
+    @Debug
+    static final boolean DEBUG = false;
+
     /**
      * The logger to use for logging messages during read and write operations.
      *

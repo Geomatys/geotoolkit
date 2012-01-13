@@ -317,7 +317,7 @@ public class About extends JComponent implements Dialog {
                     default: throw new AssertionError(index);
                 }
                 final String title = resources.getString(titleKey);
-                Iterator<? extends ImageReaderWriterSpi> it =
+                final Iterator<? extends ImageReaderWriterSpi> it =
                         IIORegistry.getDefaultInstance().getServiceProviders(category, true);
                 while (it.hasNext()) {
                     final ImageReaderWriterSpi spi = it.next();

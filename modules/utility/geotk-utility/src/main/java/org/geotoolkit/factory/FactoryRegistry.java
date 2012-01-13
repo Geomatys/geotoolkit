@@ -481,6 +481,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * @param message  Optional message, or {@code null} if none.
      * @param type     Optional class to format after the message, or {@code null}.
      */
+    @Debug
     private static void debug(final String status, final Class<?> category,
             final Hints.Key key, final String message, final Class<?> type)
     {
@@ -505,7 +506,7 @@ public class FactoryRegistry extends ServiceRegistry {
     }
 
     /**
-     * Searches the first implementation in the registery matching the specified conditions.
+     * Searches the first implementation in the registry matching the specified conditions.
      * This method is invoked only by the {@link #getServiceProvider(Class, Filter, Hints,
      * Hints.Key)} public method above; there is no recursivity there. This method does not
      * creates new instance if no matching factory is found.

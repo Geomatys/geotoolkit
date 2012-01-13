@@ -913,9 +913,14 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_SUCH_AUTHORITY_CODE_$3 = 165;
 
         /**
+         * No ‘{0}’ element.
+         */
+        public static final int NO_SUCH_ELEMENT_$1 = 261;
+
+        /**
          * No element named “{0}” has been found.
          */
-        public static final int NO_SUCH_ELEMENT_$1 = 166;
+        public static final int NO_SUCH_ELEMENT_NAME_$1 = 166;
 
         /**
          * No “{1}” record found in the “{0}” table.
@@ -1313,6 +1318,11 @@ public final class Errors extends IndexedResourceBundle {
          * Unsupported image type.
          */
         public static final int UNSUPPORTED_IMAGE_TYPE = 253;
+
+        /**
+         * At most one instance of ‘{0}’ is supported.
+         */
+        public static final int UNSUPPORTED_MULTI_OCCURRENCE_$1 = 262;
 
         /**
          * Unsupported operation: {0}

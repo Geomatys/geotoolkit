@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.io;
 
 import java.awt.Rectangle;
+import java.util.Iterator;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageWriter;
 
@@ -60,7 +61,8 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * delegate the writing of pixel values.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @author Johann Sorel (Geomatys)
+ * @version 3.20
  *
  * @see ImageWriter
  *
@@ -106,8 +108,8 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      * </ul>
      *
      * @param  output The output (typically {@link java.io.File} or {@link String}) to be written.
-     * @throws IllegalArgumentException if output is not a valid instance for this writer.
-     * @throws CoverageStoreException if the operation failed.
+     * @throws IllegalArgumentException If the output is not a valid instance for this writer.
+     * @throws CoverageStoreException If the operation failed.
      *
      * @see ImageWriter#setOutput(Object)
      */
@@ -121,7 +123,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      * or {@code null} if none.
      *
      * @return The current output, or {@code null} if none.
-     * @throws CoverageStoreException if the operation failed.
+     * @throws CoverageStoreException If the operation failed.
      *
      * @see ImageWriter#getOutput()
      */
@@ -130,17 +132,48 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
     }
 
     /**
-     * Writes the grid coverage.
+     * Writes a single grid coverage.
      *
      * @param  coverage The coverage to write.
      * @param  param Optional parameters used to control the writing process, or {@code null}.
-     * @throws IllegalStateException if the output destination has not been set.
-     * @throws CoverageStoreException if an error occurs writing the information to the output destination.
+     * @throws IllegalStateException If the output destination has not been set.
+     * @throws CoverageStoreException If an error occurs while writing the information to the output destination.
      * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
      *         the execution of this method.
      */
     public abstract void write(GridCoverage coverage, GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException;
+
+    /**
+     * Writes one or many grid coverages. The default implementation delegates to
+     * {@link #write(GridCoverage, GridCoverageWriteParam)} if the given iterable
+     * contains exactly one coverage, or throws an {@link CoverageStoreException} otherwise.
+     *
+     * @param  coverages The coverages to write.
+     * @param  param Optional parameters used to control the writing process, or {@code null}.
+     * @throws IllegalStateException If the output destination has not been set.
+     * @throws CoverageStoreException If the iterable contains an unsupported number of coverages,
+     *         or if an error occurs while writing the information to the output destination.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
+     *
+     * @since 3.20
+     */
+    public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
+            throws CoverageStoreException, CancellationException
+    {
+        int errorKey = Errors.Keys.NO_SUCH_ELEMENT_$1;
+        final Iterator<? extends GridCoverage> it = coverages.iterator();
+        if (it.hasNext()) {
+            final GridCoverage coverage = it.next();
+            if (!it.hasNext()) {
+                write(coverage, param);
+                return;
+            }
+            errorKey = Errors.Keys.UNSUPPORTED_MULTI_OCCURRENCE_$1;
+        }
+        throw new CoverageStoreException(Errors.format(errorKey, GridCoverage.class));
+    }
 
     /**
      * A callback invoked by {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates}
@@ -176,7 +209,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
     /**
      * Restores the {@code GridCoverageWriter} to its initial state.
      *
-     * @throws CoverageStoreException if an error occurs while restoring to the initial state.
+     * @throws CoverageStoreException If an error occurs while restoring to the initial state.
      *
      * @see ImageWriter#reset()
      */
@@ -191,7 +224,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      * Allows any resources held by this writer to be released. The result of calling
      * any other method subsequent to a call to this method is undefined.
      *
-     * @throws CoverageStoreException if an error occurs while disposing resources.
+     * @throws CoverageStoreException If an error occurs while disposing resources.
      *
      * @see ImageWriter#dispose()
      */

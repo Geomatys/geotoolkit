@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.util;
 
+import org.geotoolkit.lang.Debug;
+
 
 /**
  * Specifies the degree of strictness when comparing two {@link LenientComparable} objects
@@ -142,6 +144,7 @@ public enum ComparisonMode {
      *
      * @since 3.20
      */
+    @Debug
     DEBUG;
 
     /**

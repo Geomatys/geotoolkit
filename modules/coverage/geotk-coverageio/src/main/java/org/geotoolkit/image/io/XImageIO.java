@@ -47,6 +47,7 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.factory.Factories;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -190,7 +191,8 @@ public final class XImageIO extends Static {
                 return XArrays.contains(getIdentifiers((ImageReaderWriterSpi) provider, mode), name);
             }
         };
-        return registry.getServiceProviders(category, filter, true);
+        return Factories.orderForClassLoader(XImageIO.class.getClassLoader(),
+                registry.getServiceProviders(category, filter, true));
     }
 
     /**
