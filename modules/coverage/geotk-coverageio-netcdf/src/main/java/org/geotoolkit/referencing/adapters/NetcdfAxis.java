@@ -314,7 +314,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * Returns the units as a string. If the axis direction or the time epoch
      * was appended to the units, then this part of the string is removed.
      */
-    final String getUnitsString() {
+    private String getUnitsString() {
         String symbol = axis.getUnitsString();
         if (symbol != null) {
             int i = symbol.lastIndexOf('_');

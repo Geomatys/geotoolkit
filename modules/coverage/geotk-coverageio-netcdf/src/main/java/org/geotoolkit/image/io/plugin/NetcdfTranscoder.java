@@ -43,6 +43,7 @@ import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.CF;
+import ucar.nc2.units.DateUnit;
 import ucar.unidata.util.DateUtil;
 
 import org.opengis.metadata.Metadata;
@@ -133,7 +134,6 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * <ul>
  *   <li>{@code "degrees_west"} and {@code "degrees_south"} units not correctly handled</li>
  *   <li>Units of measurement not yet declared in the {@link Band} elements.</li>
- *   <li>{@link #TIME} values not yet included in the {@link Extent} element.</li>
  *   <li>{@link #FLAG_VALUES} and {@link #FLAG_MASKS} not yet included in the
  *       {@link RangeElementDescription} elements.</li>
  *   <li>Services (WMS, WCS, OPeNDAP, THREDDS) <i>etc.</i>) and transfer options not yet declared.</li>
@@ -531,12 +531,12 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getDistributionInfo() distributionInfo} /
-     * {@link Distribution#getDistributors() distributors}
+     * {@link Distribution#getDistributors() distributors} /
      * {@link Distributor#getDistributorContact() distributorContact} with {@link Role#PUBLISHER}</li>
      * <li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
-     * {@link Keywords#getKeywords() keyword} with the "dataCenter" {@link KeywordType}</li></ul>
+     * {@link Keywords#getKeywords() keyword} with the {@code "dataCenter"} {@link KeywordType}</li></ul>
      *
      * @see #CREATOR
      * @see #CONTRIBUTOR
@@ -552,7 +552,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
-     * {@link Keywords#getKeywords() keyword} with the "project" {@link KeywordType}</li></ul>
+     * {@link Keywords#getKeywords() keyword} with the {@code "project"} {@link KeywordType}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#project_Attribute">UCAR reference</a>
      */
@@ -588,7 +588,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
-     * {@link DataIdentification#getResourceConstraints() resourceConstraints}
+     * {@link DataIdentification#getResourceConstraints() resourceConstraints} /
      * {@link LegalConstraints#getUseLimitations() useLimitation}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#license_Attribute">UCAR reference</a>
@@ -962,7 +962,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     private String getStringValue(final Group group, final String name) {
         if (name != null) { // For createResponsibleParty(...) convenience.
             final Attribute attribute = getAttribute(group, name);
-            if (attribute != null) {
+            if (attribute != null && attribute.isString()) {
                 String value = attribute.getStringValue();
                 if (value != null && !(value = value.trim()).isEmpty()) {
                     return value;
@@ -1534,8 +1534,6 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         final Number ymax = getNumericValue(group, LATITUDE .MAXIMUM);
         final Number zmin = getNumericValue(group, VERTICAL .MINIMUM);
         final Number zmax = getNumericValue(group, VERTICAL .MAXIMUM);
-        final Number tmin = getNumericValue(group, TIME     .MINIMUM);
-        final Number tmax = getNumericValue(group, TIME     .MAXIMUM);
         if (xmin != null || xmax != null || ymin != null || ymax != null) {
             extent = new DefaultExtent();
             final UnitConverter cλ = getConverterTo(getUnitValue(group, LONGITUDE.UNITS), NonSI.DEGREE_ANGLE);
@@ -1558,13 +1556,33 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
             }
             extent.getVerticalElements().add(new DefaultVerticalExtent(min, max, DefaultVerticalCRS.GEOIDAL_HEIGHT));
         }
-        if (tmin != null || tmax != null) {
+        /*
+         * Temporal extent.
+         */
+        Date startTime = getDateValue(group, TIME.MINIMUM);
+        Date endTime   = getDateValue(group, TIME.MAXIMUM);
+        if (startTime == null && endTime == null) {
+            final Number tmin = getNumericValue(group, TIME.MINIMUM);
+            final Number tmax = getNumericValue(group, TIME.MAXIMUM);
+            if (tmin != null || tmax != null) {
+                final Attribute attribute = getAttribute(group, TIME.UNITS);
+                if (attribute != null) {
+                    final String symbol = attribute.getStringValue();
+                    if (symbol != null) try {
+                        final DateUnit unit = new DateUnit(symbol);
+                        if (tmin != null) startTime = unit.makeDate(tmin.doubleValue());
+                        if (tmax != null)   endTime = unit.makeDate(tmax.doubleValue());
+                    } catch (Exception e) { // Declared by the DateUnit constructor.
+                        warning("createExtent", e);
+                    }
+                }
+            }
+        }
+        if (startTime != null || endTime != null) {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            final UnitConverter c = getConverterTo(getUnitValue(group, TIME.UNITS), NonSI.DAY);
-            extent.getTemporalElements().add(new DefaultTemporalExtent(/* TODO */));
-            // Need to use gml:TimePeriod.[begin|end]Position
+            extent.getTemporalElements().add(new DefaultTemporalExtent(startTime, endTime));
         }
         return extent;
     }

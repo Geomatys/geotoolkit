@@ -239,7 +239,7 @@ all:    while (tk.hasMoreTokens()) {
      * Lists of Java keywords.
      */
     private static final Set<String> KEYWORDS =
-            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(new String[] {
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
         "abstract", "continue", "for",        "new",        "switch",
         "assert",   "default",  "goto",       "package",    "synchronized",
         "boolean",  "do",       "if",         "private",    "this",
@@ -251,7 +251,7 @@ all:    while (tk.hasMoreTokens()) {
         "class",    "finally",  "long",       "strictfp",   "volatile",
         "const",    "float",    "native",     "super",      "while",
         /* literals: */ "true", "false", "null"
-    })));
+    )));
 
     /**
      * Adds syntactic coloration for the given line.

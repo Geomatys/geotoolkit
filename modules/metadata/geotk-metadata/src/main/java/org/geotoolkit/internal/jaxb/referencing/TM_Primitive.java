@@ -24,12 +24,11 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.temporal.Period;
 import org.opengis.temporal.TemporalPrimitive;
-import org.opengis.temporal.TemporalFactory;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
+import org.geotoolkit.internal.TemporalUtilities;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
@@ -123,16 +122,11 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                     record = Errors.getResources(null).getLogRecord(Level.WARNING,
                             Errors.Keys.BAD_RANGE_$2, begin, end);
                 } else try {
-                    final TemporalFactory factory = FactoryFinder.getTemporalFactory(null);
-                    metadata = factory.createPeriod(
-                               factory.createInstant(factory.createPosition(begin)),
-                               factory.createInstant(factory.createPosition(end)));
+                    metadata = TemporalUtilities.createPeriod(begin, end);
                     period.copyIdTo(metadata);
                     return;
                 } catch (FactoryNotFoundException e) {
-                    record = Errors.getResources(null).getLogRecord(Level.WARNING,
-                            Errors.Keys.MISSING_MODULE_$1, "geotk-temporal");
-                    record.setThrown(e);
+                    record = TemporalUtilities.createLog(e);
                 }
                 record.setSourceClassName(TemporalPrimitive.class.getName());
                 record.setSourceMethodName("setTimePeriod");

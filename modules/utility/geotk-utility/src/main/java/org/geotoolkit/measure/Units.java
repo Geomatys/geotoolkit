@@ -515,7 +515,7 @@ public final class Units extends Static {
 
     /**
      * Returns {@code true} if the given {@code uom} is equals to {@code "Celsius"} or
-     * {@code "Celcius"}. The later is a common mispelling.
+     * {@code "Celcius"}. The later is a common misspelling.
      */
     private static boolean isCelsius(final String uom) {
         return uom.equalsIgnoreCase("Celsius") || uom.equalsIgnoreCase("Celcius");
