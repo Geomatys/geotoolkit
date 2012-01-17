@@ -360,7 +360,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
             if (remarks == null) {
                 remarks = localized;
             } else {
-                Logging.log(DefaultReferenceIdentifier.class,
+                Logging.log(DefaultReferenceIdentifier.class, "<init>",
                     Loggings.format(Level.WARNING, Loggings.Keys.LOCALES_DISCARTED));
             }
         }

@@ -407,7 +407,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             if (remarks == null) {
                 remarks = i18n;
             } else if (!i18n.isSubsetOf(remarks)) {
-                Logging.log(AbstractIdentifiedObject.class,
+                Logging.log(AbstractIdentifiedObject.class, "<init>",
                         Loggings.format(Level.WARNING, Loggings.Keys.LOCALES_DISCARTED));
             }
         }
@@ -423,7 +423,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                     if (current == null) {
                         subProperties.put(prefix, i18n);
                     } else if (!i18n.isSubsetOf(current)) {
-                        Logging.log(AbstractIdentifiedObject.class,
+                        Logging.log(AbstractIdentifiedObject.class, "<init>",
                                 Loggings.format(Level.WARNING, Loggings.Keys.LOCALES_DISCARTED));
                     }
                 }

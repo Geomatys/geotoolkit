@@ -28,6 +28,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.extent.GeographicDescription;
 
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+
 
 /**
  * Description of the geographic area using identifiers.
@@ -35,7 +37,7 @@ import org.opengis.metadata.extent.GeographicDescription;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -76,10 +78,27 @@ public class DefaultGeographicDescription extends AbstractGeographicExtent
     /**
      * Creates a geographic description initialized to the specified value.
      *
-     * @param geographicIdentifier The identifier used to represent a geographic area.
+     * @param geographicIdentifier The identifier used to represent a geographic area,
+     *        or {@code null} if none.
      */
     public DefaultGeographicDescription(final Identifier geographicIdentifier) {
-        setGeographicIdentifier(geographicIdentifier);
+        if (geographicIdentifier != null) {
+            setGeographicIdentifier(geographicIdentifier);
+        }
+    }
+
+    /**
+     * Creates a geographic description initialized to the specified value.
+     *
+     * @param geographicIdentifier The identifier used to represent a geographic area,
+     *        or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public DefaultGeographicDescription(final String geographicIdentifier) {
+        if (geographicIdentifier != null) {
+            setGeographicIdentifier(new DefaultIdentifier(geographicIdentifier));
+        }
     }
 
     /**

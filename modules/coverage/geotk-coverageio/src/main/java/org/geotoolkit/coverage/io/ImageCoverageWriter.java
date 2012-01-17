@@ -486,6 +486,11 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * Writes a single coverage, which may be an element of a sequence. This method needs to be
      * informed when it is writing the first or the last coverage of a sequence. If there is only
      * one coverage to write, than both {@code isFirst} and {@code isLast} must be {@code true}.
+     * <p>
+     * In current implementation, the stream metadata are generated from the first image only
+     * (when {@code isFirst == true}) and the log message (if any) shows the grid geometry of
+     * the last coverage only (when {@code isLast == true}). It should not be an issue in the
+     * common case where all coverage in the sequence have similar grid geometry or metadata.
      *
      * @param  coverages The coverages to write.
      * @param  param     Optional parameters used to control the writing process, or {@code null}.

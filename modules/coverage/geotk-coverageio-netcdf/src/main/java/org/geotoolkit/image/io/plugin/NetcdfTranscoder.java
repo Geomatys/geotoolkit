@@ -43,6 +43,7 @@ import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.CF;
+import ucar.nc2.units.DateUnit;
 import ucar.unidata.util.DateUtil;
 
 import org.opengis.metadata.Metadata;
@@ -53,11 +54,13 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.distribution.Distributor;
 import org.opengis.metadata.distribution.Distribution;
 import org.opengis.metadata.constraint.LegalConstraints;
+import org.opengis.metadata.constraint.Restriction;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.quality.DataQuality;
@@ -66,6 +69,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicDescription;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
@@ -94,6 +98,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
 import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
@@ -129,11 +134,52 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
  * {@linkplain #LONGITUDE longitude} and {@linkplain #LATITUDE latitude} resolutions are
  * often more accurate in that group.
  *
+ * {@section NetCDF attributes}
+ * The NetCDF attributes parsed by this class are
+ * {@value #ACCESS_CONSTRAINT}, {@value #ACKNOWLEDGMENT}, {@value #COMMENT},
+ * {@linkplain #CONTRIBUTOR "contributor_email"},
+ * {@linkplain #CONTRIBUTOR "contributor_name"},
+ * {@linkplain #CONTRIBUTOR "contributor_role"},
+ * {@linkplain #CONTRIBUTOR "contributor_url"},
+ * {@linkplain #CREATOR     "creator_email"},
+ * {@linkplain #CREATOR     "creator_name"},
+ * {@linkplain #CREATOR     "creator_url"},
+ * {@value #DATA_TYPE}, {@value #DATE_CREATED}, {@value #DATE_ISSUED}, {@value #DATE_MODIFIED},
+ * {@value #FLAG_MASKS}, {@value #FLAG_MEANINGS}, {@value #FLAG_NAMES}, {@value #FLAG_VALUES},
+ * {@linkplain #TITLE "full_name"},
+ * {@linkplain #GEOGRAPHIC_IDENTIFIER "geographic_identifier"},
+ * {@linkplain #LATITUDE  "geospatial_lat_max"},
+ * {@linkplain #LATITUDE  "geospatial_lat_min"},
+ * {@linkplain #LATITUDE  "geospatial_lat_resolution"},
+ * {@linkplain #LATITUDE  "geospatial_lat_units"},
+ * {@linkplain #LONGITUDE "geospatial_lon_max"},
+ * {@linkplain #LONGITUDE "geospatial_lon_min"},
+ * {@linkplain #LONGITUDE "geospatial_lon_resolution"},
+ * {@linkplain #LONGITUDE "geospatial_lon_units"},
+ * {@linkplain #VERTICAL  "geospatial_vertical_max"},
+ * {@linkplain #VERTICAL  "geospatial_vertical_min"},
+ * {@linkplain #VERTICAL  "geospatial_vertical_positive"},
+ * {@linkplain #VERTICAL  "geospatial_vertical_resolution"},
+ * {@linkplain #VERTICAL  "geospatial_vertical_units"},
+ * {@value #HISTORY}, {@value #IDENTIFIER}, {@linkplain #CREATOR "institution"}, {@value #KEYWORDS},
+ * {@value #LICENSE}, {@value #METADATA_CREATION}, {@linkplain #TITLE "name"}, {@value #NAMING_AUTHORITY},
+ * {@value #PROCESSING_LEVEL}, {@value #PROJECT},
+ * {@linkplain #PUBLISHER "publisher_email"},
+ * {@linkplain #PUBLISHER "publisher_name"},
+ * {@linkplain #PUBLISHER "publisher_url"},
+ * {@value #PURPOSE}, {@value #REFERENCES}, {@value #STANDARD_NAME},
+ * {@value #STANDARD_NAME_VOCABULARY}, {@value #SUMMARY},
+ * {@linkplain #TIME "time_coverage_duration"},
+ * {@linkplain #TIME "time_coverage_end"},
+ * {@linkplain #TIME "time_coverage_resolution"},
+ * {@linkplain #TIME "time_coverage_start"},
+ * {@linkplain #TIME "time_coverage_units"},
+ * {@value #TITLE}, {@value #TOPIC_CATEGORY} and {@value #VOCABULARY}.
+ *
  * {@section Known limitations}
  * <ul>
  *   <li>{@code "degrees_west"} and {@code "degrees_south"} units not correctly handled</li>
  *   <li>Units of measurement not yet declared in the {@link Band} elements.</li>
- *   <li>{@link #TIME} values not yet included in the {@link Extent} element.</li>
  *   <li>{@link #FLAG_VALUES} and {@link #FLAG_MASKS} not yet included in the
  *       {@link RangeElementDescription} elements.</li>
  *   <li>Services (WMS, WCS, OPeNDAP, THREDDS) <i>etc.</i>) and transfer options not yet declared.</li>
@@ -148,7 +194,8 @@ import static org.geotoolkit.util.SimpleInternationalString.wrap;
 public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     /**
      * The {@value} attribute name for a short description of the dataset
-     * (<em>Highly Recommended</em>).
+     * (<em>Highly Recommended</em>). If no {@value} attribute is provided,
+     * then {@code NetcdfTranscoder} will look for "full_name" and "name".
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
@@ -271,6 +318,25 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#keywords_vocabulary_Attribute">UCAR reference</a>
      */
     public static final String VOCABULARY = "keywords_vocabulary";
+
+    /**
+     * The {@value} attribute name for a high-level geographic data thematic classification.
+     * Typical values are {@code "farming"}, {@code "biota"}, {@code "boundaries"},
+     * {@code "climatology meteorology atmosphere"}, {@code "economy"}, {@code "elevation"},
+     * {@code "environment"}, {@code "geoscientific information"}, {@code "health"},
+     * {@code "imagery base maps earth cover"}, {@code "intelligence military"},
+     * {@code "inland waters"}, {@code "location"}, {@code "oceans"}, {@code "planning cadastre"},
+     * {@code "society"}, {@code "structure"}, {@code "transportation"} and
+     * {@code "utilitiesCommunication"}.
+     *
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getTopicCategories() topicCategory}</li></ul>
+     *
+     * @see TopicCategory
+     */
+    public static final String TOPIC_CATEGORY = "topic_category";
 
     /**
      * The {@value} attribute name for the THREDDS data type appropriate for this dataset
@@ -531,12 +597,12 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getDistributionInfo() distributionInfo} /
-     * {@link Distribution#getDistributors() distributors}
+     * {@link Distribution#getDistributors() distributors} /
      * {@link Distributor#getDistributorContact() distributorContact} with {@link Role#PUBLISHER}</li>
      * <li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
-     * {@link Keywords#getKeywords() keyword} with the "dataCenter" {@link KeywordType}</li></ul>
+     * {@link Keywords#getKeywords() keyword} with the {@code "dataCenter"} {@link KeywordType}</li></ul>
      *
      * @see #CREATOR
      * @see #CONTRIBUTOR
@@ -552,14 +618,33 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getDescriptiveKeywords() descriptiveKeywords} /
-     * {@link Keywords#getKeywords() keyword} with the "project" {@link KeywordType}</li></ul>
+     * {@link Keywords#getKeywords() keyword} with the {@code "project"} {@link KeywordType}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#project_Attribute">UCAR reference</a>
      */
     public static final String PROJECT = "project";
 
     /**
-     * The {@value} attribute name a textual description of the processing (or quality control)
+     * The {@value} attribute name for the summary of the intentions with which the resource(s)
+     * was developed.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getPurpose() purpose}</li></ul>
+     */
+    public static final String PURPOSE = "purpose";
+
+    /**
+     * The {@value} attribute name for bibliographical references.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getCitation() citation} in its own instance</li></ul>
+     */
+    public static final String REFERENCES = "references";
+
+    /**
+     * The {@value} attribute name for a textual description of the processing (or quality control)
      * level of the data.
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
@@ -588,12 +673,38 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
-     * {@link DataIdentification#getResourceConstraints() resourceConstraints}
+     * {@link DataIdentification#getResourceConstraints() resourceConstraints} /
      * {@link LegalConstraints#getUseLimitations() useLimitation}</li></ul>
      *
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#license_Attribute">UCAR reference</a>
      */
     public static final String LICENSE = "license";
+
+    /**
+     * The {@value} attribute name for the access constraints applied to assure the protection of
+     * privacy or intellectual property. Typical values are {@code "copyright"}, {@code "patent"},
+     * {@code "patent pending"}, {@code "trademark"}, {@code "license"},
+     * {@code "intellectual property rights"} or {@code "restricted"}.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getResourceConstraints() resourceConstraints} /
+     * {@link LegalConstraints#getAccessConstraints() accessConstraints}</li></ul>
+     *
+     * @see Restriction
+     */
+    public static final String ACCESS_CONSTRAINT = "acces_constraint";
+
+    /**
+     * The {@value} attribute name for an identifier of the geographic area.
+     * <p>
+     * <b>Path:</b> <ul><li>{@link Metadata} /
+     * {@link Metadata#getIdentificationInfo() identificationInfo} /
+     * {@link DataIdentification#getExtents() extent} /
+     * {@link Extent#getGeographicElements() geographicElement} /
+     * {@link GeographicDescription#getGeographicIdentifier() geographicIdentifier}</li></ul>
+     */
+    public static final String GEOGRAPHIC_IDENTIFIER = "geographic_identifier";
 
     /**
      * Holds the attribute names describing a simple latitude, longitude, and vertical bounding box.
@@ -795,7 +906,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
 
     /**
      * The set of attribute names for the start and end times of the bounding box, resolution and
-     * units. Dates are assumed to be ..., unless a units attribute is specified.
+     * units.
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
@@ -962,7 +1073,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     private String getStringValue(final Group group, final String name) {
         if (name != null) { // For createResponsibleParty(...) convenience.
             final Attribute attribute = getAttribute(group, name);
-            if (attribute != null) {
+            if (attribute != null && attribute.isString()) {
                 String value = attribute.getStringValue();
                 if (value != null && !(value = value.trim()).isEmpty()) {
                     return value;
@@ -1318,18 +1429,19 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     private Citation createCitation(final Identifier identifier) throws IOException {
         String title = getStringValue(TITLE);
         if (title == null) {
-            title = getStringValue("full_name"); // THREDDS attribute.
+            title = getStringValue("full_name"); // THREDDS attribute documented in TITLE javadoc.
             if (title == null) {
-                title = getStringValue("name"); // THREDDS attribute.
+                title = getStringValue("name"); // THREDDS attribute documented in TITLE javadoc.
                 if (title == null) {
                     title = file.getTitle();
                 }
             }
         }
-        final Date creation = getDateValue(DATE_CREATED);
-        final Date modified = getDateValue(DATE_MODIFIED);
-        final Date issued   = getDateValue(DATE_ISSUED);
-        if (title == null && identifier == null && creation == null && modified == null && issued == null) {
+        final Date   creation   = getDateValue(DATE_CREATED);
+        final Date   modified   = getDateValue(DATE_MODIFIED);
+        final Date   issued     = getDateValue(DATE_ISSUED);
+        final String references = getStringValue(REFERENCES);
+        if (title == null && identifier == null && creation == null && modified == null && issued == null && references == null) {
             return null;
         }
         final DefaultCitation citation = new DefaultCitation(title);
@@ -1353,6 +1465,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
         }
+        citation.setOtherCitationDetails(wrap(references));
         return citation;
     }
 
@@ -1369,24 +1482,38 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     {
         DefaultDataIdentification identification = null;
         Set<InternationalString>  project        = null;
+        DefaultLegalConstraints   constraints    = null;
         boolean hasExtent = false;
         for (final Group group : groups) {
             final Keywords standard = createKeywords(group, KeywordType.THEME, true);
             final Keywords keywords = createKeywords(group, KeywordType.THEME, false);
+            final String   topic    = getStringValue(group, TOPIC_CATEGORY);
             final String   type     = getStringValue(group, DATA_TYPE);
             final String   credits  = getStringValue(group, ACKNOWLEDGMENT);
             final String   license  = getStringValue(group, LICENSE);
+            final String   access   = getStringValue(group, ACCESS_CONSTRAINT);
             final Extent   extent   = hasExtent ? null : createExtent(group);
-            if (standard!=null || keywords!=null || type!=null || credits!=null || license!=null || extent!=null) {
+            if (standard!=null || keywords!=null || topic != null || type!=null || credits!=null || license!=null || access!= null || extent!=null) {
                 if (identification == null) {
                     identification = new DefaultDataIdentification();
                 }
+                if (topic    != null) addIfAbsent(identification.getTopicCategories(), CodeLists.valueOf(TopicCategory.class, topic));
                 if (type     != null) addIfAbsent(identification.getSpatialRepresentationTypes(), CodeLists.valueOf(SpatialRepresentationType.class, type));
                 if (standard != null) addIfAbsent(identification.getDescriptiveKeywords(), standard);
                 if (keywords != null) addIfAbsent(identification.getDescriptiveKeywords(), keywords);
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
-                if (license  != null) addIfAbsent(identification.getResourceConstraints(), new DefaultLegalConstraints(license));
-                if (extent   != null) {
+                if (license  != null) addIfAbsent(identification.getResourceConstraints(), constraints = new DefaultLegalConstraints(license));
+                if (access   != null) {
+                    for (final String token : Strings.split(topic, ',')) {
+                        if (!token.isEmpty()) {
+                            if (constraints == null) {
+                                identification.getResourceConstraints().add(constraints = new DefaultLegalConstraints());
+                            }
+                            addIfAbsent(constraints.getAccessConstraints(), CodeLists.valueOf(Restriction.class, token));
+                        }
+                    }
+                }
+                if (extent != null) {
                     // Takes only ONE extent, because a NetCDF file may declare many time the same
                     // extent with different precision. The groups are ordered in such a way that
                     // the first extent should be the most accurate one.
@@ -1398,14 +1525,16 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         }
         final Citation citation = createCitation(identifier);
         final String   summary  = getStringValue(SUMMARY);
+        final String   purpose  = getStringValue(PURPOSE);
         if (identification == null) {
-            if (citation==null && summary==null && project==null && publisher==null && creator==null) {
+            if (citation==null && summary==null && purpose==null && project==null && publisher==null && creator==null) {
                 return null;
             }
             identification = new DefaultDataIdentification();
         }
         identification.setCitation(citation);
         identification.setAbstract(wrap(summary));
+        identification.setPurpose (wrap(purpose));
         if (creator != null) {
             identification.getPointOfContacts().add(creator);
         }
@@ -1534,8 +1663,6 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         final Number ymax = getNumericValue(group, LATITUDE .MAXIMUM);
         final Number zmin = getNumericValue(group, VERTICAL .MINIMUM);
         final Number zmax = getNumericValue(group, VERTICAL .MAXIMUM);
-        final Number tmin = getNumericValue(group, TIME     .MINIMUM);
-        final Number tmax = getNumericValue(group, TIME     .MAXIMUM);
         if (xmin != null || xmax != null || ymin != null || ymax != null) {
             extent = new DefaultExtent();
             final UnitConverter cλ = getConverterTo(getUnitValue(group, LONGITUDE.UNITS), NonSI.DEGREE_ANGLE);
@@ -1558,13 +1685,40 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
             }
             extent.getVerticalElements().add(new DefaultVerticalExtent(min, max, DefaultVerticalCRS.GEOIDAL_HEIGHT));
         }
-        if (tmin != null || tmax != null) {
+        /*
+         * Temporal extent.
+         */
+        Date startTime = getDateValue(group, TIME.MINIMUM);
+        Date endTime   = getDateValue(group, TIME.MAXIMUM);
+        if (startTime == null && endTime == null) {
+            final Number tmin = getNumericValue(group, TIME.MINIMUM);
+            final Number tmax = getNumericValue(group, TIME.MAXIMUM);
+            if (tmin != null || tmax != null) {
+                final Attribute attribute = getAttribute(group, TIME.UNITS);
+                if (attribute != null) {
+                    final String symbol = attribute.getStringValue();
+                    if (symbol != null) try {
+                        final DateUnit unit = new DateUnit(symbol);
+                        if (tmin != null) startTime = unit.makeDate(tmin.doubleValue());
+                        if (tmax != null)   endTime = unit.makeDate(tmax.doubleValue());
+                    } catch (Exception e) { // Declared by the DateUnit constructor.
+                        warning("createExtent", e);
+                    }
+                }
+            }
+        }
+        if (startTime != null || endTime != null) {
             if (extent == null) {
                 extent = new DefaultExtent();
             }
-            final UnitConverter c = getConverterTo(getUnitValue(group, TIME.UNITS), NonSI.DAY);
-            extent.getTemporalElements().add(new DefaultTemporalExtent(/* TODO */));
-            // Need to use gml:TimePeriod.[begin|end]Position
+            extent.getTemporalElements().add(new DefaultTemporalExtent(startTime, endTime));
+        }
+        final String identifier = getStringValue(GEOGRAPHIC_IDENTIFIER);
+        if (identifier != null) {
+            if (extent == null) {
+                extent = new DefaultExtent();
+            }
+            extent.getGeographicElements().add(new DefaultGeographicDescription(identifier));
         }
         return extent;
     }
@@ -1598,7 +1752,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     }
 
     /**
-     * Creates a {@code <gmd:contentInfo>} element from all NetCDF variables.
+     * Creates a {@code <gmd:contentInfo>} element from all applicable NetCDF attributes.
      *
      * @return The content information.
      * @throws IOException If an I/O operation was necessary but failed.

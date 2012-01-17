@@ -77,10 +77,8 @@ public final class ColorPalette implements Serializable {
             try {
                 colors = factory.getColors(paletteName);
             } catch (IOException e) {
-                final LogRecord record = new LogRecord(Level.WARNING, e.getLocalizedMessage());
-                record.setSourceClassName(PaletteFactory.class.getName());
-                record.setSourceMethodName("getColors");
-                Logging.log(PaletteFactory.class, record);
+                Logging.log(PaletteFactory.class, "getColors",
+                        new LogRecord(Level.WARNING, e.getLocalizedMessage()));
             }
             if (colors == null) {
                 colors = new Color[] {Color.BLACK, Color.WHITE};

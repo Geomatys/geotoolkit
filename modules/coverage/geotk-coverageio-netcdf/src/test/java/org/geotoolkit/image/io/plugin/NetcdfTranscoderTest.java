@@ -32,12 +32,15 @@ import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.Role;
+import org.opengis.temporal.Instant;
 
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
@@ -54,7 +57,7 @@ import static org.geotoolkit.test.Commons.getSingleton;
  *
  * @since 3.20
  */
-public final strictfp class NetcdfTranscoderTest {
+public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase {
     /**
      * The THREDDS XML test file.
      */
@@ -163,7 +166,9 @@ public final strictfp class NetcdfTranscoderTest {
         assertEquals("Vertical min", 0, vext.getMinimumValue().doubleValue(), 0);
         assertEquals("Vertical max", 0, vext.getMaximumValue().doubleValue(), 0);
 
-        // TODO: test temporal extent
+        final TemporalExtent text = getSingleton(extent.getTemporalElements());
+        final Instant instant = (Instant) text.getExtent();
+        // Can not test at this time, since it requires the geotk-temporal module.
     }
 
     /**

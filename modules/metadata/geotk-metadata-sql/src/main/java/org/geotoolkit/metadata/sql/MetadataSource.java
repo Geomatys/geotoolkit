@@ -28,7 +28,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
@@ -391,11 +390,8 @@ public class MetadataSource {
                 if (identifier == null) {
                     identifier = candidate;
                 } else if (!identifier.equals(candidate)) {
-                    final LogRecord record = Errors.getResources(null).getLogRecord(
-                            Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, candidate);
-                    record.setSourceClassName(getClass().getCanonicalName());
-                    record.setSourceMethodName("search");
-                    Logging.log(MetadataSource.class, record);
+                        Logging.log(MetadataSource.class, "search", Errors.getResources(null).getLogRecord(
+                                Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, candidate));
                 }
             }
         }

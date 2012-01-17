@@ -195,10 +195,7 @@ public class CategoryRecord implements Cloneable, Serializable {
      * @param message The message to log.
      */
     private static void warning(final String method, final String message) {
-        final LogRecord record = new LogRecord(Level.WARNING, message);
-        record.setSourceClassName(CategoryRecord.class.getName());
-        record.setSourceMethodName(method);
-        Logging.log(CategoryRecord.class, record);
+        Logging.log(CategoryRecord.class, method, new LogRecord(Level.WARNING, message));
     }
 
     /**
