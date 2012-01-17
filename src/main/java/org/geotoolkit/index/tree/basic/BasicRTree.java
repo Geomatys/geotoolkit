@@ -6,7 +6,7 @@ package com.mycompany.basicrtree;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import com.mycompany.utilsRTree.SplitCase;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

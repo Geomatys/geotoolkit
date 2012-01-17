@@ -6,7 +6,7 @@ package org.geotoolkit.index.tree;
 
 import com.mycompany.basicrtree.BasicRTree;
 import com.mycompany.starRTree.StarRTree;
-import com.mycompany.utilsRTree.SplitCase;
+import org.geotoolkit.index.tree.basic.SplitCase;
 
 /**
  *
