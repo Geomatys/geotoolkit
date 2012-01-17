@@ -8,7 +8,6 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +23,7 @@ public final class TreeUtils {
     private TreeUtils() {
     }
     
-    /**To compare two {@code Node} from them boundary box x axis coordinate. 
+    /**To compare two {@code Node2D} from them boundary box minimum x axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      * @author Marechal Remi (Geomatys)
      */
@@ -37,7 +36,7 @@ public final class TreeUtils {
         }
     };
     
-    /**To compare two {@code Node} from them boundary box y axis coordinate. 
+    /**To compare two {@code Node} from them boundary box minimum y axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      * @author Marechal Remi (Geomatys)
      */
@@ -50,11 +49,11 @@ public final class TreeUtils {
         }
     };
 
-    /**To compare two distances between two distincts {@code Node} and a same {@code Node}. 
-     * Distance is Euclidean distance between joint {@code Node} centroid and {@code Node} centroid.
+    /**To compare two distances between two distincts {@code Node2D} and a same {@code Node2D}. 
+     * Distance is Euclidean distance between joint {@code Node2D} centroid and {@code Node2D} centroid.
      * 
      * <blockquote><font size=-1>
-     * <strong>NOTE: to use compare method create CoupleNode where the first param is the joint {@code Node}.</strong> 
+     * <strong>NOTE: to use compare method create CoupleNode2D where the first param is the same {@code Node2D}.</strong> 
      * </font></blockquote>
      * 
      * @see StarNode#organizeFrom(int) 
@@ -72,7 +71,7 @@ public final class TreeUtils {
         }
     };
     
-    /**To compare two {@code Node} from them boundary box x axis coordinate. 
+    /**To compare two {@code Shape} from them boundary box minimum x axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      * @author Marechal Remi (Geomatys)
      */
@@ -85,7 +84,7 @@ public final class TreeUtils {
         }
     };
     
-    /**To compare two {@code Node} from them boundary box y axis coordinate. 
+    /**To compare two {@code Shape} from them boundary box minimum y axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      * @author Marechal Remi (Geomatys)
      */
@@ -98,11 +97,11 @@ public final class TreeUtils {
         }
     };
 
-    /**To compare two distances between two distincts {@code Node} and a same {@code Node}. 
-     * Distance is Euclidean distance between joint {@code Node} centroid and {@code Node} centroid.
+    /**To compare two distances between two distincts {@code Shape} and a same {@code Shape}. 
+     * Distance is Euclidean distance between joint {@code Shape} centroid and {@code Shape} centroid.
      * 
      * <blockquote><font size=-1>
-     * <strong>NOTE: to use compare method create CoupleNode where the first param is the joint {@code Node}.</strong> 
+     * <strong>NOTE: to use compare method create CoupleNode where the first param is the joint {@code Shape}.</strong> 
      * </font></blockquote>
      * 
      * @see StarNode#organizeFrom(int) 
@@ -120,14 +119,18 @@ public final class TreeUtils {
         }
     };
     
+    /**
+     * @param node to denominate elements number.
+     * @return elements number within node.
+     */
     public static int countElements(Node2D node){
         return node.getChildren().size()+node.getEntries().size();
     }
     
-    /**Find all {@code Entry} which intersect regionSearch param. 
+    /**Find all {@code Shape} which intersect regionSearch param. 
      * 
      * @param regionSearch area of search.
-     * @param result {@code List} where is put search result.
+     * @param result {@code List} where is add search resulting.
      */
     public static void searchNode(final Node2D candidate, final Shape regionSearch, final List<Shape> result) {
         Shape bound = candidate.getBoundary();
@@ -148,7 +151,7 @@ public final class TreeUtils {
         }
     }
     
-    /**Distance returned is compute between boundary gravity center of each {@code Node}.
+    /**Distance returned is compute between boundary gravity center of each {@code Node2D}.
      * 
      * @param n1 first Node.
      * @param n2 second Node.
@@ -164,12 +167,17 @@ public final class TreeUtils {
         return Math.hypot(Math.abs(x1-x2), Math.abs(y1-y2));
     }
     
+    /**Compute general boundary of all shapes passed in param.
+     * 
+     * @param lS Shape List.
+     * @return Shape which is general boundary.
+     */
     public static Shape getEnveloppeMin(final List<Shape> lS){
         ArgumentChecks.ensureNonNull("getEnveloppeMin : lS", lS);
         if(lS.isEmpty()){
             throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
         }
-        Rectangle2D envlop = new Rectangle2D.Double();
+        final Rectangle2D envlop = new Rectangle2D.Double();
         for(Shape sh : lS){
             if(envlop.isEmpty()){
                 envlop.setRect(sh.getBounds2D());
@@ -184,8 +192,9 @@ public final class TreeUtils {
         return envlop;
     }
     
-    /**
-     * {@inheritDoc} 
+    /**Compute empty area of {@code Node2D}.
+     * 
+     * @return this area subtract some of area elements.
      */
     public static double getDeadSpace(final Node2D node){
         ArgumentChecks.ensureNonNull("getDeadSpace : node", node);
@@ -211,6 +220,10 @@ public final class TreeUtils {
         return (areaCandidate.getWidth()*areaCandidate.getHeight() - areaElement);
     }
     
+    /**
+     * @param node
+     * @return return center of {@code Node2D}.
+     */
     public static Point2D getCentroid(Node2D node){
         ArgumentChecks.ensureNonNull("getCentroid : node", node);
         final Rectangle2D rnod = node.getBoundary().getBounds2D();
@@ -218,11 +231,11 @@ public final class TreeUtils {
     }
     
     /**
-     * Organize all {@code Node} by differents criterion.
+     * Organize all children of {@code Node2D} by differents criterion.
      * 
-     * @param index : - 0 : organize all Node by nearest to furthest between them centroid and this Node centroid.
-     *                - 1 : organize all Node by smallest x value to tallest.
-     *                - 2 : organize all Node by smallest y value to tallest.
+     * @param index : - 0 : organize all Node2D children by nearest to furthest between them centroid and this Node centroid.
+     *                - 1 : organize all Node2D children by smallest x value to tallest.
+     *                - 2 : organize all Node2D children by smallest y value to tallest.
      * @throws IllegalArgumentException if index is out of required limit.
      * @throws IllegalArgumentException if lE is null.
      * @throws IllegalArgumentException if lE is empty.
@@ -270,7 +283,7 @@ public final class TreeUtils {
         }
     }
     
-    /**Find in lN, couple of {@code Node} with smallest overlapping or perimeter.
+    /**Find in lN, couple of {@code Node2D} with smallest overlapping or perimeter.
      * Choose indice : - case 0 : find couple with smallest overlapping.
      *                 - case 1 : find couple with smallest perimeter.
      * 
@@ -279,7 +292,7 @@ public final class TreeUtils {
      * @param indice to select criterion.
      * @throws IllegalArgumentException if lCN is empty or null.
      * @throws IllegalArgumentException if indice is out of required limits.
-     * @return {@code List<Node>} with size = 2, which is selectionned couple of {@code Node}.
+     * @return {@code List<Node2D>} with size = 2, which is selectionned couple of {@code Node}.
      */
     public static List<Node2D> getMinOverlapsOrPerimeter(final List<CoupleNode2D> lCN, int indice) {
 
@@ -323,7 +336,7 @@ public final class TreeUtils {
     }
     
     /**
-     * We can choose axis to split.
+     * To choose axis to split :
      *      - case 1 : to choose x axis split.
      *      - case 2 : to choose y axis split.
      * 
@@ -333,12 +346,6 @@ public final class TreeUtils {
      */
     public static List<Node2D> splitAxis(final Node2D candidate) {
         
-        /**
-         * Its to be in accordance with R*Tree properties.
-         * We can, during splitting action, create new Node which contains
-         * 33% in minimum of data from origin Node.
-         */
-        //final int val = candidate.getTree().getMaxElements()/3;
         final Tree tree = candidate.getTree();
         final int val2 = tree.getMaxElements()/2;
         final boolean leaf = candidate.isLeaf();
@@ -358,8 +365,8 @@ public final class TreeUtils {
         }
         
         organize_Node2DElements_From(defineSplitAxis(candidate), candidate);
-        List splitList1 = new ArrayList();
-        List splitList2 = new ArrayList();
+        final List splitList1 = new ArrayList();
+        final List splitList2 = new ArrayList();
         List listElements;
         
         if(leaf){
