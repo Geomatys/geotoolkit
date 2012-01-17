@@ -274,10 +274,8 @@ final class SpatialRefSysEntry {
                  * stack trace in order to not scare the user too much.  Use GridGeometryTable
                  * as the source class since SpatialRefSysEntry is too low level.
                  */
-                final LogRecord record = new LogRecord(Level.WARNING, e.getLocalizedMessage());
-                record.setSourceClassName("org.geotoolkit.coverage.sql.GridGeometryTable");
-                record.setSourceMethodName("createEntry");
-                Logging.log(SpatialRefSysEntry.class, record);
+                Logging.log(GridGeometryTable.class, "createEntry",
+                        new LogRecord(Level.WARNING, e.getLocalizedMessage()));
             }
             toDatabaseVerticalCRS = (MathTransform1D) tr;
         }

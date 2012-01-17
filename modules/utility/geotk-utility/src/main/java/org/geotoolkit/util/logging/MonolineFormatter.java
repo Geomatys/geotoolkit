@@ -598,7 +598,7 @@ loop:   for (int i=0; ; i++) {
              * approximative match is found, then the default value is the last element.
              */
             int logProducer = trace.length;
-            boolean useLoggerName = true, useClassName = true;
+            boolean useLoggerName = (loggerName != null), useClassName = true;
             for (int i=0; i<trace.length; i++) {
                 final StackTraceElement element = trace[i];
                 final String classname = element.getClassName();

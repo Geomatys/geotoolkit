@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
@@ -233,7 +232,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
     /**
      * Must be invoked by subclass constructors after they finished their work. Current
-     * implementation computes the longitude bounds to be used by {@link #rollLongitude}.
+     * implementation computes the longitude bounds to be used by {@link #rollLongitude()}.
      */
     protected final void finish() {
         double rotation = 0;
@@ -254,12 +253,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                  * projection will still work fine in many cases. We set the source to the
                  * subclass constructor since this is the place where the issue originate.
                  */
-                final Class<? extends UnitaryProjection> c = getClass();
-                final LogRecord record = Loggings.format(Level.WARNING,
-                        Loggings.Keys.CANT_ROLL_LONGITUDE_$1, c);
-                record.setSourceClassName(c.getCanonicalName());
-                record.setSourceMethodName("<init>");
-                Logging.log(UnitaryProjection.class, record);
+                Logging.log(UnitaryProjection.class, "finish", Loggings.format(Level.WARNING,
+                        Loggings.Keys.CANT_ROLL_LONGITUDE_$1, getClass()));
             }
         }
         longitudeBound = bound;

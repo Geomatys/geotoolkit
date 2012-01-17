@@ -40,6 +40,7 @@ import org.opengis.metadata.citation.Role;
 import org.opengis.temporal.Instant;
 
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
@@ -56,7 +57,7 @@ import static org.geotoolkit.test.Commons.getSingleton;
  *
  * @since 3.20
  */
-public final strictfp class NetcdfTranscoderTest {
+public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase {
     /**
      * The THREDDS XML test file.
      */

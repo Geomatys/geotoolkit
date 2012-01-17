@@ -105,12 +105,12 @@ public final class Warnings extends Static {
             level = Level.WARNING;
         }
         final LogRecord record = new LogRecord(level, message);
-        record.setSourceClassName(caller.getName());
-        record.setSourceMethodName(method);
         if (plugin != null) {
+            record.setSourceClassName(caller.getCanonicalName());
+            record.setSourceMethodName(method);
             plugin.warningOccurred(record);
         } else {
-            Logging.log(caller, record);
+            Logging.log(caller, method, record);
         }
     }
 
@@ -134,12 +134,12 @@ public final class Warnings extends Static {
         }
         final LogRecord record = Errors.getResources(plugin != null ? plugin.getLocale() : null)
                 .getLogRecord(level, key, arguments);
-        record.setSourceClassName(caller.getName());
-        record.setSourceMethodName(method);
         if (plugin != null) {
+            record.setSourceClassName(caller.getCanonicalName());
+            record.setSourceMethodName(method);
             plugin.warningOccurred(record);
         } else {
-            Logging.log(caller, record);
+            Logging.log(caller, method, record);
         }
     }
 

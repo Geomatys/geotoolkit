@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.sql.Ordering;
@@ -335,11 +334,9 @@ public class Query {
                 }
                 columnExists = columns.contains(column.name);
                 if (!columnExists) {
-                    final LogRecord record = Loggings.format(Level.CONFIG,
-                            Loggings.Keys.TABLE_COLUMN_NOT_FOUND_$3, column.name, table, column.defaultValue);
-                    record.setSourceClassName(getClass().getName());
-                    record.setSourceMethodName("select"); // "select" is the public method invoking this one.
-                    Logging.log(Query.class, record);
+                    Logging.log(Query.class, "select", // "select" is the public method invoking this one.
+                            Loggings.format(Level.CONFIG, Loggings.Keys.TABLE_COLUMN_NOT_FOUND_$3,
+                            column.name, table, column.defaultValue));
                 }
             }
             /*

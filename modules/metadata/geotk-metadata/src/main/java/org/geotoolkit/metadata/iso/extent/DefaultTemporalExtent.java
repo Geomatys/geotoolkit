@@ -67,12 +67,6 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
     private static final long serialVersionUID = 3668140516657118045L;
 
     /**
-     * {@code true} if {@link #getExtent()} already logged its warning. This is used
-     * in order to log a warning only once, in order to avoid polluting the logger.
-     */
-    private static volatile boolean warningLogged;
-
-    /**
      * The start date and time for the content of the dataset,
      * in milliseconds elapsed since January 1st, 1970. A value
      * of {@link Long#MIN_VALUE} means that this attribute is not set.
@@ -271,13 +265,11 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
                     }
                     cachedExtent = value;
                 } catch (FactoryNotFoundException e) {
-                    if (!warningLogged) {
-                        warningLogged = true;
-                        final LogRecord record = TemporalUtilities.createLog(e);
-                        record.setSourceClassName(DefaultTemporalExtent.class.getName());
-                        record.setSourceMethodName("getExtent");
-                        LOGGER.log(record);
-                    }
+                    final LogRecord record = TemporalUtilities.createLog(e);
+                    record.setSourceClassName(DefaultTemporalExtent.class.getCanonicalName());
+                    record.setSourceMethodName("getExtent");
+                    record.setLoggerName(LOGGER.getName());
+                    LOGGER.log(record);
                 }
             }
         }

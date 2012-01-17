@@ -43,6 +43,13 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  */
 public final class TemporalUtilities extends Static {
     /**
+     * {@code true} if a warning has already been logged. This is used in order to log at
+     * the warning level only once, in order to avoid polluting the logger. All warnings
+     * after the first one will be logged at the fine level.
+     */
+    private static volatile boolean warningLogged;
+
+    /**
      * Do not allow instantiation of this path.
      */
     private TemporalUtilities() {
@@ -87,7 +94,12 @@ public final class TemporalUtilities extends Static {
      * @return The record to log.
      */
     public static LogRecord createLog(final FactoryNotFoundException e) {
-        final LogRecord record = Errors.getResources(null).getLogRecord(Level.WARNING,
+        Level level = Level.FINE;
+        if (!warningLogged) {
+            warningLogged = true;
+            level = Level.WARNING;
+        }
+        final LogRecord record = Errors.getResources(null).getLogRecord(level,
                 Errors.Keys.MISSING_MODULE_$1, "geotk-temporal");
         record.setThrown(e);
         return record;

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.lang.ref.PhantomReference;
 
 import org.geotoolkit.util.Disposable;
@@ -168,10 +167,8 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
              * Logs the message at the WARNING level because execution of this code
              * means that the application failed to delete itself the temporary file.
              */
-            final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.TEMPORARY_FILE_GC_$1, this);
-            record.setSourceClassName(TemporaryFile.class.getName());
-            record.setSourceMethodName("delete");
-            Logging.log(TemporaryFile.class, record);
+            Logging.log(TemporaryFile.class, "delete",
+                    Loggings.format(Level.WARNING, Loggings.Keys.TEMPORARY_FILE_GC_$1, this));
         }
     }
 

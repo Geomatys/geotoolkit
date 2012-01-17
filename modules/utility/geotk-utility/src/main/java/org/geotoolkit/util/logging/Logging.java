@@ -44,7 +44,7 @@ import org.geotoolkit.util.converter.Classes;
  * to an other framework like <A HREF="http://commons.apache.org/logging/">Commons-logging</A> or
  * <A HREF="http://logging.apache.org/log4j">Log4J</A>.
  * <p>
- * This method provides also a {@link #log(Class, LogRecord)} convenience static method, which
+ * This method provides also a {@link #log(Class, String, LogRecord)} convenience static method, which
  * {@linkplain LogRecord#setLoggerName set the logger name} of the given record before to log it.
  * An other worthy static method is {@link #unexpectedException(Class, String, Throwable)}, for
  * reporting an anomalous but nevertheless non-fatal exception.
@@ -65,7 +65,7 @@ import org.geotoolkit.util.converter.Classes;
  * factory registration.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -152,20 +152,60 @@ public final class Logging extends Static {
     }
 
     /**
+     * Logs the given record to the logger associated to the given class.
+     * This convenience method performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Get the logger using {@link #getLogger(Class)};</li>
+     *   <li>{@linkplain LogRecord#setLoggerName(String) Set the logger name} of the given record,
+     *       if not already set;</li>
+     *   <li>Unconditionally {@linkplain LogRecord#setSourceClassName(String) set the source class
+     *       name} to the {@linkplain Class#getCanonicalName() canonical name} of the given class;</li>
+     *   <li>Unconditionally {@linkplain LogRecord#setSourceMethodName(String) set the source method
+     *       name} to the given value;</li>
+     *   <li>{@linkplain Logger#log(LogRecord) Log} the modified record.</li>
+     * </ul>
+     *
+     * @param classe The class for which to obtain a logger.
+     * @param method The name of the method which is logging a record.
+     * @param record The record to log.
+     *
+     * @since 3.20
+     */
+    public static void log(final Class<?> classe, final String method, final LogRecord record) {
+        record.setSourceClassName(classe.getCanonicalName());
+        record.setSourceMethodName(method);
+        final Logger logger = getLogger(classe);
+        if (record.getLoggerName() == null) {
+            record.setLoggerName(logger.getName());
+        }
+        logger.log(record);
+    }
+
+    /**
      * Logs the given record to the logger for the given class.
      * This convenience method performs the following steps:
      * <p>
      * <ul>
      *   <li>Get the logger using {@link #getLogger(Class)};</li>
-     *   <li>{@linkplain LogRecord#setLoggerName Set the logger name} of the given record;</li>
+     *   <li>{@linkplain LogRecord#setLoggerName(String) Set the logger name} of the given record,
+     *       if not already set;</li>
      *   <li>{@linkplain Logger#log(LogRecord) Log} the modified record.</li>
      * </ul>
+     *
+     * {@note This method does not set the source class name because <code>LogRecord</code>
+     * can infer it automatically. However callers are encouraged to set the source class
+     * and method names themselves for more reliability.}
      *
      * @param classe The class for which to obtain a logger.
      * @param record The record to log.
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@link #log(Class, String, LogRecord)}, because experience suggests
+     * that letting the caller specifies himself the source class and method names is error prone.
      */
+    @Deprecated
     public static void log(final Class<?> classe, final LogRecord record) {
         final Logger logger = getLogger(classe);
         if (record.getLoggerName() == null) {

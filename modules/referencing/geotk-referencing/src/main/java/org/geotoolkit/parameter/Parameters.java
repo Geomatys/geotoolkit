@@ -846,11 +846,8 @@ public final class Parameters extends Static {
         if (force) {
             parameter.setValue(value, unit);
         } else {
-            final LogRecord record = new LogRecord(Level.FINE,
-                    Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, name));
-            record.setSourceClassName(Parameters.class.getName());
-            record.setSourceMethodName("ensureSet");
-            Logging.log(Parameters.class, record);
+            Logging.log(Parameters.class, "ensureSet", new LogRecord(Level.FINE,
+                    Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, name)));
         }
         return true;
     }

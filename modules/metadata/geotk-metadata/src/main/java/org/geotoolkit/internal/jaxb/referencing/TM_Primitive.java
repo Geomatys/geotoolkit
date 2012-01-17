@@ -130,6 +130,7 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                 }
                 record.setSourceClassName(TemporalPrimitive.class.getName());
                 record.setSourceMethodName("setTimePeriod");
+                record.setLoggerName("org.geotoolkit.xml");
                 Logging.getLogger("org.geotoolkit.xml").log(record);
             }
         }
