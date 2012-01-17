@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.starRTree;
+package org.geotoolkit.index.tree.star;
 
 import org.geotoolkit.util.ArgumentChecks;
 import java.util.Arrays;

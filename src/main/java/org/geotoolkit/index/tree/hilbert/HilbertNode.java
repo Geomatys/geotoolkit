@@ -2,12 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.hilbeRTree;
+package org.geotoolkit.index.tree.hilbert;
 
-import com.mycompany.utilsRTree.CoupleNode;
-import com.mycompany.utilsRTree.Entry;
-import com.mycompany.utilsRTree.Node;
-import com.mycompany.utilsRTree.Rtree;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;

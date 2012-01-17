@@ -4,9 +4,9 @@
  */
 package org.geotoolkit.index.tree;
 
-import com.mycompany.basicrtree.BasicRTree;
-import com.mycompany.starRTree.StarRTree;
+import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.star.StarRTree;
 
 /**
  *

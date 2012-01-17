@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.utilsRTree;
+package org.geotoolkit.index.tree.hilbert;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;

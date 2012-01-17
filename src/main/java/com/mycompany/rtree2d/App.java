@@ -1,10 +1,5 @@
 package com.mycompany.rtree2d;
 
-import com.mycompany.basicrtree.BasicRTree;
-import com.mycompany.hilbeRTree.Bound;
-import com.mycompany.hilbeRTree.HilbertRTree;
-import com.mycompany.hilbeRTree.HilbertNode;
-import com.mycompany.utilsRTree.Entry;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.hilbeRTree;
+package org.geotoolkit.index.tree.hilbert;
 
 import java.awt.Shape;
 

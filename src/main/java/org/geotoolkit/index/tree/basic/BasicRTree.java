@@ -2,13 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.basicrtree;
+package org.geotoolkit.index.tree.basic;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import org.geotoolkit.index.tree.basic.SplitCase;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;

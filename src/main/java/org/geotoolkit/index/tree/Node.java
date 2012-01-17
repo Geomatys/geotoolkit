@@ -4,6 +4,8 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.event.EventListenerList;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 
@@ -14,7 +16,16 @@ import org.geotoolkit.util.collection.CollectionChangeListener;
 public abstract class Node {
 
     private final EventListenerList listenerList = new EventListenerList();
+    private final Map<String,Object> userProperties = new HashMap<String, Object>();
 
+    public Object getUserProperty(final String key) {
+        return userProperties.get(key);
+    }
+
+    public void setUserProperty(final String key, final Object value) {
+        userProperties.put(key,value);
+    }    
+    
     public void addListener(CollectionChangeListener l) {
         listenerList.add(CollectionChangeListener.class, l);
     }
