@@ -4,13 +4,16 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.Collection;
+import java.awt.Shape;
+import java.util.List;
 
 /**Define a generic Tree.
  *
  * @author Rémi Maréchal (Geomatys).
+ * @author Yohann Sorel (Geomatys).
+ * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree<B,V> {
+public interface Tree<B> {
     
     /**Find some {@code Entry} which intersect regionSearch param 
      * and add them into result {@code List} param.
@@ -22,22 +25,24 @@ public interface Tree<B,V> {
      * @param regionSearch Define the region to find Shape within tree.
      * @param result List of Entr(y)(ies).
      */
-    void search(B regionSearch, Collection<Entry> result);
+    void search(B regionSearch, List<B> result);
     
     /**Insert a {@code Entry} into Rtree.
      * 
      * @param Entry to insert into tree.
      */
-     void insert(Entry<B,V> entry);
+     void insert(B entry);
     
     /**Find a {@code Entry} into the tree and delete it.
      * 
      * @param Entry to delete.
      */
-     void delete(Entry<B,V> entry);
+     void delete(B entry);
     
     /**
      * @return max number autorized by tree cells.
      */
      int getMaxElements();
+     
+     Node2D getRoot();
 }

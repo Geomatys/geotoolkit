@@ -4,20 +4,31 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.Collection;
+import javax.swing.event.EventListenerList;
+import org.geotoolkit.util.collection.CollectionChangeListener;
 
 /**
  *
- * @author rmarech
+ * @author Johann Sorel (Geomatys)
  */
-public interface Node<B,V> {
-    
-    Tree<B,V> getTree();
-    
-    Collection<Node<B,V>>  getChildren();
-    
-    Collection<Entry<B,V>> getEntries();
-    
-    Node<B,V> getParent();
-    
+public abstract class Node {
+
+    private final EventListenerList listenerList = new EventListenerList();
+
+    public void addListener(CollectionChangeListener l) {
+        listenerList.add(CollectionChangeListener.class, l);
+    }
+
+    public void removeListener(CollectionChangeListener l) {
+        listenerList.remove(CollectionChangeListener.class, l);
+    }
+
+    protected void fireCollectionEvent() {
+
+        final CollectionChangeListener[] listeners = listenerList.getListeners(CollectionChangeListener.class);
+
+        for (CollectionChangeListener l : listeners) {
+            l.collectionChange(null);
+        }
+    }
 }

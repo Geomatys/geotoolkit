@@ -4,7 +4,7 @@
  */
 package com.mycompany.hilbeRTree;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Shape;
 
 /**Represente boundary of Entry or Node.
  * @see com.mycompany.utilsRTree.Node#getEnveloppeMin(java.util.List) 
@@ -15,5 +15,5 @@ public interface Bound {
     /**
      * @return boundary of this bound.
      */
-    public Rectangle2D getBoundary();
+    public Shape getBoundary();
 }

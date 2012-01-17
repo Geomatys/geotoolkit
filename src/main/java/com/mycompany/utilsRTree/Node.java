@@ -266,7 +266,7 @@ public abstract class Node extends Rectangle2D.Double implements Bound{
         if (listB.isEmpty()) {
             throw new IllegalArgumentException("impossible to find enveloppe from empty list");
         } else {
-            Rectangle2D rectTemp = listB.get(0).getBoundary();
+            Rectangle2D rectTemp = listB.get(0).getBoundary().getBounds2D();
 
             double x1 = rectTemp.getMinX();
             double y1 = rectTemp.getMinY();
@@ -274,7 +274,7 @@ public abstract class Node extends Rectangle2D.Double implements Bound{
             double y2 = y1;
 
             for (Bound boun : listB) {
-                rectTemp = boun.getBoundary();
+                rectTemp = boun.getBoundary().getBounds2D();
                 double xTemp = rectTemp.getMinX();
                 double yTemp = rectTemp.getMinY();
                 double x1Temp = rectTemp.getMaxX();

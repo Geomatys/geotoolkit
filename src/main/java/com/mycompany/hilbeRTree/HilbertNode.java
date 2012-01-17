@@ -43,8 +43,8 @@ public class HilbertNode extends Node /*implements Bound*/ {
         public int compare(Bound e1, Bound e2) {
             ArgumentChecks.ensureNonNull("first bound is null", e1);
             ArgumentChecks.ensureNonNull("second bound is null", e2);
-            java.lang.Double x1 = new java.lang.Double(e1.getBoundary().getMinX());
-            java.lang.Double x2 = new java.lang.Double(e2.getBoundary().getMinX());
+            java.lang.Double x1 = new java.lang.Double(e1.getBoundary().getBounds2D().getMinX());
+            java.lang.Double x2 = new java.lang.Double(e2.getBoundary().getBounds2D().getMinX());
             return x1.compareTo(x2);
         }
     };
@@ -57,8 +57,8 @@ public class HilbertNode extends Node /*implements Bound*/ {
         public int compare(Bound e1, Bound e2) {
             ArgumentChecks.ensureNonNull("first bound is null", e1);
             ArgumentChecks.ensureNonNull("second bound is null", e2);
-            java.lang.Double y1 = new java.lang.Double(e1.getBoundary().getMinY());
-            java.lang.Double y2 = new java.lang.Double(e2.getBoundary().getMinY());
+            java.lang.Double y1 = new java.lang.Double(e1.getBoundary().getBounds2D().getMinY());
+            java.lang.Double y2 = new java.lang.Double(e2.getBoundary().getBounds2D().getMinY());
             return y1.compareTo(y2);
         }
     };

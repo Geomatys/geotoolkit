@@ -4,16 +4,17 @@ import com.mycompany.basicrtree.BasicRTree;
 import com.mycompany.hilbeRTree.Bound;
 import com.mycompany.hilbeRTree.HilbertRTree;
 import com.mycompany.hilbeRTree.HilbertNode;
-import com.mycompany.starRTree.StarRTree;
 import com.mycompany.utilsRTree.Entry;
-import com.mycompany.utilsRTree.Rtree;
-import com.mycompany.utilsRTree.SplitCase;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import org.geotoolkit.index.tree.JTreePanel;
+import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.TreeCase;
+import org.geotoolkit.index.tree.TreeFactory;
 
 /**
  * Hello world!
@@ -24,46 +25,43 @@ public class App
     public static void main( String[] args ) throws InterruptedException
     {
         
-        JFrame fen = new JFrame();
-        Panel pan = new Panel();
-        fen.add(pan);
-        fen.setSize(1600, 900);
-        fen.setLocationRelativeTo(null);
-        fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fen.setVisible(true);
-        fen.setTitle("R-Tree");
-        int time = 1;
-        Rtree arbre = new HilbertRTree(4, 2);
-//        Rtree arbre = new StarRTree(16);
-//        Rtree arbre = new BasicRTree(16, SplitCase.LINEAR);
+        
+//        int time = 1;
+//        Tree arbre = TreeFactory.createTree(TreeCase.R_TREE2D_LINEAR_SPLIT, 4);
+        Tree arbre = TreeFactory.createTree(TreeCase.STAR_RTREE2D, 4);
         int compteur = 0;
 ////          
         
         for(;compteur<=100000;compteur++){
-            double x = 200*((Math.random()*2)-1);
-            double y = 120*((Math.random()*2)-1);
-            Shape s = new Ellipse2D.Double(x, y, 0.5, 0.5);
-            arbre.insert(new Entry(s, s.getBounds2D()));
+            double signeX = (Math.random()<0.5)?-1:1;
+            double signeY = (Math.random()<0.5)?1:-1;
+            double x = 200*Math.random()*signeX;
+            double y = 120*Math.random()*signeY;
+            arbre.insert(new Ellipse2D.Double(x, y, 0.5, 0.5));
         }
         
+        ///////////////////////////////////////////////////////////////////////////////////////
         
-//        for(int j= -120;j<=120;j+=2){
-//            for(int i = -200;i<=200;i+=2){
-//                Shape s = new Ellipse2D.Double(i, j, 0.5, 0.5);
-//                arbre.insert(new Entry(s, s.getBounds2D()));
+//        for(int j= -120;j<=120;j+=40){
+//            for(int i = -200;i<=200;i+=40){
+//                arbre.insert(new Ellipse2D.Double(i, j, 1, 1));
 //                compteur++;
-////                pan.setArbre(arbre);
-////                pan.repaint();
-////                Thread.sleep(time);
 //            }
 //        }
+//////        int test = 0;
+//        for(int j= -120;j<=120;j+=4){
+//            for(int i = -200;i<=200;i+=4){
+//                arbre.delete(new Ellipse2D.Double(i, j, 1, 1));
+//                compteur--;
+//            }
+//        }
+        ///////////////////////////////////////////////////////////////////////////////////////////
+//        System.out.println("ok pour la premiere vague");
 //        
-////        System.out.println("ok pour la premiere vague");
-////        
 //        for(int j= 121;j>=-119;j-=2){
 //            for(int i = 201;i>=-199;i-=2){
 //                Shape s = new Ellipse2D.Double(i, j, 0.5, 0.5);
-//                arbre.insert(new Entry(s, s.getBounds2D()));
+//                arbre.insert(s);
 //                compteur++;
 ////                pan.setArbre(arbre);
 ////                pan.repaint();
@@ -88,339 +86,133 @@ public class App
 //        System.out.println("le compteur = "+compteur);
 //        System.out.println("max element = "+(((HilbertLeaf)((HilbertRTree)arbre).getTreeTrunk())).getAllEntry().size());
         
-            Shape s1 = new Ellipse2D.Double(-60, -21, 5, 5);
-            arbre.insert(new Entry(s1, s1.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("1");
-            Shape s2 = new Ellipse2D.Double(-60, 0, 5, 5);
-            arbre.insert(new Entry(s2, s2.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("2");
-            Shape s3 = new Ellipse2D.Double(-60, 21, 5, 5);
-            arbre.insert(new Entry(s3, s3.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("3");
-            Shape s4 = new Ellipse2D.Double(-60, 45, 5, 5);
-            arbre.insert(new Entry(s4, s4.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("4");
-            Shape s5 =new Ellipse2D.Double(-60, 60, 5, 5);
-            arbre.insert(new Entry(s5, s5.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("5");
-            Shape s6 = new Ellipse2D.Double(-45, 60, 5, 5);
-            arbre.insert(new Entry(s6, s6.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("6");
-            Shape s7 = new Ellipse2D.Double(-21, 60, 5, 5);
-            arbre.insert(new Entry(s7, s7.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("7");
-            Shape s8 =new Ellipse2D.Double(0, 60, 5, 5);
-            arbre.insert(new Entry(s8, s8.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("8");
-            Shape s9 = new Ellipse2D.Double(21, 60, 5, 5);
-            arbre.insert(new Entry(s9, s9.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("9");
-            Shape s10 = new Ellipse2D.Double(45, 60, 5, 5);
-            arbre.insert(new Entry(s10, s10.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("10");
-            Shape s11 = new Ellipse2D.Double(60, 60, 5, 5);
-            arbre.insert(new Entry(s11, s11.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("11");
-            Shape s12 = new Ellipse2D.Double(60, 45, 5, 5);
-            arbre.insert(new Entry(s12, s12.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("12");
-            
-            Shape s13 = new Ellipse2D.Double(60, 21, 5, 5);
-            arbre.insert(new Entry(s13, s13.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("13");
-            Shape s14 = new Ellipse2D.Double(60, 0, 5, 5);
-            arbre.insert(new Entry(s14, s14.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("14");
-            Shape s15 = new Ellipse2D.Double(60, -21, 5, 5);
-            arbre.insert(new Entry(s15, s15.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s16 = new Ellipse2D.Double(60, -45, 5, 5);
-            arbre.insert(new Entry(s16, s16.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s17 = new Ellipse2D.Double(60, -60, 5, 5);
-            arbre.insert(new Entry(s17, s17.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s18 = new Ellipse2D.Double(45, -60, 5, 5);
-            arbre.insert(new Entry(s18, s18.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s19 = new Ellipse2D.Double(21, -60, 5, 5);
-            arbre.insert(new Entry(s19, s19.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s20= new Ellipse2D.Double(0, -60, 5, 5);
-            arbre.insert(new Entry(s20, s20.getBounds2D()));///spklit declencher apres ici
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s21= new Ellipse2D.Double(-21, -60, 5, 5);
-            arbre.insert(new Entry(s21, s21.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s22 = new Ellipse2D.Double(-21, 45, 5, 5);
-            arbre.insert(new Entry(s22, s22.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s23 = new Ellipse2D.Double(-21, -21, 5, 5);
-            arbre.insert(new Entry(s23, s23.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s24 = new Ellipse2D.Double(-21, 0, 5, 5);
-            arbre.insert(new Entry(s24, s24.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s25 = new Ellipse2D.Double(-21, 21, 5, 5);
-            arbre.insert(new Entry(s25, s25.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s26 = new Ellipse2D.Double(0, 21, 5, 5);
-            arbre.insert(new Entry(s26, s26.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s27 = new Ellipse2D.Double(21, 21, 5, 5);
-            arbre.insert(new Entry(s27, s27.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s28 = new Ellipse2D.Double(21, 0, 5, 5);
-            arbre.insert(new Entry(s28, s28.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s29 = new Ellipse2D.Double(21, -21, 5, 5);
-            arbre.insert(new Entry(s29, s29.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s30 = new Ellipse2D.Double(0, -21, 5, 5);
-            arbre.insert(new Entry(s30, s30.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s31 = new Ellipse2D.Double(0, 0, 5, 5);
-            arbre.insert(new Entry(s31, s31.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-            Shape s32 = new Ellipse2D.Double(-60, -21, 5, 5);
-            arbre.insert(new Entry(s32, s32.getBounds2D()));
-            pan.setArbre(arbre);
-            pan.repaint();
-//            Thread.sleep(time); 
+//            Shape s1 = new Ellipse2D.Double(-60, -21, 5, 5);
+//            arbre.insert(s1);
+//            Shape s2 = new Ellipse2D.Double(-60, 0, 5, 5);
+//            arbre.insert(s2);
+//            Shape s3 = new Ellipse2D.Double(-60, 21, 5, 5);
+//            arbre.insert(s3);
+//            Shape s4 = new Ellipse2D.Double(-60, 45, 5, 5);
+//            arbre.insert(s4);
+//            Shape s5 =new Ellipse2D.Double(-60, 60, 5, 5);
+//            arbre.insert(s5);
+//            Shape s6 = new Ellipse2D.Double(-45, 60, 5, 5);
+//            arbre.insert(s6);
+//            Shape s7 = new Ellipse2D.Double(-21, 60, 5, 5);
+//            arbre.insert(s7);
+//            Shape s8 =new Ellipse2D.Double(0, 60, 5, 5);
+//            arbre.insert(s8);
+//            Shape s9 = new Ellipse2D.Double(21, 60, 5, 5);
+//            arbre.insert(s9);
+//            Shape s10 = new Ellipse2D.Double(45, 60, 5, 5);
+//            arbre.insert(s10);
+//            Shape s11 = new Ellipse2D.Double(60, 60, 5, 5);
+//            arbre.insert(s11);
+//            Shape s12 = new Ellipse2D.Double(60, 45, 5, 5);
+//            arbre.insert(s12);
+//            Shape s13 = new Ellipse2D.Double(60, 21, 5, 5);
+//            arbre.insert(s13);
+//            Shape s14 = new Ellipse2D.Double(60, 0, 5, 5);
+//            arbre.insert(s14);
+//            Shape s15 = new Ellipse2D.Double(60, -21, 5, 5);
+//            arbre.insert(s15);
+//            Shape s16 = new Ellipse2D.Double(60, -45, 5, 5);
+//            arbre.insert(s16);
+//            Shape s17 = new Ellipse2D.Double(60, -60, 5, 5);
+//            arbre.insert(s17);
+//            Shape s18 = new Ellipse2D.Double(45, -60, 5, 5);
+//            arbre.insert(s18);
+//            Shape s19 = new Ellipse2D.Double(21, -60, 5, 5);
+//            arbre.insert(s19);
+//            Shape s20= new Ellipse2D.Double(0, -60, 5, 5);
+//            arbre.insert(s20);
+//            Shape s21= new Ellipse2D.Double(-21, -60, 5, 5);
+//            arbre.insert(s21);
+//            Shape s22 = new Ellipse2D.Double(-21, 45, 5, 5);
+//            arbre.insert(s22);
+//            Shape s23 = new Ellipse2D.Double(-21, -21, 5, 5);
+//            arbre.insert(s23);
+//            Shape s24 = new Ellipse2D.Double(-21, 0, 5, 5);
+//            arbre.insert(s24);
+//            Shape s25 = new Ellipse2D.Double(-21, 21, 5, 5);
+//            arbre.insert(s25);
+//            Shape s26 = new Ellipse2D.Double(0, 21, 5, 5);
+//            arbre.insert(s26);
+//            Shape s27 = new Ellipse2D.Double(21, 21, 5, 5);
+//            arbre.insert(s27);
+//            Shape s28 = new Ellipse2D.Double(21, 0, 5, 5);
+//            arbre.insert(s28);
+//            Shape s29 = new Ellipse2D.Double(21, -21, 5, 5);
+//            arbre.insert(s29);
+//            Shape s30 = new Ellipse2D.Double(0, -21, 5, 5);
+//            arbre.insert(s30);
+//            Shape s31 = new Ellipse2D.Double(0, 0, 5, 5);
+//            arbre.insert(s31);
+//            Shape s32 = new Ellipse2D.Double(-60, -21, 5, 5);
+//            arbre.insert(s32);
             
             
+//            arbre.delete(s1);
+//            arbre.delete(s2);
+//            arbre.delete(s3);
+//            arbre.delete(s4);
+//            arbre.delete(s5);
+//            arbre.delete(s6);
+//            arbre.delete(s7);
+//            arbre.delete(s8);
+//            arbre.delete(s9);
+//            arbre.delete(s10);
+//            arbre.delete(s11);
+//            arbre.delete(s12);
+//            arbre.delete(s13);
+//            arbre.delete(s14);
+//            arbre.delete(s15);
+//            arbre.delete(s16);
+//            arbre.delete(s17);
+//            arbre.delete(s18);
+//            arbre.delete(s19);
+//            arbre.delete(s20);
+//            arbre.delete(s21);
+//            arbre.delete(s22);
+//            arbre.delete(s23);
+//            arbre.delete(s24);
+//            arbre.delete(s25);
+//            arbre.delete(s26);
+//            arbre.delete(s27);
+//            arbre.delete(s28);
+//            arbre.delete(s29);
+//            arbre.delete(s30);
+//            arbre.delete(s31);
+//            arbre.delete(s32);
             
-            ////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////
-            
-//            for(int j= -120;j<=120;j+=20){
-//                for(int i = -200;i<=200;i+=15){
-//                    Shape s = new Ellipse2D.Double(i, j, 5, 5);
-////                    if(j==120&&i==190){
-////                        System.out.println("");
-////                    }
-//                    arbre.delete(new Entry(s, s.getBounds2D()));
-//                    compteur--;
-//                    pan.setArbre(arbre);
-//                    pan.repaint();
-//                    Thread.sleep(20);
-//                }
-//            }
-//            
-//            for(int j= 110;j>=-110;j-=10){
-//                for(int i = 195;i>=-190;i-=15){
-//                    Shape s = new Ellipse2D.Double(i, j, 5, 5);
-//                    arbre.delete(new Entry(s, s.getBounds2D()));
-//                    compteur++;
-//                    pan.setArbre(arbre);
-//                    pan.repaint();
-//                    Thread.sleep(20);
-//                }
-//            }
-//            
-//            for(int j= -195;j<=195;j+=10){
-//                for(int i = 115;i>=-115;i-=10){
-//                    Shape s = new Ellipse2D.Double(j, i, 5, 5);
-//                    arbre.delete(new Entry(s, s.getBounds2D()));
-//                    compteur++;
-//                    pan.setArbre(arbre);
-//                    pan.repaint();
-//                    Thread.sleep(20);
-//                }
-//            }
-            
-//            
-//            arbre.delete(new Entry(s27, s27.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s29, s29.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s30, s30.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s23, s23.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s31, s31.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s19, s19.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s17, s17.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s13, s13.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s14, s14.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s15, s15.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s10, s10.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            
-//            arbre.delete(new Entry(s28, s28.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s26, s26.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s25, s25.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s24, s24.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s22, s22.getBounds2D()));//
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s21, s21.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s18, s18.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s16, s16.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s11, s11.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s12, s12.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            arbre.delete(new Entry(s9, s9.getBounds2D()));
-//            pan.setArbre(arbre);
-//            pan.repaint();
-//            Thread.sleep(time);
-//            System.out.println("this is the end");
         Rectangle2D searc = new Rectangle2D.Double(-10, -50, 50, 50);
-        List<Entry> lE = new ArrayList<Entry>();
+        List<Shape> lEbis = new ArrayList<Shape>();
         long timeBase = System.nanoTime();
-        arbre.search(searc, lE);
+        arbre.search(searc, lEbis);
         long timeSearch = System.nanoTime();
         
-            
-            
-//        System.out.println(arbre);
+//        System.out.println(arbre.getRoot());
         System.out.println("/////////////////////////////////////////////////////");
         System.out.println("le compteur = "+(compteur+32));
-//        System.out.println("max element = "+(((HilbertLeaf)((HilbertRTree)arbre).getTreeTrunk())).getAllEntry().size());
+        List<Shape> lE = new ArrayList<Shape>();
+        System.out.println("enveloppe de root = "+arbre.getRoot().getBoundary());
+        arbre.search(arbre.getRoot().getBoundary().getBounds2D(), lE);
+        System.out.println("compteur reeel = "+lE.size());
         System.out.println("timeBase   = "+timeBase);
         System.out.println("timeSearch = "+timeSearch);
-        System.out.println("le temps de recherche est de : "+(timeSearch-timeBase));
+        System.out.println("le temps de recherche est de (en nano): "+(timeSearch-timeBase));
+        System.out.println("le temps de recherche est de (en ms): "+(timeSearch-timeBase)*10E-7);
         System.out.println("taille de la list de recherche = "+lE.size());
         System.out.println("/////////////////////////////////////////////////////");
-//        Rectangle2D searc = new Rectangle2D.Double(10, 50, 100, 150);
-//        HilbertLeaf hl = (((HilbertLeaf)((HilbertRTree)arbre).getTreeTrunk()));
-//        List<Bound> lE = new ArrayList<Bound>(hl.getAllEntry());
-//        Rectangle2D rect1 = hl.getBounds2D();
-//        Rectangle2D rtest = hl.getEnveloppeMin(lE);
-//        System.out.println("rect1 = "+rect1);
-//        System.out.println("rtest = "+rtest);
-////        arbre.search(searc, lE);
-//        System.out.println("lE size : "+lE.size());
+        
+        JFrame fen = new JFrame();
+        JTreePanel pan = new JTreePanel(arbre, lEbis);
+        fen.add(pan);
+        fen.setSize(1600, 900);
+        fen.setLocationRelativeTo(null);
+        fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fen.setVisible(true);
+        fen.setTitle("R-Tree");
+        
     }
 }
