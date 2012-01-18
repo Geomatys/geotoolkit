@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>processing</artifactId>
     <version>3.x-SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>processing</artifactId>
-  <packaging>pom</packaging>
-  <name>Processing</name>
+  <artifactId>geotk-processing-referencing</artifactId>
+  <packaging>jar</packaging>
+  <name>Processing referencing</name>
 
   <description>
-    Projects group for processing operation.
+    Processes for referencing
   </description>
 
 
@@ -50,16 +50,25 @@
 
 
   <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-processing-core</module>
-    <module>geotk-processing-quartz</module>
-    <module>geotk-processing-math</module>
-    <module>geotk-processing-referencing</module>
-    <module>geotk-processing-coverage</module>
-    <module>geotk-processing-vector</module>
-    <module>geotk-processing-jts-geometry</module>
-  </modules>
+  <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-processing-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
+      <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-epsg-javadb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+  </dependencies>
 
 </project>
