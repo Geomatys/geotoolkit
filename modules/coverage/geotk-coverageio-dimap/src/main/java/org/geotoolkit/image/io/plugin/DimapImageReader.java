@@ -236,8 +236,14 @@ public class DimapImageReader extends ImageReaderAdapter {
                 final File parent = file.getParentFile();
 
                 //search for metadata.dim
-                File candidate = new File(parent, "metadata.dim");
-                if(candidate.isFile()) return candidate;
+                File candidate = null;
+                for(final File f : parent.listFiles()){
+                    if("metadata.dim".equalsIgnoreCase(f.getName())){
+                        candidate = f;
+                    }
+                }
+                
+                if(candidate != null && candidate.isFile()) return candidate;
 
                 //search for filename.dim
                 Object obj = IOUtilities.changeExtension(file, "dim");
