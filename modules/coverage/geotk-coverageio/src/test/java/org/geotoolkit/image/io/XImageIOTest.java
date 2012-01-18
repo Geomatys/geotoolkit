@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * Tests {@link XImageIO}. Also ensure that every plugins are correctly registered.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.20
  *
  * @since 3.07
  */
@@ -86,6 +86,21 @@ public final strictfp class XImageIOTest extends ImageTestBase {
             assertTrue(TemporaryFile.delete(tmp));
         }
         showCurrentImage("testGetBySuffix()");
+    }
+
+    /**
+     * Tests the {@link XImageIO#getReaderBySuffix(String, Object, Boolean, Boolean)} method
+     * with a suffix having mismatched cases. We use the TIFF format, since its suffix was
+     * declared only in lower-cases as of JDK7 and Geot 3.20.
+     *
+     * @throws IOException If an I/O error occurred while fetching the reader.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testGetBySuffixIgnoreCase() throws IOException {
+        final ImageReader reader = XImageIO.getReaderBySuffix("TIFF", null, null, null);
+        reader.dispose();
     }
 
     /**

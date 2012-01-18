@@ -170,7 +170,7 @@ public final class Logging extends Static {
      * @param method The name of the method which is logging a record.
      * @param record The record to log.
      *
-     * @since 3.20
+     * @since 3.20 (derived from 3.00)
      */
     public static void log(final Class<?> classe, final String method, final LogRecord record) {
         record.setSourceClassName(classe.getCanonicalName());
@@ -589,6 +589,9 @@ public final class Logging extends Static {
      * @param error   The error.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
      *         doesn't log anything at the {@link Level#WARNING WARNING} level.
+     *
+     * @see #recoverableException(Logger, Class, String, Throwable)
+     * @see #severeException(Logger, Class, String, Throwable)
      */
     public static boolean unexpectedException(final Logger logger, final Class<?> classe,
                                               final String method, final Throwable error)
@@ -608,6 +611,8 @@ public final class Logging extends Static {
      *         doesn't log anything at the {@link Level#WARNING WARNING} level.
      *
      * @since 2.5
+     *
+     * @see #recoverableException(Class, String, Throwable)
      */
     public static boolean unexpectedException(Class<?> classe, String method, Throwable error) {
         return unexpectedException((Logger) null, classe, method, error);
@@ -748,6 +753,8 @@ public final class Logging extends Static {
      * @return {@code true} if the error has been logged, or {@code false} if the logger
      *         doesn't log anything at the {@link Level#FINE FINE} level.
      *
+     * @see #unexpectedException(Class, String, Throwable)
+     *
      * @since 2.5
      */
     public static boolean recoverableException(final Class<?> classe, final String method,
@@ -767,6 +774,9 @@ public final class Logging extends Static {
      * @param error   The error.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
      *         doesn't log anything at the {@link Level#FINE FINE} level.
+     *
+     * @see #unexpectedException(Logger, Class, String, Throwable)
+     * @see #severeException(Logger, Class, Throwable)
      *
      * @since 2.5
      */
@@ -788,6 +798,9 @@ public final class Logging extends Static {
      * @param error   The error.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
      *         doesn't log anything at the {@link Level#SEVERE SEVERE} level.
+     *
+     * @see #unexpectedException(Logger, Class, String, Throwable)
+     * @see #recoverableException(Logger, Class, String, Throwable)
      *
      * @since 3.00
      */
