@@ -231,15 +231,28 @@ public final class TreeUtils {
     }
     
     /**
-     * Organize all children of {@code Node2D} by differents criterion.
+     * Organize all elements from {@code List<Node2D>} and {@code List<Shape>} by differents criterion.
+     * 
+     * @param index : - 0 : organize all List by nearest to furthest between them centroid and this Node centroid.
+     *                - 1 : organize all List by smallest x value to tallest.
+     *                - 2 : organize all List by smallest y value to tallest.
+     * @throws IllegalArgumentException if listNode and listEntries are null.
+     */
+    public static void organize_List2DElements_From(int index, final List<Node2D> listNode, final List<Shape> listEntries) {
+        if(listNode==null&&listEntries==null){
+            throw new IllegalArgumentException("impossible to organize empty lists");
+        }
+        organize_Node2DElements_From(index, new Node2D(null, null, listNode, listEntries));
+    }
+    
+    /**
+     * Organize all children from {@code Node2D} by differents criterion.
      * 
      * @param index : - 0 : organize all Node2D children by nearest to furthest between them centroid and this Node centroid.
      *                - 1 : organize all Node2D children by smallest x value to tallest.
      *                - 2 : organize all Node2D children by smallest y value to tallest.
      * @throws IllegalArgumentException if index is out of required limit.
-     * @throws IllegalArgumentException if lE is null.
-     * @throws IllegalArgumentException if lE is empty.
-     * @throws IllegalArgumentException if lE don't contains some {@code Entry}.
+     * @throws IllegalArgumentException if candidate is null.
      */
     public static void organize_Node2DElements_From(int index, final Node2D candidate) {
 
@@ -247,7 +260,7 @@ public final class TreeUtils {
         ArgumentChecks.ensureNonNull("organizeNode2DElementsFrom : candidate", candidate);
 
         final List<Node2D> lN2D = candidate.getChildren();
-         List<Shape> lS = candidate.getEntries();
+        final List<Shape> lS = candidate.getEntries();
         
         switch (index) {
             case 0:
@@ -402,6 +415,18 @@ public final class TreeUtils {
             splitList2.clear();
         }
         return lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);
+    }
+    
+    /**Compute euclidean distance between two {@code Point2D}.
+     * 
+     * @param pointA
+     * @param pointB
+     * @return distance between pointA and pointB.
+     */
+    public static double distancebetweentwoPoint2D(final Point2D pointA, final Point2D pointB){
+        final double x = Math.abs(pointB.getX()-pointA.getX());
+        final double y = Math.abs(pointB.getY()-pointA.getY());
+        return Math.sqrt(x*x+y*y);
     }
     
     /**Compute and define which axis to split {@code this Node}.

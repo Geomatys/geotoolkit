@@ -23,7 +23,7 @@ import org.geotoolkit.util.converter.Classes;
  */
 public class Node2D extends Node{
 
-    Shape boundary;
+    protected Shape boundary;
     private Node2D parent;
     private final Tree tree;
     
@@ -89,7 +89,7 @@ public class Node2D extends Node{
      * @param entries data(s) to add.
      */
     public Node2D(Tree tree, Node2D parent, List<Node2D> children, List<Shape> entries) {
-        ArgumentChecks.ensureNonNull("tree", tree);
+     //   ArgumentChecks.ensureNonNull("tree", tree);
         this.tree = tree;
         this.parent = parent;
         if(children!=null){
@@ -123,6 +123,9 @@ public class Node2D extends Node{
         return (getChildren().isEmpty() && getEntries().isEmpty());
     }
     
+    public boolean isFull(){
+        return (getChildren().size()+getEntries().size())>=getTree().getMaxElements();
+    }
     /**
      * @return entries.
      */
@@ -174,7 +177,7 @@ public class Node2D extends Node{
     /**
      * Compute {@code Node2D} boundary. 
      */
-    private void calculateBounds(){
+    protected void calculateBounds(){
         for(Shape ent2D : getEntries()){
             addBound(ent2D);
         }
@@ -183,7 +186,7 @@ public class Node2D extends Node{
         }
     }
 
-    private void addBound(Shape shape){
+    protected void addBound(Shape shape){
         
         if(boundary==null){
             boundary = (Rectangle2D)shape.getBounds2D().clone();

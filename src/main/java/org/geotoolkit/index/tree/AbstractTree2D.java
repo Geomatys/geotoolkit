@@ -6,6 +6,7 @@ package org.geotoolkit.index.tree;
 
 import java.awt.Shape;
 import java.util.List;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 
 /**
@@ -18,6 +19,7 @@ public abstract class AbstractTree2D implements Tree<Shape>{
     private final int maxElements;
 
     public AbstractTree2D(int maxElements) {
+        ArgumentChecks.ensureStrictlyPositive("max elements parameter too small", maxElements);
         this.maxElements = maxElements;
     }
 
