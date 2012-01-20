@@ -16,60 +16,25 @@
  */
 package org.geotoolkit.feature;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-
+import com.vividsolutions.jts.geom.*;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.Association;
-import org.opengis.feature.Attribute;
-import org.opengis.feature.ComplexAttribute;
-import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.IllegalAttributeException;
-import org.opengis.feature.Property;
+import org.opengis.feature.*;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AssociationDescriptor;
-import org.opengis.feature.type.AssociationType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.PropertyType;
+import org.opengis.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
 
@@ -484,30 +449,110 @@ public final class FeatureUtilities {
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
-    public static ParameterValueGroup toParameter(final ComplexAttribute att, final ParameterDescriptorGroup desc){
+    /**
+     * Convert a ComplexAttribute in a parameter.
+     * 
+     * @param source : attributeto convert
+     * @param desc : parameter descriptor
+     * @return ParameterValueGroup
+     */
+    public static ParameterValueGroup toParameter(final ComplexAttribute source, final ParameterDescriptorGroup desc){
         
-        final ParameterValueGroup param = desc.createValue();        
-        fill(param,att);        
-        return param;
+        final ParameterValueGroup target = desc.createValue();        
+        fill(source,target);        
+        return target;
     }
     
-    private static void fill(final ParameterValueGroup parameter, final ComplexAttribute att){
+    /**
+     * Convert a ParameterValueGroup in a feature.
+     * 
+     * @param source : parameter to convert
+     * @return ComplexAttribute
+     */
+    public static ComplexAttribute toFeature(final ParameterValueGroup source){
         
-        for(final GeneralParameterDescriptor gpd : parameter.getDescriptor().descriptors()){
+        final ComplexType ft = (ComplexType)FeatureTypeUtilities.toPropertyType(source.getDescriptor());
+        final ComplexAttribute target = FeatureUtilities.defaultProperty(ft);
+        fill(source,target);
+        return target;        
+    }
+    
+    private static void fill(final ParameterValueGroup source, final ComplexAttribute target){
+        
+        final ParameterDescriptorGroup paramdesc = source.getDescriptor();
+        
+        for(final PropertyDescriptor desc : target.getType().getDescriptors()){
             
-            final Collection<Property> properties = att.getProperties(gpd.getName().getCode());
+            if(desc.getType() instanceof ComplexType){
+                
+                try{
+                    final List<ParameterValueGroup> groups = source.groups(desc.getName().getLocalPart());                
+                    if(groups != null){
+                        for(ParameterValueGroup gr : groups){
+                            final ComplexAttribute att = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
+                            fill(gr,att);
+                            target.getProperties().add(att);
+                        }
+                    }
+                }catch(Exception ex){
+                    //parameter might not exist of might be a group
+                } 
+                
+            }else if(desc.getType() instanceof AttributeType){
+                
+                try{
+                    final ParameterValue val = Parameters.getOrCreate(
+                        (ParameterDescriptor)paramdesc.descriptor(desc.getName().getLocalPart()), source);
+                    Property prop = target.getProperty(desc.getName().getLocalPart());
+                    if(prop == null){
+                        prop = FeatureUtilities.defaultProperty(desc);
+                    }
+                    prop.setValue(val.getValue());
+                }catch(Exception ex){
+                    //parameter might not exist of might be a group
+                }                
+            }
+            
+        }
+        
+        for(final GeneralParameterDescriptor gpd : source.getDescriptor().descriptors()){
+            
+            final Collection<Property> properties = target.getProperties(gpd.getName().getCode());
             
             if(gpd instanceof ParameterDescriptor){
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
                 
                 for(final Property prop : properties){
-                    Parameters.getOrCreate(desc, parameter).setValue(prop.getValue());
+                    Parameters.getOrCreate(desc, source).setValue(prop.getValue());
                 }
             }else if(gpd instanceof ParameterDescriptorGroup){
                 final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
                 
                 for(final Property prop : properties){
-                    final ParameterValueGroup subGroup = parameter.addGroup(desc.getName().getCode());                    
+                    final ParameterValueGroup subGroup = source.addGroup(desc.getName().getCode());                    
+                    fill(subGroup,(ComplexAttribute)prop);                    
+                }
+            }            
+        }
+    }
+    
+    private static void fill(final ComplexAttribute source, final ParameterValueGroup target){
+        
+        for(final GeneralParameterDescriptor gpd : target.getDescriptor().descriptors()){
+            
+            final Collection<Property> properties = source.getProperties(gpd.getName().getCode());
+            
+            if(gpd instanceof ParameterDescriptor){
+                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
+                
+                for(final Property prop : properties){
+                    Parameters.getOrCreate(desc, target).setValue(prop.getValue());
+                }
+            }else if(gpd instanceof ParameterDescriptorGroup){
+                final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
+                
+                for(final Property prop : properties){
+                    final ParameterValueGroup subGroup = target.addGroup(desc.getName().getCode());                    
                     fill(subGroup,(ComplexAttribute)prop);                    
                 }
             }            
