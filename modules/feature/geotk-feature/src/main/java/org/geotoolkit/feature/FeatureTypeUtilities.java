@@ -78,6 +78,9 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collection;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -1282,4 +1285,50 @@ public final class FeatureTypeUtilities {
         return SimpleFeatureBuilder.build(featureType, attributes, id);
     }
 
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public static PropertyType toPropertyType(final GeneralParameterDescriptor descriptor){
+        
+        if(descriptor instanceof ParameterDescriptor){
+            final ParameterDescriptor desc = (ParameterDescriptor) descriptor;
+            
+            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+            atb.setName(desc.getName().getCode());
+            atb.setBinding(desc.getValueClass());
+            final AttributeType at = atb.buildType();
+            
+            return at;
+            
+        }else if (descriptor instanceof ParameterDescriptorGroup){
+            final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) descriptor;
+            
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName(desc.getName().getCode());
+            
+            for(GeneralParameterDescriptor sd : desc.descriptors()){
+                final PropertyType pt = toPropertyType(sd);
+                
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                adb.setName(pt.getName());
+                adb.setType(pt);
+                adb.setMinOccurs(sd.getMinimumOccurs());
+                adb.setMaxOccurs(sd.getMaximumOccurs());
+                
+                if(sd instanceof ParameterDescriptor){
+                    adb.setDefaultValue( ((ParameterDescriptor)sd).getDefaultValue() );                    
+                }
+                
+                ftb.add(adb.buildDescriptor());                
+            }
+            
+            return ftb.buildType();
+        }else{
+            throw new IllegalArgumentException("Unsupported type : " + descriptor.getClass());
+        }
+        
+    }
+    
 }

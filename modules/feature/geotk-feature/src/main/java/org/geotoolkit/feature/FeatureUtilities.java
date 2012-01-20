@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -70,6 +71,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.parameter.*;
 
 /**
  *
@@ -360,7 +362,7 @@ public final class FeatureUtilities {
     public static Property defaultProperty(final PropertyDescriptor desc){
         return defaultProperty(desc, null);
     }
-
+    
     public static Property defaultProperty(final PropertyDescriptor desc, final String id){
         final PropertyType type = desc.getType();
 
@@ -391,7 +393,7 @@ public final class FeatureUtilities {
 
         throw new IllegalArgumentException("Unhandled type : " + type);
     }
-
+    
     public static ComplexAttribute defaultProperty(final ComplexType type){
         return defaultProperty(type, null);
     }
@@ -478,4 +480,38 @@ public final class FeatureUtilities {
         
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    public static ParameterValueGroup toParameter(final ComplexAttribute att, final ParameterDescriptorGroup desc){
+        
+        final ParameterValueGroup param = desc.createValue();        
+        fill(param,att);        
+        return param;
+    }
+    
+    private static void fill(final ParameterValueGroup parameter, final ComplexAttribute att){
+        
+        for(final GeneralParameterDescriptor gpd : parameter.getDescriptor().descriptors()){
+            
+            final Collection<Property> properties = att.getProperties(gpd.getName().getCode());
+            
+            if(gpd instanceof ParameterDescriptor){
+                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
+                
+                for(final Property prop : properties){
+                    Parameters.getOrCreate(desc, parameter).setValue(prop.getValue());
+                }
+            }else if(gpd instanceof ParameterDescriptorGroup){
+                final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
+                
+                for(final Property prop : properties){
+                    final ParameterValueGroup subGroup = parameter.addGroup(desc.getName().getCode());                    
+                    fill(subGroup,(ComplexAttribute)prop);                    
+                }
+            }            
+        }
+    }
+     
 }
