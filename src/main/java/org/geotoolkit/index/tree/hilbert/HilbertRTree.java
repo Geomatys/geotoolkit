@@ -72,8 +72,8 @@ public class HilbertRTree extends AbstractTree2D{
         deleteHilbertNode(getRoot(), entry);
     }
 
-    private static void searchHilbertNode(Node2D candidate, Shape regionSearch, List<Shape> result){
-        if(regionSearch.intersects(candidate.getBoundary().getBounds2D())){
+    public static void searchHilbertNode(Node2D candidate, Shape regionSearch, List<Shape> result){
+        if(regionSearch.intersects(candidate.getBoundary().getBounds2D())&&candidate instanceof HilbertNode2D){
             if(candidate.isLeaf()){
                 HilbertNode2D hN2D = (HilbertNode2D)candidate;
                 for(Node2D n2d : (List<Node2D>)hN2D.getUserProperty("cells")){
@@ -111,7 +111,10 @@ public class HilbertRTree extends AbstractTree2D{
                 candidate.getChildren().clear();
                 candidate.setLeaf(false);
                 candidate.setHilbertOrder(0);
-                candidate.getChildren().addAll(lSp);
+                lSp.get(0).setParent(candidate);
+                lSp.get(1).setParent(candidate);
+                candidate.getChildren().add(lSp.get(0));
+                candidate.getChildren().add(lSp.get(1));
             }
         }
         if (candidate.isLeaf()) {
@@ -122,9 +125,9 @@ public class HilbertRTree extends AbstractTree2D{
                 Rectangle2D enveloppe = TreeUtils.getEnveloppeMin(lS).getBounds2D();
                 candidate.setBound(enveloppe);
 
-                if (((HilbertNode2D)candidate).getHilbertOrder() > 0) {
-                    TreeUtils.organize_List2DElements_From(0, null, lS);
-                }
+//                if (((HilbertNode2D)candidate).getHilbertOrder() > 0) {
+//                    TreeUtils.organize_List2DElements_From(0, null, lS);
+//                }
                 candidate.createBasicHB(candidate.getHilbertOrder(), enveloppe);
                 for (Shape sh : lS) {
                     chooseSubtree(candidate, entry).getEntries().add(sh);
@@ -134,7 +137,8 @@ public class HilbertRTree extends AbstractTree2D{
             }
                 
         } else {
-            insertNode(((HilbertNode2D)chooseSubtree(candidate, entry)), entry);
+            HilbertNode2D nchoose = (HilbertNode2D)chooseSubtree(candidate, entry);
+            insertNode(nchoose, entry);
         }
     }
     
@@ -157,7 +161,7 @@ public class HilbertRTree extends AbstractTree2D{
                 throw new IllegalStateException("impossible to increase Hilbert order of a empty Node");
             }
             candidate.createBasicHB(candidate.getHilbertOrder()+1, TreeUtils.getEnveloppeMin(lS).getBounds2D());
-            TreeUtils.organize_List2DElements_From(0, null, lS);
+//            TreeUtils.organize_List2DElements_From(0, null, lS);
             for (Shape sh : lS) {
                 Node2D n = chooseSubtree(candidate, sh);
                 n.getEntries().add(sh);
@@ -165,10 +169,8 @@ public class HilbertRTree extends AbstractTree2D{
             return null;
         } else {
             final List<Node2D> lS = splitAxis(candidate);
-            final Node2D ls1 = lS.get(0);
-            final Node2D ls2 = lS.get(1);
-            ls1.setParent(candidate);
-            ls2.setParent(candidate);
+//            final Node2D ls1 = lS.get(0);
+//            final Node2D ls2 = lS.get(1);
 //            if (ls1.intersects(ls2)&&this.leaf) {
 //                branchGrafting(ls1, ls2);
 //            }
@@ -256,10 +258,8 @@ public class HilbertRTree extends AbstractTree2D{
     public static List<Node2D> splitAxis(final Node2D candidate) {
         
         final Tree tree = candidate.getTree();
-        final int val2 = tree.getMaxElements()/2;
         final boolean leaf = candidate.isLeaf();
-        
-        TreeUtils.organize_Node2DElements_From(defineSplitAxis(candidate), candidate);
+        int spaxis = defineSplitAxis(candidate);
         final List splitList1 = new ArrayList();
         final List splitList2 = new ArrayList();
         List listElements;
@@ -267,8 +267,10 @@ public class HilbertRTree extends AbstractTree2D{
         if(leaf){
             listElements = new ArrayList();
             searchHilbertNode(candidate, candidate.getBoundary(), listElements);
+            TreeUtils.organize_List2DElements_From(spaxis, null, listElements);
         }else{
             listElements = candidate.getChildren();
+            TreeUtils.organize_List2DElements_From(spaxis, listElements, null);
         }
         
         if(listElements.size() <=1){
@@ -285,11 +287,13 @@ public class HilbertRTree extends AbstractTree2D{
             }
         }
         
+        
+        
         CoupleNode2D couNN;
         
          List<CoupleNode2D> lSAO = new ArrayList<CoupleNode2D>();
          List<CoupleNode2D> lSSo = new ArrayList<CoupleNode2D>();
-        
+        final int val2 = listElements.size()/2;
         for(int i = val2;i<=listElements.size()-val2;i++){
             for(int j = 0;j<i;j++){
                 splitList1.add(listElements.get(j));
@@ -322,7 +326,7 @@ public class HilbertRTree extends AbstractTree2D{
      * @throws IllegalArgumentException if entry is null.
      * @return subnode choosen.
      */
-    private static Node2D chooseSubtree(Node2D candidate, Shape entry) {
+    public static Node2D chooseSubtree(Node2D candidate, Shape entry) {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
        
         if (candidate.isLeaf()) {
@@ -411,7 +415,6 @@ public class HilbertRTree extends AbstractTree2D{
         int siz = listCells.size();
         boolean oneTime = false;
         int indexTemp1 = index;
-        int indexTemp2 = index;
         for (int i = index; i < siz; i++) {
             if (! listCells.get(i).isFull()) {
                 indexTemp1 = i;
@@ -426,38 +429,77 @@ public class HilbertRTree extends AbstractTree2D{
             }
         }
         return indexTemp1;
-//        for (int j = index; j >= 0; j--) {
-//            if (! listCells.get(j).isFull()) {
-//                indexTemp2 = j;
-//                break;
-//            }
-//        }
-//
-//        if (indexTemp1 != index && indexTemp2 != index) {
-//            return (TreeUtils.distancebetweentwoPoint2D(TreeUtils.getCentroid(listCells.get(indexTemp1)), ptEntryCentroid) 
-//                  < TreeUtils.distancebetweentwoPoint2D(TreeUtils.getCentroid(listCells.get(indexTemp2)), ptEntryCentroid))
-//                    ? indexTemp1 : indexTemp2;
-//        }
-//        if (indexTemp1 != index) {
-//            return indexTemp1;
-//        }
-//        if (indexTemp2 != index) {
-//            return indexTemp2;
-//        }
-        
-        
     }
     
     private static void deleteHilbertNode(Node2D candidate, Shape entry){
         if(candidate.getBoundary().intersects(entry.getBounds2D())){
             if(candidate.isLeaf()){
-                HilbertNode2D hN2D = (HilbertNode2D)candidate;
-                //do a barell roll !!!!!
+                boolean removed = false;
+                List<Node2D> lN = (List<Node2D>)candidate.getUserProperty("cells");
+                for(Node2D nod : lN){
+                    if(nod.getEntries().remove(entry)){
+                        removed = true;
+                    }
+                }
+                if(removed){
+                    trim(candidate);
+                }
             }else{
-                for(Node2D nod : candidate.getChildren()){
+                for(Node2D nod : candidate.getChildren().toArray(new Node2D[candidate.getChildren().size()])){
                     deleteHilbertNode(nod, entry);
                 }
             }
+        }
+    }
+    
+    /**Methode which permit to condense R-Tree.
+     * Condense made begin by leaf and travel up to treetrunk.
+     * @param candidate {@code Node2D} to begin condense.
+     */
+    public static void trim(final Node2D candidate) {
+        
+        final List<Node2D> children = candidate.getChildren();
+        if(!candidate.isLeaf()){
+            HilbertRTree tree = (HilbertRTree) candidate.getTree();
+            List<Shape> lS = new ArrayList<Shape>();
+            searchHilbertNode(candidate, candidate.getBoundary(), lS);
+            if(lS.size()<=tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2)){
+                ((HilbertNode2D)candidate).createBasicHB(tree.getHilbertOrder(), TreeUtils.getEnveloppeMin(lS).getBounds2D());
+                ((HilbertNode2D)candidate).setLeaf(true);
+                for (Shape sh : lS) {
+                    Node2D n = chooseSubtree(candidate, sh);
+                    n.getEntries().add(sh);
+                }
+            }else{
+                for(int i = children.size()-1;i>=0;i--){
+                    final Node2D child = children.get(i);
+                    if(child.isEmpty()){
+                        children.remove(i);
+                    }else if(child.getChildren().size() ==1){
+                        children.remove(i);
+                        for(Node2D n2d : child.getChildren()){
+                            n2d.setParent(candidate);
+                        }
+                        children.addAll(child.getChildren());
+                    }else if(child.isLeaf()){
+                        HilbertNode2D hn2d = (HilbertNode2D)child;
+                        final List<Shape> reinsertList = new ArrayList<Shape>();
+                        searchHilbertNode(hn2d, hn2d.getBoundary(), reinsertList);
+                        int hO = hn2d.getHilbertOrder();
+                        if(reinsertList.size() <= Math.pow(2, (hO - 1) * 2)){
+                            hn2d.createBasicHB(hO-1, TreeUtils.getEnveloppeMin(reinsertList).getBounds2D());
+                            for (Shape sh : reinsertList) {
+                                Node2D n = chooseSubtree(hn2d, sh);
+                                n.getEntries().add(sh);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+        if(candidate.getParent()!=null){
+            trim(candidate.getParent());
         }
     }
     

@@ -47,7 +47,7 @@ public class JTreePanel extends JPanel{
             Rectangle2D rect = ((Shape)boundnode).getBounds2D();
             final double height = this.getHeight();
             final double scaley = (float)height/rect.getHeight();
-            System.out.println("scaley = "+scaley);
+//            System.out.println("scaley = "+scaley);
             trs.translate(this.getWidth()/2, this.getHeight()/2);
             trs.scale(3, 3);
             trs.translate( -rect.getCenterX(), -rect.getCenterY());

@@ -38,19 +38,18 @@ public class HilbertNode2D extends Node2D{
             setUserProperty("centroids", new ArrayList<Point2D>());
             setUserProperty("cells", new ArrayList<Node2D>());
             Rectangle2D rect = TreeUtils.getEnveloppeMin(entries).getBounds2D();
-//            this.setBound(rect);
             createBasicHB(hilbertOrder, rect);
-        }
-        for(Shape sh : entries){
-            HilbertRTree.insertNode(this, sh);
+            for(Shape sh : entries){
+                HilbertRTree.insertNode(this, sh);
+            }
         }
     }
 
     @Override
     public boolean isEmpty() {
-        List<HilbertCell2D> lC = (List<HilbertCell2D>)getUserProperty("cells");
+        List<Node2D> lC = (List<Node2D>)getUserProperty("cells");
         boolean empty = true;
-        for(HilbertCell2D hc : lC){
+        for(Node2D hc : lC){
             if(!hc.isEmpty()){
                 empty = false;
                 break;
@@ -61,13 +60,22 @@ public class HilbertNode2D extends Node2D{
 
     @Override
     protected void calculateBounds() {
-        for(Node2D nod : getChildren()){
-            addBound(nod.getBoundary());
+        if(isleaf){
+            for(Node2D nod : ((List<Node2D>)getUserProperty("cells"))){
+                addBound(nod.getBoundary());
+            }
+            List<Shape> lS = new ArrayList<Shape>();
+            HilbertRTree.searchHilbertNode(this, getBound(), lS);
+            createBasicHB(hilbertOrder, getBound());
+            for(Shape sh : lS){
+                HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
+            }
+            
+        }else{
+            for(Node2D nod : getChildren()){
+                addBound(nod.getBoundary());
+            }
         }
-        for(Node2D nod : ((List<Node2D>)getUserProperty("cells"))){
-            addBound(nod.getBoundary());
-        }
-        createBasicHB(hilbertOrder, getBound());
     }
     
     public Rectangle2D getBound(){
@@ -120,7 +128,7 @@ public class HilbertNode2D extends Node2D{
         setBound(bound);
         List<Node2D> listN   = (List<Node2D>)getUserProperty("cells");
         listN.clear();
-        isleaf = true;
+//        isleaf = true;
         if (indice > 0) {
             final double w = bound.getWidth() / 4;
             final double h = bound.getHeight() / 4;
@@ -139,8 +147,6 @@ public class HilbertNode2D extends Node2D{
                 }
             }
 
-            
-            
             int dim = (int) Math.pow(2, hilbertOrder);
             tabHV   = new int[dim][dim];
             
@@ -267,11 +273,12 @@ public class HilbertNode2D extends Node2D{
      */
     public int getHVOfEntry(final Shape entry) {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
-        if (!getBound().contains(entry.getBounds2D())) {
-            throw new IllegalArgumentException("entry is out of this node boundary");
-        }
         Rectangle2D recEnt = entry.getBounds2D();
         Point2D ptCE = new Point2D.Double(recEnt.getCenterX(), recEnt.getCenterY());
+        
+        if (!getBound().contains(ptCE)) {
+            throw new IllegalArgumentException("entry is out of this node boundary");
+        }
         int[] hCoord = getHilbCoord(ptCE, getBound(), getHilbertOrder());
         return tabHV[hCoord[0]][hCoord[1]];
     }

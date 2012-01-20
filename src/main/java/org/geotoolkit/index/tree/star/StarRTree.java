@@ -175,19 +175,23 @@ public class StarRTree extends AbstractTree2D{
             }
         }
         
-        if(countElements(candidate)>candidate.getTree().getMaxElements()){
-            final List<Node2D> l = splitNode(candidate);
-            final Node2D l0 = l.get(0);
-            final Node2D l1 = l.get(1);
-            l0.setParent(candidate);
-            l1.setParent(candidate);
-            candidate.getEntries().clear();
-            candidate.getChildren().clear();
-            candidate.getChildren().addAll(l);
-            if(l0.isLeaf()&&l1.isLeaf()&&l0.getBoundary().intersects(l1.getBoundary().getBounds2D())){
-                branchGrafting(l0, l1);
+        if(candidate.getParent()==null){
+            if(countElements(candidate)>candidate.getTree().getMaxElements()){
+                final List<Node2D> l = splitNode(candidate);
+                final Node2D l0 = l.get(0);
+                final Node2D l1 = l.get(1);
+                l0.setParent(candidate);
+                l1.setParent(candidate);
+                candidate.getEntries().clear();
+                candidate.getChildren().clear();
+                candidate.getChildren().addAll(l);
+                if(l0.isLeaf()&&l1.isLeaf()&&l0.getBoundary().intersects(l1.getBoundary().getBounds2D())){
+                    branchGrafting(l0, l1);
+                }
             }
         }
+        
+        
     }
     
     /**Split a overflow {@code Node2D} in accordance with R-Tree properties.

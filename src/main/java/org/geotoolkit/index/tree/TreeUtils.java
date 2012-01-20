@@ -242,7 +242,25 @@ public final class TreeUtils {
         if(listNode==null&&listEntries==null){
             throw new IllegalArgumentException("impossible to organize empty lists");
         }
-        organize_Node2DElements_From(index, new Node2D(null, null, listNode, listEntries));
+        switch (index) {
+            case 1:
+                if(listNode!=null){
+                    Collections.sort(listNode, NODE2D_COMPARATOR_X);
+                }
+                if(listEntries!=null){
+                    Collections.sort(listEntries, SHAPE_COMPARATOR_X);
+                }
+                break;
+
+            case 2:
+                if(listNode!=null){
+                    Collections.sort(listNode, NODE2D_COMPARATOR_Y);
+                }
+                if(listEntries!=null){
+                    Collections.sort(listEntries, SHAPE_COMPARATOR_Y);
+                }
+                break;
+        }
     }
     
     /**
@@ -263,26 +281,26 @@ public final class TreeUtils {
         final List<Shape> lS = candidate.getEntries();
         
         switch (index) {
-            case 0:
-                final List<CoupleNode2D> lCN = new ArrayList<CoupleNode2D>();
-                for(Node2D n2d : lN2D){
-                    lCN.add(new CoupleNode2D(candidate, n2d));
-                }
-                Collections.sort(lCN, NODE2D_COMPARATOR_CENTROID);
-                lN2D.clear();
-                for(CoupleNode2D cn2d : lCN){
-                    lN2D.add(cn2d.getObject2());
-                }
-                
-                final List<CoupleShape> lCS = new ArrayList<CoupleShape>();
-                for(Shape shap : lS){
-                    lCS.add(new CoupleShape(candidate.getBoundary(), shap));
-                }
-                Collections.sort(lCS, SHAPE_COMPARATOR_CENTROID);
-                lS.clear();
-                for(CoupleShape cs : lCS){
-                    lS.add(cs.getObject2());
-                }
+//            case 0:
+//                final List<CoupleNode2D> lCN = new ArrayList<CoupleNode2D>();
+//                for(Node2D n2d : lN2D){
+//                    lCN.add(new CoupleNode2D(candidate, n2d));
+//                }
+//                Collections.sort(lCN, NODE2D_COMPARATOR_CENTROID);
+//                lN2D.clear();
+//                for(CoupleNode2D cn2d : lCN){
+//                    lN2D.add(cn2d.getObject2());
+//                }
+//                
+//                final List<CoupleShape> lCS = new ArrayList<CoupleShape>();
+//                for(Shape shap : lS){
+//                    lCS.add(new CoupleShape(candidate.getBoundary(), shap));
+//                }
+//                Collections.sort(lCS, SHAPE_COMPARATOR_CENTROID);
+//                lS.clear();
+//                for(CoupleShape cs : lCS){
+//                    lS.add(cs.getObject2());
+//                }
 
             case 1:
                 Collections.sort(lN2D, NODE2D_COMPARATOR_X);
