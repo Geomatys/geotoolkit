@@ -38,13 +38,13 @@ public final class CreateDBDescriptor extends AbstractProcessDescriptor{
     public static final String NAME = "CreateDB";
 
     public static final ParameterDescriptor<String> DBURL =
-            new DefaultParameterDescriptor<String>("dburl","Database JDBC URL.",String.class,null,true);
+            new DefaultParameterDescriptor<String>("dburl","Database JDBC URL.",String.class,"jdbc:postgresql://localhost:5432/epsg",true);
     
     public static final ParameterDescriptor<String> USER =
-            new DefaultParameterDescriptor<String>("user","Database user.",String.class,null,true);
+            new DefaultParameterDescriptor<String>("user","Database user.",String.class,"user",true);
     
     public static final ParameterDescriptor<String> PASSWORD =
-            new DefaultParameterDescriptor<String>("password","Database password.",String.class,null,true);
+            new DefaultParameterDescriptor<String>("password","Database password.",String.class,"password",true);
     
         
     public static final ParameterDescriptorGroup INPUT_DESC =
