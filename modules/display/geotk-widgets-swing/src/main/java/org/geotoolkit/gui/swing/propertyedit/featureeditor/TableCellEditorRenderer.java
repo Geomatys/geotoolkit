@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.netbeans.swing.outline.Outline;
-import org.opengis.feature.Property;
+import org.opengis.feature.type.PropertyType;
 
 /**
  *
@@ -46,7 +46,7 @@ public abstract class TableCellEditorRenderer extends AbstractCellEditor impleme
         }
     };
     protected final JPanel panel = new JPanel();
-    protected Property property;
+    protected PropertyType property;
     protected Object value;
 
     private void mimicStyle(final JComponent model, final JComponent candidate) {

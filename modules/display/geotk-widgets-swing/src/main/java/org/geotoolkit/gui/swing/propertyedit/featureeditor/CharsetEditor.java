@@ -17,24 +17,28 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
-import javax.swing.JTextField;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class StringEditor implements JFeatureOutLine.PropertyEditor {
+public class CharsetEditor implements JFeatureOutLine.PropertyEditor {
 
-    private final StringRW r = new StringRW();
-    private final StringRW w = new StringRW();
+    private final CharsetRW r = new CharsetRW();
+    private final CharsetRW w = new CharsetRW();
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return String.class.equals(candidate.getBinding());
+        return Charset.class.equals(candidate.getBinding());
     }
 
     @Override
@@ -49,25 +53,28 @@ public class StringEditor implements JFeatureOutLine.PropertyEditor {
         return r.getRenderer();
     }
 
-    private static class StringRW extends TableCellEditorRenderer {
+    private static class CharsetRW extends TableCellEditorRenderer {
 
-        private final JTextField component = new JTextField();
+        private final JComboBox component = new JComboBox();
 
-        private StringRW() {
+        private CharsetRW() {
             panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
+            panel.add(BorderLayout.NORTH, component);
+            
+            final List<Charset> sets = new ArrayList<Charset>(Charset.availableCharsets().values());
+            component.setModel(new ListComboBoxModel(sets));
         }
 
         @Override
         protected void prepare() {
-            if (value instanceof String) {
-                component.setText((String) value);
+            if (value instanceof Charset) {
+                component.setSelectedItem(value);
             }
         }
 
         @Override
         public Object getCellEditorValue() {
-            return component.getText();
+            return component.getSelectedItem();
         }
     }
 }

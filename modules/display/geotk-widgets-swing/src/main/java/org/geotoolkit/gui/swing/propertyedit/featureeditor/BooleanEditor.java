@@ -21,7 +21,6 @@ import javax.swing.JCheckBox;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
 
 /**
@@ -39,13 +38,13 @@ public class BooleanEditor implements JFeatureOutLine.PropertyEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(Property property) {
+    public TableCellEditor getEditor(PropertyType property) {
         w.property = property;
         return w;
     }
 
     @Override
-    public TableCellRenderer getRenderer(Property property) {
+    public TableCellRenderer getRenderer(PropertyType property) {
         r.property = property;
         return r.getRenderer();
     }
@@ -57,6 +56,7 @@ public class BooleanEditor implements JFeatureOutLine.PropertyEditor {
         private BooleanRW() {
             panel.setLayout(new BorderLayout());
             panel.add(BorderLayout.CENTER, component);
+            component.setOpaque(false);
         }
 
         @Override

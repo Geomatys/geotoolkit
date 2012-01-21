@@ -22,7 +22,6 @@ import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -42,13 +41,13 @@ public class CRSEditor implements JFeatureOutLine.PropertyEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(Property property) {
+    public TableCellEditor getEditor(PropertyType property) {
         w.property = property;
         return w;
     }
 
     @Override
-    public TableCellRenderer getRenderer(Property property) {
+    public TableCellRenderer getRenderer(PropertyType property) {
         r.property = property;
         return r.getRenderer();
     }

@@ -154,6 +154,13 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     }
 
     /**
+     * @return live list of property editors used for additional attributs
+     */
+    public List<JFeatureOutLine.PropertyEditor> getEditors() {
+        return guiConfig.getEditors();
+    }
+    
+    /**
      * Go to the given directory.
      */
     public void setDirectory(final File directory) {
@@ -214,7 +221,12 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     }
     
     public static List<DataStore> showDialog(){
+        return showDialog(Collections.EMPTY_LIST);
+    }
+    
+    public static List<DataStore> showDialog(List<JFeatureOutLine.PropertyEditor> editors){
         final JFileDatastoreChooser chooser = new JFileDatastoreChooser();
+        chooser.getEditors().addAll(editors);
         final JDialog dialog = new JDialog();
         
         final JToolBar bar = new JToolBar();

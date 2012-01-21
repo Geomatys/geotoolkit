@@ -86,6 +86,7 @@ import org.geotoolkit.gui.swing.filestore.JFileDatastoreChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
+import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
@@ -109,7 +110,7 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class JMap2DFrame extends javax.swing.JFrame {
-
+    
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
     

@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -31,6 +32,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -54,15 +56,14 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public class JFeatureOutLine extends Outline{
-
+    
     public static interface PropertyEditor{
         
         boolean canHandle(PropertyType candidate);
         
-        TableCellEditor getEditor(Property property);
+        TableCellEditor getEditor(PropertyType type);
         
-        TableCellRenderer getRenderer(Property property);
-        
+        TableCellRenderer getRenderer(PropertyType type);
     }
     
     private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_smallgray");
@@ -70,18 +71,19 @@ public class JFeatureOutLine extends Outline{
     private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
     private static final ImageIcon ICON_OCC_REMOVE = IconBundle.getIcon("16_occurence_remove");
 
-    private final List<PropertyEditor> editors = new CopyOnWriteArrayList<PropertyEditor>();
-    private final PropertyRowModel rowModel = new PropertyRowModel();
+    private final List<JFeatureOutLine.PropertyEditor> editors = new CopyOnWriteArrayList<JFeatureOutLine.PropertyEditor>();
+    private final JFeatureOutLine.PropertyRowModel rowModel = new JFeatureOutLine.PropertyRowModel();
     private FeatureTreeModel treeModel = null;
     private Property edited = null;
     
     public JFeatureOutLine(){
-        setRenderDataProvider(new PropertyDataProvider());
+        setRenderDataProvider(new JFeatureOutLine.PropertyDataProvider());
         setShowHorizontalLines(false);
         setColumnSelectionAllowed(false);
         setFillsViewportHeight(true);
         setBackground(Color.WHITE);
         getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        editors.addAll(createDefaultEditorList());
     }
     
     /**
@@ -125,31 +127,44 @@ public class JFeatureOutLine extends Outline{
     /**
      * @return live list of property editors.
      */
-    public List<PropertyEditor> getEditors() {
+    public List<JFeatureOutLine.PropertyEditor> getEditors() {
         return editors;
     }
 
     @Override
     public TableCellEditor getCellEditor(final int row, final int column) {
         if(column == 2){
-            return new ActionCellEditor();
+            return new JFeatureOutLine.ActionCellEditor();
         }
 
         final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
-        final Property prop = (Property) node.getUserObject();
-        final PropertyType type = prop.getType();
+        PropertyType type = null;
+        final Object obj = node.getUserObject();
+        if(obj instanceof Property){
+            type = ((Property)obj).getType();
+        }
         
         if(column == 1){
-            for(PropertyEditor edit : editors){
-                if(edit.canHandle(type)){
-                    return edit.getEditor(prop);
-                }
+            final JFeatureOutLine.PropertyEditor edit = getEditor(type);
+            if(edit != null){
+                return edit.getEditor(type);
             }
         }
         
         //fallback on default java editor.
         final Class c = type.getBinding();
         return getDefaultEditor(c);
+    }
+    
+    private JFeatureOutLine.PropertyEditor getEditor(PropertyType type){
+        if(type != null){
+            for(JFeatureOutLine.PropertyEditor edit : editors){
+                if(edit.canHandle(type)){
+                    return edit;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -163,25 +178,27 @@ public class JFeatureOutLine extends Outline{
     @Override
     public TableCellRenderer getCellRenderer(final int row, final int column) {
         if(column == 2){
-            return new ActionCellRenderer();
+            return new JFeatureOutLine.ActionCellRenderer();
         }
 
         final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
-        final Property prop = (Property) node.getUserObject();
-        final PropertyType type = prop.getType();
+        PropertyType type = null;
+        final Object obj = node.getUserObject();
+        if(obj instanceof Property){
+            type = ((Property)obj).getType();
+        }
         
-        if(column == 1){
-            for(PropertyEditor edit : editors){
-                if(edit.canHandle(type)){
-                    return edit.getRenderer(prop);
-                }
+        if(column == 1 && type != null){
+            final JFeatureOutLine.PropertyEditor edit = getEditor(type);
+            if(edit != null){
+                return edit.getRenderer(type);
             }
         }
         
         //fallback on default java editor.        
         final Object value = getValueAt(row, column);
         if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
-            return new GeometryCellRenderer();
+            return new JFeatureOutLine.GeometryCellRenderer();
         }
         return super.getCellRenderer(row, column);
     }
@@ -228,7 +245,7 @@ public class JFeatureOutLine extends Outline{
                 final Property prop = (Property) node.getUserObject();
                 final Class type = prop.getType().getBinding();
                 return !(prop instanceof ComplexAttribute)
-                      && (type == String.class || getDefaultEditor(type) != getDefaultEditor(Object.class));
+                      && getEditor(prop.getType()) != null || getDefaultEditor(type) != getDefaultEditor(Object.class);
             }else{
                 return false;
             }
@@ -456,6 +473,16 @@ public class JFeatureOutLine extends Outline{
         return new JLabel();
     }
 
+    public static List<JFeatureOutLine.PropertyEditor> createDefaultEditorList(){
+        final List<JFeatureOutLine.PropertyEditor> lst = new ArrayList<JFeatureOutLine.PropertyEditor>();
+        lst.add(new BooleanEditor());
+        lst.add(new CRSEditor());
+        lst.add(new CharsetEditor());
+        lst.add(new NumberEditor());
+        lst.add(new StringEditor());
+        return lst;
+    }
+    
     public static void show(final Property candidate){
         final JDialog dialog = new JDialog();
         final JFeatureOutLine outline = new JFeatureOutLine();

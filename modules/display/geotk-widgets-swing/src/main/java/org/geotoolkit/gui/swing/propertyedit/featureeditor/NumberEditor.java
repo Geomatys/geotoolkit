@@ -17,12 +17,12 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.math.BigDecimal;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
 
@@ -41,13 +41,13 @@ public class NumberEditor implements JFeatureOutLine.PropertyEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(Property property) {
+    public TableCellEditor getEditor(PropertyType property) {
         w.property = property;
         return w;
     }
 
     @Override
-    public TableCellRenderer getRenderer(Property property) {
+    public TableCellRenderer getRenderer(PropertyType property) {
         r.property = property;
         return r.getRenderer();
     }
@@ -68,11 +68,11 @@ public class NumberEditor implements JFeatureOutLine.PropertyEditor {
         protected void prepare() {
 
             //change model based on property
-            if (property != null && property.getType() instanceof AttributeType) {
-                final AttributeType type = (AttributeType) property.getType();
+            if (property != null && property instanceof AttributeType) {
+                final AttributeType type = (AttributeType) property;
                 final Class clazz = type.getBinding();
 
-                if (clazz == Double.class || clazz == Float.class) {
+                if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class) {
                     component.setModel(new SpinnerNumberModel(Double.valueOf(0d), null, null, Double.valueOf(0.1d)));
                 } else {
                     component.setModel(new SpinnerNumberModel(0, null, null, 1));
