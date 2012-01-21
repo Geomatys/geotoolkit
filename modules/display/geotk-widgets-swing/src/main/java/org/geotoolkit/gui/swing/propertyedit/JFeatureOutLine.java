@@ -23,32 +23,20 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-import javax.swing.AbstractCellEditor;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
-
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.util.Converters;
-
+import org.geotoolkit.util.converter.Classes;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
-import org.netbeans.swing.outline.DefaultOutlineCellRenderer;
-import org.netbeans.swing.outline.DefaultOutlineModel;
-import org.netbeans.swing.outline.Outline;
-import org.netbeans.swing.outline.RenderDataProvider;
-import org.netbeans.swing.outline.RowModel;
-
+import org.netbeans.swing.outline.*;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.Name;
@@ -63,11 +51,22 @@ import org.opengis.feature.type.PropertyType;
  */
 public class JFeatureOutLine extends Outline{
 
+    public static interface PropertyEditor{
+        
+        boolean canHandle(PropertyType candidate);
+        
+        TableCellEditor getEditor(Property property);
+        
+        TableCellRenderer getRenderer(Property property);
+        
+    }
+    
     private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_smallgray");
     private static final ImageIcon ICON_REMOVE = IconBundle.getIcon("16_smallgreen");
     private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
     private static final ImageIcon ICON_OCC_REMOVE = IconBundle.getIcon("16_occurence_remove");
 
+    private final List<PropertyEditor> editors = new CopyOnWriteArrayList<PropertyEditor>();
     private final PropertyRowModel rowModel = new PropertyRowModel();
     private FeatureTreeModel treeModel = null;
     private Property edited = null;
@@ -99,6 +98,13 @@ public class JFeatureOutLine extends Outline{
     public Property getEdited(){
         return edited;
     }
+    
+    /**
+     * @return live list of property editors.
+     */
+    public List<PropertyEditor> getEditors() {
+        return editors;
+    }
 
     @Override
     public TableCellEditor getCellEditor(final int row, final int column) {
@@ -109,13 +115,23 @@ public class JFeatureOutLine extends Outline{
         final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
         final Property prop = (Property) node.getUserObject();
         final PropertyType type = prop.getType();
+        
+        if(column == 1){
+            for(PropertyEditor edit : editors){
+                if(edit.canHandle(type)){
+                    return edit.getEditor(prop);
+                }
+            }
+        }
+        
+        //fallback on default java editor.
         final Class c = type.getBinding();
         return getDefaultEditor(c);
     }
 
     @Override
     public TableCellEditor getDefaultEditor(final Class<?> columnClass) {
-        if(Date.class.isAssignableFrom(columnClass)){
+        if(columnClass != null && Date.class.isAssignableFrom(columnClass)){
             return new DatePickerCellEditor();
         }
         return super.getDefaultEditor(columnClass);
@@ -127,6 +143,19 @@ public class JFeatureOutLine extends Outline{
             return new ActionCellRenderer();
         }
 
+        final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
+        final Property prop = (Property) node.getUserObject();
+        final PropertyType type = prop.getType();
+        
+        if(column == 1){
+            for(PropertyEditor edit : editors){
+                if(edit.canHandle(type)){
+                    return edit.getRenderer(prop);
+                }
+            }
+        }
+        
+        //fallback on default java editor.        
         final Object value = getValueAt(row, column);
         if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
             return new GeometryCellRenderer();
@@ -276,7 +305,7 @@ public class JFeatureOutLine extends Outline{
 
             return null;
         }
-
+        
         @Override
         public javax.swing.Icon getIcon(final Object o) {
             final MutableTreeNode node = (MutableTreeNode) o;
@@ -294,7 +323,9 @@ public class JFeatureOutLine extends Outline{
             final Object userObject = node.getUserObject();
 
             if(userObject instanceof Property){
-                return DefaultName.toJCRExtendedForm( ((Property) node.getUserObject()).getName());
+                String tooltip = DefaultName.toJCRExtendedForm( ((Property) node.getUserObject()).getName());
+                tooltip += " ("+Classes.getShortName(((Property) node.getUserObject()).getType().getBinding()) +")";
+                return tooltip;
             }else{
                 return null;
             }
