@@ -255,7 +255,7 @@
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-swing-outline</artifactId>
-        <version>RELEASE70</version>
+        <version>RELEASE71</version>
       </dependency>
 
       <dependency>

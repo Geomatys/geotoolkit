@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.Component;
+import java.util.logging.Level;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.xml.bind.JAXBException;
@@ -30,6 +31,7 @@ import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.logging.Logging;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 
 import org.opengis.sld.LayerStyle;
@@ -37,7 +39,6 @@ import org.opengis.sld.NamedLayer;
 import org.opengis.sld.UserLayer;
 import org.opengis.style.Style;
 import org.opengis.util.FactoryException;
-import org.openide.util.Exceptions;
 
 
 /**
@@ -129,7 +130,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                 try {
                     tool.writeStyle(chooser.getSelectedFile(), style, version);
                 } catch (JAXBException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
                 }
             }
         }
@@ -167,9 +168,9 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                     }
 
                 } catch (JAXBException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
                 } catch (FactoryException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
                 }
             }
         }
