@@ -29,10 +29,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ButtonGroup;
@@ -79,6 +81,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
+import org.geotoolkit.gui.swing.filestore.JFileCoverageChooser;
 import org.geotoolkit.gui.swing.filestore.JFileDatastoreChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
@@ -231,6 +234,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiConfigBar = new JConfigBar();
         jMenuBar1 = new JMenuBar();
         jMenu1 = new JMenu();
+        jMenuItem3 = new JMenuItem();
         jMenuItem2 = new JMenuItem();
         jSeparator4 = new JPopupMenu.Separator();
         jMenuItem1 = new JMenuItem();
@@ -318,7 +322,15 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        jMenuItem2.setText("Add vector file data ...");
+        jMenuItem3.setText("Add image file ...");
+        jMenuItem3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
+
+        jMenuItem2.setText("Add vector data ...");
         jMenuItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -425,6 +437,12 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
         
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void jMenuItem3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        
+        final Map<File,ImageReaderSpi> map = JFileCoverageChooser.showDialog();
+        
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
 
     private boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
@@ -465,6 +483,7 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     private JMenuBar jMenuBar1;
     private JMenuItem jMenuItem1;
     private JMenuItem jMenuItem2;
+    private JMenuItem jMenuItem3;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private Separator jSeparator1;
