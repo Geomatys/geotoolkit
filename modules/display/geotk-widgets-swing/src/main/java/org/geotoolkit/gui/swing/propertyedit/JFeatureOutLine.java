@@ -30,6 +30,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -42,9 +43,12 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Property editor, can edit Feature/Complex attribut or single properties.
+ * Additionaly Parameter can be edited since their model is close.
  * 
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
@@ -97,6 +101,25 @@ public class JFeatureOutLine extends Outline{
      */
     public Property getEdited(){
         return edited;
+    }
+    
+    /**
+     * Set the property to display in this component. Parameters are not the
+     * natural model expected, but since Parameters are close to Features. An
+     * automatic translation is done.
+     */
+    public void setEdited(final ParameterValueGroup parameter) {
+        setEdited(FeatureUtilities.toFeature(parameter));
+    }
+
+    /**
+     * Return the edited property as a Parameter
+     *
+     * @param desc parameter descriptor
+     * @return ParameterValueGroup
+     */
+    public ParameterValueGroup getEditedAsParameter(final ParameterDescriptorGroup desc) {
+        return FeatureUtilities.toParameter((ComplexAttribute) edited, desc);
     }
     
     /**
