@@ -28,56 +28,42 @@ import java.beans.PropertyChangeEvent;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.EventObject;
-import java.util.HashSet;
-import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import org.geotoolkit.map.MapItem;
-
-import org.geotoolkit.storage.DataStoreException;
+import javax.swing.table.TableCellEditor;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.model.FeatureCollectionModel;
-import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
-
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -115,8 +101,26 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private FeatureMapLayer layer = null;
     private boolean editable = false;
     private final LayerListener.Weak weakListener = new LayerListener.Weak(this);
+    private final List<JFeatureOutLine.PropertyEditor> editors = new CopyOnWriteArrayList<JFeatureOutLine.PropertyEditor>();
     
-    private final JXTable tab_data = new JXTable();
+    private final JXTable tab_data = new JXTable(){        
+        @Override
+        public TableCellEditor getCellEditor(final int row, final int column) {
+
+            final FeatureCollectionModel model = (FeatureCollectionModel) tab_data.getModel();
+            final int modelindex = tab_data.getColumnModel().getColumn(column).getModelIndex();
+            
+            final PropertyDescriptor desc = model.getColumnDesc(modelindex);
+            if(desc != null){
+                final JFeatureOutLine.PropertyEditor edit = getEditor(desc.getType());
+                if(edit != null){
+                    return edit.getEditor(desc.getType());
+                }
+            }
+
+            return super.getCellEditor(row, column);
+        }        
+    };
     private final JFeatureCollectionOutline outline = new JFeatureCollectionOutline();
     
 
@@ -138,6 +142,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.setDefaultEditor(java.sql.Date.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
         tab_data.setDefaultEditor(Time.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
         tab_data.setDefaultEditor(Timestamp.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
+        editors.addAll(JFeatureOutLine.createDefaultEditorList());
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -168,6 +173,25 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         checkChanges();
 
+    }
+
+    
+    /**
+     * @return live list of property editors.
+     */
+    public List<JFeatureOutLine.PropertyEditor> getEditors() {
+        return editors;
+    }
+    
+    private JFeatureOutLine.PropertyEditor getEditor(PropertyType type){
+        if(type != null){
+            for(JFeatureOutLine.PropertyEditor edit : editors){
+                if(edit.canHandle(type)){
+                    return edit;
+                }
+            }
+        }
+        return null;
     }
 
     /**
