@@ -77,7 +77,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collection;
-import org.opengis.feature.type.PropertyType;
+import org.opengis.feature.type.*;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -1289,6 +1289,10 @@ public final class FeatureTypeUtilities {
     ////////////////////////////////////////////////////////////////////////////
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+    
+    public static ComplexType toPropertyType(final ParameterDescriptorGroup descriptor){
+        return (ComplexType) toPropertyType((GeneralParameterDescriptor)descriptor);
+    }
     
     public static PropertyType toPropertyType(final GeneralParameterDescriptor descriptor){
         

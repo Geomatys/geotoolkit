@@ -24,11 +24,13 @@ import java.net.URI;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.*;
@@ -475,6 +477,66 @@ public final class FeatureUtilities {
         final ComplexAttribute target = FeatureUtilities.defaultProperty(ft);
         fill(source,target);
         return target;        
+    }
+    
+    /**
+     * Convert a ComplexAttribute in a Map of values.
+     * 
+     * @param source : property to convert
+     * @return Map
+     */
+    public static Map<String,Object> toMap(final ComplexAttribute att){
+        final Map<String,Object> map = new HashMap<String, Object>();
+        for(final Property prop : att.getProperties()){
+            map.put(prop.getName().getLocalPart(), prop.getValue());
+        }
+        return map;
+    }
+    
+    /**
+     * Convert a ParameterValueGroup in a Map of values.
+     * 
+     * @param source : parameter to convert
+     * @return Map
+     */
+    public static Map<String,Object> toMap(final ParameterValueGroup source){
+        return toMap(toFeature(source));
+    }
+    
+    public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
+        final ParameterValueGroup parameter = desc.createValue();
+
+        for(final Entry<String, ?> entry : params.entrySet()){
+            
+            final GeneralParameterDescriptor subdesc;
+            try{
+                subdesc = desc.descriptor(entry.getKey());
+            }catch(ParameterNotFoundException ex){
+                //do nothing, the map may contain other values for other uses
+                continue;
+            }
+            
+            if(!(subdesc instanceof ParameterDescriptor)){
+                //we can not recreate value groups
+                continue;
+            }
+            
+            final ParameterDescriptor pd = (ParameterDescriptor) subdesc;
+            
+            final ParameterValue param;
+            try{
+                param = Parameters.getOrCreate(pd,parameter);
+            }catch(ParameterNotFoundException ex){
+                //do nothing, the map may contain other values for other uses
+                continue;
+            }
+            
+            Object val = entry.getValue();
+            val = Converters.convert(val, pd.getValueClass());
+            param.setValue(val);
+        }
+
+        return parameter;
     }
     
     private static void fill(final ParameterValueGroup source, final ComplexAttribute target){
