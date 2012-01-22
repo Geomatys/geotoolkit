@@ -216,6 +216,7 @@ final class AuthorityCodeList extends AbstractListModel<AuthorityCode> implement
         }
         // If the SwingWorker thread is still running, we will search
         // for the code when the worker will have finished its job.
+        selected = null;
         selectedCode = code;
     }
 

@@ -33,7 +33,7 @@ import org.opengis.referencing.IdentifiedObject;
  * @since 3.08
  * @module
  *
- * @todo Future version should provides more sophesticated rendering, for example
+ * @todo Future version should provides more sophisticated rendering, for example
  *       a button for showing a popup with more properties.
  */
 public final class IdentifiedObjectRenderer extends DefaultTableCellRenderer {
