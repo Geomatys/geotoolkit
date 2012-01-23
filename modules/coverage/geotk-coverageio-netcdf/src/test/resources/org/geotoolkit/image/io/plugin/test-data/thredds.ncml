@@ -2,7 +2,7 @@
 
 <!--
   NcML test file derived from an example published in the following page on October 5, 2011:
-  https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery
+  http://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery
 -->
 
 <netcdf    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -16,7 +16,7 @@
   <attribute name="history" value="xyz2grd -R-80/-64/40/48 -I3c -Gcrm_v1.grd"/>
   <attribute name="GMT_version" value="4.5.1 [64-bit]"/>
   <attribute name="creator_name" value="David Neufeld"/>
-  <attribute name="creator_email" value="David.Neufeld@noaa.gov"/>
+  <attribute name="creator_email" value="xxxxx.xxxxxxx@noaa.gov"/>
   <attribute name="geospatial_lon_units" value="degrees_east"/>
   <attribute name="geospatial_lat_units" value="degrees_north"/>
   <attribute name="geospatial_lon_min" type="float" value="-80.0"/>
@@ -42,7 +42,7 @@
   <group name="THREDDSMetadata">
     <attribute name="id" value="crm_v1"/>
     <attribute name="creator_name" value="David Neufeld"/>
-    <attribute name="creator_email" value="David.Neufeld@noaa.gov"/>
+    <attribute name="creator_email" value="xxxxx.xxxxxxx@noaa.gov"/>
     <attribute name="data_distribution" value="http://localhost:8080/thredds/dodsC/test/crm_v1.nc"/>
     <attribute name="wms_service" value="http://localhost:8080//thredds/wms/crm/crm_vol9.nc"/>
     <attribute name="wcs_service" value="http://localhost:8080//thredds/wcs/crm/crm_vol9.nc"/>

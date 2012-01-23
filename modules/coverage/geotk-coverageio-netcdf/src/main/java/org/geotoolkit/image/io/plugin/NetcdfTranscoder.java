@@ -229,7 +229,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getCitation() citation} /
-     * {@link Citation#getIdentifiers() identifier}</li></ul>
+     * {@link Citation#getIdentifiers() identifier} /
+     * {@link Identifier#getCode() code}</li></ul>
      *
      * @see #getFileIdentifier()
      * @see NetcdfFile#getId()
@@ -247,7 +248,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * <li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
      * {@link DataIdentification#getCitation() citation} /
-     * {@link Citation#getIdentifiers() identifier}</li></ul>
+     * {@link Citation#getIdentifiers() identifier} /
+     * {@link Identifier#getAuthority() authority}</li></ul>
      *
      * @see #IDENTIFIER
      * @see #getFileIdentifier()

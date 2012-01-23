@@ -215,6 +215,7 @@ final class AuthorityCodeList extends AbstractListModel implements FastComboBox.
         }
         // If the SwingWorker thread is still running, we will search
         // for the code when the worker will have finished its job.
+        selected = null;
         selectedCode = code;
     }
 

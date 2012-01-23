@@ -17,9 +17,9 @@
  */
 package org.geotoolkit.factory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+
+import org.geotoolkit.util.collection.DeferringIterator;
 
 
 /**
@@ -34,27 +34,11 @@ import java.util.List;
  * @since 3.20
  * @module
  */
-final class OrderedIterator <T> implements Iterator<T> {
+final class OrderedIterator<T> extends DeferringIterator<T> {
     /**
      * The desired class loader (never {@code null}).
      */
     final ClassLoader classLoader;
-
-    /**
-     * The iterator given to the constructor, or the {@linkplain #fallbacks} iterator.
-     */
-    private Iterator<T> iterator;
-
-    /**
-     * The object of classes not loaded by the desired class loader.
-     * This list is initially null and is created only if needed.
-     */
-    private List<T> fallbacks;
-
-    /**
-     * {@code true} if the {@linkplain #iterator} is iterating over the fallbacks.
-     */
-    private boolean usingFallbacks;
 
     /**
      * Creates a new ordered iterator.
@@ -63,78 +47,36 @@ final class OrderedIterator <T> implements Iterator<T> {
      * @param  iterator The iterator to wrap.
      */
     OrderedIterator(final ClassLoader classLoader, final Iterator<T> iterator) {
+        super(iterator);
         this.classLoader = classLoader;
-        this.iterator    = iterator;
     }
 
     /**
-     * Returns {@code true} if the iteration has more elements.
+     * Returns {@code true} if the given element does not use the expected class loader.
      */
     @Override
-    public boolean hasNext() {
-        boolean hasNext = iterator.hasNext();
-        if (!hasNext && !usingFallbacks && fallbacks != null) {
-            hasNext = fallbacks().hasNext();
+    protected boolean isDeferred(final T element) {
+        if (element == null) {
+            return false;
         }
-        return hasNext;
-    }
-
-    /**
-     * Returns the next element in the iteration.
-     */
-    @Override
-    public T next() {
-        do {
-            final T next = iterator.next();
-            if (next == null || usingFallbacks) {
-                return next;
+        final ClassLoader nc = element.getClass().getClassLoader(); // May be null.
+        for (ClassLoader c=classLoader; c != null;) {
+            c = c.getParent(); // May be null, which we want to test.
+            if (c == nc) {
+                // Loaded by the desired class loader or one of its parents.
+                // This is the case of standard services (PNG or JPEG images).
+                return false;
             }
-            final ClassLoader nc = next.getClass().getClassLoader(); // May be null.
-            for (ClassLoader c=classLoader; c != null;) {
-                c = c.getParent(); // May be null, which we want to test.
-                if (c == nc) {
-                    // Loaded by the desired class loader or one of its parents.
-                    // This is the case of standard services (PNG or JPEG images).
-                    return next;
-                }
-            }
-            for (ClassLoader c=nc; c!=null; c=c.getParent()) {
-                if (c == classLoader) {
-                    // Loaded by the desired class loader or one of its children.
-                    // This is the case of services defined by the library.
-                    return next;
-                }
-            }
-            // In the tree of ClassLoaders, the 'nc' classloader is not on the
-            // same "branch" than the desired classloader.
-            if (fallbacks == null) {
-                fallbacks = new ArrayList<T>();
-            }
-            fallbacks.add(next);
-        } while (iterator.hasNext());
-        return fallbacks().next();
-    }
-
-    /**
-     * Switches to the fallback iterator. This method is invoked when the iteration
-     * using the iterator given at construction time is finished.
-     */
-    private Iterator<T> fallbacks() {
-        iterator       = fallbacks.iterator();
-        fallbacks      = null;
-        usingFallbacks = true;
-        return iterator;
-    }
-
-    /**
-     * Removes the last element returned by the iterator, except if we were iterating
-     * over the fallbacks. In the later case, it is to late for removing the element.
-     */
-    @Override
-    public void remove() throws UnsupportedOperationException {
-        if (usingFallbacks) {
-            throw new UnsupportedOperationException();
         }
-        iterator.remove();
+        for (ClassLoader c=nc; c!=null; c=c.getParent()) {
+            if (c == classLoader) {
+                // Loaded by the desired class loader or one of its children.
+                // This is the case of services defined by the library.
+                return false;
+            }
+        }
+        // In the tree of ClassLoaders, the 'nc' classloader is not on the
+        // same "branch" than the desired classloader.
+        return true;
     }
 }

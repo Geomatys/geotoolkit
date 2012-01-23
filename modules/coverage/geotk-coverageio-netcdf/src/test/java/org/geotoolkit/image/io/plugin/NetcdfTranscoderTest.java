@@ -36,6 +36,9 @@ import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.citation.CitationDate;
+import org.opengis.metadata.citation.ResponsibleParty;
+import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.Role;
 import org.opengis.temporal.Instant;
 
@@ -92,8 +95,15 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
             in.close();
         }
         assertEquals("crm_v1", metadata.getFileIdentifier());
-        assertEquals("David Neufeld", getSingleton(metadata.getContacts()).getIndividualName());
-
+        /*
+         * Metadata / Responsibly party.
+         */
+        final ResponsibleParty party = getSingleton(metadata.getContacts());
+        assertEquals("David Neufeld", party.getIndividualName());
+        assertEquals("xxxxx.xxxxxxx@noaa.gov", getSingleton(party.getContactInfo().getAddress().getElectronicMailAddresses()));
+        /*
+         * Metadata / Grid Spatial Representation.
+         */
         final GridSpatialRepresentation spatial = (GridSpatialRepresentation) getSingleton(metadata.getSpatialRepresentationInfo());
         final List<? extends Dimension> axis = spatial.getAxisDimensionProperties();
         assertEquals(Integer.valueOf(2), spatial.getNumberOfDimensions());
@@ -102,14 +112,18 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
         assertEquals(Integer.valueOf( 9601), axis.get(1).getDimensionSize());
         assertEquals(Double .valueOf(8.332899328159992E-4), axis.get(0).getResolution());
         assertEquals(Double .valueOf(8.332465368190813E-4), axis.get(1).getResolution());
-
+        /*
+         * Metadata / Data Identification / Geographic Bounding Box.
+         */
         final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
         final GeographicBoundingBox bbox = (GeographicBoundingBox) getSingleton(getSingleton(identification.getExtents()).getGeographicElements());
         assertEquals("West Bound Longitude", -80, bbox.getWestBoundLongitude(), EPS);
         assertEquals("East Bound Longitude", -64, bbox.getEastBoundLongitude(), EPS);
         assertEquals("South Bound Latitude",  40, bbox.getSouthBoundLatitude(), EPS);
         assertEquals("North Bound Latitude",  48, bbox.getNorthBoundLatitude(), EPS);
-
+        /*
+         * Metadata / Quality.
+         */
         assertEquals("xyz2grd -R-80/-64/40/48 -I3c -Gcrm_v1.grd",
                 getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
     }
@@ -132,40 +146,61 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
      * Checks the metadata from the {@value #BINARY_FILE} file.
      */
     private static void checkSST(final Metadata metadata) {
+        /*
+         * Metadata / Data Identification.
+         */
         assertEquals("NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc", metadata.getFileIdentifier());
-        assertEquals("NOAA/NWS/NCEP", getSingleton(metadata.getContacts()).getIndividualName());
-        assertEquals(Role.ORIGINATOR, getSingleton(metadata.getContacts()).getRole());
-
-        assertEquals("2003-04-07 12:12:50 - created by gribtocdl              "
-                   + "2005-09-26T21:50:00 - edavis - add attributes for dataset discovery",
-                   getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
-
         final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
         assertSame(SpatialRepresentationType.GRID, getSingleton(identification.getSpatialRepresentationTypes()));
         assertEquals("NCEP SST Global 5.0 x 2.5 degree model data", identification.getAbstract().toString());
         assertEquals("Freely available", getSingleton(getSingleton(identification.getResourceConstraints()).getUseLimitations()).toString());
-
+        /*
+         * Metadata / Quality.
+         */
+        assertEquals("2003-04-07 12:12:50 - created by gribtocdl              "
+                   + "2005-09-26T21:50:00 - edavis - add attributes for dataset discovery",
+                   getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
+        /*
+         * Metadata / Responsibly party.
+         */
+        final ResponsibleParty party = getSingleton(metadata.getContacts());
+        assertEquals("NOAA/NWS/NCEP", party.getIndividualName());
+        assertEquals(Role.ORIGINATOR, party.getRole());
+        /*
+         * Metadata / Data Identification / Citation.
+         */
         final Citation citation = identification.getCitation();
         final Identifier identifier = getSingleton(citation.getIdentifiers());
+        final CitationDate date = getSingleton(citation.getDates());
         assertEquals("Sea Surface Temperature Analysis Model", citation.getTitle().toString());
         assertEquals("edu.ucar.unidata", identifier.getAuthority().getTitle().toString());
         assertEquals("NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc", identifier.getCode());
-
+        assertEquals("Expected 2005-09-22T00:00", 1127340000000L, date.getDate().getTime());
+        assertSame(DateType.CREATION, date.getDateType());
+        /*
+         * Metadata / Data Identification / Keywords.
+         */
         final Keywords keywords = getSingleton(identification.getDescriptiveKeywords());
         assertEquals("GCMD Science Keywords", keywords.getThesaurusName().getTitle().toString());
         assertEquals("EARTH SCIENCE > Oceans > Ocean Temperature > Sea Surface Temperature", getSingleton(keywords.getKeywords()).toString());
-
+        /*
+         * Metadata / Data Identification / Geographic Bounding Box.
+         */
         final Extent extent = getSingleton(identification.getExtents());
         final GeographicBoundingBox bbox = (GeographicBoundingBox) getSingleton(extent.getGeographicElements());
         assertEquals("West Bound Longitude", -180, bbox.getWestBoundLongitude(), 0);
         assertEquals("East Bound Longitude", +180, bbox.getEastBoundLongitude(), 0);
         assertEquals("South Bound Latitude",  -90, bbox.getSouthBoundLatitude(), 0);
         assertEquals("North Bound Latitude",  +90, bbox.getNorthBoundLatitude(), 0);
-
+        /*
+         * Metadata / Data Identification / Vertical Extent.
+         */
         final VerticalExtent vext = getSingleton(extent.getVerticalElements());
         assertEquals("Vertical min", 0, vext.getMinimumValue().doubleValue(), 0);
         assertEquals("Vertical max", 0, vext.getMaximumValue().doubleValue(), 0);
-
+        /*
+         * Metadata / Data Identification / Temporal Extent.
+         */
         final TemporalExtent text = getSingleton(extent.getTemporalElements());
         final Instant instant = (Instant) text.getExtent();
         // Can not test at this time, since it requires the geotk-temporal module.

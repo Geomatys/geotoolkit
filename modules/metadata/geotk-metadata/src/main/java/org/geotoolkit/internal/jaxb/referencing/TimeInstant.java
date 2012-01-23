@@ -24,8 +24,13 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Position;
+
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.lang.Workaround;
+import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 
 
 /**
@@ -33,7 +38,7 @@ import org.geotoolkit.lang.Workaround;
  * which is itself contained in a {@link TimePeriod} in GML 2. It is not used for GML 3.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.03
+ * @version 3.20
  *
  * @since 3.03
  * @module
@@ -46,7 +51,7 @@ import org.geotoolkit.lang.Workaround;
 @XmlRootElement(name="TimeInstant")
 @XmlType(name = "TimeInstantType", namespace = Namespaces.GMD)
 @Workaround(library="Geotk", version="3.15")
-public final class TimeInstant {
+public final class TimeInstant extends GMLAdapter {
     /**
      * The time.
      */
@@ -60,11 +65,37 @@ public final class TimeInstant {
     }
 
     /**
+     * Creates a new time instant initialized to the given value.
+     *
+     * @param instant The initial instant value.
+     */
+    public TimeInstant(final Instant instant) {
+        timePosition = toDate(instant);
+    }
+
+    /**
+     * Creates a XML Gregorian Calendar from the given instants, if non-null.
+     * Otherwise returns {@code null}.
+     */
+    static XMLGregorianCalendar toDate(final Instant instant) {
+        if (instant != null) {
+            final Position position = instant.getPosition();
+            if (position != null) {
+                return XmlUtilities.toXML(position.getDate());
+            }
+        }
+        return null;
+    }
+
+    /**
      * The {@code gml:id}, which is mandatory.
      *
      * @return The {@code "extent"} ID.
+     *
+     * @deprecated This duplicate the {@link GMLAdapter#id} field.
      */
     @XmlID
+    @Deprecated
     @XmlAttribute(name = "id", required = true, namespace = Namespaces.GML)
     public String getID() {
         return "extent";

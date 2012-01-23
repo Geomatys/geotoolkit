@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import java.awt.image.RenderedImage;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.DeferringIterator;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -173,26 +175,64 @@ public final class XImageIO extends Static {
      * Returns an iterator over all providers of the given category having the given name,
      * suffix or MIME type.
      *
-     * @param <T>      The compile-time type of the {@code category} argument.
-     * @param category Either {@link ImageReaderSpi} or {@link ImageWriterSpi}.
-     * @param mode     Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
-     * @param suffix   The name, suffix or MIME type to look for, or {@code null}.
-     * @return         An iterator over the requested providers.
+     * @param <T>       The compile-time type of the {@code category} argument.
+     * @param category  Either {@link ImageReaderSpi} or {@link ImageWriterSpi}.
+     * @param mode      Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
+     * @param suffix    The name, suffix or MIME type to look for, or {@code null}.
+     * @return          An iterator over the requested providers.
      */
     private static <T extends ImageReaderWriterSpi> Iterator<T> getServiceProviders(
             final Class<T> category, final int mode, final String name)
     {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         if (name == null) {
-            return registry.getServiceProviders(category, true);
+            return orderForClassLoader(registry.getServiceProviders(category, true));
         }
-        final IIORegistry.Filter filter = new IIORegistry.Filter() {
+        /*
+         * This inner class filters the providers according the name given in argument to this method,
+         * ignoring cases. However this filter will opportunistically keep trace of providers for which
+         * the lower/upper cases don't match. We do that because the Image I/O API seems to be usually
+         * case-sensitive (for example the PNG format declares both the ".png" and ".PNG" suffixes),
+         * while some formats seem to forgot to declare the two variants (for example the TIFF format
+         * declares the ".tiff" suffix but not the ".TIFF" one). As a safety, we will give precedence
+         * to providers for which an exact match is found before to accept a provider which match only
+         * when ignoring cases.
+         */
+        @SuppressWarnings("serial")
+        final class Filter extends IdentityHashMap<Object,Object> implements IIORegistry.Filter {
             @Override public boolean filter(final Object provider) {
-                return XArrays.contains(getIdentifiers((ImageReaderWriterSpi) provider, mode), name);
+                final String[] identifiers = getIdentifiers((ImageReaderWriterSpi) provider, mode);
+                boolean found = XArrays.contains(identifiers, name);
+                if (!found) {
+                    found = XArrays.containsIgnoreCase(identifiers, name);
+                    if (found) {
+                        // Remember that this provider matches only when ignoring case.
+                        put(provider, null);
+                    }
+                }
+                return found;
+            }
+        }
+        /*
+         * At this point, the map is still empty. It may be filled during the iteration process.
+         * Any element stored in the map will be deferred to the end of the iteration.
+         */
+        final Filter filter = new Filter();
+        return new DeferringIterator<T>(orderForClassLoader(registry.getServiceProviders(category, filter, true))) {
+            @Override protected boolean isDeferred(final T element) {
+                return filter.containsKey(element);
             }
         };
-        return Factories.orderForClassLoader(XImageIO.class.getClassLoader(),
-                registry.getServiceProviders(category, filter, true));
+    }
+
+    /**
+     * Wraps the given iterator in order to give precedence to providers loaded by this
+     * application class loader, before providers loaded by class loaders of other applications.
+     *
+     * @since 3.20
+     */
+    private static <T extends ImageReaderWriterSpi> Iterator<T> orderForClassLoader(final Iterator<T> iterator) {
+        return Factories.orderForClassLoader(XImageIO.class.getClassLoader(), iterator);
     }
 
     /**
