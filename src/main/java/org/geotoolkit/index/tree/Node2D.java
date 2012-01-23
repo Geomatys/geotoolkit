@@ -211,6 +211,14 @@ public class Node2D extends Node{
         return boundary;
     }
     
+    public Rectangle2D getBound(){
+        return this.boundary.getBounds2D();
+    }
+    
+    public void setBound(Rectangle2D rect){
+        this.boundary = rect;
+    }
+    
     @Override
     public String toString() {
         final Collection col = new ArrayList(entries);

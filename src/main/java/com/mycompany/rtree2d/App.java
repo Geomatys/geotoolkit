@@ -27,17 +27,17 @@ public class App
         int time = 0;
 //        Tree arbre = TreeFactory.createTree(TreeCase.R_TREE2D_QUADRATIC_SPLIT, 4);
 //        Tree arbre = TreeFactory.createTree(TreeCase.STAR_RTREE2D, 4);//declenchement split ou ajout a revoir
-        Tree arbre = TreeFactory.createHilbertRTree2D(4, 2);//juste un trip de parent ou daffectation apre split 
+        Tree arbre = TreeFactory.createHilbertRTree2D(4, 3);//juste un trip de parent ou daffectation apre split 
         int compteur = 0;
 ////          
         
-//        for(;compteur<=100000;compteur++){
-//            double signeX = (Math.random()<0.5)?-1:1;
-//            double signeY = (Math.random()<0.5)?1:-1;
-//            double x = 200*Math.random()*signeX;
-//            double y = 120*Math.random()*signeY;
-//            arbre.insert(new Ellipse2D.Double(x, y, 0.5, 0.5));
-//        }
+        for(;compteur<=100000;compteur++){
+            double signeX = (Math.random()<0.5)?-1:1;
+            double signeY = (Math.random()<0.5)?1:-1;
+            double x = 200*Math.random()*signeX;
+            double y = 120*Math.random()*signeY;
+            arbre.insert(new Ellipse2D.Double(x, y, 0.5, 0.5));
+        }
         
         ///////////////////////////////////////////////////////////////////////////////////////
         
@@ -223,7 +223,7 @@ public class App
         arbre.search(searc, lEbis);
         long timeSearch = System.nanoTime();
         
-        System.out.println(arbre);
+//        System.out.println(arbre);
         
         
         

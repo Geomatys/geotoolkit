@@ -95,7 +95,7 @@ public class JTreePanel extends JPanel{
         HilbertNode2D hn2d = (HilbertNode2D)node;
         Rectangle2D boundnode = hn2d.getBoundary().getBounds2D();
         
-        if(hn2d.isLeaf()){
+        if((Boolean)hn2d.getUserProperty("isleaf")){
             for(Node2D nod : (List<Node2D>)hn2d.getUserProperty("cells")){
                 if(nod.getBoundary()!=null){
                     paintNode(nod, g2d, trs);
