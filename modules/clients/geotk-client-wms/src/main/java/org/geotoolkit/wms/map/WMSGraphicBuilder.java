@@ -159,12 +159,15 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 final Envelope env2D = CRS.transform(env, crs2d);
                 final AffineTransform2D gridToCRS = new AffineTransform2D(GO2Utilities.toAffine(dim, env2D));
 
+                //only if envelope is not empty, avoid a wms error
+                if(!env.isEmpty()){
+                    final String id = UUID.randomUUID().toString();
+                    final TileReference ref = new TileReference(id,
+                            CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), 
+                            gridToCRS, request);
+                    queries.add(ref);
+                }
                 
-                final String id = UUID.randomUUID().toString();
-                final TileReference ref = new TileReference(id,
-                        CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), 
-                        gridToCRS, request);
-                queries.add(ref);
             } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
