@@ -115,6 +115,15 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
                              str.equalsIgnoreCase("tiff"))){
                             return false;
                         }
+                        
+                        try{
+                            final GeoTiffImageReader reader = new GeoTiffImageReader(this);
+                            reader.setInput(source);
+                            reader.getImageMetadata(0);
+                        }catch(IOException ex){
+                            //failed to read metadatas
+                            return false;
+                        }
                         //ok
                     }else{
                         return false;
