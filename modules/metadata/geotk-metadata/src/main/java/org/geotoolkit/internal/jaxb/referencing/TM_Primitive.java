@@ -23,6 +23,7 @@ import java.util.logging.LogRecord;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.temporal.Period;
+import org.opengis.temporal.Instant;
 import org.opengis.temporal.TemporalPrimitive;
 
 import org.geotoolkit.resources.Errors;
@@ -40,7 +41,7 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -81,26 +82,44 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
     }
 
     /**
-     * Returns the {@link TemporalPrimitive} generated from the metadata value.
+     * Returns the {@link TimePeriod} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *
-     * @return The temporal primitive, or {@code null}.
-     *
-     * @todo Add other TemporalPrimitive than Period.
+     * @return The time period, or {@code null}.
      */
     @Override
     @XmlElement(name = "TimePeriod")
     public TimePeriod getElement() {
-        if (skip()) return null;
-        final TemporalPrimitive metadata = this.metadata;
-        if (metadata instanceof Period) {
-            return new TimePeriod((Period) metadata);
+        if (!skip()) {
+            final TemporalPrimitive metadata = this.metadata;
+            if (metadata instanceof Period) {
+                return new TimePeriod((Period) metadata);
+            }
         }
         return null;
     }
 
     /**
-     * Sets the value from the {@link TemporalPrimitive}.
+     * Returns the {@link TimeInstant} generated from the metadata value.
+     * This method is systematically called at marshalling-time by JAXB.
+     *
+     * @return The time instant, or {@code null}.
+     *
+     * @since 3.20
+     */
+    @XmlElement(name = "TimeInstant")
+    public TimeInstant getInstant() {
+        if (!skip()) {
+            final TemporalPrimitive metadata = this.metadata;
+            if (metadata instanceof Instant) {
+                return new TimeInstant((Instant) metadata);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value from the {@link TimePeriod}.
      * This method is called at unmarshalling-time by JAXB.
      *
      * @param period The adapter to set.
@@ -128,11 +147,42 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                 } catch (FactoryNotFoundException e) {
                     record = TemporalUtilities.createLog(e);
                 }
-                record.setSourceClassName(TemporalPrimitive.class.getName());
-                record.setSourceMethodName("setTimePeriod");
-                record.setLoggerName("org.geotoolkit.xml");
-                Logging.getLogger("org.geotoolkit.xml").log(record);
+                log("setTimePeriod", record);
             }
         }
+    }
+
+    /**
+     * Sets the value from the {@link TimeInstant}.
+     * This method is called at unmarshalling-time by JAXB.
+     *
+     * @param instant The adapter to set.
+     *
+     * @since 3.20
+     */
+    public void setInstant(final TimeInstant instant) {
+        metadata = null; // Cleaned first in case of failure.
+        if (instant != null) {
+            final Date position = XmlUtilities.toDate(instant.timePosition);
+            if (position != null) try {
+                metadata = TemporalUtilities.createInstant(position);
+                instant.copyIdTo(metadata);
+            } catch (FactoryNotFoundException e) {
+                log("setTimeInstant", TemporalUtilities.createLog(e));
+            }
+        }
+    }
+
+    /**
+     * Logs the given record. This method is invoked in case of failure or warning.
+     *
+     * @param method The name of the method to declare in the log record.
+     * @param record The record to log.
+     */
+    private static void log(final String method, final LogRecord record) {
+        record.setSourceClassName(TemporalPrimitive.class.getName());
+        record.setSourceMethodName(method);
+        record.setLoggerName("org.geotoolkit.xml");
+        Logging.getLogger("org.geotoolkit.xml").log(record);
     }
 }

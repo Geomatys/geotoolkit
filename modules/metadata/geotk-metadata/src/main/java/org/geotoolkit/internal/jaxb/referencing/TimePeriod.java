@@ -22,12 +22,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.opengis.temporal.Period;
-import org.opengis.temporal.Instant;
-import org.opengis.temporal.Position;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.lang.Workaround;
 
 
@@ -35,7 +32,7 @@ import org.geotoolkit.lang.Workaround;
  * The adapter for {@code "TimePeriod"}. This is an attribute of {@link TM_Primitive}.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -94,22 +91,8 @@ public final class TimePeriod extends GMLAdapter {
      */
     public TimePeriod(final Period period) {
         super(period);
-        beginPosition = toDate(period.getBeginning());
-        endPosition   = toDate(period.getEnding());
-    }
-
-    /**
-     * Creates a XML Gregorian Calendar from the given instants, if non-null.
-     * Otherwise returns {@code null}.
-     */
-    private static XMLGregorianCalendar toDate(final Instant instant) {
-        if (instant != null) {
-            final Position position = instant.getPosition();
-            if (position != null) {
-                return XmlUtilities.toXML(position.getDate());
-            }
-        }
-        return null;
+        beginPosition = TimeInstant.toDate(period.getBeginning());
+        endPosition   = TimeInstant.toDate(period.getEnding());
     }
 
     /**

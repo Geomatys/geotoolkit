@@ -247,8 +247,12 @@ final class NewGridCoverageIterator {
         int count = 0;
         int dateIndex = entry.imageIndex;
         for (final URI uri : aggregatedFiles) {
+            // The URI should start with "file://". If there is no scheme,
+            // assume that the string is directly a path in the native OS.
             final File file;
-            try {
+            if (uri.getScheme() == null) {
+                file = new File(uri.toString());
+            } else try {
                 file = new File(uri);
             } catch (IllegalArgumentException e) {
                 throw new IIOException(e.getLocalizedMessage(), e);
