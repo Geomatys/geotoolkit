@@ -46,8 +46,6 @@ public class JTreePanel extends JPanel{
         if(boundnode instanceof Shape){
             Rectangle2D rect = ((Shape)boundnode).getBounds2D();
             final double height = this.getHeight();
-            final double scaley = (float)height/rect.getHeight();
-//            System.out.println("scaley = "+scaley);
             trs.translate(this.getWidth()/2, this.getHeight()/2);
             trs.scale(3, 3);
             trs.translate( -rect.getCenterX(), -rect.getCenterY());
@@ -65,8 +63,6 @@ public class JTreePanel extends JPanel{
                 g2d.draw(trs.createTransformedShape(sh));
             }
         }
-            
-        
     }
     
     public void setTree(Tree tree){
@@ -76,14 +72,14 @@ public class JTreePanel extends JPanel{
     private void paintNode(Node2D node, Graphics2D g2d, AffineTransform trs){
         Rectangle2D boundnode = node.getBoundary().getBounds2D();
         for(Shape ent : node.getEntries()){
-            g2d.setColor(cO);
+            g2d.setColor(cL);
             g2d.draw(trs.createTransformedShape(ent));
         }
         
         for(Node2D nod : node.getChildren()){
             paintNode(nod, g2d,trs);
         }
-        if(node.isLeaf()){//attention seulement couche inférieur
+        if(node.isLeaf()){
             g2d.setColor(cO);            
             g2d.draw(trs.createTransformedShape(boundnode));
         }
@@ -115,21 +111,6 @@ public class JTreePanel extends JPanel{
                 paintHilberNode(nod, g2d, trs);
             }
         }
-        
-//        for(Shape ent : node.getEntries()){
-//            g2d.setColor(cO);
-//            g2d.draw(trs.createTransformedShape(ent));
-//        }
-//        
-//        for(Node2D nod : node.getChildren()){
-//            paintNode(nod, g2d,trs);
-//        }
-//        if(node.isLeaf()){//attention seulement couche inférieur
-//            g2d.setColor(cF);            
-//            g2d.draw(trs.createTransformedShape(boundnode));
-//        }
-            
-        
     }
     
 }

@@ -19,7 +19,7 @@ import org.geotoolkit.util.converter.Classes;
 /**Create a Node adapting with 2DEuclidean dimension datas.
  * 
  * @author Rémi Marechal (Geomatys)
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel  (Geomatys)
  */
 public class Node2D extends Node{
 
@@ -77,7 +77,11 @@ public class Node2D extends Node{
         }
     };
     
-    public Node2D(Tree tree) {
+    /**Create an empty {@code Node2D}.
+     * 
+     * @param tree 
+     */
+    public Node2D(final Tree tree) {
         this(tree, null, null, null);
     }
     
@@ -87,9 +91,10 @@ public class Node2D extends Node{
      * @param parent pointer on {@code Node2D} parent.
      * @param children subNode.
      * @param entries data(s) to add.
+     * @throws IllegalArgumentException if tree pointer is null.
      */
-    public Node2D(Tree tree, Node2D parent, List<Node2D> children, List<Shape> entries) {
-     //   ArgumentChecks.ensureNonNull("tree", tree);
+    public Node2D(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries) {
+        ArgumentChecks.ensureNonNull("tree", tree);
         this.tree = tree;
         this.parent = parent;
         if(children!=null){
@@ -159,10 +164,7 @@ public class Node2D extends Node{
      * 
      * @param parent 
      */
-    public void setParent(Node2D parent){
-//        if(this.parent!=null){
-//            throw new IllegalArgumentException("impossible d'affecter un parent non null");
-//        }
+    public void setParent(final Node2D parent){
         this.parent = parent;
     }
     
@@ -186,7 +188,11 @@ public class Node2D extends Node{
         }
     }
 
-    protected void addBound(Shape shape){
+    /**Update boundary size from shape.
+     * 
+     * @param shape 
+     */
+    protected void addBound(final Shape shape){
         
         if(boundary==null){
             boundary = (Rectangle2D)shape.getBounds2D().clone();
@@ -201,7 +207,11 @@ public class Node2D extends Node{
             boundary = bf;
         }
     }
+    
     /**
+     * <blockquote><font size=-1>
+     * <strong>NOTE: if boundary is null, method re-compute all subnode boundary.</strong> 
+     * </font></blockquote>
      * @return boundary.
      */
     public Shape getBoundary() {
@@ -211,14 +221,9 @@ public class Node2D extends Node{
         return boundary;
     }
     
-    public Rectangle2D getBound(){
-        return this.boundary.getBounds2D();
-    }
-    
-    public void setBound(Rectangle2D rect){
-        this.boundary = rect;
-    }
-    
+    /**
+     * {@inheritDoc}. 
+     */
     @Override
     public String toString() {
         final Collection col = new ArrayList(entries);

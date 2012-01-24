@@ -9,9 +9,9 @@ import javax.swing.JFrame;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.tree.JTreePanel;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeCase;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.TreeUtils;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.util.converter.Classes;
 
 /**
@@ -25,13 +25,13 @@ public class App
         
         
         int time = 0;
-//        Tree arbre = TreeFactory.createTree(TreeCase.R_TREE2D_QUADRATIC_SPLIT, 4);
-//        Tree arbre = TreeFactory.createTree(TreeCase.STAR_RTREE2D, 4);//declenchement split ou ajout a revoir
-        Tree arbre = TreeFactory.createHilbertRTree2D(4, 3);//juste un trip de parent ou daffectation apre split 
+//        Tree arbre = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
+        Tree arbre = TreeFactory.createStarRTree2D(4);//declenchement split ou ajout a revoir
+//        Tree arbre = TreeFactory.createHilbertRTree2D(4, 3);
         int compteur = 0;
 ////          
         
-        for(;compteur<=100000;compteur++){
+        for(;compteur<=1000000;compteur++){
             double signeX = (Math.random()<0.5)?-1:1;
             double signeY = (Math.random()<0.5)?1:-1;
             double x = 200*Math.random()*signeX;
@@ -178,7 +178,7 @@ public class App
             Shape s31 = new Ellipse2D.Double(0, 0, 5, 5);
             arbre.insert(s31);
             
-            Shape s32 = new Ellipse2D.Double(-60, -21, 5, 5);
+            Shape s32 = new Ellipse2D.Double(-60, -45, 5, 5);
             arbre.insert(s32);
             
             ////////////affiner delete methode !!!!!!!!

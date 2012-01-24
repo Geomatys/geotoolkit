@@ -9,36 +9,51 @@ import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 
-/**
+/**Create a "generic" 2D Tree.
  *
- * @author rmarech
+ * @author Rémi Marechal (Geomatys).
+ * @author Johann Sorel  (Geomatys).
  */
 public abstract class AbstractTree2D implements Tree<Shape>{
     
     private Node2D root;
     private final int maxElements;
 
+    /**Create 2 Dimension Tree
+     * 
+     * @param maxElements max value permit for each tree cells.
+     * @throws IllegalArgumentException if maxElements is out of required limits.
+     */
     public AbstractTree2D(int maxElements) {
-        ArgumentChecks.ensureStrictlyPositive("max elements parameter too small", maxElements);
+        ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", maxElements);
         this.maxElements = maxElements;
     }
 
+    /**
+     * @return max elements permitted by tree cells. 
+     */
     public int getMaxElements() {
         return maxElements;
     }
-       
+    /**
+     * {@inheritDoc}
+     */   
     public Node2D getRoot(){
         return root;
     }
     
+    /**Affect a new tree trunk.
+     * 
+     * @param root 
+     */
     protected void setRoot(Node2D root){
         this.root = root;
     }
     
-    /**Create a adapted Node for this tree.
+    /**Create a adapted {@code Node2D} in 2 dimension for this tree.
      * 
      * @param tree pointer on tree.
-     * @param parent Node parent.
+     * @param parent pointer on {@code Node2D} parent.
      * @param children subNode.
      * @param entries 
      * @return Node2D
@@ -46,9 +61,10 @@ public abstract class AbstractTree2D implements Tree<Shape>{
     public static Node2D createNode(Tree tree, Node2D parent, List<Node2D> children, List<Shape> entries) {
         return new Node2D(tree, parent, children, entries);
     }
-    
-    //protected abstract Node2D createNode(Tree tree, Node2D parent, List<Node2D> children, List<Entry2D<Object>>entries);
 
+    /**
+     * {@inheritDoc} 
+     */
     @Override
     public String toString() {
         return Classes.getShortClassName(this)+"\n"+getRoot();

@@ -9,7 +9,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
-/**
+/**Create CrossList.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -19,11 +19,17 @@ public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> i
         super(type);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void notifyAdd(T e, int i) {
         e.addListener(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void notifyAdd(Collection<? extends T> clctn, NumberRange<Integer> nr) {
         for(T n : clctn){
@@ -31,11 +37,17 @@ public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> i
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void notifyRemove(T e, int i) {
         e.removeListener(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void notifyRemove(Collection<? extends T> clctn, NumberRange<Integer> nr) {
         for(T n : clctn){

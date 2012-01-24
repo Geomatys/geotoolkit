@@ -9,20 +9,32 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 import org.geotoolkit.util.collection.CollectionChangeListener;
 
-/**
+/**Create "generic" Node.
  *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class Node {
 
     private final EventListenerList listenerList = new EventListenerList();
-    private final Map<String,Object> userProperties = new HashMap<String, Object>();
+    private Map<String,Object> userProperties ;
 
+    /**
+     * @param key
+     * @return user properties stocked at key emplacement.
+     */
     public Object getUserProperty(final String key) {
         return userProperties.get(key);
     }
 
+    /**Add user property with key access.
+     * 
+     * @param key 
+     * @param value Object will be stocked.
+     */
     public void setUserProperty(final String key, final Object value) {
+        if(userProperties == null){
+            userProperties = new HashMap<String, Object>(); 
+        }
         userProperties.put(key,value);
     }    
     

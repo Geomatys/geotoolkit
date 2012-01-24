@@ -4,13 +4,12 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.awt.Shape;
 import java.util.List;
 
 /**Define a generic Tree.
  *
- * @author Rémi Maréchal (Geomatys).
- * @author Yohann Sorel (Geomatys).
+ * @author Rémi Maréchal       (Geomatys).
+ * @author Yohann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
 public interface Tree<B> {
@@ -44,5 +43,8 @@ public interface Tree<B> {
      */
      int getMaxElements();
      
+     /**
+      * @return tree trunk.
+      */
      Node2D getRoot();
 }

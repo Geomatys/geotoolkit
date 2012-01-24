@@ -4,13 +4,17 @@
  */
 package org.geotoolkit.index.tree.basic;
 
+import java.util.List;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.index.tree.AbstractTree2D;
 import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.TreeUtils;
+import org.geotoolkit.util.ArgumentChecks;
 import static org.geotoolkit.index.tree.TreeUtils.*;
 
 /**Create R-Tree (Basic)
@@ -45,10 +49,13 @@ public class BasicRTree extends AbstractTree2D {
      */
     @Override
     public void insert(Shape entry) {
-        if(getRoot().isEmpty()){
-            getRoot().getEntries().add(entry);
-        }else{
-            insertNode(getRoot(), entry);
+        final Node2D root = getRoot();
+        if(root != null){
+            if(root.isEmpty()){
+                root.getEntries().add(entry);
+            }else{
+                insertNode(getRoot(), entry);
+            }
         }
     }
 
@@ -57,7 +64,10 @@ public class BasicRTree extends AbstractTree2D {
      */
     @Override
     public void delete(Shape entry) {
-        deleteNode(getRoot(), entry);
+        final Node2D root = getRoot();
+        if(root != null){
+            deleteNode(getRoot(), entry);
+        }
     }
 
     /**
@@ -71,9 +81,11 @@ public class BasicRTree extends AbstractTree2D {
      * 
      * @param candidate {@code Node2D} where user want insert data.
      * @param entry to insert.
+     * @throws IllegalArgumentException if candidate or entry are null.
      */
     private static void insertNode(final Node2D candidate, final Shape entry){
-        
+        ArgumentChecks.ensureNonNull("insertNode : candidate", candidate);
+        ArgumentChecks.ensureNonNull("insertNode : entry", entry);
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
@@ -108,10 +120,13 @@ public class BasicRTree extends AbstractTree2D {
     
     /**Split a overflow {@code Node2D} in accordance with R-Tree properties.
      * 
-     * @param candidate {@code Node2D} to Split
+     * @param candidate {@code Node2D} to Split.
+     * @throws IllegalArgumentException if candidate is null.
+     * @throws IllegalArgumentException if candidate elements number is lesser 2.
      * @return List<Node2D> which contains two {@code Node2D} (split of candidate).
      */
     private static List<Node2D> splitNode(final Node2D candidate){
+        ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         if(countElements(candidate) < 2){
             throw new IllegalArgumentException("not enought elements within "+candidate+" to split.");
         }
@@ -156,11 +171,22 @@ public class BasicRTree extends AbstractTree2D {
             }break;
                 
             case QUADRATIC : {
+                Rectangle2D rectGlobal;
                 for(int i=0;i<ls.size()-1;i++){
                     for(int j = i+1;j<ls.size();j++){
-                        lfTemp = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)ls.get(i),(Shape)ls.get(j))) 
-                                        : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)ls.get(i),(Node2D)ls.get(j)), null);
-                        tempValue = getDeadSpace(lfTemp);
+//                        lfTemp = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)ls.get(i),(Shape)ls.get(j))) 
+//                                        : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)ls.get(i),(Node2D)ls.get(j)), null);
+//                        tempValue = getDeadSpace(lfTemp);
+                        if(leaf){
+                            rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)ls.get(i),(Shape)ls.get(j))).getBounds2D();
+                        }else{
+                            Rectangle2D bound1 = ((Node2D)ls.get(i)).getBoundary().getBounds2D();
+                            Rectangle2D bound2 = ((Node2D)ls.get(j)).getBoundary().getBounds2D();
+                            rectGlobal = TreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)bound1,bound2)).getBounds2D();
+                            tempValue = rectGlobal.getWidth()*rectGlobal.getHeight() - ();
+                        }
+                        
+                        
                         if(tempValue > refValue){
                             s1 = ls.get(i);
                             s2 = ls.get(j);
@@ -269,10 +295,13 @@ public class BasicRTree extends AbstractTree2D {
      * 
      * @param children List of {@code Node2D}.
      * @param entry {@code Entry2D<Object>} to add.
+     * @throws IllegalArgumentException if children or entry are null.
+     * @throws IllegalArgumentException if children is empty.
      * @return {@code Node2D} which is appropriate to contain shap.
      */
     private static Node2D chooseSubtree(final List<Node2D> children, final Shape entry){
-        
+        ArgumentChecks.ensureNonNull("chooseSubtree : List<Node2D> children", children);
+        ArgumentChecks.ensureNonNull("chooseSubtree : Shape entry", entry);
         if(children.isEmpty()){
             throw new IllegalArgumentException("chooseSubtree : ln is empty");
         }
@@ -281,7 +310,7 @@ public class BasicRTree extends AbstractTree2D {
             return children.get(0);
         }
         
-        Rectangle2D sB = entry.getBounds2D();
+        final Rectangle2D sB = entry.getBounds2D();
         Node2D n = children.get(0);
         
         for(Node2D nod : children){
