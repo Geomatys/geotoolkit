@@ -4,16 +4,19 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
-/**Create CrossList.
+/**
+ * A subclass of NotifiedCheckedList which listen to it's contained Node.
+ * This allow to automatically forward events.
  *
+ * @param <T> 
  * @author Johann Sorel (Geomatys)
  */
-public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> implements CollectionChangeListener<T> {
+public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> implements PropertyChangeListener{
 
     public CrossList(final Class<T> type) {
         super(type);

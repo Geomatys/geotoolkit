@@ -16,7 +16,7 @@ import static org.geotoolkit.index.tree.TreeUtils.*;
 
 /**Create R*Tree.
  *
- * @author Maréchal Rémi (Geomatys)
+ * @author Rémi Maréchal (Geomatys)
  * @author Johann Sorel  (Geomatys).
  * @version SNAPSHOT
  */
@@ -24,7 +24,7 @@ public class StarRTree extends AbstractTree2D{
 
     /**
      * In accordance with R*Tree properties.
-     * To avoid unneccessary split permit to 
+     * To avoid unnecessary split permit to 
      * reinsert some elements just one time.
      */
     private boolean insertAgain = true;
@@ -82,13 +82,17 @@ public class StarRTree extends AbstractTree2D{
      * @throws IllegalArgumentException if {@code List<Node2D>} listSubnode is null.
      * @throws IllegalArgumentException if {@code Shape} entry is null.
      * @throws IllegalArgumentException if {@code List<Node2D>} listSubnode is empty.
-     * @return {@code Node} which is appropriate to contain shap.
+     * @return {@code Node} which is appropriate to contain shape.
      */
     private static Node2D chooseSubtree(final List<Node2D> listSubnode, final Shape entry){
         ArgumentChecks.ensureNonNull("chooseSubtree : List<Node2D> lN", listSubnode);
         ArgumentChecks.ensureNonNull("chooseSubtree : Shape entry", entry);
         if(listSubnode.isEmpty()){
             throw new IllegalArgumentException("impossible to find subtree from empty list");
+        }
+        
+        if(listSubnode.size() == 1){
+            return listSubnode.get(0);
         }
         
         for (Node2D no : listSubnode) {
@@ -98,6 +102,7 @@ public class StarRTree extends AbstractTree2D{
         }
 
         int index = 0;
+        
         final Rectangle2D rtotal = listSubnode.get(0).getParent().getBoundary().getBounds2D();
         double overlaps = rtotal.getWidth() * rtotal.getHeight();
 
@@ -140,6 +145,7 @@ public class StarRTree extends AbstractTree2D{
     private static void insertNode(final Node2D candidate, final Shape entry) {
         ArgumentChecks.ensureNonNull("insertNode : candidate", candidate);
         ArgumentChecks.ensureNonNull("insertNode : entry", entry);
+        
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
@@ -148,7 +154,7 @@ public class StarRTree extends AbstractTree2D{
         
         final StarRTree tree = (StarRTree)candidate.getTree();
         final int maxElmts = tree.getMaxElements();
-        final List<Node2D> lC = candidate.getChildren(); 
+        
         if(countElements(candidate) > maxElmts && tree.getIA()){
             tree.setIA(false);
             final List<Shape> lsh30 = getElementAtMore33PerCent(candidate);
@@ -162,16 +168,16 @@ public class StarRTree extends AbstractTree2D{
         }
         
         if(!candidate.isLeaf()){
-            for(int i = lC.size()-1; i>=0; i--){
-                if(countElements(lC.get(i)) >maxElmts){
-                    final Node2D ns = lC.remove(i);
-                    final List<Node2D> l = splitNode(ns);
-                    final Node2D l0 = l.get(0);
-                    final Node2D l1 = l.get(1);
+            final List<Node2D> lN =  candidate.getChildren();
+            for(int i = lN.size()-1;i>=0;i--){
+                if(countElements(lN.get(i)) > candidate.getTree().getMaxElements()){
+                    final Node2D n = lN.remove(i);
+                    List<Node2D> ls = splitNode(n);
+                    Node2D l0 = ls.get(0);
+                    Node2D l1 = ls.get(1);
                     l0.setParent(candidate);
                     l1.setParent(candidate);
-                    lC.add(l0);
-                    lC.add(l1);
+                    lN.addAll(ls);
                     if(l0.isLeaf()&&l1.isLeaf()&&l0.getBoundary().intersects(l1.getBoundary().getBounds2D())){
                         branchGrafting(l0, l1);
                     }
@@ -181,17 +187,17 @@ public class StarRTree extends AbstractTree2D{
         
         if(candidate.getParent()==null){
             if(countElements(candidate)>candidate.getTree().getMaxElements()){
-                final List<Node2D> l = splitNode(candidate);
-                final Node2D l0 = l.get(0);
-                final Node2D l1 = l.get(1);
+                List<Node2D> l = splitNode(candidate);
+                Node2D l0 = l.get(0);
+                Node2D l1 = l.get(1);
                 l0.setParent(candidate);
                 l1.setParent(candidate);
-                candidate.getEntries().clear();
-                candidate.getChildren().clear();
-                candidate.getChildren().addAll(l);
                 if(l0.isLeaf()&&l1.isLeaf()&&l0.getBoundary().intersects(l1.getBoundary().getBounds2D())){
                     branchGrafting(l0, l1);
                 }
+                candidate.getEntries().clear();
+                candidate.getChildren().clear();
+                candidate.getChildren().addAll(l);
             }
         }
     }
@@ -210,12 +216,12 @@ public class StarRTree extends AbstractTree2D{
         }
         
         final List<Node2D> lsn = new ArrayList<Node2D>(splitAxis(candidate));
-        for(int i = lsn.size()-1;i>=0;i--){
-            if(lsn.get(i).getChildren().size()==1){
-                final Node2D nt = lsn.remove(i);
-                lsn.addAll(nt.getChildren());
-            }
-        }
+//        for(int i = lsn.size()-1;i>=0;i--){
+//            if(lsn.get(i).getChildren().size()==1){
+//                final Node2D nt = lsn.remove(i);
+//                lsn.addAll(nt.getChildren());
+//            }
+//        }
         return lsn;
     }
     

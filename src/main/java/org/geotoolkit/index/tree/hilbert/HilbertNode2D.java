@@ -83,7 +83,7 @@ public class HilbertNode2D extends Node2D{
                 addBound(nod.getBoundary());
             }
             HilbertRTree.searchHilbertNode(this, getBound(), lS);
-            HilbertRTree.createBasicHB(this, (Integer)getUserProperty("hilbertOrder"), getBound());
+            HilbertRTree.createBasicHB(this, (Integer)getUserProperty("hilbertOrder"), TreeUtils.getEnveloppeMin(lS).getBounds2D());
             for(Shape sh : lS){
                 HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
             }

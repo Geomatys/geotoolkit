@@ -4,10 +4,10 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.event.EventListenerList;
-import org.geotoolkit.util.collection.CollectionChangeListener;
 
 /**Create "generic" Node.
  *
@@ -20,9 +20,12 @@ public abstract class Node {
 
     /**
      * @param key
-     * @return user properties stocked at key emplacement.
+     * @return user property for given key
      */
     public Object getUserProperty(final String key) {
+        if(userProperties == null){
+            return null;
+        }
         return userProperties.get(key);
     }
 
@@ -38,20 +41,20 @@ public abstract class Node {
         userProperties.put(key,value);
     }    
     
-    public void addListener(CollectionChangeListener l) {
-        listenerList.add(CollectionChangeListener.class, l);
+    public void addListener(PropertyChangeListener l) {
+        listenerList.add(PropertyChangeListener.class, l);
     }
 
-    public void removeListener(CollectionChangeListener l) {
-        listenerList.remove(CollectionChangeListener.class, l);
+    public void removeListener(PropertyChangeListener l) {
+        listenerList.remove(PropertyChangeListener.class, l);
     }
 
     protected void fireCollectionEvent() {
 
-        final CollectionChangeListener[] listeners = listenerList.getListeners(CollectionChangeListener.class);
+        final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
 
-        for (CollectionChangeListener l : listeners) {
-            l.collectionChange(null);
+        for (PropertyChangeListener l : listeners) {
+            l.propertyChange(null);
         }
     }
 }

@@ -227,7 +227,7 @@ public final class TreeUtils {
      * @param indice to select criterion.
      * @throws IllegalArgumentException if lCN is empty or null.
      * @throws IllegalArgumentException if indice is out of required limits.
-     * @return {@code List<Node2D>} with size = 2, which is selectionned couple of {@code Node}.
+     * @return {@code List<Node2D>} with size = 2, which is selected couple of {@code Node}.
      */
     public static List<Node2D> getMinOverlapsOrPerimeter(final List<CoupleNode2D> lCN, int indice) {
 
@@ -275,6 +275,7 @@ public final class TreeUtils {
      *      - case 1 : to choose x axis split.
      *      - case 2 : to choose y axis split.
      * 
+     * @param candidate Node2D will be split.
      * @param index choose one or 2
      * @return List of two Node which is split of Node passed in parameter.
      * @throws Exception if try to split leaf with only one element.
@@ -303,12 +304,14 @@ public final class TreeUtils {
         final List splitList2 = new ArrayList();
         List listElements;
         
+        
+        int splitAxe = defineSplitAxis(candidate);
         if(leaf){
             listElements = candidate.getEntries();
-            organize_List2DElements_From(defineSplitAxis(candidate), null, listElements);
+            organize_List2DElements_From(splitAxe, null, listElements);
         }else{
             listElements = candidate.getChildren();
-            organize_List2DElements_From(defineSplitAxis(candidate), listElements, null);
+            organize_List2DElements_From(splitAxe, listElements, null);
         }
         
         CoupleNode2D couNN;
@@ -337,10 +340,18 @@ public final class TreeUtils {
             splitList1.clear();
             splitList2.clear();
         }
-        return lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);
+        
+        List<Node2D> lResult = lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);
+        for(Node2D nod : lResult){
+            for(Node2D nc : nod.getChildren()){
+                nc.setParent(nod);
+            }
+        }
+        return lResult;
+//        return lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);//ici bug
     }
     
-    /**Compute euclidean distance between two {@code Point2D}.
+    /**Compute Euclidean distance between two {@code Point2D}.
      * 
      * @param pointA
      * @param pointB
@@ -630,11 +641,11 @@ public final class TreeUtils {
             if(child.isEmpty()){
                 children.remove(i);
             }else if(child.getChildren().size() ==1){
-                children.remove(i);
-                for(Node2D n2d : child.getChildren()){
+                Node2D n = children.remove(i);
+                for(Node2D n2d : n.getChildren()){
                     n2d.setParent(candidate);
                 }
-                children.addAll(child.getChildren());
+                children.addAll(n.getChildren());
             }else if(child.isLeaf()&&child.getEntries().size()<=tree.getMaxElements()/3){
                 reinsertList.addAll(child.getEntries());
                 children.remove(i);

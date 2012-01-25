@@ -111,13 +111,13 @@ public class HilbertRTree extends AbstractTree2D{
         if (candidate.isFull()) {
             List<Node2D> lSp = splitNode2D((HilbertNode2D)candidate);
             if (lSp != null) {
+                final Node2D lsp0 = lSp.get(0);
+                final Node2D lsp1 = lSp.get(1);
                 ((List<Point2D>)candidate.getUserProperty("centroids")).clear();
                 ((List<Node2D>)candidate.getUserProperty("cells")).clear();
                 candidate.getChildren().clear();
                 candidate.setUserProperty("isleaf", false);
                 candidate.setUserProperty("hilbertOrder", 0);
-                final Node2D lsp0 = lSp.get(0);
-                final Node2D lsp1 = lSp.get(1);
                 lsp0.setParent(candidate);
                 lsp1.setParent(candidate);
                 if (lsp0.isLeaf()&&lsp1.isLeaf()&&lsp0.getBoundary().intersects(lsp1.getBoundary().getBounds2D())) {
@@ -140,10 +140,8 @@ public class HilbertRTree extends AbstractTree2D{
             }else{
                 chooseSubtree(candidate, entry).getEntries().add(entry);
             }
-                
         } else {
-            HilbertNode2D nchoose = (HilbertNode2D)chooseSubtree(candidate, entry);
-            insertNode(nchoose, entry);
+            insertNode(chooseSubtree(candidate, entry), entry);
         }
     }
     
@@ -326,7 +324,7 @@ public class HilbertRTree extends AbstractTree2D{
     public static Node2D chooseSubtree(Node2D candidate, Shape entry) {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
        
-        if(candidate.isFull()){
+        if(candidate.isLeaf()&&candidate.isFull()){
             throw new IllegalStateException("impossible to choose subtree in overflow node");
         }
         

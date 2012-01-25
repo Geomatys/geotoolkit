@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.tree.JTreePanel;
+import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.TreeUtils;
@@ -24,29 +25,31 @@ public class App
     {
         
         
+        
+        
+        
         int time = 0;
 //        Tree arbre = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
-        Tree arbre = TreeFactory.createStarRTree2D(4);//declenchement split ou ajout a revoir
-//        Tree arbre = TreeFactory.createHilbertRTree2D(4, 3);
+//        Tree arbre = TreeFactory.createStarRTree2D(4);//declenchement split ou ajout a revoir
+        Tree arbre = TreeFactory.createHilbertRTree2D(4, 2);
         int compteur = 0;
-////          
         
-        for(;compteur<=1000000;compteur++){
-            double signeX = (Math.random()<0.5)?-1:1;
-            double signeY = (Math.random()<0.5)?1:-1;
-            double x = 200*Math.random()*signeX;
-            double y = 120*Math.random()*signeY;
-            arbre.insert(new Ellipse2D.Double(x, y, 0.5, 0.5));
-        }
+//        for(;compteur<=500000;compteur++){
+//            double signeX = (Math.random()<0.5)?-1:1;
+//            double signeY = (Math.random()<0.5)?1:-1;
+//            double x = 200*Math.random()*signeX;
+//            double y = 120*Math.random()*signeY;
+//            arbre.insert(new Ellipse2D.Double(x, y, 0.5, 0.5));
+//        }
         
         ///////////////////////////////////////////////////////////////////////////////////////
         
-//        for(int j= -120;j<=120;j+=4){
-//            for(int i = -200;i<=200;i+=4){
-//                arbre.insert(new Ellipse2D.Double(i, j, 1, 1));
-//                compteur++;
-//            }
-//        }
+        for(int j= -120;j<=120;j+=4){
+            for(int i = -200;i<=200;i+=4){
+                arbre.insert(new Ellipse2D.Double(i, j, 1, 1));
+                compteur++;
+            }
+        }
 //////        int test = 0;
 //        for(int j= -120;j<=120;j+=4){
 //            for(int i = -200;i<=200;i+=4){
@@ -112,13 +115,13 @@ public class App
             
             Shape s9 = new Ellipse2D.Double(21, 60, 5, 5);
             arbre.insert(s9);
-           
+//           
             Shape s10 = new Ellipse2D.Double(45, 60, 5, 5);
             arbre.insert(s10);
             
             Shape s11 = new Ellipse2D.Double(60, 60, 5, 5);
             arbre.insert(s11);
-            
+//            
             Shape s12 = new Ellipse2D.Double(60, 45, 5, 5);
             arbre.insert(s12);
             

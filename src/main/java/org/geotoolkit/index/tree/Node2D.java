@@ -6,6 +6,7 @@ package org.geotoolkit.index.tree;
 
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -53,7 +54,7 @@ public class Node2D extends Node{
             clearBounds();
         }
 
-        public void collectionChange(CollectionChangeEvent<Node2D> cce) {
+        public void propertyChange(PropertyChangeEvent evt) {
             clearBounds();
         }
     };

@@ -7,14 +7,12 @@ package org.geotoolkit.index.tree.basic;
 import java.util.List;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Arrays;
-import org.geotoolkit.index.tree.Node2D;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.AbstractTree2D;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeUtils;
-import org.geotoolkit.util.ArgumentChecks;
 import static org.geotoolkit.index.tree.TreeUtils.*;
 
 /**Create R-Tree (Basic)
@@ -41,7 +39,10 @@ public class BasicRTree extends AbstractTree2D {
      * {@inheritDoc} 
      */
     public void search(Shape regionSearch, List<Shape> result) {
-        searchNode(getRoot(), regionSearch, result);
+        final Node2D root = getRoot();
+        if(root!=null){
+            searchNode(getRoot(), regionSearch, result);
+        }
     }
     
     /**
@@ -123,7 +124,7 @@ public class BasicRTree extends AbstractTree2D {
      * @param candidate {@code Node2D} to Split.
      * @throws IllegalArgumentException if candidate is null.
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
-     * @return List<Node2D> which contains two {@code Node2D} (split of candidate).
+     * @return List<Node2D> which contains two {@code Node2D} (split result of candidate).
      */
     private static List<Node2D> splitNode(final Node2D candidate){
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
@@ -136,7 +137,6 @@ public class BasicRTree extends AbstractTree2D {
         boolean leaf = candidate.isLeaf();
         List<?> ls;
         Object s1, s2 ;
-        Node2D lfTemp;
         
         if(leaf){
             ls =  candidate.getEntries();
@@ -171,21 +171,22 @@ public class BasicRTree extends AbstractTree2D {
             }break;
                 
             case QUADRATIC : {
-                Rectangle2D rectGlobal;
+                Rectangle2D rectGlobal, bound1, bound2;
                 for(int i=0;i<ls.size()-1;i++){
                     for(int j = i+1;j<ls.size();j++){
-//                        lfTemp = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)ls.get(i),(Shape)ls.get(j))) 
-//                                        : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)ls.get(i),(Node2D)ls.get(j)), null);
-//                        tempValue = getDeadSpace(lfTemp);
                         if(leaf){
-                            rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)ls.get(i),(Shape)ls.get(j))).getBounds2D();
+                            bound1 = ((Shape)ls.get(i)).getBounds2D();
+                            bound2 = ((Shape)ls.get(j)).getBounds2D();
+                            rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)bound1,(Shape)bound2)).getBounds2D();
+                            
                         }else{
-                            Rectangle2D bound1 = ((Node2D)ls.get(i)).getBoundary().getBounds2D();
-                            Rectangle2D bound2 = ((Node2D)ls.get(j)).getBoundary().getBounds2D();
+                            bound1 = ((Node2D)ls.get(i)).getBoundary().getBounds2D();
+                            bound2 = ((Node2D)ls.get(j)).getBoundary().getBounds2D();
                             rectGlobal = TreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)bound1,bound2)).getBounds2D();
-                            tempValue = rectGlobal.getWidth()*rectGlobal.getHeight() - ();
+                            
                         }
-                        
+                        tempValue = rectGlobal.getWidth()*rectGlobal.getHeight() 
+                                        - (bound1.getWidth()*bound1.getHeight()+bound2.getWidth()*bound2.getHeight());
                         
                         if(tempValue > refValue){
                             s1 = ls.get(i);
@@ -201,20 +202,22 @@ public class BasicRTree extends AbstractTree2D {
         
         ls.remove(Math.max(index1, index2));
         ls.remove(Math.min(index1, index2));
-        Node2D b1Temp, b2Temp;
+        Rectangle2D r1Temp, r2Temp;
         Node2D result1 = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)s1))
                                 : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)s1), null);
         Node2D result2 = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)s2))
                                 : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)s2), null);
-        final double demimaxE = maxElmnts/2;
-        
+        double demimaxE = maxElmnts/3;
+        demimaxE = Math.max(demimaxE, 1);
         if(leaf){
             for(Shape ent : (List<Shape>)ls){
-                b1Temp = createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)s1, ent));
-                b2Temp = createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape)s2, ent));
+                r1Temp = getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)s1, ent)).getBounds2D();
+                r2Temp = getEnveloppeMin(UnmodifiableArrayList.wrap((Shape)s2, ent)).getBounds2D();
+                double area1 = r1Temp.getWidth()*r1Temp.getHeight();
+                double area2 = r2Temp.getWidth()*r2Temp.getHeight();
                 int r1nbE = countElements(result1);
                 int r2nbE = countElements(result2);
-                if(b1Temp.getArea()<b2Temp.getArea()){
+                if(area1<area2){
                     if(r1nbE<=demimaxE&&r2nbE>demimaxE){
                         insertNode(result1, ent);
                     }else if(r2nbE<=demimaxE&&r1nbE>demimaxE){
@@ -222,7 +225,7 @@ public class BasicRTree extends AbstractTree2D {
                     }else{
                         insertNode(result1, ent);
                     }
-                }else if(b1Temp.getArea() == b2Temp.getArea()){
+                }else if(area1 == area2){
                     if(r1nbE<r2nbE){
                         insertNode(result1, ent);
                     }else{
@@ -231,7 +234,7 @@ public class BasicRTree extends AbstractTree2D {
                 }else{
                     if(r1nbE<=demimaxE&&r2nbE>demimaxE){
                         insertNode(result1, ent);
-                    }else if(r2nbE<=maxElmnts/2&&r1nbE>maxElmnts/2){
+                    }else if(r2nbE<=demimaxE&&r1nbE>demimaxE){
                         insertNode(result2,ent);
                     }else{
                         insertNode(result2,ent);
@@ -243,27 +246,31 @@ public class BasicRTree extends AbstractTree2D {
             final List<Node2D> listResult2 = result2.getChildren();
             
             for(Node2D no : (List<Node2D>)ls){
-                b1Temp = createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)s1, no), null);
-                b2Temp = createNode(tree, null, UnmodifiableArrayList.wrap((Node2D)s2, no), null);
 
-                if(b1Temp.getArea() < b2Temp.getArea()){
-                    if(countElements(result1) <=maxElmnts/2&&countElements(result2) > maxElmnts/2){
+                r1Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(((Node2D)s1).getBoundary(), no.getBoundary())).getBounds2D();
+                r2Temp = getEnveloppeMin(UnmodifiableArrayList.wrap(((Node2D)s2).getBoundary(), no.getBoundary())).getBounds2D();
+                double area1 = r1Temp.getWidth()*r1Temp.getHeight();
+                double area2 = r2Temp.getWidth()*r2Temp.getHeight();
+                int lrs1 = listResult1.size();
+                int lrs2 = listResult2.size();
+                if(area1 < area2){
+                    if(lrs1 <=demimaxE&&lrs2 > demimaxE){
                         listResult1.add(no);
-                    }else if(countElements(result2)<=maxElmnts/2&&countElements(result1) > maxElmnts/2){
+                    }else if(lrs2<=demimaxE&&lrs1 > demimaxE){
                         listResult2.add(no);
                     }else{
                         listResult1.add(no);
                     }
-                }else if(b1Temp.getArea() == b2Temp.getArea()){
-                    if(countElements(b1Temp) < countElements(b2Temp)){
+                }else if(area1 == area2){
+                    if(lrs1 < lrs2){
                         listResult1.add(no);
                     }else{
                         listResult2.add(no);
                     }
                 }else{
-                    if(countElements(result1)<=maxElmnts/2&&countElements(result2)>maxElmnts/2){
+                    if(lrs1<=demimaxE&&lrs2>demimaxE){
                         listResult1.add(no);
-                    }else if(countElements(result2)<=maxElmnts/2&&countElements(result1)>maxElmnts/2){
+                    }else if(lrs2<=demimaxE&&lrs1>demimaxE){
                         listResult2.add(no);
                     }else{
                         listResult2.add(no);
@@ -288,13 +295,13 @@ public class BasicRTree extends AbstractTree2D {
         return UnmodifiableArrayList.wrap(result1, result2);
     }
     
-/**Find appropriate {@code Node2D} to contains {@code Entry2D<Object>}.
+/**Find appropriate {@code Node2D} to insert {@code Shape}.
      * To define appropriate Node, criterion are : 
      *      - require minimum area enlargement to cover shap.
-     *      - or put into {@code Node2D} with lesser elements number in case area equals.
+     *      - or put into {@code Node2D} with lesser elements number in case of area equals.
      * 
      * @param children List of {@code Node2D}.
-     * @param entry {@code Entry2D<Object>} to add.
+     * @param entry {@code Shape} to add.
      * @throws IllegalArgumentException if children or entry are null.
      * @throws IllegalArgumentException if children is empty.
      * @return {@code Node2D} which is appropriate to contain shap.
