@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.coverage;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -31,15 +30,14 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * A best of toolkit for DataStoreFactory implementors.
+ * General implementation of methods for CoverageStoreFactory implementations.
  *
- * @author Jody Garnett, Refractions Research
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
+public abstract class AbstractCoverageStoreFactory extends Factory implements CoverageStoreFactory {
 
-    /** parameter for namespace of the datastore */
+    /** parameter for namespace of the coveragestore */
     public static final ParameterDescriptor<String> NAMESPACE =
              new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);
 
@@ -66,9 +64,9 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore createCoverageStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createDataStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return createCoverageStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -78,9 +76,9 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore createNewCoverageStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createNewDataStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return createNewCoverageStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }

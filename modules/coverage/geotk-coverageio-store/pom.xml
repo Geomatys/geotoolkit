@@ -65,6 +65,11 @@
             <artifactId>geotk-coverageio</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-feature</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
