@@ -18,7 +18,7 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
-
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -26,7 +26,6 @@ import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NullArgumentException;
-
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
@@ -40,14 +39,26 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
 
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(DefaultGeographicCRS.WGS84, -180, 180, -90, 90);
 
+    private final CoverageReference ref;
     private final GridCoverageReader reader;
     private final Name coverageName;
+    
+    DefaultCoverageMapLayer(final CoverageReference ref, final MutableStyle style, final Name name){
+        super(style);
+        if(ref == null || name == null || name.toString() == null || name.getLocalPart() == null){
+            throw new NullArgumentException("Coverage Reader and name can not be null");
+        }
+        this.ref = ref;
+        this.reader = null;
+        this.coverageName = name;
+    }
     
     DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
         super(style);
         if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
             throw new NullArgumentException("Coverage Reader and name can not be null");
         }
+        this.ref = null;
         this.reader = reader;
         this.coverageName = name;
     }
@@ -65,9 +76,20 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
      */
     @Override
     public GridCoverageReader getCoverageReader(){
+        if(ref != null){
+            return ref.createReader();
+        }
         return reader;
     }
         
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public CoverageReference getCoverageReference() {
+        return ref;
+    }
+    
     /**
      * {@inheritDoc }
      */

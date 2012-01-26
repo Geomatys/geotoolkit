@@ -21,30 +21,28 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
-
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.SimpleInternationalString;
-
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.util.GenericName;
 
 /**
@@ -60,6 +58,7 @@ public final class MapBuilder {
 
     /**
      * Create a Default Mapcontext object using coordinate reference system : CRS:84.
+     * @return MapContext
      */
     public static MapContext createContext(){
         return createContext(DefaultGeographicCRS.WGS84);
@@ -69,6 +68,8 @@ public final class MapBuilder {
      * Create a Default Mapcontext object with the given coordinate reference system.
      * The crs is not used for rendering, it is only used when calling the getEnvelope
      * method.
+     * @param crs : mapcontext CoordinateReferenceSystem
+     * @return MapContext 
      */
     public static MapContext createContext(final CoordinateReferenceSystem crs){
         return new DefaultMapContext(crs);
@@ -76,6 +77,7 @@ public final class MapBuilder {
 
     /**
      * Create a Default MapItem object. It can be used to group layers.
+     * @return MapItem
      */
     public static MapItem createItem(){
         return new DefaultMapItem();
@@ -85,6 +87,7 @@ public final class MapBuilder {
      * Create an empty map layer without any datas. It can be useful in different
      * kind of applications, like holding a space in the map context for a layer
      * when a datastore is unavailable.
+     * @return EmptyMapLayer
      */
     public static EmptyMapLayer createEmptyMapLayer(){
         final Hints hints = new Hints();
@@ -95,6 +98,9 @@ public final class MapBuilder {
 
     /**
      * Create a default collection map layer with a collection and a style.
+     * @param collection layer data collection
+     * @param style layer style
+     * @return CollectionMapLayer
      */
     public static CollectionMapLayer createCollectionLayer(final Collection<?> collection, final MutableStyle style){
         return new DefaultCollectionMapLayer(collection, style);
@@ -102,6 +108,9 @@ public final class MapBuilder {
 
     /**
      * Create a default feature map layer with a feature collection and a style.
+     * @param collection layer data collection
+     * @param style layer style
+     * @return FeatureMapLayer
      */
     public static FeatureMapLayer createFeatureLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style){
         return new DefaultFeatureMapLayer(collection, style);
@@ -109,6 +118,10 @@ public final class MapBuilder {
 
     /**
      * Create a default coverage map layer with a gridCoverage, a style and the grid name.
+     * @param grid GridCoverage2D
+     * @param style layer style
+     * @param name layer name
+     * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
         return createCoverageLayer(new SimpleCoverageReader(grid), style, name);
@@ -116,10 +129,28 @@ public final class MapBuilder {
 
     /**
      * Create a default coverage map layer with a coverageReader, a style and the grid name.
+     * @param reader GridCoverageReader
+     * @param style layer style
+     * @param name layer name
+     * @return  CoverageMapLayer
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, final MutableStyle style, final String name){
         ensureNonNull("name", name);
         final CoverageMapLayer layer = new DefaultCoverageMapLayer(reader, style, new DefaultName(name) );
+        layer.setDescription(new DefaultDescription(new SimpleInternationalString(name), new SimpleInternationalString(name)));
+        return layer;
+    }
+
+    /**
+     * Create a default coverage map layer with a coveragrReference, a style and the grid name.
+     * @param ref CoverageReference
+     * @param style layer style
+     * @param name layer name
+     * @return  CoverageMapLayer
+     */
+    public static CoverageMapLayer createCoverageLayer(final CoverageReference ref, final MutableStyle style, final String name){
+        ensureNonNull("name", name);
+        final CoverageMapLayer layer = new DefaultCoverageMapLayer(ref, style, new DefaultName(name) );
         layer.setDescription(new DefaultDescription(new SimpleInternationalString(name), new SimpleInternationalString(name)));
         return layer;
     }

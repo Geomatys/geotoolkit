@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.map;
 
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.feature.type.Name;
 
@@ -32,7 +33,14 @@ public interface CoverageMapLayer extends MapLayer{
     
     /**
      * CoverageReader used to obtain GridCoverages.
+     * @return GridCoverageReader
      */
     GridCoverageReader getCoverageReader();
         
+    /**
+     * If layer is from a coverage store, returns it's reference
+     * @return CoverageReference, can be null.
+     */
+    CoverageReference getCoverageReference();
+    
 }

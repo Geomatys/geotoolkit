@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2011, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,71 +14,103 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.client.map;
+package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.Dimension;
-import java.util.AbstractMap.SimpleImmutableEntry;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Abstract graphic rendering tiled services.
- * Child class must provide a pyramid definition.
+ * Graphic for pyramidal coverage layers.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
+public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
 
-    private final double tolerance;
-    
-    /**
-     * 
-     * @param canvas
-     * @param crs
-     * @param resolutionTolerance : since tiles are at given scale level
-     * if tile contain texts it is not always efficient to take the highest mosaic
-     * above. it might be better to have text slightly bigger rather then N times bigger.
-     * value in %.
-     */
-    public AbstractPyramidGraphic(final J2DCanvas canvas, 
-            final CoordinateReferenceSystem crs, final double resolutionTolerance){
-        super(canvas, crs);
-        this.tolerance = resolutionTolerance / 100d;
+    private class TileReference{
+        GridMosaic mosaic;
+        String mimeType;
+        int col;
+        int row;
+        MathTransform gridToCRS;
     }
     
-    protected abstract PyramidSet getPyramidSet();
-    
-    protected abstract Request createRequest(GridMosaic mosaic, int col, int row);
-    
+    private final PyramidalModel model;
+    private final double tolerance;
+
+    public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
+        super(canvas, layer, true);
+        
+        model = (PyramidalModel)layer.getCoverageReference();
+        tolerance = 0.1; // in % , TODO use a flag to allow change value
+    }
+
+    /**
+     * {@inheritDoc }
+     * @param context2D 
+     */
     @Override
-    public void paint(final RenderingContext2D context2D) {
+    public void paintLayer(final RenderingContext2D context2D) {
+                     
+        final Name coverageName = item.getCoverageName();
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
+                context2D.getSEScale(), coverageName,null);
+
+        //we perform a first check on the style to see if there is at least
+        //one valid rule at this scale, if not we just continue.
+        if (rules.length == 0) {
+            return;
+        }
+
         final CanvasMonitor monitor = context2D.getMonitor();
 
         final Envelope canvasEnv = context2D.getCanvasObjectiveBounds2D();   
-        final PyramidSet pyramidSet = getPyramidSet();
+        final PyramidSet pyramidSet;
+        try {
+            pyramidSet = model.getPyramidSet();
+        } catch (DataStoreException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
         
         final Pyramid pyramid = findOptimalPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
                 
@@ -180,29 +212,157 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
                 final double scaleX = (rightX - leftX) / tileWidth ;
                 final double scaleY = (upperY - lowerY) / tileHeight ;
 
-                final MathTransform gridToCRS = new AffineTransform2D(
+                final TileReference ref = new TileReference();
+                ref.mosaic = mosaic;
+                ref.col = tileCol;
+                ref.row = tileRow;                
+                ref.gridToCRS = new AffineTransform2D(
                         scaleX, 0, 0, -scaleY, leftX, upperY);
-
-                final Request request = createRequest(mosaic, tileCol, tileRow);
-
-                final String tileId = mosaic.getId() +"_"+tileRow+"_"+tileCol;
-                final TileReference ref = new TileReference(tileId, pyramidCRS, gridToCRS, request);
                 
                 queries.add(ref);
-                //break loopCol;
             }
         }
 
-        paint(context2D, queries);
+        paintTiles(context2D, queries);
     }
 
+    /**
+     * {@inheritDoc }
+     * @param context 
+     * @param mask
+     * @param filter
+     * @param graphics  
+     */
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
-        if(!(context instanceof RenderingContext2D)){
+    public List<Graphic> getGraphicAt(final RenderingContext context, 
+            final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
+
+        if(!(context instanceof RenderingContext2D) ) return graphics;
+        if(!item.isSelectable())                     return graphics;
+        if(!item.isVisible())                        return graphics;
+
+        final RenderingContext2D renderingContext = (RenderingContext2D) context;
+
+        final Name coverageName = item.getCoverageName();
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
+                renderingContext.getSEScale(), coverageName,null);
+
+        //we perform a first check on the style to see if there is at least
+        //one valid rule at this scale, if not we just continue.
+        if (rules.length == 0) {
             return graphics;
         }
-        graphics.add(this);
+
+        if(graphics == null) graphics = new ArrayList<Graphic>();
+        if(mask instanceof SearchAreaJ2D){
+            //TODO
+        }else{
+            //TODO
+        }
+
         return graphics;
+    }
+
+    
+    /**
+     * Render each query response as a coverage with the given gridToCRS and CRS.
+     * @param context 
+     * @param tileRefs 
+     */
+    private static void paintTiles(final RenderingContext2D context, 
+            final Collection<TileReference>  tileRefs) {
+        final CanvasMonitor monitor = context.getMonitor();
+        
+        //bypass all if no queries
+        if(tileRefs.isEmpty()){
+            return;
+        }
+        
+        //bypass thread creation when only a single tile
+        if(tileRefs.size() == 1){
+            paintTile(context, tileRefs.iterator().next());            
+            return;
+        }
+        
+        final ExecutorService executor = Executors.newFixedThreadPool(6);
+        
+        for(final TileReference entry : tileRefs){            
+            if(monitor.stopRequested()){
+                return;
+            }
+            
+            final Runnable call = new Runnable() {
+                @Override
+                public void run() {
+                    paintTile(context, entry);
+                }
+            };
+            
+            executor.execute(call);            
+        }
+        
+        executor.shutdown();
+        try {
+            executor.awaitTermination(2, TimeUnit.MINUTES);
+        } catch (InterruptedException ex) {
+            Logging.getLogger(StatelessPyramidalCoverageLayerJ2D.class).log(Level.WARNING, ex.getMessage(), ex);
+        }
+        
+    }
+    
+    private static void paintTile(final RenderingContext2D context, 
+            final TileReference tileRef){        
+        final CanvasMonitor monitor = context.getMonitor();
+        final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
+                
+        if(monitor.stopRequested()){
+            return;
+        }
+        
+        
+        RenderedImage image;
+        try {
+            image = tileRef.mosaic.getTile("", tileRef.col, tileRef.row);
+        } catch (DataStoreException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+                
+        if (image == null) {
+            //no tile at this position
+            return;
+        }
+
+        final GridCoverageFactory gc = new GridCoverageFactory();
+        GridCoverage2D coverage;
+        
+        //check the crs
+        final CoordinateReferenceSystem tileCRS = tileRef.mosaic.getPyramid().getCoordinateReferenceSystem();
+        if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){
+            
+            //will be reprojected, we must check that image has alpha support
+            //otherwise we will have black borders after reprojection
+            if(!image.getColorModel().hasAlpha()){
+                final BufferedImage buffer = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
+                image = buffer;
+            }
+            
+            coverage = gc.create("tile", image,
+            tileCRS, tileRef.gridToCRS, null, null, null);            
+            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
+            
+        }else{
+            coverage = gc.create("tile", image,
+            tileCRS, tileRef.gridToCRS, null, null, null);
+        }
+        
+        try {
+            GO2Utilities.portray(context, coverage);
+        } catch (PortrayalException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
     }
     
     private static Pyramid findOptimalPyramid(final PyramidSet set, final CoordinateReferenceSystem crs){
@@ -225,10 +385,8 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
         return result;
     }
     
-    private static GridMosaic findOptimalMosaic(final Pyramid pyramid, final double resolution, final double tolerance){
-        
-        GridMosaic result = null;
-        
+    private static GridMosaic findOptimalMosaic(final Pyramid pyramid, final double resolution, final double tolerance){        
+        GridMosaic result = null;        
         final double[] scales = pyramid.getScales();
         
         for(int i=0;i<scales.length;i++){
@@ -247,7 +405,6 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
         }
                 
         return result;
-        
     }
-    
+        
 }

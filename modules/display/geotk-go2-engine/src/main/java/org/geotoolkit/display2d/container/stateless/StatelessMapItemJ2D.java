@@ -30,6 +30,8 @@ import java.util.logging.Level;
 import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.PyramidalModel;
 
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -128,7 +130,15 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         }else if (child instanceof CollectionMapLayer){
             g2d = new StatelessCollectionLayerJ2D(getCanvas(), (CollectionMapLayer)child);
         }else if (child instanceof CoverageMapLayer){
-            g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+            final CoverageMapLayer layer = (CoverageMapLayer) child;
+            final CoverageReference ref = layer.getCoverageReference();
+            if(ref != null && ref instanceof PyramidalModel){
+                //pyramidal model, we can improve rendering
+                g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+            }else{
+                //normal coverage
+                g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+            }            
         }else if(child instanceof MapLayer){
             g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child);
         }else{
