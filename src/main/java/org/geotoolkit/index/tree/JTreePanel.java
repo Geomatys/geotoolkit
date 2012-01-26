@@ -45,9 +45,10 @@ public class JTreePanel extends JPanel{
         final AffineTransform trs = new AffineTransform();
         if(boundnode instanceof Shape){
             Rectangle2D rect = ((Shape)boundnode).getBounds2D();
-            final double height = this.getHeight();
+            final double height = this.getHeight()-50;
+            double scale = height/rect.getHeight();
             trs.translate(this.getWidth()/2, this.getHeight()/2);
-            trs.scale(3, 3);
+            trs.scale(scale, scale);
             trs.translate( -rect.getCenterX(), -rect.getCenterY());
         }
         g2d.setColor(Color.blue);

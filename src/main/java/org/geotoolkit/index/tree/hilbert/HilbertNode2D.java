@@ -78,15 +78,24 @@ public class HilbertNode2D extends Node2D{
     @Override
     protected void calculateBounds() {
         if((Boolean)getUserProperty("isleaf")){
+            
             List<Shape> lS = new ArrayList<Shape>();
-            for(Node2D nod : (List<Node2D>)getUserProperty("cells")){
-                addBound(nod.getBoundary());
+            List<Node2D> listCells = (List<Node2D>)getUserProperty("cells");
+            for(Node2D nod : listCells){
+                lS.addAll(nod.getEntries());
             }
-            HilbertRTree.searchHilbertNode(this, getBound(), lS);
+            
+            if(lS.isEmpty()&&this.getParent()==null){
+                return;
+            }
+//            HilbertRTree.searchHilbertNode(this, TreeUtils.getEnveloppeMin(lS), lS);
             HilbertRTree.createBasicHB(this, (Integer)getUserProperty("hilbertOrder"), TreeUtils.getEnveloppeMin(lS).getBounds2D());
             for(Shape sh : lS){
                 HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
             }
+//            for(Node2D nod : listCells){
+//                addBound(nod.getBoundary());
+//            }
         }else{
             for(Node2D nod : getChildren()){
                 addBound(nod.getBoundary());

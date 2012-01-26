@@ -4,15 +4,15 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.star.StarRTree;
 
 /**
  *
  * @author rmarech
  */
-public class HilbertRTreeTest extends TreeTest{
-    public HilbertRTreeTest() {
-        super(new HilbertRTree(4, 2));
+public class StarRTreeTest extends TreeTest{
+    public StarRTreeTest() {
+        super(new StarRTree(4));
     }
     
     public void testInsert(){

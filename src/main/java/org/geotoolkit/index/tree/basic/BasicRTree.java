@@ -72,7 +72,7 @@ public class BasicRTree extends AbstractTree2D {
     }
 
     /**
-     * @return splitcase choosen to split. 
+     * @return split case chosen to split. 
      */
     public SplitCase getSplitCase() {
         return this.choice;

@@ -32,7 +32,7 @@ public class HilbertRTree extends AbstractTree2D{
     
     /**Create Hilbert RTree.
      * 
-     * @param maxElements max elements number autorized
+     * @param maxElements max elements number authorized
      * @param hilbertOrder max order value.
      * @throws IllegalArgumentException if maxElements <= 0.
      * @throws IllegalArgumentException if hilbertOrder <= 0. 
@@ -139,9 +139,11 @@ public class HilbertRTree extends AbstractTree2D{
                 }
             }else{
                 chooseSubtree(candidate, entry).getEntries().add(entry);
+                
             }
         } else {
             insertNode(chooseSubtree(candidate, entry), entry);
+            ((HilbertNode2D)candidate).setBound(null);
         }
     }
     
@@ -314,12 +316,12 @@ public class HilbertRTree extends AbstractTree2D{
     }
     
     /**Find appropriate subnode to insert new entry.
-     * Appropriate subnode is choosed to answer HilbertRtree criterions.
+     * Appropriate subnode is chosen to answer HilbertRtree criterion.
      * 
      * @param entry to insert.
      * @throws IllegalArgumentException if this subnodes list is empty.
      * @throws IllegalArgumentException if entry is null.
-     * @return subnode choosen.
+     * @return subnode chosen.
      */
     public static Node2D chooseSubtree(Node2D candidate, Shape entry) {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
@@ -393,15 +395,15 @@ public class HilbertRTree extends AbstractTree2D{
         }
     }
     
-    /**To answer Hilbert criterions and to avoid call split method,  in some case 
+    /**To answer Hilbert criterion and to avoid call split method,  in some case 
      * we constrain tree leaf to choose another cell to insert Entry. 
      * 
-     * @param index of subnode which is normaly choosen.
-     * @param ptEntryCentroid subnode choosen centroid.
+     * @param index of subnode which is normally chosen.
+     * @param ptEntryCentroid subnode chosen centroid.
      * @throws IllegalArgumentException if method call by none leaf {@code Node}.
      * @throws IllegalArgumentException if index is out of required limit.
      * @throws IllegalStateException if no another cell is find.
-     * @return int index of another subnode.
+     * @return index of another subnode.
      */
     private static int findAnotherCell(int index, Node2D candidate, Point2D ptEntryCentroid) {
         ArgumentChecks.ensureNonNull("impossible to find another leaf with ptCentroid null", ptEntryCentroid);
@@ -441,6 +443,7 @@ public class HilbertRTree extends AbstractTree2D{
                     }
                 }
                 if(removed){
+                    ((HilbertNode2D)candidate).setBound(null);
                     trim(candidate);
                 }
             }else{
@@ -451,8 +454,9 @@ public class HilbertRTree extends AbstractTree2D{
         }
     }
     
-    /**Methode which permit to condense R-Tree.
-     * Condense made begin by leaf and travel up to treetrunk.
+    /**Method which permit to condense R-Tree.
+     * Condense made begin by leaf and travel up to tree trunk.
+     * 
      * @param candidate {@code Node2D} to begin condense.
      */
     public static void trim(final Node2D candidate) {
@@ -462,7 +466,7 @@ public class HilbertRTree extends AbstractTree2D{
             HilbertRTree tree = (HilbertRTree) candidate.getTree();
             List<Shape> lS = new ArrayList<Shape>();
             searchHilbertNode(candidate, candidate.getBoundary(), lS);
-            if(lS.size()<=tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2)){
+            if(lS.size()<=tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2)&&!lS.isEmpty()){
                 createBasicHB(candidate, tree.getHilbertOrder(), TreeUtils.getEnveloppeMin(lS).getBounds2D());
                 ((HilbertNode2D)candidate).setUserProperty("isleaf", true);
                 for (Shape sh : lS) {
@@ -485,7 +489,7 @@ public class HilbertRTree extends AbstractTree2D{
                         final List<Shape> reinsertList = new ArrayList<Shape>();
                         searchHilbertNode(hn2d, hn2d.getBoundary(), reinsertList);
                         int hO = (Integer)hn2d.getUserProperty("hilbertOrder");
-                        if(reinsertList.size() <= Math.pow(2, (hO - 1) * 2)){
+                        if(reinsertList.size() <= Math.pow(2, (hO - 1) * 2)&&!reinsertList.isEmpty()){
                             createBasicHB(hn2d, hO-1, TreeUtils.getEnveloppeMin(reinsertList).getBounds2D());
                             for (Shape sh : reinsertList) {
                                 Node2D n = chooseSubtree(hn2d, sh);
@@ -756,9 +760,9 @@ public class HilbertRTree extends AbstractTree2D{
     /**Find {@code Point2D} Hilbert coordinate from this Node.
      * 
      * @param pt {@code Point2D} 
-     * @throws IllegalArgumentException if param "pt" is out of this node boundary.
-     * @throws IllegalArgumentException if param pt is null.
-     * @return int[] table of lenght 2 which contains two coordinate.
+     * @throws IllegalArgumentException if parameter "pt" is out of this node boundary.
+     * @throws IllegalArgumentException if parameter pt is null.
+     * @return int[] table of length 2 which contains two coordinate.
      * @see #getHVOfEntry(org.geotoolkit.utilsRTree.Entry)
      */
     private static int[] getHilbCoord(final Point2D pt, final Rectangle2D rect, final int hilbertOrder) {
@@ -776,9 +780,9 @@ public class HilbertRTree extends AbstractTree2D{
     /**Find Hilbert order of an entry from this HilbertLeaf.
      * 
      * @param entry where we looking for her Hilbert order.
-     * @throws IllegalArgumentException if param "entry" is out of this node boundary.
+     * @throws IllegalArgumentException if parameter "entry" is out of this node boundary.
      * @throws IllegalArgumentException if entry is null.
-     * @return int the entry Hilbert order.
+     * @return integer the entry Hilbert order.
      */
     public static int getHVOfEntry(final Node2D candidate, final Shape entry) {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
@@ -798,7 +802,7 @@ public class HilbertRTree extends AbstractTree2D{
         return nod2d;
     }
     
-    /**Create an appriate {@code Node2D} to this Hilbert R-Tree.
+    /**Create an appropriate {@code Node2D} to this Hilbert R-Tree.
      * 
      * @param tree pointer on Tree.
      * @param parent pointer on parent Node2D.

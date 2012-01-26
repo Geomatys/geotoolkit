@@ -117,7 +117,7 @@ public final class TreeUtils {
                           Math.abs(rect1.getCenterY()-rect2.getCenterY()));
     }
     
-    /**Compute general boundary of all shapes passed in param.
+    /**Compute general boundary of all shapes passed in parameter.
      * 
      * @param lS Shape List.
      * @throws IllegalArgumentException if List<Shape> lS is null.
@@ -470,80 +470,62 @@ public final class TreeUtils {
             final List<Shape> lEOverlaps = new ArrayList<Shape>();
             searchNode(theFather, boundN1.createIntersection(boundN2), lEOverlaps);
             if (!lEOverlaps.isEmpty()) {
-                final List<Shape> lEn1 = n1.getEntries();
-                final List<Shape> lEn2 = n2.getEntries();
-                for(Shape sh : lEOverlaps){
-                    lEn1.remove(sh);
-                    lEn2.remove(sh);
+                List<Shape> ln1 = n1.getEntries();
+                List<Shape> ln2 = n2.getEntries();
+                
+                List<Shape> lS = new ArrayList<Shape>(ln1);
+                lS.addAll(ln2);
+
+                for(int i = 0; i<lS.size()-1; i++){
+                    for(int j = i+1; j<lS.size();j++){
+                        if(lS.get(i).equals(lS.get(j))){
+//                                throw  new IllegalStateException("in the ass all the times fucking tree !!!!");
+                            lS.remove(j);
+                        }
+                    }
                 }
-                int indice;
-                if(lEn1.isEmpty()||lEn2.isEmpty()){
-                    indice = -1;
-                }else{
-                    indice = findAppropriateSplit(lEn1, lEn2, lEOverlaps);
-                }
-                if (!boundN1.contains(boundN2) && !boundN2.contains(boundN1) && indice != -1) {
+                final int s = lS.size();
+                final int smin = s / 3;
+                final Rectangle2D rectGlob = getEnveloppeMin(lS).getBounds2D();
+                final double rGW = rectGlob.getWidth();
+                final double rGH = rectGlob.getHeight();
+                final int index = (rGW < rGH) ? 2 : 1;
+                organize_List2DElements_From(index, null, lS);
+                int indexing = s / 2;
+                double overlapsTemp = rGW * rGH;
+                final Rectangle2D rTemp1 = new Rectangle2D.Double();
+                final Rectangle2D rTemp2 = new Rectangle2D.Double();
+                int ind = indexing;
+                for (int i = smin; i < s - smin; i++) {
+                    final List<Shape> testn1 = new ArrayList<Shape>();
+                    final List<Shape> testn2 = new ArrayList<Shape>();
+                    for (int j = 0; j < i; j++) {
+                        testn1.add(lS.get(j));
+                    }
+                    for (int k = i; k < s; k++) {
+                        testn2.add(lS.get(k));
+                    }
+                    final Rectangle2D r1 = getEnveloppeMin(testn1).getBounds2D();
+                    final Rectangle2D r2 = getEnveloppeMin(testn2).getBounds2D();
+                    final Rectangle2D overlaps = r1.createIntersection(r2);
+                    final double over = overlaps.getWidth() * overlaps.getHeight();
+                    int indexingTemp = Math.abs(s / 2 - i);
                     
-                    for (int i = 0; i < indice; i++) {
-                        lEn1.add(lEOverlaps.get(i));
+                    if (over < overlapsTemp ||(over == overlapsTemp&& indexingTemp <= indexing)) {
+                        indexing = indexingTemp;
+                        overlapsTemp = over;
+                        rTemp1.setRect(r1);
+                        rTemp2.setRect(r2);
+                        ind = i;
                     }
-
-                    for (int i = indice, s = lEOverlaps.size(); i < s; i++) {
-                        lEn2.add(lEOverlaps.get(i));
-                    }
-                } else {
-
-                    List<Shape> lS = new ArrayList<Shape>(lEn1);
-                    lS.addAll(lEn2);
-                    lS.addAll(lEOverlaps);
-
-                    final int s = lS.size();
-                    final int smin = s / 3;
-                    final Rectangle2D rectGlob = getEnveloppeMin(lS).getBounds2D();
-                    final double rGW = rectGlob.getWidth();
-                    final double rGH = rectGlob.getHeight();
-                    final int index = (rGW < rGH) ? 2 : 1;
-                    organize_List2DElements_From(index, null, lS);
-                    int indexing = s / 2;
-                    double overlapsTemp = rGW * rGH;
-                    final Rectangle2D rTemp1 = new Rectangle2D.Double();
-                    final Rectangle2D rTemp2 = new Rectangle2D.Double();
-                    final List<Shape> lTn1 = new ArrayList<Shape>();
-                    final List<Shape> lTn2 = new ArrayList<Shape>();
-
-                    for (int i = smin; i < s - smin; i++) {
-                        final List<Shape> testn1 = new ArrayList<Shape>();
-                        final List<Shape> testn2 = new ArrayList<Shape>();
-                        for (int j = 0; j < i; j++) {
-                            testn1.add(lS.get(j));
-                        }
-                        for (int k = i; k < s; k++) {
-                            testn2.add(lS.get(k));
-                        }
-                        final Rectangle2D r1 = getEnveloppeMin(testn1).getBounds2D();
-                        final Rectangle2D r2 = getEnveloppeMin(testn2).getBounds2D();
-                        final Rectangle2D overlaps = r1.createIntersection(r2);
-                        final double over = overlaps.getWidth() * overlaps.getHeight();
-                        int indexingTemp = Math.abs(s / 2 - i);
-                        if (over <= overlapsTemp && indexingTemp <= indexing) {
-                            lTn1.clear();
-                            lTn2.clear();
-                            indexing = indexingTemp;
-                            overlapsTemp = over;
-                            rTemp1.setRect(r1);
-                            rTemp2.setRect(r2);
-                            lTn1.addAll(testn1);
-                            lTn2.addAll(testn2);
-                        }
-                    }
-                    lEn1.clear();
-                    lEn2.clear();
-                    for (Shape ent : lTn1) {
-                        lEn1.add(ent);
-                    }
-                    for (Shape ent : lTn2) {
-                        lEn2.add(ent);
-                    }
+                }
+                ln1.clear();
+                ln2.clear();
+                for (int i = 0;i<ind;i++) {
+                    ln1.add(lS.get(i));
+                }
+                for (int i = ind;i<s;i++) {
+                    ln2.add(lS.get(i));
                 }
             }
         }

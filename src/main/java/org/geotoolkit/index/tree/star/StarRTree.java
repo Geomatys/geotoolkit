@@ -43,10 +43,11 @@ public class StarRTree extends AbstractTree2D{
      */
     @Override
     public void insert(Shape entry) {
-        if(getRoot().isEmpty()){
-            getRoot().getEntries().add(entry);
+        final Node2D root = getRoot();
+        if(root.isEmpty()){
+            root.getEntries().add(entry);
         }else{
-            insertNode(getRoot(), entry);
+            insertNode(root, entry);
         }
     }
 
@@ -74,7 +75,7 @@ public class StarRTree extends AbstractTree2D{
     
     /**Find appropriate {@code Node2D} to insert {@code Shape}.
      * To define appropriate Node, R*Tree criterion are : 
-     *      - require minimum area enlargement to cover shap.
+     *      - require minimum area enlargement to cover shape.
      *      - or put into Node with lesser elements number in case area equals.
      * 
      * @param listSubnode List of {@code Shape} means you must pass a list of {@code Node}.

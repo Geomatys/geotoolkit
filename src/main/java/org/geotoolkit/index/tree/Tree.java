@@ -14,11 +14,11 @@ import java.util.List;
  */
 public interface Tree<B> {
     
-    /**Find some {@code Entry} which intersect regionSearch param 
-     * and add them into result {@code List} param.
+    /**Find some {@code Entry} which intersect regionSearch parameter 
+     * and add them into result {@code List} parameter.
      * 
      * <blockquote><font size=-1>
-     * <strong>NOTE: if no result finded, the list passed in parameter is unchanged.</strong> 
+     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong> 
      * </font></blockquote>
      * 
      * @param regionSearch Define the region to find Shape within tree.
@@ -39,7 +39,7 @@ public interface Tree<B> {
      void delete(B entry);
     
     /**
-     * @return max number autorized by tree cells.
+     * @return max number authorized by tree cells.
      */
      int getMaxElements();
      

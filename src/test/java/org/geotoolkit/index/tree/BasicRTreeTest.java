@@ -15,10 +15,30 @@ import org.geotoolkit.index.tree.basic.SplitCase;
 public class BasicRTreeTest extends TreeTest{
 
     public BasicRTreeTest() {
-        super(new BasicRTree(3, SplitCase.LINEAR));
+        super(new BasicRTree(4, SplitCase.LINEAR));
     }
    
     public void testInsert(){
         super.insertTest();
     } 
+    
+    public void testQueryInside(){
+        super.queryInsideTest();
+    }
+    
+    public void testQueryOutside(){
+        super.queryOutsideTest();
+    }
+    
+    public void testQueryOnBorder(){
+        super.queryOnBorderTest();
+    }
+    
+    public void testQueryAll(){
+        super.queryAllTest();
+    }
+    
+    public void testInsertDelete(){
+        super.insertDelete();
+    }
 }
