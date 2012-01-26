@@ -16,12 +16,18 @@
  */
 package org.geotoolkit.googlemaps.model;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import org.geotoolkit.client.map.DefaultPyramid;
-import org.geotoolkit.client.map.DefaultPyramidSet;
-import org.geotoolkit.client.map.PyramidSet;
+import java.io.IOException;
+import java.io.InputStream;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.coverage.DefaultPyramid;
+import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.googlemaps.GetMapRequest;
+import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
 import org.geotoolkit.googlemaps.map.GoogleMapsUtilities;
+import org.geotoolkit.storage.DataStoreException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -29,9 +35,29 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GoogleMapsPyramidSet extends DefaultPyramidSet{
+public class GoogleMapsPyramidSet extends CachedPyramidSet{
 
-    private GoogleMapsPyramidSet(final int maxScale) {
+    private final StaticGoogleMapsServer server;
+    private final String mapType;
+    
+    public GoogleMapsPyramidSet(final StaticGoogleMapsServer server, final String mapType) {
+        
+        this.server = server;
+        this.mapType = mapType;
+        
+        final int maxScale;        
+        if (GetMapRequest.TYPE_HYBRID.equalsIgnoreCase(mapType)) {
+            maxScale = 18;
+        } else if (GetMapRequest.TYPE_ROADMAP.equalsIgnoreCase(mapType)) {
+            maxScale = 18;
+        } else if (GetMapRequest.TYPE_SATELLITE.equalsIgnoreCase(mapType)) {
+            maxScale = 18;
+        } else if (GetMapRequest.TYPE_TERRAIN.equalsIgnoreCase(mapType)) {
+            maxScale = 18;
+        } else {
+            throw new IllegalArgumentException("Unknowned google maps layer : " + mapType);
+        }
+        
         
         final DefaultPyramid pyramid = new DefaultPyramid(this, GoogleMapsUtilities.GOOGLE_MERCATOR);
         
@@ -48,9 +74,9 @@ public class GoogleMapsPyramidSet extends DefaultPyramidSet{
             
             final GoogleMapsMosaic mosaic = new GoogleMapsMosaic(
                     pyramid, upperLeft, 
-                    size, size, 
-                    tileHeight, tileWidth, 
-                    tileWidth*scale, tileHeight*scale,
+                    new Dimension(size,size),
+                    new Dimension(tileHeight, tileWidth), 
+                    scale,
                     i);
             
             pyramid.getMosaics().put(scale, mosaic);
@@ -59,24 +85,23 @@ public class GoogleMapsPyramidSet extends DefaultPyramidSet{
         getPyramids().add(pyramid);    
     }
     
-    public static PyramidSet getPyramidSet(final String name){
+    @Override
+    protected InputStream download(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException {
+        final int zoom = ((GoogleMapsMosaic)mosaic).getScaleLevel();
         
-        PyramidSet set = null;
-        
-        if (GetMapRequest.TYPE_HYBRID.equalsIgnoreCase(name)) {
-            set = new GoogleMapsPyramidSet(18);
-        } else if (GetMapRequest.TYPE_ROADMAP.equalsIgnoreCase(name)) {
-            set = new GoogleMapsPyramidSet(18);
-        } else if (GetMapRequest.TYPE_SATELLITE.equalsIgnoreCase(name)) {
-            set = new GoogleMapsPyramidSet(18);
-        } else if (GetMapRequest.TYPE_TERRAIN.equalsIgnoreCase(name)) {
-            set = new GoogleMapsPyramidSet(18);
-        } else {
-            throw new IllegalArgumentException("Unknowned google maps layer : " + name);
+        final GetMapRequest request = server.createGetMap();
+        request.setFormat(mimeType);
+        request.setMapType(mapType);
+        request.setDimension(new Dimension(GoogleMapsUtilities.BASE_TILE_SIZE, GoogleMapsUtilities.BASE_TILE_SIZE));
+        request.setZoom(zoom);
+
+        final DirectPosition position = GoogleMapsUtilities.getCenter(zoom, col, row);
+        request.setCenter(position);
+        try {
+            return request.getResponseStream();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
-        
-        return set;        
     }
-    
     
 }

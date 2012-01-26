@@ -31,6 +31,7 @@ public class DefaultPyramidSet implements PyramidSet{
 
     private final String id = UUID.randomUUID().toString();
     private final List<Pyramid> pyramids = new ArrayList<Pyramid>();
+    private final List<String> formats = new ArrayList<String>();
     
     @Override
     public Collection<Pyramid> getPyramids() {
@@ -40,6 +41,11 @@ public class DefaultPyramidSet implements PyramidSet{
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public List<String> getFormats() {
+        return formats;
     }
     
 }

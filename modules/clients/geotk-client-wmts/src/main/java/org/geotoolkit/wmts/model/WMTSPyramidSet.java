@@ -16,39 +16,55 @@
  */
 package org.geotoolkit.wmts.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-
-import org.geotoolkit.client.map.Pyramid;
-import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.wmts.xml.v100.Capabilities;
-import org.geotoolkit.wmts.xml.v100.ContentsType;
-import org.geotoolkit.wmts.xml.v100.LayerType;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSetLink;
+import org.geotoolkit.wmts.GetTileRequest;
+import org.geotoolkit.wmts.WebMapTileServer;
+import org.geotoolkit.wmts.xml.v100.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMTSPyramidSet implements PyramidSet{
+public class WMTSPyramidSet extends CachedPyramidSet{
 
-    private final String id = UUID.randomUUID().toString();
-    private final Capabilities capabilities;
+    private final WebMapTileServer server;
     private final String layerName;
+    private final String style;
+    private final String id = UUID.randomUUID().toString();
+    private LayerType wmtsLayer;
     
-    public WMTSPyramidSet(final Capabilities capabilities, final String layerName){
-        ArgumentChecks.ensureNonNull("capabilities", capabilities);
+    public WMTSPyramidSet(final WebMapTileServer server, final String layerName, final String style){
+        ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layerName);
-        this.capabilities = capabilities;
+        this.server = server;
         this.layerName = layerName;
+        this.style = style;
+        
+        
+        //find the wmts layer
+        final ContentsType contents = server.getCapabilities().getContents();
+        wmtsLayer = null;
+        for(LayerType candidate : contents.getLayers()){            
+            if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
+                wmtsLayer = candidate;
+                break;
+            }            
+        }
     }
-
+    
     public Capabilities getCapabilities() {
-        return capabilities;
+        return server.getCapabilities();
     }
 
     public String getLayerName() {
@@ -64,7 +80,7 @@ public class WMTSPyramidSet implements PyramidSet{
     public Collection<Pyramid> getPyramids() {        
         final List<Pyramid> pyramids = new ArrayList<Pyramid>();
         
-        final ContentsType contents = capabilities.getContents();
+        final ContentsType contents = server.getCapabilities().getContents();
         
         //first find the layer
         LayerType layer = null;
@@ -85,6 +101,40 @@ public class WMTSPyramidSet implements PyramidSet{
         }
         
         return pyramids;
+    }
+
+    @Override
+    protected InputStream download(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException {
+        final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
+        
+        final GetTileRequest request = server.createGetTile();
+        request.setFormat(mimeType);
+        request.setLayer(layerName);
+        request.setTileCol(col);
+        request.setTileRow(row);
+        request.setTileMatrix(wmtsMosaic.getMatrix().getIdentifier().getValue());
+        request.setTileMatrixSet(wmtsMosaic.getPyramid().getMatrixset().getIdentifier().getValue());
+        
+        //find the style
+        String style = this.style;
+        if(style == null){
+            //get the default style
+            for(Style st : wmtsLayer.getStyle()){
+                if(style == null){
+                    style = st.getIdentifier().getValue();
+                }
+                if(st.isIsDefault()){
+                    break;
+                }
+            }
+        }        
+        request.setStyle(style);
+        
+        try {
+            return request.getResponseStream();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
     
 }

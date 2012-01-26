@@ -16,10 +16,14 @@
  */
 package org.geotoolkit.wmts.model;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
+import java.awt.image.RenderedImage;
+import java.io.InputStream;
 import java.util.UUID;
-import org.geotoolkit.client.map.GridMosaic;
+import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
 import org.opengis.geometry.Envelope;
@@ -64,41 +68,31 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public int getWidth() {
-        return matrix.getMatrixWidth();
+    public Dimension getGridSize() {
+        return new Dimension(
+                matrix.getMatrixWidth(),
+                matrix.getMatrixHeight());
     }
 
     @Override
-    public int getHeight() {
-        return matrix.getMatrixHeight();
+    public double getScale() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public double getTileSpanX() {
-        return getTileWidth() * matrix.getScaleDenominator();
+    public Dimension getTileSize() {
+        return new Dimension(
+                matrix.getTileWidth(),
+                matrix.getTileHeight());
     }
-
-    @Override
-    public double getTileSpanY() {
-        return getTileHeight() * matrix.getScaleDenominator();
-    }
-
-    @Override
-    public int getTileWidth() {
-        return matrix.getTileWidth();
-    }
-
-    @Override
-    public int getTileHeight() {
-        return matrix.getTileHeight();
-    }
-
+    
     @Override
     public Envelope getEnvelope(int row, int col) {
         final double minX = getUpperLeftCorner().getX();
         final double maxY = getUpperLeftCorner().getY();
-        final double spanX = getTileSpanX();
-        final double spanY = getTileSpanY();
+        final Dimension tileSize = getTileSize();
+        final double spanX = tileSize.width * matrix.getScaleDenominator();
+        final double spanY = tileSize.height * matrix.getScaleDenominator();
         
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
@@ -117,6 +111,16 @@ public class WMTSMosaic implements GridMosaic{
              || col > limit.getMaxTileCol()
              || row < limit.getMinTileRow()
              || row > limit.getMaxTileRow();
+    }
+
+    @Override
+    public RenderedImage getTile(String mimetype, int col, int row) throws DataStoreException {
+        return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, mimetype, col, row);
+    }
+
+    @Override
+    public InputStream getTileStream(String mimetype, int col, int row) throws DataStoreException {
+        return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, mimetype, col, row);
     }
     
 }

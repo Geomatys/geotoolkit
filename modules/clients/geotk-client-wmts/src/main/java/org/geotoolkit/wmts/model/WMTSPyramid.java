@@ -18,15 +18,9 @@ package org.geotoolkit.wmts.model;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.geotoolkit.client.map.DefaultPyramid;
+import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.wmts.xml.v100.TileMatrix;
-import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSet;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSetLimits;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSetLink;
-
+import org.geotoolkit.wmts.xml.v100.*;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;

@@ -18,8 +18,8 @@ package org.geotoolkit.osmtms.map;
 
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractPyramidGraphic;
-import org.geotoolkit.client.map.GridMosaic;
-import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.osmtms.GetTileRequest;
 import org.geotoolkit.osmtms.model.OSMTMSMosaic;

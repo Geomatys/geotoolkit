@@ -16,14 +16,17 @@
  */
 package org.geotoolkit.client.map;
 
+import java.awt.Dimension;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-
 import org.geotoolkit.client.Request;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -34,7 +37,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -122,12 +124,15 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
         final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
         final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
-        final int gridWidth = mosaic.getWidth();
-        final int gridHeight = mosaic.getHeight();
-        final double tileWidth = mosaic.getTileWidth();
-        final double tileHeight = mosaic.getTileHeight();
-        final double tileSpanX = mosaic.getTileSpanX();
-        final double tileSpanY = mosaic.getTileSpanY();
+        final Dimension gridSize = mosaic.getGridSize();
+        final Dimension tileSize = mosaic.getTileSize();
+        final double scale = mosaic.getScale();
+        final double tileSpanX = scale * tileSize.width;
+        final double tileSpanY = scale * tileSize.height;
+        final int gridWidth = gridSize.width;
+        final int gridHeight = gridSize.height;
+        final double tileWidth = tileSize.width;
+        final double tileHeight = tileSize.height;
 
         //find all the tiles we need --------------------------------------
         //tiles to render         

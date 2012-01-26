@@ -17,16 +17,14 @@
 package org.geotoolkit.googlemaps.map;
 
 import java.awt.Dimension;
-
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractPyramidGraphic;
-import org.geotoolkit.client.map.GridMosaic;
-import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.googlemaps.GetMapRequest;
 import org.geotoolkit.googlemaps.model.GoogleMapsMosaic;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
-
 import org.opengis.geometry.DirectPosition;
 
 /**
@@ -40,7 +38,6 @@ public class GoogleMapsGraphic extends AbstractPyramidGraphic{
     private static final double SCALE_TOLERANCE = 35d;
     
     private final GoogleMapsMapLayer layer;
-    private PyramidSet pyramidSet = null;
     
     public GoogleMapsGraphic(final J2DCanvas canvas, final GoogleMapsMapLayer layer){
         super(canvas,layer.getBounds().getCoordinateReferenceSystem(), SCALE_TOLERANCE);
@@ -65,7 +62,7 @@ public class GoogleMapsGraphic extends AbstractPyramidGraphic{
 
     @Override
     protected PyramidSet getPyramidSet() {
-        return GoogleMapsPyramidSet.getPyramidSet(layer.getMapType());
+        return new GoogleMapsPyramidSet(layer.getServer(),layer.getMapType());
     }
     
 }

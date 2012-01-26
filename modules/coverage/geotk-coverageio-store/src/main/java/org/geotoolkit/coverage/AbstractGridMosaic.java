@@ -18,7 +18,6 @@ package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
@@ -29,7 +28,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultGridMosaic implements GridMosaic{
+public abstract class AbstractGridMosaic implements GridMosaic{
 
     private final String id = UUID.randomUUID().toString();
     private final Pyramid pyramid;
@@ -38,7 +37,7 @@ public class DefaultGridMosaic implements GridMosaic{
     private final Dimension tileSize;
     private final double scale;
 
-    public DefaultGridMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
+    public AbstractGridMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
             Dimension tileSize, double scale) {
         this.pyramid = pyramid;
         this.upperLeft = (Point2D) upperLeft.clone();
@@ -97,9 +96,4 @@ public class DefaultGridMosaic implements GridMosaic{
         return false;
     }
     
-    @Override
-    public RenderedImage getTile(int col, int row) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

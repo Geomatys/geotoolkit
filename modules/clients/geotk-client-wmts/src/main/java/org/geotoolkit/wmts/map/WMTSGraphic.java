@@ -18,8 +18,8 @@ package org.geotoolkit.wmts.map;
 
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractPyramidGraphic;
-import org.geotoolkit.client.map.GridMosaic;
-import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.wmts.GetTileRequest;
 import org.geotoolkit.wmts.model.WMTSMosaic;
@@ -87,7 +87,7 @@ public class WMTSGraphic extends AbstractPyramidGraphic{
 
     @Override
     protected PyramidSet getPyramidSet() {
-        return new WMTSPyramidSet(layer.getServer().getCapabilities(), layer.getLayer());
+        return new WMTSPyramidSet(layer.getServer(), layer.getLayer(),layer.getTileSetStyle());
     }
     
 }

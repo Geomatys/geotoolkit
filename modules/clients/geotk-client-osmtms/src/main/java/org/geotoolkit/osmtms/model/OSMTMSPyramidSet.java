@@ -16,13 +16,17 @@
  */
 package org.geotoolkit.osmtms.model;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
-
-import org.geotoolkit.client.map.DefaultPyramid;
-import org.geotoolkit.client.map.DefaultPyramidSet;
+import java.io.IOException;
+import java.io.InputStream;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.coverage.DefaultPyramid;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.osmtms.GetTileRequest;
+import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.osmtms.map.OSMTMSUtilities;
-import org.geotoolkit.referencing.CRS;
-
+import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -30,9 +34,12 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSPyramidSet extends DefaultPyramidSet{
+public class OSMTMSPyramidSet extends CachedPyramidSet{
 
-    public OSMTMSPyramidSet(final int maxScale) {
+    private final OSMTileMapServer server;
+    
+    public OSMTMSPyramidSet(final OSMTileMapServer server, final int maxScale) {
+        this.server = server;
         
         final DefaultPyramid pyramid = new DefaultPyramid(this,OSMTMSUtilities.GOOGLE_MERCATOR);
         
@@ -51,9 +58,9 @@ public class OSMTMSPyramidSet extends DefaultPyramidSet{
             
             final OSMTMSMosaic mosaic = new OSMTMSMosaic(
                     pyramid, upperLeft, 
-                    size, size, 
-                    tileHeight, tileWidth, 
-                    tileWidth*scale, tileHeight*scale,
+                    new Dimension(size, size), 
+                    new Dimension(tileWidth,tileHeight),
+                    scale,
                     i);
             
             pyramid.getMosaics().put(scale, mosaic);
@@ -61,5 +68,18 @@ public class OSMTMSPyramidSet extends DefaultPyramidSet{
         
         getPyramids().add(pyramid);        
     }
-    
+
+    @Override
+    protected InputStream download(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException {
+        final GetTileRequest request = server.createGetTile();
+        request.setScaleLevel( ((OSMTMSMosaic)mosaic).getScaleLevel() );
+        request.setTileCol(col);
+        request.setTileRow(row);        
+        try {
+            return request.getResponseStream();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+
 }

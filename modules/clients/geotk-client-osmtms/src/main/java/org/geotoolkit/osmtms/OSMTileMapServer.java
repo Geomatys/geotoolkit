@@ -17,9 +17,8 @@
 package org.geotoolkit.osmtms;
 
 import java.net.URL;
-
 import org.geotoolkit.client.AbstractServer;
-import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
 
@@ -55,7 +54,7 @@ public class OSMTileMapServer extends AbstractServer{
             final int maxZoomLevel) {
         super(serverURL,security);
         this.maxZoomLevel = maxZoomLevel;
-        pyramidSet = new OSMTMSPyramidSet(maxZoomLevel);
+        pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel);
     }
 
     public PyramidSet getPyramidSet(){

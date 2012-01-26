@@ -16,27 +16,41 @@
  */
 package org.geotoolkit.googlemaps.model;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import org.geotoolkit.client.map.DefaultGridMosaic;
-import org.geotoolkit.client.map.Pyramid;
+import java.awt.image.RenderedImage;
+import java.io.InputStream;
+import org.geotoolkit.coverage.AbstractGridMosaic;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GoogleMapsMosaic extends DefaultGridMosaic{
+public class GoogleMapsMosaic extends AbstractGridMosaic{
 
     private final int scaleLevel;
     
-    public GoogleMapsMosaic(Pyramid pyramid, Point2D upperLeft, int width, int height, 
-            int tileHeight, int tileWidth, double tileSpanX, double tileSpanY, int scaleLevel) {
-        super(pyramid,upperLeft,width,height,tileHeight,tileWidth,tileSpanX,tileSpanY);
+    public GoogleMapsMosaic(Pyramid pyramid, Point2D upperLeft, Dimension gridSize,
+            Dimension tileSize, double scale, int scaleLevel) {
+        super(pyramid,upperLeft,gridSize,tileSize,scale);
         this.scaleLevel = scaleLevel;
     }
 
     public int getScaleLevel() {
         return scaleLevel;
+    }
+
+    @Override
+    public RenderedImage getTile(String mimetype, int col, int row) throws DataStoreException {
+        return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTile(this, mimetype, col, row);
+    }
+
+    @Override
+    public InputStream getTileStream(String mimetype, int col, int row) throws DataStoreException {
+        return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, mimetype, col, row);
     }
     
 }

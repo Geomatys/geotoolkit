@@ -18,7 +18,7 @@ package org.geotoolkit.wmsc.model;
 
 import java.awt.geom.Point2D;
 import java.util.List;
-import org.geotoolkit.client.map.DefaultPyramid;
+import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wmsc.xml.v111.TileSet;
 import org.opengis.referencing.NoSuchAuthorityCodeException;

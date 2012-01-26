@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Define a collection of pyramid for a give data.
@@ -36,5 +37,11 @@ public interface PyramidSet {
      * @return Collection of pyramid, each pyramid has a different CRS.
      */
     Collection<Pyramid> getPyramids();
+    
+    /**
+     * List of format mime types handle by this pyramid set.
+     * @return List<String>
+     */
+    List<String> getFormats();
     
 }

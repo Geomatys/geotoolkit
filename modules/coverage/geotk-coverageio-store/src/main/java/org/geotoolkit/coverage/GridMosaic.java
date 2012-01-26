@@ -19,6 +19,8 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
+import java.io.InputStream;
+import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -83,10 +85,22 @@ public interface GridMosaic {
     
     /**
      * Get a tile.
+     * @param mimetype : mime type to read from, must be one specified in the PyramidSet.
      * @param col : tile column index
      * @param row : row column index
      * @return RenderedImage , may be null if tile is missing.
+     * @throws DataStoreException  
      */
-    RenderedImage getTile(int col, int row);
+    RenderedImage getTile(String mimetype, int col, int row) throws DataStoreException;
+    
+    /**
+     * Get a tile as a stream
+     * @param mimetype : mime type to read from, must be one specified in the PyramidSet.
+     * @param col : tile column index
+     * @param row : row column index
+     * @return InputStream , may be null if tile is missing.
+     * @throws DataStoreException  
+     */
+    InputStream getTileStream(String mimetype, int col, int row) throws DataStoreException;
     
 }

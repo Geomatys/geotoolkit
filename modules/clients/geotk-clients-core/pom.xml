@@ -77,6 +77,12 @@
       <artifactId>geotk-temporal</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-coverageio-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!--for base64 enconding -->
     <dependency>

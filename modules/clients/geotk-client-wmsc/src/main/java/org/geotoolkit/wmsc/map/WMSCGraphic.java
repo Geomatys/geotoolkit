@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.wmsc.map;
 
-import java.awt.Dimension;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractPyramidGraphic;
-import org.geotoolkit.client.map.GridMosaic;
-import org.geotoolkit.client.map.PyramidSet;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.wms.GetMapRequest;
+import org.geotoolkit.wmsc.WebMapServerCached;
 import org.geotoolkit.wmsc.model.WMSCPyramid;
 import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 
@@ -43,7 +43,7 @@ public class WMSCGraphic extends AbstractPyramidGraphic{
         this.layer = layer;
         setSilentErrors(true);
         
-        pyramidset = new WMSCPyramidSet(layer.getServer().getCapabilities(), layer.getLayerNames()[0]);
+        pyramidset = new WMSCPyramidSet((WebMapServerCached)layer.getServer(), layer.getLayerNames()[0]);
     }
     
     @Override
@@ -56,7 +56,7 @@ public class WMSCGraphic extends AbstractPyramidGraphic{
         final GetMapRequest request = layer.getServer().createGetMap();
         request.setLayers(layer.getCombinedLayerNames());
         request.setEnvelope(mosaic.getEnvelope(col, row));
-        request.setDimension(new Dimension(mosaic.getTileWidth(), mosaic.getTileHeight()));
+        request.setDimension(mosaic.getTileSize());
         request.setFormat(((WMSCPyramid)mosaic.getPyramid()).getTileset().getFormat());
         return request;
     }
