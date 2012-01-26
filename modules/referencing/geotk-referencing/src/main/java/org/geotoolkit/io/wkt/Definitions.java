@@ -342,7 +342,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
     }
 
     /**
-     * Adjust the {@linkplain ParseException#getErrorIndex error index} in order to
+     * Adjusts the {@linkplain ParseException#getErrorIndex error index} in order to
      * point to the character in the original text (before substitutions) where the
      * parsing failed. A new exception must be created because the error offset is
      * not modifiable, but it will be filled with the same stack trace so this change

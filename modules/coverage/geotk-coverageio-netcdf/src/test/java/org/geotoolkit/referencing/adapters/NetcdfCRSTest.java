@@ -59,26 +59,42 @@ import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAx
 
 /**
  * Tests the {@link NetcdfCRS} class using the same test file than {@link CoriolisFormatTest}.
+ * In addition, this class inherits all tests defined in the {@code geoapi-netcdf} module.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.08
  */
 @Depend(IrregularAxesConverterTest.class)
-public final strictfp class NetcdfCRSTest {
+public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.NetcdfCRSTest {
     /**
      * Small tolerance factor for floating point comparison.
      */
     private static final double EPS = 1E-10;
 
     /**
-     * Tests the creation of a geographic CRS.
+     * Wraps the given NetCDF file into the CRS object to test.
+     * This method is invoked by the tests inherited from the {@code geoapi-test} module.
+     *
+     * @param  cs   The NetCDF coordinate system to wrap.
+     * @param  file The originating dataset file, or {@code null} if none.
+     * @return A CRS implementation created from the given NetCDF coordinate system.
+     * @throws IOException If an error occurred while wrapping the given NetCDF coordinate system.
+     */
+    @Override
+    protected CoordinateReferenceSystem wrap(final CoordinateSystem cs, final NetcdfDataset file) throws IOException {
+        return NetcdfCRS.wrap(cs, file, null);
+    }
+
+    /**
+     * Tests the creation of a geographic CRS from the Coriolis format.
+     * This is a "geographic" CRS with non-regular axes.
      *
      * @throws IOException If an error occurred while reading the test file.
      */
     @Test
-    public void testGeographicCRS() throws IOException {
+    public void testCoriolisCRS() throws IOException {
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         assertNotNull("NetcdfDataset shall not be null.", data);
         try {

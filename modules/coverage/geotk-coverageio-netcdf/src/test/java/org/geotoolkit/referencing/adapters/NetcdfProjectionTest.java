@@ -17,84 +17,29 @@
  */
 package org.geotoolkit.referencing.adapters;
 
-import java.util.Random;
-import ucar.unidata.geoloc.projection.Mercator;
+import ucar.unidata.geoloc.Projection;
 
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.test.referencing.TransformTestCase;
-
-import org.junit.Test;
-
-import static org.opengis.test.Assert.*;
-import static org.opengis.test.Validators.*;
+import org.opengis.referencing.operation.SingleOperation;
 
 
 /**
- * Tests the {@link NetcdfProjection} class. The projected values correctness
- * (external consistency) is not verified - only internal consistency is verified.
+ * Tests the {@link NetcdfProjection} class. This class inherits the tests from the
+ * {@code geoapi-netcdf} module.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 3.20
  */
-public final strictfp class NetcdfProjectionTest extends TransformTestCase {
+public final strictfp class NetcdfProjectionTest extends org.opengis.wrapper.netcdf.NetcdfProjectionTest {
     /**
-     * The NetCDF projection wrapper to test.
-     */
-    private final NetcdfProjection projection;
-
-    /**
-     * Creates a new test case initialized with a default NetCDF projection.
-     */
-    public NetcdfProjectionTest() {
-        final Mercator p = new Mercator();
-        p.setName("Default Mercator projection");
-        projection = new NetcdfProjection(p, null, null);
-        transform = projection.transform;
-        tolerance = 1E-10;
-        isDerivativeSupported = false;
-    }
-
-    /**
-     * Tests the consistency of various {@code transform} methods. This method runs the
-     * {@link #verifyInDomain(double[], double[], int[], Random)} test method using a
-     * trivial {@link SimpleTransform2D} implementation.
+     * Wraps the given NetCDF projection into the object to test.
      *
-     * @throws TransformException Should never happen.
+     * @param  projection The NetCDF projection to wrap.
+     * @return An operation implementation created from the given projection.
      */
-    @Test
-    public void testConsistency() throws TransformException {
-        validate(transform);
-        verifyInDomain(new double[] {-180, -80}, // Minimal ordinate values to test.
-                       new double[] {+180, +80}, // Maximal ordinate values to test.
-                       new int[]    { 180,  80}, // Number of points to test.
-                       new Random(216919106));
-    }
-
-    /**
-     * Tests projection name and classname.
-     */
-    @Test
-    public void testNames() {
-        assertEquals("Default Mercator projection", projection.getName().getCode());
-        assertEquals("Mercator", projection.getMethod().getName().getCode());
-    }
-
-    /**
-     * Tests the {@link NetcdfProjection#getDomainOfValidity()} method.
-     * In NetCDF 4.2, the declared bounding box was approximatively
-     * west=-152.85, east=-57.15, south=-43.1, north=43.1. However
-     * we presume that this bounding box may change in the future.
-     */
-    @Test
-    public void testDomainOfValidity() {
-        final GeographicBoundingBox box = (GeographicBoundingBox)
-                projection.getDomainOfValidity().getGeographicElements().iterator().next();
-        assertBetween("westBoundLongitude", -180, -152, box.getWestBoundLongitude());
-        assertBetween("eastBoundLongitude",  -58, +180, box.getEastBoundLongitude());
-        assertBetween("southBoundLatitude",  -90,  -43, box.getSouthBoundLatitude());
-        assertBetween("northBoundLatitude",   43,  +90, box.getNorthBoundLatitude());
+    @Override
+    protected SingleOperation wrap(final Projection projection) {
+        return new NetcdfProjection(projection, null, null);
     }
 }

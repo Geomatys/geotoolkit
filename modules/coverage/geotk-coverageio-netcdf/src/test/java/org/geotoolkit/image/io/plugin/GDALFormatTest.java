@@ -17,18 +17,17 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.awt.geom.Point2D;
 
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.wrapper.netcdf.IOTestCase;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -38,22 +37,11 @@ import static org.geotoolkit.test.Assert.*;
  * Tests reading a Landsat file converted to NetCDF by GDAL.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.19 (derived from 3.16)
  */
 public final strictfp class GDALFormatTest extends NetcdfTestBase {
-    /**
-     * Returns the file to test, which is mandatory since provided in the
-     * {@code test-data} directory.
-     *
-     * @return The test file (never null).
-     * @throws IOException If the file can not be obtained.
-     */
-    public static File getTestFile() throws IOException {
-        return TestData.file(GDALFormatTest.class, "melb3112.nc");
-    }
-
     /**
      * Creates a reader and initializes its input to the test file defined in
      * {@link #getTestFile()}. This method is invoked by each tests inherited
@@ -62,7 +50,7 @@ public final strictfp class GDALFormatTest extends NetcdfTestBase {
     @Override
     protected NetcdfImageReader createImageReader() throws IOException {
         final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(getTestFile());
+        reader.setInput(open(IOTestCase.LANDSAT));
         return reader;
     }
 

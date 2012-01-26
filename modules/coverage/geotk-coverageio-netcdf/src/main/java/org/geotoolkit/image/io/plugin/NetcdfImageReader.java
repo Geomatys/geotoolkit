@@ -861,6 +861,14 @@ public class NetcdfImageReader extends FileImageReader implements
             final String inputURL;
             boolean useCache = true;
             final Object input = this.input;
+            if (input instanceof NetcdfFile) {
+                if (input instanceof NetcdfDataset) {
+                    dataset = (NetcdfDataset) input;
+                } else {
+                    dataset = new NetcdfDataset((NetcdfFile) input);
+                }
+                return;
+            }
             switch (Protocol.getProtocol(input)) {
                 case DODS: {
                     inputURL = input.toString();
@@ -1344,6 +1352,9 @@ public class NetcdfImageReader extends FileImageReader implements
             pluginClassName = "org.geotoolkit.image.io.plugin.NetcdfImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            final int length = inputTypes.length;
+            inputTypes = Arrays.copyOf(inputTypes, length+1);
+            inputTypes[length] = NetcdfFile.class;
         }
 
         /**

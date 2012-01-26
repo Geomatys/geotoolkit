@@ -18,14 +18,11 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.List;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import javax.imageio.IIOException;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.ncml.NcMLReader;
 
 import org.opengis.metadata.Metadata;
-import org.opengis.metadata.Identifier;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
@@ -34,16 +31,9 @@ import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.VerticalExtent;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.citation.CitationDate;
-import org.opengis.metadata.citation.ResponsibleParty;
-import org.opengis.metadata.citation.DateType;
-import org.opengis.metadata.citation.Role;
 import org.opengis.temporal.Instant;
+import org.opengis.wrapper.netcdf.NetcdfMetadataTest;
 
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
@@ -53,51 +43,58 @@ import static org.geotoolkit.test.Commons.getSingleton;
 
 
 /**
- * Tests using the {@link NetcdfTranscoder} class.
+ * Tests using the {@link NetcdfTranscoder} class. This class inherits the tests from the
+ * {@code geoapi-netcdf} module, and adds a some additional assertions for attributes not
+ * parsed by the GeoAPI demo code.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 3.20
  */
-public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase {
+public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     /**
-     * The THREDDS XML test file.
+     * {@code true} if this instance is running an integration test.
      */
-    private static final String THREDDS_FILE = "thredds.ncml";
+    private boolean integrationTest;
 
     /**
-     * The binary NetCDF test file.
+     * Wraps the given NetCDF file into the Metadata object to be tested.
+     * This method is invoked by the tests inherited from the {@code geoapi-test} module.
+     *
+     * @param  file The NetCDF file to wrap.
+     * @return A metadata implementation created from the attributes found in the given file.
+     * @throws IOException If an error occurred while wrapping the given NetCDF file.
      */
-    private static final String BINARY_FILE = "2005092200_sst_21-24.en.nc";
+    @Override
+    protected Metadata wrap(final NetcdfFile file) throws IOException {
+        if (integrationTest) try {
+            final NetcdfImageReader imageReader = new NetcdfImageReader(null);
+            imageReader.setInput(file);
+            final ImageCoverageReader coverageReader = new ImageCoverageReader();
+            coverageReader.setInput(imageReader);
+            final Metadata metadata = coverageReader.getMetadata();
+            coverageReader.dispose();
+            return metadata;
+        } catch (CoverageStoreException e) {
+            throw new IIOException(e.getLocalizedMessage(), e);
+        }
+        // Bellow is the "normal" test.
+        final NetcdfTranscoder ncISO = new NetcdfTranscoder(file, null);
+        return ncISO.readMetadata();
+    }
 
     /**
-     * Tolerance factor for floating point comparison.
-     * We actually require an exact match.
-     */
-    private static final double EPS = 0;
-
-    /**
-     * Tests a file that contains THREDDS metadata.
+     * Tests a file that contains THREDDS metadata. This method inherits the tests defined in
+     * GeoAPI, and adds some additional tests for attributes parsed by Geotk but not GeoAPI.
      *
      * @throws IOException If the test file can not be read.
      */
     @Test
-    public void testTHREDDS() throws IOException {
-        final Metadata metadata;
-        try (InputStream in = TestData.openStream(NetcdfImageReader.class, THREDDS_FILE)) {
-            final NetcdfFile file = NcMLReader.readNcML(in, null);
-            final NetcdfTranscoder ncISO = new NetcdfTranscoder(file, null);
-            metadata = ncISO.readMetadata();
-            file.close();
-        }
+    @Override
+    public void testThredds() throws IOException {
+        super.testThredds();
         assertEquals("crm_v1", metadata.getFileIdentifier());
-        /*
-         * Metadata / Responsibly party.
-         */
-        final ResponsibleParty party = getSingleton(metadata.getContacts());
-        assertEquals("David Neufeld", party.getIndividualName());
-        assertEquals("xxxxx.xxxxxxx@noaa.gov", getSingleton(party.getContactInfo().getAddress().getElectronicMailAddresses()));
         /*
          * Metadata / Grid Spatial Representation.
          */
@@ -110,15 +107,6 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
         assertEquals(Double .valueOf(8.332899328159992E-4), axis.get(0).getResolution());
         assertEquals(Double .valueOf(8.332465368190813E-4), axis.get(1).getResolution());
         /*
-         * Metadata / Data Identification / Geographic Bounding Box.
-         */
-        final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
-        final GeographicBoundingBox bbox = (GeographicBoundingBox) getSingleton(getSingleton(identification.getExtents()).getGeographicElements());
-        assertEquals("West Bound Longitude", -80, bbox.getWestBoundLongitude(), EPS);
-        assertEquals("East Bound Longitude", -64, bbox.getEastBoundLongitude(), EPS);
-        assertEquals("South Bound Latitude",  40, bbox.getSouthBoundLatitude(), EPS);
-        assertEquals("North Bound Latitude",  48, bbox.getNorthBoundLatitude(), EPS);
-        /*
          * Metadata / Quality.
          */
         assertEquals("xyz2grd -R-80/-64/40/48 -I3c -Gcrm_v1.grd",
@@ -126,30 +114,20 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
     }
 
     /**
-     * Tests a NetCDF binary file.
+     * Tests a NetCDF binary file. This method inherits the tests defined in GeoAPI,
+     * and adds some additional tests for attributes parsed by Geotk but not GeoAPI.
      *
      * @throws IOException If the test file can not be read.
      */
     @Test
-    public void testNC() throws IOException {
-        final File file = TestData.file(NetcdfImageReader.class, BINARY_FILE);
-        final NetcdfTranscoder ncISO = new NetcdfTranscoder(NetcdfFile.open(file.getPath()), null);
-        final Metadata metadata = ncISO.readMetadata();
-        ncISO.file.close();
-        checkSST(metadata);
-    }
-
-    /**
-     * Checks the metadata from the {@value #BINARY_FILE} file.
-     */
-    private static void checkSST(final Metadata metadata) {
+    @Override
+    public void testNCEP() throws IOException {
+        super.testNCEP();
         /*
          * Metadata / Data Identification.
          */
-        assertEquals("NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc", metadata.getFileIdentifier());
         final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
         assertSame(SpatialRepresentationType.GRID, getSingleton(identification.getSpatialRepresentationTypes()));
-        assertEquals("NCEP SST Global 5.0 x 2.5 degree model data", identification.getAbstract().toString());
         assertEquals("Freely available", getSingleton(getSingleton(identification.getResourceConstraints()).getUseLimitations()).toString());
         /*
          * Metadata / Quality.
@@ -158,40 +136,15 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
                    + "2005-09-26T21:50:00 - edavis - add attributes for dataset discovery",
                    getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
         /*
-         * Metadata / Responsibly party.
-         */
-        final ResponsibleParty party = getSingleton(metadata.getContacts());
-        assertEquals("NOAA/NWS/NCEP", party.getIndividualName());
-        assertEquals(Role.ORIGINATOR, party.getRole());
-        /*
-         * Metadata / Data Identification / Citation.
-         */
-        final Citation citation = identification.getCitation();
-        final Identifier identifier = getSingleton(citation.getIdentifiers());
-        final CitationDate date = getSingleton(citation.getDates());
-        assertEquals("Sea Surface Temperature Analysis Model", citation.getTitle().toString());
-        assertEquals("edu.ucar.unidata", identifier.getAuthority().getTitle().toString());
-        assertEquals("NCEP/SST/Global_5x2p5deg/SST_Global_5x2p5deg_20050922_0000.nc", identifier.getCode());
-        assertEquals("Expected 2005-09-22T00:00", 1127340000000L, date.getDate().getTime());
-        assertSame(DateType.CREATION, date.getDateType());
-        /*
          * Metadata / Data Identification / Keywords.
          */
         final Keywords keywords = getSingleton(identification.getDescriptiveKeywords());
         assertEquals("GCMD Science Keywords", keywords.getThesaurusName().getTitle().toString());
         assertEquals("EARTH SCIENCE > Oceans > Ocean Temperature > Sea Surface Temperature", getSingleton(keywords.getKeywords()).toString());
         /*
-         * Metadata / Data Identification / Geographic Bounding Box.
-         */
-        final Extent extent = getSingleton(identification.getExtents());
-        final GeographicBoundingBox bbox = (GeographicBoundingBox) getSingleton(extent.getGeographicElements());
-        assertEquals("West Bound Longitude", -180, bbox.getWestBoundLongitude(), 0);
-        assertEquals("East Bound Longitude", +180, bbox.getEastBoundLongitude(), 0);
-        assertEquals("South Bound Latitude",  -90, bbox.getSouthBoundLatitude(), 0);
-        assertEquals("North Bound Latitude",  +90, bbox.getNorthBoundLatitude(), 0);
-        /*
          * Metadata / Data Identification / Vertical Extent.
          */
+        final Extent extent = getSingleton(identification.getExtents());
         final VerticalExtent vext = getSingleton(extent.getVerticalElements());
         assertEquals("Vertical min", 0, vext.getMinimumValue().doubleValue(), 0);
         assertEquals("Vertical max", 0, vext.getMaximumValue().doubleValue(), 0);
@@ -204,7 +157,7 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
     }
 
     /**
-     * Same test than {@link #testNC()}, but now reading through a {@link ImageCoverageReader}.
+     * Same test than {@link #testNCEP()}, but now reading through a {@link ImageCoverageReader}.
      * This is an integration test.
      *
      * @throws IOException If the test file can not be read.
@@ -212,12 +165,7 @@ public final strictfp class NetcdfTranscoderTest extends LocaleDependantTestBase
      */
     @Test
     public void testGridCoverageReader() throws IOException, CoverageStoreException {
-        final NetcdfImageReader imageReader = new NetcdfImageReader(null);
-        imageReader.setInput(TestData.file(NetcdfImageReader.class, BINARY_FILE));
-        final ImageCoverageReader coverageReader = new ImageCoverageReader();
-        coverageReader.setInput(imageReader);
-        final Metadata metadata = coverageReader.getMetadata();
-        coverageReader.dispose();
-        checkSST(metadata);
+        integrationTest = true;
+        testNCEP();
     }
 }
