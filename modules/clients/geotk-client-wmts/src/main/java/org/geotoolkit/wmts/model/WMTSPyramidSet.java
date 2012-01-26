@@ -18,13 +18,11 @@ package org.geotoolkit.wmts.model;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.wmts.GetTileRequest;
@@ -38,20 +36,22 @@ import org.geotoolkit.wmts.xml.v100.*;
  */
 public class WMTSPyramidSet extends CachedPyramidSet{
 
+    /**
+     * Additional hint : to specify the style.
+     */
+    public static final String HINT_STYLE = "style";
+    
     private final WebMapTileServer server;
     private final String layerName;
-    private final String style;
     private final String id = UUID.randomUUID().toString();
     private LayerType wmtsLayer;
     
-    public WMTSPyramidSet(final WebMapTileServer server, final String layerName, final String style){
+    public WMTSPyramidSet(final WebMapTileServer server, final String layerName){
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layerName);
         this.server = server;
         this.layerName = layerName;
-        this.style = style;
-        
-        
+                
         //find the wmts layer
         final ContentsType contents = server.getCapabilities().getContents();
         wmtsLayer = null;
@@ -104,20 +104,28 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected InputStream download(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException {
+    protected InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
         
         final GetTileRequest request = server.createGetTile();
-        request.setFormat(mimeType);
+        
+        //set the format
+        Object format = hints.get(PyramidSet.HINT_FORMAT);
+        if(format == null){
+            //set a default value
+            format = "image/png";
+        }        
+        request.setFormat(format.toString());
+        
         request.setLayer(layerName);
         request.setTileCol(col);
         request.setTileRow(row);
         request.setTileMatrix(wmtsMosaic.getMatrix().getIdentifier().getValue());
         request.setTileMatrixSet(wmtsMosaic.getPyramid().getMatrixset().getIdentifier().getValue());
         
-        //find the style
-        String style = this.style;
-        if(style == null){
+        //set the style
+        Object style = hints.get(HINT_STYLE);
+        if(style == null || !(style instanceof String)){
             //get the default style
             for(Style st : wmtsLayer.getStyle()){
                 if(style == null){
@@ -128,7 +136,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
                 }
             }
         }        
-        request.setStyle(style);
+        request.setStyle(style.toString());
         
         try {
             return request.getResponseStream();

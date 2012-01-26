@@ -18,8 +18,15 @@ package org.geotoolkit.googlemaps;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.Name;
 
 /**
  * Client for google static maps.
@@ -27,9 +34,10 @@ import org.geotoolkit.client.AbstractServer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StaticGoogleMapsServer extends AbstractServer{
+public class StaticGoogleMapsServer extends AbstractServer implements CoverageStore{
     
     public static final URL DEFAULT_GOOGLE_STATIC_MAPS;
+    private static final Set<Name> LAYER_NAMES;
     
     static {
         try {
@@ -38,6 +46,13 @@ public class StaticGoogleMapsServer extends AbstractServer{
             //will not happen
             throw new RuntimeException(ex.getLocalizedMessage(),ex);
         }
+        
+        final Set<Name> names = new HashSet<Name>();
+        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_HYBRID));
+        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_ROADMAP));
+        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_SATELLITE));
+        names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN));
+        LAYER_NAMES = Collections.unmodifiableSet(names);
     }
     
     private final String key;
@@ -69,6 +84,20 @@ public class StaticGoogleMapsServer extends AbstractServer{
      */
     public GetMapRequest createGetMap() {
         return new DefaultGetMap(this,getKey());
+    }
+
+    @Override
+    public Set<Name> getNames() {
+        return LAYER_NAMES;
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        return new GoogleCoverageReference(this,name);
+    }
+
+    @Override
+    public void dispose() {
     }
     
 }

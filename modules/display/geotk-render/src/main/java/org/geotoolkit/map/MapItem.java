@@ -18,6 +18,7 @@
 package org.geotoolkit.map;
 
 import java.util.List;
+import java.util.Map;
 import org.opengis.style.Description;
 
 /**
@@ -84,14 +85,24 @@ public interface MapItem {
 
     /**
      * Store a value for this maplayer in a hashmap using the given key.
+     * @param key
+     * @param value  
      */
     void setUserPropertie(String key,Object value);
 
     /**
      * Get a stored value knowing the key.
+     * @param key
+     * @return user property object , can be null
      */
     Object getUserPropertie(String key);
 
+    /**
+     * @return map of all user properties.
+     *          This is the live map.
+     */
+    Map<String,Object> getUserProperties();
+    
     /**
      * Register an item listener.
      * @param listener item listener to register

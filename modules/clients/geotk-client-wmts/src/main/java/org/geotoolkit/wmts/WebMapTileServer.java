@@ -18,17 +18,26 @@ package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
 import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
+import org.geotoolkit.wmts.xml.v100.LayerType;
+import org.opengis.feature.type.Name;
 
 
 /**
@@ -37,12 +46,13 @@ import org.geotoolkit.wmts.xml.v100.Capabilities;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WebMapTileServer extends AbstractServer{
+public class WebMapTileServer extends AbstractServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
     private final WMTSVersion version;
     private Capabilities capabilities;
+    private Set<Name> names = null;
 
     /**
      * Builds a web map server with the given server url and version.
@@ -175,6 +185,32 @@ public class WebMapTileServer extends AbstractServer{
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
+    }
+
+    @Override
+    public synchronized Set<Name> getNames() throws DataStoreException {
+        if(names == null){
+            names = new HashSet<Name>();
+            final List<LayerType> layers = getCapabilities().getContents().getLayers();
+            for(LayerType lt : layers){
+                final String name = lt.getIdentifier().getValue();
+                names.add(new DefaultName(name));
+            }
+            names = Collections.unmodifiableSet(names);
+        }
+        return names;
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(getNames().contains(name)){
+            return new WMTSCoverageReference(this,name);
+        }
+        throw new DataStoreException("No layer for name : " + name);
+    }
+
+    @Override
+    public void dispose() {
     }
 
 }

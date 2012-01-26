@@ -17,10 +17,17 @@
 package org.geotoolkit.osmtms;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.Name;
 
 /**
  * Represent a Tile Map Server instance.
@@ -28,10 +35,11 @@ import org.geotoolkit.security.ClientSecurity;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTileMapServer extends AbstractServer{
+public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     
     private final OSMTMSPyramidSet pyramidSet;
     private final int maxZoomLevel;
+    private final Name name;
     
     /**
      * Builds a tile map server with the given server url and version.
@@ -55,6 +63,7 @@ public class OSMTileMapServer extends AbstractServer{
         super(serverURL,security);
         this.maxZoomLevel = maxZoomLevel;
         pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel);
+        this.name = new DefaultName(serverURL.toString());
     }
 
     public PyramidSet getPyramidSet(){
@@ -73,6 +82,23 @@ public class OSMTileMapServer extends AbstractServer{
      */
     public GetTileRequest createGetTile() {
         return new DefaultGetTile(serverURL.toString(),securityManager);
+    }
+
+    @Override
+    public Set<Name> getNames() {
+        return Collections.singleton(name);
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(DefaultName.match(this.name, name)){
+            return new OSMTMSCoverageReference(this);
+        }
+        throw new DataStoreException("No coverage for name : " + name);
+    }
+
+    @Override
+    public void dispose() {
     }
 
 }

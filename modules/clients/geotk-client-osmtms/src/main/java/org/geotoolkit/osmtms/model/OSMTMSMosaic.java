@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.io.InputStream;
+import java.util.Map;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.storage.DataStoreException;
@@ -44,13 +45,13 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
     }
 
     @Override
-    public RenderedImage getTile(String mimetype, int col, int row) throws DataStoreException {
-        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTile(this, mimetype, col, row);
+    public RenderedImage getTile(int col, int row, Map hints) throws DataStoreException {
+        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
 
     @Override
-    public InputStream getTileStream(String mimetype, int col, int row) throws DataStoreException {
-        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, mimetype, col, row);
+    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
+        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
     }
     
 }

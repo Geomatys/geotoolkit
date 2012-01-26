@@ -17,10 +17,15 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import java.util.Set;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.WMSVersion;
+import org.opengis.feature.type.Name;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
@@ -29,7 +34,7 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebMapServerCached extends WebMapServer{
+public class WebMapServerCached extends WebMapServer implements CoverageStore{
     
     /**
      * Builds a web map server with the given server url and version.
@@ -54,6 +59,20 @@ public class WebMapServerCached extends WebMapServer{
         final GetMapRequest request = super.createGetMap();
         request.dimensions().put("TILED", "true");
         return request;
+    }
+
+    @Override
+    public Set<Name> getNames() throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void dispose() {
     }
     
 }

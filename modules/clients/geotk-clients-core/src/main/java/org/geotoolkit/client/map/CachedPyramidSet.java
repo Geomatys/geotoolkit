@@ -19,6 +19,7 @@ package org.geotoolkit.client.map;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -42,25 +43,25 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
      */
     private final Cache<String,RenderedImage> tileCache = new Cache<String, RenderedImage>(4, 10, false);
     
-    protected abstract InputStream download(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException;
+    protected abstract InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException;
     
-    private String toId(GridMosaic mosaic, String mimeType, int col, int row){
+    private String toId(GridMosaic mosaic, int col, int row, Map hints){
         final String pyramidId = mosaic.getPyramid().getId();
         final String mosaicId = mosaic.getId();
         
         final StringBuilder sb = new StringBuilder(pyramidId).append('_').append(mosaicId)
-                .append('_').append(mimeType).append('_').append(col).append('_').append(row);
+                .append('_').append(col).append('_').append(row);
         
         return sb.toString();
     }
     
-    public InputStream getTileStream(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException{
-        return download(mosaic,mimeType,col,row);
+    public InputStream getTileStream(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
+        return download(mosaic,col,row, hints);
     }
     
-    public RenderedImage getTile(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException{
+    public RenderedImage getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
         
-        final String tileId = toId(mosaic, mimeType, col, row);
+        final String tileId = toId(mosaic, col, row, hints);
         
         //use the cache if available        
         RenderedImage value = tileCache.peek(tileId);
@@ -69,7 +70,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final InputStream stream = download(mosaic, mimeType, col, row);
+                    final InputStream stream = download(mosaic, col, row, hints);
                     if(stream != null){
                         try{
                             value = ImageIO.read(stream);

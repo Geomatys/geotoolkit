@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -115,13 +116,13 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public RenderedImage getTile(String mimetype, int col, int row) throws DataStoreException {
-        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTile(this, mimetype, col, row);
+    public RenderedImage getTile(int col, int row, Map hints) throws DataStoreException {
+        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
 
     @Override
-    public InputStream getTileStream(String mimetype, int col, int row) throws DataStoreException {
-        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, mimetype, col, row);
+    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
+        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
     }
 
 }

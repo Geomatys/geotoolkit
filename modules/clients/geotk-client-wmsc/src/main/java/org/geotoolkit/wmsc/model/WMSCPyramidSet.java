@@ -19,6 +19,7 @@ package org.geotoolkit.wmsc.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
@@ -84,7 +85,7 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected InputStream download(GridMosaic mosaic, String mimeType, int col, int row) throws DataStoreException {
+    protected InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final GetMapRequest request = server.createGetMap();
         request.setLayers(layer);
         request.setEnvelope(mosaic.getEnvelope(col, row));

@@ -18,12 +18,15 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NullArgumentException;
 import org.opengis.feature.type.Name;
@@ -31,11 +34,13 @@ import org.opengis.geometry.Envelope;
 
 /**
  * Default implementation of the coverage MapLayer.
+ * Use MapBuilder to create it.
+ * This class is left public only for subclass implementations.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
+public class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
 
     private static final ImmutableEnvelope INFINITE = new ImmutableEnvelope(DefaultGeographicCRS.WGS84, -180, 180, -90, 90);
 
@@ -43,7 +48,7 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
     private final GridCoverageReader reader;
     private final Name coverageName;
     
-    DefaultCoverageMapLayer(final CoverageReference ref, final MutableStyle style, final Name name){
+    protected DefaultCoverageMapLayer(final CoverageReference ref, final MutableStyle style, final Name name){
         super(style);
         if(ref == null || name == null || name.toString() == null || name.getLocalPart() == null){
             throw new NullArgumentException("Coverage Reader and name can not be null");
@@ -53,7 +58,7 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
         this.coverageName = name;
     }
     
-    DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
+    protected DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
         super(style);
         if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
             throw new NullArgumentException("Coverage Reader and name can not be null");
@@ -94,9 +99,18 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
      * {@inheritDoc }
      */
     @Override
-    public Envelope getBounds() {        
+    public Envelope getBounds() {
+        if(ref != null && ref instanceof PyramidalModel){
+            try {
+                return ((PyramidalModel)ref).getPyramidSet().getEnvelope();
+            } catch (DataStoreException ex) {
+                Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        
         try {
-            final GeneralGridGeometry geom = reader.getGridGeometry(0);
+            final GeneralGridGeometry geom = getCoverageReader().getGridGeometry(0);
             if(geom == null){
                 LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageName());
                 return INFINITE;

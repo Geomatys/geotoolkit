@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import java.util.Collection;
 import java.util.List;
+import org.opengis.geometry.Envelope;
 
 /**
  * Define a collection of pyramid for a give data.
@@ -26,6 +27,11 @@ import java.util.List;
  * @module pending
  */
 public interface PyramidSet {
+    
+    /**
+     * Additional hint : to specify the mime type.
+     */
+    public static final String HINT_FORMAT = "format";
     
     /**
      * @return unique id.
@@ -43,5 +49,11 @@ public interface PyramidSet {
      * @return List<String>
      */
     List<String> getFormats();
+    
+    /**
+     * This envelope is not exact, it is approximative.
+     * @return global envelope of all pyramids
+     */
+    Envelope getEnvelope();
     
 }

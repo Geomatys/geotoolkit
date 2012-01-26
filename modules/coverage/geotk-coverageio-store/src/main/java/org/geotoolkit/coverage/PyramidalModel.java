@@ -35,6 +35,12 @@ public interface PyramidalModel {
     
     /**
      * 
+     * @return true if model can be modified
+     */
+    boolean isWriteable();
+    
+    /**
+     * 
      * @param crs
      * @return created pyramid
      * @throws DataStoreException  

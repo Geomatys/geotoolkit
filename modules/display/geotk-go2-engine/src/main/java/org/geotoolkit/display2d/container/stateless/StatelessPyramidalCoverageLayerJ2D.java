@@ -20,9 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -72,6 +70,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         int col;
         int row;
         MathTransform gridToCRS;
+        Map hints;
     }
     
     private final PyramidalModel model;
@@ -169,6 +168,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         //find all the tiles we need --------------------------------------
         //tiles to render         
         final Collection<TileReference> queries = new ArrayList<TileReference>();
+        final Map hints = new HashMap(item.getUserProperties());
 
         final double epsilon = 1e-6;
         final double bBoxMinX = wantedEnv.getMinimum(0);
@@ -218,6 +218,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 ref.row = tileRow;                
                 ref.gridToCRS = new AffineTransform2D(
                         scaleX, 0, 0, -scaleY, leftX, upperY);
+                ref.hints = hints;
                 
                 queries.add(ref);
             }
@@ -322,7 +323,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         
         RenderedImage image;
         try {
-            image = tileRef.mosaic.getTile("", tileRef.col, tileRef.row);
+            image = tileRef.mosaic.getTile(tileRef.col, tileRef.row, tileRef.hints);
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;

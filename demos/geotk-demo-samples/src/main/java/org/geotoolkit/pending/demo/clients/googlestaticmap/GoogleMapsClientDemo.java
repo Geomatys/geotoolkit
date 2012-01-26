@@ -36,8 +36,7 @@ public class GoogleMapsClientDemo {
 
         final StaticGoogleMapsServer server = new StaticGoogleMapsServer(
                 StaticGoogleMapsServer.DEFAULT_GOOGLE_STATIC_MAPS,null);
-        final GoogleMapsMapLayer layer = new GoogleMapsMapLayer(server);
-        layer.setMapType(GetMapRequest.TYPE_TERRAIN);
+        final GoogleMapsMapLayer layer = new GoogleMapsMapLayer(server,GetMapRequest.TYPE_TERRAIN);
         
         context.layers().add(layer);
         
