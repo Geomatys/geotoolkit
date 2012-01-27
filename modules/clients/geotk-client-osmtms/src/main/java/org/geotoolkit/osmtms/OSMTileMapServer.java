@@ -63,7 +63,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
         super(serverURL,security);
         this.maxZoomLevel = maxZoomLevel;
         pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel);
-        this.name = new DefaultName(serverURL.toString());
+        this.name = new DefaultName(serverURL.toString(),"main");
     }
 
     public PyramidSet getPyramidSet(){

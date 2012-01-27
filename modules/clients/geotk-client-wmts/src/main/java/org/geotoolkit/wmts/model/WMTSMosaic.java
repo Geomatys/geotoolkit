@@ -25,6 +25,8 @@ import java.util.UUID;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.wmts.WMTSUtilities;
 import org.geotoolkit.wmts.xml.v100.TileMatrix;
 import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
 import org.opengis.geometry.Envelope;
@@ -40,11 +42,13 @@ public class WMTSMosaic implements GridMosaic{
     private final WMTSPyramid pyramid;
     private final TileMatrix matrix;
     private final TileMatrixLimits limit;
+    private final double scale;
 
     public WMTSMosaic(final WMTSPyramid pyramid, final TileMatrix matrix, final TileMatrixLimits limits) {
         this.pyramid = pyramid;
         this.matrix = matrix;
         this.limit = limits;
+        this.scale = WMTSUtilities.unitsByPixel(pyramid.getMatrixset(), pyramid.getCoordinateReferenceSystem(), matrix);
     }
     
     public TileMatrix getMatrix() {
@@ -77,7 +81,7 @@ public class WMTSMosaic implements GridMosaic{
 
     @Override
     public double getScale() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return scale;
     }
 
     @Override
@@ -92,8 +96,9 @@ public class WMTSMosaic implements GridMosaic{
         final double minX = getUpperLeftCorner().getX();
         final double maxY = getUpperLeftCorner().getY();
         final Dimension tileSize = getTileSize();
-        final double spanX = tileSize.width * matrix.getScaleDenominator();
-        final double spanY = tileSize.height * matrix.getScaleDenominator();
+        final double scale = getScale();
+        final double spanX = tileSize.width * scale;
+        final double spanY = tileSize.height * scale;
         
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
@@ -122,6 +127,15 @@ public class WMTSMosaic implements GridMosaic{
     @Override
     public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
+    }
+ 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append("   scale = ").append(getScale());
+        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
+        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
+        return sb.toString();
     }
     
 }

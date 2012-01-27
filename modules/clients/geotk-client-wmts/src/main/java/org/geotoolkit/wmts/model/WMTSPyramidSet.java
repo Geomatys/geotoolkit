@@ -135,8 +135,11 @@ public class WMTSPyramidSet extends CachedPyramidSet{
                     break;
                 }
             }
-        }        
-        request.setStyle(style.toString());
+        }
+        
+        if(style != null){
+            request.setStyle(style.toString());
+        }
         
         try {
             return request.getResponseStream();
@@ -144,5 +147,5 @@ public class WMTSPyramidSet extends CachedPyramidSet{
             throw new DataStoreException(ex);
         }
     }
-    
+        
 }

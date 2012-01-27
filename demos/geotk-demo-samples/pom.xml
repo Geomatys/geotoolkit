@@ -83,6 +83,11 @@
             <artifactId>geotk-client-wmsc</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-wmts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	<dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-client-sos</artifactId>

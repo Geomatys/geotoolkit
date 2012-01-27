@@ -21,6 +21,9 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
+import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -92,5 +95,13 @@ public class DefaultPyramid implements Pyramid{
         return null;
     }
     
+    @Override
+    public String toString(){
+        return Trees.toString(
+                Classes.getShortClassName(this)
+                +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem()) 
+                +" "+getId(), 
+                getMosaics().values());
+    }
     
 }

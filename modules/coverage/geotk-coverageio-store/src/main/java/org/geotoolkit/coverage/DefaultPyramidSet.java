@@ -21,7 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -57,6 +59,11 @@ public class DefaultPyramidSet implements PyramidSet{
         env.setRange(0, -180, +180);
         env.setRange(1, -90, +90);
         return env;
+    }
+    
+    @Override
+    public String toString(){
+        return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
     
 }

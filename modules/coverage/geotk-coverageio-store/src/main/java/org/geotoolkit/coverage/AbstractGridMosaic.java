@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -94,6 +95,15 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     @Override
     public boolean isMissing(int col, int row) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append("   scale = ").append(getScale());
+        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
+        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
+        return sb.toString();
     }
     
 }
