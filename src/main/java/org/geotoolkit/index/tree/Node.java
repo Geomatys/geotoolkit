@@ -16,14 +16,14 @@ import javax.swing.event.EventListenerList;
 public abstract class Node {
 
     private final EventListenerList listenerList = new EventListenerList();
-    private Map<String,Object> userProperties ;
+    private Map<String, Object> userProperties;
 
     /**
      * @param key
      * @return user property for given key
      */
     public Object getUserProperty(final String key) {
-        if(userProperties == null){
+        if (userProperties == null) {
             return null;
         }
         return userProperties.get(key);
@@ -35,12 +35,12 @@ public abstract class Node {
      * @param value Object will be stocked.
      */
     public void setUserProperty(final String key, final Object value) {
-        if(userProperties == null){
-            userProperties = new HashMap<String, Object>(); 
+        if (userProperties == null) {
+            userProperties = new HashMap<String, Object>();
         }
-        userProperties.put(key,value);
-    }    
-    
+        userProperties.put(key, value);
+    }
+
     public void addListener(PropertyChangeListener l) {
         listenerList.add(PropertyChangeListener.class, l);
     }

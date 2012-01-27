@@ -14,8 +14,8 @@ import org.geotoolkit.util.converter.Classes;
  * @author Rémi Marechal (Geomatys).
  * @author Johann Sorel  (Geomatys).
  */
-public abstract class AbstractTree2D implements Tree<Shape>{
-    
+public abstract class AbstractTree2D implements Tree<Shape> {
+
     private Node2D root;
     private final int maxElements;
 
@@ -35,21 +35,22 @@ public abstract class AbstractTree2D implements Tree<Shape>{
     public int getMaxElements() {
         return maxElements;
     }
+
     /**
      * {@inheritDoc}
-     */   
-    public Node2D getRoot(){
+     */
+    public Node2D getRoot() {
         return root;
     }
-    
+
     /**Affect a new tree trunk.
      * 
      * @param root 
      */
-    protected void setRoot(Node2D root){
+    protected void setRoot(Node2D root) {
         this.root = root;
     }
-    
+
     /**Create a adapted {@code Node2D} in 2 dimension for this tree.
      * 
      * @param tree pointer on tree.
@@ -58,7 +59,7 @@ public abstract class AbstractTree2D implements Tree<Shape>{
      * @param entries 
      * @return Node2D
      */
-    public static Node2D createNode(Tree tree, Node2D parent, List<Node2D> children, List<Shape> entries) {
+    public static Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries) {
         return new Node2D(tree, parent, children, entries);
     }
 
@@ -67,6 +68,6 @@ public abstract class AbstractTree2D implements Tree<Shape>{
      */
     @Override
     public String toString() {
-        return Classes.getShortClassName(this)+"\n"+getRoot();
+        return Classes.getShortClassName(this) + "\n" + getRoot();
     }
 }

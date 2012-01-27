@@ -20,7 +20,7 @@ import static org.geotoolkit.index.tree.TreeUtils.*;
  * @author Johann Sorel  (Geomatys).
  * @version SNAPSHOT
  */
-public class StarRTree extends AbstractTree2D{
+public class StarRTree extends AbstractTree2D {
 
     /**
      * In accordance with R*Tree properties.
@@ -28,7 +28,7 @@ public class StarRTree extends AbstractTree2D{
      * reinsert some elements just one time.
      */
     private boolean insertAgain = true;
-    
+
     /**Create R*Tree.
      * 
      * @param maxElements max elements number permit by cells. 
@@ -44,9 +44,9 @@ public class StarRTree extends AbstractTree2D{
     @Override
     public void insert(Shape entry) {
         final Node2D root = getRoot();
-        if(root.isEmpty()){
+        if (root.isEmpty()) {
             root.getEntries().add(entry);
-        }else{
+        } else {
             insertNode(root, entry);
         }
     }
@@ -57,7 +57,7 @@ public class StarRTree extends AbstractTree2D{
     @Override
     public void delete(Shape entry) {
         final Node2D root = getRoot();
-        if(root!=null){
+        if (root != null) {
             deleteNode(root, entry);
         }
     }
@@ -68,11 +68,11 @@ public class StarRTree extends AbstractTree2D{
     @Override
     public void search(Shape regionSearch, List<Shape> result) {
         final Node2D root = getRoot();
-        if(root!=null){
+        if (root != null) {
             searchNode(root, regionSearch, result);
         }
     }
-    
+
     /**Find appropriate {@code Node2D} to insert {@code Shape}.
      * To define appropriate Node, R*Tree criterion are : 
      *      - require minimum area enlargement to cover shape.
@@ -85,17 +85,17 @@ public class StarRTree extends AbstractTree2D{
      * @throws IllegalArgumentException if {@code List<Node2D>} listSubnode is empty.
      * @return {@code Node} which is appropriate to contain shape.
      */
-    private static Node2D chooseSubtree(final List<Node2D> listSubnode, final Shape entry){
+    private static Node2D chooseSubtree(final List<Node2D> listSubnode, final Shape entry) {
         ArgumentChecks.ensureNonNull("chooseSubtree : List<Node2D> lN", listSubnode);
         ArgumentChecks.ensureNonNull("chooseSubtree : Shape entry", entry);
-        if(listSubnode.isEmpty()){
+        if (listSubnode.isEmpty()) {
             throw new IllegalArgumentException("impossible to find subtree from empty list");
         }
-        
-        if(listSubnode.size() == 1){
+
+        if (listSubnode.size() == 1) {
             return listSubnode.get(0);
         }
-        
+
         for (Node2D no : listSubnode) {
             if (no.getBoundary().contains(entry.getBounds2D())) {
                 return no;
@@ -103,7 +103,7 @@ public class StarRTree extends AbstractTree2D{
         }
 
         int index = 0;
-        
+
         final Rectangle2D rtotal = listSubnode.get(0).getParent().getBoundary().getBounds2D();
         double overlaps = rtotal.getWidth() * rtotal.getHeight();
 
@@ -111,8 +111,8 @@ public class StarRTree extends AbstractTree2D{
             double overlapsTemp = 0;
             for (int j = 0; j < listSubnode.size(); j++) {
                 if (i != j) {
-                    final Node2D ni =  listSubnode.get(i);
-                    final Node2D nj =  listSubnode.get(j);
+                    final Node2D ni = listSubnode.get(i);
+                    final Node2D nj = listSubnode.get(j);
                     final List<Shape> lB = new ArrayList<Shape>(Arrays.asList(ni.getBoundary(), entry));
                     final Rectangle2D inter = getEnveloppeMin(lB).getBounds2D().createIntersection(nj.getBoundary().getBounds2D());
                     overlapsTemp += inter.getWidth() * inter.getHeight();
@@ -132,7 +132,7 @@ public class StarRTree extends AbstractTree2D{
         }
         return listSubnode.get(index);
     }
-    
+
     /**Insert new {@code Entry} in branch and organize branch if it's necessary.
      * 
      * <blockquote><font size=-1>
@@ -146,54 +146,54 @@ public class StarRTree extends AbstractTree2D{
     private static void insertNode(final Node2D candidate, final Shape entry) {
         ArgumentChecks.ensureNonNull("insertNode : candidate", candidate);
         ArgumentChecks.ensureNonNull("insertNode : entry", entry);
-        
-        if(candidate.isLeaf()){
+
+        if (candidate.isLeaf()) {
             candidate.getEntries().add(entry);
-        }else{
+        } else {
             insertNode(chooseSubtree(candidate.getChildren(), entry), entry);
         }
-        
-        final StarRTree tree = (StarRTree)candidate.getTree();
+
+        final StarRTree tree = (StarRTree) candidate.getTree();
         final int maxElmts = tree.getMaxElements();
-        
-        if(countElements(candidate) > maxElmts && tree.getIA()){
+
+        if (countElements(candidate) > maxElmts && tree.getIA()) {
             tree.setIA(false);
             final List<Shape> lsh30 = getElementAtMore33PerCent(candidate);
-            for(Shape ent : lsh30){
+            for (Shape ent : lsh30) {
                 deleteNode(candidate, ent);
             }
-            for(Shape ent : lsh30){
+            for (Shape ent : lsh30) {
                 tree.insert(ent);
             }
             tree.setIA(true);
         }
-        
-        if(!candidate.isLeaf()){
-            final List<Node2D> lN =  candidate.getChildren();
-            for(int i = lN.size()-1;i>=0;i--){
-                if(countElements(lN.get(i)) > candidate.getTree().getMaxElements()){
+
+        if (!candidate.isLeaf()) {
+            final List<Node2D> lN = candidate.getChildren();
+            for (int i = lN.size() - 1; i >= 0; i--) {
+                if (countElements(lN.get(i)) > candidate.getTree().getMaxElements()) {
                     final Node2D n = lN.remove(i);
                     List<Node2D> ls = splitNode(n);
-                    Node2D l0 = ls.get(0);
-                    Node2D l1 = ls.get(1);
+                    final Node2D l0 = ls.get(0);
+                    final Node2D l1 = ls.get(1);
                     l0.setParent(candidate);
                     l1.setParent(candidate);
                     lN.addAll(ls);
-                    if(l0.isLeaf()&&l1.isLeaf()&&l0.getBoundary().intersects(l1.getBoundary().getBounds2D())){
+                    if (l0.isLeaf() && l1.isLeaf() && l0.getBoundary().intersects(l1.getBoundary().getBounds2D())) {
                         branchGrafting(l0, l1);
                     }
                 }
             }
         }
-        
-        if(candidate.getParent()==null){
-            if(countElements(candidate)>candidate.getTree().getMaxElements()){
+
+        if (candidate.getParent() == null) {
+            if (countElements(candidate) > candidate.getTree().getMaxElements()) {
                 List<Node2D> l = splitNode(candidate);
-                Node2D l0 = l.get(0);
-                Node2D l1 = l.get(1);
+                final Node2D l0 = l.get(0);
+                final Node2D l1 = l.get(1);
                 l0.setParent(candidate);
                 l1.setParent(candidate);
-                if(l0.isLeaf()&&l1.isLeaf()&&l0.getBoundary().intersects(l1.getBoundary().getBounds2D())){
+                if (l0.isLeaf() && l1.isLeaf() && l0.getBoundary().intersects(l1.getBoundary().getBounds2D())) {
                     branchGrafting(l0, l1);
                 }
                 candidate.getEntries().clear();
@@ -202,7 +202,7 @@ public class StarRTree extends AbstractTree2D{
             }
         }
     }
-    
+
     /**Split a overflow {@code Node2D} in accordance with R-Tree properties.
      * 
      * @param candidate {@code Node2D} to Split
@@ -210,56 +210,48 @@ public class StarRTree extends AbstractTree2D{
      * @throws IllegalArgumentException if elements number within candidate is lesser 2.
      * @return List<Node2D> which contains two {@code Node2D} (split of candidate).
      */
-    private static List<Node2D> splitNode(final Node2D candidate){
+    private static List<Node2D> splitNode(final Node2D candidate) {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
-        if(countElements(candidate) < 2){
-            throw new IllegalArgumentException("not enought elements within "+candidate+" to split.");
+        if (countElements(candidate) < 2) {
+            throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         }
-        
-        final List<Node2D> lsn = new ArrayList<Node2D>(splitAxis(candidate));
-//        for(int i = lsn.size()-1;i>=0;i--){
-//            if(lsn.get(i).getChildren().size()==1){
-//                final Node2D nt = lsn.remove(i);
-//                lsn.addAll(nt.getChildren());
-//            }
-//        }
-        return lsn;
+        return new ArrayList<Node2D>(splitAxis(candidate));
     }
-    
+
     /**Recover lesser 33% largest of {@code Node2D} candidate within it.
      * 
      * @throws IllegalArgumentException if {@code Node2D} candidate is null.
      * @return all Entry within subNodes at more 33% largest of {@code this Node}.
      */
-    private static List<Shape> getElementAtMore33PerCent(final Node2D candidate){
+    private static List<Shape> getElementAtMore33PerCent(final Node2D candidate) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
         final List<Shape> lsh = new ArrayList<Shape>();
         final Rectangle2D rect = candidate.getBoundary().getBounds2D();
         final double rw2 = rect.getWidth();
         final double rh2 = rect.getHeight();
-        
-        final double distPermit = Math.hypot(rw2, rh2)/1.666666666;
+
+        final double distPermit = Math.hypot(rw2, rh2) / 1.666666666;
         searchNode(candidate, rect, lsh);
-        for(int i = lsh.size()-1;i>=0;i--){
-            if(getDistanceBetweenTwoBound2D(lsh.get(i).getBounds2D(), rect) < distPermit){
+        for (int i = lsh.size() - 1; i >= 0; i--) {
+            if (getDistanceBetweenTwoBound2D(lsh.get(i).getBounds2D(), rect) < distPermit) {
                 lsh.remove(i);
             }
         }
         return lsh;
     }
-    
+
     /**Get statement from re-insert state.
      * 
      * @return true if it's permit to re-insert else false.
      */
-    private boolean getIA(){
+    private boolean getIA() {
         return insertAgain;
     }
-    
+
     /**Affect statement to permit or not, re-insertion.
      * @param insertAgain
      */
-    private void setIA(boolean insertAgain){
+    private void setIA(boolean insertAgain) {
         this.insertAgain = insertAgain;
     }
 }

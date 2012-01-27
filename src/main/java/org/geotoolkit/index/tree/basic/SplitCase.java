@@ -4,7 +4,8 @@
  */
 package org.geotoolkit.index.tree.basic;
 
-/**To choose split made.
+/**
+ * To choose split made.
  * @see BasicRTree#splitNode(org.geotoolkit.index.tree.Node2D).
  * @author Rémi Mréchal (Geomatys).
  */

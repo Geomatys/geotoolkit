@@ -13,7 +13,7 @@ import java.util.List;
  * @author Martin Desruisseaux (Geomatys).
  */
 public interface Tree<B> {
-    
+
     /**Find some {@code Entry} which intersect regionSearch parameter 
      * and add them into result {@code List} parameter.
      * 
@@ -25,26 +25,26 @@ public interface Tree<B> {
      * @param result List of Entr(y)(ies).
      */
     void search(B regionSearch, List<B> result);
-    
+
     /**Insert a {@code Entry} into Rtree.
      * 
      * @param Entry to insert into tree.
      */
-     void insert(B entry);
-    
+    void insert(B entry);
+
     /**Find a {@code Entry} into the tree and delete it.
      * 
      * @param Entry to delete.
      */
-     void delete(B entry);
-    
+    void delete(B entry);
+
     /**
      * @return max number authorized by tree cells.
      */
-     int getMaxElements();
-     
-     /**
-      * @return tree trunk.
-      */
-     Node2D getRoot();
+    int getMaxElements();
+
+    /**
+     * @return tree trunk.
+     */
+    Node2D getRoot();
 }

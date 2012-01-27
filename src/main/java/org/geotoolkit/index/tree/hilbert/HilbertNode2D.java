@@ -21,7 +21,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class HilbertNode2D extends Node2D{
+public class HilbertNode2D extends Node2D {
 
     /**Create HilbertNode2D.
      * 
@@ -29,19 +29,20 @@ public class HilbertNode2D extends Node2D{
      * @param parent pointer on parent Node2D.
      * @param hilbertOrder currently Node2D Hilbert order.
      * @param children sub {@code Node2D}.
-     * @param entries {@code List<Shape>} to add in this node. 
+     * @param entries {@code List<Shape>} to add in this node.
+     * @throws IllegalArgumentException if hilbertOrder < 0.
      */
-    public HilbertNode2D(Tree tree, Node2D parent, int hilbertOrder, List<Node2D> children, List<Shape> entries) {
+    public HilbertNode2D(final Tree tree, final Node2D parent, final int hilbertOrder, final List<Node2D> children, final List<Shape> entries) {
         super(tree, parent, children, null);
         ArgumentChecks.ensurePositive("hilbertOrder", hilbertOrder);
         setUserProperty("isleaf", false);
-        if(children==null){
+        if (children == null) {
             setUserProperty("isleaf", true);
             setUserProperty("centroids", new ArrayList<Point2D>());
             setUserProperty("cells", new ArrayList<Node2D>());
             Rectangle2D rect = TreeUtils.getEnveloppeMin(entries).getBounds2D();
             HilbertRTree.createBasicHB(this, hilbertOrder, rect);
-            for(Shape sh : entries){
+            for (Shape sh : entries) {
                 HilbertRTree.insertNode(this, sh);
             }
         }
@@ -52,11 +53,11 @@ public class HilbertNode2D extends Node2D{
      */
     @Override
     public boolean isEmpty() {
-        List<Node2D> lC = (List<Node2D>)getUserProperty("cells");
+        List<Node2D> lC = (List<Node2D>) getUserProperty("cells");
         boolean empty = true;
-        if(!lC.isEmpty()){
-            for(Node2D hc : lC.toArray(new Node2D[lC.size()])){
-                if(!hc.isEmpty()){
+        if (!lC.isEmpty()) {
+            for (Node2D hc : lC.toArray(new Node2D[lC.size()])) {
+                if (!hc.isEmpty()) {
                     empty = false;
                     break;
                 }
@@ -65,43 +66,50 @@ public class HilbertNode2D extends Node2D{
         return getChildren().isEmpty() && empty;
     }
 
-    
-    public Rectangle2D getBound(){
+    /**
+     * @return boundary without re-compute of sub node boundary.
+     */
+    public Rectangle2D getBound() {
         return this.boundary.getBounds2D();
     }
-    
-    public void setBound(Rectangle2D rect){
+
+    /**
+     * Set new boundary.
+     * 
+     * @param rect future boundary.
+     */
+    public void setBound(final Rectangle2D rect) {
         this.boundary = rect;
     }
-    
+
     /**
      * {@inheritDoc}.
      */
     @Override
     protected void calculateBounds() {
-        if((Boolean)getUserProperty("isleaf")){
-            
+        if ((Boolean) getUserProperty("isleaf")) {
+
             final List<Shape> lS = new ArrayList<Shape>();
-            final List<Node2D> listCells = (List<Node2D>)getUserProperty("cells");
-            for(Node2D nod : listCells){
+            final List<Node2D> listCells = (List<Node2D>) getUserProperty("cells");
+            for (Node2D nod : listCells) {
                 lS.addAll(nod.getEntries());
             }
-            
-            if(lS.isEmpty()&&this.getParent()==null){
+
+            if (lS.isEmpty() && this.getParent() == null) {
                 return;
             }
-            
-            int hO = (Integer)getUserProperty("hilbertOrder");
-            if(hO>0&&lS.size()<getTree().getMaxElements()*Math.pow(4, hO-1)){
+
+            int hO = (Integer) getUserProperty("hilbertOrder");
+            if (hO > 0 && lS.size() < getTree().getMaxElements() * Math.pow(4, hO - 1)) {
                 hO--;
             }
-            
+
             HilbertRTree.createBasicHB(this, hO, TreeUtils.getEnveloppeMin(lS).getBounds2D());
-            for(Shape sh : lS){
+            for (Shape sh : lS) {
                 HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
             }
-        }else{
-            for(Node2D nod : getChildren()){
+        } else {
+            for (Node2D nod : getChildren()) {
                 addBound(nod.getBoundary());
             }
         }
@@ -112,33 +120,33 @@ public class HilbertNode2D extends Node2D{
      */
     @Override
     public boolean isLeaf() {
-        return (Boolean)getUserProperty("isleaf");
+        return (Boolean) getUserProperty("isleaf");
     }
-    
+
     /**
      * {@inheritDoc} 
      */
     @Override
     public boolean isFull() {
-        if((Boolean)getUserProperty("isleaf")){
-            for(Node2D n2d : (List<Node2D>)getUserProperty("cells")){
-                if(!n2d.isFull()){
+        if ((Boolean) getUserProperty("isleaf")) {
+            for (Node2D n2d : (List<Node2D>) getUserProperty("cells")) {
+                if (!n2d.isFull()) {
                     return false;
                 }
             }
             return true;
         }
-        return getChildren().size()>=getTree().getMaxElements();
+        return getChildren().size() >= getTree().getMaxElements();
     }
-    
+
     /**
      * {@inheritDoc} 
      */
     @Override
     public String toString() {
-        final Collection col = new ArrayList((List<Node2D>)getUserProperty("cells"));
+        final Collection col = new ArrayList((List<Node2D>) getUserProperty("cells"));
         col.addAll(getChildren());
-        String strparent =  (getParent() == null)?"null":String.valueOf(getParent().hashCode()); 
-        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent+" isleaf : "+((Boolean)getUserProperty("isleaf")), col);
+        String strparent = (getParent() == null) ? "null" : String.valueOf(getParent().hashCode());
+        return Trees.toString(Classes.getShortClassName(this) + " : " + this.hashCode() + " parent : " + strparent + " isleaf : " + ((Boolean) getUserProperty("isleaf")), col);
     }
 }

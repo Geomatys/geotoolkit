@@ -16,12 +16,12 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
  * @param <T> 
  * @author Johann Sorel (Geomatys)
  */
-public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> implements PropertyChangeListener{
+public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> implements PropertyChangeListener {
 
     public CrossList(final Class<T> type) {
         super(type);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -35,7 +35,7 @@ public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> i
      */
     @Override
     protected void notifyAdd(Collection<? extends T> clctn, NumberRange<Integer> nr) {
-        for(T n : clctn){
+        for (T n : clctn) {
             n.addListener(this);
         }
     }
@@ -53,7 +53,7 @@ public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> i
      */
     @Override
     protected void notifyRemove(Collection<? extends T> clctn, NumberRange<Integer> nr) {
-        for(T n : clctn){
+        for (T n : clctn) {
             n.removeListener(this);
         }
     }

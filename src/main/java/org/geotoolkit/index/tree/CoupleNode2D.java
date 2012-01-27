@@ -11,7 +11,7 @@ import org.geotoolkit.util.ArgumentChecks;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class CoupleNode2D implements Couple<Node2D>{
+public class CoupleNode2D implements Couple<Node2D> {
 
     private final Node2D node1;
     private final Node2D node2;
@@ -49,7 +49,7 @@ public class CoupleNode2D implements Couple<Node2D>{
     public double getPerimeter() {
         final Rectangle2D rectO1 = getObject1().getBoundary().getBounds2D();
         final Rectangle2D rectO2 = getObject2().getBoundary().getBounds2D();
-        return 2*(rectO1.getWidth() + rectO1.getHeight() + rectO2.getWidth() + rectO2.getHeight());
+        return 2 * (rectO1.getWidth() + rectO1.getHeight() + rectO2.getWidth() + rectO2.getHeight());
     }
 
     /**
@@ -65,12 +65,12 @@ public class CoupleNode2D implements Couple<Node2D>{
     public double getDistance() {
         return TreeUtils.getDistanceBetweenTwoBound2D(getObject1().getBoundary().getBounds2D(), getObject2().getBoundary().getBounds2D());
     }
-    
+
     /**
      * @return  Overlaps area between two Node2D.
      */
-    public double getOverlaps(){
+    public double getOverlaps() {
         final Rectangle2D over = getObject1().getBoundary().getBounds2D().createIntersection(getObject2().getBoundary().getBounds2D());
-        return over.getWidth()*over.getHeight();
+        return over.getWidth() * over.getHeight();
     }
 }

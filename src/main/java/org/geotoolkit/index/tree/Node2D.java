@@ -13,7 +13,6 @@ import java.util.List;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
 

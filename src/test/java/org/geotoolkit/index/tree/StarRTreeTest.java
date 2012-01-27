@@ -11,50 +11,57 @@ import org.geotoolkit.index.tree.star.StarRTree;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class StarRTreeTest extends TreeTest{
+public class StarRTreeTest extends TreeTest {
+
     public StarRTreeTest() {
         super(new StarRTree(4));
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Some elements inserted in Hilbert R-Tree.
      */
-    public void testInsert(){
+    public void testInsert() {
         super.insertTest();
-    } 
+    }
+
+    public void testCheckBoundary(){
+        super.checkBoundaryTest();
+    }
     
     /**
-     * {@inheritDoc}
+     * Test search query inside tree.
      */
-    public void testQueryInside(){
+    public void testQueryInside() {
         super.queryInsideTest();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Test query outside of tree area.
      */
-    public void testQueryOutside(){
+    public void testQueryOutside() {
         super.queryOutsideTest();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Test query on tree boundary border. 
      */
-    public void testQueryOnBorder(){
+    public void testQueryOnBorder() {
         super.queryOnBorderTest();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Test query with search area contain all tree boundary. 
      */
-    public void testQueryAll(){
+    public void testQueryAll() {
         super.queryAllTest();
     }
-    
+
     /**
-     * {@inheritDoc}
+     * Test insertion and deletion in tree.
      */
-    public void testInsertDelete(){
-        super.insertDelete();
+    public void testInsertDelete() {
+//        for (int i = 0; i < 20; i++) {
+            super.insertDelete();
+//        }
     }
 }

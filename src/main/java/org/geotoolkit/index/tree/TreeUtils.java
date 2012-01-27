@@ -79,7 +79,7 @@ public final class TreeUtils {
         return node.getChildren().size()+node.getEntries().size();
     }
     
-    /**Find all {@code Shape} which intersect regionSearch param. 
+    /**Find all {@code Shape} which intersect regionSearch parameter. 
      * 
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
@@ -304,7 +304,6 @@ public final class TreeUtils {
         final List splitList2 = new ArrayList();
         List listElements;
         
-        
         int splitAxe = defineSplitAxis(candidate);
         if(leaf){
             listElements = candidate.getEntries();
@@ -341,14 +340,13 @@ public final class TreeUtils {
             splitList2.clear();
         }
         
-        List<Node2D> lResult = lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);
+        final List<Node2D> lResult = lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);
         for(Node2D nod : lResult){
             for(Node2D nc : nod.getChildren()){
                 nc.setParent(nod);
             }
         }
         return lResult;
-//        return lSSo.isEmpty() ? getMinOverlapsOrPerimeter(lSAO, 0) : getMinOverlapsOrPerimeter(lSSo, 1);//ici bug
     }
     
     /**Compute Euclidean distance between two {@code Point2D}.
@@ -479,7 +477,6 @@ public final class TreeUtils {
                 for(int i = 0; i<lS.size()-1; i++){
                     for(int j = i+1; j<lS.size();j++){
                         if(lS.get(i).equals(lS.get(j))){
-//                                throw  new IllegalStateException("in the ass all the times fucking tree !!!!");
                             lS.remove(j);
                         }
                     }

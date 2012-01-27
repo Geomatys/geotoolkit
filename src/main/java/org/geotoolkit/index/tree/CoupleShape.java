@@ -12,7 +12,7 @@ import org.geotoolkit.util.ArgumentChecks;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class CoupleShape implements Couple<Shape>{
+public class CoupleShape implements Couple<Shape> {
 
     private final Shape shape1;
     private final Shape shape2;
@@ -50,8 +50,7 @@ public class CoupleShape implements Couple<Shape>{
     public double getPerimeter() {
         final Rectangle2D rectO1 = getObject1().getBounds2D();
         final Rectangle2D rectO2 = getObject2().getBounds2D();
-        
-        return 2*(rectO1.getWidth() + rectO1.getHeight() + rectO2.getWidth() + rectO2.getHeight());
+        return 2 * (rectO1.getWidth() + rectO1.getHeight() + rectO2.getWidth() + rectO2.getHeight());
     }
 
     /**
@@ -67,12 +66,12 @@ public class CoupleShape implements Couple<Shape>{
     public double getDistance() {
         return TreeUtils.getDistanceBetweenTwoBound2D(getObject1().getBounds2D(), getObject2().getBounds2D());
     }
-    
+
     /**
      * {@inheritDoc}. 
      */
-    public double getOverlaps(){
+    public double getOverlaps() {
         Rectangle2D over = getObject1().getBounds2D().createIntersection(getObject2().getBounds2D());
-        return over.getWidth()*over.getHeight();
+        return over.getWidth() * over.getHeight();
     }
 }
