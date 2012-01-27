@@ -54,10 +54,12 @@ public class HilbertNode2D extends Node2D{
     public boolean isEmpty() {
         List<Node2D> lC = (List<Node2D>)getUserProperty("cells");
         boolean empty = true;
-        for(Node2D hc : lC){
-            if(!hc.isEmpty()){
-                empty = false;
-                break;
+        if(!lC.isEmpty()){
+            for(Node2D hc : lC.toArray(new Node2D[lC.size()])){
+                if(!hc.isEmpty()){
+                    empty = false;
+                    break;
+                }
             }
         }
         return getChildren().isEmpty() && empty;
@@ -79,8 +81,8 @@ public class HilbertNode2D extends Node2D{
     protected void calculateBounds() {
         if((Boolean)getUserProperty("isleaf")){
             
-            List<Shape> lS = new ArrayList<Shape>();
-            List<Node2D> listCells = (List<Node2D>)getUserProperty("cells");
+            final List<Shape> lS = new ArrayList<Shape>();
+            final List<Node2D> listCells = (List<Node2D>)getUserProperty("cells");
             for(Node2D nod : listCells){
                 lS.addAll(nod.getEntries());
             }
@@ -88,14 +90,16 @@ public class HilbertNode2D extends Node2D{
             if(lS.isEmpty()&&this.getParent()==null){
                 return;
             }
-//            HilbertRTree.searchHilbertNode(this, TreeUtils.getEnveloppeMin(lS), lS);
-            HilbertRTree.createBasicHB(this, (Integer)getUserProperty("hilbertOrder"), TreeUtils.getEnveloppeMin(lS).getBounds2D());
+            
+            int hO = (Integer)getUserProperty("hilbertOrder");
+            if(hO>0&&lS.size()<getTree().getMaxElements()*Math.pow(4, hO-1)){
+                hO--;
+            }
+            
+            HilbertRTree.createBasicHB(this, hO, TreeUtils.getEnveloppeMin(lS).getBounds2D());
             for(Shape sh : lS){
                 HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
             }
-//            for(Node2D nod : listCells){
-//                addBound(nod.getBoundary());
-//            }
         }else{
             for(Node2D nod : getChildren()){
                 addBound(nod.getBoundary());

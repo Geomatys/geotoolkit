@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
- * Test some queries.
+ * Test some R-Tree queries.
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -112,17 +112,15 @@ public abstract class TreeTest extends TestCase{
      * Test insertion and deletion in tree.
      */
     protected void insertDelete(){
-        for(int j= -120;j<=120;j+=4){
-            for(int i = -200;i<=200;i+=4){
-                tree.delete(new Ellipse2D.Double(i, j, 1, 1));
-            }
+        Collections.shuffle(lData);
+        for(Shape sh : lData){
+            tree.delete(sh);
         }
         
         final List<Shape> listSearch = new ArrayList<Shape>();
         tree.search(new Rectangle2D.Double(-200, -120, 400, 240), listSearch);
         assertTrue(listSearch.isEmpty());
         System.out.println("boundary imaginaire : "+tree.getRoot().getBoundary());
-//        assertTrue(tree.getRoot().getBoundary() == null);
         
         final List<Shape> listToAdd = new ArrayList<Shape>();
         
@@ -170,15 +168,22 @@ public abstract class TreeTest extends TestCase{
         for(Shape sh : listToAdd){
             tree.insert(sh);
         }
+        Collections.shuffle(lData);
         for(Shape sh : lData){
             tree.delete(sh);
         }
         
         listSearch.clear();
         tree.search(tree.getRoot().getBoundary(), listSearch);
-        System.out.println("listS.size : "+listSearch.size());
-        System.out.println("lData.size : "+lData.size());
         assertTrue(compareList(listSearch, listToAdd));
+        
+        for(Shape sh : listToAdd){
+            tree.delete(sh);
+        }
+        Collections.shuffle(lData);
+        for(Shape sh : lData){
+            tree.insert(sh);
+        }
     }
     
     /**
