@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 // openGis dependencies
-import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
+import org.geotoolkit.gml.xml.v311.*;
 import org.opengis.observation.Process;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.Metadata;
@@ -38,12 +38,6 @@ import org.opengis.observation.Phenomenon;
 import org.opengis.observation.sampling.SamplingFeature;
 
 // GeotoolKit dependencies
-import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
-import org.geotoolkit.gml.xml.v311.FeatureCollectionType;
-import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
-import org.geotoolkit.gml.xml.v311.ReferenceType;
-import org.geotoolkit.gml.xml.v311.TimePeriodType;
-import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureType;
 import org.geotoolkit.sampling.xml.v100.SamplingPointType;
@@ -532,8 +526,21 @@ public class ObservationType implements Observation, Entry {
      * {@inheritDoc}
      */
     public void extendSamplingTime(final String newEndBound) {
-        if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
-            ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
+        if (newEndBound != null) {
+            System.out.println("new end Bound:" + newEndBound);
+            if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
+                ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
+                System.out.println("update end");
+            } else if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimeInstantType) {
+                final TimeInstantType instant = (TimeInstantType) samplingTime.getTimeGeometricPrimitive();
+                if (!newEndBound.equals(instant.getTimePosition().getValue())) {
+                    final TimePeriodType period = new TimePeriodType(instant.getTimePosition().getValue(), newEndBound);
+                    samplingTime.setTimeGeometricPrimitive(period);
+                    System.out.println("not equals updatting: old=" +instant.getTimePosition().getValue());
+                } else {
+                    System.out.println("equals old=" + instant.getTimePosition().getValue());
+                }
+            }
         }
     }
 

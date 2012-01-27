@@ -125,10 +125,16 @@ public class TimeGeometricPrimitivePropertyType {
     public void setTimeGeometricPrimitive(final AbstractTimeGeometricPrimitiveType value) {
         if (value instanceof TimePeriodType) {
             this.timePeriod = (TimePeriodType) value;
+            this.timeInstant = null;
+            this.timeGeometricPrimitive = null;
         } else if (value instanceof TimeInstantType) {
+            this.timePeriod  = null;
             this.timeInstant = (TimeInstantType) value;
+            this.timeGeometricPrimitive = null;
         } else {
+            this.timePeriod  = null;
             this.timeGeometricPrimitive = value;
+            this.timeInstant = null;
         }
     }
 
