@@ -64,6 +64,7 @@
     <dependency>
       <groupId>org.geotoolkit.project</groupId>
       <artifactId>geotk-test</artifactId>
+      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

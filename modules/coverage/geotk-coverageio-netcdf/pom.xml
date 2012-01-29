@@ -68,6 +68,7 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverageio</artifactId>
+      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
