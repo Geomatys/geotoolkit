@@ -246,7 +246,7 @@ final class NetcdfTransform extends AbstractMathTransform implements MathTransfo
          */
         @Override
         public Formula getFormula() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         /**

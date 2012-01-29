@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.awt.image.Raster;
 import java.awt.image.BufferedImage;
 
+import ucar.nc2.NetcdfFile;
+import org.opengis.wrapper.netcdf.IOTestCase;
+
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.referencing.adapters.NetcdfCRSTest;
 import org.geotoolkit.test.image.ImageReaderTestBase;
@@ -34,7 +37,7 @@ import org.geotoolkit.test.Depend;
  * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.10
  */
@@ -45,6 +48,25 @@ public abstract strictfp class NetcdfTestBase extends ImageReaderTestBase {
      */
     protected NetcdfTestBase() {
         super(NetcdfImageReader.class);
+    }
+
+    /**
+     * Opens the given NetCDF file. The file argument should be one of the names listed in the
+     * {@link IOUtilities} class. If a test file of the given name exists in this package, it
+     * will have precedence over the test file defines in the {@code geoapi-netcdf} test module.
+     *
+     * @param  file The file name.
+     * @return The NetCDF file.
+     * @throws IOException If an error occurred while opening the file.
+     *
+     * @since 3.20
+     */
+    protected static NetcdfFile open(final String file) throws IOException {
+        return new IOTestCase() {
+            @Override public NetcdfFile open(final String file) throws IOException {
+                return super.open(file);
+            }
+        }.open(file);
     }
 
     /**

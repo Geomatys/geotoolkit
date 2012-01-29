@@ -78,6 +78,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.image.io.metadata.MetadataTranscoder;
 import org.geotoolkit.internal.CodeLists;
@@ -1891,7 +1892,15 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");
         final Identifier identifier = getFileIdentifier();
         if (identifier != null) {
-            metadata.setFileIdentifier(identifier.getCode());
+            String code = identifier.getCode();
+            final Citation authority = identifier.getAuthority();
+            if (authority != null) {
+                final InternationalString title = authority.getTitle();
+                if (title != null) {
+                    code = title.toString() + DefaultNameSpace.DEFAULT_SEPARATOR + code;
+                }
+            }
+            metadata.setFileIdentifier(code);
         }
         metadata.setDateStamp(getDateValue(METADATA_CREATION));
         metadata.getHierarchyLevels().add(ScopeCode.DATASET);
