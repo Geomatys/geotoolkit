@@ -29,13 +29,15 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.xml.StaxStreamReader;
+import static org.geotoolkit.xml.parameter.ParameterConstants.*;
+import org.geotoolkit.xml.parameter.ParameterConstants.ValueType;
+import org.geotoolkit.xml.parameter.ParameterConstants.ValuesTopology;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
-import static org.geotoolkit.xml.parameter.ParameterConstants.*;
 
 /**
  * <p>This class provides a GeneralParameterValue reading method.</p>
@@ -45,7 +47,6 @@ import static org.geotoolkit.xml.parameter.ParameterConstants.*;
  */
 public class ParameterDescriptorReader extends StaxStreamReader {
 
-    private Map<String, GeneralParameterDescriptor> descriptors = new HashMap<String, GeneralParameterDescriptor>();
     private GeneralParameterDescriptor root;
 
     /**
@@ -90,13 +91,6 @@ public class ParameterDescriptorReader extends StaxStreamReader {
         return this.root;
     }
 
-    /**
-     *
-     * @return Map of all contained descriptors.
-     */
-    public Map<String, GeneralParameterDescriptor> getDescriptorsMap() {
-        return this.descriptors;
-    }
 
     /**
      * <p>Reads an occurrence value.</p>
@@ -158,7 +152,6 @@ public class ParameterDescriptorReader extends StaxStreamReader {
             }
         }
 
-        this.descriptors.put(descriptorCodeName, descriptor);
         return descriptor;
     }
 
