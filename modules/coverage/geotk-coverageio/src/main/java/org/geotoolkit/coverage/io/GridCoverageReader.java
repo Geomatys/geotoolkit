@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -39,6 +40,7 @@ import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.GenericName;
@@ -338,25 +340,33 @@ public abstract class GridCoverageReader extends GridCoverageStore {
         }
         /*
          * Check if we should complete the extents and resolutions. We will do so only
-         * if the extent and resolution are not already provided in the metadata.
+         * if the vertical/temporal extent, geographic bounding box and resolution are
+         * not already provided in the metadata.  If the geographic extent is declared
+         * by an other kind of object than GeographicBoundingBox, we will still add the
+         * bounding box because the existing extent could be only a textual description.
          */
-        final boolean computeExtents, computeResolutions;
+        boolean failed              = false;  // For logging warning only once.
+        boolean computeExtents      = true;   // 'false' if extents are already present.
+        boolean computeResolutions  = true;   // 'false' is resolutions are already present.
+        DefaultExtent   extent      = null;   // The extent to compute, if needed.
+        List<Extent>    extents     = null;   // The extents already provided in the metadata.
+        Set<Resolution> resolutions = null;   // The resolutions to compute, if needed.
         if (identification != null) {
-            computeExtents     = isNullOrEmpty(identification.getExtents());
             computeResolutions = isNullOrEmpty(identification.getSpatialResolutions());
-        } else {
-            computeExtents     = true;
-            computeResolutions = true;
+            final Collection<? extends Extent> existings = identification.getExtents();
+            if (!isNullOrEmpty(existings)) {
+                extents = new ArrayList<>(existings);
+                extent = UniqueExtents.getIncomplete(extents);
+                if (extent == null) {
+                    // The plugin-provided Metadata instance seems to contain Extents
+                    // that are complete enough, so we will not try to complete them.
+                    computeExtents = false;
+                    extents = null;
+                }
+            }
         }
         final List<? extends GenericName> coverageNames = getCoverageNames();
         final int numCoverages = coverageNames.size();
-        /*
-         * If there is no "DiscoveryMetadata" node, or if this node does not contain any
-         * extent or resolution, computes the missing elements from the grid geometry.
-         */
-        boolean         failed      = false;  // For logging warning only once.
-        DefaultExtent   extent      = null;   // The extents to compute, if needed.
-        Set<Resolution> resolutions = null;   // The resolutions to compute, if needed.
         for (int i=0; i<numCoverages; i++) {
             final SpatialMetadata coverageMetadata = getCoverageMetadata(i);
             if (coverageMetadata != null) {
@@ -416,7 +426,11 @@ public abstract class GridCoverageReader extends GridCoverageStore {
         if (extent != null || resolutions != null) {
             final DefaultDataIdentification copy = new DefaultDataIdentification(identification);
             if (extent != null) {
-                copy.getExtents().add(extent);
+                if (extents != null) {
+                    copy.setExtents(extents);
+                } else {
+                    copy.getExtents().add(extent);
+                }
             }
             if (resolutions != null) {
                 copy.setSpatialResolutions(resolutions);

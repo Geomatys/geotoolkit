@@ -1507,7 +1507,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
                 if (credits  != null) addIfAbsent(identification.getCredits(), credits);
                 if (license  != null) addIfAbsent(identification.getResourceConstraints(), constraints = new DefaultLegalConstraints(license));
                 if (access   != null) {
-                    for (final String token : Strings.split(topic, ',')) {
+                    for (final String token : Strings.split(access, ',')) {
                         if (!token.isEmpty()) {
                             if (constraints == null) {
                                 identification.getResourceConstraints().add(constraints = new DefaultLegalConstraints());
