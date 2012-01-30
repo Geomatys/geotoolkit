@@ -191,7 +191,11 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     public synchronized Set<Name> getNames() throws DataStoreException {
         if(names == null){
             names = new HashSet<Name>();
-            final List<LayerType> layers = getCapabilities().getContents().getLayers();
+            final Capabilities capa = getCapabilities();
+            if(capa == null){
+                throw new DataStoreException("Could not get Capabilities.");
+            }
+            final List<LayerType> layers = capa.getContents().getLayers();
             for(LayerType lt : layers){
                 final String name = lt.getIdentifier().getValue();
                 names.add(new DefaultName(name));
