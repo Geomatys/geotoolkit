@@ -74,5 +74,10 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
     @Override
     public void dispose() {
     }
+
+    @Override
+    public CoverageReference create(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
     
 }

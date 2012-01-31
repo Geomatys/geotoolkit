@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 import java.util.Collection;
 import java.util.List;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Define a collection of pyramid for a give data.

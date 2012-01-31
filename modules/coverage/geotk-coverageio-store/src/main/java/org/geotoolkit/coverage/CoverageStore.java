@@ -34,7 +34,6 @@ public interface CoverageStore {
      */
     Set<Name> getNames() throws DataStoreException;
     
-    
     /**
      * Get the coverage reference for the given name.
      * @param name reference name
@@ -42,6 +41,16 @@ public interface CoverageStore {
      * @throws DataStoreException 
      */
     CoverageReference getCoverageReference(Name name) throws DataStoreException;
+    
+    /**
+     * Create a new coverage reference.
+     * The returned coverage reference might have a different namespace.
+     * 
+     * @param name
+     * @return CoverageReference
+     * @throws DataStoreException 
+     */
+    CoverageReference create(Name name) throws DataStoreException;
     
     /**
      * Dispose the coveragestore caches and underlying resources.
