@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -172,6 +173,15 @@ public class XMLMosaic implements GridMosaic{
         } catch (FileNotFoundException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
         }
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append("   scale = ").append(getScale());
+        sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
+        sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
+        return sb.toString();
     }
     
     public File getTileFile(int col, int row) throws DataStoreException{

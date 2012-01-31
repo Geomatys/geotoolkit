@@ -28,8 +28,10 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -108,6 +110,11 @@ public class XMLPyramidSet implements PyramidSet{
             }
         }
         return null;
+    }
+    
+    @Override
+    public String toString(){
+        return Trees.toString(Classes.getShortClassName(this)+" "+getId(), getPyramids());
     }
     
     /**

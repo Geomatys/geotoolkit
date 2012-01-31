@@ -28,8 +28,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -52,7 +55,13 @@ public class XMLPyramid implements Pyramid{
     @XmlTransient
     private XMLPyramidSet set;
     @XmlTransient
-    private final SortedMap<Double,XMLMosaic> sorted = new TreeMap<Double, XMLMosaic>();
+    private final SortedMap<Double,XMLMosaic> sorted = new TreeMap<Double, XMLMosaic>(new Comparator<Double>() {
+
+        @Override
+        public int compare(Double o1, Double o2) {
+            return o2.compareTo(o1);
+        }
+    });
     @XmlTransient
     private CoordinateReferenceSystem crsobj; 
     
@@ -131,6 +140,15 @@ public class XMLPyramid implements Pyramid{
         throw new ArrayIndexOutOfBoundsException(index);
     }
 
+    @Override
+    public String toString(){
+        return Trees.toString(
+                Classes.getShortClassName(this)
+                +" "+IdentifiedObjects.getIdentifier(getCoordinateReferenceSystem()) 
+                +" "+getId(), 
+                mosaics());
+    }
+    
     /**
      * Return the mosaic with the given id
      * 
