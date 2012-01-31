@@ -146,12 +146,19 @@ public class ImageProperties extends JComponent implements Dialog {
     private final ColorRamp colorRamp;
 
     /**
-     * The table model for image's properties.
+     * The table model for image properties, or {@code null} if none.
+     * This field is {@code null} - together with {@link #samples} - when this object
+     * is actually an instance of the {@link ImageFileProperties} subclass, because the
+     * properties tab is replaced by image metadata.
      */
     private final Table properties;
 
     /**
-     * The table for sample values.
+     * The table for sample values, or {@code null} if none.
+     * This field is {@code null} - together with {@link #properties} - when this object
+     * is actually an instance of the {@link ImageFileProperties} subclass, because the
+     * later will try to load only a small portion of the image.  Since the subsampling
+     * is arbitrary, so is the table size - so we are better to not show it.
      */
     private final ImageSampleValues samples;
 
@@ -265,9 +272,11 @@ public class ImageProperties extends JComponent implements Dialog {
         }
         tabs.addTab(resources.getString(Vocabulary.Keys.INFORMATIONS), info);
         /*
-         * Build the image's properties tab and the image sample value tab.
-         * In the particular case of ImageFileProperties, those two tabs
-         * are replaced by a metadata tab.
+         * Build the image's properties tab and the image sample values tab.
+         * In the particular case of ImageFileProperties, those two tabs are
+         * replaced by a metadata tab.  We do not show the sample values tab
+         * for image file because the ImageFileProperties widget will try to
+         * load only a small portion of image data.
          */
         if (metadata == null) {
             properties = new Table(resources);
