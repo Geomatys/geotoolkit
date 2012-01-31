@@ -18,7 +18,6 @@ package org.geotoolkit.skos.xml;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,19 +101,19 @@ public class Concept implements Serializable {
     private String externalID;
     
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private String prefLabel;
+    private List<Value> prefLabel;
     
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private List<String> altLabel;
+    private List<Value> altLabel;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private Concept related;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private String scopeNote;
+    private List<Value> scopeNote;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private String example;
+    private List<Value> example;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> broader;
@@ -126,7 +125,7 @@ public class Concept implements Serializable {
     private List<Concept> narrowerTransitive;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private String definition;
+    private List<Value> definition;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String changeNote;
@@ -147,7 +146,7 @@ public class Concept implements Serializable {
     private String description;
 
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
-    private String language;
+    private List<String> language;
 
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String rights;
@@ -182,21 +181,82 @@ public class Concept implements Serializable {
         this.about = about;
     }
 
+    /**
+     * @deprecated use Concept(final {@link String} about, final {@link Value} prefLabel)
+     */
+    @Deprecated
     public Concept(final String about, final String prefLabel) {
         this.about     = about;
-        this.prefLabel = prefLabel;
+        this.prefLabel = new ArrayList<Value>();
+        if (prefLabel != null) {
+            this.prefLabel.add(new Value(prefLabel));
+        }
+    }
+    
+    public Concept(final String about, final Value prefLabel) {
+        this.about     = about;
+        this.prefLabel = new ArrayList<Value>();
+        if (prefLabel != null) {
+            this.prefLabel.add(prefLabel);
+        }
     }
 
+    /**
+     * @deprecated use Concept(final {@link String} about, final {@link String} externalID, final {@link Value} prefLabel, final {@link Value} altLabel, final {@link Value} definition, final {@link String} date)
+     */
+    @Deprecated
     public Concept(final String about, final String externalID, final String prefLabel, final String altLabel, final String definition, final String date) {
         this.about      = about;
-        this.altLabel   = Arrays.asList(altLabel);
+        this.altLabel = new ArrayList<Value>();
+        if (altLabel != null) {
+            this.altLabel.add(new Value(altLabel));
+        }
         this.date       = date;
-        this.definition = definition;
+        this.definition = new ArrayList<Value>();
+        if (definition != null) {
+            this.definition.add(new Value(definition));
+        }
         this.externalID = externalID;
-        this.prefLabel  = prefLabel;
+        this.prefLabel = new ArrayList<Value>();
+        if (prefLabel != null) {
+            this.prefLabel.add(new Value(prefLabel));
+        }
+    }
+    
+    public Concept(final String about, final String externalID, final Value prefLabel, final Value altLabel, final Value definition, final String date) {
+        this.about      = about;
+        this.altLabel = new ArrayList<Value>();
+        if (altLabel != null) {
+            this.altLabel.add(altLabel);
+        }
+        this.date       = date;
+        this.definition = new ArrayList<Value>();
+        if (definition != null) {
+            this.definition.add(definition);
+        }
+        this.externalID = externalID;
+        this.prefLabel = new ArrayList<Value>();
+        if (prefLabel != null) {
+            this.prefLabel.add(prefLabel);
+        }
     }
 
-    public Concept(final String about, final String externalID, final String prefLabel, final List<String >altLabel, final String definition, final String date) {
+    public Concept(final String about, final String externalID, final Value prefLabel, final List<Value>altLabel, final Value definition, final String date) {
+        this.about      = about;
+        this.altLabel   = altLabel;
+        this.date       = date;
+        this.definition = new ArrayList<Value>();
+        if (definition != null) {
+            this.definition.add(definition);
+        }
+        this.externalID = externalID;
+        this.prefLabel = new ArrayList<Value>();
+        if (prefLabel != null) {
+            this.prefLabel.add(prefLabel);
+        }
+    }
+    
+    public Concept(final String about, final String externalID, final List<Value> prefLabel, final List<Value>altLabel, final List<Value> definition, final String date) {
         this.about      = about;
         this.altLabel   = altLabel;
         this.date       = date;
@@ -205,21 +265,92 @@ public class Concept implements Serializable {
         this.prefLabel  = prefLabel;
     }
 
-    public String getPropertyValue(final String property) {
+    @Deprecated
+    public Value getPropertyValue(final String property) {
         if (property != null) {
-            if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equals("definition")) {
+            if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equalsIgnoreCase("definition")) {
+                if (definition != null && !definition.isEmpty()) {
+                    return definition.get(0);
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#prefLabel") || property.equalsIgnoreCase("preferredLabel")) {
+                if (prefLabel != null && !prefLabel.isEmpty()) {
+                    return prefLabel.get(0);
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#scopeNote") || property.equalsIgnoreCase("scopeNote")) {
+                if (scopeNote != null && !scopeNote.isEmpty()) {
+                    return scopeNote.get(0);
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#altLabel") || property.equalsIgnoreCase("nonPreferredLabels")) {
+                if (altLabel != null && !altLabel.isEmpty()) {
+                    return altLabel.get(0);
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#example") || property.equalsIgnoreCase("example")) {
+                if (example != null && !example.isEmpty()) {
+                    return example.get(0);
+                }
+            }
+        }
+        return null;
+    }
+    
+    public Value getPropertyValue(final String property, final String language) {
+        if (property != null) {
+            if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equalsIgnoreCase("definition")) {
+                if (definition != null) {
+                    for (Value v : definition) {
+                        if (v.getLang() != null && v.getLang().equalsIgnoreCase(language)) {
+                            return v;
+                        }
+                    }
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#prefLabel") || property.equalsIgnoreCase("preferredLabel")) {
+                if (prefLabel != null) {
+                    for (Value v : prefLabel) {
+                        if (v.getLang() != null && v.getLang().equalsIgnoreCase(language)) {
+                            return v;
+                        }
+                    }
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#scopeNote") || property.equalsIgnoreCase("scopeNote")) {
+                if (scopeNote != null) {
+                    for (Value v : scopeNote) {
+                        if (v.getLang() != null && v.getLang().equalsIgnoreCase(language)) {
+                            return v;
+                        }
+                    }
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#altLabel") || property.equalsIgnoreCase("nonPreferredLabels")) {
+                if (altLabel != null) {
+                    for (Value v : altLabel) {
+                        if (v.getLang() != null && v.getLang().equalsIgnoreCase(language)) {
+                            return v;
+                        }
+                    }
+                }
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#example") || property.equalsIgnoreCase("example")) {
+                if (example != null) {
+                    for (Value v : example) {
+                        if (v.getLang() != null && v.getLang().equalsIgnoreCase(language)) {
+                            return v;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    public List<Value> getPropertyValues(final String property) {
+        if (property != null) {
+            if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equalsIgnoreCase("definition")) {
                 return definition;
-            }
-            if (property.equals("http://www.w3.org/2004/02/skos/core#prefLabel") || property.equals("preferredLabel")) {
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#prefLabel") || property.equalsIgnoreCase("preferredLabel")) {
                 return prefLabel;
-            }
-            if (property.equals("http://www.w3.org/2004/02/skos/core#scopeNote") || property.equals("scopeNote")) {
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#scopeNote") || property.equalsIgnoreCase("scopeNote")) {
                 return scopeNote;
-            }
-            if ((property.equals("http://www.w3.org/2004/02/skos/core#altLabel") || property.equals("nonPreferredLabels")) && altLabel!= null && altLabel.size() > 0) {
-                return altLabel.get(0);
-            }
-            if (property.equals("http://www.w3.org/2004/02/skos/core#example") || property.equals("example")) {
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#altLabel") || property.equalsIgnoreCase("nonPreferredLabels")) {
+                return altLabel;
+            } else if (property.equals("http://www.w3.org/2004/02/skos/core#example") || property.equalsIgnoreCase("example")) {
                 return example;
             }
         }
@@ -296,37 +427,110 @@ public class Concept implements Serializable {
         this.externalID = externalID;
     }
 
-    public String getPrefLabel() {
+    public List<Value> getPrefLabel() {
+        if (this.prefLabel == null) {
+            this.prefLabel = new ArrayList<Value>();
+        }
         return prefLabel;
     }
+    
+    public String getPrefLabel(final String language) {
+        if (prefLabel != null) {
+            for (Value v: prefLabel) {
+                if (v.getLang() != null &&
+                    v.getLang().equalsIgnoreCase(language)) {
+                    return v.getValue();
+                } else if (v.getLang() == null && language == null) {
+                    return v.getValue();
+                }
+            }
+        }
+        return null;
+    }
 
+    @Deprecated
     public void setPrefLabel(final String prefLabel) {
+        if (this.prefLabel == null) {
+            this.prefLabel = new ArrayList<Value>();
+        }
+        this.prefLabel.add(new Value(prefLabel));
+    }
+    
+    public void addPrefLabel(final Value prefLabel) {
+        if (this.prefLabel == null) {
+            this.prefLabel = new ArrayList<Value>();
+        }
+        this.prefLabel.add(prefLabel);
+    }
+    
+    public void setPrefLabel(final List<Value> prefLabel) {
         this.prefLabel = prefLabel;
     }
 
-    public List<String> getAltLabel() {
+    public List<Value> getAltLabel() {
         if (altLabel == null) {
-            altLabel = new ArrayList<String>();
+            altLabel = new ArrayList<Value>();
         }
         return altLabel;
     }
+    
+    public List<String> getAltLabel(final String language) {
+        final List<String> response = new ArrayList<String>();
+        if (altLabel != null) {
+            for (Value v: altLabel) {
+                if (v.getLang() != null &&
+                    v.getLang().equalsIgnoreCase(language)) {
+                    response.add(v.getValue());
+                } else if (v.getLang() == null && language == null) {
+                    response.add(v.getValue());
+                }
+            }
+        }
+        return response;
+    }
 
-    public void setAltLabel(final List<String> altLabel) {
+    public void setAltLabel(final List<Value> altLabel) {
         this.altLabel = altLabel;
     }
 
+    @Deprecated
     public void addAltLabel(final String altLabel) {
         if (this.altLabel == null) {
-            this.altLabel = new ArrayList<String>();
+            this.altLabel = new ArrayList<Value>();
+        }
+        this.altLabel.add(new Value(altLabel));
+    }
+    
+    public void addAltLabel(final Value altLabel) {
+        if (this.altLabel == null) {
+            this.altLabel = new ArrayList<Value>();
         }
         this.altLabel.add(altLabel);
     }
 
-    public String getDefinition() {
+    public List<Value> getDefinition() {
+        if (this.definition == null) {
+            this.definition = new ArrayList<Value>();
+        }
         return definition;
     }
 
+    @Deprecated
     public void setDefinition(final String definition) {
+        if (this.definition == null) {
+            this.definition = new ArrayList<Value>();
+        }
+        this.definition.add(new Value(definition));
+    }
+    
+    public void addDefinition(final Value definition) {
+        if (this.definition == null) {
+            this.definition = new ArrayList<Value>();
+        }
+        this.definition.add(definition);
+    }
+    
+    public void setDefinition(final List<Value> definition) {
         this.definition = definition;
     }
 
@@ -355,14 +559,21 @@ public class Concept implements Serializable {
     /**
      * @return the language
      */
-    public String getLanguage() {
+    public List<String> getLanguage() {
         return language;
     }
 
+    public void addLanguage(final String language) {
+        if (this.language == null) {
+            this.language = new ArrayList<String>();
+        }
+        this.language.add(language);
+    }
+    
     /**
      * @param language the language to set
      */
-    public void setLanguage(final String language) {
+    public void setLanguage(final List<String> language) {
         this.language = language;
     }
 
@@ -590,17 +801,35 @@ public class Concept implements Serializable {
     /**
      * @return the scopeNote
      */
-    public String getScopeNote() {
+    public List<Value> getScopeNote() {
+        if (this.scopeNote == null) {
+            this.scopeNote = new ArrayList<Value>();
+        }
         return scopeNote;
     }
 
     /**
      * @param scopeNote the scopeNote to set
      */
+    @Deprecated
     public void setScopeNote(final String scopeNote) {
-        this.scopeNote = scopeNote;
+        if (this.scopeNote == null) {
+            this.scopeNote = new ArrayList<Value>();
+        }
+        this.scopeNote.add(new Value(scopeNote));
     }
 
+    public void addScopeNote(final Value scopeNote) {
+        if (this.scopeNote == null) {
+            this.scopeNote = new ArrayList<Value>();
+        }
+        this.scopeNote.add(scopeNote);
+    }
+    
+    public void setScopeNote(final List<Value> scopeNote) {
+        this.scopeNote = scopeNote;
+    }
+    
     /**
      * @return the name
      */
@@ -618,17 +847,35 @@ public class Concept implements Serializable {
     /**
      * @return the example
      */
-    public String getExample() {
+    public List<Value> getExample() {
+        if (this.example == null) {
+            this.example = new ArrayList<Value>();
+        }
         return example;
     }
 
     /**
      * @param example the example to set
      */
+    @Deprecated
     public void setExample(final String example) {
-        this.example = example;
+        if (this.example == null) {
+            this.example = new ArrayList<Value>();
+        }
+        this.example.add(new Value(example));
     }
 
+    public void addExample(final Value example) {
+        if (this.example == null) {
+            this.example = new ArrayList<Value>();
+        }
+        this.example.add(example);
+    }
+    
+    public void setExample(final List<Value> example) {
+        this.example = example;
+    }
+    
     /**
      * @return the resource
      */
@@ -774,7 +1021,7 @@ public class Concept implements Serializable {
             sb.append("about:").append(about).append('\n');
         if (altLabel != null) {
             sb.append("altLabel:").append('\n');
-            for (String b : altLabel) {
+            for (Value b : altLabel) {
                 sb.append(b).append('\n');
             }
         }

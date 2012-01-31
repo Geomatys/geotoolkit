@@ -89,6 +89,7 @@ public class RDF implements Serializable {
         return sb.toString();
     }
 
+    /*@Deprecated
     public Map<String, String> getShortMap() {
         final Map<String, String> map = new HashMap<String, String>();
         if (getConcept().isEmpty()) {
@@ -99,7 +100,7 @@ public class RDF implements Serializable {
             }
         } 
         return map;
-    }
+    }*/
 
     /*
      * Verifie si cette entree est identique a l'objet specifie.
