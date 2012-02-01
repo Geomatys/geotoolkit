@@ -23,6 +23,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.util.BitSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalModel;
@@ -130,8 +132,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                 Point2D upperleft = new Point2D.Double(envelope.getMinimum(0), envelope.getMaximum(1));
                 Dimension tileDim = tileSize;
                 Dimension gridSize = new Dimension( (int)(gridWidth+0.5), (int)(gridHeight+0.5));
-                
-                
+                                
                 //check if we already have a mosaic at this scale
                 GridMosaic mosaic = null;
                 int index = 0;
@@ -153,12 +154,22 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                         gridSize, tileDim, upperleft, scale);
                 }
                 
+                
+                //mark the tiles we already generated
+                final BitSet completed = new BitSet(gridSize.width*gridSize.height);
+                
                 final double tilespanX = scale*tileSize.width;
                 final double tilespanY = scale*tileSize.height;
                 
                 //generate all tiles
                 for(int col=0;col<gridSize.width;col++){
                     for(int row=0;row<gridSize.height;row++){
+                        
+                        if(completed.get(row*gridSize.width+col)){
+                            //we already render on this tile
+                            continue;
+                        }
+                        
                         if(!mosaic.isMissing(col, row)){
                             //tile is not missing, continue
                             continue;
@@ -181,6 +192,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                         if(nbtileonwidth == 1 && nbtileonheight == 1){
                             //no need to cut it
                             container.updateTile(pyramid.getId(), mosaic.getId(), col, row, buffer);
+                            completed.set(row*gridSize.width+col, true);
                         }else{
                             //cut image in tiles
                             final Graphics2D g2d = (Graphics2D) tileBuffer.getGraphics();
@@ -191,6 +203,8 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                                 for(int cy=0; cy<nbtileonheight ; cy++){
                                     final int targetrow = row+cy;
                                     if(targetrow>=gridSize.height) break;
+                                    
+                                    completed.set(targetrow*gridSize.width+targetcol, true);
                                     
                                     if(!mosaic.isMissing(targetcol, targetrow)){
                                         //tile is not missing, continue
@@ -203,6 +217,12 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                                     g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
                                     //paint the wanted area
                                     g2d.drawImage(buffer, -cx*tileSize.width, -cy*tileSize.height, null);
+                                                                        
+                                    if(isEmpty(tileBuffer)){
+                                        //do not write empty tiles
+                                        continue;
+                                    }
+                                    
                                     container.updateTile(pyramid.getId(), mosaic.getId(), targetcol, targetrow, tileBuffer);
                                 }
                             }
@@ -224,4 +244,24 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
         return outputParameters;
     }
 
+    private static boolean isEmpty(BufferedImage image){
+        
+        //check if image is empty
+        final Raster raster = image.getData();
+        double[] array = null;
+        searchEmpty:
+        for(int x=0,width=image.getWidth(); x<width; x++){
+            for(int y=0,height=image.getHeight(); y<height; y++){
+                array = raster.getPixel(x, y, array);
+                for(double d : array){
+                    if(d != 0){
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+    
 }
