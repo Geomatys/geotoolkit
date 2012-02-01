@@ -14,50 +14,33 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.coverage.filestore;
 
 import java.util.Iterator;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import static org.junit.Assert.fail;
-import org.junit.*;
+import org.junit.Test;
 
 /**
- * OSM TMS coverage store tests.
+ * Tests for XMLCoverageStore
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSCoverageStoreFactoryTest {
+public class XMLCoverageStoreFactoryTest {
     
-    public OSMTMSCoverageStoreFactoryTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
+    public XMLCoverageStoreFactoryTest() {
     }
 
     @Test
     public void testFactory() {
-        
-        
+                
         final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllCoverageStores();
         
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof OSMTMSCoverageStoreFactory){
+            if(ite.next() instanceof XMLCoverageStoreFactory){
                 found = true;
             }
         }
