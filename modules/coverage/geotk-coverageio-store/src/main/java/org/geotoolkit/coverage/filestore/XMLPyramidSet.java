@@ -32,6 +32,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -43,6 +44,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @XmlRootElement(name="PyramidSet")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLPyramidSet implements PyramidSet{
+    
+    @XmlTransient
+    private static MarshallerPool POOL;
+    
+    private static synchronized MarshallerPool getPoolInstance() throws JAXBException{
+        if(POOL == null){
+            POOL = new MarshallerPool(XMLPyramidSet.class);
+        }
+        return POOL;
+    }
+    
     
     @XmlElement(name="Pyramid")
     private List<XMLPyramid> pyramids;
@@ -155,10 +167,14 @@ public class XMLPyramidSet implements PyramidSet{
      * @throws JAXBException 
      */
     public void write() throws JAXBException{
-        final JAXBContext context = JAXBContext.newInstance(XMLPyramidSet.class);
-        final Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(this, getMainfile());
+        final MarshallerPool pool = getPoolInstance();
+        final Marshaller marshaller = pool.acquireMarshaller();
+        try{
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(this, getMainfile());
+        }finally{
+            pool.release(marshaller);
+        }
     }
     
     /**
@@ -169,9 +185,14 @@ public class XMLPyramidSet implements PyramidSet{
      * @throws JAXBException 
      */
     public static XMLPyramidSet read(File file) throws JAXBException{
-        final JAXBContext context = JAXBContext.newInstance(XMLPyramidSet.class);
-        final Unmarshaller unmarshaller = context.createUnmarshaller();
-        final XMLPyramidSet set = (XMLPyramidSet) unmarshaller.unmarshal(file);
+        final MarshallerPool pool = getPoolInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final XMLPyramidSet set;
+        try{
+            set = (XMLPyramidSet) unmarshaller.unmarshal(file);
+        }finally{
+            pool.release(unmarshaller);
+        }
         set.initialize(file);
         return set;
     }
