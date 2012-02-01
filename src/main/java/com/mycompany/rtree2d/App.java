@@ -6,13 +6,17 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.tree.JTreePanel;
 import org.geotoolkit.index.tree.Node2D;
+import org.geotoolkit.index.tree.ReadRTree;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.TreeUtils;
+import org.geotoolkit.index.tree.WriteRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.util.converter.Classes;
 
@@ -29,10 +33,10 @@ public class App
         
         
         
-        int time = 1;
-//        Tree arbre = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
+        int time = 5000;
+        Tree arbre = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
 //        Tree arbre = TreeFactory.createStarRTree2D(4);//declenchement split ou ajout a revoir
-        Tree arbre = TreeFactory.createHilbertRTree2D(4, 2);
+//        Tree arbre = TreeFactory.createHilbertRTree2D(4, 2);
         int compteur = 0;
         
 //        for(;compteur<=500000;compteur++){
@@ -42,23 +46,26 @@ public class App
 //            double y = 120*Math.random()*signeY;
 //            arbre.insert(new Ellipse2D.Double(x, y, 0.5, 0.5));
 //        }
-        JFrame fen = new JFrame();
-        JTreePanel pan = new JTreePanel(arbre, null);
-        fen.add(pan);
-        fen.setSize(1600, 900);
-        fen.setLocationRelativeTo(null);
-        fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fen.setVisible(true);
-        fen.setTitle("R-Tree");
-        Thread.sleep(time);
+//        JFrame fen = new JFrame();
+//        JTreePanel pan = new JTreePanel(arbre, null);
+//        fen.add(pan);
+//        fen.setSize(1600, 900);
+//        fen.setLocationRelativeTo(null);
+//        fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        fen.setVisible(true);
+//        fen.setTitle("R-Tree");
+//        Thread.sleep(time);
         ///////////////////////////////////////////////////////////////////////////////////////
         List<Shape> lData = new ArrayList<Shape>();
-        for(int j= -120;j<=120;j+=4){
-            for(int i = -200;i<=200;i+=4){
-                lData.add(new Ellipse2D.Double(i, j, 1, 1));
-                compteur++;
-            }
-        }
+        
+        
+        
+//        for(int j= -120;j<=120;j+=4){
+//            for(int i = -200;i<=200;i+=4){
+//                lData.add(new Ellipse2D.Double(i, j, 1, 1));
+//                compteur++;
+//            }
+//        }
         
 //////        int test = 0;
         
@@ -94,47 +101,48 @@ public class App
 //        System.out.println("max element = "+(((HilbertLeaf)((HilbertRTree)arbre).getTreeTrunk())).getAllEntry().size());
         
         
-//        Shape s1 = new Ellipse2D.Double(-60, -21, 5, 5);
-//        Shape s2 = new Ellipse2D.Double(-60, 0, 5, 5);
-//        Shape s3 = new Ellipse2D.Double(-60, 21, 5, 5);
-//        Shape s4 = new Ellipse2D.Double(-60, 45, 5, 5);
-//        Shape s5 =new Ellipse2D.Double(-60, 60, 5, 5);
-//        Shape s6 = new Ellipse2D.Double(-45, 60, 5, 5);
-//        Shape s7 = new Ellipse2D.Double(-21, 60, 5, 5);
-//        Shape s8 =new Ellipse2D.Double(0, 60, 5, 5);
-//        Shape s9 = new Ellipse2D.Double(21, 60, 5, 5);
-//        Shape s10 = new Ellipse2D.Double(45, 60, 5, 5);
-//        Shape s11 = new Ellipse2D.Double(60, 60, 5, 5);
-//        Shape s12 = new Ellipse2D.Double(60, 45, 5, 5);
-//        Shape s13 = new Ellipse2D.Double(60, 21, 5, 5);
-//        Shape s14 = new Ellipse2D.Double(60, 0, 5, 5);
-//        Shape s15 = new Ellipse2D.Double(60, -21, 5, 5);
-//        Shape s16 = new Ellipse2D.Double(60, -45, 5, 5);
-//        Shape s17 = new Ellipse2D.Double(60, -60, 5, 5);
-//        Shape s18 = new Ellipse2D.Double(45, -60, 5, 5);
-//        Shape s19 = new Ellipse2D.Double(21, -60, 5, 5);
-//        Shape s20= new Ellipse2D.Double(0, -60, 5, 5);
-//        Shape s21= new Ellipse2D.Double(-21, -60, 5, 5);
-//        Shape s22 = new Ellipse2D.Double(-21, 45, 5, 5);
-//        Shape s23 = new Ellipse2D.Double(-21, -21, 5, 5);
-//        Shape s24 = new Ellipse2D.Double(-21, 0, 5, 5);
-//        Shape s25 = new Ellipse2D.Double(-21, 21, 5, 5);
-//        Shape s26 = new Ellipse2D.Double(0, 21, 5, 5);
-//        Shape s27 = new Ellipse2D.Double(21, 21, 5, 5);
-//        Shape s28 = new Ellipse2D.Double(21, 0, 5, 5);
-//        Shape s29 = new Ellipse2D.Double(21, -21, 5, 5);
-//        Shape s30 = new Ellipse2D.Double(0, -21, 5, 5);
-//        Shape s31 = new Ellipse2D.Double(0, 0, 5, 5);
-//        Shape s32 = new Ellipse2D.Double(-60, -45, 5, 5);
-//        lData.add(s1); lData.add(s2); lData.add(s3); lData.add(s4);
-//        lData.add(s5); lData.add(s6); lData.add(s7); lData.add(s8);
-//        lData.add(s9); lData.add(s10);lData.add(s11);lData.add(s12);
-//        lData.add(s13);lData.add(s14);lData.add(s15);lData.add(s16);
-//        lData.add(s17);lData.add(s18);lData.add(s19);lData.add(s20);
-//        lData.add(s24);lData.add(s23);lData.add(s22);lData.add(s21);
-//        lData.add(s25);lData.add(s26);lData.add(s27);lData.add(s28);
-//        lData.add(s29);lData.add(s30);lData.add(s31);lData.add(s32);
-//        compteur+=32;
+        Shape s1 = new Ellipse2D.Double(-60, -21, 5, 5);
+        System.out.println("shape s1"+s1.getClass());
+        Shape s2 = new Ellipse2D.Double(-60, 0, 5, 5);
+        Shape s3 = new Ellipse2D.Double(-60, 21, 5, 5);
+        Shape s4 = new Ellipse2D.Double(-60, 45, 5, 5);
+        Shape s5 =new Ellipse2D.Double(-60, 60, 5, 5);
+        Shape s6 = new Ellipse2D.Double(-45, 60, 5, 5);
+        Shape s7 = new Ellipse2D.Double(-21, 60, 5, 5);
+        Shape s8 =new Ellipse2D.Double(0, 60, 5, 5);
+        Shape s9 = new Ellipse2D.Double(21, 60, 5, 5);
+        Shape s10 = new Ellipse2D.Double(45, 60, 5, 5);
+        Shape s11 = new Ellipse2D.Double(60, 60, 5, 5);
+        Shape s12 = new Ellipse2D.Double(60, 45, 5, 5);
+        Shape s13 = new Ellipse2D.Double(60, 21, 5, 5);
+        Shape s14 = new Ellipse2D.Double(60, 0, 5, 5);
+        Shape s15 = new Ellipse2D.Double(60, -21, 5, 5);
+        Shape s16 = new Ellipse2D.Double(60, -45, 5, 5);
+        Shape s17 = new Ellipse2D.Double(60, -60, 5, 5);
+        Shape s18 = new Ellipse2D.Double(45, -60, 5, 5);
+        Shape s19 = new Ellipse2D.Double(21, -60, 5, 5);
+        Shape s20= new Ellipse2D.Double(0, -60, 5, 5);
+        Shape s21= new Ellipse2D.Double(-21, -60, 5, 5);
+        Shape s22 = new Ellipse2D.Double(-21, 45, 5, 5);
+        Shape s23 = new Ellipse2D.Double(-21, -21, 5, 5);
+        Shape s24 = new Ellipse2D.Double(-21, 0, 5, 5);
+        Shape s25 = new Ellipse2D.Double(-21, 21, 5, 5);
+        Shape s26 = new Ellipse2D.Double(0, 21, 5, 5);
+        Shape s27 = new Ellipse2D.Double(21, 21, 5, 5);
+        Shape s28 = new Ellipse2D.Double(21, 0, 5, 5);
+        Shape s29 = new Ellipse2D.Double(21, -21, 5, 5);
+        Shape s30 = new Ellipse2D.Double(0, -21, 5, 5);
+        Shape s31 = new Ellipse2D.Double(0, 0, 5, 5);
+        Shape s32 = new Ellipse2D.Double(-60, -45, 5, 5);
+        lData.add(s1); lData.add(s2); lData.add(s3); lData.add(s4);
+        lData.add(s5); lData.add(s6); lData.add(s7); lData.add(s8);
+        lData.add(s9); lData.add(s10);lData.add(s11);lData.add(s12);
+        lData.add(s13);lData.add(s14);lData.add(s15);lData.add(s16);
+        lData.add(s17);lData.add(s18);lData.add(s19);lData.add(s20);
+        lData.add(s24);lData.add(s23);lData.add(s22);lData.add(s21);
+        lData.add(s25);lData.add(s26);lData.add(s27);lData.add(s28);
+        lData.add(s29);lData.add(s30);lData.add(s31);lData.add(s32);
+        compteur+=32;
         
         Collections.shuffle(lData);
         for(Shape sh : lData){
@@ -281,17 +289,17 @@ public class App
 //            pan.repaint();
 //            Thread.sleep(time);
             
-            Collections.shuffle(lData);
-            for(Shape sh : lData){
-                compteur--;
-                if(compteur == 100){
-                    time = 100;
-                }
-                arbre.delete(sh);
-                pan.setTree(arbre);
-                pan.repaint();
-                Thread.sleep(time);
-            }
+//            Collections.shuffle(lData);
+//            for(Shape sh : lData){
+//                compteur--;
+//                if(compteur == 100){
+//                    time = 100;
+//                }
+//                arbre.delete(sh);
+//                pan.setTree(arbre);
+//                pan.repaint();
+//                Thread.sleep(time);
+//            }
             
         Rectangle2D searc = new Rectangle2D.Double(-10, -50, 50, 50);
         List<Shape> lEbis = new ArrayList<Shape>();
@@ -300,6 +308,34 @@ public class App
         long timeSearch = System.nanoTime();
         
         System.out.println(arbre);
+        
+        JFrame fen = new JFrame();
+        JTreePanel pan = new JTreePanel(arbre, lEbis);
+        fen.add(pan);
+        fen.setSize(1600, 900);
+        fen.setLocationRelativeTo(null);
+        fen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fen.setVisible(true);
+        fen.setTitle("R-Tree");
+        Thread.sleep(time);
+        
+        WriteRTree wrrt = new WriteRTree(arbre, "tree.bin");
+        ReadRTree rrt = new ReadRTree("tree.bin");
+        try {
+            Tree tree = rrt.readFile();
+            System.out.println("************************************************");
+            System.out.println("***************arbre yo yo yo yo****************");
+            System.out.println(tree);
+            System.out.println("************************************************");
+            System.out.println("************************************************");
+            
+            pan.setTree(tree);
+            pan.repaint();
+            Thread.sleep(time);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         
         System.out.println("/////////////////////////////////////////////////////");
         System.out.println("le compteur = "+(compteur));

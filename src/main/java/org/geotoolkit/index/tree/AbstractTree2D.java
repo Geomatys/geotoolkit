@@ -47,7 +47,7 @@ public abstract class AbstractTree2D implements Tree<Shape> {
      * 
      * @param root 
      */
-    protected void setRoot(Node2D root) {
+    public void setRoot(Node2D root) {
         this.root = root;
     }
 

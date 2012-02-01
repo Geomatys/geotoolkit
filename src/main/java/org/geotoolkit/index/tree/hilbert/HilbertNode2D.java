@@ -90,7 +90,7 @@ public class HilbertNode2D extends Node2D {
         if ((Boolean) getUserProperty("isleaf")) {
 
             final List<Shape> lS = new ArrayList<Shape>();
-            final List<Node2D> listCells = (List<Node2D>) getUserProperty("cells");
+            final List<Node2D> listCells = new ArrayList<Node2D>((List<Node2D>) getUserProperty("cells"));
             for (Node2D nod : listCells) {
                 lS.addAll(nod.getEntries());
             }

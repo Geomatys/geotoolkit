@@ -47,4 +47,6 @@ public interface Tree<B> {
      * @return tree trunk.
      */
     Node2D getRoot();
+    
+    void setRoot(Node2D root);
 }
