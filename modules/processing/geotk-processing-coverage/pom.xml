@@ -75,6 +75,21 @@
           <version>${project.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-render</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-coverageio-store</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-go2</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage</artifactId>
       </dependency>
