@@ -3,6 +3,8 @@ package com.mycompany.rtree2d;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,12 +14,12 @@ import javax.swing.JFrame;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.index.tree.JTreePanel;
 import org.geotoolkit.index.tree.Node2D;
-import org.geotoolkit.index.tree.ReadRTree;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.TreeUtils;
-import org.geotoolkit.index.tree.WriteRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.io.TreeReader;
+import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.util.converter.Classes;
 
 /**
@@ -26,7 +28,7 @@ import org.geotoolkit.util.converter.Classes;
  */
 public class App 
 {
-    public static void main( String[] args ) throws InterruptedException
+    public static void main( String[] args ) throws InterruptedException, IOException, ClassNotFoundException
     {
         
         
@@ -34,9 +36,9 @@ public class App
         
         
         int time = 5000;
-        Tree arbre = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
+//        Tree arbre = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
 //        Tree arbre = TreeFactory.createStarRTree2D(4);//declenchement split ou ajout a revoir
-//        Tree arbre = TreeFactory.createHilbertRTree2D(4, 2);
+        Tree arbre = TreeFactory.createHilbertRTree2D(4, 1);
         int compteur = 0;
         
 //        for(;compteur<=500000;compteur++){
@@ -57,7 +59,7 @@ public class App
 //        Thread.sleep(time);
         ///////////////////////////////////////////////////////////////////////////////////////
         List<Shape> lData = new ArrayList<Shape>();
-        
+        File fil = new File("tree.bin");
         
         
 //        for(int j= -120;j<=120;j+=4){
@@ -319,23 +321,19 @@ public class App
         fen.setTitle("R-Tree");
         Thread.sleep(time);
         
-        WriteRTree wrrt = new WriteRTree(arbre, "tree.bin");
-        ReadRTree rrt = new ReadRTree("tree.bin");
-        try {
-            Tree tree = rrt.readFile();
-            System.out.println("************************************************");
-            System.out.println("***************arbre yo yo yo yo****************");
-            System.out.println(tree);
-            System.out.println("************************************************");
-            System.out.println("************************************************");
-            
-            pan.setTree(tree);
-            pan.repaint();
-            Thread.sleep(time);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        TreeWriter.write(arbre, fil);
+        arbre.setRoot(null);
+        TreeReader.read(arbre, fil);
         
+        System.out.println("************************************************");
+        System.out.println("***************arbre yo yo yo yo****************");
+        System.out.println(arbre);
+        System.out.println("************************************************");
+        System.out.println("************************************************");
+         
+        pan.setTree(arbre);
+        pan.repaint();
+        Thread.sleep(time);
         
         System.out.println("/////////////////////////////////////////////////////");
         System.out.println("le compteur = "+(compteur));

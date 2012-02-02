@@ -48,7 +48,20 @@ public interface Tree<B> {
      */
     Node2D getRoot();
     
+    /**
+     * Affect a new root {@Node}.
+     * @param root new root.
+     */
     void setRoot(Node2D root);
     
+    /**
+     * Create a node in accordance with this RTree properties.
+     * 
+     * @param tree pointer on Tree.
+     * @param parent pointer on parent {@code Node2D}.
+     * @param children sub {@code Node2D}.
+     * @param entries {@code List<Shape>} to add in this node. 
+     * @return 
+     */
     Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<B> listEntries);
 }

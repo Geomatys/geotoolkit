@@ -36,7 +36,7 @@ public class HilbertNode2D extends Node2D {
         super(tree, parent, children, null);
         ArgumentChecks.ensurePositive("hilbertOrder", hilbertOrder);
         setUserProperty("isleaf", false);
-        if (children == null) {
+        if (entries != null && !entries.isEmpty()) {
             setUserProperty("isleaf", true);
             setUserProperty("centroids", new ArrayList<Point2D>());
             setUserProperty("cells", new ArrayList<Node2D>());
@@ -55,7 +55,7 @@ public class HilbertNode2D extends Node2D {
     public boolean isEmpty() {
         List<Node2D> lC = (List<Node2D>) getUserProperty("cells");
         boolean empty = true;
-        if (!lC.isEmpty()) {
+        if (lC!=null && !lC.isEmpty()) {
             for (Node2D hc : lC.toArray(new Node2D[lC.size()])) {
                 if (!hc.isEmpty()) {
                     empty = false;
@@ -144,7 +144,8 @@ public class HilbertNode2D extends Node2D {
      */
     @Override
     public String toString() {
-        final Collection col = new ArrayList((List<Node2D>) getUserProperty("cells"));
+        final List<Node2D> cup = (List<Node2D>) getUserProperty("cells");
+        final Collection col = (cup!=null)?new ArrayList(cup):new ArrayList();
         col.addAll(getChildren());
         String strparent = (getParent() == null) ? "null" : String.valueOf(getParent().hashCode());
         return Trees.toString(Classes.getShortClassName(this) + " : " + this.hashCode() + " parent : " + strparent + " isleaf : " + ((Boolean) getUserProperty("isleaf")), col);

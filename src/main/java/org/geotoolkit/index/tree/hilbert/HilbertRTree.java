@@ -298,10 +298,10 @@ public class HilbertRTree extends AbstractTree2D {
         if (listElements.size() == 2) {
             if (leaf) {
                 return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(0))),
-                        createHilbertNode2D(tree, null, 0, null, UnmodifiableArrayList.wrap((Shape) listElements.get(1))));
+                        tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(1))));
             } else {
                 return UnmodifiableArrayList.wrap(tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(0)), null),
-                        createHilbertNode2D(tree, null, 0, UnmodifiableArrayList.wrap((Node2D) listElements.get(1)), null));
+                        tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(1)), null));
             }
         }
 
@@ -820,19 +820,9 @@ public class HilbertRTree extends AbstractTree2D {
         return nod2d;
     }
 
-    /**Create an appropriate {@code Node2D} to this Hilbert R-Tree.
-     * 
-     * @param tree pointer on Tree.
-     * @param parent pointer on parent Node2D.
-     * @param hilbertOrder currently Node2D Hilbert order.
-     * @param children sub {@code Node2D}.
-     * @param entries {@code List<Shape>} to add in this node. 
-     * @return HilbertNode2D.
+    /**
+     * {@inheritDoc}
      */
-    public static Node2D createHilbertNode2D(final Tree tree, final Node2D parent, int hilbertOrder, final List<Node2D> children, final List<Shape> entries) {
-        return new HilbertNode2D(tree, parent, hilbertOrder, children, entries);
-    }
-
     public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
         return new HilbertNode2D(tree, parent, 0, listChildren, listEntries);
     }
