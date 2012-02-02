@@ -23,15 +23,16 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import junit.framework.TestCase;
 import org.geotoolkit.util.ArgumentChecks;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
  * Test some R-Tree queries.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public abstract class TreeTest extends TestCase {
+public abstract class TreeTest/* extends TestCase*/ {
 
     protected final Tree tree;
     protected final List<Shape> lData = new ArrayList<Shape>();
@@ -67,10 +68,16 @@ public abstract class TreeTest extends TestCase {
         assertTrue(listSearch.size() == lData.size());
     }
 
+    /**
+     * Compare all boundary node from their children boundary.
+     */
     public void checkBoundaryTest(){
         checkNodeBoundaryTest(tree.getRoot());
     }
     
+    /**
+     * Compare boundary node from his children boundary.
+     */
     public void checkNodeBoundaryTest(final Node2D node){
         assertTrue(checkBoundaryNode(node));
         for(Node2D no : node.getChildren()){
@@ -78,6 +85,9 @@ public abstract class TreeTest extends TestCase {
         }
     }
     
+    /**
+     * Compare boundary node from his children boundary.
+     */
     protected boolean checkBoundaryNode(final Node2D node){
         final Rectangle2D subBound = new Rectangle2D.Double();
         final List<Shape> lS = new ArrayList<Shape>();

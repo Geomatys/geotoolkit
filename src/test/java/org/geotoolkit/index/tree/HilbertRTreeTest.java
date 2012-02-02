@@ -21,6 +21,8 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Create Hilbert R-Tree test suite.
@@ -36,6 +38,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Some elements inserted in Hilbert R-Tree.
      */
+    @Test
     public void testInsert() {
         super.insertTest();
     }
@@ -43,6 +46,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Verify all node boundary from its subnode boundary.
      */
+    @Test
     public void testCheckBoundary(){
         super.checkBoundaryTest();
     }
@@ -71,6 +75,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Test search query inside tree.
      */
+    @Test
     public void testQueryInside() {
         super.queryInsideTest();
     }
@@ -78,6 +83,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Test query outside of tree area.
      */
+    @Test
     public void testQueryOutside() {
         super.queryOutsideTest();
     }
@@ -85,6 +91,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Test query on tree boundary border. 
      */
+    @Test
     public void testQueryOnBorder() {
         super.queryOnBorderTest();
     }
@@ -92,6 +99,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Test query with search area contain all tree boundary. 
      */
+    @Test
     public void testQueryAll() {
         super.queryAllTest();
     }
@@ -99,6 +107,7 @@ public class HilbertRTreeTest extends TreeTest {
     /**
      * Test insertion and deletion in tree.
      */
+    @Test
     public void testInsertDelete() {
         super.insertDelete();
     }

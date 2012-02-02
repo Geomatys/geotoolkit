@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.star.StarRTree;
+import org.junit.Test;
 
 /**
  * Create R*Tree test suite.
@@ -33,10 +34,12 @@ public class StarRTreeTest extends TreeTest {
     /**
      * Some elements inserted in Hilbert R-Tree.
      */
+    @Test
     public void testInsert() {
         super.insertTest();
     }
 
+    @Test
     public void testCheckBoundary(){
         super.checkBoundaryTest();
     }
@@ -44,6 +47,7 @@ public class StarRTreeTest extends TreeTest {
     /**
      * Test search query inside tree.
      */
+    @Test
     public void testQueryInside() {
         super.queryInsideTest();
     }
@@ -51,6 +55,7 @@ public class StarRTreeTest extends TreeTest {
     /**
      * Test query outside of tree area.
      */
+    @Test
     public void testQueryOutside() {
         super.queryOutsideTest();
     }
@@ -58,6 +63,7 @@ public class StarRTreeTest extends TreeTest {
     /**
      * Test query on tree boundary border. 
      */
+    @Test
     public void testQueryOnBorder() {
         super.queryOnBorderTest();
     }
@@ -65,6 +71,7 @@ public class StarRTreeTest extends TreeTest {
     /**
      * Test query with search area contain all tree boundary. 
      */
+    @Test
     public void testQueryAll() {
         super.queryAllTest();
     }
@@ -72,6 +79,7 @@ public class StarRTreeTest extends TreeTest {
     /**
      * Test insertion and deletion in tree.
      */
+    @Test
     public void testInsertDelete() {
         super.insertDelete();
     }

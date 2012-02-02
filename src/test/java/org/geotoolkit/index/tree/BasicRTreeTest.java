@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.junit.Test;
 
 /**
  * Create (Basic) R-Tree test suite.
@@ -34,10 +35,12 @@ public class BasicRTreeTest extends TreeTest {
     /**
      * Some elements inserted in Hilbert R-Tree.
      */
+    @Test
     public void testInsert() {
         super.insertTest();
     }
 
+    @Test
     public void testCheckBoundary(){
         super.checkBoundaryTest();
     }
@@ -45,6 +48,7 @@ public class BasicRTreeTest extends TreeTest {
     /**
      * Test search query inside tree.
      */
+    @Test
     public void testQueryInside() {
         super.queryInsideTest();
     }
@@ -52,6 +56,7 @@ public class BasicRTreeTest extends TreeTest {
     /**
      * Test query outside of tree area.
      */
+    @Test
     public void testQueryOutside() {
         super.queryOutsideTest();
     }
@@ -59,6 +64,7 @@ public class BasicRTreeTest extends TreeTest {
     /**
      * Test query on tree boundary border. 
      */
+    @Test
     public void testQueryOnBorder() {
         super.queryOnBorderTest();
     }
@@ -66,6 +72,7 @@ public class BasicRTreeTest extends TreeTest {
     /**
      * Test query with search area contain all tree boundary. 
      */
+    @Test
     public void testQueryAll() {
         super.queryAllTest();
     }
@@ -73,6 +80,7 @@ public class BasicRTreeTest extends TreeTest {
     /**
      * Test insertion and deletion in tree.
      */
+    @Test
     public void testInsertDelete() {
         super.insertDelete();
     }
