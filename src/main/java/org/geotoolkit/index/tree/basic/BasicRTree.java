@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.basic;
 
@@ -15,7 +28,8 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeUtils;
 import static org.geotoolkit.index.tree.TreeUtils.*;
 
-/**Create R-Tree (Basic)
+/**
+ * Create R-Tree (Basic)
  *
  * @author Rémi Marechal (Geomatys)
  * @author Yohann Sorel (Geomatys)
@@ -24,7 +38,8 @@ public class BasicRTree extends AbstractTree2D {
 
     private SplitCase choice;
 
-    /**Create R-Tree.
+    /**
+     * Create R-Tree.
      * 
      * @param maxElements max value of elements per tree cell.
      * @param choice Split made "linear" or "quadratic".
@@ -78,7 +93,8 @@ public class BasicRTree extends AbstractTree2D {
         return this.choice;
     }
 
-    /**Insert entry in {@code Node2D} in accordance with R-Tree properties.
+    /**
+     * Insert entry in {@code Node2D} in accordance with R-Tree properties.
      * 
      * @param candidate {@code Node2D} where user want insert data.
      * @param entry to insert.
@@ -298,7 +314,8 @@ public class BasicRTree extends AbstractTree2D {
         return UnmodifiableArrayList.wrap(result1, result2);
     }
 
-    /**Find appropriate {@code Node2D} to insert {@code Shape}.
+    /**
+     * Find appropriate {@code Node2D} to insert {@code Shape}.
      * To define appropriate Node, criterion are : 
      *      - require minimum area enlargement to cover shape.
      *      - or put into {@code Node2D} with lesser elements number in case of area equals.
@@ -360,6 +377,10 @@ public class BasicRTree extends AbstractTree2D {
         return n;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
         return new Node2D(tree, parent, listChildren, listEntries);
     }

@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.hilbert;
 
@@ -20,7 +33,8 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
-/**Create Hilbert RTree.
+/**
+ * Create Hilbert RTree.
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -28,7 +42,8 @@ public class HilbertRTree extends AbstractTree2D {
 
     int hilbertOrder;
 
-    /**Create Hilbert RTree.
+    /**
+     * Create Hilbert RTree.
      * 
      * @param maxElements max elements number authorized
      * @param hilbertOrder max order value.
@@ -86,7 +101,8 @@ public class HilbertRTree extends AbstractTree2D {
         deleteHilbertNode(getRoot(), entry);
     }
 
-    /**Find all {@code Shape} which intersect regionSearch parameter. 
+    /**
+     * Find all {@code Shape} which intersect regionSearch parameter. 
      * 
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.

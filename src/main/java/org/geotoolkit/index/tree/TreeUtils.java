@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
 
@@ -14,7 +27,8 @@ import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
-/**Some Utils methods.
+/**
+ * Some Utils methods.
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -23,7 +37,8 @@ public final class TreeUtils {
     private TreeUtils() {
     }
     
-    /**To compare two {@code Node2D} from them boundary box minimum x axis coordinate. 
+    /**
+     * To compare two {@code Node2D} from them boundary box minimum x axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      */
     private static final Comparator<Node2D> NODE2D_COMPARATOR_X = new Comparator<Node2D>() {
@@ -35,7 +50,8 @@ public final class TreeUtils {
         }
     };
     
-    /**To compare two {@code Node} from them boundary box minimum y axis coordinate. 
+    /**
+     * To compare two {@code Node} from them boundary box minimum y axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      */
     private static final Comparator<Node2D> NODE2D_COMPARATOR_Y = new Comparator<Node2D>() {
@@ -47,7 +63,8 @@ public final class TreeUtils {
         }
     };
     
-    /**To compare two {@code Shape} from them boundary box minimum x axis coordinate. 
+    /**
+     * To compare two {@code Shape} from them boundary box minimum x axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      */
     private static final Comparator<Shape> SHAPE_COMPARATOR_X = new Comparator<Shape>() {
@@ -59,7 +76,8 @@ public final class TreeUtils {
         }
     };
     
-    /**To compare two {@code Shape} from them boundary box minimum y axis coordinate. 
+    /**
+     * To compare two {@code Shape} from them boundary box minimum y axis coordinate. 
      * @see StarNode#organizeFrom(int) 
      */
     private static final Comparator<Shape> SHAPE_COMPARATOR_Y = new Comparator<Shape>() {
@@ -79,7 +97,8 @@ public final class TreeUtils {
         return node.getChildren().size()+node.getEntries().size();
     }
     
-    /**Find all {@code Shape} which intersect regionSearch parameter. 
+    /**
+     * Find all {@code Shape} which intersect regionSearch parameter. 
      * 
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
@@ -103,7 +122,8 @@ public final class TreeUtils {
         }
     }
     
-    /**Distance returned is compute between boundary gravity center of each {@code Node2D}.
+    /**
+     * Distance returned is compute between boundary gravity center of each {@code Node2D}.
      * 
      * @param n1 first Node.
      * @param n2 second Node.
@@ -117,7 +137,8 @@ public final class TreeUtils {
                           Math.abs(rect1.getCenterY()-rect2.getCenterY()));
     }
     
-    /**Compute general boundary of all shapes passed in parameter.
+    /**
+     * Compute general boundary of all shapes passed in parameter.
      * 
      * @param lS Shape List.
      * @throws IllegalArgumentException if List<Shape> lS is null.
@@ -174,6 +195,7 @@ public final class TreeUtils {
     }
     
     /**
+     * Find {@code Node2D} centroid. 
      * @param node
      * @throws IllegalArgumentException if node is null.
      * @return return center of {@code Node2D}.
@@ -218,7 +240,8 @@ public final class TreeUtils {
         }
     }
     
-    /**Find in lN, couple of {@code Node2D} with smallest overlapping or perimeter.
+    /**
+     * Find in lN, couple of {@code Node2D} with smallest overlapping or perimeter.
      * Choose indice : - case 0 : find couple with smallest overlapping.
      *                 - case 1 : find couple with smallest perimeter.
      * 
@@ -349,7 +372,8 @@ public final class TreeUtils {
         return lResult;
     }
     
-    /**Compute Euclidean distance between two {@code Point2D}.
+    /**
+     * Compute Euclidean distance between two {@code Point2D}.
      * 
      * @param pointA
      * @param pointB
@@ -364,7 +388,8 @@ public final class TreeUtils {
         return Math.sqrt(x*x+y*y);
     }
     
-    /**Compute and define which axis to split {@code this Node}.
+    /**
+     * Compute and define which axis to split {@code this Node}.
      * 
      * @throws IllegalArgumentException if candidate is null.
      * @return 1 to split in x axis and 2 to split in y axis.
@@ -432,7 +457,8 @@ public final class TreeUtils {
         }
     }
     
-    /**Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
+    /**
+     * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
      * Also branchGrafting will be able to avoid splitting node.
      * 
      * @param n1 Node2D
@@ -528,7 +554,8 @@ public final class TreeUtils {
         }
     }
     
-    /**Add progressively each {@code listOverlaps} element(s) in {@code listnode1} or {@code listnode2}. 
+    /**
+     * Add progressively each {@code listOverlaps} element(s) in {@code listnode1} or {@code listnode2}. 
      * Each list symbolize a surface representing by them elements.
      * The aim is to distribute one by one in order each data of {@code listOverlaps} in {@code listNode1} and 
      * {@code listNode2} to avoid (if it's possible) overlaps between {@code listNode1} surface and {@code listNode2} surface.
@@ -571,7 +598,8 @@ public final class TreeUtils {
         return -1;
     }
     
-    /**Travel {@code Tree}, find {@code Entry} if it exist and delete it.
+    /**
+     * Travel {@code Tree}, find {@code Entry} if it exist and delete it.
      * 
      * <blockquote><font size=-1>
      * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong> 

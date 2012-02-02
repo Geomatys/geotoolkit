@@ -1,12 +1,26 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
 
 import java.util.List;
 
-/**Define a generic Tree.
+/**
+ * Define a generic Tree.
  *
  * @author Rémi Maréchal       (Geomatys).
  * @author Yohann Sorel        (Geomatys).
@@ -14,7 +28,8 @@ import java.util.List;
  */
 public interface Tree<B> {
 
-    /**Find some {@code Entry} which intersect regionSearch parameter 
+    /**
+     * Find some {@code Entry} which intersect regionSearch parameter 
      * and add them into result {@code List} parameter.
      * 
      * <blockquote><font size=-1>
@@ -26,13 +41,15 @@ public interface Tree<B> {
      */
     void search(B regionSearch, List<B> result);
 
-    /**Insert a {@code Entry} into Rtree.
+    /**
+     * Insert a {@code Entry} into Rtree.
      * 
      * @param Entry to insert into tree.
      */
     void insert(B entry);
 
-    /**Find a {@code Entry} into the tree and delete it.
+    /**
+     * Find a {@code Entry} into the tree and delete it.
      * 
      * @param Entry to delete.
      */
@@ -50,6 +67,7 @@ public interface Tree<B> {
     
     /**
      * Affect a new root {@Node}.
+     * 
      * @param root new root.
      */
     void setRoot(Node2D root);
