@@ -33,7 +33,7 @@ import javax.swing.table.AbstractTableModel;
 
 
 /**
- * A table model for image sample values (or pixels). This model is serialiable if the
+ * A table model for image sample values (or pixels). This model is serializable if the
  * underlying {@link RenderedImage} is serializable.
  *
  * @author Martin Desruisseaux (IRD)

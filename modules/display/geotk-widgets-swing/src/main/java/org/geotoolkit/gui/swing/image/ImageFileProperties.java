@@ -133,7 +133,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
 
     /**
      * If a worker is currently running, that worker. This is used by {@link #propertyChange}
-     * (invoked when a new file is selected in the file chooser) for cancelling a running action
+     * (invoked when a new file is selected in the file chooser) for canceling a running action
      * before to start a new one. This is also used as progress and warning listeners to be
      * registered to the image reader.
      * <p>
