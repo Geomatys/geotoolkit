@@ -77,9 +77,7 @@ public class WriteRTree {
         final List<Node2D> listChild = node.getChildren();
         final List<Shape> listEntries = node.getEntries();
         
-        int isleaf = (!node.isLeaf()) ? 0 : 1;
         int nbrSubNode = listChild.size();
-        dops.writeInt(isleaf);
         dops.writeInt(index.get(node));
         dops.writeInt(nbrSubNode);
         

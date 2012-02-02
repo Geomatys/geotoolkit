@@ -206,10 +206,10 @@ public class BasicRTree extends AbstractTree2D {
         ls.remove(Math.max(index1, index2));
         ls.remove(Math.min(index1, index2));
         Rectangle2D r1Temp, r2Temp;
-        Node2D result1 = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s1))
-                : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s1), null);
-        Node2D result2 = (leaf) ? createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s2))
-                : createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s2), null);
+        Node2D result1 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s1))
+                : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s1), null);
+        Node2D result2 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s2))
+                : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s2), null);
         double demimaxE = maxElmnts / 3;
         demimaxE = Math.max(demimaxE, 1);
         if (leaf) {
@@ -359,4 +359,9 @@ public class BasicRTree extends AbstractTree2D {
         }
         return n;
     }
+
+    public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
+        return new Node2D(tree, parent, listChildren, listEntries);
+    }
+
 }

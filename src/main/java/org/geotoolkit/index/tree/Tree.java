@@ -49,4 +49,6 @@ public interface Tree<B> {
     Node2D getRoot();
     
     void setRoot(Node2D root);
+    
+    Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<B> listEntries);
 }

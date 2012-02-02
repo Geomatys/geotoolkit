@@ -58,7 +58,7 @@ public class ReadRTree {
                 }catch(EOFException ex){
                     
                 }
-                tree.setRoot(getRoot(dips));
+                tree.setRoot(getRoot());
                 dips.close();
                 fis.close();
                 return tree;
@@ -68,7 +68,7 @@ public class ReadRTree {
         return null;
     }
     
-    private Node2D getRoot(DataInputStream dips){
+    private Node2D getRoot(){
         for(Node2D node : lN){
             int[] tabC = (int[])node.getUserProperty("tabidchildren");
             final List<Node2D> children = node.getChildren();
@@ -83,7 +83,6 @@ public class ReadRTree {
     
     private void readNode(DataInputStream dips) throws IOException, ClassNotFoundException{
         
-        int isleaf = dips.readInt();
         int id = dips.readInt();
         int nbrChildren = dips.readInt();
         int[] tabChild = new int[nbrChildren];

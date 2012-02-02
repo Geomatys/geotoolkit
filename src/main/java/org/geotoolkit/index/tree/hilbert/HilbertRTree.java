@@ -73,7 +73,7 @@ public class HilbertRTree extends AbstractTree2D {
     public void insert(final Shape entry) {
         final Node2D root = getRoot();
         if (root == null || root.isEmpty()) {
-            setRoot(createHilbertNode2D(this, null, 0, null, UnmodifiableArrayList.wrap(entry)));
+            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(entry)));
         } else {
             insertNode(root, entry);
         }
@@ -233,11 +233,11 @@ public class HilbertRTree extends AbstractTree2D {
                 }
 
                 if (isleaf) {
-                    couplelements = new CoupleNode2D(AbstractTree2D.createNode(tree, null, null, (List<Shape>) splitList1),
-                            AbstractTree2D.createNode(tree, null, null, (List<Shape>) splitList2));
+                    couplelements = new CoupleNode2D(tree.createNode(tree, null, null, (List<Shape>) splitList1),
+                            tree.createNode(tree, null, null, (List<Shape>) splitList2));
                 } else {
-                    couplelements = new CoupleNode2D(AbstractTree2D.createNode(tree, null, (List<Node2D>) splitList1, null),
-                            AbstractTree2D.createNode(tree, null, (List<Node2D>) splitList2, null));
+                    couplelements = new CoupleNode2D(tree.createNode(tree, null, (List<Node2D>) splitList1, null),
+                            tree.createNode(tree, null, (List<Node2D>) splitList2, null));
                 }
 
                 switch (index) {
@@ -294,13 +294,13 @@ public class HilbertRTree extends AbstractTree2D {
         if (listElements.size() <= 1) {
             throw new IllegalArgumentException("you can't split Leaf with only one elements or lesser");
         }
-
+        
         if (listElements.size() == 2) {
             if (leaf) {
-                return UnmodifiableArrayList.wrap(createHilbertNode2D(tree, null, 0, null, UnmodifiableArrayList.wrap((Shape) listElements.get(0))),
+                return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(0))),
                         createHilbertNode2D(tree, null, 0, null, UnmodifiableArrayList.wrap((Shape) listElements.get(1))));
             } else {
-                return UnmodifiableArrayList.wrap(createHilbertNode2D(tree, null, 0, UnmodifiableArrayList.wrap((Node2D) listElements.get(0)), null),
+                return UnmodifiableArrayList.wrap(tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(0)), null),
                         createHilbertNode2D(tree, null, 0, UnmodifiableArrayList.wrap((Node2D) listElements.get(1)), null));
             }
         }
@@ -318,9 +318,9 @@ public class HilbertRTree extends AbstractTree2D {
                 splitList2.add(listElements.get(k));
             }
             if (leaf) {
-                couNN = new CoupleNode2D(createHilbertNode2D(tree, null, 0, null, splitList1), createHilbertNode2D(tree, null, 0, null, splitList2));
+                couNN = new CoupleNode2D(tree.createNode(tree, null, null, splitList1), tree.createNode(tree, null, null, splitList2));
             } else {
-                couNN = new CoupleNode2D(createHilbertNode2D(tree, null, 0, splitList1, null), createHilbertNode2D(tree, null, 0, splitList2, null));
+                couNN = new CoupleNode2D(tree.createNode(tree, null, splitList1, null), tree.createNode(tree, null, splitList2, null));
             }
 
             if (couNN.intersect()) {
@@ -831,5 +831,9 @@ public class HilbertRTree extends AbstractTree2D {
      */
     public static Node2D createHilbertNode2D(final Tree tree, final Node2D parent, int hilbertOrder, final List<Node2D> children, final List<Shape> entries) {
         return new HilbertNode2D(tree, parent, hilbertOrder, children, entries);
+    }
+
+    public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
+        return new HilbertNode2D(tree, parent, 0, listChildren, listEntries);
     }
 }

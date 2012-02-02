@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.index.tree.AbstractTree2D;
 import org.geotoolkit.index.tree.Node2D;
@@ -253,5 +254,9 @@ public class StarRTree extends AbstractTree2D {
      */
     private void setIA(boolean insertAgain) {
         this.insertAgain = insertAgain;
+    }
+
+    public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
+        return new Node2D(tree, parent, listChildren, listEntries);
     }
 }

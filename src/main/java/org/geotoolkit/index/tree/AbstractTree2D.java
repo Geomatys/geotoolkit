@@ -51,17 +51,17 @@ public abstract class AbstractTree2D implements Tree<Shape> {
         this.root = root;
     }
 
-    /**Create a adapted {@code Node2D} in 2 dimension for this tree.
-     * 
-     * @param tree pointer on tree.
-     * @param parent pointer on {@code Node2D} parent.
-     * @param children subNode.
-     * @param entries 
-     * @return Node2D
-     */
-    public static Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries) {
-        return new Node2D(tree, parent, children, entries);
-    }
+//    /**Create a adapted {@code Node2D} in 2 dimension for this tree.
+//     * 
+//     * @param tree pointer on tree.
+//     * @param parent pointer on {@code Node2D} parent.
+//     * @param children subNode.
+//     * @param entries 
+//     * @return Node2D
+//     */
+//    public static Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries) {
+//        return new Node2D(tree, parent, children, entries);
+//    }
 
     /**
      * {@inheritDoc} 
