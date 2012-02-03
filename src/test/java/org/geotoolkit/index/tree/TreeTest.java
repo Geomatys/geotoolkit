@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public abstract class TreeTest/* extends TestCase*/ {
+public abstract class TreeTest {
 
     protected final Tree tree;
     protected final List<Shape> lData = new ArrayList<Shape>();
@@ -59,11 +59,8 @@ public abstract class TreeTest/* extends TestCase*/ {
      */
     protected void insertTest() {
         assertTrue(tree.getRoot().getBoundary().getBounds2D().equals(TreeUtils.getEnveloppeMin(lData)));
-        System.out.println(tree.getRoot().getBoundary().getBounds2D());
         final List<Shape> listSearch = new ArrayList<Shape>();
         tree.search(tree.getRoot().getBoundary(), listSearch);
-        System.out.println("listS.size : " + listSearch.size());
-        System.out.println("lData.size : " + lData.size());
         assertTrue(listSearch.size() == lData.size());
     }
 
@@ -77,7 +74,7 @@ public abstract class TreeTest/* extends TestCase*/ {
     /**
      * Compare boundary node from his children boundary.
      */
-    public void checkNodeBoundaryTest(final Node2D node) {
+    public void checkNodeBoundaryTest(final Node2D node) {        
         assertTrue(checkBoundaryNode(node));
         for (Node2D no : node.getChildren()) {
             checkNodeBoundaryTest(no);

@@ -38,11 +38,12 @@ import static org.junit.Assert.*;
  */
 public class ReaderWriterTest {
 
-    Tree treeRef, treeTest;
-    File fil = new File("tree.bin");
-    final List<Shape> lData = new ArrayList<Shape>();
+    private Tree treeRef, treeTest;
+    private final File fil = new File("tree.bin");
+    private final List<Shape> lData = new ArrayList<Shape>();
 
     public ReaderWriterTest() {
+        fil.deleteOnExit();
         for (int j = -120; j <= 120; j += 4) {
             for (int i = -200; i <= 200; i += 4) {
                 lData.add(new Ellipse2D.Double(i, j, 1, 1));
