@@ -18,66 +18,51 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import com.vividsolutions.jts.geom.Envelope;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
-
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
-import org.geotoolkit.data.shapefile.lock.ShpFileType;
-import org.geotoolkit.data.shapefile.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShapefileFeatureReader;
-import org.geotoolkit.data.shapefile.shx.ShxReader;
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
+import org.geotoolkit.data.shapefile.lock.ShpFileType;
+import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.lock.ShpFiles.toFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.IdCollectorFilterVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
-import org.geotoolkit.index.quadtree.DataReader;
-import org.geotoolkit.index.quadtree.QuadTree;
-import org.geotoolkit.index.quadtree.StoreException;
-import org.geotoolkit.index.quadtree.LazySearchCollection;
-import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
-import org.geotoolkit.index.rtree.RTree;
-import org.geotoolkit.util.NullProgressListener;
-import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.data.shapefile.lock.AccessManager;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
-import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
+import org.geotoolkit.index.quadtree.*;
 import org.geotoolkit.referencing.CRS;
-
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.NullProgressListener;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -90,9 +75,6 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
-import static org.geotoolkit.data.shapefile.lock.ShpFiles.*;
 
 
 /**
@@ -115,7 +97,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
     IndexType treeType;
     final boolean useIndex;
-    private RTree rtree;
     int maxDepth;
 
     /**
@@ -203,14 +184,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        if (rtree != null) {
-            try {
-                rtree.close();
-            } catch (Exception e) {
-                getLogger().log(Level.WARNING, "org.geotoolkit.data.shapefile.indexed"
-                        + ".IndexedShapeFileDataStore#finalize(): Error closing rtree. {0}", e.getLocalizedMessage());
-            }
-        }
     }
     
     /**

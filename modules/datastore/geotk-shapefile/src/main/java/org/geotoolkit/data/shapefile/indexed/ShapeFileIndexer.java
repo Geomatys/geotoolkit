@@ -35,7 +35,6 @@ import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.quadtree.fs.IndexHeader;
-import org.geotoolkit.index.rtree.PageStore;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.process.ProgressController;
 
@@ -51,7 +50,6 @@ public class ShapeFileIndexer {
     private IndexType idxType;
     private int max = 50;
     private int min = 25;
-    private short split = PageStore.SPLIT_QUADRATIC;
     private String byteOrder;
     private ShpFiles shpFiles;
 
@@ -186,15 +184,6 @@ public class ShapeFileIndexer {
     /**
      * DOCUMENT ME!
      * 
-     * @param s
-     */
-    public void setSplit(final short s) {
-        split = s;
-    }
-
-    /**
-     * DOCUMENT ME!
-     * 
      * @param shpFiles
      */
     public void setShapeFileName(final ShpFiles shpFiles) {
@@ -237,8 +226,6 @@ public class ShapeFileIndexer {
                 idx.setMax(Integer.parseInt(args[++i]));
             } else if (args[i].equals("-m")) {
                 idx.setMin(Integer.parseInt(args[++i]));
-            } else if (args[i].equals("-s")) {
-                idx.setSplit(Short.parseShort(args[++i]));
             } else if (args[i].equals("-b")) {
                 idx.setByteOrder(args[++i]);
             } else {

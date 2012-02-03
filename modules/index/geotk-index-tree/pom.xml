@@ -11,7 +11,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-index-tree</artifactId>
   <packaging>jar</packaging>
-  <name>Index new tree</name>
+  <name>Index RTree</name>
 
   <dependencies>
     <dependency>

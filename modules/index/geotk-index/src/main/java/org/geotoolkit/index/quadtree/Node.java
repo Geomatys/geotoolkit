@@ -20,7 +20,7 @@ package org.geotoolkit.index.quadtree;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * Represent a tyle in the fack quad tree.
+ * Represent a tyle in the fake quad tree.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
