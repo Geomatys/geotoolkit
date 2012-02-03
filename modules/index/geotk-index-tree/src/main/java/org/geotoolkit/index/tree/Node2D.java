@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel  (Geomatys)
  */
-public class Node2D extends Node{
+public class Node2D extends AbstractNode{
 
     protected Shape boundary;
     private Node2D parent;
@@ -67,6 +67,7 @@ public class Node2D extends Node{
             clearBounds();
         }
 
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             clearBounds();
         }
@@ -123,6 +124,7 @@ public class Node2D extends Node{
     /**
      * @return subNode.
      */
+    @Override
     public List<Node2D> getChildren() {
         return children;
     }
@@ -131,6 +133,7 @@ public class Node2D extends Node{
      * 
      * @return true if it is  a leaf else false (branch).
      */
+    @Override
     public boolean isLeaf(){
         return getChildren().isEmpty();
     }
@@ -138,16 +141,19 @@ public class Node2D extends Node{
     /**
      * @return true if {@code Node2D} contains nothing else false.
      */
+    @Override
     public boolean isEmpty(){
         return (getChildren().isEmpty() && getEntries().isEmpty());
     }
     
+    @Override
     public boolean isFull(){
         return (getChildren().size()+getEntries().size())>=getTree().getMaxElements();
     }
     /**
      * @return entries.
      */
+    @Override
     public List<Shape> getEntries() {
         return entries;
     }
@@ -155,6 +161,7 @@ public class Node2D extends Node{
     /**
      * @return {@code Node2D} parent pointer.
      */
+    @Override
     public Node2D getParent() {
         return parent;
     }
@@ -162,6 +169,7 @@ public class Node2D extends Node{
     /**
      * @return {@code Tree} pointer.
      */
+    @Override
     public Tree getTree() {
         return tree;
     }

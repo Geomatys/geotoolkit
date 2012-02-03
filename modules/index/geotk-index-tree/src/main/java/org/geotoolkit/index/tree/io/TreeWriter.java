@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.AbstractNode;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
@@ -65,7 +65,7 @@ public class TreeWriter {
     private boolean closeOnDispose = false;
     private OutputStream sourceStream = null;
     private DataOutputStream dataOPStream = null;
-    private Map<Node, Integer> index = null;
+    private Map<AbstractNode, Integer> index = null;
 
     public TreeWriter() {
     }
@@ -80,7 +80,7 @@ public class TreeWriter {
      * @throws IOException
      */
     public void setOutput(final Object output) throws IOException {
-        index = new HashMap<Node, Integer>();
+        index = new HashMap<AbstractNode, Integer>();
         if (output instanceof OutputStream) {
             sourceStream = (OutputStream) output;
             dataOPStream = new DataOutputStream(sourceStream);

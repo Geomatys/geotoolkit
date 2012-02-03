@@ -29,7 +29,7 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
  * @param <T> 
  * @author Johann Sorel (Geomatys)
  */
-public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> implements PropertyChangeListener {
+public abstract class CrossList<T extends AbstractNode> extends NotifiedCheckedList<T> implements PropertyChangeListener {
 
     public CrossList(final Class<T> type) {
         super(type);

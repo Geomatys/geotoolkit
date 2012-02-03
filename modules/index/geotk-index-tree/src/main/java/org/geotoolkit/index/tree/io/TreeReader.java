@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.AbstractNode;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
@@ -127,7 +127,7 @@ public class TreeReader {
     public void read(final Tree tree) throws IOException, ClassNotFoundException {
         ArgumentChecks.ensureNonNull("read : tree", tree);
         final List<Node2D> listNodes = new ArrayList<Node2D>();
-        final Map<Integer, Node> index = new HashMap<Integer, Node>();
+        final Map<Integer, AbstractNode> index = new HashMap<Integer, AbstractNode>();
         readNode(tree, dataIPStream, listNodes, index);
 
         for (Node2D node : listNodes) {
@@ -152,7 +152,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    private void readNode(final Tree tree, final DataInputStream dips, final List<Node2D> listNodes, final Map<Integer, Node> index) throws IOException, ClassNotFoundException {
+    private void readNode(final Tree tree, final DataInputStream dips, final List<Node2D> listNodes, final Map<Integer, AbstractNode> index) throws IOException, ClassNotFoundException {
         ArgumentChecks.ensureNonNull("readNode : tree", tree);
         ArgumentChecks.ensureNonNull("readNode : dips", dips);
         ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
