@@ -61,6 +61,7 @@ propOrder = {
     "broader",
     "related",
     "scopeNote",
+    "historyNote",
     "changeNote",
     "name",
     "narrower",
@@ -111,6 +112,9 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> scopeNote;
+    
+    @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
+    private List<Value> historyNote;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> example;
@@ -831,6 +835,27 @@ public class Concept implements Serializable {
     }
     
     /**
+     * @return the scopeNote
+     */
+    public List<Value> getHistoryNote() {
+        if (this.historyNote == null) {
+            this.historyNote = new ArrayList<Value>();
+        }
+        return historyNote;
+    }
+
+    public void addHistoryNote(final Value historyNote) {
+        if (this.historyNote == null) {
+            this.historyNote = new ArrayList<Value>();
+        }
+        this.historyNote.add(historyNote);
+    }
+    
+    public void setHistoryNote(final List<Value> historyNote) {
+        this.historyNote = historyNote;
+    }
+    
+    /**
      * @return the name
      */
     public String getName() {
@@ -1063,6 +1088,8 @@ public class Concept implements Serializable {
             sb.append("rights:").append(rights).append('\n');
         if (scopeNote != null)
             sb.append("scopeNote:").append(scopeNote).append('\n');
+        if (historyNote != null)
+            sb.append("historyNote:").append(historyNote).append('\n');
         if (title != null)
             sb.append("title:").append(title).append('\n');
         if (type != null)
@@ -1139,6 +1166,7 @@ public class Concept implements Serializable {
                    Utilities.equals(this.related,            that.related)     &&
                    Utilities.equals(this.rights,             that.rights)      &&
                    Utilities.equals(this.scopeNote,          that.scopeNote)   &&
+                   Utilities.equals(this.historyNote,        that.historyNote) &&
                    Utilities.equals(this.title,              that.title)       &&
                    Utilities.equals(this.type,               that.type)        &&
                    Utilities.equals(this.example,            that.example)     &&
