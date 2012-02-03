@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import org.geotoolkit.coverage.filestore.XMLMosaic;
+import org.geotoolkit.coverage.filestore.XMLPyramid;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -55,10 +57,22 @@ public class DefaultPyramidSet implements PyramidSet{
 
     @Override
     public Envelope getEnvelope() {
-        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
-        env.setRange(0, -180, +180);
-        env.setRange(1, -90, +90);
-        return env;
+        for(Pyramid pyramid : getPyramids()){
+            final double[] scales = pyramid.getScales();
+            for(int i=0;i<scales.length;i++){
+                final GridMosaic mosaic = pyramid.getMosaic(i);
+                final double minX = mosaic.getUpperLeftCorner().getX();
+                final double maxY = mosaic.getUpperLeftCorner().getY();
+                final double spanX = mosaic.getTileSize().width * mosaic.getGridSize().width * mosaic.getScale();
+                final double spanY = mosaic.getTileSize().height* mosaic.getGridSize().height* mosaic.getScale();
+                final GeneralEnvelope envelope = new GeneralEnvelope(
+                        pyramid.getCoordinateReferenceSystem());
+                envelope.setRange(0, minX, minX + spanX);
+                envelope.setRange(1, maxY - spanY, maxY );
+                return envelope;
+            }
+        }
+        return null;
     }
     
     @Override
