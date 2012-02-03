@@ -34,6 +34,7 @@ import java.util.Map;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.util.ArgumentChecks;
 
 /**Create TreeReader object.
  *
@@ -41,19 +42,19 @@ import org.geotoolkit.index.tree.Tree;
  * Example : <br/>
  * <pre>
  * {@code
- * final TreeReader reader = new TreeReader();
- * reader.setInput(input);
- * reader.read(tree);
- * reader.dispose();
- * reader.reset(); 
+ *      final TreeReader reader = new TreeReader();
+ *      reader.setInput(input);
+ *      reader.read(tree);
+ *      reader.dispose();
+ *      reader.reset(); 
  * 
- * reader.setInput(input2);...//for another input
+ *      reader.setInput(input2);...//for another input
  * }
  * </pre>
  * And should be used like :<br/>
  * <pre>
  * {@code
- * TreeReader.read(tree, File);
+ *      TreeReader.read(tree, File);
  * }
  * <blockquote><font size=-1>
  * <strong>NOTE: tree root node will be exchange with read node from file</strong> 
@@ -79,10 +80,9 @@ public class TreeReader {
      * 
      * @param input
      * @throws IOException
-     * @throws XMLStreamException
      */
     public void setInput(final Object input) throws IOException{
-    
+        ArgumentChecks.ensureNonNull("static read : input", input);
         if(input instanceof InputStream){
             sourceStream = (InputStream) input;
             dataIPStream = new DataInputStream(sourceStream);
@@ -122,6 +122,7 @@ public class TreeReader {
      * @throws ClassNotFoundException 
      */
     public void read(final Tree tree) throws IOException, ClassNotFoundException{
+        ArgumentChecks.ensureNonNull("read : tree", tree);
         final List<Node2D> listNodes = new ArrayList<Node2D>();
         final Map<Integer, Node> index = new HashMap<Integer, Node>();
         readNode(tree, dataIPStream, listNodes, index);
@@ -149,6 +150,10 @@ public class TreeReader {
      * @throws ClassNotFoundException 
      */
     private void readNode(final Tree tree, final DataInputStream dips, final List<Node2D> listNodes, final Map<Integer, Node> index) throws IOException, ClassNotFoundException{
+        ArgumentChecks.ensureNonNull("readNode : tree", tree);
+        ArgumentChecks.ensureNonNull("readNode : dips", dips);
+        ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
+        ArgumentChecks.ensureNonNull("readNode : index", index);
         if(dips.available()>0){
             int id = dips.readInt();
             int nbrChildren = dips.readInt();
@@ -195,6 +200,8 @@ public class TreeReader {
      * @throws ClassNotFoundException 
      */
     public static void read(final Tree tree, final Object input) throws IOException, ClassNotFoundException{
+        ArgumentChecks.ensureNonNull("static read : tree", tree);
+        ArgumentChecks.ensureNonNull("static read : input", input);
         final TreeReader reader = new TreeReader();
         reader.setInput(input);
         reader.read(tree);

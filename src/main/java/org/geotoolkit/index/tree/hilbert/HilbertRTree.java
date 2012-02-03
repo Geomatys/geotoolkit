@@ -839,7 +839,7 @@ public class HilbertRTree extends AbstractTree2D {
     /**
      * {@inheritDoc}
      */
-    public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
+    public Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> listChildren, final List<Shape> listEntries) {
         return new HilbertNode2D(tree, parent, 0, listChildren, listEntries);
     }
 }

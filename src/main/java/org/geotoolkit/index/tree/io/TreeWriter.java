@@ -25,12 +25,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.util.ArgumentChecks;
 
 /**Create TreeWriter object.
  *
@@ -75,7 +77,6 @@ public class TreeWriter {
      * 
      * @param output
      * @throws IOException
-     * @throws XMLStreamException
      */
     public void setOutput(final Object output) throws IOException {
         index = new HashMap<Node, Integer>();
@@ -103,7 +104,7 @@ public class TreeWriter {
      * @throws IOException 
      */
     public void write(final Tree tree) throws IOException{
-        Node2D root = tree.getRoot();
+        final Node2D root = tree.getRoot();
         createIndex(root);
         serializeNode(root, dataOPStream);
     }
@@ -130,16 +131,15 @@ public class TreeWriter {
      * @throws IOException 
      */
     private void nodeToBinary(final Node2D node, final DataOutputStream dops) throws IOException{
-        
         final List<Node2D> listChild = node.getChildren();
-        final List<Shape> listEntries = node.getEntries();
+        final List<Shape> listEntries = new ArrayList<Shape>(node.getEntries());
         
         int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
         dops.writeInt(nbrSubNode);
         
         for(Node2D child : listChild){
-            dops.writeInt(index.get(child));//sur 4 octets
+            dops.writeInt(index.get(child));
         }
         List<Node2D> listup = (List<Node2D>)node.getUserProperty("cells");
         if(listup!=null){
@@ -150,10 +150,10 @@ public class TreeWriter {
         
         dops.writeInt(listEntries.size());
         for(Shape shape : listEntries){
-            final ByteArrayOutputStream temp = new ByteArrayOutputStream(); //tableau de byte dans lequel on peut ecrire         
-            final ObjectOutputStream     ost = new ObjectOutputStream(temp);//on ouvre un flux sur un tableau de byte 
-            ost.writeObject(shape); //on ecrit le shape dans le tableau de byte
-            temp.flush();//on vide le buffer
+            final ByteArrayOutputStream temp = new ByteArrayOutputStream();          
+            final ObjectOutputStream     ost = new ObjectOutputStream(temp);
+            ost.writeObject(shape); 
+            temp.flush();
             final byte[] array = temp.toByteArray();
             dops.writeInt(array.length);
             dops.write(array);
@@ -166,6 +166,7 @@ public class TreeWriter {
      * @param node tree root node.
      */
     private void createIndex(final Node2D node){
+        ArgumentChecks.ensureNonNull("createIndex : tree", node);
         index.put(node, inc);
         for(Node2D child : node.getChildren()){
             inc++;
@@ -206,6 +207,8 @@ public class TreeWriter {
      * @throws ClassNotFoundException 
      */
     public static void write(final Tree tree, final Object output) throws IOException{
+        ArgumentChecks.ensureNonNull("static write : tree", tree);
+        ArgumentChecks.ensureNonNull("static write : output", output);
         final TreeWriter tW = new TreeWriter();
         tW.setOutput(output);
         tW.write(tree);

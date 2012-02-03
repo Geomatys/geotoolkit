@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
-import org.junit.*;
 import static org.junit.Assert.*;
 
 /**

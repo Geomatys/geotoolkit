@@ -44,7 +44,7 @@ public class BasicRTree extends AbstractTree2D {
      * @param maxElements max value of elements per tree cell.
      * @param choice Split made "linear" or "quadratic".
      */
-    public BasicRTree(int maxElements, SplitCase choice) {
+    public BasicRTree(final int maxElements, final SplitCase choice) {
         super(maxElements);
         this.choice = choice;
         setRoot(new Node2D(this));
@@ -53,7 +53,7 @@ public class BasicRTree extends AbstractTree2D {
     /**
      * {@inheritDoc} 
      */
-    public void search(Shape regionSearch, List<Shape> result) {
+    public void search(final Shape regionSearch, final List<Shape> result) {
         final Node2D root = getRoot();
         if (root != null) {
             searchNode(getRoot(), regionSearch, result);
@@ -64,7 +64,7 @@ public class BasicRTree extends AbstractTree2D {
      * {@inheritDoc} 
      */
     @Override
-    public void insert(Shape entry) {
+    public void insert(final Shape entry) {
         final Node2D root = getRoot();
         if (root != null) {
             if (root.isEmpty()) {
@@ -79,7 +79,7 @@ public class BasicRTree extends AbstractTree2D {
      * {@inheritDoc} 
      */
     @Override
-    public void delete(Shape entry) {
+    public void delete(final Shape entry) {
         final Node2D root = getRoot();
         if (root != null) {
             deleteNode(getRoot(), entry);

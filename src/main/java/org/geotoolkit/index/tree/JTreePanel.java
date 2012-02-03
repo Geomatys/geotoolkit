@@ -30,8 +30,9 @@ import javax.swing.JPanel;
 import org.geotoolkit.index.tree.hilbert.HilbertNode2D;
 
 /**
+ * Create a panel to visualize R-tree.
  *
- * @author rmarech
+ * @author rémi Marechal (Geomatys).
  */
 public class JTreePanel extends JPanel{
     

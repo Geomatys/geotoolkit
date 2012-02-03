@@ -29,7 +29,8 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
 
-/**Create a Node adapting with 2DEuclidean dimension datas.
+/**
+ * Create a Node adapting with 2DEuclidean dimension datas.
  * 
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel  (Geomatys)

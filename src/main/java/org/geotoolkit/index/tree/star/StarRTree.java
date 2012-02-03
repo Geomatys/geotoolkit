@@ -56,7 +56,7 @@ public class StarRTree extends AbstractTree2D {
      * {@inheritDoc}.
      */
     @Override
-    public void insert(Shape entry) {
+    public void insert(final Shape entry) {
         final Node2D root = getRoot();
         if (root.isEmpty()) {
             root.getEntries().add(entry);
@@ -69,7 +69,7 @@ public class StarRTree extends AbstractTree2D {
      * {@inheritDoc}
      */
     @Override
-    public void delete(Shape entry) {
+    public void delete(final Shape entry) {
         final Node2D root = getRoot();
         if (root != null) {
             deleteNode(root, entry);
@@ -80,7 +80,7 @@ public class StarRTree extends AbstractTree2D {
      *{@inheritDoc}.
      */
     @Override
-    public void search(Shape regionSearch, List<Shape> result) {
+    public void search(final Shape regionSearch, final List<Shape> result) {
         final Node2D root = getRoot();
         if (root != null) {
             searchNode(root, regionSearch, result);
@@ -269,7 +269,7 @@ public class StarRTree extends AbstractTree2D {
         this.insertAgain = insertAgain;
     }
 
-    public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
+    public Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> listChildren, final List<Shape> listEntries) {
         return new Node2D(tree, parent, listChildren, listEntries);
     }
 }

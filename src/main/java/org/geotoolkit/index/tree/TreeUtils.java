@@ -28,7 +28,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
- * Some Utils methods.
+ * Some utile methods.
  *
  * @author Rémi Maréchal (Geomatys).
  */

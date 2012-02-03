@@ -163,6 +163,6 @@ public class HilbertNode2D extends Node2D {
         final Collection col = (cup!=null)?new ArrayList(cup):new ArrayList();
         col.addAll(getChildren());
         String strparent = (getParent() == null) ? "null" : String.valueOf(getParent().hashCode());
-        return Trees.toString(Classes.getShortClassName(this) + " : " + this.hashCode() + " parent : " + strparent + " isleaf : " + ((Boolean) getUserProperty("isleaf")), col);
+        return Trees.toString(Classes.getShortClassName(this) + " : " + this.hashCode() + " parent : " + strparent + " isleaf : " + ((Boolean) getUserProperty("isleaf"))+"listentries : "+getEntries(), col);
     }
 }

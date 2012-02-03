@@ -50,69 +50,159 @@ public class ReaderWriterTest{
         }
     }
 
+    /**
+     * Test suite on (Basic) R-Tree.
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    @Test
+    public void basicRTreeTest() throws IOException, ClassNotFoundException{
+        setBasicRTree();
+        testTree();
+    }
+    
+    /**
+     * Test suite on R*Tree.
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    @Test
+    public void starRTreeTest() throws IOException, ClassNotFoundException{
+        setStarRTree();
+        testTree();
+    }
+    
+    /**
+     * Test suite on Hilbert R-Tree.
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    @Test
+    public void hilbertRTreeTest() throws IOException, ClassNotFoundException{
+        setHilbertRTree();
+        testTree();
+    }
+    
+    /**
+     * Affect (Basic) R-Tree on two tree test.
+     */
     private void setBasicRTree(){
         treeRef  = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
         treeTest = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
         insert();
     }
     
+    /**
+     * Affect R*Tree on two tree test.
+     */
     private void setStarRTree(){
         treeRef  = TreeFactory.createStarRTree2D(4);
         treeTest = TreeFactory.createStarRTree2D(4);
         insert();
     }
     
+    /**
+     * Affect Hilbert RTree on two tree test.
+     */
     private void setHilbertRTree(){
         treeRef  = TreeFactory.createHilbertRTree2D(4, 2);
         treeTest = TreeFactory.createHilbertRTree2D(4, 2);
         insert();
     }
     
+    /**
+     * Shuffle entries data list and insert in treeRef.
+     */
     private void insert() {
+        ArgumentChecks.ensureNonNull("insert : lData", lData);
         Collections.shuffle(lData);
         for (Shape shape : lData) {
             treeRef.insert(shape);
         }
     }
     
-    @Test
-    public void testBasic() throws IOException, ClassNotFoundException{
-        setBasicRTree();
+    /**
+     * Test suite to compare two RTree.
+     * 
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Test criterion are : - same node number.
+     *                                    - trees contains same leafs.
+     *                                    - trees contains same entries.</strong> 
+     * </font></blockquote>
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    public void testTree() throws IOException, ClassNotFoundException{
+        ArgumentChecks.ensureNonNull("testTree : treeRef", treeRef);
+        ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
         TreeWriter.write(treeRef, fil);
         TreeReader.read(treeTest, fil);
+            
         final List<Shape> listSearchTreeRef = new ArrayList<Shape>();
         final List<Shape> listSearchTreeTest = new ArrayList<Shape>();
         treeRef.search(treeRef.getRoot().getBoundary(), listSearchTreeRef);
         treeTest.search(treeTest.getRoot().getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
-        
-        //verif nbre de node
-        //verif toute les feuilles
-        
-        //test entre les 2 arbres
+        final List<Node2D> listLeafTreeRef = getAllLeaf(treeRef);
+        final List<Node2D> listLeafTreeTest = getAllLeaf(treeTest);
+        assertTrue(compareListLeaf(listLeafTreeRef, listLeafTreeTest));
     }
     
+    /**
+     * Find and enumerate all tree node.
+     * 
+     * @param tree
+     * @return tree node number.
+     */
     private int countAllNode(final Tree tree){
+        ArgumentChecks.ensureNonNull("countAllNode : tree", tree);
         int count = 0;
         countNode(tree.getRoot(), count);
         return count;
     }
     
+    /**
+     * Increment count for each node parameter.
+     * 
+     * @param node
+     * @param count 
+     */
     private void countNode(final Node2D node, int count){
+        ArgumentChecks.ensureNonNull("countNode : node", node);
         count++;
         for(Node2D nod : node.getChildren()){
             countNode(nod, count);
         }
     }
     
+    /**
+     * Find all tree Leaf
+     * 
+     * @param tree
+     * @return leaf list.
+     */
     private List<Node2D> getAllLeaf(final Tree tree){
+        ArgumentChecks.ensureNonNull("getAllLeaf : tree", tree);
         final List<Node2D> listLeaf= new ArrayList<Node2D>();
         getLeaf(tree.getRoot(), listLeaf);
         return listLeaf;
     }
     
+    /**
+     * Check if {@code node} passed in parameter is a leaf.
+     * if it is true node is added in parameter {@code listLeaf}.
+     * 
+     * @param node to study
+     * @param listLeaf 
+     */
     private void getLeaf(final Node2D node, final List<Node2D> listLeaf){
+        ArgumentChecks.ensureNonNull("getLeaf : node", node);
+        ArgumentChecks.ensureNonNull("getLeaf : listLeaf", listLeaf);
         if(node.isLeaf()){
             listLeaf.add(node);
         }
@@ -121,7 +211,61 @@ public class ReaderWriterTest{
         }
     }
     
+    /**
+     * Compare 2 {@code Node2D} lists.
+     * 
+     * <blockquote><font size=-1>
+     * <strong>NOTE: return {@code true} if listTreeRef and listTreeTest are empty.</strong> 
+     * </font></blockquote>
+     * 
+     * @param listTreeRef
+     * @param listTreeTest
+     * @throws IllegalArgumentException if listTreeRef or listTreeTest is null.
+     * @return true if listTreeRef contains same elements from listTreeTest.
+     */
+    private boolean compareListLeaf(final List<Node2D> listTreeRef, final List<Node2D>listTreeTest){
+        ArgumentChecks.ensureNonNull("compareListLeaf : listTreeRef", listTreeRef);
+        ArgumentChecks.ensureNonNull("compareListLeaf : listTreeTest", listTreeTest);
+        
+        if(listTreeRef.isEmpty()&&listTreeTest.isEmpty()){
+            return true;
+        }
+        
+        if(listTreeRef.size()!=listTreeTest.size()){
+            return false;
+        }
+        boolean test = false;        
+        for(Node2D nod : listTreeRef){
+            for(Node2D no : listTreeTest){
+                if(compareLeaf(nod, no)){
+                    test = true;
+                }
+            }
+            if(!test){
+                return false;
+            }
+            test = false;
+        }
+        return true;
+    }
+    
+    /**
+     * Test suite to compare two "leaf" ({@Node2D}).
+     * 
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Test based on this criterion : - same boundary.
+     *                                              - same entries (Shape) number within each of them.
+     *                                              - they contain same entries.
+     *                                              Moreover entries order is not compare.</strong> 
+     * </font></blockquote>
+     * 
+     * @param nodeA
+     * @param nodeB
+     * @return true if 3 assertion are verified else false.
+     */
     private boolean compareLeaf(final Node2D nodeA, final Node2D nodeB){
+        ArgumentChecks.ensureNonNull("compareLeaf : nodeA", nodeA);
+        ArgumentChecks.ensureNonNull("compareLeaf : nodeB", nodeB);
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("compareLeaf : you must compare two leaf");
         }
@@ -129,7 +273,6 @@ public class ReaderWriterTest{
         if(!nodeA.getBoundary().getBounds2D().equals(nodeB.getBoundary().getBounds2D())){
             return false;
         }
-        
         final List<Shape> listA = new ArrayList<Shape>();
         final List<Shape> listB = new ArrayList<Shape>();
         
@@ -150,7 +293,6 @@ public class ReaderWriterTest{
         
         listA.addAll(nodeA.getEntries());
         listB.addAll(nodeB.getEntries());
-        
         return compareList(listA, listB);
     }
     
@@ -170,14 +312,14 @@ public class ReaderWriterTest{
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
-        if (listA.isEmpty() && listB.isEmpty()) {
-            return true;
-        }
-
         if (listA.size() != listB.size()) {
             return false;
         }
 
+        if(listA.isEmpty() && listB.isEmpty()){
+            return true;
+        }
+        
         boolean shapequals = false;
         for (Shape shs : listA) {
             for (Shape shr : listB) {
@@ -192,6 +334,4 @@ public class ReaderWriterTest{
         }
         return true;
     }
-    
-    
 }
