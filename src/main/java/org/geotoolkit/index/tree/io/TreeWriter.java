@@ -195,6 +195,7 @@ public class TreeWriter {
         closeOnDispose = false;
         sourceStream = null;
         dataOPStream = null;
+        index = null;
         inc = 0;
     }
     

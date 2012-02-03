@@ -59,6 +59,8 @@ public class ReaderWriterTest{
     @Test
     public void basicRTreeTest() throws IOException, ClassNotFoundException{
         setBasicRTree();
+        TreeWriter.write(treeRef, fil);
+        TreeReader.read(treeTest, fil);
         testTree();
     }
     
@@ -71,6 +73,8 @@ public class ReaderWriterTest{
     @Test
     public void starRTreeTest() throws IOException, ClassNotFoundException{
         setStarRTree();
+        TreeWriter.write(treeRef, fil);
+        TreeReader.read(treeTest, fil);
         testTree();
     }
     
@@ -83,6 +87,47 @@ public class ReaderWriterTest{
     @Test
     public void hilbertRTreeTest() throws IOException, ClassNotFoundException{
         setHilbertRTree();
+        TreeWriter.write(treeRef, fil);
+        TreeReader.read(treeTest, fil);
+        testTree();
+    }
+    
+    @Test
+    public void multiTest() throws IOException, ClassNotFoundException{
+        final TreeWriter treeW = new TreeWriter();
+        final TreeReader treeR = new TreeReader();
+        
+        setBasicRTree();
+        treeW.setOutput(fil);
+        treeW.write(treeRef);
+        treeW.dispose();
+        treeW.reset();
+        treeR.setInput(fil);
+        treeR.read(treeTest);
+        treeR.dispose();
+        treeR.reset();
+        testTree();
+        
+        setStarRTree();
+        treeW.setOutput(fil);
+        treeW.write(treeRef);
+        treeW.dispose();
+        treeW.reset();
+        treeR.setInput(fil);
+        treeR.read(treeTest);
+        treeR.dispose();
+        treeR.reset();
+        testTree();
+        
+        setHilbertRTree();
+        treeW.setOutput(fil);
+        treeW.write(treeRef);
+        treeW.dispose();
+        treeW.reset();
+        treeR.setInput(fil);
+        treeR.read(treeTest);
+        treeR.dispose();
+        treeR.reset();
         testTree();
     }
     
@@ -136,21 +181,16 @@ public class ReaderWriterTest{
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public void testTree() throws IOException, ClassNotFoundException{
+    private void testTree() throws IOException, ClassNotFoundException{
         ArgumentChecks.ensureNonNull("testTree : treeRef", treeRef);
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
-        TreeWriter.write(treeRef, fil);
-        TreeReader.read(treeTest, fil);
-            
         final List<Shape> listSearchTreeRef = new ArrayList<Shape>();
         final List<Shape> listSearchTreeTest = new ArrayList<Shape>();
         treeRef.search(treeRef.getRoot().getBoundary(), listSearchTreeRef);
         treeTest.search(treeTest.getRoot().getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
-        final List<Node2D> listLeafTreeRef = getAllLeaf(treeRef);
-        final List<Node2D> listLeafTreeTest = getAllLeaf(treeTest);
-        assertTrue(compareListLeaf(listLeafTreeRef, listLeafTreeTest));
+        assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));
     }
     
     /**

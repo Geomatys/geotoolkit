@@ -69,6 +69,9 @@ public class TreeReader {
     private boolean closeOnDispose = false;
     private InputStream sourceStream = null;
     private DataInputStream dataIPStream = null;
+
+    public TreeReader() {
+    }
     
     /**
      * Set the input for this reader.<br/>
@@ -117,7 +120,7 @@ public class TreeReader {
     /**
      * Read and re-create R-Tree.
      * 
-     * @param tree
+     * @param tree  where result is affect.
      * @throws IOException
      * @throws ClassNotFoundException 
      */
