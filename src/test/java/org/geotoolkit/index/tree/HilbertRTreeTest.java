@@ -47,31 +47,31 @@ public class HilbertRTreeTest extends TreeTest {
      * Verify all node boundary from its subnode boundary.
      */
     @Test
-    public void testCheckBoundary(){
+    public void testCheckBoundary() {
         super.checkBoundaryTest();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean checkBoundaryNode(final Node2D node){
+    public boolean checkBoundaryNode(final Node2D node) {
         final List<Shape> lS = new ArrayList<Shape>();
-        if(node.isLeaf()){
-            for(Node2D no : (List<Node2D>)node.getUserProperty("cells")){
-                if(!no.isEmpty()){
+        if (node.isLeaf()) {
+            for (Node2D no : (List<Node2D>) node.getUserProperty("cells")) {
+                if (!no.isEmpty()) {
                     assertTrue(super.checkBoundaryNode(no));
                     lS.add(no.getBoundary());
                 }
             }
-        }else{
-            for(Node2D no : node.getChildren()){
+        } else {
+            for (Node2D no : node.getChildren()) {
                 lS.add(no.getBoundary());
             }
         }
         return (TreeUtils.getEnveloppeMin(lS).getBounds2D().equals(node.getBoundary().getBounds2D())) ? true : false;
     }
-    
+
     /**
      * Test search query inside tree.
      */

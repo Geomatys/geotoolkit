@@ -310,7 +310,7 @@ public class HilbertRTree extends AbstractTree2D {
         if (listElements.size() <= 1) {
             throw new IllegalArgumentException("you can't split Leaf with only one elements or lesser");
         }
-        
+
         if (listElements.size() == 2) {
             if (leaf) {
                 return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(0))),

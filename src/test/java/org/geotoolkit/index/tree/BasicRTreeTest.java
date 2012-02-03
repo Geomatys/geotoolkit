@@ -41,10 +41,10 @@ public class BasicRTreeTest extends TreeTest {
     }
 
     @Test
-    public void testCheckBoundary(){
+    public void testCheckBoundary() {
         super.checkBoundaryTest();
     }
-    
+
     /**
      * Test search query inside tree.
      */

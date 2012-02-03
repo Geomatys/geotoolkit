@@ -60,6 +60,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Johann Sorel (Geomatys)
  */
 public class TreeWriter {
+
     int inc = 0;
     private boolean closeOnDispose = false;
     private OutputStream sourceStream = null;
@@ -96,14 +97,14 @@ public class TreeWriter {
         }
 
     }
-    
+
     /**
      * Write tree in binary.
      * 
      * @param tree
      * @throws IOException 
      */
-    public void write(final Tree tree) throws IOException{
+    public void write(final Tree tree) throws IOException {
         final Node2D root = tree.getRoot();
         createIndex(root);
         serializeNode(root, dataOPStream);
@@ -116,13 +117,13 @@ public class TreeWriter {
      * @param dops
      * @throws IOException 
      */
-    private void serializeNode(final Node2D root, final DataOutputStream dops) throws IOException{
+    private void serializeNode(final Node2D root, final DataOutputStream dops) throws IOException {
         nodeToBinary(root, dops);
-        for(Node2D child : root.getChildren()){
+        for (Node2D child : root.getChildren()) {
             serializeNode(child, dops);
         }
     }
-    
+
     /**
      * Write node in binary.
      * 
@@ -130,50 +131,50 @@ public class TreeWriter {
      * @param dops
      * @throws IOException 
      */
-    private void nodeToBinary(final Node2D node, final DataOutputStream dops) throws IOException{
+    private void nodeToBinary(final Node2D node, final DataOutputStream dops) throws IOException {
         final List<Node2D> listChild = node.getChildren();
         final List<Shape> listEntries = new ArrayList<Shape>(node.getEntries());
-        
+
         int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
         dops.writeInt(nbrSubNode);
-        
-        for(Node2D child : listChild){
+
+        for (Node2D child : listChild) {
             dops.writeInt(index.get(child));
         }
-        List<Node2D> listup = (List<Node2D>)node.getUserProperty("cells");
-        if(listup!=null){
-            for(Node2D n : listup){
+        List<Node2D> listup = (List<Node2D>) node.getUserProperty("cells");
+        if (listup != null) {
+            for (Node2D n : listup) {
                 listEntries.addAll(n.getEntries());
             }
         }
-        
+
         dops.writeInt(listEntries.size());
-        for(Shape shape : listEntries){
-            final ByteArrayOutputStream temp = new ByteArrayOutputStream();          
-            final ObjectOutputStream     ost = new ObjectOutputStream(temp);
-            ost.writeObject(shape); 
+        for (Shape shape : listEntries) {
+            final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+            final ObjectOutputStream ost = new ObjectOutputStream(temp);
+            ost.writeObject(shape);
             temp.flush();
             final byte[] array = temp.toByteArray();
             dops.writeInt(array.length);
             dops.write(array);
         }
     }
-    
+
     /**
      * Find all tree node and affect an id for each them.
      * 
      * @param node tree root node.
      */
-    private void createIndex(final Node2D node){
+    private void createIndex(final Node2D node) {
         ArgumentChecks.ensureNonNull("createIndex : tree", node);
         index.put(node, inc);
-        for(Node2D child : node.getChildren()){
+        for (Node2D child : node.getChildren()) {
             inc++;
             createIndex(child);
         }
     }
-    
+
     /**
      * Release potential locks or opened stream.
      * Must be called when the writer is not needed anymore.
@@ -198,7 +199,7 @@ public class TreeWriter {
         index = null;
         inc = 0;
     }
-    
+
     /**
      * To write one time without TreeWriter re-utilization.
      * 
@@ -207,7 +208,7 @@ public class TreeWriter {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public static void write(final Tree tree, final Object output) throws IOException{
+    public static void write(final Tree tree, final Object output) throws IOException {
         ArgumentChecks.ensureNonNull("static write : tree", tree);
         ArgumentChecks.ensureNonNull("static write : output", output);
         final TreeWriter tW = new TreeWriter();

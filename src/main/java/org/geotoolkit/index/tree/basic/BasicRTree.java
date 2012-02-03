@@ -384,5 +384,4 @@ public class BasicRTree extends AbstractTree2D {
     public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
         return new Node2D(tree, parent, listChildren, listEntries);
     }
-
 }

@@ -70,40 +70,40 @@ public abstract class TreeTest/* extends TestCase*/ {
     /**
      * Compare all boundary node from their children boundary.
      */
-    public void checkBoundaryTest(){
+    public void checkBoundaryTest() {
         checkNodeBoundaryTest(tree.getRoot());
     }
-    
+
     /**
      * Compare boundary node from his children boundary.
      */
-    public void checkNodeBoundaryTest(final Node2D node){
+    public void checkNodeBoundaryTest(final Node2D node) {
         assertTrue(checkBoundaryNode(node));
-        for(Node2D no : node.getChildren()){
+        for (Node2D no : node.getChildren()) {
             checkNodeBoundaryTest(no);
         }
     }
-    
+
     /**
      * Compare boundary node from his children boundary.
      */
-    protected boolean checkBoundaryNode(final Node2D node){
+    protected boolean checkBoundaryNode(final Node2D node) {
         final Rectangle2D subBound = new Rectangle2D.Double();
         final List<Shape> lS = new ArrayList<Shape>();
-        if(node.isLeaf()){
-            for(Shape shap : node.getEntries()){
+        if (node.isLeaf()) {
+            for (Shape shap : node.getEntries()) {
                 lS.add(shap);
             }
-            
-        }else{
-            for(Node2D no : node.getChildren()){
+
+        } else {
+            for (Node2D no : node.getChildren()) {
                 lS.add(no.getBoundary());
             }
         }
         subBound.setRect(TreeUtils.getEnveloppeMin(lS).getBounds2D());
         return (subBound.equals(node.getBoundary().getBounds2D())) ? true : false;
     }
-    
+
     /**
      * Test search query inside tree.
      */
@@ -258,7 +258,6 @@ public abstract class TreeTest/* extends TestCase*/ {
         }
     }
 
-    
     /**
      * Compare 2 lists elements.
      * 

@@ -42,6 +42,7 @@ import org.geotoolkit.index.tree.TreeUtils;
  * @author Rémi Mréchal (Geomatys).
  */
 public enum SplitCase {
+
     QUADRATIC,
     LINEAR
 }
