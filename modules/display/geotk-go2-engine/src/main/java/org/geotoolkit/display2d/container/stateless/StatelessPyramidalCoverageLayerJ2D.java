@@ -136,7 +136,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, maxExt.getMinimum(1), wantedEnv.getMaximum(1));  }
             if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), maxExt.getMaximum(1));  }
         }
-
+        
         //the wanted image resolution
         final double wantedResolution;
         try {
@@ -146,11 +146,19 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
 
-        final GridMosaic mosaic = findOptimalMosaic(pyramid, wantedResolution, tolerance);
+        final GridMosaic mosaic = findOptimalMosaic(pyramid, wantedResolution, tolerance, wantedEnv);
         if(mosaic == null){
             //no reliable mosaic
             return;
         }
+        
+        
+        //we definitly do not want some NaN values
+        if(Double.isNaN(wantedEnv.getMinimum(0))){ wantedEnv.setRange(0, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(0));  }
+        if(Double.isNaN(wantedEnv.getMaximum(0))){ wantedEnv.setRange(0, wantedEnv.getMinimum(0), Double.POSITIVE_INFINITY);  }
+        if(Double.isNaN(wantedEnv.getMinimum(1))){ wantedEnv.setRange(1, Double.NEGATIVE_INFINITY, wantedEnv.getMaximum(1));  }
+        if(Double.isNaN(wantedEnv.getMaximum(1))){ wantedEnv.setRange(1, wantedEnv.getMinimum(1), Double.POSITIVE_INFINITY);  }
+        
         
 
         final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
@@ -166,9 +174,6 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         final double tileHeight = tileSize.height;
 
         //find all the tiles we need --------------------------------------
-        //tiles to render         
-        final Collection<TileReference> queries = new ArrayList<TileReference>();
-        final Map hints = new HashMap(item.getUserProperties());
 
         final double epsilon = 1e-6;
         final double bBoxMinX = wantedEnv.getMinimum(0);
@@ -191,6 +196,10 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             System.out.println("Too much tiles requiered to render layer at this scale.");
             return;
         }
+        
+        //tiles to render         
+        final Collection<TileReference> queries = new ArrayList<TileReference>();
+        final Map hints = new HashMap(item.getUserProperties());
         
         loopCol:
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
@@ -386,23 +395,44 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         return result;
     }
     
-    private static GridMosaic findOptimalMosaic(final Pyramid pyramid, final double resolution, final double tolerance){        
+    private static GridMosaic findOptimalMosaic(final Pyramid pyramid, final double resolution, 
+            final double tolerance, final Envelope env){
+        
         GridMosaic result = null;        
         final double[] scales = pyramid.getScales();
         
         for(int i=0;i<scales.length;i++){
-            
+            final double scale = scales[i];            
+                        
+            final GridMosaic candidate = pyramid.getMosaic(i);            
             if(result == null){
-                result = pyramid.getMosaic(i);
+                result = candidate;
             }
             
-            if( (scales[i] * (1-tolerance)) < resolution){
-                //we found the most accurate resolution
-                result = pyramid.getMosaic(i);
+            //check if it will not requiere too much tiles
+            final Dimension tileSize = candidate.getTileSize();
+            double nbtileX = env.getSpan(0) / (tileSize.width*scale);
+            double nbtileY = env.getSpan(1) / (tileSize.height*scale);
+            
+            //if the envelope has some NaN, we presume it's a square
+            if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){
+                nbtileX = nbtileY;
+            }else if(Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)){
+                nbtileY = nbtileX;
+            }
+            
+            if(nbtileX*nbtileY > 100){
+                //we haven't reach the best resolution, it would requiere
+                //too much tiles, we use the previous scale level
                 break;
-            }else{
-                result = pyramid.getMosaic(i);
-            }            
+            }
+            
+            result = candidate;
+            
+            if( (scale * (1-tolerance)) < resolution){                      
+                //we found the most accurate resolution
+                break;
+            }           
         }
                 
         return result;
