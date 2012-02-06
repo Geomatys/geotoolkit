@@ -313,8 +313,8 @@ public class PortrayalRenderedImage implements RenderedImage{
         //cut the canvas buffer in pieces
         canvas.repaint();
         final BufferedImage canvasBuffer = canvas.getSnapShot();
-        for(int x=0;x<nbtileonwidth;x++){
-            for(int y=0;y<nbtileonheight;y++){
+        for(int x=0; x<nbtileonwidth && col+x<gridSize.width; x++){
+            for(int y=0; y<nbtileonheight && row+y<gridSize.height; y++){
                 final int idx = getTileIndex(col+x, row+y);
                 final BufferedImage tile = canvasBuffer.getSubimage(
                         x*tileSize.width, 
