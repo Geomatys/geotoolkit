@@ -68,6 +68,11 @@
       <artifactId>geotk-xml-wmts</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-epsg-javadb</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
