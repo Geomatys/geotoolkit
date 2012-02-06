@@ -58,9 +58,9 @@ public abstract class TreeTest {
      * Test if tree contain all elements inserted.
      */
     protected void insertTest() {
-        assertTrue(tree.getRoot().getBoundary().getBounds2D().equals(TreeUtils.getEnveloppeMin(lData)));
+        assertTrue(((Node2D)tree.getRoot()).getBoundary().getBounds2D().equals(TreeUtils.getEnveloppeMin(lData)));
         final List<Shape> listSearch = new ArrayList<Shape>();
-        tree.search(tree.getRoot().getBoundary(), listSearch);
+        tree.search(((Node2D)tree.getRoot()).getBoundary(), listSearch);
         assertTrue(listSearch.size() == lData.size());
     }
 
@@ -68,7 +68,7 @@ public abstract class TreeTest {
      * Compare all boundary node from their children boundary.
      */
     public void checkBoundaryTest() {
-        checkNodeBoundaryTest(tree.getRoot());
+        checkNodeBoundaryTest((Node2D)tree.getRoot());
     }
 
     /**
@@ -243,7 +243,7 @@ public abstract class TreeTest {
         }
 
         listSearch.clear();
-        tree.search(tree.getRoot().getBoundary(), listSearch);
+        tree.search(((Node2D)tree.getRoot()).getBoundary(), listSearch);
         assertTrue(compareList(listSearch, listToAdd));
 
         for (Shape sh : listToAdd) {

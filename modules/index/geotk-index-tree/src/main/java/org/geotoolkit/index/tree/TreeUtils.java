@@ -93,7 +93,7 @@ public final class TreeUtils {
      * @param node to denominate elements number.
      * @return elements number within node.
      */
-    public static int countElements(Node2D node){
+    public static int countElements(Node node){
         return node.getChildren().size()+node.getEntries().size();
     }
     
@@ -315,11 +315,11 @@ public final class TreeUtils {
         
         if(countElements(candidate) == 2){
             if(leaf){
-                return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(candidate.getEntries().get(0))),
-                                                  tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(candidate.getEntries().get(1))));
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(candidate.getEntries().get(0))),
+                                                  (Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(candidate.getEntries().get(1))));
             }else{
-                return UnmodifiableArrayList.wrap(tree.createNode(tree, null, UnmodifiableArrayList.wrap(candidate.getChildren().get(0)), null),
-                                                  tree.createNode(tree, null, UnmodifiableArrayList.wrap(candidate.getChildren().get(1)), null));
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap(candidate.getChildren().get(0)), null),
+                                                  (Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap(candidate.getChildren().get(1)), null));
             }
         }
         
@@ -349,9 +349,9 @@ public final class TreeUtils {
                 splitList2.add(listElements.get(k));
             }
             if(leaf){
-                couNN = new CoupleNode2D(tree.createNode(tree, null, null, splitList1), tree.createNode(tree, null, null, splitList2));
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, splitList1), (Node2D)tree.createNode(tree, null, null, splitList2));
             }else{
-                couNN = new CoupleNode2D(tree.createNode(tree, null, splitList1, null), tree.createNode(tree, null, splitList2, null));
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, splitList1, null), (Node2D)tree.createNode(tree, null, splitList2, null));
             }
             
             if(couNN.intersect()){
@@ -428,11 +428,11 @@ public final class TreeUtils {
                 }
 
                 if(candidate.isLeaf()){
-                    couplelements = new CoupleNode2D(tree.createNode(tree, null, null, (List<Shape>)splitList1),
-                                                     tree.createNode(tree, null, null, (List<Shape>)splitList2));
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, (List<Shape>)splitList1),
+                                                     (Node2D)tree.createNode(tree, null, null, (List<Shape>)splitList2));
                 }else{
-                    couplelements = new CoupleNode2D(tree.createNode(tree, null, (List<Node2D>)splitList1, null),
-                                                     tree.createNode(tree, null, (List<Node2D>)splitList2, null));
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, (List<Node2D>)splitList1, null),
+                                                     (Node2D)tree.createNode(tree, null, (List<Node2D>)splitList2, null));
                 }
 
                 switch(index){

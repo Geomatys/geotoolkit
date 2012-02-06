@@ -4,16 +4,17 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.awt.Shape;
 import java.util.List;
 
-/**
+/**Create a {@code Node}.
  *
- * @author rmarech
+ * <B> : Entries type stocked in {@code Node}.
+ * 
+ * @author Rémi Marechal (Geomatys).
  */
-public interface Node {
+public interface Node<N extends Node<N,B>, B> {
     
-    List<? extends Node> getChildren();
+    List<N> getChildren();
     
     /**A leaf is a {@code Node2D} at extremity of {@code Tree} which contains only entries.
      * 
@@ -33,14 +34,22 @@ public interface Node {
     boolean isFull();
     
     /**
+     * <blockquote><font size=-1>
+     * <strong>NOTE: if boundary is null, method re-compute all subnode boundary.</strong> 
+     * </font></blockquote>
+     * @return boundary.
+     */
+    B getBoundary();
+    
+    /**
      * @return entries.
      */
-    List<Shape> getEntries();
+    List<B> getEntries();
 
     /**
      * @return {@code Node2D} parent pointer.
      */
-    Node getParent();
+    N getParent();
 
     /**
      * @return {@code Tree} pointer.

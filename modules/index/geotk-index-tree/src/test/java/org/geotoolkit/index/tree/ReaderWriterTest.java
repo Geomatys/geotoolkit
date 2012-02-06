@@ -187,8 +187,8 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
         final List<Shape> listSearchTreeRef = new ArrayList<Shape>();
         final List<Shape> listSearchTreeTest = new ArrayList<Shape>();
-        treeRef.search(treeRef.getRoot().getBoundary(), listSearchTreeRef);
-        treeTest.search(treeTest.getRoot().getBoundary(), listSearchTreeTest);
+        treeRef.search(((Node2D)treeRef.getRoot()).getBoundary(), listSearchTreeRef);
+        treeTest.search(((Node2D)treeTest.getRoot()).getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
         assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));
@@ -203,7 +203,7 @@ public class ReaderWriterTest {
     private int countAllNode(final Tree tree) {
         ArgumentChecks.ensureNonNull("countAllNode : tree", tree);
         int count = 0;
-        countNode(tree.getRoot(), count);
+        countNode((Node)tree.getRoot(), count);
         return count;
     }
 
@@ -213,10 +213,10 @@ public class ReaderWriterTest {
      * @param node
      * @param count 
      */
-    private void countNode(final Node2D node, int count) {
+    private void countNode(final Node node, int count) {
         ArgumentChecks.ensureNonNull("countNode : node", node);
         count++;
-        for (Node2D nod : node.getChildren()) {
+        for (Node nod : (List<Node>)node.getChildren()) {
             countNode(nod, count);
         }
     }
@@ -230,7 +230,7 @@ public class ReaderWriterTest {
     private List<Node2D> getAllLeaf(final Tree tree) {
         ArgumentChecks.ensureNonNull("getAllLeaf : tree", tree);
         final List<Node2D> listLeaf = new ArrayList<Node2D>();
-        getLeaf(tree.getRoot(), listLeaf);
+        getLeaf((Node2D)tree.getRoot(), listLeaf);
         return listLeaf;
     }
 

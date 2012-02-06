@@ -19,7 +19,6 @@ package org.geotoolkit.index.tree;
 
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.event.EventListenerList;
 
@@ -27,11 +26,13 @@ import javax.swing.event.EventListenerList;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractNode implements Node{
+public abstract class AbstractNode<N extends Node<N,B>, B> implements Node<N, B>{
 
     private final EventListenerList listenerList = new EventListenerList();
     private Map<String, Object> userProperties;
 
+    
+    
     /**
      * @param key
      * @return user property for given key

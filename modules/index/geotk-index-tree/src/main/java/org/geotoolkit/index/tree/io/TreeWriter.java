@@ -105,7 +105,7 @@ public class TreeWriter {
      * @throws IOException 
      */
     public void write(final Tree tree) throws IOException {
-        final Node2D root = tree.getRoot();
+        final Node2D root = (Node2D)tree.getRoot();
         createIndex(root);
         serializeNode(root, dataOPStream);
     }

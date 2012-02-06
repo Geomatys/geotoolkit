@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel  (Geomatys)
  */
-public class Node2D extends AbstractNode{
+public class Node2D extends AbstractNode<Node2D, Shape>{
 
     protected Shape boundary;
     private Node2D parent;
@@ -231,11 +231,9 @@ public class Node2D extends AbstractNode{
     }
     
     /**
-     * <blockquote><font size=-1>
-     * <strong>NOTE: if boundary is null, method re-compute all subnode boundary.</strong> 
-     * </font></blockquote>
-     * @return boundary.
+     * {@inheritDoc} 
      */
+    @Override
     public Shape getBoundary() {
         if(boundary==null){
             calculateBounds();

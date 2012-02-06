@@ -26,7 +26,7 @@ import org.geotoolkit.util.converter.Classes;
  * @author Rémi Marechal (Geomatys).
  * @author Johann Sorel  (Geomatys).
  */
-public abstract class AbstractTree2D implements Tree<Shape> {
+public abstract class AbstractTree2D implements Tree<Node2D, Shape> {
 
     private Node2D root;
     private final int maxElements;
@@ -44,6 +44,7 @@ public abstract class AbstractTree2D implements Tree<Shape> {
     /**
      * @return max elements permitted by tree cells. 
      */
+    @Override
     public int getMaxElements() {
         return maxElements;
     }
@@ -51,6 +52,7 @@ public abstract class AbstractTree2D implements Tree<Shape> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Node2D getRoot() {
         return root;
     }
@@ -59,6 +61,7 @@ public abstract class AbstractTree2D implements Tree<Shape> {
      * 
      * @param root 
      */
+    @Override
     public void setRoot(Node2D root) {
         this.root = root;
     }

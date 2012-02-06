@@ -26,7 +26,7 @@ import java.util.List;
  * @author Yohann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree<B> {
+public interface Tree<A, B> {
 
     /**
      * Find some {@code Entry} which intersect regionSearch parameter 
@@ -63,14 +63,14 @@ public interface Tree<B> {
     /**
      * @return tree trunk.
      */
-    Node2D getRoot();
+    A getRoot();
     
     /**
      * Affect a new root {@Node}.
      * 
      * @param root new root.
      */
-    void setRoot(Node2D root);
+    void setRoot(A root);
     
     /**
      * Create a node in accordance with this RTree properties.
@@ -81,5 +81,5 @@ public interface Tree<B> {
      * @param entries {@code List<Shape>} to add in this node. 
      * @return 
      */
-    Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<B> listEntries);
+    A createNode(Tree tree, A parent, List<A> listChildren, List<B> listEntries);
 }

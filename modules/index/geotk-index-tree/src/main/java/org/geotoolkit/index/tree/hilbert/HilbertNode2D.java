@@ -88,6 +88,8 @@ public class HilbertNode2D extends Node2D {
         return this.boundary.getBounds2D();
     }
 
+    
+    
     /**
      * Set new boundary.
      * 

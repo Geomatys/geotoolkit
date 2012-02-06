@@ -75,6 +75,7 @@ public class HilbertRTree extends AbstractTree2D {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void search(final Shape regionSearch, final List<Shape> result) {
         final Node2D root = getRoot();
         if (!root.isEmpty() && root != null) {
@@ -85,6 +86,7 @@ public class HilbertRTree extends AbstractTree2D {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void insert(final Shape entry) {
         final Node2D root = getRoot();
         if (root == null || root.isEmpty()) {
@@ -97,6 +99,7 @@ public class HilbertRTree extends AbstractTree2D {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete(final Shape entry) {
         deleteHilbertNode(getRoot(), entry);
     }
@@ -249,11 +252,11 @@ public class HilbertRTree extends AbstractTree2D {
                 }
 
                 if (isleaf) {
-                    couplelements = new CoupleNode2D(tree.createNode(tree, null, null, (List<Shape>) splitList1),
-                            tree.createNode(tree, null, null, (List<Shape>) splitList2));
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, (List<Shape>) splitList1),
+                                                     (Node2D)tree.createNode(tree, null, null, (List<Shape>) splitList2));
                 } else {
-                    couplelements = new CoupleNode2D(tree.createNode(tree, null, (List<Node2D>) splitList1, null),
-                            tree.createNode(tree, null, (List<Node2D>) splitList2, null));
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, (List<Node2D>) splitList1, null),
+                                                     (Node2D)tree.createNode(tree, null, (List<Node2D>) splitList2, null));
                 }
 
                 switch (index) {
@@ -313,11 +316,11 @@ public class HilbertRTree extends AbstractTree2D {
 
         if (listElements.size() == 2) {
             if (leaf) {
-                return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(0))),
-                        tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(1))));
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(0))),
+                                                  (Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) listElements.get(1))));
             } else {
-                return UnmodifiableArrayList.wrap(tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(0)), null),
-                        tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(1)), null));
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(0)), null),
+                                                  (Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) listElements.get(1)), null));
             }
         }
 
@@ -334,9 +337,9 @@ public class HilbertRTree extends AbstractTree2D {
                 splitList2.add(listElements.get(k));
             }
             if (leaf) {
-                couNN = new CoupleNode2D(tree.createNode(tree, null, null, splitList1), tree.createNode(tree, null, null, splitList2));
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, splitList1), (Node2D)tree.createNode(tree, null, null, splitList2));
             } else {
-                couNN = new CoupleNode2D(tree.createNode(tree, null, splitList1, null), tree.createNode(tree, null, splitList2, null));
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, splitList1, null), (Node2D)tree.createNode(tree, null, splitList2, null));
             }
 
             if (couNN.intersect()) {
@@ -839,6 +842,7 @@ public class HilbertRTree extends AbstractTree2D {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> listChildren, final List<Shape> listEntries) {
         return new HilbertNode2D(tree, parent, 0, listChildren, listEntries);
     }
