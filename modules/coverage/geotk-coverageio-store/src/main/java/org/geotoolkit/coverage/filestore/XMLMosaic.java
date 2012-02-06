@@ -25,6 +25,8 @@ import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.BitSet;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -46,6 +48,12 @@ import org.opengis.geometry.Envelope;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLMosaic implements GridMosaic{
         
+    //empty tile informations
+    @XmlTransient
+    private BufferedImage emptyTile = null;
+    @XmlTransient
+    private byte[] emptyTileEncoded = null;
+    
     //written values
     double scale;
     double upperleftX;
@@ -60,6 +68,8 @@ public class XMLMosaic implements GridMosaic{
     XMLPyramid pyramid = null;
     @XmlTransient
     BitSet tileExist;
+    @XmlTransient
+    BitSet tileEmpty;
     
     void initialize(XMLPyramid pyramid){
         this.pyramid = pyramid;
@@ -67,13 +77,26 @@ public class XMLMosaic implements GridMosaic{
             completion = "";
         }
         tileExist = new BitSet(gridWidth*gridHeight);
+        tileEmpty = new BitSet(gridWidth*gridHeight);
         String packed = completion.replaceAll("\n", "");
         packed = packed.replaceAll("\t", "");
         packed = packed.replaceAll(" ", "");
         for(int i=0,n=packed.length();i<n;i++){
             final char c = packed.charAt(i);
             tileExist.set(i, c!='0');
+            tileEmpty.set(i, c=='2');
         }
+        
+        //create an empty tile
+        emptyTile = new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB);
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(emptyTile, "PNG", out);
+            out.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        emptyTileEncoded = out.toByteArray();
     }
     
     private void updateCompletionString(){
@@ -82,7 +105,10 @@ public class XMLMosaic implements GridMosaic{
         for(int y=0,l=getGridSize().height;y<l;y++){
             sb.append('\n');
             for(int x=0,n=getGridSize().width;x<n;x++){
-                sb.append( tileExist.get(index)?'1':'0' );
+                char tc = !tileExist.get(index) ? '0': 
+                          !tileEmpty.get(index) ? '1': 
+                                                  '2';
+                sb.append(tc);
                 index++;
             }
         }
@@ -161,9 +187,17 @@ public class XMLMosaic implements GridMosaic{
     public boolean isMissing(int col, int row) {
         return !tileExist.get(getTileIndex(col, row));
     }
+    
+    private boolean isEmpty(int col, int row){
+        return tileEmpty.get(getTileIndex(col, row));
+    }
 
     @Override
     public RenderedImage getTile(int col, int row, Map hints) throws DataStoreException {
+        if(isEmpty(col, row)){
+            return emptyTile;
+        }
+        
         try {
             return ImageIO.read(getTileFile(col, row));
         } catch (IOException ex) {
@@ -173,6 +207,10 @@ public class XMLMosaic implements GridMosaic{
 
     @Override
     public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
+        if(isEmpty(col, row)){
+            return new ByteArrayInputStream(emptyTileEncoded);
+        }
+        
         try {
             return new FileInputStream(getTileFile(col, row));
         } catch (FileNotFoundException ex) {
@@ -195,6 +233,13 @@ public class XMLMosaic implements GridMosaic{
     }
 
     void createTile(int col, int row, RenderedImage image) throws DataStoreException {
+        if(isEmpty(image.getData())){
+            tileExist.set(getTileIndex(col, row), true);
+            tileEmpty.set(getTileIndex(col, row), true);
+            updateCompletionString();
+            return;
+        }
+        
         checkPosition(col, row);
         final File f = getTileFile(col, row);
         f.getParentFile().mkdirs();
@@ -205,6 +250,7 @@ public class XMLMosaic implements GridMosaic{
             writer.write(image);
             writer.dispose();
             tileExist.set(getTileIndex(col, row), true);
+            tileEmpty.set(getTileIndex(col, row), false);
             updateCompletionString();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
@@ -224,7 +270,18 @@ public class XMLMosaic implements GridMosaic{
                         continue;
                     }
                     
+                    final int tileIndex = getTileIndex(x, y);
                     checkPosition(x, y);
+                    
+                    final Raster raster = image.getTile(x, y);
+                    
+                    //check if image is empty
+                    if(isEmpty(raster)){
+                        tileExist.set(tileIndex, true);
+                        tileEmpty.set(tileIndex, true);
+                        continue;
+                    }
+                    
                     final File f = getTileFile(x, y);
                     f.getParentFile().mkdirs();
                     
@@ -232,7 +289,7 @@ public class XMLMosaic implements GridMosaic{
                     writer.reset();
                     writer.setOutput(out);
                     
-                    final Raster raster = image.getTile(x, y);
+                    //write tile
                     if(canWriteRaster){
                         final IIOImage buffer = new IIOImage(raster, null, null);                    
                         writer.write(buffer);
@@ -244,7 +301,8 @@ public class XMLMosaic implements GridMosaic{
                         writer.write(buffer);
                     }
                     
-                    tileExist.set(getTileIndex(x, y), true);
+                    tileExist.set(tileIndex, true);
+                    tileEmpty.set(tileIndex, false);
                 }
             }
                     
