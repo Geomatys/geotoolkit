@@ -61,6 +61,20 @@ public interface PyramidalModel {
             Dimension tilePixelSize, Point2D upperleft, double pixelscale) throws DataStoreException;
     
     /**
+     * Write a complete mosaic level used the given rendered image.
+     * The rendered image size and tile size must match the mosaic definition.
+     * 
+     * @param pyramidId
+     * @param mosaicId
+     * @param image
+     * @param onlyMissing : set to true to fill only missing tiles
+     * @throws DataStoreException  
+     */
+    void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException;
+    
+    /**
+     * Write or update a single tile in the mosaic.
+     * Rendered image size must match mosaic tile size.
      * 
      * @param pyramidId : pyramid id in which to insert the tile
      * @param mosaicId : mosaic id in which to insert the tile
@@ -69,7 +83,7 @@ public interface PyramidalModel {
      * @param image : image to insert
      * @throws DataStoreException  
      */
-    void updateTile(String pyramidId, String mosaicId, int col, int row, 
+    void writeTile(String pyramidId, String mosaicId, int col, int row, 
             RenderedImage image) throws DataStoreException;
     
 }

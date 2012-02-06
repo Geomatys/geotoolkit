@@ -76,7 +76,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public void updateTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
+    public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
         final XMLPyramidSet set = getPyramidSet();
         final XMLPyramid pyramid = set.getPyramid(pyramidId);
         final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
@@ -95,6 +95,15 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
         } catch (JAXBException ex) {
             Logger.getLogger(XMlCoverageReference.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
         }
+    }
+
+    @Override
+    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
+        final XMLPyramidSet set = getPyramidSet();
+        final XMLPyramid pyramid = set.getPyramid(pyramidId);
+        final XMLMosaic mosaic = pyramid.getMosaic(mosaicId);
+        mosaic.writeTiles(image,onlyMissing);
+        save();
     }
     
 }

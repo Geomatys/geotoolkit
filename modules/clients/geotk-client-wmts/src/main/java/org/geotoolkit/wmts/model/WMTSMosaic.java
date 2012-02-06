@@ -109,6 +109,21 @@ public class WMTSMosaic implements GridMosaic{
     }
     
     @Override
+    public Envelope getEnvelope() {
+        final double minX = getUpperLeftCorner().getX();
+        final double maxY = getUpperLeftCorner().getY();
+        final double spanX = getTileSize().width * getGridSize().width * getScale();
+        final double spanY = getTileSize().height* getGridSize().height* getScale();
+        
+        final GeneralEnvelope envelope = new GeneralEnvelope(
+                getPyramid().getCoordinateReferenceSystem());
+        envelope.setRange(0, minX, minX + spanX);
+        envelope.setRange(1, maxY - spanY, maxY );
+        
+        return envelope;
+    }
+    
+    @Override
     public boolean isMissing(int col, int row) {        
         if(limit == null) return false;
         

@@ -65,7 +65,12 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     }
 
     @Override
-    public void updateTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
+    public void writeTile(String pyramidId, String mosaicId, int col, int row, RenderedImage image) throws DataStoreException {
+        throw new DataStoreException("Model is not writeable.");
+    }
+
+    @Override
+    public void writeTiles(String pyramidId, String mosaicId, RenderedImage image, boolean onlyMissing) throws DataStoreException {
         throw new DataStoreException("Model is not writeable.");
     }
 

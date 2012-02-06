@@ -18,10 +18,14 @@ package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.BitSet;
 import java.util.Map;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
@@ -123,6 +127,7 @@ public class XMLMosaic implements GridMosaic{
         return new Dimension(tileWidth, tileHeight);
     }
     
+    @Override
     public Envelope getEnvelope(){
         final double minX = getUpperLeftCorner().getX();
         final double maxY = getUpperLeftCorner().getY();
@@ -186,7 +191,7 @@ public class XMLMosaic implements GridMosaic{
     
     public File getTileFile(int col, int row) throws DataStoreException{
         checkPosition(col, row);
-        return new File(getFolder(),col+"_"+row+"."+getPyramid().getPostfix());
+        return new File(getFolder(),row+"_"+col+"."+getPyramid().getPostfix());
     }
 
     void createTile(int col, int row, RenderedImage image) throws DataStoreException {
@@ -206,6 +211,54 @@ public class XMLMosaic implements GridMosaic{
         }
     }
     
+    void writeTiles(final RenderedImage image, final boolean onlyMissing) throws DataStoreException{
+        
+        ImageWriter writer = null;
+        try {            
+            writer = ImageIO.getImageWritersByFormatName("PNG").next();
+            final boolean canWriteRaster = writer.canWriteRasters();
+            
+            for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
+                for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
+                    if(onlyMissing && !isMissing(x, y)){
+                        continue;
+                    }
+                    
+                    checkPosition(x, y);
+                    final File f = getTileFile(x, y);
+                    f.getParentFile().mkdirs();
+                    
+                    final ImageOutputStream out = ImageIO.createImageOutputStream(f);                    
+                    writer.reset();
+                    writer.setOutput(out);
+                    
+                    final Raster raster = image.getTile(x, y);
+                    if(canWriteRaster){
+                        final IIOImage buffer = new IIOImage(raster, null, null);                    
+                        writer.write(buffer);
+                    }else{
+                        //encapsulate image in a buffered image with parent color model
+                        final BufferedImage buffer = new BufferedImage(
+                                image.getColorModel(), 
+                                (WritableRaster)raster, true, null);
+                        writer.write(buffer);
+                    }
+                    
+                    tileExist.set(getTileIndex(x, y), true);
+                }
+            }
+                    
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(),ex);
+        } finally{
+            updateCompletionString();
+            if(writer != null){
+                writer.dispose();
+            }
+        }
+        
+    }
+    
     private void checkPosition(int col, int row) throws DataStoreException{
         if(col >= getGridSize().width || row >=getGridSize().height){
             throw new DataStoreException("Tile position is outside the grid : " + col +" "+row);
@@ -215,6 +268,25 @@ public class XMLMosaic implements GridMosaic{
     private int getTileIndex(int col, int row){
         final int index = row*getGridSize().width + col;
         return index;
+    }
+
+    /**
+     * check if image is empty
+     */
+    private static boolean isEmpty(Raster raster){
+        double[] array = null;
+        searchEmpty:
+        for(int x=0,width=raster.getWidth(); x<width; x++){
+            for(int y=0,height=raster.getHeight(); y<height; y++){
+                array = raster.getPixel(x, y, array);
+                for(double d : array){
+                    if(d != 0){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
     
 }

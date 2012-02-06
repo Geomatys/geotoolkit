@@ -66,12 +66,20 @@ public interface GridMosaic {
     Dimension getTileSize();
     
     /**
+     * Envelope of the given tile.
      * 
      * @param col
      * @param row
      * @return Envelope of the given tile.
      */
     Envelope getEnvelope(int col, int row);
+    
+    /**
+     * Envelope of the mosaic.
+     * 
+     * @return Envelope
+     */
+    Envelope getEnvelope();
     
     /**
      * Some services define some missing tiles.

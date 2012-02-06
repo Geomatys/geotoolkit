@@ -305,6 +305,23 @@ public class DefaultPortrayalService implements PortrayalService{
 
     }
 
+    /**
+     * Create a rendered image which tile model maps the given definition.
+     * The image will be divided in the same number of tiles and size as the mosaic.
+     * Unlike a call to a portray method, the returned rendered image will be calculated
+     * progressively.
+     * 
+     * @param mosaic
+     * @param def
+     * @param sceneDef
+     * @param viewDef
+     * @return 
+     */
+    public static RenderedImage prepareImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef, 
+            final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{        
+        return new PortrayalRenderedImage(canvasDef, sceneDef, viewDef, gridSize, tileSize, scale);
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
     // PAINTING IN A STREAM or OUTPUT //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
