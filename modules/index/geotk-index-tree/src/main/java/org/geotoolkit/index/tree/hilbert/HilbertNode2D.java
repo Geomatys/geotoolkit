@@ -47,8 +47,8 @@ public class HilbertNode2D extends Node2D {
      * @param entries {@code List<Shape>} to add in this node.
      * @throws IllegalArgumentException if hilbertOrder < 0.
      */
-    public HilbertNode2D(final Tree tree, final Node2D parent, final int hilbertOrder, final List<Node2D> children, final List<Shape> entries) {
-        super(tree, parent, children, null);
+    public HilbertNode2D(final Tree tree, final Node2D parent, final int hilbertOrder, double minX, double minY, double maxX, double maxY, final List<Node2D> children, final List<Shape> entries) {
+        super(tree, parent, minX, minY, maxX, maxY, children, null);
         ArgumentChecks.ensurePositive("hilbertOrder", hilbertOrder);
         setUserProperty("isleaf", false);
         if (entries != null && !entries.isEmpty()) {

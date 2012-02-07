@@ -273,7 +273,7 @@ public class StarRTree extends AbstractTree2D {
      * {@inheritDoc} 
      */
     @Override
-    public Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> listChildren, final List<Shape> listEntries) {
-        return new Node2D(tree, parent, listChildren, listEntries);
+    public Node2D createNode(final Tree tree, final Node2D parent, double minX, double minY, double maxX, double maxY, final List<Node2D> listChildren, final List<Shape> listEntries) {
+        return new Node2D(tree, parent, minX, minY, maxX, maxY, listChildren, listEntries);
     }
 }

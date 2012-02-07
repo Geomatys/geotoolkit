@@ -219,10 +219,25 @@ public class BasicRTree extends AbstractTree2D {
         ls.remove(Math.max(index1, index2));
         ls.remove(Math.min(index1, index2));
         Rectangle2D r1Temp, r2Temp;
-        Node2D result1 = (Node2D) ((leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s1))
-                          : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s1), null));
-        Node2D result2 = (Node2D) ((leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s2))
-                          : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s2), null));
+        Rectangle2D boundS1, boundS2;
+        Node2D result1, result2;
+        
+        if(leaf){
+            boundS1 = ((Shape)s1).getBounds2D();
+            boundS2 = ((Shape)s2).getBounds2D();
+            result1 = (Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, UnmodifiableArrayList.wrap((Shape) s1)); 
+            result2 = (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), null, UnmodifiableArrayList.wrap((Shape) s2));
+        }else{
+            boundS1 = ((Node2D)s1).getBoundary().getBounds2D();
+            boundS2 = ((Node2D)s2).getBoundary().getBounds2D();
+            result1 = (Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), UnmodifiableArrayList.wrap((Node2D) s1), null); 
+            result2 = (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), UnmodifiableArrayList.wrap((Node2D) s2), null);
+        }
+        
+//        Node2D result1 = (Node2D) ((leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s1))
+//                          : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s1), null));
+//        Node2D result2 = (Node2D) ((leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Shape) s2))
+//                          : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node2D) s2), null));
         double demimaxE = maxElmnts / 3;
         demimaxE = Math.max(demimaxE, 1);
         if (leaf) {
@@ -378,7 +393,7 @@ public class BasicRTree extends AbstractTree2D {
      * {@inheritDoc}
      */
     @Override
-    public Node2D createNode(Tree tree, Node2D parent, List<Node2D> listChildren, List<Shape> listEntries) {
-        return new Node2D(tree, parent, listChildren, listEntries);
+    public Node2D createNode(Tree tree, Node2D parent, double minX, double minY, double maxX, double maxY, List<Node2D> listChildren, List<Shape> listEntries) {
+        return new Node2D(tree, parent, minX, minY, maxX, maxY, listChildren, listEntries);
     }
 }

@@ -30,8 +30,6 @@ public abstract class AbstractNode<N extends Node<N,B>, B> implements Node<N, B>
 
     private final EventListenerList listenerList = new EventListenerList();
     private Map<String, Object> userProperties;
-
-    
     
     /**
      * @param key

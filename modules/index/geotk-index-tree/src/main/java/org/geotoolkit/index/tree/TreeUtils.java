@@ -165,6 +165,26 @@ public final class TreeUtils {
         return envlop;
     }
     
+    /**
+     * Compute general boundary of all {@code Node2D} passed in parameter.
+     * 
+     * @param lN Node2D List.
+     * @throws IllegalArgumentException if List<Node2D> lN is null.
+     * @throws IllegalArgumentException if List<Node2D> lN is empty.
+     * @return Shape which is general boundary.
+     */
+    public static Shape getEnveloppeMinNode(final List<Node2D> lN){
+        ArgumentChecks.ensureNonNull("getEnveloppeMinNode : lN", lN);
+        if(lN.isEmpty()){
+            throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
+        }
+        final List<Shape>lS = new ArrayList<Shape>();
+        for(Node2D node : lN){
+            lS.add(node.getBoundary());
+        }
+        return getEnveloppeMin(lS);
+    }
+    
     /**Compute empty area of {@code Node2D}.
      * 
      * @throws IllegalArgumentException if node is null.
@@ -315,11 +335,19 @@ public final class TreeUtils {
         
         if(countElements(candidate) == 2){
             if(leaf){
-                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(candidate.getEntries().get(0))),
-                                                  (Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(candidate.getEntries().get(1))));
+                final Shape s0 = candidate.getEntries().get(0);
+                final Shape s1 = candidate.getEntries().get(1);
+                final Rectangle2D boundS0 = s0.getBounds2D();
+                final Rectangle2D boundS1 = s1.getBounds2D();
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, boundS0.getMinX(), boundS0.getMinY(), boundS0.getMaxX(), boundS0.getMaxY(), null, UnmodifiableArrayList.wrap(s0)),
+                                                  (Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, UnmodifiableArrayList.wrap(s1)));
             }else{
-                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap(candidate.getChildren().get(0)), null),
-                                                  (Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap(candidate.getChildren().get(1)), null));
+                final Node2D n0 = candidate.getChildren().get(0);
+                final Node2D n1 = candidate.getChildren().get(1);
+                final Rectangle2D boundS0 = n0.getBoundary().getBounds2D();
+                final Rectangle2D boundS1 = n1.getBoundary().getBounds2D();
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, boundS0.getMinX(), boundS0.getMinY(), boundS0.getMaxX(), boundS0.getMaxY(), UnmodifiableArrayList.wrap(n0), null),
+                                                  (Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), UnmodifiableArrayList.wrap(n1), null));
             }
         }
         
@@ -340,7 +368,7 @@ public final class TreeUtils {
         
         final List<CoupleNode2D> lSAO = new ArrayList<CoupleNode2D>();
         final List<CoupleNode2D> lSSo = new ArrayList<CoupleNode2D>();
-        
+        Rectangle2D boundS1, boundS2;
         for(int i = val2;i<=listElements.size()-val2;i++){
             for(int j = 0;j<i;j++){
                 splitList1.add(listElements.get(j));
@@ -349,9 +377,13 @@ public final class TreeUtils {
                 splitList2.add(listElements.get(k));
             }
             if(leaf){
-                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, splitList1), (Node2D)tree.createNode(tree, null, null, splitList2));
+                boundS1 = getEnveloppeMin(splitList1).getBounds2D();
+                boundS2 = getEnveloppeMin(splitList2).getBounds2D();
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, splitList1), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), null, splitList2));
             }else{
-                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, splitList1, null), (Node2D)tree.createNode(tree, null, splitList2, null));
+                boundS1 = getEnveloppeMinNode(splitList1).getBounds2D();
+                boundS2 = getEnveloppeMinNode(splitList2).getBounds2D();
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), splitList1, null), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), splitList2, null));
             }
             
             if(couNN.intersect()){
@@ -411,7 +443,7 @@ public final class TreeUtils {
         }else{
              listElmnts = candidate.getChildren();
         }
-        
+        Rectangle2D boundS1, boundS2;
         for(int index = 1; index<=2;index++){
             if(candidate.isLeaf()){
                  organize_List2DElements_From(index, null, listElmnts);
@@ -428,11 +460,13 @@ public final class TreeUtils {
                 }
 
                 if(candidate.isLeaf()){
-                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, (List<Shape>)splitList1),
-                                                     (Node2D)tree.createNode(tree, null, null, (List<Shape>)splitList2));
+                    boundS1 = getEnveloppeMin(splitList1).getBounds2D();
+                    boundS2 = getEnveloppeMin(splitList2).getBounds2D();
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, splitList1), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), null, splitList2));
                 }else{
-                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, (List<Node2D>)splitList1, null),
-                                                     (Node2D)tree.createNode(tree, null, (List<Node2D>)splitList2, null));
+                    boundS1 = getEnveloppeMinNode(splitList1).getBounds2D();
+                    boundS2 = getEnveloppeMinNode(splitList2).getBounds2D();
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), splitList1, null), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), splitList2, null));
                 }
 
                 switch(index){

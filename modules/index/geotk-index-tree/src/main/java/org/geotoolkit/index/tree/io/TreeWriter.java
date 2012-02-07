@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree.io;
 
 import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.index.tree.AbstractNode;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
@@ -135,14 +137,19 @@ public class TreeWriter {
         final List<Node2D> listChild = node.getChildren();
         final List<Shape> listEntries = new ArrayList<Shape>(node.getEntries());
 
-        int nbrSubNode = listChild.size();
+        final int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
+        final Rectangle2D bound = node.getBoundary().getBounds2D();
+        dops.writeDouble(bound.getMinX());
+        dops.writeDouble(bound.getMinY());
+        dops.writeDouble(bound.getMaxX());
+        dops.writeDouble(bound.getMaxY());
         dops.writeInt(nbrSubNode);
 
         for (Node2D child : listChild) {
             dops.writeInt(index.get(child));
         }
-        List<Node2D> listup = (List<Node2D>) node.getUserProperty("cells");
+        final List<Node2D> listup = (List<Node2D>) node.getUserProperty("cells");
         if (listup != null) {
             for (Node2D n : listup) {
                 listEntries.addAll(n.getEntries());

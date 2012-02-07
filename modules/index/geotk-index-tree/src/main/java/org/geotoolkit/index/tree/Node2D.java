@@ -97,7 +97,7 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
      * @param tree 
      */
     public Node2D(final Tree tree) {
-        this(tree, null, null, null);
+        this(tree, null, Double.NaN, Double.NaN, Double.NaN, Double.NaN, null, null);
     }
     
     /**Create {@code Node2D}.
@@ -108,10 +108,11 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
      * @param entries data(s) to add.
      * @throws IllegalArgumentException if tree pointer is null.
      */
-    public Node2D(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries) {
+    public Node2D(final Tree tree, final Node2D parent, double minX, double minY, double maxX, double maxY, final List<Node2D> children, final List<Shape> entries) {
         ArgumentChecks.ensureNonNull("tree", tree);
         this.tree = tree;
         this.parent = parent;
+        
         if(children!=null){
             for(Node2D n2d : children){
                 n2d.setParent(this);
@@ -119,6 +120,11 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
             this.children.addAll(children);
         }
         if(entries!=null)this.entries.addAll(entries);
+        if(minX != Double.NaN && minY != Double.NaN && maxX != Double.NaN && maxY != Double.NaN){
+            final Rectangle2D rectB = new Rectangle2D.Double();
+            rectB.setFrameFromDiagonal(minX, minY, maxX, maxY);
+            this.boundary = rectB;
+        }
     }
     
     /**

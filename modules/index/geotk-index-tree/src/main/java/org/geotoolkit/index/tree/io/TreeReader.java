@@ -131,10 +131,10 @@ public class TreeReader {
         readNode(tree, dataIPStream, listNodes, index);
 
         for (Node2D node : listNodes) {
-            int[] tabC = (int[]) node.getUserProperty("tabidchildren");
+            final int[] tabC = (int[]) node.getUserProperty("tabidchildren");
             final List<Node2D> children = node.getChildren();
             for (int i = 0; i < tabC.length; i++) {
-                Node2D child = (Node2D) index.get(tabC[i]);
+                final Node2D child = (Node2D) index.get(tabC[i]);
                 child.setParent(node);
                 children.add(child);
             }
@@ -158,23 +158,27 @@ public class TreeReader {
         ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
         ArgumentChecks.ensureNonNull("readNode : index", index);
         if (dips.available() > 0) {
-            int id = dips.readInt();
-            int nbrChildren = dips.readInt();
-            int[] tabChild = new int[nbrChildren];
+            final int id = dips.readInt();
+            final double minx = dips.readDouble();
+            final double miny = dips.readDouble();
+            final double maxX = dips.readDouble();
+            final double maxY = dips.readDouble();
+            final int nbrChildren = dips.readInt();
+            final int[] tabChild = new int[nbrChildren];
             for (int i = 0; i < nbrChildren; i++) {
                 tabChild[i] = dips.readInt();
             }
-            int nbrEntries = dips.readInt();
+            final int nbrEntries = dips.readInt();
             final List<Shape> listEntries = new ArrayList<Shape>();
             for (int i = 0; i < nbrEntries; i++) {
-                int arrayLength = dips.readInt();
-                byte[] tabB = new byte[arrayLength];
+                final int arrayLength = dips.readInt();
+                final byte[] tabB = new byte[arrayLength];
                 dips.read(tabB, 0, arrayLength);
-                ByteArrayInputStream bis = new ByteArrayInputStream(tabB);
+                final ByteArrayInputStream bis = new ByteArrayInputStream(tabB);
                 ObjectInputStream oins = new ObjectInputStream(bis);
                 listEntries.add((Shape) oins.readObject());
             }
-            final Node2D result = (Node2D)tree.createNode(tree, null, null, listEntries);
+            final Node2D result = (Node2D)tree.createNode(tree, null, minx, miny, maxX, maxY, null, listEntries);
             result.setUserProperty("tabidchildren", tabChild);
             index.put(id, result);
             listNodes.add(result);

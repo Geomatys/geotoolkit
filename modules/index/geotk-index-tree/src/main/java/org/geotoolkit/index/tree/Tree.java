@@ -81,5 +81,5 @@ public interface Tree<N extends Node<N,B>, B> {
      * @param entries {@code List<Shape>} to add in this node. 
      * @return 
      */
-    N createNode(Tree tree, N parent, List<N> listChildren, List<B> listEntries);
+    N createNode(Tree tree, N parent, double minX, double minY, double maxX, double maxY, List<N> listChildren, List<B> listEntries);
 }
