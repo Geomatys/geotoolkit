@@ -165,16 +165,13 @@ public final class WMTSUtilities {
 
         double valRef = -1;
         double eltTemp;
-
-        CoordinateReferenceSystem crsTemp;
-        MathTransform mt;
-
-        int index = -1;
-        double valTemp = 0;
+        //in case we fail to find a crs more appropriate then another, we return the first one
+        int index = 0;
+        
         for (int n = 0, s = listCrs.size(); n < s; n++) {
-            crsTemp = listCrs.get(n);
-            valTemp = 0;
-            mt = CRS.findMathTransform(crsBase, crsTemp);
+            final CoordinateReferenceSystem crsTemp = listCrs.get(n);
+            double valTemp = 0;
+            final MathTransform mt = CRS.findMathTransform(crsBase, crsTemp);
             mat1.set(new GeneralMatrix(mt.derivative(dplong1)));
             mat2.set(new GeneralMatrix(mt.derivative(dplong2)));
             mat3.set(new GeneralMatrix(mt.derivative(dplat1)));
@@ -214,9 +211,7 @@ public final class WMTSUtilities {
                 }
             }
         }
-        if (index == -1) {
-            return env.getCoordinateReferenceSystem();
-        }
+        
         return listCrs.get(index);
     }
 
