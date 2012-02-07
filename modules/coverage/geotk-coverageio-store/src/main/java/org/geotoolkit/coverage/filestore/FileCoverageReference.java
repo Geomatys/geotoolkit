@@ -14,24 +14,33 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.coverage.filestore;
 
+import java.io.File;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
- *
+ * Reference to a coverage stored in a single file.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface CoverageReference {
+public class FileCoverageReference implements CoverageReference{
+
+    private final File file;
     
-    /**
-     * Get a new reader for this coverage.
-     * 
-     * @return GridCoverageReader
-     * @throws DataStoreException  
-     */
-    GridCoverageReader createReader() throws DataStoreException;
+    public FileCoverageReference(final File file){
+        this.file = file;
+    }
+    
+    @Override
+    public GridCoverageReader createReader() throws DataStoreException{
+        final ImageCoverageReader reader = new ImageCoverageReader();
+        reader.setInput(file);
+        return reader;
+    }
     
 }

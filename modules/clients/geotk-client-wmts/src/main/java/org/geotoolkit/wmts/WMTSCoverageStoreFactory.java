@@ -98,7 +98,7 @@ public class WMTSCoverageStoreFactory extends AbstractCoverageStoreFactory{
 
     @Override
     public CoverageStore createNewCoverageStore(ParameterValueGroup params) throws DataStoreException {
-        throw new DataStoreException("Can not instance of WMTS store.");
+        throw new DataStoreException("Can not create new instance of WMTS store.");
     }
     
 }

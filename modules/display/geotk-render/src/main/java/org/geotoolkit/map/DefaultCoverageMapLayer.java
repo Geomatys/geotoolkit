@@ -82,7 +82,11 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     @Override
     public GridCoverageReader getCoverageReader(){
         if(ref != null){
-            return ref.createReader();
+            try {
+                return ref.createReader();
+            } catch (DataStoreException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+            }
         }
         return reader;
     }
