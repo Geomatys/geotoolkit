@@ -111,7 +111,7 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
     public Node2D(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries, double ...coordinates) {
         ArgumentChecks.ensureNonNull("tree", tree);
         int length = coordinates.length;
-        if(length != 0 || length != 4){
+        if(length != 0 && length != 4){
             throw new IllegalArgumentException("invalid coordinates number");
         }
         this.tree = tree;
