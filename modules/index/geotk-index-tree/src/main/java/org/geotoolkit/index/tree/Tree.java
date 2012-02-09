@@ -72,14 +72,14 @@ public interface Tree<N extends Node<N,B>, B> {
      */
     void setRoot(N root);
     
-    /**
-     * Create a node in accordance with this RTree properties.
-     * 
+    /**Create a node in accordance with this RTree properties.
+     *  
      * @param tree pointer on Tree.
-     * @param parent pointer on parent {@code Node2D}.
-     * @param children sub {@code Node2D}.
-     * @param entries {@code List<Shape>} to add in this node. 
-     * @return 
+     * @param parent pointer on parent {@code Node}.
+     * @param children sub {@code Node}.
+     * @param entries entries {@code List} to add in this node. 
+     * @param coordinates lower upper bounding box coordinates table. 
+     * @return appropriate Node from tree.
      */
-    N createNode(Tree tree, N parent, double minX, double minY, double maxX, double maxY, List<N> listChildren, List<B> listEntries);
+    N createNode(Tree tree, N parent, List<N> listChildren, List<B> listEntries, double ...coordinates);
 }

@@ -91,7 +91,7 @@ public class HilbertRTree extends AbstractTree2D {
         final Node2D root = getRoot();
         if (root == null || root.isEmpty()) {
             final Rectangle2D boundS = entry.getBounds2D();
-            setRoot(createNode(this, null, boundS.getMinX(), boundS.getMinY(), boundS.getMaxX(), boundS.getMaxY(), null, UnmodifiableArrayList.wrap(entry)));
+            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(entry), boundS.getMinX(), boundS.getMinY(), boundS.getMaxX(), boundS.getMaxY()));
         } else {
             insertNode(root, entry);
         }
@@ -255,11 +255,13 @@ public class HilbertRTree extends AbstractTree2D {
                 if(isleaf){
                     boundS1 = TreeUtils.getEnveloppeMin(splitList1).getBounds2D();
                     boundS2 = TreeUtils.getEnveloppeMin(splitList2).getBounds2D();
-                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, splitList1), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), null, splitList2));
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, splitList1, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY()), 
+                                                     (Node2D)tree.createNode(tree, null, null, splitList2, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY()));
                 }else{
                     boundS1 = TreeUtils.getEnveloppeMinNode(splitList1).getBounds2D();
                     boundS2 = TreeUtils.getEnveloppeMinNode(splitList2).getBounds2D();
-                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), splitList1, null), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), splitList2, null));
+                    couplelements = new CoupleNode2D((Node2D)tree.createNode(tree, null, splitList1, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY()), 
+                                                     (Node2D)tree.createNode(tree, null, splitList2, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY()));
                 }
 
                 switch (index) {
@@ -323,15 +325,15 @@ public class HilbertRTree extends AbstractTree2D {
                 final Shape s1 = (Shape) listElements.get(1);
                 final Rectangle2D boundS0 = s0.getBounds2D();
                 final Rectangle2D boundS1 = s1.getBounds2D();
-                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, boundS0.getMinX(), boundS0.getMinY(), boundS0.getMaxX(), boundS0.getMaxY(), null, UnmodifiableArrayList.wrap(s0)),
-                                                  (Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, UnmodifiableArrayList.wrap(s1)));
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(s0), boundS0.getMinX(), boundS0.getMinY(), boundS0.getMaxX(), boundS0.getMaxY()),
+                                                  (Node2D)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap(s1), boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY()));
             } else {
                 final Node2D n0 = (Node2D) listElements.get(0);
                 final Node2D n1 = (Node2D) listElements.get(1);
                 final Rectangle2D boundS0 = n0.getBoundary().getBounds2D();
                 final Rectangle2D boundS1 = n1.getBoundary().getBounds2D();
-                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, boundS0.getMinX(), boundS0.getMinY(), boundS0.getMaxX(), boundS0.getMaxY(), UnmodifiableArrayList.wrap(n0), null),
-                                                  (Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), UnmodifiableArrayList.wrap(n1), null));
+                return UnmodifiableArrayList.wrap((Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap(n0), null, boundS0.getMinX(), boundS0.getMinY(), boundS0.getMaxX(), boundS0.getMaxY()),
+                                                  (Node2D)tree.createNode(tree, null, UnmodifiableArrayList.wrap(n1), null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY()));
             }
         }
 
@@ -351,11 +353,13 @@ public class HilbertRTree extends AbstractTree2D {
             if(leaf){
                 boundS1 = TreeUtils.getEnveloppeMin(splitList1).getBounds2D();
                 boundS2 = TreeUtils.getEnveloppeMin(splitList2).getBounds2D();
-                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), null, splitList1), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), null, splitList2));
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, null, splitList1, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY()), 
+                                         (Node2D)tree.createNode(tree, null, null, splitList2, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY()));
             }else{
                 boundS1 = TreeUtils.getEnveloppeMinNode(splitList1).getBounds2D();
                 boundS2 = TreeUtils.getEnveloppeMinNode(splitList2).getBounds2D();
-                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY(), splitList1, null), (Node2D)tree.createNode(tree, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY(), splitList2, null));
+                couNN = new CoupleNode2D((Node2D)tree.createNode(tree, null, splitList1, null, boundS1.getMinX(), boundS1.getMinY(), boundS1.getMaxX(), boundS1.getMaxY()), 
+                                         (Node2D)tree.createNode(tree, null, splitList2, null, boundS2.getMinX(), boundS2.getMinY(), boundS2.getMaxX(), boundS2.getMaxY()));
             }
 
             if (couNN.intersect()) {
@@ -729,12 +733,12 @@ public class HilbertRTree extends AbstractTree2D {
                 Point2D ptCTemp = listOfCentroidChild.get(i);
                 int[] tabTemp = getHilbCoord(ptCTemp, bound, indice);
                 tabHV[tabTemp[0]][tabTemp[1]] = i;
-                listN.add(createCell(candidate.getTree(), candidate, Double.NaN, Double.NaN, Double.NaN, Double.NaN, ptCTemp, i, null));
+                listN.add(createCell(candidate.getTree(), candidate, ptCTemp, i, null));
             }
             candidate.setUserProperty("tabHV", tabHV);
         } else {
             listOfCentroidChild.add(new Point2D.Double(bound.getCenterX(), bound.getCenterY()));
-            listN.add(createCell(candidate.getTree(), candidate, Double.NaN, Double.NaN, Double.NaN, Double.NaN, listOfCentroidChild.get(0), 0, null));
+            listN.add(createCell(candidate.getTree(), candidate, listOfCentroidChild.get(0), 0, null));
         }
 
     }
@@ -848,8 +852,8 @@ public class HilbertRTree extends AbstractTree2D {
         return ((int[][]) candidate.getUserProperty("tabHV"))[hCoord[0]][hCoord[1]];
     }
 
-    private static Node2D createCell(final Tree tree, final Node2D parent, double minX, double minY, double maxX, double maxY, final Point2D centroid, final int hilbertValue, final List<Shape> entries) {
-        final Node2D nod2d = new Node2D(tree, parent, minX, minY, maxX, maxY, null, entries);
+    private static Node2D createCell(final Tree tree, final Node2D parent, final Point2D centroid, final int hilbertValue, final List<Shape> entries, double ...coordinates) {
+        final Node2D nod2d = new Node2D(tree, parent, null, entries, coordinates);
         nod2d.setUserProperty("hilbertValue", hilbertValue);
         nod2d.setUserProperty("centroid", centroid);
         return nod2d;
@@ -859,7 +863,7 @@ public class HilbertRTree extends AbstractTree2D {
      * {@inheritDoc}
      */
     @Override
-    public Node2D createNode(final Tree tree, final Node2D parent, double minX, double minY, double maxX, double maxY, final List<Node2D> listChildren, final List<Shape> listEntries) {
-        return new HilbertNode2D(tree, parent, 0, minX, minY, maxX, maxY, listChildren, listEntries);
+    public Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> listChildren, final List<Shape> listEntries, double ...coordinates) {
+        return new HilbertNode2D(tree, parent, 0, listChildren, listEntries, coordinates);
     }
 }

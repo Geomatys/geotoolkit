@@ -97,7 +97,7 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
      * @param tree 
      */
     public Node2D(final Tree tree) {
-        this(tree, null, Double.NaN, Double.NaN, Double.NaN, Double.NaN, null, null);
+        this(tree, null, null, null);
     }
     
     /**Create {@code Node2D}.
@@ -108,8 +108,12 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
      * @param entries data(s) to add.
      * @throws IllegalArgumentException if tree pointer is null.
      */
-    public Node2D(final Tree tree, final Node2D parent, double minX, double minY, double maxX, double maxY, final List<Node2D> children, final List<Shape> entries) {
+    public Node2D(final Tree tree, final Node2D parent, final List<Node2D> children, final List<Shape> entries, double ...coordinates) {
         ArgumentChecks.ensureNonNull("tree", tree);
+        int length = coordinates.length;
+        if(length != 0 || length != 4){
+            throw new IllegalArgumentException("invalid coordinates number");
+        }
         this.tree = tree;
         this.parent = parent;
         
@@ -120,9 +124,9 @@ public class Node2D extends AbstractNode<Node2D, Shape>{
             this.children.addAll(children);
         }
         if(entries!=null)this.entries.addAll(entries);
-        if(minX != Double.NaN && minY != Double.NaN && maxX != Double.NaN && maxY != Double.NaN){
+        if(coordinates.length != 0){
             final Rectangle2D rectB = new Rectangle2D.Double();
-            rectB.setFrameFromDiagonal(minX, minY, maxX, maxY);
+            rectB.setFrameFromDiagonal(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
             this.boundary = rectB;
         }
     }

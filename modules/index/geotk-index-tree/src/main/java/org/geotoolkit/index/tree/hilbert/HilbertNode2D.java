@@ -47,8 +47,8 @@ public class HilbertNode2D extends Node2D {
      * @param entries {@code List<Shape>} to add in this node.
      * @throws IllegalArgumentException if hilbertOrder < 0.
      */
-    public HilbertNode2D(final Tree tree, final Node2D parent, final int hilbertOrder, double minX, double minY, double maxX, double maxY, final List<Node2D> children, final List<Shape> entries) {
-        super(tree, parent, minX, minY, maxX, maxY, children, null);
+    public HilbertNode2D(final Tree tree, final Node2D parent, final int hilbertOrder, final List<Node2D> children, final List<Shape> entries, double ...coordinates) {
+        super(tree, parent, children, null, coordinates);
         ArgumentChecks.ensurePositive("hilbertOrder", hilbertOrder);
         setUserProperty("isleaf", false);
         if (entries != null && !entries.isEmpty()) {
@@ -105,7 +105,6 @@ public class HilbertNode2D extends Node2D {
     @Override
     protected void calculateBounds() {
         if ((Boolean) getUserProperty("isleaf")) {
-
             final List<Shape> lS = new ArrayList<Shape>();
             final List<Node2D> listCells = new ArrayList<Node2D>((List<Node2D>) getUserProperty("cells"));
             for (Node2D nod : listCells) {
@@ -165,6 +164,6 @@ public class HilbertNode2D extends Node2D {
         final Collection col = (cup != null) ? new ArrayList(cup) : new ArrayList();
         col.addAll(getChildren());
         String strparent = (getParent() == null) ? "null" : String.valueOf(getParent().hashCode());
-        return Trees.toString(Classes.getShortClassName(this) + " : " + this.hashCode() + " parent : " + strparent + " isleaf : " + ((Boolean) getUserProperty("isleaf")) + "listentries : " + getEntries(), col);
+        return Trees.toString(Classes.getShortClassName(this) + " : " + this.hashCode() + " parent : " + strparent + " isleaf : " + ((Boolean) getUserProperty("isleaf")), col);
     }
 }

@@ -178,7 +178,7 @@ public class TreeReader {
                 ObjectInputStream oins = new ObjectInputStream(bis);
                 listEntries.add((Shape) oins.readObject());
             }
-            final Node2D result = (Node2D)tree.createNode(tree, null, minx, miny, maxX, maxY, null, listEntries);
+            final Node2D result = (Node2D)tree.createNode(tree, null, null, listEntries, minx, miny, maxX, maxY);
             result.setUserProperty("tabidchildren", tabChild);
             index.put(id, result);
             listNodes.add(result);
