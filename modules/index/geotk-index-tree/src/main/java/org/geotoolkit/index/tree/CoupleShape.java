@@ -87,4 +87,18 @@ public class CoupleShape implements Couple<Shape> {
         Rectangle2D over = getObject1().getBounds2D().createIntersection(getObject2().getBounds2D());
         return over.getWidth() * over.getHeight();
     }
+
+    /**
+     * {@inheritDoc}. 
+     */
+    @Override
+    public double getArea() {
+        final Rectangle2D rectO1 = getObject1().getBounds2D();
+        final Rectangle2D rectO2 = getObject2().getBounds2D();
+        final double areaSom = rectO1.getWidth()*rectO1.getHeight()+rectO2.getWidth()*rectO2.getHeight();
+        if(rectO1.intersects(rectO2)){
+            return areaSom-getOverlaps();
+        }
+        return areaSom;
+    }
 }

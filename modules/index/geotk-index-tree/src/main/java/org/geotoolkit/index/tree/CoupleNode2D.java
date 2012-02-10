@@ -45,6 +45,7 @@ public class CoupleNode2D implements Couple<Node2D> {
     /**
      * @return node1.
      */
+    @Override
     public Node2D getObject1() {
         return node1;
     }
@@ -52,6 +53,7 @@ public class CoupleNode2D implements Couple<Node2D> {
     /**
      * @return node2.
      */
+    @Override
     public Node2D getObject2() {
         return node2;
     }
@@ -59,6 +61,7 @@ public class CoupleNode2D implements Couple<Node2D> {
     /**
      * @return sum of two Node2D boundary.
      */
+    @Override
     public double getPerimeter() {
         final Rectangle2D rectO1 = getObject1().getBoundary().getBounds2D();
         final Rectangle2D rectO2 = getObject2().getBoundary().getBounds2D();
@@ -68,6 +71,7 @@ public class CoupleNode2D implements Couple<Node2D> {
     /**
      * @return true if the two Node2D intersect them else false.
      */
+    @Override
     public boolean intersect() {
         return getObject1().getBoundary().intersects(getObject2().getBoundary().getBounds2D());
     }
@@ -75,6 +79,7 @@ public class CoupleNode2D implements Couple<Node2D> {
     /**
      * @return  Euclidean distance between two Node2D centroids.
      */
+    @Override
     public double getDistance() {
         return TreeUtils.getDistanceBetweenTwoBound2D(getObject1().getBoundary().getBounds2D(), getObject2().getBoundary().getBounds2D());
     }
@@ -85,5 +90,19 @@ public class CoupleNode2D implements Couple<Node2D> {
     public double getOverlaps() {
         final Rectangle2D over = getObject1().getBoundary().getBounds2D().createIntersection(getObject2().getBoundary().getBounds2D());
         return over.getWidth() * over.getHeight();
+    }
+    
+    /**
+     * {@inheritDoc}. 
+     */
+    @Override
+    public double getArea() {
+        final Rectangle2D rectO1 = getObject1().getBoundary().getBounds2D();
+        final Rectangle2D rectO2 = getObject2().getBoundary().getBounds2D();
+        final double areaSom = rectO1.getWidth()*rectO1.getHeight()+rectO2.getWidth()*rectO2.getHeight();
+        if(rectO1.intersects(rectO2)){
+            return areaSom-getOverlaps();
+        }
+        return areaSom;
     }
 }

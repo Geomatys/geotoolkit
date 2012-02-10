@@ -47,4 +47,9 @@ public interface Couple<B> {
      * @return distance between two objects centroids.
      */
     double getDistance();
+    
+    /**
+     * @return two objects area.
+     */
+    double getArea();
 }

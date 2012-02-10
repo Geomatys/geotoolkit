@@ -97,7 +97,7 @@ public class StarRTree extends AbstractTree2D {
      * @throws IllegalArgumentException if {@code List<Node2D>} listSubnode is null.
      * @throws IllegalArgumentException if {@code Shape} entry is null.
      * @throws IllegalArgumentException if {@code List<Node2D>} listSubnode is empty.
-     * @return {@code Node} which is appropriate to contain shape.
+     * @return {@code Node} which will be appropriate to contain shape.
      */
     private static Node2D chooseSubtree(final List<Node2D> listSubnode, final Shape entry) {
         ArgumentChecks.ensureNonNull("chooseSubtree : List<Node2D> lN", listSubnode);
