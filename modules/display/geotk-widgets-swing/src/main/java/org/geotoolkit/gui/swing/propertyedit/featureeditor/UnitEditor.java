@@ -17,13 +17,19 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
-import java.nio.charset.Charset;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
@@ -31,14 +37,14 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class CharsetEditor implements JFeatureOutLine.PropertyEditor {
+public class UnitEditor implements JFeatureOutLine.PropertyEditor {
 
-    private final CharsetRW r = new CharsetRW();
-    private final CharsetRW w = new CharsetRW();
+    private final EnumRW r = new EnumRW();
+    private final EnumRW w = new EnumRW();
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Charset.class.equals(candidate.getBinding());
+        return Unit.class.equals(candidate.getBinding());
     }
 
     @Override
@@ -53,21 +59,44 @@ public class CharsetEditor implements JFeatureOutLine.PropertyEditor {
         return r.getRenderer();
     }
 
-    private static class CharsetRW extends TableCellEditorRenderer {
+    private static class EnumRW extends TableCellEditorRenderer {
 
         private final JComboBox component = new JComboBox();
 
-        private CharsetRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.NORTH, component);
+        private EnumRW() {
+            final List<Unit> units = new ArrayList<Unit>(SI.getInstance().getUnits());
+            units.addAll(NonSI.getInstance().getUnits());
             
-            final List<Charset> sets = new ArrayList<Charset>(Charset.availableCharsets().values());
-            component.setModel(new ListComboBoxModel(sets));
+            component.setModel(new ListComboBoxModel(units));
+            component.setRenderer(new DefaultListCellRenderer(){
+
+                @Override
+                public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    super.getListCellRendererComponent(list, null, index, isSelected, cellHasFocus);
+                    
+                    if(value instanceof Unit){
+                        final Unit unit = (Unit) value;
+                        String str = "";
+                        try{
+                            str = unit.toString();
+                        }catch(Exception ex){
+                            str = "-";
+                        }
+                        this.setText(str);
+                    }
+                    
+                    return this;
+                }
+                
+            });
+            
+            panel.setLayout(new BorderLayout());
+            panel.add(BorderLayout.CENTER, component);
         }
 
         @Override
         protected void prepare() {
-            if (value instanceof Charset) {
+            if (value instanceof Unit) {
                 component.setSelectedItem(value);
             }else{
                 component.setSelectedItem(null);

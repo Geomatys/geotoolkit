@@ -17,24 +17,25 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class BooleanEditor implements JFeatureOutLine.PropertyEditor {
+public class EnumEditor implements JFeatureOutLine.PropertyEditor {
 
-    private final BooleanRW r = new BooleanRW();
-    private final BooleanRW w = new BooleanRW();
+    private final EnumRW r = new EnumRW();
+    private final EnumRW w = new EnumRW();
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Boolean.class.equals(candidate.getBinding());
+        return Enum.class.equals(candidate.getBinding());
     }
 
     @Override
@@ -49,28 +50,29 @@ public class BooleanEditor implements JFeatureOutLine.PropertyEditor {
         return r.getRenderer();
     }
 
-    private static class BooleanRW extends TableCellEditorRenderer {
+    private static class EnumRW extends TableCellEditorRenderer {
 
-        private final JCheckBox component = new JCheckBox();
+        private final JComboBox component = new JComboBox();
 
-        private BooleanRW() {
+        private EnumRW() {
             panel.setLayout(new BorderLayout());
             panel.add(BorderLayout.CENTER, component);
-            component.setOpaque(false);
         }
 
         @Override
         protected void prepare() {
-            if (value instanceof Boolean) {
-                component.setSelected((Boolean) value);
+            component.setModel(new EnumComboBoxModel(property.getBinding()));
+                
+            if (value instanceof Enum) {
+                component.setSelectedItem(value);
             }else{
-                component.setSelected(false);
+                component.setSelectedItem(null);
             }
         }
 
         @Override
         public Object getCellEditorValue() {
-            return component.isSelected();
+            return component.getSelectedItem();
         }
     }
 }

@@ -480,6 +480,10 @@ public class JFeatureOutLine extends Outline{
         lst.add(new CharsetEditor());
         lst.add(new NumberEditor());
         lst.add(new StringEditor());
+        lst.add(new URLEditor());
+        lst.add(new FileEditor());
+        lst.add(new UnitEditor());
+        lst.add(new EnumEditor());
         return lst;
     }
     

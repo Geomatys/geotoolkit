@@ -17,24 +17,30 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class StringEditor implements JFeatureOutLine.PropertyEditor {
+public class FileEditor implements JFeatureOutLine.PropertyEditor {
 
-    private final StringRW r = new StringRW();
-    private final StringRW w = new StringRW();
+    private final FileRW r = new FileRW();
+    private final FileRW w = new FileRW();
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return String.class.equals(candidate.getBinding());
+        return File.class.equals(candidate.getBinding());
     }
 
     @Override
@@ -49,19 +55,23 @@ public class StringEditor implements JFeatureOutLine.PropertyEditor {
         return r.getRenderer();
     }
 
-    private static class StringRW extends TableCellEditorRenderer {
+    private static class FileRW extends TableCellEditorRenderer implements ActionListener {
 
         private final JTextField component = new JTextField();
+        private final JButton chooseButton = new JButton("...");
+        
 
-        private StringRW() {
+        private FileRW() {
             panel.setLayout(new BorderLayout());
             panel.add(BorderLayout.CENTER, component);
+            panel.add(BorderLayout.EAST, chooseButton);
+            chooseButton.addActionListener(this);
         }
 
         @Override
         protected void prepare() {
-            if (value instanceof String) {
-                component.setText((String) value);
+            if (value instanceof File) {
+                component.setText( ((File) value).toURI().toString() );
             }else{
                 component.setText("");
             }
@@ -69,7 +79,25 @@ public class StringEditor implements JFeatureOutLine.PropertyEditor {
 
         @Override
         public Object getCellEditorValue() {
-            return component.getText();
+            final String str = component.getText();
+            value = new File(str);
+            return value;
         }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            chooser.setMultiSelectionEnabled(false);
+            final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
+            if(response == JFileChooser.APPROVE_OPTION){
+                final File f = chooser.getSelectedFile();
+                if(f!=null){
+                    value = f;
+                    prepare();
+                }
+            }
+        }
+        
     }
 }

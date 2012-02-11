@@ -78,6 +78,8 @@ public class CRSEditor implements JFeatureOutLine.PropertyEditor {
                 } catch (FactoryException ex) {
                     //no need to log
                 }
+            }else{
+                component.setSelectedCode(null);
             }
         }
 

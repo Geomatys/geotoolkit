@@ -83,6 +83,8 @@ public class NumberEditor implements JFeatureOutLine.PropertyEditor {
 
             if (value instanceof Number) {
                 component.setValue((Number) value);
+            }else{
+                component.setValue(0d);
             }
         }
 
