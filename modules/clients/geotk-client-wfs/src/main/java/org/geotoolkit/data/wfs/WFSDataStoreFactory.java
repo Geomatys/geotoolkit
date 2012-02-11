@@ -17,20 +17,22 @@
 
 package org.geotoolkit.data.wfs;
 
-import java.net.MalformedURLException;
-
-import java.net.URI;
-import java.util.WeakHashMap;
-
+import java.io.Serializable;
+import java.net.URL;
+import java.util.Map;
+import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.Server;
+import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.wfs.xml.WFSVersion;
+import org.opengis.parameter.*;
 
 /**
  * Datastore factory for WFS client.
@@ -38,24 +40,22 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WFSDataStoreFactory extends AbstractDataStoreFactory{
+public class WFSDataStoreFactory extends AbstractDataStoreFactory implements ServerFactory{
 
     /**
-     * Mandatory - server uri
+     * Version, Mandatory.
      */
-    public static final ParameterDescriptor<URI> SERVER_URI =
-            new DefaultParameterDescriptor<URI>("server uri","server uri",URI.class,null,true);
+    public static final ParameterDescriptor<WFSVersion> VERSION =
+            new DefaultParameterDescriptor<WFSVersion>("version","Server version",WFSVersion.class,WFSVersion.v110,true);
     /**
      * Optional -post request
      */
     public static final ParameterDescriptor<Boolean> POST_REQUEST =
-            new DefaultParameterDescriptor<Boolean>("post request","post request",Boolean.class,false,false);
+            new DefaultParameterDescriptor<Boolean>("post request","post request",Boolean.class,false,false);    
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                SERVER_URI, POST_REQUEST);
-
-    private static final WeakHashMap<URI,WFSDataStore> STORES = new WeakHashMap<URI, WFSDataStore>();
+                AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY, POST_REQUEST);
 
     /**
      * {@inheritDoc }
@@ -77,22 +77,8 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public synchronized WFSDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
-        final URI serverURI       = (URI) params.parameter(SERVER_URI.getName().getCode()).getValue();
-        final boolean postrequest = params.parameter(POST_REQUEST.getName().getCode()).booleanValue();
-
-        WFSDataStore store = STORES.get(serverURI);
-
-        if(store == null){
-            try {
-                store = new WFSDataStore(serverURI, postrequest);
-            } catch (MalformedURLException ex) {
-                throw new DataStoreException(ex);
-            }
-            STORES.put(serverURI, store);
-        }
-
-        return store;
+    public synchronized DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+        return create(params);
     }
 
     /**
@@ -101,6 +87,29 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
     @Override
     public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create any new WFS DataStore");
+    }
+
+    @Override
+    public Server create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        try{
+            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+        }catch(InvalidParameterValueException ex){
+            throw new DataStoreException(ex);
+        }
+    }
+
+    @Override
+    public WebFeatureServer create(ParameterValueGroup params) throws DataStoreException {
+        final URL url = (URL)Parameters.getOrCreate(AbstractServerFactory.URL, params).getValue();
+        final WFSVersion version = (WFSVersion)Parameters.getOrCreate(VERSION, params).getValue();
+        final boolean usePost = (Boolean)Parameters.getOrCreate(POST_REQUEST, params).getValue();
+        ClientSecurity security = null;
+        try{
+            final ParameterValue val = params.parameter(AbstractServerFactory.SECURITY.getName().getCode());
+            security = (ClientSecurity) val.getValue();
+        }catch(ParameterNotFoundException ex){}
+        
+        return new WebFeatureServer(url,security,version,usePost);
     }
 
 }

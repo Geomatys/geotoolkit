@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.osmtms;
+package org.geotoolkit.wmts;
 
 import java.util.Iterator;
 import org.geotoolkit.coverage.CoverageStoreFactory;
@@ -28,9 +28,9 @@ import org.junit.Test;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSCoverageStoreFactoryTest {
+public class WMTSCoverageStoreFactoryTest {
     
-    public OSMTMSCoverageStoreFactoryTest() {
+    public WMTSCoverageStoreFactoryTest() {
     }
 
     @Test
@@ -41,7 +41,7 @@ public class OSMTMSCoverageStoreFactoryTest {
         
         boolean found = false;
         while (ite.hasNext()){
-            if(ite.next() instanceof OSMTMSServerFactory){
+            if(ite.next() instanceof WMTSServerFactory){
                 found = true;
             }
         }

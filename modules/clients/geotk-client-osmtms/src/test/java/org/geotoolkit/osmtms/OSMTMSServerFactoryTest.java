@@ -17,27 +17,26 @@
 package org.geotoolkit.osmtms;
 
 import java.util.Iterator;
-import org.geotoolkit.coverage.CoverageStoreFactory;
-import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
 /**
- * Coverage store tests.
+ * Server tests.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSCoverageStoreFactoryTest {
+public class OSMTMSServerFactoryTest {
     
-    public OSMTMSCoverageStoreFactoryTest() {
+    public OSMTMSServerFactoryTest() {
     }
 
     @Test
     public void testFactory() {
         
-        
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllCoverageStores();
+        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories();
         
         boolean found = false;
         while (ite.hasNext()){

@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Unmarshaller;
-
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
@@ -75,11 +74,25 @@ public class WebProcessingServer extends AbstractServer{
      * @param version 
      */  
    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version) {
-       super(serverURL,security);
-        if(version.equals("1.0.0")){
-            this.version = WPSVersion.v100;
-        }else{
-            throw new IllegalArgumentException("Unkonwed version : "+ version);
+       super(serverURL, security);
+       if (version.equals("1.0.0")) {
+           this.version = WPSVersion.v100;
+       } else {
+           throw new IllegalArgumentException("Unkonwed version : " + version);
+       }
+       this.capabilities = null;
+    }
+   
+   /**
+     * Constructor
+     * @param serverURL
+     * @param version 
+     */  
+   public WebProcessingServer(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
+        super(serverURL, security);
+        this.version = version;
+        if (version == null) {
+            throw new IllegalArgumentException("Unkonwed version : " + version);
         }
         this.capabilities = null;
     }

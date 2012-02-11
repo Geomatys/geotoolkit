@@ -17,21 +17,10 @@
 package org.geotoolkit.sos;
 
 import java.net.URL;
-
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.sos.v100.DescribeFeatureType100;
-import org.geotoolkit.sos.v100.DescribeObservationType100;
-import org.geotoolkit.sos.v100.DescribeResultModel100;
-import org.geotoolkit.sos.v100.DescribeSensor100;
-import org.geotoolkit.sos.v100.GetCapabilities100;
-import org.geotoolkit.sos.v100.GetFeatureOfInterest100;
-import org.geotoolkit.sos.v100.GetFeatureOfInterestTime100;
-import org.geotoolkit.sos.v100.GetObservation100;
-import org.geotoolkit.sos.v100.GetObservationById100;
-import org.geotoolkit.sos.v100.GetResult100;
+import org.geotoolkit.sos.v100.*;
 import org.geotoolkit.sos.xml.SOSVersion;
-
 
 /**
  * CSW server.
@@ -52,6 +41,14 @@ public class SensorObservationServiceServer extends AbstractServer {
         if (version.equals("1.0.0")){
             this.version = SOSVersion.v100;
         } else {
+            throw new IllegalArgumentException("unkonwed version : "+ version);
+        }
+    }
+    
+    public SensorObservationServiceServer(final URL serverURL, final ClientSecurity security, final SOSVersion version) {
+        super(serverURL,security);
+        this.version = version;
+        if(version == null){
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
     }

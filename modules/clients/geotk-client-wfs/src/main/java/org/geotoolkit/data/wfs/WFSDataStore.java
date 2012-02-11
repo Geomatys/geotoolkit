@@ -487,6 +487,4 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
-
-
 }

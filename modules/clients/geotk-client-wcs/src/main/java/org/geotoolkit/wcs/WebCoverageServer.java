@@ -59,6 +59,14 @@ public class WebCoverageServer extends AbstractServer {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
     }
+    
+    public WebCoverageServer(final URL serverURL, final ClientSecurity security, final WCSVersion version) {
+        super(serverURL,security);
+        this.version = version;
+        if(version == null){
+            throw new IllegalArgumentException("unkonwed version : " + version);
+        }
+    }
 
     /**
      * Returns the {@linkplain WCSCapabilitiesType capabilities} response for this

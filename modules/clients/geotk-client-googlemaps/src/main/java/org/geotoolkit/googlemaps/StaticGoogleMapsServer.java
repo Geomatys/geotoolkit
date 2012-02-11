@@ -25,6 +25,7 @@ import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
@@ -71,7 +72,11 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
      * @param key, account key.
      */
     public StaticGoogleMapsServer(final URL serverURL, final String key) {
-        super(serverURL);
+        this(serverURL,key,null);
+    }
+    
+    public StaticGoogleMapsServer(final URL serverURL, final String key, final ClientSecurity security) {
+        super(serverURL,security);
         this.key = key;
     }
         
