@@ -310,7 +310,7 @@ public class ObliqueMercator extends UnitaryProjection {
             }
             if (isTwoPoints) {
                 throw new ParameterNotFoundException(Errors.format(
-                        Errors.Keys.MISSING_PARAMETER_$1, problem), problem);
+                        Errors.Keys.NO_PARAMETER_$1, problem), problem);
             } else {
                 throw new InvalidParameterNameException(Errors.format(
                         Errors.Keys.UNEXPECTED_PARAMETER_$1, problem), problem);

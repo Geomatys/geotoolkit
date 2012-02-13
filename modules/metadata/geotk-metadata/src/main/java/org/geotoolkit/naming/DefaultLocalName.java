@@ -96,7 +96,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
      * Constructs a local name from the given character sequence. If the character sequence is an
      * instance of {@link InternationalString}, then its {@link InternationalString#toString(java.util.Locale)
      * toString(null)} method will be invoked for fetching an unlocalized name. Otherwise
-     * the {@link CharSequence#toString toString()} method will be used.
+     * the {@link CharSequence#toString() toString()} method will be used.
      *
      * @param scope The scope of this name, or {@code null} for a global scope.
      * @param name The local name (never {@code null}).
@@ -181,7 +181,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
     /**
      * Returns a locale-independent string representation of this local name.
      * This string does not include the scope, which is consistent with the
-     * {@linkplain #getParsedNames parsed names} definition.
+     * {@linkplain #getParsedNames() parsed names} definition.
      */
     @Override
     public synchronized String toString() {

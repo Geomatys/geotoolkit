@@ -334,7 +334,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 label = Integer.valueOf(i);
             }
             if (range.getLow(i)!=min || range.getSpan(i)!=span) {
-                return Errors.format(Errors.Keys.BAD_GRID_ENVELOPE_$3, label, min, min + span);
+                return Errors.format(Errors.Keys.ILLEGAL_GRID_ENVELOPE_$3, label, min, min + span);
             }
         }
         return null;

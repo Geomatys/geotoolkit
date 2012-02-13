@@ -148,7 +148,7 @@ public class MetadataHelper implements Localized {
     private void ensureVectorsExist(final List<?> vectors) throws ImageMetadataException {
         ensureMetadataExists("OffsetVectors", -1, vectors);
         if (vectors.isEmpty()) {
-            throw new ImageMetadataException(error(Errors.Keys.MISSING_PARAMETER_VALUE_$1, "OffsetVectors"));
+            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_VALUE_$1, "OffsetVectors"));
         }
     }
 
@@ -166,7 +166,7 @@ public class MetadataHelper implements Localized {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new ImageMetadataException(error(Errors.Keys.MISSING_PARAMETER_$1, name));
+            throw new ImageMetadataException(error(Errors.Keys.NO_PARAMETER_$1, name));
         }
     }
 

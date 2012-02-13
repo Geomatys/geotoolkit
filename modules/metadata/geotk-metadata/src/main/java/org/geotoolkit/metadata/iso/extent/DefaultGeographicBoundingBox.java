@@ -413,7 +413,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         }
         String message = Vocabulary.format(propertyKey);
         message = Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1, message);
-        message = message + ' ' + Errors.format(Errors.Keys.BAD_RANGE_$2, min, max);
+        message = message + ' ' + Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, min, max);
         throw new IllegalArgumentException(message);
     }
 

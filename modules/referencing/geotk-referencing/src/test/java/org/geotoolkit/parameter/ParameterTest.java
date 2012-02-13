@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
+import org.geotoolkit.test.referencing.ParameterTestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -45,7 +46,7 @@ import static java.lang.StrictMath.*;
  * @since 2.1
  */
 @Depend(ParameterDescriptorTest.class)
-public final strictfp class ParameterTest {
+public final strictfp class ParameterTest extends ParameterTestBase {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
      * case of this test suite, we can afford to be strict since we will perform

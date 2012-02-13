@@ -117,7 +117,7 @@ final class MetadataResult extends StatementEntry {
             final String table = results.getMetaData().getTableName(1);
             results.close();
             results = null;
-            throw new SQLException(Errors.format(Errors.Keys.RECORD_NOT_FOUND_$2, table, identifier));
+            throw new SQLException(Errors.format(Errors.Keys.NO_SUCH_RECORD_$2, table, identifier));
         }
         this.identifier = identifier;
         return results;

@@ -316,7 +316,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     public V put(final K key, final V value) {
         if (isReservedType(value)) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.BAD_PARAMETER_TYPE_$2, "value", value.getClass()));
+                    Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2, "value", value.getClass()));
         }
         final Object previous;
         if (value != null) {
@@ -707,7 +707,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
             try {
                 if (isReservedType(result)) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.BAD_PARAMETER_TYPE_$2, "result", result.getClass()));
+                            Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2, "result", result.getClass()));
                 }
                 // Assignation of 'value' must happen before we release the lock.
                 value = result;

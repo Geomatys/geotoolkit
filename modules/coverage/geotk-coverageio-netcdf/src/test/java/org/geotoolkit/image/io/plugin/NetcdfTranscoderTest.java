@@ -18,11 +18,15 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.List;
+import java.util.Collection;
 import java.io.IOException;
 import javax.imageio.IIOException;
 import ucar.nc2.NetcdfFile;
 
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
@@ -38,7 +42,7 @@ import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.opengis.test.Assert.*;
 import static org.geotoolkit.test.Commons.getSingleton;
 
 
@@ -92,8 +96,8 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
      */
     @Test
     @Override
-    public void testThredds() throws IOException {
-        super.testThredds();
+    public void testTHREDDS() throws IOException {
+        super.testTHREDDS();
         assertEquals("crm_v1", metadata.getFileIdentifier());
         /*
          * Metadata / Grid Spatial Representation.
@@ -154,6 +158,22 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
         final TemporalExtent text = getSingleton(extent.getTemporalElements());
         final Instant instant = (Instant) text.getExtent();
         // Can not test at this time, since it requires the geotk-temporal module.
+    }
+
+    /**
+     * Tests the Landsat file (binary format).
+     *
+     * @throws IOException If the test file can not be read.
+     */
+    @Test
+    @Override
+    public void testLandsat() throws IOException {
+        super.testLandsat();
+        final ContentInformation content = getSingleton(metadata.getContentInfo());
+        assertInstanceOf("ContentInformation", CoverageDescription.class, content);
+        final RangeDimension band = getSingleton(((CoverageDescription) content).getDimensions());
+        assertEquals("long_name attribute:", "GDAL Band Number 1", String.valueOf(band.getDescriptor()));
+        assertEquals("NetCDF variable name:", "Band1", String.valueOf(band.getSequenceIdentifier()));
     }
 
     /**

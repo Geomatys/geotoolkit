@@ -92,7 +92,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
             final int upper = index[dimension+i];
             if (!(lower <= upper)) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.BAD_GRID_ENVELOPE_$3, i, lower, upper-1));
+                        Errors.Keys.ILLEGAL_GRID_ENVELOPE_$3, i, lower, upper-1));
             }
         }
     }

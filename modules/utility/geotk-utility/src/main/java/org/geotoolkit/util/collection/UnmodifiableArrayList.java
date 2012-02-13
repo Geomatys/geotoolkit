@@ -114,7 +114,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
             throws IndexOutOfBoundsException
     {
         if (lower < 0 || upper > array.length || lower > upper) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, lower, upper));
         }
         if (lower == 0 && upper == array.length) {
             return new UnmodifiableArrayList<E>(array);
@@ -270,7 +270,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
             throws IndexOutOfBoundsException
     {
         if (lower < 0 || upper > size() || lower > upper) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, lower, upper));
         }
         return new SubList<E>(array, lower + lower(), upper - lower);
     }

@@ -294,7 +294,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         try {
             transformed = Envelopes.transform(gridToCRS, this);
         } catch (TransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
                     Classes.getClass(gridToCRS)), exception);
         }
         assert transformed.ordinates.length == this.ordinates.length;

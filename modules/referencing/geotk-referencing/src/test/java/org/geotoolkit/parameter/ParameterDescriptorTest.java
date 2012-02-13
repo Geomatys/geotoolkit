@@ -19,6 +19,7 @@ package org.geotoolkit.parameter;
 
 import org.junit.*;
 import org.opengis.parameter.*;
+import org.geotoolkit.test.referencing.ParameterTestBase;
 
 import static org.junit.Assert.*;
 import static org.opengis.test.Validators.*;
@@ -33,7 +34,7 @@ import static javax.measure.unit.SI.*;
  *
  * @since 2.1
  */
-public final strictfp class ParameterDescriptorTest {
+public final strictfp class ParameterDescriptorTest extends ParameterTestBase {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
      * case of this test suite, we can afford to be strict since we will perform

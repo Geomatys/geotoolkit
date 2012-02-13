@@ -445,7 +445,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
     {
         if (minSize <= 1 || minSize > maxSize) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.BAD_RANGE_$2, minSize, maxSize));
+                    Errors.Keys.ILLEGAL_RANGE_$2, minSize, maxSize));
         }
         ensureBetween("tileSize", minSize, maxSize, tileSize);
         if (imageSize <= minSize) {
@@ -728,7 +728,7 @@ public class MosaicBuilder extends Builder<TileManager> implements LogProducer {
         final Rectangle tileBounds    = new Rectangle(tileSize);
         Dimension[] subsamplings = getSubsamplings();
         if (subsamplings == null || subsamplings.length == 0) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.MISSING_PARAMETER_VALUE_$1,
+            throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_VALUE_$1,
                     Vocabulary.format(Vocabulary.Keys.SUBSAMPLING)));
         }
         final List<Tile> tiles;

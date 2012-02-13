@@ -368,7 +368,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         try {
             transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
                     Classes.getClass(gridToCRS)), exception);
         }
         extent = new GeneralGridEnvelope(transformed, anchor, false);

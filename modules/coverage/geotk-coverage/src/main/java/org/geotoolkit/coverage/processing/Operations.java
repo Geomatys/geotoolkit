@@ -111,7 +111,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.AddConst
      */
-    public Coverage add(final Coverage source, final double[] constants)
+    public Coverage add(final Coverage source, final double... constants)
             throws CoverageProcessingException
     {
         return doOperation("AddConst", source, "constants", constants);
@@ -127,7 +127,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.SubtractConst
      */
-    public Coverage subtract(final Coverage source, final double[] constants)
+    public Coverage subtract(final Coverage source, final double... constants)
             throws CoverageProcessingException
     {
         return doOperation("SubtractConst", source, "constants", constants);
@@ -143,7 +143,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.SubtractFromConst
      */
-    public Coverage subtractFrom(final Coverage source, final double[] constants)
+    public Coverage subtractFrom(final Coverage source, final double... constants)
             throws CoverageProcessingException
     {
         return doOperation("SubtractFromConst", source, "constants", constants);
@@ -159,7 +159,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.MultiplyConst
      */
-    public Coverage multiply(final Coverage source, final double[] constants)
+    public Coverage multiply(final Coverage source, final double... constants)
             throws CoverageProcessingException
     {
         return doOperation("MultiplyConst", source, "constants", constants);
@@ -175,7 +175,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.DivideByConst
      */
-    public Coverage divideBy(final Coverage source, final double[] constants)
+    public Coverage divideBy(final Coverage source, final double... constants)
             throws CoverageProcessingException
     {
         return doOperation("DivideByConst", source, "constants", constants);
@@ -339,7 +339,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.Interpolate
      */
-    public GridCoverage interpolate(final GridCoverage source, final Interpolation[] types)
+    public GridCoverage interpolate(final GridCoverage source, final Interpolation... types)
             throws CoverageProcessingException
     {
         return (GridCoverage) doOperation("Interpolate", source, "Type", types);
@@ -357,7 +357,7 @@ public class Operations {
      *
      * @since 2.4
      */
-    public GridCoverage recolor(final GridCoverage source, final ColorMap[] colorMaps)
+    public GridCoverage recolor(final GridCoverage source, final ColorMap... colorMaps)
             throws CoverageProcessingException
     {
         return (GridCoverage) doOperation("Recolor", source, "ColorMaps", colorMaps);
@@ -375,7 +375,7 @@ public class Operations {
      *
      * @see org.geotoolkit.coverage.processing.operation.SelectSampleDimension
      */
-    public Coverage selectSampleDimension(final Coverage source, final int[] sampleDimensions)
+    public Coverage selectSampleDimension(final Coverage source, final int... sampleDimensions)
             throws CoverageProcessingException
     {
         return doOperation("SelectSampleDimension", source, "SampleDimensions", sampleDimensions);

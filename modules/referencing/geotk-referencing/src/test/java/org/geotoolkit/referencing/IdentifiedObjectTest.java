@@ -72,11 +72,12 @@ public final strictfp class IdentifiedObjectTest extends ReferencingTestBase {
         assertEquals("remarks_fr_CA", "Pareil",                identifier.getRemarks().toString(Locale.CANADA_FRENCH));
         assertEquals("remarks_fr_BE", "Voici des remarques",   identifier.getRemarks().toString(new Locale("fr", "BE")));
 
-        if (false) {
-            // Disabled in order to avoid logging a warning (it pollutes the JUnit output)
-            properties.put("remarks", new SimpleInternationalString("Overrides remarks"));
+        // Following produces warnings, which we ignore.
+        if (true) {
+            final Object old = properties.put("remarks", new SimpleInternationalString("Overrides remarks"));
             identifier = new NamedIdentifier(properties);
             assertEquals("remarks", "Overrides remarks", identifier.getRemarks().toString(Locale.ENGLISH));
+            assertNotNull(properties.put("remarks", old)); // Restore the previous value.
         }
 
         assertNotNull(properties.remove("authority"));
@@ -90,7 +91,7 @@ public final strictfp class IdentifiedObjectTest extends ReferencingTestBase {
         assertNull(properties.put("authority", Locale.CANADA));
         try {
             identifier = new NamedIdentifier(properties);
-            fail();
+            fail(identifier.toString());
         } catch (InvalidParameterValueException exception) {
             // This is the expected exception
         }

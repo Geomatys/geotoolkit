@@ -287,7 +287,7 @@ public abstract class WindowCreator extends JComponent {
                     return true;
                 } catch (ParseException exception) {
                     SwingUtilities.showMessageDialog(owner, exception.getLocalizedMessage(),
-                            Errors.getResources(content.getLocale()).getString(Errors.Keys.BAD_ENTRY),
+                            Errors.getResources(content.getLocale()).getString(Errors.Keys.ILLEGAL_ENTRY),
                             JOptionPane.ERROR_MESSAGE);
                 }
             }

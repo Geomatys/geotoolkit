@@ -123,11 +123,11 @@ final class RenderedSampleDimension extends GridSampleDimension {
     {
         final int numBands = model.getNumBands();
         if (src!=null && src.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NUMBER_OF_BANDS_MISMATCH_$3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
                     numBands, src.length, "SampleDimension"));
         }
         if (dst.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NUMBER_OF_BANDS_MISMATCH_$3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
                     numBands, dst.length, "SampleDimension"));
         }
         /*
@@ -281,15 +281,15 @@ final class RenderedSampleDimension extends GridSampleDimension {
     {
         final int numBands = dst.length;
         if (min != null && min.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NUMBER_OF_BANDS_MISMATCH_$3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
                     numBands, min.length, "min[i]"));
         }
         if (max != null && max.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NUMBER_OF_BANDS_MISMATCH_$3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
                     numBands, max.length, "max[i]"));
         }
         if (colors != null && colors.length != numBands) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NUMBER_OF_BANDS_MISMATCH_$3,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
                     numBands, colors.length, "colors[i]"));
         }
         /*

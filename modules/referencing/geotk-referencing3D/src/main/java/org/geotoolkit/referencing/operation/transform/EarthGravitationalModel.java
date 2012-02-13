@@ -195,7 +195,7 @@ public class EarthGravitationalModel extends VerticalTransform {
         try {
             load(filename);
         } catch (IOException e) {
-            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_$1, filename), e);
+            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_$1, filename), e);
         }
         initialize();
     }

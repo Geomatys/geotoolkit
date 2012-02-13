@@ -597,7 +597,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                         }
                         buffer.append(value);
                     }
-                    String message = Warnings.message(caller, Errors.Keys.AMBIGIOUS_VALUE_$1, buffer);
+                    String message = Warnings.message(caller, Errors.Keys.AMBIGUOUS_VALUE_$1, buffer);
                     buffer.setLength(0);
                     buffer.append(message);
                     for (final T source : found.keySet()) {

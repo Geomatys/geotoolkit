@@ -1023,7 +1023,7 @@ public class CoverageStack extends AbstractCoverage {
      * @todo provides a better formatting of the point coordinate.
      */
     private static String cannotEvaluate(final DirectPosition point) {
-        return Errors.format(Errors.Keys.CANT_EVALUATE_$1, point);
+        return Errors.format(Errors.Keys.CANT_EVALUATE_FOR_COORDINATE_$1, point);
     }
 
     /**

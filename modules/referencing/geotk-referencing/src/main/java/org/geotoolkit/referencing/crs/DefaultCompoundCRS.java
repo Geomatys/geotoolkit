@@ -176,7 +176,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         ensureNonNull("crs", crs);
         if (crs.length < 2) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_$1, "crs[" + crs.length + ']'));
+                    Errors.Keys.NO_PARAMETER_$1, "crs[" + crs.length + ']'));
         }
         final CoordinateSystem[] cs = new CoordinateSystem[crs.length];
         for (int i=0; i<crs.length; i++) {

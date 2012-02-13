@@ -640,7 +640,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
         final Object angle=field.getValue();
         if (expectLatitude ? (angle instanceof Longitude) : (angle instanceof Latitude)) {
             throw new ParseException(Errors.getResources(getLocale()).getString(
-                    Errors.Keys.BAD_COORDINATE_$1, angle), 0);
+                    Errors.Keys.ILLEGAL_COORDINATE_$1, angle), 0);
         }
     }
 

@@ -143,6 +143,22 @@ public abstract strictfp class TestBase {
     }
 
     /**
+     * Installs the customized validators defined in the {@link org.geotoolkit.test.validator}
+     * package. Those validators ensures that ISO or GeoAPI restrictions apply, then checks for
+     * yet more restrictive Geotk conditions. For example Geotk requires the exact same instance
+     * where GeoAPI requires only instances that are {@linkplain Object#equals(Object) equal}.
+     */
+    static {
+        final Class<?> c = org.geotoolkit.test.validator.Validators.class;
+        try {
+            // Force class initialization.
+            assertSame(c, Class.forName(c.getName(), true, c.getClassLoader()));
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError(e); // Should never happen.
+        }
+    }
+
+    /**
      * Date parser, created when first needed.
      */
     private transient DateFormat dateFormat;

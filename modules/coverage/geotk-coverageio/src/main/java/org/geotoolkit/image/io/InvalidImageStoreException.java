@@ -127,7 +127,7 @@ public class InvalidImageStoreException extends IIOException {
             for (final Class<?> e : expected) {
                 if (e.isInstance(io)) {
                     return resources.getString(
-                            write ? Errors.Keys.CANT_WRITE_$1 : Errors.Keys.CANT_READ_$1,
+                            write ? Errors.Keys.CANT_WRITE_FILE_$1 : Errors.Keys.CANT_READ_FILE_$1,
                             IOUtilities.name(io));
                 }
             }

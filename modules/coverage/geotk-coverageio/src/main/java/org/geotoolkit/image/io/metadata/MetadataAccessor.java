@@ -507,7 +507,7 @@ public class MetadataAccessor implements WarningProducer {
                 // Found too many paths.
                 final String lineSeparator = System.getProperty("line.separator", "\n");
                 final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
-                        Errors.Keys.AMBIGIOUS_VALUE_$1, type)).append(lineSeparator);
+                        Errors.Keys.AMBIGUOUS_VALUE_$1, type)).append(lineSeparator);
                 for (final String path : paths) {
                     buffer.append(" \u2022 ").append(path).append(lineSeparator);
                 }
@@ -1147,7 +1147,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final String value = getAttribute(attribute);
         final T code = CodeLists.valueOf(codeType, value, false);
         if (code == null && value != null) {
-            warning("getAttributeAsCode", Errors.Keys.BAD_PARAMETER_$2, attribute, value);
+            warning("getAttributeAsCode", Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, attribute, value);
         }
         return code;
     }
@@ -1180,7 +1180,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             {
                 return Boolean.FALSE;
             }
-            warning("getAttributeAsBoolean", Errors.Keys.BAD_PARAMETER_$2, attribute, value);
+            warning("getAttributeAsBoolean", Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, attribute, value);
         }
         return null;
     }

@@ -469,18 +469,18 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     public void setUserObject(Object value) throws IllegalArgumentException {
         final Class<?> type = getValueType();
         if (type == null) {
-            throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_$2, value));
+            throw new IllegalArgumentException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, value));
         }
         if (value != null) {
             value = convert(value);
             if (!type.isInstance(value)) {
-                throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_TYPE_$2, value.getClass()));
+                throw new IllegalArgumentException(error(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2, value.getClass()));
             }
             final ValueRestriction r = getValueRestriction();
             if (r != null) {
                 final Set<?> validValues = r.validValues;
                 if (validValues != null && !validValues.contains(value)) {
-                    throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_$2, value));
+                    throw new IllegalArgumentException(error(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2, value));
                 }
                 final NumberRange<?> range = r.range;
                 // We know we can cast to Comparable since 'value' is an instance of 'type'.

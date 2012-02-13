@@ -363,7 +363,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         try {
             settings = installation.getDataSource();
         } catch (IOException ex) {
-            error(Errors.Keys.CANT_READ_$1, ex);
+            error(Errors.Keys.CANT_READ_FILE_$1, ex);
             return;
         }
         final boolean manual = (settings != null);
@@ -448,7 +448,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
                     settings.store(out, "Connection parameters to the " + name + " database");
                     out.close();
                 } catch (IOException ex) {
-                    error(Errors.Keys.CANT_WRITE_$1, ex);
+                    error(Errors.Keys.CANT_WRITE_FILE_$1, ex);
                     return;
                 }
             }

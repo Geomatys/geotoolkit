@@ -354,7 +354,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
                     m[count++] = Double.parseDouble(line);
                 } catch (NumberFormatException e) {
                     in.close();
-                    throw new ContentFormatException(Errors.format(Errors.Keys.BAD_LINE_IN_FILE_$2,
+                    throw new ContentFormatException(Errors.format(Errors.Keys.ILLEGAL_LINE_IN_FILE_$2,
                             IOUtilities.name(filename), in.getLineNumber()), e);
                 }
             }

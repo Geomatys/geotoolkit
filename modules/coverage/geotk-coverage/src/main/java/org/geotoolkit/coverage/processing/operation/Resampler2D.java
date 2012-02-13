@@ -927,7 +927,7 @@ final class Resampler2D extends GridCoverage2D {
             // The loop below intentionally tries one more iteration than the constant in case we need
             // to apply slightly more than the above scale and translation because of rounding errors.
         } while (step++ <= EMPIRICAL_ADJUSTMENT_STEPS);
-        throw new FactoryException(Errors.format(Errors.Keys.CANT_REPROJECT_$1, name));
+        throw new FactoryException(Errors.format(Errors.Keys.CANT_REPROJECT_COVERAGE_$1, name));
     }
 
     /**

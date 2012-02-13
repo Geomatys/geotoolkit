@@ -392,7 +392,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             if (cause instanceof IOException) {
                 throw (IOException) cause;
             }
-            throw new IIOException(Errors.format(Errors.Keys.CANT_READ_$1, getName()), e);
+            throw new IIOException(Errors.format(Errors.Keys.CANT_READ_FILE_$1, getName()), e);
         }
     }
 

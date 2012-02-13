@@ -189,7 +189,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, identifier));
         }
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISSING_WKT_DEFINITION));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_WKT_DEFINITION));
         }
         /*
          * The value should be a complete WKT string. But if it is not, if it is an

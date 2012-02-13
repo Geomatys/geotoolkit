@@ -20,6 +20,7 @@ package org.geotoolkit.naming;
 import java.util.Arrays;
 
 import org.opengis.util.GenericName;
+import org.geotoolkit.test.metadata.MetadataTestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -35,7 +36,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  *
  * @since 3.00
  */
-public final strictfp class GenericNameTest {
+public final strictfp class GenericNameTest extends MetadataTestBase {
     /**
      * Tests the creation of a local name in the global namespace.
      * The fully qualified name is {@code "EPSG"}.

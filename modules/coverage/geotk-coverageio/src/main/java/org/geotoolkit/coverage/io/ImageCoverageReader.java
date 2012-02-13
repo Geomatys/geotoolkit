@@ -376,7 +376,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                                     final int messageKey;
                                     final Object argument;
                                     if (IOUtilities.canProcessAsPath(input)) {
-                                        messageKey = Errors.Keys.CANT_READ_$1;
+                                        messageKey = Errors.Keys.CANT_READ_FILE_$1;
                                         argument = IOUtilities.name(input);
                                     } else {
                                         messageKey = Errors.Keys.UNKNOWN_TYPE_$1;

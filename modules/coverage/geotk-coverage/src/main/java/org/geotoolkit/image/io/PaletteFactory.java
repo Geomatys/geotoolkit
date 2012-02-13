@@ -744,7 +744,7 @@ public class PaletteFactory {
      * Prepares an exception for the specified cause, which may be {@code null}.
      */
     private IIOException syntaxError(final LineNumberReader input, final String name, final Exception cause) {
-        String message = getErrorResources().getString(Errors.Keys.BAD_LINE_IN_FILE_$2,
+        String message = getErrorResources().getString(Errors.Keys.ILLEGAL_LINE_IN_FILE_$2,
                 name, input.getLineNumber());
         if (cause != null) {
             message += cause.getLocalizedMessage();

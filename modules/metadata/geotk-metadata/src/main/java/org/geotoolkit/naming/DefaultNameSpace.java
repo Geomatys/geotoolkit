@@ -43,7 +43,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 /**
  * A domain in which {@linkplain AbstractName names} given by character strings are defined.
  * This implementation does not support localization in order to avoid ambiguity when testing
- * two namespaces for {@linkplain #equals equality}.
+ * two namespaces for {@linkplain #equals(Object) equality}.
  * <p>
  * {@code DefaultNameSpace} can be instantiated by any of the following methods:
  * <ul>
@@ -89,13 +89,13 @@ public class DefaultNameSpace implements NameSpace, Serializable {
     private final CharSequence name;
 
     /**
-     * The separator to insert between the namespace and the {@linkplain AbstractName#head head}
+     * The separator to insert between the namespace and the {@linkplain AbstractName#head() head}
      * of any name in that namespace.
      */
     final String headSeparator;
 
     /**
-     * The separator to insert between the {@linkplain AbstractName#getParsedNames parsed names}
+     * The separator to insert between the {@linkplain AbstractName#getParsedNames() parsed names}
      * of any name in that namespace.
      */
     final String separator;
@@ -107,7 +107,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
     private transient AbstractName path;
 
     /**
-     * The childs created in this namespace. The values are restricted to the following types:
+     * The children created in this namespace. The values are restricted to the following types:
      * <p>
      * <ul>
      *   <li>{@link DefaultNameSpace}</li>
@@ -145,9 +145,9 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      *          or an {@link InternationalString}.
      * @param headSeparator
      *          The separator to insert between the namespace and the
-     *          {@linkplain AbstractName#head head} of any name in that namespace.
+     *          {@linkplain AbstractName#head() head} of any name in that namespace.
      * @param separator
-     *          The separator to insert between the {@linkplain AbstractName#getParsedNames
+     *          The separator to insert between the {@linkplain AbstractName#getParsedNames()
      *          parsed names} of any name in that namespace.
      */
     protected DefaultNameSpace(final DefaultNameSpace parent, CharSequence name,
@@ -198,9 +198,9 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      *          The name for the namespace to obtain, or {@code null}.
      * @param headSeparator
      *          The separator to insert between the namespace and the
-     *          {@linkplain AbstractName#head head} of any name in that namespace.
+     *          {@linkplain AbstractName#head() head} of any name in that namespace.
      * @param separator
-     *          The separator to insert between the {@linkplain AbstractName#getParsedNames
+     *          The separator to insert between the {@linkplain AbstractName#getParsedNames()
      *          parsed names} of any name in that namespace.
      * @return A namespace having the given name, or {@code null} if name was null.
      */
@@ -238,9 +238,11 @@ public class DefaultNameSpace implements NameSpace, Serializable {
     }
 
     /**
-     * Indicates whether this namespace is a "top level" namespace. Global, or top-level
-     * namespaces are not contained within another namespace. Hence, this flag indicates
-     * whether the namespace has a parent.
+     * Indicates whether this namespace is a "top level" namespace.  Global, or top-level
+     * namespaces are not contained within another namespace. The global namespace has no
+     * parent.
+     *
+     * @return {@code true} if this namespace is the global namespace.
      */
     @Override
     public boolean isGlobal() {
@@ -263,10 +265,12 @@ public class DefaultNameSpace implements NameSpace, Serializable {
     }
 
     /**
-     * Represents the identifier of this namespace. If the {@linkplain #isGlobal global} attribute is
-     * {@code true}, indicating that this is a top level {@code NameSpace}, then the name should be a
-     * {@linkplain LocalName local name}. If {@code false}, name should be a fully-qualified name where
-     * <code>name.{@linkplain AbstractName#scope() scope()}.{@linkplain #isGlobal} == true</code>.
+     * Represents the identifier of this namespace. Namespace identifiers shall be
+     * {@linkplain GenericName#toFullyQualifiedName() fully-qualified names} where:
+     *
+     * <blockquote><code>
+     * name.{@linkplain GenericName#scope() scope()}.{@linkplain #isGlobal()} == true
+     * </code></blockquote>
      *
      * @return The identifier of this namespace.
      */
@@ -358,9 +362,9 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      *          The name of the child namespace, or {@code null} if same than key.
      * @param headSeparator
      *          The separator to insert between the namespace and the
-     *          {@linkplain AbstractName#head head} of any name in that namespace.
+     *          {@linkplain AbstractName#head() head} of any name in that namespace.
      * @param separator
-     *          The separator to insert between the {@linkplain AbstractName#getParsedNames
+     *          The separator to insert between the {@linkplain AbstractName#getParsedNames()
      *          parsed names} of any name in that namespace.
      * @return The child namespace. It may be an existing instance.
      */
@@ -400,7 +404,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
 
     /**
      * Returns a name which is local in this namespace. The returned name will have this
-     * namespace as its {@linkplain DefaultLocalName#scope scope}. This method may returns
+     * namespace as its {@linkplain DefaultLocalName#scope() scope}. This method may returns
      * an existing instance on a "best effort" basis, but this is not guaranteed.
      *
      * @param  name      The name of the instance to create.

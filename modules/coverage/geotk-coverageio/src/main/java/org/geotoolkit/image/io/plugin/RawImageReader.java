@@ -390,7 +390,7 @@ public class RawImageReader extends SpatialImageReader {
             iter.startBands();
             for (int j=dstBand; --j>=0;) {
                 if (iter.nextBandDone()) {
-                    throw new IIOException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, dstBand));
+                    throw new IIOException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, dstBand));
                 }
             }
             iter.startLines();

@@ -795,7 +795,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                     } else {
                         // Use range.getMin/MaxValue() because they may be integers rather than doubles.
                         Warnings.log(this, null, SpatialImageReader.class, "getImageType",
-                                Errors.Keys.BAD_RANGE_$2, range.getMinValue(), range.getMaxValue());
+                                Errors.Keys.ILLEGAL_RANGE_$2, range.getMinValue(), range.getMaxValue());
                         continue;
                     }
                 } else {

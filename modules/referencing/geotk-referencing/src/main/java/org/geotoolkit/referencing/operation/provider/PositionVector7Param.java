@@ -364,7 +364,7 @@ public class PositionVector7Param extends MathTransformProvider {
     private static void ensureValid(final ParameterDescriptor<?> param, double value) {
         if (!(value > 0)) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_$1, param.getName().getCode()));
+                    Errors.Keys.NO_PARAMETER_$1, param.getName().getCode()));
         }
     }
 }

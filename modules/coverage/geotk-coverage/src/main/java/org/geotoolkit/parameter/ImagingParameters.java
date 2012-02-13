@@ -243,7 +243,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
                     final ParameterDescriptor<?> d = (ParameterDescriptor<?>) values[i].getDescriptor();
                     if (IdentifiedObjects.nameMatches(d, name)) {
                         throw new InvalidParameterNameException(Errors.format(
-                                Errors.Keys.PARAMETER_NAME_CLASH_$4,
+                                Errors.Keys.DUPLICATED_PARAMETER_NAME_$4,
                                 d.getName().getCode(), j, name, i), name);
                     }
                 }

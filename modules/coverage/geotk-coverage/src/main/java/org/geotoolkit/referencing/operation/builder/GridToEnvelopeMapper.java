@@ -269,7 +269,7 @@ public class GridToEnvelopeMapper {
     public GridEnvelope getGridRange() throws IllegalStateException {
         if (gridExtent == null) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_VALUE_$1, "gridEnvelope"));
+                    Errors.Keys.NO_PARAMETER_VALUE_$1, "gridEnvelope"));
         }
         return gridExtent;
     }
@@ -360,7 +360,7 @@ public class GridToEnvelopeMapper {
     public Envelope getEnvelope() throws IllegalStateException {
         if (envelope == null) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_VALUE_$1, "envelope"));
+                    Errors.Keys.NO_PARAMETER_VALUE_$1, "envelope"));
         }
         return envelope;
     }

@@ -146,7 +146,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         if (index != 0) {
             final String layer = getLayer();
             if (layer == null) {
-                throw new CatalogException(errors().getString(Errors.Keys.MISSING_PARAMETER_$1, "layer"));
+                throw new CatalogException(errors().getString(Errors.Keys.NO_PARAMETER_$1, "layer"));
             }
             statement.setString(index, layer);
         }

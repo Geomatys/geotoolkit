@@ -9,7 +9,7 @@ Developing Geotoolkit.org
   Improving and extending Geotk requires extensive knowledge of geographic information science,
   object oriented programming, the Java language, and of the library itself. Contributors should
   expect that they will need to learn a great deal before being able to become productive.
-  However, the effort requried to become productive should improve the contributor's understanding
+  However, the effort required to become productive should improve the contributor's understanding
   and knowledge of geographic information systems, of geodetic and geographic science, and of
   effective computer programming.
 
@@ -34,7 +34,7 @@ Developing Geotoolkit.org
   Issues of spatial representation, data size, spatial scale, information workflows and other topics
   arise frequently and are worth understanding.
 
-  The best general introduction to the field is the book <Geographic Infromation Systems and Science>
+  The best general introduction to the field is the book <Geographic Information Systems and Science>
   by Paul A. Longley, Michael F. Goodchild, David J. Maguire and David W. Rhind published in its
   second edition by John Wiley and Sons Ltd. in 2004.
 
@@ -46,7 +46,7 @@ Developing Geotoolkit.org
   Organization for Standardization\ (ISO) and the Open Geospatial Consortium\ (OGC). Contributors
   to Geotk should have at least a basic understanding of the model developed in the
   ISO\ 19000 series of specifications, starting with the Abstract model and working through the
-  <Feature> model. While the ISO specifications are sold, the OGC releases its own, essentiallly
+  <Feature> model. While the ISO specifications are sold, the OGC releases its own, essentially
   identical versions of standards which have evolved from the collaboration. The OGC specifications
   are available for the {{{http://www.opengeospatial.org/standards}OGC standards and specification}}
   page.
@@ -61,7 +61,7 @@ Developing Geotoolkit.org
   Geotk must consider the various ways that users can reuse Java code: not only through object
   instantiation and method calls but also through inheritance. Geotk pays special attention to
   accessibility constraints ensuring that only the classes and methods which are offered for use are
-  publically accessible and that these methods are fully and correctly documented in javadoc.
+  publicly accessible and that these methods are fully and correctly documented in javadoc.
 
   In order to contribute source code to the Geotk library, a solid background in the Java
   language is necessary. Contributors should at least know of the existence of all the operators in
@@ -78,7 +78,7 @@ Developing Geotoolkit.org
 ** Mathematical Background
 
   Geotk frequently deals with complex calculations using relatively simple mathematics of
-  triginometry and matrix algebra. The coordinate operations of the Referencing modules involve
+  trigonometry and matrix algebra. The coordinate operations of the Referencing modules involve
   trigonometric transformations on a flattened ellipsoid of rotation, the image transformations in
   the Coverage modules and in the Rendering system involve extensive use of Affine transforms, and
   the Analytic modules often use their own mathematical operations. These mathematics cannot be
@@ -91,7 +91,7 @@ Developing Geotoolkit.org
   the library. Mathematically, affine transformations are usually applied as a matrix operation
   applied to a coordinate vector. There are numerous introductions to affine transformations
   available on the World Wide Web since the concept is central to all graphics programming. One
-  such introdution is avaiable {{{http://www.glyphic.com/transform/}here}}.
+  such introduction is available {{{http://www.glyphic.com/transform/}here}}.
 
 
 
@@ -107,17 +107,11 @@ Developing Geotoolkit.org
 
 
 
-* The Geotk library utilities
+* The Geotk library modules
 
   Contributors should gain a basic understanding of the core library including the separation into
   modules, the functionality available in the base module, and the functioning of the modules of
   interest.
-
-~~TODO: The library structure
-
-~~The base module of Geotk is the
-~~{{{http://www.geotoolkit.org/apidocs/index.html?org/geotoolkit/util/package-summary.html}org.geotoolkit.util}} set of packages. The best source of
-~~information on these module is in their respective package javadoc.
 
 
 
@@ -127,6 +121,10 @@ Developing Geotoolkit.org
   Geotk follows a number of conventions to ensure collaboration can occur while minimizing the
   impact on various users. These conventions aim to ensure the production of a high quality library
   and protect ongoing collaboration between contributors.
+  Contribution should follow the following guidelines:
+
+    * {{{./code-patterns.html}Code patterns}} gained from experience.
+
 
 
 ** Copyright Assignment

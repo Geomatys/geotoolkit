@@ -20,6 +20,7 @@ package org.geotoolkit.xml;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
+import javax.xml.XMLConstants;
 
 import org.geotoolkit.lang.Static;
 
@@ -95,10 +96,12 @@ public final class Namespaces extends Static {
 
     /**
      * The <code>{@value}</code> URL.
+     * This is also defined by {@link XMLConstants#W3C_XML_SCHEMA_INSTANCE_NS_URI}.
      *
      * @category W3C
+     * @see XMLConstants#W3C_XML_SCHEMA_INSTANCE_NS_URI
      */
-    public static final String XSI = "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String XSI = XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
 
     /**
      * The <code>{@value}</code> URL.
@@ -132,8 +135,8 @@ public final class Namespaces extends Static {
     private static final Map<String,String> SPECIFIC_URLS;
     static {
         final Map<String,String> p = new HashMap<String,String>(40);
-        p.put("http://www.w3.org/2001/XMLSchema",                         "xsd");
-        p.put("http://www.w3.org/2001/XMLSchema-instance",                "xsi");
+        p.put(XMLConstants.W3C_XML_SCHEMA_NS_URI,                         "xsd");
+        p.put(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,                "xsi");
         p.put("http://www.w3.org/2004/02/skos/core#",                    "skos");
         p.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",              "rdf");
         p.put("http://www.opengis.net/sensorML/1.0",                     "sml1");

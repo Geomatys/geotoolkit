@@ -26,8 +26,8 @@ import net.jcip.annotations.Immutable;
 
 /**
  * The global namespace. Only one instance of this class is allowed to exists. We do not expose
- * any global namespace in public API since ISO 19103 do not defines them, and users should not
- * need them.
+ * any global namespace in public API since ISO 19103 does not define them and users should not
+ * need to handle them explicitely.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
