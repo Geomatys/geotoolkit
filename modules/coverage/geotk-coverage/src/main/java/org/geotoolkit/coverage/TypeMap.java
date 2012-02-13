@@ -315,7 +315,7 @@ public final class TypeMap extends Static {
     public static SampleDimensionType getSampleDimensionType(final SampleModel model, final int band)
             throws IllegalArgumentException
     {
-        if (band<0 || band>=model.getNumBands()) {
+        if (band < 0 || band >= model.getNumBands()) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, band));
         }
         boolean signed = true;
@@ -559,7 +559,7 @@ public final class TypeMap extends Static {
     public static ColorInterpretation getColorInterpretation(final ColorModel model, final int band)
             throws IllegalArgumentException
     {
-        if (band<0 || band>=ColorUtilities.getNumBands(model)) {
+        if (band < 0 || band >= ColorUtilities.getNumBands(model)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, band));
         }
         if (model instanceof IndexColorModel) {

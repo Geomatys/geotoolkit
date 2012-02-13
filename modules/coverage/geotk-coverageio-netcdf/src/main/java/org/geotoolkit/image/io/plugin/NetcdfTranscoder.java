@@ -26,7 +26,6 @@ import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.text.ParseException;
 import java.io.IOException;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
@@ -44,7 +43,7 @@ import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.CF;
 import ucar.nc2.units.DateUnit;
-import ucar.unidata.util.DateUtil;
+import ucar.nc2.units.DateFormatter;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.Identifier;
@@ -105,6 +104,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.SimpleInternationalString.wrap;
 
@@ -1001,6 +1001,11 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     private final Group[] groups;
 
     /**
+     * The object to use for parsing dates, created when first needed.
+     */
+    private transient DateFormatter dateFormat;
+
+    /**
      * The name factory, created when first needed.
      */
     private transient NameFactory nameFactory;
@@ -1160,10 +1165,16 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      */
     private Date getDateValue(final Group group, final String name) {
         final String date = getStringValue(group, name);
-        if (date != null) try {
-            return DateUtil.parse(date);
-        } catch (ParseException e) {
-            warning("getDateValue", e);
+        if (date != null) {
+            if (dateFormat == null) {
+                dateFormat = new DateFormatter();
+            }
+            final Date result = dateFormat.getISODate(date);
+            if (result == null) {
+                Warnings.log(this, Level.WARNING, NetcdfTranscoder.class, "getDateValue",
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, name, date);
+            }
+            return result;
         }
         return null;
     }

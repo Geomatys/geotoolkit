@@ -34,9 +34,10 @@ import org.geotoolkit.internal.InternalUtilities;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 // NetCDF attributes to be read by this class
-import static ucar.nc2.constants.CF.ADD_OFFSET;
-import static ucar.nc2.constants.CF.MISSING_VALUE;
-import static ucar.nc2.constants.CF.SCALE_FACTOR;
+import static ucar.nc2.constants.CDM.ADD_OFFSET;
+import static ucar.nc2.constants.CDM.FILL_VALUE;
+import static ucar.nc2.constants.CDM.MISSING_VALUE;
+import static ucar.nc2.constants.CDM.SCALE_FACTOR;
 
 
 /**
@@ -68,8 +69,7 @@ final class NetcdfVariable {
     static final String
             VALID_MIN     = "valid_min",
             VALID_MAX     = "valid_max",
-            VALID_RANGE   = "valid_range",
-            FILL_VALUE    = "_FillValue";
+            VALID_RANGE   = "valid_range";
 
     /**
      * The data type to accept in images. Used for automatic detection of which variables

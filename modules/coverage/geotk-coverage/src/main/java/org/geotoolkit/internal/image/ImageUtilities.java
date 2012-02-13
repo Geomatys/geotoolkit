@@ -590,7 +590,7 @@ public final class ImageUtilities extends Static {
 
     /**
      * Sets the content of all banks in the given data buffer to the specified value. We do not
-     * allow setting of different value for invidivual bank because the data buffer "banks" do
+     * allow setting of different value for individual bank because the data buffer "banks" do
      * not necessarily match the image "bands".
      * <p>
      * We do not provide version for setting only a portion of the data buffer in order to
