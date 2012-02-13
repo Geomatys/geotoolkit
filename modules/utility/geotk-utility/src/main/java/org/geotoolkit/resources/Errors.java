@@ -1260,6 +1260,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNMODIFIABLE_OBJECT_$1 = 231;
 
         /**
+         * Can't parse value “{1}” in attribute ‘{0}’.
+         */
+        public static final int UNPARSABLE_ATTRIBUTE_$2 = 263;
+
+        /**
          * Can’t parse “{0}” as a number.
          */
         public static final int UNPARSABLE_NUMBER_$1 = 232;

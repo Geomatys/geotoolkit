@@ -18,12 +18,13 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.awt.image.DataBuffer;
-import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.VariableEnhanced;
@@ -57,7 +58,7 @@ import static ucar.nc2.constants.CDM.SCALE_FACTOR;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -77,18 +78,14 @@ final class NetcdfVariable {
      *
      * @see #getRawDataType(VariableIF)
      */
-    static final Set<DataType> VALID_TYPES;
-    static {
-        final Set<DataType> types = EnumSet.noneOf(DataType.class);
-        types.add(DataType.BOOLEAN);
-        types.add(DataType.BYTE);
-        types.add(DataType.SHORT);
-        types.add(DataType.INT);
-        types.add(DataType.LONG);
-        types.add(DataType.FLOAT);
-        types.add(DataType.DOUBLE);
-        VALID_TYPES = Collections.unmodifiableSet(types);
-    }
+    private static final Set<DataType> VALID_TYPES = EnumSet.of(
+            DataType.BOOLEAN,
+            DataType.BYTE,
+            DataType.SHORT,
+            DataType.INT,
+            DataType.LONG,
+            DataType.FLOAT,
+            DataType.DOUBLE);
 
     /**
      * Raw image type as one of {@link DataBuffer} constants.
@@ -374,6 +371,46 @@ scan:   for (int i=0; i<missingCount; i++) {
             case DOUBLE:  return DataBuffer.TYPE_DOUBLE;
         }
         return DataBuffer.TYPE_UNDEFINED;
+    }
+
+    /**
+     * Returns {@code true} if the given variable can be used for generating an image.
+     * This method checks for the following conditions:
+     * <p>
+     * <ul>
+     *   <li>Images require at least 2 dimensions. They may have more dimensions,
+     *       in which case a slice will be taken later.</li>
+     *   <li>Exclude axes. Axes are often already excluded by the above condition
+     *       because axis are usually 1-dimensional, but some axes are 2-dimensional
+     *       (e.g. a localization grid).</li>
+     *   <li>Excludes characters, strings and structures, which can not be easily
+     *       mapped to an image type. In addition, 2-dimensional character arrays
+     *       are often used for annotations and we don't want to confuse them
+     *       with images.</li>
+     * </ul>
+     *
+     * @param  variable The variable to test.
+     * @param  variables The list of all variables from which the given variable come from.
+     * @return {@code true} if the specified variable can be returned from the
+     *         {@link NetcdfImageReader#getImageNames()} method.
+     */
+    static boolean isCoverage(final VariableSimpleIF variable, final List<? extends VariableIF> variables) {
+        if (variable.getRank() >= 2 && VALID_TYPES.contains(variable.getDataType())) {
+            final String name = variable.getShortName();
+            for (final VariableIF var : variables) {
+                if (var != variable) {
+                    Dimension dim;
+                    for (int d=0; (dim=var.getDimension(d)) != null; d++) {
+                        if (dim.getName().equals(name)) {
+                            // The specified variable is a dimension of another variable.
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**

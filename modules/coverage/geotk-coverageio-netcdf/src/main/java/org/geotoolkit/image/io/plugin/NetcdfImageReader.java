@@ -822,31 +822,6 @@ public class NetcdfImageReader extends FileImageReader implements
     }
 
     /**
-     * Returns {@code true} if the specified variable is a dimension of an other variable.
-     * Such dimensions will be excluded from the list returned by {@link #getImageNames()}.
-     *
-     * @param  candidate The variable to test.
-     * @param  variables The list of variables.
-     * @return {@code true} if the specified variable is a dimension of an other variable.
-     */
-    private static boolean isAxis(final VariableIF candidate, final List<? extends VariableIF> variables) {
-        final String name = candidate.getShortName();
-        final int size = variables.size();
-        for (int i=0; i<size; i++) {
-            final VariableIF var = variables.get(i);
-            if (var != candidate) {
-                Dimension dim;
-                for (int d=0; (dim=var.getDimension(d)) != null; d++) {
-                    if (dim.getName().equals(name)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Ensures that the NetCDF file is open, but does not load any variable yet.
      * The {@linkplain #variable} will be read by {@link #prepareVariable} only.
      */
@@ -925,24 +900,21 @@ public class NetcdfImageReader extends FileImageReader implements
             final List<Variable> variables = dataset.getVariables();
             final String[] filtered = new String[variables.size()];
             int count = 0;
-            for (int i=0; i<filtered.length; i++) {
-                final VariableIF candidate = variables.get(i);
-                /*
-                 * - Images require at least 2 dimensions. They may have more dimensions,
-                 *   in which case a slice will be taken later.
-                 *
-                 * - Excludes axis. They are often already excluded by the first condition
-                 *   because axis are usually 1-dimensional, but some are 2-dimensional,
-                 *   e.g. a localization grid.
-                 *
-                 * - Excludes characters, strings and structures, which can not be easily
-                 *   mapped to an image type. In addition, 2-dimensional character arrays
-                 *   are often used for annotations and we don't wan't to confuse them
-                 *   with images.
-                 */
-                if (candidate.getRank() >= 2 && !isAxis(candidate, variables) &&
-                        NetcdfVariable.VALID_TYPES.contains(candidate.getDataType()))
-                {
+            for (final VariableIF candidate : variables) {
+                if (NetcdfVariable.isCoverage(candidate, variables)) {
+                   /*
+                    * - Images require at least 2 dimensions. They may have more dimensions,
+                    *   in which case a slice will be taken later.
+                    *
+                    * - Excludes axis. They are often already excluded by the first condition
+                    *   because axis are usually 1-dimensional, but some are 2-dimensional,
+                    *   e.g. a localization grid.
+                    *
+                    * - Excludes characters, strings and structures, which can not be easily
+                    *   mapped to an image type. In addition, 2-dimensional character arrays
+                    *   are often used for annotations and we don't want to confuse them
+                    *   with images.
+                    */
                     filtered[count++] = candidate.getShortName();
                 }
             }

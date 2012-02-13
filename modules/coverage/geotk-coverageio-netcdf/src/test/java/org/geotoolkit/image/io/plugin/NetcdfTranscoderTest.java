@@ -171,9 +171,9 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
         super.testLandsat();
         final ContentInformation content = getSingleton(metadata.getContentInfo());
         assertInstanceOf("ContentInformation", CoverageDescription.class, content);
-        Collection<? extends RangeDimension> dimensions = ((CoverageDescription) content).getDimensions();
-        assertEquals("Dimensions", 2, dimensions.size());
-        // TODO: should have only one band!!
+        final RangeDimension band = getSingleton(((CoverageDescription) content).getDimensions());
+        assertEquals("long_name attribute:", "GDAL Band Number 1", String.valueOf(band.getDescriptor()));
+        assertEquals("NetCDF variable name:", "Band1", String.valueOf(band.getSequenceIdentifier()));
     }
 
     /**

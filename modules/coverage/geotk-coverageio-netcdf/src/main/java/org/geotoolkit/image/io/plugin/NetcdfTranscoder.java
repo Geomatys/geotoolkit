@@ -36,6 +36,7 @@ import javax.measure.converter.ConversionException;
 import ucar.nc2.Group;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
@@ -1172,7 +1173,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
             final Date result = dateFormat.getISODate(date);
             if (result == null) {
                 Warnings.log(this, Level.WARNING, NetcdfTranscoder.class, "getDateValue",
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, name, date);
+                        Errors.Keys.UNPARSABLE_ATTRIBUTE_$2, name, date);
             }
             return result;
         }
@@ -1780,7 +1781,12 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         } else {
             content = new DefaultCoverageDescription();
         }
-        for (final VariableSimpleIF variable : file.getVariables()) {
+        final List<? extends VariableIF> variables = file.getVariables();
+        for (final VariableSimpleIF variable : variables) {
+            if (!NetcdfVariable.isCoverage(variable, variables)) {
+                // Same exclusion criterion than the one applied in NetcdfImageReader.getImageNames().
+                continue;
+            }
             content.getDimensions().add(createSampleDimension(variable));
             final Object[] names    = getSequence(variable, FLAG_NAMES,    false);
             final Object[] meanings = getSequence(variable, FLAG_MEANINGS, false);
