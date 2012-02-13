@@ -39,11 +39,13 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.test.Validators;
 import org.opengis.test.CalculationType;
 import org.opengis.test.ToleranceModifier;
 import org.opengis.test.referencing.TransformTestCase;
 
 import org.geotoolkit.test.Commons;
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.Statistics;
@@ -53,8 +55,6 @@ import org.geotoolkit.io.wkt.FormattableObject;
 import static java.lang.StrictMath.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.util.converter.Classes.*;
-
-import org.opengis.test.Validators;
 
 
 /**
@@ -67,6 +67,14 @@ import org.opengis.test.Validators;
  * @since 2.0
  */
 public abstract strictfp class TransformTestBase extends TransformTestCase implements ToleranceModifier {
+    /**
+     * Ensures that the {@link TestBase} class has been initialized. We don't really
+     * need to flush the output; this is just a lazy way to ensure class initialization.
+     */
+    static {
+        TestBase.flushVerboseOutput();
+    }
+
     /**
      * The number of ordinates to use for stressing the math transform. We use a number that
      * encompass at least 2 time the default buffer size in order to test the code that use

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.naming;
 
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 
@@ -48,5 +49,13 @@ public final strictfp class GeoapiTest extends NameTest {
      */
     public GeoapiTest() {
         super(FactoryFinder.getNameFactory(new Hints(Hints.NAME_FACTORY, DefaultNameFactory.class)));
+    }
+
+    /**
+     * Ensures that the {@link TestBase} class has been initialized. We don't really
+     * need to flush the output; this is just a lazy way to ensure class initialization.
+     */
+    static {
+        TestBase.flushVerboseOutput();
     }
 }

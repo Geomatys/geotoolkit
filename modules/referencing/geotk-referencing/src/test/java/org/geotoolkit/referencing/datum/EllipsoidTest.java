@@ -18,12 +18,14 @@
 package org.geotoolkit.referencing.datum;
 
 import java.util.Random;
-import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 
 import org.junit.*;
 import org.opengis.test.Validators;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
+
 import static org.junit.Assert.*;
 import static java.lang.StrictMath.*;
+import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 
 
 /**
@@ -34,7 +36,7 @@ import static java.lang.StrictMath.*;
  *
  * @since 2.1
  */
-public final strictfp class EllipsoidTest {
+public final strictfp class EllipsoidTest extends ReferencingTestBase {
     /**
      * Validates constant definitions.
      */

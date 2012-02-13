@@ -34,6 +34,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.test.referencing.ParameterTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,7 +49,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final strictfp class ImagingParametersTest {
+public final strictfp class ImagingParametersTest extends ParameterTestBase {
     /**
      * Tests {@link ImagingParameters}.
      */

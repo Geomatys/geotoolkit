@@ -20,7 +20,9 @@ package org.geotoolkit.parameter;
 import java.util.*;
 import java.io.IOException;
 import java.io.StringWriter;
+
 import org.opengis.parameter.*;
+import org.geotoolkit.test.referencing.ParameterTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -37,7 +39,7 @@ import static org.opengis.test.Validators.*;
  * @since 2.1
  */
 @SuppressWarnings("serial")
-public final strictfp class ParameterGroupTest {
+public final strictfp class ParameterGroupTest extends ParameterTestBase {
     /**
      * Tests parameter values group.
      *
