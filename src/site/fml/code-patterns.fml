@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+      title="Code patterns" toplink="false">
+  <part id="database">
+    <title>Coverages</title>
+
+    <faq id="gridToCRS">
+      <question>
+        Georeference images with affine transforms, <em>not</em> bounding boxes
+      </question>
+      <answer>
+        <p>Many users define the geographic extent of an image by its corner locations.
+        This approach is not sufficient as it does not specify if the (<var>x</var>,<var>y</var>)
+        axes are interchanged (see the <a href="modules/referencing/faq.html#axisOrder">axis order
+        issue</a>) or if the <var>y</var> axis is oriented downward. All images in Geotk shall be
+        georeferenced by at least an affine transform (more complex transforms are also possible),
+        never by a rectangle or bounding box. In the two-dimensional case, the standard
+        <code>java.awt.geom.AffineTransform</code> class can be used.</p>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="database">
+    <title>Database</title>
+
+    <faq id="database-calendar">
+      <question>
+        Use <code>ResultSet.getTimestamp(int, <em>Calendar</em>)</code>
+      </question>
+      <answer>
+        <p>Geospatial data often cover a wide geographic area, spanning many time zones.
+        When reading dates or timestamps from a <code>ResultSet</code>, always specify
+        the expected time zone. It may not be the local time zone.</p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

@@ -35,6 +35,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
@@ -53,7 +54,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
- * @see org.geotoolkit.factory.FactoryFinder#getNameFactory
+ * @see org.geotoolkit.factory.FactoryFinder#getNameFactory(Hints)
  *
  * @since 2.1
  * @module
@@ -67,7 +68,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
 
     /**
      * Creates a new factory. Users should not invoke this constructor directly.
-     * Use {@link org.geotoolkit.factory.FactoryFinder#getNameFactory} instead.
+     * Use {@link org.geotoolkit.factory.FactoryFinder#getNameFactory(Hints)} instead.
      */
     public DefaultNameFactory() {
         pool = WeakHashSet.newInstance(GenericName.class);
@@ -162,7 +163,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$1, isEmpty ? "separator" : "separator.head"));
         }
-        return DefaultNameSpace.forName(name, headSeparator, separator);
+        return DefaultNameSpace.forName(name.toFullyQualifiedName(), headSeparator, separator);
     }
 
     /**
@@ -222,7 +223,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * Creates a local name from the given character sequence. The default implementation
      * returns a new or an existing {@link DefaultLocalName} instance.
      *
-     * @param  scope The {@linkplain GenericName#scope scope} of the local
+     * @param  scope The {@linkplain GenericName#scope() scope} of the local
      *         name to be created, or {@code null} for a global namespace.
      * @param  name The local name as a string or an international string.
      * @return The local name for the given character sequence.
@@ -245,7 +246,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * array is 1, or an instance of {@link DefaultScopedName} if the length of the array is 2
      * or more.
      *
-     * @param  scope The {@linkplain AbstractName#scope scope} of the generic name to
+     * @param  scope The {@linkplain AbstractName#scope() scope} of the generic name to
      *         be created, or {@code null} for a global namespace.
      * @param  parsedNames The local names as an array of {@linkplain String strings} or
      *         {@linkplain InternationalString international strings}. This array must
@@ -270,7 +271,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      * separator inferred from the given scope, or the {@linkplain DefaultNameSpace#DEFAULT_SEPARATOR
      * default separator} if the given scope is null.
      *
-     * @param  scope The {@linkplain AbstractName#scope scope} of the generic name to
+     * @param  scope The {@linkplain AbstractName#scope() scope} of the generic name to
      *         be created, or {@code null} for a global namespace.
      * @param  name The qualified name, as a sequence of names separated by a scope-dependent
      *         separator.
@@ -340,7 +341,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *   <li>{@link CharSequence} (usually a {@link String} or an {@link InternationalString}), to
      *       be parsed as a generic name using the {@linkplain DefaultNameSpace#DEFAULT_SEPARATOR
      *       default separator}.</li>
-     *   <li>{@link Identifier}, its {@linkplain Identifier#getCode code} to be parsed as a generic
+     *   <li>{@link Identifier}, its {@linkplain Identifier#getCode() code} to be parsed as a generic
      *       name using the {@linkplain DefaultNameSpace#DEFAULT_SEPARATOR default separator}.</li>
      * </ul>
      *
