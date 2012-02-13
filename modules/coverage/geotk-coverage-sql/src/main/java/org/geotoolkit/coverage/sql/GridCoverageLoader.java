@@ -468,7 +468,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
             final int imageWidth     = imageReader.getWidth (index);
             final int imageHeight    = imageReader.getHeight(index);
             if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
-                throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.IMAGE_SIZE_MISMATCH_$5,
+                throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.MISMATCHED_IMAGE_SIZE_$5,
                         IOUtilities.name(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
             }
         } catch (IOException e) {
@@ -510,7 +510,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     private String formatErrorMessage(final Exception e) throws CoverageStoreException {
         final String cause = e.getLocalizedMessage();
-        String message = Errors.getResources(getLocale()).getString(Errors.Keys.CANT_READ_$1, getInputName());
+        String message = Errors.getResources(getLocale()).getString(Errors.Keys.CANT_READ_FILE_$1, getInputName());
         if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
             message = message + '\n' + cause;
         }

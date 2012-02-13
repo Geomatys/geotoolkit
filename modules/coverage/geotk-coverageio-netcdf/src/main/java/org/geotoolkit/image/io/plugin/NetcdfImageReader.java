@@ -661,7 +661,7 @@ public class NetcdfImageReader extends FileImageReader implements
                 switch (n) {
                     case X_DIMENSION:
                     case Y_DIMENSION: {
-                        throw new IllegalImageDimensionException(errors().getString(Errors.Keys.BAD_PARAMETER_$2,
+                        throw new IllegalImageDimensionException(errors().getString(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
                                 "DimensionSlice(" + api.name() + ')', n));
                     }
                 }
@@ -1238,7 +1238,7 @@ public class NetcdfImageReader extends FileImageReader implements
      * Wraps a generic exception into an {@link IIOException}.
      */
     private IIOException netcdfFailure(final Exception e) throws IOException {
-        return new IIOException(errors().getString(Errors.Keys.CANT_READ_$1, dataset.getLocation()), e);
+        return new IIOException(errors().getString(Errors.Keys.CANT_READ_FILE_$1, dataset.getLocation()), e);
     }
 
     /**

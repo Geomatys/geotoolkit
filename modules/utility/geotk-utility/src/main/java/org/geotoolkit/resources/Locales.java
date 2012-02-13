@@ -190,7 +190,7 @@ public final class Locales extends Static {
                 country = code.substring(ci, vi).trim();
                 variant = code.substring(++vi).trim();
                 if (code.indexOf('_', vi) >= 0) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_LOCALE_$1, code));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_LANGUAGE_CODE_$1, code));
                 }
             }
         }
@@ -238,7 +238,7 @@ public final class Locales extends Static {
             case 2: return false;
             case 3: return true;
             default: {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_LOCALE_$1, code));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_LANGUAGE_CODE_$1, code));
             }
         }
     }

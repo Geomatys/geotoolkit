@@ -251,7 +251,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
             final int size = target.size();
             if (size <= 1) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.MISSING_PARAMETER_$1, "operations[" + size + ']'));
+                        Errors.Keys.NO_PARAMETER_$1, "operations[" + size + ']'));
             }
         }
         return transform;

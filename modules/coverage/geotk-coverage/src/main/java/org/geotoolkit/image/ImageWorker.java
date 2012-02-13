@@ -702,7 +702,7 @@ public class ImageWorker extends ImageInspector {
         if (first < 0) first += numBands;
         if (last  < 0) last  += numBands;
         if (first < 0 || last < first || last >= numBands) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.BAD_RANGE_$2, first, last));
+            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, first, last));
         }
         final int count = last - first + 1;
         if (count != numBands) {

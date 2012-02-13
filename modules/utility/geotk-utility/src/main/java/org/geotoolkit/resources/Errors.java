@@ -57,7 +57,7 @@ public final class Errors extends IndexedResourceBundle {
         /**
          * Value “{0}” is ambiguous since it associated to the following possibilities:
          */
-        public static final int AMBIGIOUS_VALUE_$1 = 1;
+        public static final int AMBIGUOUS_VALUE_$1 = 1;
 
         /**
          * Angle {0} is too high.
@@ -65,89 +65,9 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ANGLE_OVERFLOW_$1 = 2;
 
         /**
-         * Latitudes {0} and {1} are opposite.
-         */
-        public static final int ANTIPODE_LATITUDES_$2 = 3;
-
-        /**
          * Azimuth {0} is out of range (±180°).
          */
         public static final int AZIMUTH_OUT_OF_RANGE_$1 = 4;
-
-        /**
-         * Band number {0} is not valid.
-         */
-        public static final int BAD_BAND_NUMBER_$1 = 5;
-
-        /**
-         * Coefficient {0}={1} can’t be NaN or infinity.
-         */
-        public static final int BAD_COEFFICIENT_$2 = 6;
-
-        /**
-         * Illegal coordinate: {0}
-         */
-        public static final int BAD_COORDINATE_$1 = 7;
-
-        /**
-         * Bad entry
-         */
-        public static final int BAD_ENTRY = 8;
-
-        /**
-         * Illegal grid envelope [{1} … {2}] for dimension {0}.
-         */
-        public static final int BAD_GRID_ENVELOPE_$3 = 9;
-
-        /**
-         * Illegal data at line {1} in file “{0}”.
-         */
-        public static final int BAD_LINE_IN_FILE_$2 = 10;
-
-        /**
-         * Bad local: {0}
-         */
-        public static final int BAD_LOCALE_$1 = 11;
-
-        /**
-         * Parameter ‘{0}’ can’t have value “{1}”.
-         */
-        public static final int BAD_PARAMETER_$2 = 12;
-
-        /**
-         * Parameter ‘{0}’ can’t be of type ‘{1}’.
-         */
-        public static final int BAD_PARAMETER_TYPE_$2 = 13;
-
-        /**
-         * Values for the ‘{0}’ property can not be of kind ‘{1}’.
-         */
-        public static final int BAD_PROPERTY_TYPE_$2 = 254;
-
-        /**
-         * Range [{0} … {1}] is not valid.
-         */
-        public static final int BAD_RANGE_$2 = 14;
-
-        /**
-         * Empty or invalid rectangle: {0}
-         */
-        public static final int BAD_RECTANGLE_$1 = 15;
-
-        /**
-         * Illegal transform of type ‘{0}’.
-         */
-        public static final int BAD_TRANSFORM_$1 = 16;
-
-        /**
-         * Multiplication or division of “{0}” by “{1}” not allowed.
-         */
-        public static final int BAD_UNIT_OPERATION_$2 = 17;
-
-        /**
-         * Unit “{1}” can’t be raised to power {0}.
-         */
-        public static final int BAD_UNIT_POWER_$2 = 18;
 
         /**
          * Bursa-Wolf parameters required.
@@ -192,17 +112,17 @@ public final class Errors extends IndexedResourceBundle {
         /**
          * Can’t create a factory of type ‘{0}’.
          */
-        public static final int CANT_CREATE_FACTORY_$1 = 26;
+        public static final int CANT_CREATE_FACTORY_FOR_TYPE_$1 = 26;
 
         /**
          * Can’t create object of type ‘{0}’ from a text.
          */
-        public static final int CANT_CREATE_FROM_TEXT_$1 = 27;
+        public static final int CANT_CREATE_OBJECT_FROM_TEXT_$1 = 27;
 
         /**
          * Can’t evaluate a value for coordinate ({0}).
          */
-        public static final int CANT_EVALUATE_$1 = 28;
+        public static final int CANT_EVALUATE_FOR_COORDINATE_$1 = 28;
 
         /**
          * Failed to get the data source for name “{0}”.
@@ -213,11 +133,6 @@ public final class Errors extends IndexedResourceBundle {
          * Can not process the “{0}={1}” property.
          */
         public static final int CANT_PROCESS_PROPERTY_$2 = 30;
-
-        /**
-         * Can’t read file “{0}”.
-         */
-        public static final int CANT_READ_$1 = 31;
 
         /**
          * Can’t read the “{1}” record in the “{0}” table.
@@ -240,6 +155,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_READ_DATABASE_TABLE_$2 = 35;
 
         /**
+         * Can’t read file “{0}”.
+         */
+        public static final int CANT_READ_FILE_$1 = 31;
+
+        /**
          * Can’t reduce “{0}” to a two-dimensional coordinate system.
          */
         public static final int CANT_REDUCE_TO_TWO_DIMENSIONS_$1 = 36;
@@ -247,7 +167,7 @@ public final class Errors extends IndexedResourceBundle {
         /**
          * Can’t reproject grid coverage “{0}”.
          */
-        public static final int CANT_REPROJECT_$1 = 37;
+        public static final int CANT_REPROJECT_COVERAGE_$1 = 37;
 
         /**
          * Can’t separate CRS “{0}”.
@@ -277,7 +197,7 @@ public final class Errors extends IndexedResourceBundle {
         /**
          * Can’t write file “{0}”.
          */
-        public static final int CANT_WRITE_$1 = 42;
+        public static final int CANT_WRITE_FILE_$1 = 42;
 
         /**
          * Graphic “{0}” is owned by an other canvas.
@@ -330,6 +250,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DISTANCE_OUT_OF_RANGE_$4 = 52;
 
         /**
+         * Name or alias for parameter “{0}” at index {1} conflict with name “{2}” at index {3}.
+         */
+        public static final int DUPLICATED_PARAMETER_NAME_$4 = 182;
+
+        /**
          * The {0} record is defined more than once.
          */
         public static final int DUPLICATED_RECORD_$1 = 53;
@@ -368,6 +293,11 @@ public final class Errors extends IndexedResourceBundle {
          * Envelope must be at least two-dimensional and non-empty.
          */
         public static final int EMPTY_ENVELOPE_2D = 60;
+
+        /**
+         * Empty or invalid rectangle: {0}
+         */
+        public static final int EMPTY_RECTANGLE_$1 = 15;
 
         /**
          * Premature end of data file.
@@ -415,11 +345,6 @@ public final class Errors extends IndexedResourceBundle {
         public static final int GRID_LOCATIONS_UNEQUAL = 68;
 
         /**
-         * Grid header has unexpected length: {0}
-         */
-        public static final int HEADER_UNEXPECTED_LENGTH_$1 = 69;
-
-        /**
          * Hole is not inside polygon.
          */
         public static final int HOLE_NOT_INSIDE_POLYGON = 70;
@@ -450,6 +375,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_AXIS_ORIENTATION_$2 = 75;
 
         /**
+         * Band number {0} is not valid.
+         */
+        public static final int ILLEGAL_BAND_NUMBER_$1 = 5;
+
+        /**
          * Class ‘{0}’ is illegal. It must be ‘{1}’ or a derived class.
          */
         public static final int ILLEGAL_CLASS_$2 = 76;
@@ -459,6 +389,11 @@ public final class Errors extends IndexedResourceBundle {
          * type.
          */
         public static final int ILLEGAL_CLASS_$3 = 256;
+
+        /**
+         * Illegal coordinate: {0}
+         */
+        public static final int ILLEGAL_COORDINATE_$1 = 7;
 
         /**
          * Illegal coordinate reference system.
@@ -481,6 +416,16 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_DESCRIPTOR_FOR_PARAMETER_$1 = 80;
 
         /**
+         * Bad entry.
+         */
+        public static final int ILLEGAL_ENTRY = 8;
+
+        /**
+         * Illegal grid envelope [{1} … {2}] for dimension {0}.
+         */
+        public static final int ILLEGAL_GRID_ENVELOPE_$3 = 9;
+
+        /**
          * “{0}” is not a valid identifier.
          */
         public static final int ILLEGAL_IDENTIFIER_$1 = 82;
@@ -496,9 +441,24 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_KEY_$1 = 84;
 
         /**
+         * Local “{0}” is not recognized.
+         */
+        public static final int ILLEGAL_LANGUAGE_CODE_$1 = 11;
+
+        /**
+         * Illegal data at line {1} in file “{0}”.
+         */
+        public static final int ILLEGAL_LINE_IN_FILE_$2 = 10;
+
+        /**
          * Illegal matrix size.
          */
         public static final int ILLEGAL_MATRIX_SIZE = 85;
+
+        /**
+         * Expected a source with a single image, or tiles having the same resolution.
+         */
+        public static final int ILLEGAL_MOSAIC_INPUT = 100;
 
         /**
          * Parameter “{0}” occurs {1} time, while the expected range of occurrences was [{2} … {3}].
@@ -516,10 +476,44 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_ORDINATE_AT_$1 = 81;
 
         /**
-         * The dimension of the “{0}” image is ({1}×{2}) pixels, while the expected dimension was
-         * ({3}×{4}) pixels.
+         * Parameter ‘{0}’ can’t be of type ‘{1}’.
          */
-        public static final int IMAGE_SIZE_MISMATCH_$5 = 88;
+        public static final int ILLEGAL_PARAMETER_TYPE_$2 = 13;
+
+        /**
+         * Parameter ‘{0}’ can’t have value “{1}”.
+         */
+        public static final int ILLEGAL_PARAMETER_VALUE_$2 = 12;
+
+        /**
+         * Values for the ‘{0}’ property can not be of kind ‘{1}’.
+         */
+        public static final int ILLEGAL_PROPERTY_TYPE_$2 = 254;
+
+        /**
+         * Range [{0} … {1}] is not valid.
+         */
+        public static final int ILLEGAL_RANGE_$2 = 14;
+
+        /**
+         * Illegal transform of type ‘{0}’.
+         */
+        public static final int ILLEGAL_TRANSFORM_FOR_TYPE_$1 = 16;
+
+        /**
+         * Unit “{1}” can’t be raised to power {0}.
+         */
+        public static final int ILLEGAL_UNIT_POWER_$2 = 18;
+
+        /**
+         * Multiplication or division of “{0}” by “{1}” not allowed.
+         */
+        public static final int ILLEGAL_UNIT_PRODUCT_$2 = 17;
+
+        /**
+         * The “{0}” object is too complex for WKT syntax.
+         */
+        public static final int ILLEGAL_WKT_FORMAT_$1 = 101;
 
         /**
          * Incompatible coordinate system type.
@@ -562,6 +556,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int INDEX_OUT_OF_BOUNDS_$1 = 96;
 
         /**
+         * Coefficient {0}={1} can’t be NaN or infinity.
+         */
+        public static final int INFINITE_COEFFICIENT_$2 = 6;
+
+        /**
          * {0} value is infinite.
          */
         public static final int INFINITE_VALUE_$1 = 97;
@@ -577,19 +576,14 @@ public final class Errors extends IndexedResourceBundle {
         public static final int INSUFFICIENT_POINTS_$2 = 99;
 
         /**
-         * Expected a source with a single image, or tiles having the same resolution.
-         */
-        public static final int INVALID_MOSAIC_INPUT = 100;
-
-        /**
-         * The “{0}” object is too complex for WKT syntax.
-         */
-        public static final int INVALID_WKT_FORMAT_$1 = 101;
-
-        /**
          * Error in “{0}”:
          */
         public static final int IN_$1 = 102;
+
+        /**
+         * Latitudes {0} and {1} are opposite.
+         */
+        public static final int LATITUDES_ARE_OPPOSITE_$2 = 3;
 
         /**
          * Latitude {0} is out of range (±90°).
@@ -658,9 +652,15 @@ public final class Errors extends IndexedResourceBundle {
         public static final int MISMATCHED_ENVELOPE_CRS_$2 = 114;
 
         /**
-         * No authority was defined for code “{0}”. Did you forget "AUTHORITY:NUMBER"?
+         * The dimension of the “{0}” image is ({1}×{2}) pixels, while the expected dimension was
+         * ({3}×{4}) pixels.
          */
-        public static final int MISSING_AUTHORITY_$1 = 115;
+        public static final int MISMATCHED_IMAGE_SIZE_$5 = 88;
+
+        /**
+         * The number of image bands ({0}) differs from the number of supplied ‘{2}’ objects ({1}).
+         */
+        public static final int MISMATCHED_NUMBER_OF_BANDS_$3 = 177;
 
         /**
          * Character ‘{0}’ was expected.
@@ -668,29 +668,9 @@ public final class Errors extends IndexedResourceBundle {
         public static final int MISSING_CHARACTER_$1 = 116;
 
         /**
-         * No foreigner key found in table “{0}”.
-         */
-        public static final int MISSING_FOREIGNER_KEY_$1 = 117;
-
-        /**
          * This operation requires the “{0}” module.
          */
         public static final int MISSING_MODULE_$1 = 118;
-
-        /**
-         * Parameter “{0}” is missing.
-         */
-        public static final int MISSING_PARAMETER_$1 = 119;
-
-        /**
-         * Missing value for parameter “{0}”.
-         */
-        public static final int MISSING_PARAMETER_VALUE_$1 = 120;
-
-        /**
-         * Missing WKT definition.
-         */
-        public static final int MISSING_WKT_DEFINITION = 121;
 
         /**
          * Geophysics categories mixed with non-geophysics ones.
@@ -838,6 +818,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NOT_TWO_DIMENSIONAL_$1 = 150;
 
         /**
+         * No authority was defined for code “{0}”. Did you forget "AUTHORITY:NUMBER"?
+         */
+        public static final int NO_AUTHORITY_$1 = 115;
+
+        /**
          * No category for value {0}.
          */
         public static final int NO_CATEGORY_FOR_VALUE_$1 = 151;
@@ -856,6 +841,11 @@ public final class Errors extends IndexedResourceBundle {
          * No data source found.
          */
         public static final int NO_DATA_SOURCE = 154;
+
+        /**
+         * No foreigner key found in table “{0}”.
+         */
+        public static final int NO_FOREIGNER_KEY_$1 = 117;
 
         /**
          * No image codec found for the “{0}” format. Available formats are {1}.
@@ -886,6 +876,16 @@ public final class Errors extends IndexedResourceBundle {
          * No layer has been specified.
          */
         public static final int NO_LAYER_SPECIFIED = 160;
+
+        /**
+         * Parameter “{0}” is missing.
+         */
+        public static final int NO_PARAMETER_$1 = 119;
+
+        /**
+         * Missing value for parameter “{0}”.
+         */
+        public static final int NO_PARAMETER_VALUE_$1 = 120;
 
         /**
          * No data series has been specified.
@@ -923,6 +923,16 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_SUCH_ELEMENT_NAME_$1 = 166;
 
         /**
+         * No such “{0}” operation for this processor.
+         */
+        public static final int NO_SUCH_OPERATION_$1 = 180;
+
+        /**
+         * No record found in table “{0}” for key “{1}”.
+         */
+        public static final int NO_SUCH_RECORD_$2 = 192;
+
+        /**
          * No “{1}” record found in the “{0}” table.
          */
         public static final int NO_SUCH_RECORD_IN_TABLE_$2 = 167;
@@ -946,6 +956,11 @@ public final class Errors extends IndexedResourceBundle {
          * Unit must be specified.
          */
         public static final int NO_UNIT = 171;
+
+        /**
+         * Missing WKT definition.
+         */
+        public static final int NO_WKT_DEFINITION = 121;
 
         /**
          * Argument ‘{0}’ should not be null.
@@ -973,11 +988,6 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NULL_VALUE_IN_TABLE_$3 = 176;
 
         /**
-         * The number of image bands ({0}) differs from the number of supplied ‘{2}’ objects ({1}).
-         */
-        public static final int NUMBER_OF_BANDS_MISMATCH_$3 = 177;
-
-        /**
          * Bad array length: {0}. An even array length was expected.
          */
         public static final int ODD_ARRAY_LENGTH_$1 = 178;
@@ -988,19 +998,9 @@ public final class Errors extends IndexedResourceBundle {
         public static final int OPERATION_ALREADY_BOUNDS_$1 = 179;
 
         /**
-         * No such “{0}” operation for this processor.
-         */
-        public static final int OPERATION_NOT_FOUND_$1 = 180;
-
-        /**
          * Possible use of “{0}” projection outside its valid area.
          */
         public static final int OUT_OF_PROJECTION_VALID_AREA_$1 = 181;
-
-        /**
-         * Name or alias for parameter “{0}” at index {1} conflict with name “{2}” at index {3}.
-         */
-        public static final int PARAMETER_NAME_CLASH_$4 = 182;
 
         /**
          * Unparsable string: “{0}”. Please check characters “{1}”.
@@ -1041,11 +1041,6 @@ public final class Errors extends IndexedResourceBundle {
          * Ranges [{0} … {1}] and [{2} … {3}] overlap.
          */
         public static final int RANGE_OVERLAP_$4 = 191;
-
-        /**
-         * No record found in table “{0}” for key “{1}”.
-         */
-        public static final int RECORD_NOT_FOUND_$2 = 192;
 
         /**
          * Recursive call while creating a ‘{0}’ object.
@@ -1136,6 +1131,11 @@ public final class Errors extends IndexedResourceBundle {
          * Unexpected end of string.
          */
         public static final int UNEXPECTED_END_OF_STRING = 208;
+
+        /**
+         * Grid header has unexpected length: {0}
+         */
+        public static final int UNEXPECTED_HEADER_LENGTH_$1 = 69;
 
         /**
          * Image doesn’t have the expected size.

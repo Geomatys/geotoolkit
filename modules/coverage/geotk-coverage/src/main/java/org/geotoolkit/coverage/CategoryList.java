@@ -1218,7 +1218,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             while (!iterator.nextLineDone());
         } catch (TransformException cause) {
             RasterFormatException exception = new RasterFormatException(Errors.format(
-                    Errors.Keys.BAD_TRANSFORM_$1, Classes.getClass(tr)));
+                    Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1, Classes.getClass(tr)));
             exception.initCause(cause);
             throw exception;
         }

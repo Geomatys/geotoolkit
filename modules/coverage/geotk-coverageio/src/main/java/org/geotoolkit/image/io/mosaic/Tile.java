@@ -266,7 +266,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         ensureNonNull("tile", tile);
         if (region != null) {
             if (region.isEmpty()) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RECTANGLE_$1, region));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, region));
             }
             x = region.x;
             y = region.y;
@@ -363,7 +363,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         ensureNonNull("input",    input);
         ensureNonNull("region",   region);
         if (region.isEmpty()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RECTANGLE_$1, region));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, region));
         }
         this.provider   = provider;
         this.input      = input;

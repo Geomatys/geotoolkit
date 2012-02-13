@@ -81,7 +81,7 @@ final class MetadataHandler implements InvocationHandler {
             final int key;
             final Object value;
             if (count == 0) {
-                key = Errors.Keys.MISSING_PARAMETER_$1;
+                key = Errors.Keys.NO_PARAMETER_$1;
                 value = "arg";
             } else {
                 key = Errors.Keys.UNEXPECTED_PARAMETER_$1;

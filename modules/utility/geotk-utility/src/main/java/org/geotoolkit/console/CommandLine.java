@@ -433,7 +433,7 @@ public abstract class CommandLine implements Runnable {
                 if (text == null && option.mandatory() && status == null) {
                     if (!ignoreMandatoryOption) {
                         status = new IllegalArgumentException(error(
-                                Errors.Keys.MISSING_PARAMETER_$1, name));
+                                Errors.Keys.NO_PARAMETER_$1, name));
                     }
                     continue;
                 }
@@ -532,7 +532,7 @@ public abstract class CommandLine implements Runnable {
                         split = 0;
                     }
                     throw new IllegalArgumentException(error(
-                            Errors.Keys.MISSING_PARAMETER_VALUE_$1, arg));
+                            Errors.Keys.NO_PARAMETER_VALUE_$1, arg));
                 }
             }
         }

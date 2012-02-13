@@ -342,7 +342,7 @@ final class PropertyAccessor {
                 final Integer old = mapping.put(name, index);
                 if (old != null && !old.equals(index)) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.PARAMETER_NAME_CLASH_$4, name, index, name, old));
+                            Errors.Keys.DUPLICATED_PARAMETER_NAME_$4, name, index, name, old));
                 }
                 original = name;
                 name = name.toLowerCase(LOCALE).trim();

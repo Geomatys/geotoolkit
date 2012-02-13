@@ -216,7 +216,7 @@ public class OperationJAI extends Operation2D {
                 return operation;
             }
         }
-        throw new OperationNotFoundException(Errors.format(Errors.Keys.OPERATION_NOT_FOUND_$1, name));
+        throw new OperationNotFoundException(Errors.format(Errors.Keys.NO_SUCH_OPERATION_$1, name));
     }
 
     /**
@@ -519,7 +519,7 @@ public class OperationJAI extends Operation2D {
                     }
                 } catch (FactoryException exception) {
                     throw new CannotReprojectException(Errors.format(
-                            Errors.Keys.CANT_REPROJECT_$1, source.getName()), exception);
+                            Errors.Keys.CANT_REPROJECT_COVERAGE_$1, source.getName()), exception);
                 }
             }
             final GridGeometry2D targetGeom = new GridGeometry2D(null, toTarget, targetCRS);

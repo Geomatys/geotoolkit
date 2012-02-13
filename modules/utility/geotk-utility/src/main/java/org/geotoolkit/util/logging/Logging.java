@@ -434,7 +434,7 @@ public final class Logging extends Static {
                     throw factoryNotFound(className, (NoClassDefFoundError) cause);
                 }
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.CANT_CREATE_FACTORY_$1, className, cause));
+                        Errors.Keys.CANT_CREATE_FACTORY_FOR_TYPE_$1, className, cause));
             }
         }
         setLoggerFactory(factory);

@@ -475,7 +475,7 @@ scan:       while (!tables.isEmpty()) {
             final CrossReference ref = entry.getValue();
             if (ref == null) {
                 throw new SQLException(Errors.getResources(database.getLocale())
-                        .getString(Errors.Keys.MISSING_FOREIGNER_KEY_$1, table));
+                        .getString(Errors.Keys.NO_FOREIGNER_KEY_$1, table));
             }
             assert table.equals(ref.primaryKey.table) : table;
             buffer.append(" ON ");

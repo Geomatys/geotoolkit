@@ -183,7 +183,7 @@ final class NTv2Loader extends GridLoader {
             loader.longitudeGridFile = gridFile;
             loader.latitudeGridFile  = gridFile;
         } catch (IOException cause) {
-            String message = Errors.format(Errors.Keys.CANT_READ_$1, gridFile);
+            String message = Errors.format(Errors.Keys.CANT_READ_FILE_$1, gridFile);
             message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_$3,
                     "NTv2", NTv2.directory(true), "geotk-setup");
             final FactoryException ex;

@@ -219,13 +219,13 @@ final class SampleTranscoder extends PointOpImage {
             final GridSampleDimension[] bands = (GridSampleDimension[]) param.getObjectParameter(0);
             final int numBands = source.getSampleModel().getNumBands();
             if (numBands != bands.length) {
-                message.append(Errors.format(Errors.Keys.NUMBER_OF_BANDS_MISMATCH_$3,
+                message.append(Errors.format(Errors.Keys.MISMATCHED_NUMBER_OF_BANDS_$3,
                         numBands, bands.length, "SampleDimension"));
                 return false;
             }
             for (int i=0; i<numBands; i++) {
                 if (bands[i].categories == null) {
-                    message.append(Errors.format(Errors.Keys.BAD_PARAMETER_$2,
+                    message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_VALUE_$2,
                             "sampleDimensions["+i+"].categories", null));
                     return false;
                 }

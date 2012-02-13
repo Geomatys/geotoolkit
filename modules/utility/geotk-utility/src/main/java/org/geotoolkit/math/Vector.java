@@ -566,7 +566,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
             final int key;
             final Object arg1, arg2;
             if (step == 1) {
-                key  = Errors.Keys.BAD_RANGE_$2;
+                key  = Errors.Keys.ILLEGAL_RANGE_$2;
                 arg1 = first;
                 arg2 = first + length;
             } else {

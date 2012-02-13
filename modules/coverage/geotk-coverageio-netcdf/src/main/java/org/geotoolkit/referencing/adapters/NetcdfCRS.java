@@ -518,7 +518,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     public MathTransform getGridToCRS(final int lowerDimension, final int upperDimension) {
         if (lowerDimension < 0 || upperDimension > axes.length || upperDimension < lowerDimension) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.BAD_RANGE_$2, lowerDimension, upperDimension));
+                    Errors.Keys.ILLEGAL_RANGE_$2, lowerDimension, upperDimension));
         }
         final int numDimensions = upperDimension - lowerDimension;
         final Matrix matrix = Matrices.create(numDimensions + 1);

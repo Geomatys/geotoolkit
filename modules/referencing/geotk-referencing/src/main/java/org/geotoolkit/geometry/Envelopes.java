@@ -1205,7 +1205,7 @@ public final class Envelopes extends Static {
             return new GeneralEnvelope(wkt);
         } catch (RuntimeException e) {
             throw new FactoryException(Errors.format(
-                    Errors.Keys.CANT_CREATE_FROM_TEXT_$1, Envelope.class), e);
+                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_$1, Envelope.class), e);
         }
     }
 

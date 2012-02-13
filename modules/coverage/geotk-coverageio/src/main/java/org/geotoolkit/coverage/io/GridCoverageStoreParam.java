@@ -439,7 +439,7 @@ public abstract class GridCoverageStoreParam implements Serializable {
             for (int i=0; i<bands.length; i++) {
                 final int band = bands[i];
                 if (band < 0) {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, band));
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, band));
                 }
                 for (int j=i; --j>=0;) {
                     if (band == bands[j]) {

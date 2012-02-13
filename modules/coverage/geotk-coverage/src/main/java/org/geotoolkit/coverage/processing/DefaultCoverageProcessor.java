@@ -238,7 +238,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             return operation;
         }
         throw new OperationNotFoundException(Errors.getResources(getLocale()).getString(
-                Errors.Keys.OPERATION_NOT_FOUND_$1, name));
+                Errors.Keys.NO_SUCH_OPERATION_$1, name));
     }
 
     /**
@@ -316,7 +316,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             op = (AbstractOperation) operation;
         } catch (ClassCastException cause) {
             throw new OperationNotFoundException(Errors.getResources(getLocale()).getString(
-                        Errors.Keys.OPERATION_NOT_FOUND_$1, operationName), cause);
+                        Errors.Keys.NO_SUCH_OPERATION_$1, operationName), cause);
         }
         Coverage cv = op.doOperation(parameters, hints);
         if (interpolations != null && (cv instanceof GridCoverage2D) && !(cv instanceof Interpolator2D)) {

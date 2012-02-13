@@ -623,7 +623,7 @@ copy:       while (true) {
             if (formatter.warning != null) {
                 return formatter.warning;
             }
-            return Errors.format(Errors.Keys.INVALID_WKT_FORMAT_$1, formatter.getUnformattableClass());
+            return Errors.format(Errors.Keys.ILLEGAL_WKT_FORMAT_$1, formatter.getUnformattableClass());
         }
         return null;
     }

@@ -338,7 +338,7 @@ final class PropertyTree {
              * including the checked ones (it bypass the compile-time exception checking).
              */
             ParseException exception = new ParseException(Errors.format(
-                    Errors.Keys.CANT_CREATE_FROM_TEXT_$1, type), 0);
+                    Errors.Keys.CANT_CREATE_OBJECT_FROM_TEXT_$1, type), 0);
             exception.initCause(cause);
             throw exception;
         }

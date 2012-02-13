@@ -162,7 +162,7 @@ abstract class NadconLoader extends GridLoader {
             loader.latitudeGridFile  = latitudeGrid;
             return loader;
         } catch (IOException cause) {
-            String message = Errors.format(Errors.Keys.CANT_READ_$1, rx ? longitudeGrid : latitudeGrid);
+            String message = Errors.format(Errors.Keys.CANT_READ_FILE_$1, rx ? longitudeGrid : latitudeGrid);
             message = message + ' ' + Descriptions.format(Descriptions.Keys.DATA_NOT_INSTALLED_$3,
                     "NADCON", NADCON.directory(true), "geotk-setup");
             final FactoryException ex;
@@ -292,7 +292,7 @@ abstract class NadconLoader extends GridLoader {
             int tokenCount = tokens.countTokens();
             if (tokenCount != 8) {
                 throw new ContentFormatException(Errors.format(
-                        Errors.Keys.HEADER_UNEXPECTED_LENGTH_$1, tokenCount));
+                        Errors.Keys.UNEXPECTED_HEADER_LENGTH_$1, tokenCount));
             }
             String n = null;
             try {

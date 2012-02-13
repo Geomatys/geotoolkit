@@ -89,7 +89,7 @@ public final class CombineDescriptor extends OperationDescriptorImpl {
             for (int i=param.getNumSources(); --i>=0;) {
                 final Object source = param.getSource(i);
                 if (!(source instanceof RenderedImage)) {
-                    message.append(Errors.format(Errors.Keys.BAD_PARAMETER_TYPE_$2,
+                    message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
                             "source"+i, Classes.getClass(source)));
                     return false;
                 }

@@ -677,7 +677,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
             throws IllegalArgumentException
     {
         if (lower<0 || lower>=upper) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RANGE_$2, lower, upper));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, lower, upper));
         }
         if (sequence == null) {
             sequence = series(lower, upper);

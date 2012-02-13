@@ -375,7 +375,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         }
         if (onlyOneImage) {
             throw new InvalidImageStoreException(Errors.getResources(locale)
-                    .getString(Errors.Keys.INVALID_MOSAIC_INPUT));
+                    .getString(Errors.Keys.ILLEGAL_MOSAIC_INPUT));
         }
         return success;
     }

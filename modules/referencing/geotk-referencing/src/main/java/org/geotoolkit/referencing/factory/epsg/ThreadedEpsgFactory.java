@@ -376,7 +376,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         try (InputStream in = new FileInputStream(file)) {
             p.load(in);
         } catch (IOException exception) {
-            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_$1, file), exception);
+            throw new FactoryException(Errors.format(Errors.Keys.CANT_READ_FILE_$1, file), exception);
         }
         return p;
     }

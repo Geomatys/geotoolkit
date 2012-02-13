@@ -851,7 +851,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
              * only one specific type of datum or coordinate system.
              */
             if (baseType.equals(Datum.class) || baseType.equals(CoordinateSystem.class)) {
-                warning(method, Errors.Keys.MISSING_PARAMETER_VALUE_$1, "type");
+                warning(method, Errors.Keys.NO_PARAMETER_VALUE_$1, "type");
             }
         } else try {
             // Following line may throw a ClassCastException (as of method contract).
@@ -953,7 +953,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         if (value != null) {
             return true;
         }
-        warning(method, Errors.Keys.MISSING_PARAMETER_VALUE_$1, attribute);
+        warning(method, Errors.Keys.NO_PARAMETER_VALUE_$1, attribute);
         return false;
     }
 

@@ -509,7 +509,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
         String message = null;
         if (authority == null) {
             authority = Vocabulary.format(Vocabulary.Keys.UNKNOWN);
-            message   = Errors.format(Errors.Keys.MISSING_AUTHORITY_$1, code);
+            message   = Errors.format(Errors.Keys.NO_AUTHORITY_$1, code);
         } else {
             /*
              * Gets the message of the very last cause, since it is often the most pertinent

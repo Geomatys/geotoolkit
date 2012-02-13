@@ -184,7 +184,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
                 if (i != j) {
                     if (IdentifiedObjects.nameMatches(parameters[j], name)) {
                         throw new InvalidParameterNameException(Errors.format(
-                                Errors.Keys.PARAMETER_NAME_CLASH_$4,
+                                Errors.Keys.DUPLICATED_PARAMETER_NAME_$4,
                                 parameters[j].getName().getCode(), j, name, i), name);
                     }
                 }

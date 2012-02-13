@@ -129,7 +129,7 @@ public final class Parameters extends Static {
             // We require a strict equality - not type.isAssignableFrom(actual) - because in
             // the later case we could have (to be strict) to return a <? extends T> type.
             if (!type.equals(actual)) {
-                throw new ClassCastException(Errors.format(Errors.Keys.BAD_PARAMETER_TYPE_$2,
+                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
                         descriptor.getName().getCode(), actual));
             }
         }
@@ -158,7 +158,7 @@ public final class Parameters extends Static {
             final ParameterDescriptor<?> descriptor = value.getDescriptor();
             final Class<?> actual = descriptor.getValueClass();
             if (!type.equals(actual)) { // Same comment than cast(ParameterDescriptor)...
-                throw new ClassCastException(Errors.format(Errors.Keys.BAD_PARAMETER_TYPE_$2,
+                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
                         descriptor.getName().getCode(), actual));
             }
         }
@@ -211,7 +211,7 @@ public final class Parameters extends Static {
             if (descriptor.getMinimumOccurs() == 0) {
                 return null; // Test pass.
             }
-            return localized ? Errors.formatInternational(Errors.Keys.MISSING_PARAMETER_$1,
+            return localized ? Errors.formatInternational(Errors.Keys.NO_PARAMETER_$1,
                     AbstractParameter.getName(descriptor)) : EXPLAIN;
         }
         /*
@@ -360,7 +360,7 @@ public final class Parameters extends Static {
                         final int key;
                         final Object[] param;
                         if (n == 0) {
-                            key = Errors.Keys.MISSING_PARAMETER_$1;
+                            key = Errors.Keys.NO_PARAMETER_$1;
                             param = new Object[] {name};
                         } else {
                             key = Errors.Keys.ILLEGAL_OCCURS_FOR_PARAMETER_$4;

@@ -259,7 +259,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                                 final int messageKey;
                                 final Object argument;
                                 if (IOUtilities.canProcessAsPath(output)) {
-                                    messageKey = Errors.Keys.CANT_WRITE_$1;
+                                    messageKey = Errors.Keys.CANT_WRITE_FILE_$1;
                                     argument = IOUtilities.name(output);
                                 } else {
                                     messageKey = Errors.Keys.UNKNOWN_TYPE_$1;

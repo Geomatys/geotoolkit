@@ -316,7 +316,7 @@ public final class TypeMap extends Static {
             throws IllegalArgumentException
     {
         if (band < 0 || band >= model.getNumBands()) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, band));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, band));
         }
         boolean signed = true;
         switch (model.getDataType()) {
@@ -560,7 +560,7 @@ public final class TypeMap extends Static {
             throws IllegalArgumentException
     {
         if (band < 0 || band >= ColorUtilities.getNumBands(model)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, band));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_BAND_NUMBER_$1, band));
         }
         if (model instanceof IndexColorModel) {
             return ColorInterpretation.PALETTE_INDEX;

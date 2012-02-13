@@ -579,7 +579,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             try {
                 return Locales.parse(source);
             } catch (IllegalArgumentException e) {
-                throw new NonconvertibleObjectException(Errors.format(Errors.Keys.BAD_LOCALE_$1, source), e);
+                throw new NonconvertibleObjectException(Errors.format(Errors.Keys.ILLEGAL_LANGUAGE_CODE_$1, source), e);
             }
         }
 
