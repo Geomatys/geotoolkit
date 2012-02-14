@@ -84,8 +84,12 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      */
     @Override
     public Server create(final Map<String, ? extends Serializable> params) throws DataStoreException {
+        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        if(prm == null){
+            return null;
+        }
         try{
-            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(prm);
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -96,8 +100,12 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      */
     @Override
     public boolean canProcess(final Map<String, ? extends Serializable> params) {
+        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        if(prm == null){
+            return false;
+        }
         try{
-            return canProcess(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return canProcess(prm);
         }catch(InvalidParameterValueException ex){
             return false;
         }

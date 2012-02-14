@@ -503,7 +503,42 @@ public final class FeatureUtilities {
         return toMap(toFeature(source));
     }
     
+    /**
+     * Transform a Map in a ParameterValueGroup.
+     * A default parameter is first created and all key found in the map
+     * that match the descriptor will be completed.
+     * 
+     * @param params
+     * @param desc
+     * @return 
+     */
     public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
+        return toParameter(params, desc, true);
+    }
+    
+    /**
+     * Transform a Map in a ParameterValueGroup.
+     * A default parameter is first created and all key found in the map
+     * that match the descriptor will be completed.
+     * 
+     * @param params
+     * @param desc
+     * @param checkMandatory : will return a parameter only if all mandatory values 
+     *      have been found in the map.
+     * @return 
+     */
+    public static ParameterValueGroup toParameter(final Map<String, ?> params, 
+            final ParameterDescriptorGroup desc, final boolean checkMandatory) {
+        
+        if(checkMandatory){
+            for(GeneralParameterDescriptor de : desc.descriptors()){
+                if(de.getMinimumOccurs()>0 && !(params.containsKey(de.getName().getCode()))){
+                    //a mandatory parameter is not present
+                    return null;
+                }
+            }
+        }
+        
         final ParameterValueGroup parameter = desc.createValue();
 
         for(final Entry<String, ?> entry : params.entrySet()){

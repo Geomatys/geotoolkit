@@ -65,8 +65,12 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      */
     @Override
     public CoverageStore create(final Map<String, ? extends Serializable> params) throws DataStoreException {
+        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        if(prm == null){
+            return null;
+        }
         try{
-            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(prm);
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -77,8 +81,12 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      */
     @Override
     public CoverageStore createNew(final Map<String, ? extends Serializable> params) throws DataStoreException {
+        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        if(prm == null){
+            return null;
+        }
         try{
-            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return createNew(prm);
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -89,8 +97,12 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      */
     @Override
     public boolean canProcess(final Map<String, ? extends Serializable> params) {
+        final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
+        if(prm == null){
+            return false;
+        }
         try{
-            return canProcess(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return canProcess(prm);
         }catch(InvalidParameterValueException ex){
             return false;
         }
@@ -114,6 +126,5 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         result.setPass(Boolean.TRUE);
         return result;
     }
-
 
 }
