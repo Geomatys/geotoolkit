@@ -229,6 +229,9 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     @Override
     public synchronized void repaint(final Shape displayArea) {
+        //finish any previous painting
+        getMonitor().stopRendering();
+        
         this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
         thread.wake();

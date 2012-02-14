@@ -106,6 +106,9 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     @Override
     public void repaint(final Shape displayArea) {
+        //finish any previous painting
+        getMonitor().stopRendering();
+        
         final Dimension dim = getSize();
 
         if(buffer == null){
