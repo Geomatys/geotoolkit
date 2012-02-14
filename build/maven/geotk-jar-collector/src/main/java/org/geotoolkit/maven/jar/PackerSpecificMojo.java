@@ -37,7 +37,7 @@ import org.apache.maven.project.MavenProject;
  * many time.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.20
  *
  * @since 3.00
  *
@@ -78,32 +78,38 @@ public class PackerSpecificMojo extends AbstractMojo {
          * Now packs the JARs.
          */
         try {
+            final String metadata    = "geotk-bundle-metadata-"    + VERSION + ".jar";
             final String referencing = "geotk-bundle-referencing-" + VERSION + ".jar";
             final String coverage    = "geotk-bundle-coverage-"    + VERSION + ".jar";
+            final String netcdf      = "geotk-bundle-netcdf-"      + VERSION + ".jar";
             final String storage     = "geotk-bundle-storage-"     + VERSION + ".jar";
             final String all         = "geotk-bundle-"             + VERSION + ".jar";
             final Packer packer = new Packer(targetDirectory, VERSION);
-            packer.addPack(null, referencing, new String[] {
-                    "vecmath-*.jar",
+            packer.addPack(null, metadata, new String[] {
                     "jsr-275-*.jar",
+                    "jcip-annotations-*.jar",
                     "geoapi-pending-*.jar",
+                    "geotk-utility-"  + VERSION + ".jar",
+                    "geotk-xml-base-" + VERSION + ".jar",
+                    "geotk-metadata-" + VERSION + ".jar"
+            });
+            packer.addPack(metadata, referencing, new String[] {
+                    "vecmath-*.jar",
                     "geotk-epsg-"        + VERSION + ".jar",
-                    "geotk-utility-"     + VERSION + ".jar",
-                    "geotk-xml-base-"    + VERSION + ".jar",
-                    "geotk-metadata-"    + VERSION + ".jar",
                     "geotk-referencing-" + VERSION + ".jar" // Last in order to pickup its main class.
             });
             packer.addPack(referencing, coverage, new String[] {
-                    "geotk-coverage-"          + VERSION + ".jar",
-                    "geotk-coverageio-"        + VERSION + ".jar",
+                    "geotk-storage-"     + VERSION + ".jar",
+                    "geotk-coverage-"    + VERSION + ".jar",
+                    "geotk-coverageio-"  + VERSION + ".jar",
+                    "jai_imageio-*.jar"
+            });
+            packer.addPack(coverage, netcdf, new String[] {
                     "geotk-coverageio-netcdf-" + VERSION + ".jar",
-                    "geotk-storage-"           + VERSION + ".jar",
-                    "jai_imageio-*.jar",
                     "netcdf-*.jar",
-                    "unidataCommon-*.jar",
-                    "jcip-annotations-*.jar",
                     "opendap-*.jar",
                     "grib-*.jar",
+                    "protobuf-java-*.jar",
                     "jdom-*.jar",
                     "servlet-api-*.jar",
                     "commons-codec-*.jar",
@@ -112,7 +118,7 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "slf4j-api-*.jar",
                     "slf4j-jdk14-*.jar"
             });
-            packer.addPack(coverage, storage, new String[] {
+            packer.addPack(netcdf, storage, new String[] {
                     "geotk-metadata-sql-" + VERSION + ".jar",
                     "geotk-coverage-sql-" + VERSION + ".jar",
                     "geotk-epsg-javadb-"  + VERSION + ".jar",

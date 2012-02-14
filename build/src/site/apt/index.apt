@@ -26,7 +26,7 @@ Building Geotoolkit.org
       ({{{http://download.java.net/media/jai-imageio/builds/release/}download}}).
       This installation is actually optional but recommended.
 
-    * {{{http://maven.apache.org}Maven 3.0.3}} or later.
+    * {{{http://maven.apache.org}Maven 3.0.4}} or later.
 
     * {{{http://mercurial.selenic.com}Mercurial}} (if Geotk is going to be fetched from the source code repository).
 

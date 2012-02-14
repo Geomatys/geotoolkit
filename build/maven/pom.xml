@@ -50,15 +50,12 @@
 
   <!-- ===========================================================
            Dependency Management
-
-       TODO: avoid hard-coded version when the following is fixed:
-       http://jira.codehaus.org/browse/MNG-4112
        =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>3.0.3</version>
+      <version>${maven.version}</version>
     </dependency>
   </dependencies>
 

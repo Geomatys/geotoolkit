@@ -19,10 +19,12 @@ package org.geotoolkit.maven.jar;
 
 import java.util.Map;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.jar.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +34,7 @@ import java.io.InputStream;
  * Creates PAC200 files from the JAR builds by Maven.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -63,12 +65,12 @@ public final class Packer implements FilenameFilter {
     /**
      * The JAR files to read, by input filename.
      */
-    private final Map<File,PackInput> inputs = new LinkedHashMap<File,PackInput>();
+    private final Map<File,PackInput> inputs = new LinkedHashMap<>();
 
     /**
      * The JAR and PACK files to create, by output name.
      */
-    private final Map<String,PackOutput> outputs = new LinkedHashMap<String,PackOutput>();
+    private final Map<String,PackOutput> outputs = new LinkedHashMap<>();
 
     /**
      * The version to declare in the manifest file.
@@ -91,8 +93,9 @@ public final class Packer implements FilenameFilter {
      * Adds a pack which will contain every JAR files in the target directory.
      *
      * @param pack The name of the pack file to create.
+     * @throws IOException If an error occurred while collecting the target directory content.
      */
-    public void addPack(final String pack) {
+    public void addPack(final String pack) throws IOException {
         addPack(null, pack, jarDirectory.list(this));
     }
 
@@ -102,11 +105,10 @@ public final class Packer implements FilenameFilter {
      * @param parent The pack from which to inherit the JAR files, or {@code null} if none.
      * @param pack   The name of the pack file to create.
      * @param jars   The list of JAR files in this pack file.
+     * @throws IOException If an error occurred while collecting the target directory content.
      */
-    public void addPack(final String parent, final String pack, final String[] jars) {
-        if (pack == null) {
-            throw new NullPointerException("pack");
-        }
+    public void addPack(final String parent, final String pack, final String[] jars) throws IOException {
+        Objects.requireNonNull("pack", pack);
         PackOutput p = null;
         if (parent != null) {
             p = outputs.get(parent);
@@ -126,11 +128,15 @@ public final class Packer implements FilenameFilter {
             if (w >= 0) {
                 final String prefix = jarFile.substring(0, w);
                 final String suffix = jarFile.substring(w+1);
-                final String[] f = new File(targetDirectory, JAR_DIRECTORY).list(new FilenameFilter() {
+                final File directory = new File(targetDirectory, JAR_DIRECTORY);
+                final String[] f = directory.list(new FilenameFilter() {
                     @Override public boolean accept(final File directory, final String name) {
                         return name.startsWith(prefix) && name.endsWith(suffix);
                     }
                 });
+                if (f == null) {
+                    throw new FileNotFoundException("Directory not found: " + directory);
+                }
                 switch (f.length) {
                     case 1:  jars[i] = f[0]; break;
                     case 0:  throw new IllegalArgumentException("No file found for pattern: " + jarFile);
@@ -178,7 +184,7 @@ public final class Packer implements FilenameFilter {
          * need to be copied - all those "active" output streams will be filled in parallel.
          */
         final byte[] buffer = new byte[64*1024];
-        final Map<File,PackInput> activeInputs = new LinkedHashMap<File,PackInput>(inputs.size() * 4/3);
+        final Map<File,PackInput> activeInputs = new LinkedHashMap<>(inputs.size() * 4/3);
         final PackOutput[] activesForFile      = new PackOutput[outputs.size()];
         final PackOutput[] activesForEntry     = new PackOutput[activesForFile.length];
         final PackOutput[] activesForFollow    = new PackOutput[activesForFile.length];
