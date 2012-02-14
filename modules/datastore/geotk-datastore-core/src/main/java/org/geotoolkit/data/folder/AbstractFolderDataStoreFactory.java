@@ -99,16 +99,16 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
     }
 
     @Override
-    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(ParameterValueGroup params) throws DataStoreException {
         final FolderDataStore store = new FolderDataStore(params,this);
         return store;
     }
 
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(ParameterValueGroup params) throws DataStoreException {
         //we can create an empty datastore of this type
         //the create datastore will always work, it will just be empty if there are no files in it.
-        return createDataStore(params);
+        return create(params);
     }
      
     /**

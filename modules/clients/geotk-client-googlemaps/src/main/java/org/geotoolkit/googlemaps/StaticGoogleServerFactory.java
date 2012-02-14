@@ -67,30 +67,21 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
     }
 
     @Override
-    public CoverageStore createCoverageStore(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public StaticGoogleMapsServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (StaticGoogleMapsServer) super.create(params);
+    }
+
+    @Override
+    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createCoverageStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public CoverageStore createCoverageStore(ParameterValueGroup params) throws DataStoreException {
-        return create(params);
-    }
-
-    @Override
-    public CoverageStore createNewCoverageStore(Map<String, ? extends Serializable> params) throws DataStoreException {
-        try{
-            return createNewCoverageStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
-        }catch(InvalidParameterValueException ex){
-            throw new DataStoreException(ex);
-        }
-    }
-
-    @Override
-    public CoverageStore createNewCoverageStore(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create new Google Static coverage store.");
     }
     

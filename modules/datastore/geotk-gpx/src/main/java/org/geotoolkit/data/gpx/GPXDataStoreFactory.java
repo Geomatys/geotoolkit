@@ -19,13 +19,11 @@ package org.geotoolkit.data.gpx;
 
 import java.io.IOException;
 import java.net.URL;
-
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -52,7 +50,7 @@ public class GPXDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
                 
         final String path = url.toString();
@@ -70,8 +68,8 @@ public class GPXDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
-        return createDataStore(params);
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+        return create(params);
     }
 
     @Override

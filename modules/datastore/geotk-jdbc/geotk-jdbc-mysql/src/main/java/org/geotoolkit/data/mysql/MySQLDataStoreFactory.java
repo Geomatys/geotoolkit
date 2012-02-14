@@ -92,9 +92,9 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore createDataStore(final ParameterValueGroup params)
+    public JDBCDataStore create(final ParameterValueGroup params)
         throws DataStoreException {
-        JDBCDataStore dataStore = super.createDataStore(params);
+        JDBCDataStore dataStore = super.create(params);
 
         final MySQLDialect dialect;
 

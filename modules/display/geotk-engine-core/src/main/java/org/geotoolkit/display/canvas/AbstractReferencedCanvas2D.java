@@ -366,7 +366,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
          * the user.
          */
         if (!isValid(source)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RECTANGLE_$1, source));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_RECTANGLE_$1, source));
         }
         if (!isValid(dest)) {
             return new AffineTransform();

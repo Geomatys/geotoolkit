@@ -30,7 +30,7 @@ public class FishDatastoreFactory extends AbstractFileDataStoreFactory{
     }
 
     @Override
-    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(ParameterValueGroup params) throws DataStoreException {
 
         URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
@@ -43,7 +43,7 @@ public class FishDatastoreFactory extends AbstractFileDataStoreFactory{
     }
 
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 

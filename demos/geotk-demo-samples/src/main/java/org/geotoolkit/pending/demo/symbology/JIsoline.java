@@ -63,7 +63,7 @@ public class JIsoline extends JAbstractMapPane{
         try{
             params = new HashMap<String,Serializable>();
             params.put( "url", JAbstractMapPane.class.getResource("/data/weather/stations2.shp") );
-            store = DataStoreFinder.getDataStore(params);
+            store = DataStoreFinder.get(params);
             fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
             layer = MapBuilder.createFeatureLayer(fs, createStationStyle());
             layer.setDescription(SF.description("stations", ""));

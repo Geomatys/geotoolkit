@@ -18,15 +18,10 @@ package org.geotoolkit.coverage;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.spi.ServiceRegistry;
-
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.internal.LazySet;
@@ -73,9 +68,9 @@ public final class CoverageStoreFinder{
      * Get a CoverageStore wich has a single parameter. 
      * This is a utility method that will redirect to getCoverageStore(java.util.Map)
      */
-    public static synchronized CoverageStore getCoverageStore(
+    public static synchronized CoverageStore get(
             final String key, final Serializable value) throws DataStoreException{
-        return getCoverageStore(Collections.singletonMap(key, value));
+        return get(Collections.singletonMap(key, value));
     }
 
     /**
@@ -95,9 +90,9 @@ public final class CoverageStoreFinder{
      *             If a suitable loader can be found, but it can not be attached
      *             to the specified resource without errors.
      */
-    public static synchronized CoverageStore getCoverageStore(
+    public static synchronized CoverageStore get(
             final Map<String, Serializable> params) throws DataStoreException {
-        final Iterator<CoverageStoreFactory> ps = getAvailableCoverageStores();
+        final Iterator<CoverageStoreFactory> ps = getAvailableFactories();
 
 
         DataStoreException canProcessButNotAvailable = null;
@@ -124,7 +119,7 @@ public final class CoverageStoreFinder{
                 }
                 if (isAvailable) {
                     try {
-                        return fac.createCoverageStore(params);
+                        return fac.create(params);
                     } catch (DataStoreException couldNotConnect) {
                         canProcessButNotAvailable = couldNotConnect;
                         LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
@@ -157,9 +152,9 @@ public final class CoverageStoreFinder{
      *             If a suitable loader can be found, but it can not be attached
      *             to the specified resource without errors.
      */
-    public static synchronized CoverageStore getCoverageStore(
+    public static synchronized CoverageStore get(
             final ParameterValueGroup parameters) throws DataStoreException {
-        final Iterator<CoverageStoreFactory> ps = getAvailableCoverageStores();
+        final Iterator<CoverageStoreFactory> ps = getAvailableFactories();
 
         DataStoreException canProcessButNotAvailable = null;
         while (ps.hasNext()) {
@@ -185,7 +180,7 @@ public final class CoverageStoreFinder{
                 }
                 if (isAvailable) {
                     try {
-                        return fac.createCoverageStore(parameters);
+                        return fac.create(parameters);
                     } catch (DataStoreException couldNotConnect) {
                         canProcessButNotAvailable = couldNotConnect;
                         LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
@@ -211,15 +206,15 @@ public final class CoverageStoreFinder{
      * @return An iterator over all discovered CoverageStores which have registered
      *         factories
      */
-    public static synchronized Iterator<CoverageStoreFactory> getAllCoverageStores() {
-        return getAllCoverageStores(null);
+    public static synchronized Iterator<CoverageStoreFactory> getAllFactories() {
+        return getAllFactories(null);
     }
 
     /**
      * @see CoverageStoreFinder#getAllCoverageStores() 
      * Get all CoverageStores of a given class.
      */
-    public static synchronized <T extends CoverageStoreFactory> Iterator<T> getAllCoverageStores(final Class<T> type){
+    public static synchronized <T extends CoverageStoreFactory> Iterator<T> getAllFactories(final Class<T> type){
         final FactoryRegistry serviceRegistry = getServiceRegistry();
 
         ServiceRegistry.Filter filter = null;
@@ -245,16 +240,16 @@ public final class CoverageStoreFinder{
      * @return An iterator over all discovered CoverageStores which have registered
      *         factories, and whose available method returns true.
      */
-    public static synchronized Iterator<CoverageStoreFactory> getAvailableCoverageStores() {
-        return getAvailableCoverageStores(null);
+    public static synchronized Iterator<CoverageStoreFactory> getAvailableFactories() {
+        return getAvailableFactories(null);
     }
 
     /**
      * @see CoverageStoreFinder#getAvailableCoverageStores()
      * Get all available CoverageStores of a given class.
      */
-    public static synchronized <T extends CoverageStoreFactory> Iterator<T> getAvailableCoverageStores(final Class<T> type) {
-        final Iterator<T> allStores = getAllCoverageStores(type);
+    public static synchronized <T extends CoverageStoreFactory> Iterator<T> getAvailableFactories(final Class<T> type) {
+        final Iterator<T> allStores = getAllFactories(type);
 
         final Set<T> availableStores = new HashSet<T>();
 

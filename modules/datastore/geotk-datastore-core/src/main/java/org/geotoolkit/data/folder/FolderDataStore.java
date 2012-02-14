@@ -128,7 +128,7 @@ public class FolderDataStore extends AbstractDataStore{
             params.values().add(urlparam);
             if(singleFileFactory.canProcess(params)){
                 try {
-                    final DataStore fileDS = singleFileFactory.createDataStore(params);
+                    final DataStore fileDS = singleFileFactory.create(params);
                     stores.put(fileDS.getNames().iterator().next(), fileDS);
                 } catch (DataStoreException ex) {
                     getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -161,7 +161,7 @@ public class FolderDataStore extends AbstractDataStore{
             throw new DataStoreException(ex);
         }
         
-        final DataStore store = singleFileFactory.createNewDataStore(params);
+        final DataStore store = singleFileFactory.createNew(params);
         store.createSchema(typeName, featureType);
         stores.put(typeName, store);
     }

@@ -135,7 +135,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("url", PortrayalDemo.class.getResource("/data/world/Countries.shp"));
 
-        final DataStore store = DataStoreFinder.getDataStore(params);
+        final DataStore store = DataStoreFinder.get(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());
         final FeatureCollection collection = session.getFeatureCollection(query);

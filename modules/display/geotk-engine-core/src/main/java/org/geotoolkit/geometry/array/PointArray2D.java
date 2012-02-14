@@ -484,7 +484,7 @@ public abstract class PointArray2D implements PointArray, Serializable {
         assert (lower        & 1) == 0 : lower;
         assert (upper        & 1) == 0 : upper;
         if (upper < lower) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RANGE_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2,
                                                new Integer(lower), new Integer(upper)));
         }
         if (((upper-lower) & 1) !=0) {

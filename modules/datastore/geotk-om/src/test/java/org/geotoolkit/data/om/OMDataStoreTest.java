@@ -66,7 +66,7 @@ public class OMDataStoreTest extends AbstractReadingTests{
             params.put(OMDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(OMDataStoreFactory.DERBYURL.getName().toString(), url);
 
-            store = DataStoreFinder.getDataStore(params);
+            store = DataStoreFinder.get(params);
 
             final String nsOM = "http://www.opengis.net/sampling/1.0";
             final String nsGML = "http://www.opengis.net/gml";

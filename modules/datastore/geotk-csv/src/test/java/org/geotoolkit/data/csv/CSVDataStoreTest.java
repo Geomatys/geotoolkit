@@ -73,7 +73,7 @@ public class CSVDataStoreTest {
         File f = File.createTempFile("test", ".csv");
         f.deleteOnExit();
 
-        final DataStore ds = DataStoreFinder.getDataStore(AbstractFileDataStoreFactory.URLP.getName().getCode(),
+        final DataStore ds = DataStoreFinder.get(AbstractFileDataStoreFactory.URLP.getName().getCode(),
                 f.toURL());
         assertNotNull(ds);
         

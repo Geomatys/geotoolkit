@@ -146,7 +146,7 @@ public abstract class JDBCTestSupport extends TestCase {
         params.put( JDBCDataStoreFactory.DATASOURCE.getName().toString(), setup.getDataSource() );
         
         JDBCDataStoreFactory factory = setup.createDataStoreFactory();
-        dataStore = (JDBCDataStore) factory.createDataStore( params );
+        dataStore = (JDBCDataStore) factory.create( params );
         
         setup.setUpDataStore(dataStore);
         dialect = dataStore.getDialect();

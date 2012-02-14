@@ -38,7 +38,7 @@ public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     
     @Override
     public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllDataStores(CSVDataStoreFactory.class).next();
+        return DataStoreFinder.getAllFactories(CSVDataStoreFactory.class).next();
     }
 
     @Override

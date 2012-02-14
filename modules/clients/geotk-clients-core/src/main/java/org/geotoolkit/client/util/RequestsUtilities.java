@@ -213,7 +213,7 @@ public final class RequestsUtilities {
             final double maximum = envelope.getMaximum(index);
             if (!(minimum < maximum)) {
                 throw new IllegalArgumentException(
-                        Errors.format(Errors.Keys.BAD_RANGE_$2, minimum, maximum));
+                        Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, minimum, maximum));
             }
         }
         return envelope;

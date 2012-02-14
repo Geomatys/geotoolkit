@@ -66,9 +66,9 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore create(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createDataStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -78,9 +78,9 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore createNew(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createNewDataStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }

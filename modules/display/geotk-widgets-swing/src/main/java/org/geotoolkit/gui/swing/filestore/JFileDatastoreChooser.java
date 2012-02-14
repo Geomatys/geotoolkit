@@ -77,7 +77,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
         // get all datastore factories ---------------------------------------------
         final List<FileFilter> filters = new ArrayList<FileFilter>();
 
-        final Iterator<FileDataStoreFactory> ite = DataStoreFinder.getAvailableDataStores(FileDataStoreFactory.class);
+        final Iterator<FileDataStoreFactory> ite = DataStoreFinder.getAvailableFactories(FileDataStoreFactory.class);
         while(ite.hasNext()){
             final FileDataStoreFactory fact = ite.next();
             final String name = fact.getDescription();

@@ -60,7 +60,7 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         final char separator = (Character) params.parameter(SEPARATOR.getName().toString()).getValue();
@@ -84,8 +84,8 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
-        return createDataStore(params);
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+        return create(params);
     }
 
     @Override

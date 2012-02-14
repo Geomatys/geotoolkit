@@ -114,7 +114,7 @@ class CompressedArray extends PointArray {
     {
         checkRange(coord, lower, upper);
         if (upper-lower < 2) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RANGE_$2,
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2,
                                                new Integer(lower), new Integer(upper)));
         }
         /*

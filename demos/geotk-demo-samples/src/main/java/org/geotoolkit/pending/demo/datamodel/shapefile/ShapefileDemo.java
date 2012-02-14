@@ -22,14 +22,14 @@ public class ShapefileDemo {
         Parameters.getOrCreate(ShapefileDataStoreFactory.URLP,parameters).setValue(
                 ShapefileDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store1 = DataStoreFinder.getDataStore(parameters);        
+        final DataStore store1 = DataStoreFinder.get(parameters);        
         
         
         //create using a Map----------------------------------------------------
         final Map<String,Serializable> map = new HashMap<String, Serializable>();
         map.put("url", ShapefileDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store2 = DataStoreFinder.getDataStore(map);
+        final DataStore store2 = DataStoreFinder.get(map);
         
     }
     

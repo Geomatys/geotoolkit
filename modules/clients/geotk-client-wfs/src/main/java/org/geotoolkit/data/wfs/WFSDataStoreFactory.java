@@ -21,11 +21,9 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
-import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
@@ -77,25 +75,13 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
      * {@inheritDoc }
      */
     @Override
-    public synchronized DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
-        return create(params);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create any new WFS DataStore");
     }
 
     @Override
-    public Server create(Map<String, ? extends Serializable> params) throws DataStoreException {
-        try{
-            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
-        }catch(InvalidParameterValueException ex){
-            throw new DataStoreException(ex);
-        }
+    public WebFeatureServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebFeatureServer)super.create(params);
     }
 
     @Override

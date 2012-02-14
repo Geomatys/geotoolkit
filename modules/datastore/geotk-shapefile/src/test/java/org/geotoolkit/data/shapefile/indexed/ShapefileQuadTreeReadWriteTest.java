@@ -112,7 +112,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         Map params = new HashMap();
         params.put(ShapefileDataStoreFactory.URLP.getName().toString(), url);
         params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
-        DataStore createDataStore = fac.createDataStore(params);
+        DataStore createDataStore = fac.create(params);
         return createDataStore;
     }
 
@@ -230,7 +230,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         Map params = new HashMap();
         params.put(ShapefileDataStoreFactory.URLP.getName().toString(), file.toURI().toURL());
         params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.getName().toString(), new Boolean(true));
-        IndexedShapefileDataStore ds = (IndexedShapefileDataStore) fac.createDataStore(params);
+        IndexedShapefileDataStore ds = (IndexedShapefileDataStore) fac.create(params);
 
         FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
 

@@ -64,9 +64,9 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * {@inheritDoc }
      */
     @Override
-    public CoverageStore createCoverageStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore create(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createCoverageStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return create(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }
@@ -76,9 +76,9 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * {@inheritDoc }
      */
     @Override
-    public CoverageStore createNewCoverageStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore createNew(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
-            return createNewCoverageStore(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
         }catch(InvalidParameterValueException ex){
             throw new DataStoreException(ex);
         }

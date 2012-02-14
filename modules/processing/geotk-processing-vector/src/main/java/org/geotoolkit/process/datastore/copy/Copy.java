@@ -74,7 +74,7 @@ public class Copy extends AbstractProcess {
         final DataStore sourceDS;
         DataStore targetDS = null;
         try{
-            sourceDS = DataStoreFinder.getDataStore(sourceDSparams);
+            sourceDS = DataStoreFinder.get(sourceDSparams);
             if(sourceDS == null){
                 throw new DataStoreException("No datastore for parameters :"+sourceDSparams);
             }
@@ -85,7 +85,7 @@ public class Copy extends AbstractProcess {
         
         DataStoreException exp = null;
         try{
-            targetDS = DataStoreFinder.getDataStore(targetDSparams);
+            targetDS = DataStoreFinder.get(targetDSparams);
             if(targetDS == null){
                 exp = new DataStoreException("No datastore for parameters :"+targetDSparams);
             }
@@ -96,12 +96,12 @@ public class Copy extends AbstractProcess {
         if(exp != null){
             if(createParam){
                 //try to create the datastore
-                final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableDataStores();
+                final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableFactories();
                 while(ite.hasNext()){
                     final DataStoreFactory factory = ite.next();
                     if(factory.canProcess(targetDSparams)){
                         try{
-                            targetDS = factory.createNewDataStore(targetDSparams);
+                            targetDS = factory.createNew(targetDSparams);
                         }catch(DataStoreException ex){
                             fireFailEvent(new ProcessEvent(this, null,0, ex));
                             return outputParameters;

@@ -36,7 +36,7 @@ public class XMLCoverageStoreFactoryTest {
     @Test
     public void testFactory() {
                 
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllCoverageStores();
+        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories();
         
         boolean found = false;
         while (ite.hasNext()){

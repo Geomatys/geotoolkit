@@ -99,7 +99,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             params.put("dbtype", "SML");
             params.put(SMLDataStoreFactory.SGBDTYPE.getName().toString(), "derby");
             params.put(SMLDataStoreFactory.DERBYURL.getName().toString(), url);
-            store = DataStoreFinder.getDataStore(params);
+            store = DataStoreFinder.get(params);
 
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();

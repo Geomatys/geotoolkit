@@ -44,7 +44,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
      */
     @Test
     public void testIsAvailable() {
-        Iterator list = DataStoreFinder.getAvailableDataStores();
+        Iterator list = DataStoreFinder.getAvailableFactories();
         boolean found = false;
         while (list.hasNext()) {
             DataStoreFactory fac = (DataStoreFactory) list.next();
@@ -64,7 +64,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
     public void testShapefileDataStore() throws Exception {
         HashMap params = new HashMap();
         params.put("url", ShapeTestData.url(TEST_FILE));
-        DataStore ds = DataStoreFinder.getDataStore(params);
+        DataStore ds = DataStoreFinder.get(params);
         assertNotNull(ds);
         params.put("url", ShapeTestData.url(TEST_FILE).toString());
         assertNotNull(ds);
@@ -76,7 +76,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
         params.put("url", "aaa://bbb.ccc");
         try {
             ShapefileDataStoreFactory f = new ShapefileDataStoreFactory();
-            f.createDataStore(params);
+            f.create(params);
             fail("did not throw error");
         } catch (DataStoreException ioe) {
             // this is actually good

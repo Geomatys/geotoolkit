@@ -168,7 +168,7 @@ public final class JTS {
         ensureNonNull("transform", transform);
 
         if ((transform.getSourceDimensions() != 2) || (transform.getTargetDimensions() != 2)) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
                     Classes.getShortClassName(transform)));
         }
 

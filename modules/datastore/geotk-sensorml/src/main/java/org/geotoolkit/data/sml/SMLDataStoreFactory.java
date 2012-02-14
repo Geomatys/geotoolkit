@@ -139,7 +139,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         try{
             //create a datasource
             final BasicDataSource dataSource = new BasicDataSource();
@@ -174,7 +174,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

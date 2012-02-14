@@ -78,7 +78,7 @@ public class ShadedReliefDescriptor extends OperationDescriptorImpl {
 
             final Object source = param.getSource(0);
             if (!(source instanceof RenderedImage)) {
-                message.append(Errors.format(Errors.Keys.BAD_PARAMETER_TYPE_$2,
+                message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
                                "source"+0, Classes.getClass(source)));
                 return false;
             }

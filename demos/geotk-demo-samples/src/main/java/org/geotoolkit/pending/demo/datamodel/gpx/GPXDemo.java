@@ -18,7 +18,7 @@ public class GPXDemo {
         final Map<String,Serializable> parameters = new HashMap<String,Serializable>();
         parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
 
-        final DataStore store = DataStoreFinder.getDataStore(parameters);
+        final DataStore store = DataStoreFinder.get(parameters);
 
         System.out.println("=================== Feature types ====================");
         final Set<Name> names = store.getNames();

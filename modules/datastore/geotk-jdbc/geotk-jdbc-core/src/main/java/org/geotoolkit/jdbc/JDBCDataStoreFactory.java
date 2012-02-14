@@ -135,7 +135,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public JDBCDataStore create(final ParameterValueGroup params) throws DataStoreException {
         // namespace
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
@@ -183,7 +183,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

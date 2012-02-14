@@ -56,7 +56,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore createCoverageStore(ParameterValueGroup params) throws DataStoreException {
+    public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
         if(!canProcess(params)){
             throw new DataStoreException("Can not process parameters.");
         }
@@ -68,8 +68,8 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
 
     @Override
-    public CoverageStore createNewCoverageStore(ParameterValueGroup params) throws DataStoreException {
-        return createCoverageStore(params);
+    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+        return create(params);
     }
     
 }

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -166,7 +165,7 @@ public interface DataStoreFactory {
     /**
      * @see DataStoreFactory#createDataStore(org.opengis.parameter.ParameterValueGroup)
      */
-    DataStore createDataStore(Map<String, ? extends Serializable> params) throws DataStoreException;
+    DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Construct a live DataStore using the connection parameters provided.
@@ -204,10 +203,10 @@ public interface DataStoreFactory {
      * @throws IOException if there were any problems setting up (creating or
      *         connecting) the datasource.
      */
-    DataStore createDataStore(ParameterValueGroup params) throws DataStoreException;
+    DataStore create(ParameterValueGroup params) throws DataStoreException;
 
-    DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws DataStoreException;
+    DataStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException;
 
-    DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException;
+    DataStore createNew(ParameterValueGroup params) throws DataStoreException;
 
 }

@@ -78,7 +78,7 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
      */
     @Override
     public DataStore createDataStore(final URL url) throws DataStoreException {
-        return createDataStore(Collections.singletonMap(URLP.getName().toString(), url));
+        return create(Collections.singletonMap(URLP.getName().toString(), url));
     }
 
 }
