@@ -136,6 +136,19 @@ public final class GO2Hints extends Static {
      * Default value is false.
      */
     public static final Key KEY_PARALLAL_BUFFER = new NamedKey(Boolean.class, "GO2 - Parallal Buffer");
+    
+    /**
+     * Used only by J2DCanvasVolatile.
+     * BEHAVIOR_PROGRESSIVE : progressive repaint
+     * BEHAVIOR_KEEP_TILE : keep an image of the previously rendered map and translate it while map is repainting
+     * BEHAVIOR_ON_FINISH : replace image only when painting is finished
+     *
+     * Default value is false.
+     */
+    public static final Key KEY_BEHAVIOR_MODE = new NamedKey(Object.class, "GO2 - Paint of finish");
+    public static final Object BEHAVIOR_PROGRESSIVE = new Object();
+    public static final Object BEHAVIOR_KEEP_TILE = new Object();
+    public static final Object BEHAVIOR_ON_FINISH = new Object();
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
