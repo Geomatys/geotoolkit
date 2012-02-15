@@ -615,7 +615,6 @@
                 <tagletArtifact>
                   <groupId>org.geotoolkit.project</groupId>
                   <artifactId>geotk-javadoc</artifactId>
-                  <classifier>${project.classifier}</classifier>
                   <version>${project.version}</version>
                 </tagletArtifact>
 

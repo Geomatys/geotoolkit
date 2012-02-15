@@ -7,7 +7,7 @@ Maven plugins for Geotk
 
   This directory contains Maven plugin created for the specific needs of the Geotoolkit.org project.
   Some of those plugins can be used for external projects, but creating general-purpose plugins is
-  out of their scope.
+  actually out of scope for this module.
 
   For more general build instructions, see the {{{../index.html}building Geotoolkit.org}} page.
 
@@ -19,3 +19,5 @@ Maven plugins for Geotk
   * {{{./geotk-javadoc/index.html}Javadoc plugins}} for custom taglets.
 
   * {{{./geotk-jar-collector/index.html}JAR collector}}, which can also create PACK200 files.
+
+  * {{{./geotk-unopkg/index.html}UNO packager}}, for creating Libre/OpenOffice.org add-ins.

@@ -56,7 +56,7 @@
        don't want it to be processed in the aggregated javadoc.
        We can't use the javadoc "exclude package" option since
        we don't want to exclude the real classes defined in an
-       other module. Concequently "geotk-provided" needs to be
+       other module. Consequently "geotk-provided" needs to be
        deployed manually. Hopefully the changes in that module
        are exceptional enough.
 
