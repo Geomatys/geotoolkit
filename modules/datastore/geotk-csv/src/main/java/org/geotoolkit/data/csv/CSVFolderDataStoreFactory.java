@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
-            createDescriptor(CSVDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            createDescriptor("CSV",CSVDataStoreFactory.PARAMETERS_DESCRIPTOR);
     
     public CSVFolderDataStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);

@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class ShapefileFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
-            createDescriptor(ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            createDescriptor("SHP",ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
     
     public ShapefileFolderDataStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);

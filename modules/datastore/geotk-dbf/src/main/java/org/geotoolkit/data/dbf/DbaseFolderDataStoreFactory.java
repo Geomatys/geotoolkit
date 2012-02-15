@@ -30,7 +30,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
-            createDescriptor(DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            createDescriptor("DBF",DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);
     
     public DbaseFolderDataStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);

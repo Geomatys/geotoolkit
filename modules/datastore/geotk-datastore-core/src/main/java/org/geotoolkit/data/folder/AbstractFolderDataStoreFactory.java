@@ -19,7 +19,6 @@ package org.geotoolkit.data.folder;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
@@ -27,7 +26,6 @@ import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
@@ -117,14 +115,14 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
      * 
      * @return ParameterDescriptorGroup
      */
-    protected static ParameterDescriptorGroup createDescriptor(final ParameterDescriptorGroup sd){
+    protected static ParameterDescriptorGroup createDescriptor(final String prefix, final ParameterDescriptorGroup sd){
 
         final List<GeneralParameterDescriptor> params = new ArrayList<GeneralParameterDescriptor>(sd.descriptors());
         params.remove(AbstractFileDataStoreFactory.URLP);
         params.add(0,URLFOLDER);
         params.add(1,RECURSIVE);
 
-        return new DefaultParameterDescriptorGroup("FolderParameters",
+        return new DefaultParameterDescriptorGroup(prefix+"FolderParameters",
                 params.toArray(new GeneralParameterDescriptor[params.size()]));
     }
     
