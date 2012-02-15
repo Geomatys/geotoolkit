@@ -18,6 +18,7 @@
 package org.geotoolkit.maven.jar;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,14 +35,15 @@ import org.apache.maven.artifact.Artifact;
  * except if already presents.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.2
  *
  * @goal collect
  * @phase package
+ * @requiresDependencyResolution runtime
  */
-public class Collector extends AbstractMojo {
+public class Collector extends AbstractMojo implements FileFilter {
     /**
      * The sub directory to create inside the "target" directory.
      */
@@ -107,15 +109,15 @@ public class Collector extends AbstractMojo {
     }
 
     /**
-     * Implementation of the {@link #execute} method.
+     * Implementation of the {@link #execute()} method.
      */
     private void collect() throws MojoExecutionException, IOException {
         /*
          * Make sure that we are collecting the JAR file from a module which produced
          * such file. Some modules use pom packaging, which do not produce any JAR file.
          */
-        final File jarFile = new File(outputDirectory, jarName + ".jar");
-        if (!jarFile.isFile()) {
+        final File jarFile = getProjectFile();
+        if (jarFile == null) {
             return;
         }
         /*
@@ -137,7 +139,8 @@ public class Collector extends AbstractMojo {
             return;
         }
         /*
-         * Creates a "binaries" subdirectory inside the "target" directory.
+         * Creates a "binaries" subdirectory inside the "target" directory, then copy the
+         * JAR file compiled by Maven. If an JAR file already existed, it will be deleted.
          */
         collect = new File(collect, SUB_DIRECTORY);
         if (!collect.exists()) {
@@ -145,8 +148,13 @@ public class Collector extends AbstractMojo {
                 throw new MojoExecutionException("Failed to create binaries directory.");
             }
         }
-        copyFileToDirectory(jarFile, new File(collect, jarFile.getName()));
-        final Set<Artifact> dependencies = project.getDependencyArtifacts();
+        File copy = new File(collect, jarFile.getName());
+        copy.delete();
+        copyFileToDirectory(jarFile, copy);
+        /*
+         * Copies the dependencies.
+         */
+        final Set<Artifact> dependencies = project.getArtifacts();
         if (dependencies != null) {
             for (final Artifact artifact : dependencies) {
                 final String scope = artifact.getScope();
@@ -155,35 +163,52 @@ public class Collector extends AbstractMojo {
                     scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
                 {
                     final File file = artifact.getFile();
-                    if (file == null) {
-                        /*
-                         * Not sure why the file is sometime null... Maybe we should get the
-                         * file in a different way, but for now I don't know what to do here.
-                         * So wkip the file for now, may revisit later.
-                         */
-                        continue;
-                    }
-                    final File copy = new File(collect, getFinalName(file, artifact));
-                    if (!artifact.getGroupId().startsWith("org.geotoolkit")) {
-                        if (copy.exists()) {
+                    if (file != null) { // I'm not sure why the file is sometime null...
+                        copy = new File(collect, getFinalName(file, artifact));
+                        if (!copy.exists()) {
                             /*
                              * Copies the dependency only if it was not already copied. Note that
                              * the module's JAR was copied unconditionally above (because it may
-                             * be the result of a new compilation). If a Geotoolkit JAR from the
-                             * dependencies list changed, it will be copied unconditionally when
-                             * the module for this JAR will be processed by Maven.
+                             * be the result of a new compilation).
                              */
-                            continue;
+                            copyFileToDirectory(file, copy);
                         }
                     }
-                    copyFileToDirectory(file, copy);
                 }
             }
         }
     }
 
     /**
-     * Returns name of the given name. If the given file is a snapshot, then the
+     * Filters the content of the "target" directory in order to keep only the project
+     * build result. We scan the directory because the final name may be different than
+     * the {@link #jarName} declaration, because a classifier may have been added to the
+     * name.
+     * <p>
+     * <b>Complain:</b> Why the hell peoples use the {@code ".jar"} file extension for what
+     * should be plain source and javadoc {@code ".zip"} files?
+     */
+    @Override
+    public boolean accept(final File pathname) {
+        final String name = pathname.getName();
+        return name.startsWith(jarName) && name.endsWith(".jar") &&
+                !name.endsWith("-sources.jar") && !name.endsWith("-javadoc.jar") && pathname.isFile();
+    }
+
+    /**
+     * Returns the JAR file, or {@code null} if none.
+     * In case of doubt, conservatively returns {@code null}.
+     */
+    private File getProjectFile() {
+        final File[] files = new File(outputDirectory).listFiles(this);
+        if (files != null && files.length == 1) {
+            return files[0];
+        }
+        return null;
+    }
+
+    /**
+     * Returns the name of the given file. If the given file is a snapshot, then the
      * {@code "SNAPSHOT"} will be replaced by the timestamp if possible.
      *
      * @param  file     The file from which to get the filename.
@@ -209,6 +234,9 @@ public class Collector extends AbstractMojo {
 
     /**
      * Copies the given file to the given target file.
+     *
+     * @param file The source file to read.
+     * @param copy The destination file to create.
      */
     private static void copyFileToDirectory(final File file, final File copy) throws IOException {
         final FileInputStream in = new FileInputStream(file);

@@ -201,7 +201,7 @@ final class PackOutput implements Closeable {
                             packageName = classname.substring(0, length);
                         } else {
                             length = Math.min(packageName.length(), length);
-                            int i=0; for (i=0; i<length; i++) {
+                            int i; for (i=0; i<length; i++) {
                                 if (packageName.charAt(i) != classname.charAt(i)) {
                                     break;
                                 }

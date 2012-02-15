@@ -401,7 +401,7 @@ scan:   for (int i=0; i<missingCount; i++) {
                 if (var != variable) {
                     Dimension dim;
                     for (int d=0; (dim=var.getDimension(d)) != null; d++) {
-                        if (dim.getName().equals(name)) {
+                        if (name.equals(dim.getName())) {
                             // The specified variable is a dimension of another variable.
                             return false;
                         }

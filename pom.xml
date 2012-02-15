@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <prerequisites>
-    <maven>3.0.2</maven>
+    <maven>3.0.4</maven>
   </prerequisites>
 
 

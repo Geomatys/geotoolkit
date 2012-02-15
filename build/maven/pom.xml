@@ -50,47 +50,24 @@
 
   <!-- ===========================================================
            Dependency Management
-
-       TODO: avoid hard-coded version when the following is fixed:
-       http://jira.codehaus.org/browse/MNG-4112
        =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>3.0.3</version>
+      <version>${maven.version}</version>
     </dependency>
   </dependencies>
 
 
   <!-- ===========================================================
            Modules included in the build
-
-           Those modules will be excluded when generating the
-           web site because aggregated javadoc cause failures
-           during Maven plugins build.
-
-           See http://jira.codehaus.org/browse/MJAVADOC-145
-
-           For testing if the bug has been fixed:
-
-           mvn site -Pno-site
-
-           Check that the list of modules includes those below.
        =========================================================== -->
-  <profiles>
-    <profile>
-      <id>no-site</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>geotk-resource-compiler</module>
-        <module>geotk-jar-collector</module>
-        <module>geotk-unopkg</module>
-        <module>geotk-javadoc</module>
-        <module>geotk-site</module>
-      </modules>
-    </profile>
-  </profiles>
+  <modules>
+    <module>geotk-resource-compiler</module>
+    <module>geotk-jar-collector</module>
+    <module>geotk-unopkg</module>
+    <module>geotk-javadoc</module>
+    <module>geotk-site</module>
+  </modules>
 </project>
