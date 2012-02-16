@@ -676,10 +676,10 @@ public final class TreeUtils {
      * @throws IllegalArgumentException if candidate is null.
      */
     public static void trim(final Node2D candidate) {
-        ArgumentChecks.ensureNonNull("DeleteNode : Node2D candidate", candidate);
+        ArgumentChecks.ensureNonNull("trim : Node2D candidate", candidate);
         List<Node2D> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
-        List<Shape> reinsertList = new ArrayList<Shape>();
+        final List<Shape> reinsertList = new ArrayList<Shape>();
         for(int i = children.size()-1;i>=0;i--){
             final Node2D child = children.get(i);
             if(child.isEmpty()){

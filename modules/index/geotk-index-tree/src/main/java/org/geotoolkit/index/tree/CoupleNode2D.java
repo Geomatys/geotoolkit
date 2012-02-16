@@ -85,8 +85,9 @@ public class CoupleNode2D implements Couple<Node2D> {
     }
 
     /**
-     * @return  Overlaps area between two Node2D.
+     * {@inheritDoc}. 
      */
+    @Override
     public double getOverlaps() {
         final Rectangle2D over = getObject1().getBoundary().getBounds2D().createIntersection(getObject2().getBoundary().getBounds2D());
         return over.getWidth() * over.getHeight();

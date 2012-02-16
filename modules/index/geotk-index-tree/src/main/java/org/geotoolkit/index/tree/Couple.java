@@ -52,4 +52,9 @@ public interface Couple<B> {
      * @return two objects area.
      */
     double getArea();
+    
+    /**
+     * @return  Overlaps between two Object.
+     */
+    double getOverlaps();
 }
