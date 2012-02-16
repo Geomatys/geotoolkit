@@ -17,16 +17,16 @@
  */
 package org.geotoolkit.index.tree.star;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.util.ArgumentChecks;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.geotoolkit.index.tree.AbstractTree2D;
 import org.geotoolkit.index.tree.Node2D;
+import org.geotoolkit.index.tree.Tree;
 import static org.geotoolkit.index.tree.TreeUtils.*;
+import org.geotoolkit.util.ArgumentChecks;
 
 /**Create R*Tree.
  *
