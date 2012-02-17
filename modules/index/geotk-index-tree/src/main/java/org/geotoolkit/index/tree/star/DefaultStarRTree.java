@@ -24,17 +24,14 @@ import java.util.logging.Logger;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeUtils;
-import org.geotoolkit.index.tree.CoupleGE;
-import org.geotoolkit.index.tree.DefaultAbstractTree;
-import org.geotoolkit.index.tree.DefaultNode;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import org.geotoolkit.index.tree.*;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**Create R*Tree in Euclidean space.
@@ -73,9 +70,13 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void search(final GeneralEnvelope regionSearch, final List<GeneralEnvelope> result) {
+    public void search(final GeneralEnvelope regionSearch, final List<GeneralEnvelope> result) throws TransformException{
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
+        final CoordinateReferenceSystem entryCRS = regionSearch.getCoordinateReferenceSystem();
+        if(!entryCRS.equals(crs)){
+            regionSearch.setEnvelope(Envelopes.transform(regionSearch, crs));
+        }
         final DefaultNode root = this.getRoot();
         if(root != null){
             DefaultNodeSearch(root, regionSearch, result);
@@ -86,15 +87,12 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void insert(final GeneralEnvelope entry){
+    public void insert(final GeneralEnvelope entry) throws TransformException{
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         final CoordinateReferenceSystem entryCRS = entry.getCoordinateReferenceSystem();
         if(!entryCRS.equals(crs)){
-            try {
                 entry.setEnvelope(Envelopes.transform(entry, crs));
-            } catch (Exception ex) {
-                Logger.getLogger(DefaultStarRTree.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
         }
         final DefaultNode root = getRoot();
         if (root.isEmpty()) {
@@ -108,7 +106,11 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void delete(final GeneralEnvelope entry) {
+    public void delete(final GeneralEnvelope entry) throws TransformException{
+        final CoordinateReferenceSystem entryCRS = entry.getCoordinateReferenceSystem();
+        if(!entryCRS.equals(crs)){
+            entry.setEnvelope(Envelopes.transform(entry, crs));
+        }
         final DefaultNode root = getRoot();
         if (root != null) {
             deleteNode3D(root, entry);
@@ -184,7 +186,7 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if {@code DefaultNode} candidate is null.
      * @throws IllegalArgumentException if {@code GeneralEnvelope} entry is null.
      */
-    private static void DefaultNodeInsert(final DefaultNode candidate, final GeneralEnvelope entry){
+    private static void DefaultNodeInsert(final DefaultNode candidate, final GeneralEnvelope entry) throws TransformException{
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
@@ -605,7 +607,7 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    public static boolean deleteNode3D(final DefaultNode candidate, final GeneralEnvelope entry){
+    public static boolean deleteNode3D(final DefaultNode candidate, final GeneralEnvelope entry) throws TransformException{
         ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
         if(candidate.getBoundary().intersects(entry, true)){
@@ -634,7 +636,7 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * @param candidate {@code Node3D} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    public static void trim(final DefaultNode candidate) {
+    public static void trim(final DefaultNode candidate) throws TransformException {
         ArgumentChecks.ensureNonNull("trim : Node3D candidate", candidate);
         final List<DefaultNode> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
@@ -673,7 +675,7 @@ public class DefaultStarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private static void branchGrafting(DefaultNode nodeA, DefaultNode nodeB ){
+    private static void branchGrafting(DefaultNode nodeA, DefaultNode nodeB ) throws TransformException{
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("branchGrafting : not leaf");
         }

@@ -69,7 +69,7 @@ public class HilbertRTreeTest extends TreeTest {
                 lS.add(no.getBoundary());
             }
         }
-        return (TreeUtils.getEnveloppeMin(lS).getBounds2D().equals(node.getBoundary().getBounds2D())) ? true : false;
+        return (TreeUtils.getEnveloppeMin(lS).getBounds2D().equals(node.getBoundary().getBounds2D()));
     }
 
     /**

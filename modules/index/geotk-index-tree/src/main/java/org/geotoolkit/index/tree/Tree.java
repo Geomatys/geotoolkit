@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a generic Tree.
@@ -39,21 +40,21 @@ public interface Tree<N extends Node<N,B>, B> {
      * @param regionSearch Define the region to find Shape within tree.
      * @param result List of Entr(y)(ies).
      */
-    void search(B regionSearch, List<B> result);
+    void search(B regionSearch, List<B> result) throws TransformException;
 
     /**
      * Insert a {@code Entry} into Rtree.
      * 
      * @param Entry to insert into tree.
      */
-    void insert(B entry);
+    void insert(B entry)throws TransformException;
 
     /**
      * Find a {@code Entry} into the tree and delete it.
      * 
      * @param Entry to delete.
      */
-    void delete(B entry);
+    void delete(B entry)throws TransformException;
 
     /**
      * @return max number authorized by tree cells.

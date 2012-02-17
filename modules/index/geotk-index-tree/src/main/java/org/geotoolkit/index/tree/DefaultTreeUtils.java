@@ -395,6 +395,25 @@ public class DefaultTreeUtils {
         }
     }
     
+    /**Compute general boundary of all shapes passed in parameter.
+     * 
+     * @param lS GeneralEnvelope List.
+     * @throws IllegalArgumentException if {@code GeneralEnvelope} list lS is null.
+     * @throws IllegalArgumentException if {@code GeneralEnvelope} list lS is empty.
+     * @return Shape which is general boundary.
+     */
+    public static GeneralEnvelope getEnveloppeMin(final List<GeneralEnvelope> lGE){
+        ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
+        if(lGE.isEmpty()){
+            throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
+        }
+        final GeneralEnvelope envlop = new GeneralEnvelope(lGE.get(0));
+        for(int i = 1, s = lGE.size(); i<s;i++){
+            envlop.add(lGE.get(i));
+        }
+        return envlop;
+    }
+    
     /**Compute {@code GeneralEnvelope} area in euclidean cartesian space.
      * 
      * @param envelope
