@@ -21,6 +21,11 @@
     </dependency>
     
     <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
