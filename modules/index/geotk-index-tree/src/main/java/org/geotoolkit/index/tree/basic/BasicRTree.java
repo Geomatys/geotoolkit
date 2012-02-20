@@ -24,6 +24,7 @@ import org.geotoolkit.index.tree.*;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.geotoolkit.index.tree.TreeUtils.*;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Create R-Tree (Basic)
@@ -76,7 +77,7 @@ public class BasicRTree extends AbstractTree2D {
      * {@inheritDoc} 
      */
     @Override
-    public void delete(final Shape entry) {
+    public void delete(final Shape entry) throws TransformException {
         final Node2D root = getRoot();
         if (root != null) {
             deleteNode(getRoot(), entry);

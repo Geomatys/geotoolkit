@@ -30,10 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.index.tree.AbstractNode;
-import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.Node2D;
-import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.*;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**Create TreeWriter object.
@@ -100,67 +98,67 @@ public class TreeWriter {
 
     }
 
-    /**
-     * Write tree in binary.
+    /**Write tree in binary.
      * 
      * @param tree
      * @throws IOException 
      */
     public void write(final Tree tree) throws IOException {
-        final Node2D root = (Node2D)tree.getRoot();
+        final DefaultNode root = (DefaultNode)tree.getRoot();
         createIndex(root);
         serializeNode(root, dataOPStream);
     }
 
-    /**
-     * Write all node to binary.
+    /**Write all node to binary.
      * 
      * @param root
      * @param dops
      * @throws IOException 
      */
-    private void serializeNode(final Node2D root, final DataOutputStream dops) throws IOException {
+    private void serializeNode(final DefaultNode root, final DataOutputStream dops) throws IOException {
         nodeToBinary(root, dops);
-        for (Node2D child : root.getChildren()) {
+        for (DefaultNode child : root.getChildren()) {
             serializeNode(child, dops);
         }
     }
 
-    /**
-     * Write node in binary.
+    /**Write node in binary.
      * 
      * @param node
      * @param dops
      * @throws IOException 
      */
-    private void nodeToBinary(final Node2D node, final DataOutputStream dops) throws IOException {
-        final List<Node2D> listChild = node.getChildren();
-        final List<Shape> listEntries = new ArrayList<Shape>(node.getEntries());
-
+    private void nodeToBinary(final DefaultNode node, final DataOutputStream dops) throws IOException {
+        final List<DefaultNode> listChild = node.getChildren();
+        final List<GeneralEnvelope> listEntries = new ArrayList<GeneralEnvelope>(node.getEntries());
         final int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
-        final Rectangle2D bound = node.getBoundary().getBounds2D();
-        dops.writeDouble(bound.getMinX());
-        dops.writeDouble(bound.getMinY());
-        dops.writeDouble(bound.getMaxX());
-        dops.writeDouble(bound.getMaxY());
+        final GeneralEnvelope bound = node.getBoundary();
+        final int dim = bound.getDimension();
+        dops.writeInt(dim);
+        
+        for(int i = 0; i<dim; i++){
+            dops.writeDouble(bound.getLower(i));
+        }
+        for(int i = 0; i<dim; i++){
+            dops.writeDouble(bound.getUpper(i));
+        }
         dops.writeInt(nbrSubNode);
 
-        for (Node2D child : listChild) {
+        for (DefaultNode child : listChild) {
             dops.writeInt(index.get(child));
         }
-        final List<Node2D> listup = (List<Node2D>) node.getUserProperty("cells");
+        final List<DefaultNode> listup = (List<DefaultNode>) node.getUserProperty("cells");
         if (listup != null) {
-            for (Node2D n : listup) {
+            for (DefaultNode n : listup) {
                 listEntries.addAll(n.getEntries());
             }
         }
-
         dops.writeInt(listEntries.size());
-        for (Shape shape : listEntries) {
+        for (GeneralEnvelope gEnv : listEntries) {
             final ByteArrayOutputStream temp = new ByteArrayOutputStream();
             final ObjectOutputStream ost = new ObjectOutputStream(temp);
-            ost.writeObject(shape);
+            ost.writeObject(gEnv);
             temp.flush();
             final byte[] array = temp.toByteArray();
             dops.writeInt(array.length);
@@ -173,10 +171,10 @@ public class TreeWriter {
      * 
      * @param node tree root node.
      */
-    private void createIndex(final Node2D node) {
+    private void createIndex(final DefaultNode node) {
         ArgumentChecks.ensureNonNull("createIndex : tree", node);
         index.put(node, inc);
-        for (Node2D child : node.getChildren()) {
+        for (DefaultNode child : node.getChildren()) {
             inc++;
             createIndex(child);
         }

@@ -17,22 +17,16 @@
  */
 package org.geotoolkit.index.tree.io;
 
-import java.awt.Shape;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.AbstractNode;
-import org.geotoolkit.index.tree.Node2D;
+import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
 
@@ -126,20 +120,20 @@ public class TreeReader {
      */
     public void read(final Tree tree) throws IOException, ClassNotFoundException {
         ArgumentChecks.ensureNonNull("read : tree", tree);
-        final List<Node2D> listNodes = new ArrayList<Node2D>();
+        final List<DefaultNode> listNodes = new ArrayList<DefaultNode>();
         final Map<Integer, AbstractNode> index = new HashMap<Integer, AbstractNode>();
         readNode(tree, dataIPStream, listNodes, index);
 
-        for (Node2D node : listNodes) {
+        for (DefaultNode node : listNodes) {
             final int[] tabC = (int[]) node.getUserProperty("tabidchildren");
-            final List<Node2D> children = node.getChildren();
+            final List<DefaultNode> children = node.getChildren();
             for (int i = 0; i < tabC.length; i++) {
-                final Node2D child = (Node2D) index.get(tabC[i]);
+                final DefaultNode child = (DefaultNode) index.get(tabC[i]);
                 child.setParent(node);
                 children.add(child);
             }
         }
-        tree.setRoot((Node2D) index.get(0));
+        tree.setRoot((DefaultNode) index.get(0));
     }
 
     /**
@@ -152,33 +146,35 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    private void readNode(final Tree tree, final DataInputStream dips, final List<Node2D> listNodes, final Map<Integer, AbstractNode> index) throws IOException, ClassNotFoundException {
+    private void readNode(final Tree tree, final DataInputStream dips, final List<DefaultNode> listNodes, final Map<Integer, AbstractNode> index) throws IOException, ClassNotFoundException {
         ArgumentChecks.ensureNonNull("readNode : tree", tree);
         ArgumentChecks.ensureNonNull("readNode : dips", dips);
         ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
         ArgumentChecks.ensureNonNull("readNode : index", index);
+        
         if (dips.available() > 0) {
             final int id = dips.readInt();
-            final double minx = dips.readDouble();
-            final double miny = dips.readDouble();
-            final double maxX = dips.readDouble();
-            final double maxY = dips.readDouble();
+            final int dim = dips.readInt();
+            double[] coordinates = new double[dim*2];
+            for(int i = 0; i<2*dim; i++){
+                coordinates[i] = dips.readDouble();
+            }
             final int nbrChildren = dips.readInt();
             final int[] tabChild = new int[nbrChildren];
             for (int i = 0; i < nbrChildren; i++) {
                 tabChild[i] = dips.readInt();
             }
             final int nbrEntries = dips.readInt();
-            final List<Shape> listEntries = new ArrayList<Shape>();
+            final List<GeneralEnvelope> listEntries = new ArrayList<GeneralEnvelope>();
             for (int i = 0; i < nbrEntries; i++) {
                 final int arrayLength = dips.readInt();
                 final byte[] tabB = new byte[arrayLength];
                 dips.read(tabB, 0, arrayLength);
                 final ByteArrayInputStream bis = new ByteArrayInputStream(tabB);
                 ObjectInputStream oins = new ObjectInputStream(bis);
-                listEntries.add((Shape) oins.readObject());
+                listEntries.add((GeneralEnvelope) oins.readObject());
             }
-            final Node2D result = (Node2D)tree.createNode(tree, null, null, listEntries, minx, miny, maxX, maxY);
+            final DefaultNode result = (DefaultNode)tree.createNode(tree, null, null, listEntries, coordinates);
             result.setUserProperty("tabidchildren", tabChild);
             index.put(id, result);
             listNodes.add(result);

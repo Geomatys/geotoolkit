@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Some utile methods.
@@ -647,7 +648,7 @@ public final class TreeUtils {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    public static boolean deleteNode(final Node2D candidate, final Shape entry) {
+    public static boolean deleteNode(final Node2D candidate, final Shape entry) throws TransformException {
         ArgumentChecks.ensureNonNull("DeleteNode : Node2D candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode : Shape entry", entry);
         
@@ -675,7 +676,7 @@ public final class TreeUtils {
      * @param candidate {@code Node2D} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    public static void trim(final Node2D candidate) {
+    public static void trim(final Node2D candidate) throws TransformException {
         ArgumentChecks.ensureNonNull("trim : Node2D candidate", candidate);
         List<Node2D> children = candidate.getChildren();
         final Tree tree = candidate.getTree();

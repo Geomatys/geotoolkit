@@ -18,29 +18,29 @@
 package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.star.StarRTree;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
+import org.opengis.referencing.operation.TransformException;
 
-/**
- * Create R*Tree test suite.
+/**Create R*Tree test suite.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class StarRTreeTest extends TreeTest {
-
-    public StarRTreeTest() {
-        super(new StarRTree(4));
+public class StarRTree3DTest extends TreeTest{
+    public StarRTree3DTest() throws TransformException {
+        super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D), DefaultEngineeringCRS.CARTESIAN_3D);
     }
-
+    
     /**
      * Some elements inserted in Hilbert R-Tree.
      */
     @Test
-    public void testInsert() {
+    public void testInsert() throws TransformException {
         super.insertTest();
     }
 
     @Test
-    public void testCheckBoundary() {
+    public void testCheckBoundary() throws TransformException {
         super.checkBoundaryTest();
     }
 
@@ -48,7 +48,7 @@ public class StarRTreeTest extends TreeTest {
      * Test search query inside tree.
      */
     @Test
-    public void testQueryInside() {
+    public void testQueryInside() throws TransformException {
         super.queryInsideTest();
     }
 
@@ -56,7 +56,7 @@ public class StarRTreeTest extends TreeTest {
      * Test query outside of tree area.
      */
     @Test
-    public void testQueryOutside() {
+    public void testQueryOutside() throws TransformException {
         super.queryOutsideTest();
     }
 
@@ -64,23 +64,15 @@ public class StarRTreeTest extends TreeTest {
      * Test query on tree boundary border. 
      */
     @Test
-    public void testQueryOnBorder() {
+    public void testQueryOnBorder() throws TransformException {
         super.queryOnBorderTest();
-    }
-
-    /**
-     * Test query with search area contain all tree boundary. 
-     */
-    @Test
-    public void testQueryAll() {
-        super.queryAllTest();
     }
 
     /**
      * Test insertion and deletion in tree.
      */
     @Test
-    public void testInsertDelete() {
+    public void testInsertDelete() throws TransformException {
         super.insertDelete();
     }
 }

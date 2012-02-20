@@ -1,258 +1,190 @@
 /*
- *    Geotoolkit.org - An Open Source Java GIS Toolkit
- *    http://www.geotoolkit.org
- *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 package org.geotoolkit.index.tree;
 
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.ArgumentChecks;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
-/**
- * Test some R-Tree queries.
+/**Test some R-Tree queries.
  *
  * @author Rémi Marechal (Geomatys).
  */
 public abstract class TreeTest {
-
     protected final Tree tree;
-    protected final List<Shape> lData = new ArrayList<Shape>();
-
-    public TreeTest(Tree tree) {
+    protected final List<GeneralEnvelope> lData = new ArrayList<GeneralEnvelope>();
+    protected final CoordinateReferenceSystem crs;
+    protected final int dimension;
+    
+    public TreeTest(Tree tree, CoordinateReferenceSystem crs) throws TransformException {
         ArgumentChecks.ensureNonNull("tree", tree);
+        ArgumentChecks.ensureNonNull("crs", crs);
+        this.dimension = crs.getCoordinateSystem().getDimension();
+        ArgumentChecks.ensurePositive("dimension", this.dimension);
         this.tree = tree;
-        for (int j = -120; j <= 120; j += 4) {
-            for (int i = -200; i <= 200; i += 4) {
-                lData.add(new Ellipse2D.Double(i, j, 1, 1));
+        this.crs = crs;
+        
+        final DirectPosition centerEntry = new GeneralDirectPosition(crs);
+        for(int i = 0; i<3000; i++){
+            for(int nbCoords = 0; nbCoords<this.dimension; nbCoords++){
+                double value = (Math.random() < 0.5) ? -1 : 1;
+                value *= 1500 * Math.random();
+                centerEntry.setOrdinate(nbCoords, value);
             }
+            lData.add(createEntry(centerEntry));
         }
-        Collections.shuffle(lData);
         insert();
     }
-
-    private void insert() {
-        for (Shape shape : lData) {
-            tree.insert(shape);
+    
+    
+    private void insert() throws TransformException {
+        for (GeneralEnvelope gEnv : lData) {
+            tree.insert(gEnv);
         }
     }
-
+    
     /**
      * Test if tree contain all elements inserted.
      */
-    protected void insertTest() {
-        assertTrue(((Node2D)tree.getRoot()).getBoundary().getBounds2D().equals(TreeUtils.getEnveloppeMin(lData)));
-        final List<Shape> listSearch = new ArrayList<Shape>();
-        tree.search(((Node2D)tree.getRoot()).getBoundary(), listSearch);
+    protected void insertTest() throws TransformException {
+        final GeneralEnvelope gr = ((DefaultNode)tree.getRoot()).getBoundary();
+        final GeneralEnvelope gem = DefaultTreeUtils.getEnveloppeMin(lData);
+        assertTrue(gr.equals(gem, 1E-9, false));
+        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        tree.search(gr, listSearch);
         assertTrue(listSearch.size() == lData.size());
     }
 
     /**
      * Compare all boundary node from their children boundary.
      */
-    public void checkBoundaryTest() {
-        checkNodeBoundaryTest((Node2D)tree.getRoot());
+    protected void checkBoundaryTest() throws TransformException {
+        checkNodeBoundaryTest((DefaultNode)tree.getRoot());
     }
 
     /**
      * Compare boundary node from his children boundary.
      */
-    public void checkNodeBoundaryTest(final Node2D node) {        
+    protected void checkNodeBoundaryTest(final DefaultNode node) {        
         assertTrue(checkBoundaryNode(node));
-        for (Node2D no : node.getChildren()) {
+        for (DefaultNode no : node.getChildren()) {
             checkNodeBoundaryTest(no);
         }
     }
 
+    public void queryOnBorderTest() throws TransformException {
+        final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
+        for(GeneralEnvelope ge : lData){
+            tree.delete(ge);
+        }
+        final List<GeneralEnvelope> lGERef = new ArrayList<GeneralEnvelope>();
+        final GeneralEnvelope gR = new GeneralEnvelope(crs);
+        
+        if(dimension == 2){
+            for(int i = 0; i<20; i++){
+                for(int j = 0; j<20; j++){
+                    final GeneralEnvelope gE = new GeneralEnvelope(crs);
+                    gE.setEnvelope(5*i,5*j,5*i,5*j);
+                    lGE.add(gE);
+                    if(i == 19 && j>3 &&j<18){
+                        lGERef.add(gE);
+                    }
+                }
+            }
+            gR.setEnvelope(93, 18, 130, 87);
+        }else{
+            for(int i = 0; i<20; i++){
+                for(int j = 0; j<20; j++){
+                    final GeneralEnvelope gE = new GeneralEnvelope(crs);
+                    gE.setEnvelope(5*i,5*j,20,5*i,5*j,20);
+                    lGE.add(gE);
+                    if(i == 19 && j>3 &&j<18){
+                        lGERef.add(gE);
+                    }
+                }
+            }
+            gR.setEnvelope(93, 18, 19, 130, 87, 21);
+        }
+        
+        for(GeneralEnvelope ge : lGE){
+            tree.insert(ge);
+        }
+        
+        final List<GeneralEnvelope> lGES = new ArrayList<GeneralEnvelope>(); 
+        tree.search(gR, lGES);
+        
+        assertTrue(compareList(lGERef, lGES));
+    }
+    
     /**
      * Compare boundary node from his children boundary.
      */
-    protected boolean checkBoundaryNode(final Node2D node) {
-        final Rectangle2D subBound = new Rectangle2D.Double();
-        final List<Shape> lS = new ArrayList<Shape>();
+    protected boolean checkBoundaryNode(final DefaultNode node) {
+        final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
         if (node.isLeaf()) {
-            for (Shape shap : node.getEntries()) {
-                lS.add(shap);
+            for (GeneralEnvelope gEnv : node.getEntries()) {
+                lGE.add(gEnv);
             }
 
         } else {
-            for (Node2D no : node.getChildren()) {
-                lS.add(no.getBoundary());
+            for (DefaultNode no : node.getChildren()) {
+                lGE.add(no.getBoundary());
             }
         }
-        subBound.setRect(TreeUtils.getEnveloppeMin(lS).getBounds2D());
-        return (subBound.equals(node.getBoundary().getBounds2D())) ? true : false;
+        final GeneralEnvelope subBound = DefaultTreeUtils.getEnveloppeMin(lGE);
+        return subBound.equals(node.getBoundary());
     }
 
     /**
      * Test search query inside tree.
      */
-    protected void queryInsideTest() {
-
-        final List<Shape> listRef = new ArrayList<Shape>();
-        for (int j = 20; j < 50; j += 4) {
-            for (int i = -48; i <= 20; i += 4) {
-                listRef.add(new Ellipse2D.Double(i, j, 1, 1));
-            }
-        }
-        final List<Shape> listSearch = new ArrayList<Shape>();
-        tree.search(TreeUtils.getEnveloppeMin(listRef), listSearch);
-        assertTrue(compareList(listRef, listSearch));
+    protected void queryInsideTest() throws TransformException {
+        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        tree.search(DefaultTreeUtils.getEnveloppeMin(lData), listSearch);
+        assertTrue(compareList(lData, listSearch));
     }
 
     /**
      * Test query outside of tree area.
      */
-    protected void queryOutsideTest() {
-        final Rectangle2D areaSearch = new Rectangle2D.Double(202, 20, 70, 30);
-        final List<Shape> listSearch = new ArrayList<Shape>();
+    protected void queryOutsideTest() throws TransformException {
+        final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
+        for(int i = 0; i<dimension; i++){
+            areaSearch.setRange(i, 1600, 2000);
+        }
+        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
         tree.search(areaSearch, listSearch);
         assertTrue(listSearch.isEmpty());
     }
 
-    /**
-     * Test query on tree boundary border. 
-     */
-    protected void queryOnBorderTest() {
-        final Rectangle2D areaSearch = new Rectangle2D.Double(150, 80, 100, 80);
-        final List<Shape> listSearch = new ArrayList<Shape>();
-        tree.search(areaSearch, listSearch);
-
-        final List<Shape> listRef = new ArrayList<Shape>();
-        for (int j = 80; j <= 120; j += 4) {
-            for (int i = 152; i <= 200; i += 4) {
-                listRef.add(new Ellipse2D.Double(i, j, 1, 1));
-            }
-        }
-        assertTrue(compareList(listRef, listSearch));
-    }
-
-    /**
-     * Test query with search area contain all tree boundary. 
-     */
-    protected void queryAllTest() {
-        final Rectangle2D areaSearch = new Rectangle2D.Double(-250, -150, 500, 300);
-        final List<Shape> listSearch = new ArrayList<Shape>();
-        tree.search(areaSearch, listSearch);
-        assertTrue(compareList(lData, listSearch));
-    }
 
     /**
      * Test insertion and deletion in tree.
      */
-    protected void insertDelete() {
+    protected void insertDelete() throws TransformException {
         Collections.shuffle(lData);
-        for (Shape sh : lData) {
-            tree.delete(sh);
+        for (GeneralEnvelope env : lData) {
+            tree.delete(env);
         }
-
-        final List<Shape> listSearch = new ArrayList<Shape>();
-        tree.search(new Rectangle2D.Double(-200, -120, 400, 240), listSearch);
+        final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
+        for(int i = 0; i<dimension; i++){
+            areaSearch.setRange(i, -1500, 1500);
+        }
+        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        tree.search(areaSearch, listSearch);
         assertTrue(listSearch.isEmpty());
-
-        final List<Shape> listToAdd = new ArrayList<Shape>();
-
-        final Shape s1 = new Ellipse2D.Double(-60, -21, 5, 5);
-        final Shape s2 = new Ellipse2D.Double(-60, 0, 5, 5);
-        final Shape s3 = new Ellipse2D.Double(-60, 21, 5, 5);
-        final Shape s4 = new Ellipse2D.Double(-60, 45, 5, 5);
-        final Shape s5 = new Ellipse2D.Double(-60, 60, 5, 5);
-        final Shape s6 = new Ellipse2D.Double(-45, 60, 5, 5);
-        final Shape s7 = new Ellipse2D.Double(-21, 60, 5, 5);
-        final Shape s8 = new Ellipse2D.Double(0, 60, 5, 5);
-        final Shape s9 = new Ellipse2D.Double(21, 60, 5, 5);
-        final Shape s10 = new Ellipse2D.Double(45, 60, 5, 5);
-        final Shape s11 = new Ellipse2D.Double(60, 60, 5, 5);
-        final Shape s12 = new Ellipse2D.Double(60, 45, 5, 5);
-        final Shape s13 = new Ellipse2D.Double(60, 21, 5, 5);
-        final Shape s14 = new Ellipse2D.Double(60, 0, 5, 5);
-        final Shape s15 = new Ellipse2D.Double(60, -21, 5, 5);
-        final Shape s16 = new Ellipse2D.Double(60, -45, 5, 5);
-        final Shape s17 = new Ellipse2D.Double(60, -60, 5, 5);
-        final Shape s18 = new Ellipse2D.Double(45, -60, 5, 5);
-        final Shape s19 = new Ellipse2D.Double(21, -60, 5, 5);
-        final Shape s20 = new Ellipse2D.Double(0, -60, 5, 5);
-        final Shape s21 = new Ellipse2D.Double(-21, -60, 5, 5);
-        final Shape s22 = new Ellipse2D.Double(-21, 45, 5, 5);
-        final Shape s23 = new Ellipse2D.Double(-21, -21, 5, 5);
-        final Shape s24 = new Ellipse2D.Double(-21, 0, 5, 5);
-        final Shape s25 = new Ellipse2D.Double(-21, 21, 5, 5);
-        final Shape s26 = new Ellipse2D.Double(0, 21, 5, 5);
-        final Shape s27 = new Ellipse2D.Double(21, 21, 5, 5);
-        final Shape s28 = new Ellipse2D.Double(21, 0, 5, 5);
-        final Shape s29 = new Ellipse2D.Double(21, -21, 5, 5);
-        final Shape s30 = new Ellipse2D.Double(0, -21, 5, 5);
-        final Shape s31 = new Ellipse2D.Double(0, 0, 5, 5);
-        final Shape s32 = new Ellipse2D.Double(-60, -45, 5, 5);
-        listToAdd.add(s1);
-        listToAdd.add(s2);
-        listToAdd.add(s3);
-        listToAdd.add(s4);
-        listToAdd.add(s5);
-        listToAdd.add(s6);
-        listToAdd.add(s7);
-        listToAdd.add(s8);
-        listToAdd.add(s9);
-        listToAdd.add(s10);
-        listToAdd.add(s11);
-        listToAdd.add(s12);
-        listToAdd.add(s13);
-        listToAdd.add(s14);
-        listToAdd.add(s15);
-        listToAdd.add(s16);
-        listToAdd.add(s17);
-        listToAdd.add(s18);
-        listToAdd.add(s19);
-        listToAdd.add(s20);
-        listToAdd.add(s24);
-        listToAdd.add(s23);
-        listToAdd.add(s22);
-        listToAdd.add(s21);
-        listToAdd.add(s25);
-        listToAdd.add(s26);
-        listToAdd.add(s27);
-        listToAdd.add(s28);
-        listToAdd.add(s29);
-        listToAdd.add(s30);
-        listToAdd.add(s31);
-        listToAdd.add(s32);
         insert();
-        for (Shape sh : listToAdd) {
-            tree.insert(sh);
-        }
-        Collections.shuffle(lData);
-        for (Shape sh : lData) {
-            tree.delete(sh);
-        }
-
-        listSearch.clear();
-        tree.search(((Node2D)tree.getRoot()).getBoundary(), listSearch);
-        assertTrue(compareList(listSearch, listToAdd));
-
-        for (Shape sh : listToAdd) {
-            tree.delete(sh);
-        }
-        Collections.shuffle(lData);
-        for (Shape sh : lData) {
-            tree.insert(sh);
-        }
+        tree.search(areaSearch, listSearch);
+        assertTrue(compareList(listSearch, lData));
     }
 
     /**
@@ -267,7 +199,7 @@ public abstract class TreeTest {
      * @throws IllegalArgumentException if listA or ListB is null.
      * @return true if listA contains same elements from listB.
      */
-    protected boolean compareList(final List<Shape> listA, final List<Shape> listB) {
+    protected boolean compareList(final List<GeneralEnvelope> listA, final List<GeneralEnvelope> listB) {
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
@@ -280,9 +212,9 @@ public abstract class TreeTest {
         }
 
         boolean shapequals = false;
-        for (Shape shs : listA) {
-            for (Shape shr : listB) {
-                if (shs.equals(shr)) {
+        for (GeneralEnvelope shs : listA) {
+            for (GeneralEnvelope shr : listB) {
+                if (shs.equals(shr, 1E-9, false)) {
                     shapequals = true;
                 }
             }
@@ -293,4 +225,27 @@ public abstract class TreeTest {
         }
         return true;
     }
+    
+    public static GeneralEnvelope createEntry(final DirectPosition position){
+        final double[] coord = position.getCoordinate();
+        int length = coord.length;
+        double[] coordLow = new double[length];
+        double[] coordUpp = new double[length];
+        for(int i = 0; i< length; i++){
+            coordLow[i] = coord[i]-(Math.random() * 5 + 5);
+            coordUpp[i] = coord[i]+(Math.random() * 5 + 5);
+        }
+        final CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
+        if(crs == null){
+            return new GeneralEnvelope(new GeneralDirectPosition(coordLow), new GeneralDirectPosition(coordUpp));
+        }
+        final GeneralDirectPosition dpLow = new GeneralDirectPosition(crs);
+        final GeneralDirectPosition dpUpp = new GeneralDirectPosition(crs);
+        for(int i = 0; i<length; i++){
+            dpLow.setOrdinate(i, coordLow[i]);
+            dpUpp.setOrdinate(i, coordUpp[i]);
+        }
+        return new GeneralEnvelope(dpLow, dpUpp);
+    }
+    
 }

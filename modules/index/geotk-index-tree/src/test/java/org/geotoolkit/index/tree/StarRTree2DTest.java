@@ -17,22 +17,21 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.basic.BasicRTree;
-import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.star.StarRTree;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
-/**
- * Create (Basic) R-Tree test suite.
+/**Create R*Tree test suite.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BasicRTreeTest extends TreeTestShape {
+public class StarRTree2DTest extends TreeTest{
 
-    public BasicRTreeTest() throws TransformException {
-        super(new BasicRTree(4, SplitCase.QUADRATIC));
+    public StarRTree2DTest() throws TransformException {
+        super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_2D), DefaultEngineeringCRS.CARTESIAN_2D);
     }
-
+    
     /**
      * Some elements inserted in Hilbert R-Tree.
      */
@@ -42,7 +41,7 @@ public class BasicRTreeTest extends TreeTestShape {
     }
 
     @Test
-    public void testCheckBoundary() {
+    public void testCheckBoundary() throws TransformException {
         super.checkBoundaryTest();
     }
 
@@ -68,14 +67,6 @@ public class BasicRTreeTest extends TreeTestShape {
     @Test
     public void testQueryOnBorder() throws TransformException {
         super.queryOnBorderTest();
-    }
-
-    /**
-     * Test query with search area contain all tree boundary. 
-     */
-    @Test
-    public void testQueryAll() throws TransformException {
-        super.queryAllTest();
     }
 
     /**

@@ -21,6 +21,7 @@ import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.index.tree.star.StarRTree;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Create chosen tree.
@@ -49,8 +50,8 @@ public final class TreeFactory {
      * @param maxElements_per_cells
      * @return R*Tree.
      */
-    public static Tree createStarRTree2D(final int maxElements_per_cells) {
-        return new StarRTree(maxElements_per_cells);
+    public static Tree createStarRTree(final int maxElements_per_cells, CoordinateReferenceSystem crs) {
+        return new StarRTree(maxElements_per_cells, crs);
     }
 
     /**
