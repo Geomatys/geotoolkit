@@ -2,14 +2,30 @@
 
 <html>
   <head>
-    <title>Geotk Maven Repository - legacy NetCDF archives</title>
+    <title>Geotk Maven Repository - NetCDF archives</title>
   </head>
   <body>
-    <h1>Maven Repository: legacy NetCDF archives</h1>
+    <h1>NetCDF archives</h1>
 
-    <p align="justify">This directory contains Java Archive (JAR) files for the NetCDF library
-    prior to version 4.2.20. Starting from version 4.2.20, the NetCDF library is deployed on
-    the <a href="http://repo2.maven.org/maven2/edu/ucar/">Maven Central repository</a>. The
-    legacy NetCDF archives are kept for compilation of Geotk versions prior to 3.18.</p>
+    <p>This directory contains Java Archive (JAR) files for the
+    <a href="http://www.unidata.ucar.edu/software/netcdf-java/">NetCDF library</a>. The archives deployed
+    in this directory are either legacy files used before the NetCDF build was "mavenized", or files
+    modified before deployment (for example in order to replace some embedded dependencies by external
+    dependencies).</p>
+
+    <h2>History</h2>
+    <p>NetCDF versions in the 2.<var>x</var> series were deployed on this repository or on the Geotools
+    repository. Those artifacts were used by all Geotk versions prior to 3.18. NetCDF version 4.2.20
+    was deployed on the <a href="http://repo2.maven.org/maven2/edu/ucar/">Maven Central repository</a>.
+    NetCDF version 4.3.8 and above are deployed on the UCAR repository. Those changes in deployment
+    target were accompanied by changes in Maven <code>groupId</code> and version policy, and
+    consequently changes in the directory names listed in this repository:</p>
+    <ul>
+      <li>Starting from 4.2.20, <code>bufrTables</code> has been renamed to <code>bufr</code>.</li>
+      <li>Starting from 4.2.20, <code>unidatacommon</code> has been renamed to <code>unidataCommon</code> (with upper-case "C").</li>
+      <li>Starting from 4.2.20, <code>grib</code> version numbers are aligned with <code>netcdf</code> version numbers.
+          Consequently <code>grib</code> version 4.2.26 is more recent than <code>grib</code> version 8.0.27.</li>
+      <li>Starting from 4.3.7, the <code>netcdf-parent</code> POM has been renamed <code>thredds-parent</code>.</li>
+    </ul>
   </body>
 </html>
