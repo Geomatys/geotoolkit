@@ -40,8 +40,8 @@ public final class TreeFactory {
      * @param maxElements_per_cells
      * @return Basic RTree.
      */
-    public static Tree createBasicRTree2D(final SplitCase splitMade, final int maxElements_per_cells) {
-        return new BasicRTree(maxElements_per_cells, splitMade);
+    public static Tree createBasicRTree( final int maxElements_per_cells, final CoordinateReferenceSystem crs, final SplitCase splitMade) {
+        return new BasicRTree(maxElements_per_cells, crs, splitMade);
     }
 
     /**
@@ -50,7 +50,7 @@ public final class TreeFactory {
      * @param maxElements_per_cells
      * @return R*Tree.
      */
-    public static Tree createStarRTree(final int maxElements_per_cells, CoordinateReferenceSystem crs) {
+    public static Tree createStarRTree(final int maxElements_per_cells, final CoordinateReferenceSystem crs) {
         return new StarRTree(maxElements_per_cells, crs);
     }
 

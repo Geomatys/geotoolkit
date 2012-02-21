@@ -17,22 +17,24 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.star.StarRTree;
+import org.geotoolkit.index.tree.basic.BasicRTree;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
-/**Create R*Tree test suite.
+/**
+ * Create (Basic) R-Tree test suite in 2D.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class StarRTree2DTest extends TreeTest{
+public class BasicRTree2DTest extends TreeTest {
 
-    public StarRTree2DTest() throws TransformException {
-        super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_2D), DefaultEngineeringCRS.CARTESIAN_2D);
+    public BasicRTree2DTest() throws TransformException {
+        super(new BasicRTree(4,DefaultEngineeringCRS.CARTESIAN_2D , SplitCase.QUADRATIC), DefaultEngineeringCRS.CARTESIAN_2D);
     }
-    
-    /**Some elements inserted Tree.
+
+   /**Some elements inserted Tree.
      * 
      * @throws TransformException 
      */

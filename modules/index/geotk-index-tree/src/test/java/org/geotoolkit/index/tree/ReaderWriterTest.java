@@ -54,19 +54,19 @@ public class ReaderWriterTest {
         }
     }
 
-//    /**
-//     * Test suite on (Basic) R-Tree.
-//     * 
-//     * @throws IOException
-//     * @throws ClassNotFoundException 
-//     */
-//    @Test
-//    public void basicRTreeTest() throws IOException, ClassNotFoundException, TransformException {
-//        setBasicRTree();
-//        TreeWriter.write(treeRef, fil);
-//        TreeReader.read(treeTest, fil);
-//        testTree();
-//    }
+    /**
+     * Test suite on (Basic) R-Tree.
+     * 
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
+    @Test
+    public void basicRTreeTest() throws IOException, ClassNotFoundException, TransformException {
+        setBasicRTree();
+        TreeWriter.write(treeRef, fil);
+        TreeReader.read(treeTest, fil);
+        testTree();
+    }
 
     /**
      * Test suite on R*Tree.
@@ -101,16 +101,16 @@ public class ReaderWriterTest {
         final TreeWriter treeW = new TreeWriter();
         final TreeReader treeR = new TreeReader();
 
-//        setBasicRTree();
-//        treeW.setOutput(fil);
-//        treeW.write(treeRef);
-//        treeW.dispose();
-//        treeW.reset();
-//        treeR.setInput(fil);
-//        treeR.read(treeTest);
-//        treeR.dispose();
-//        treeR.reset();
-//        testTree();
+        setBasicRTree();
+        treeW.setOutput(fil);
+        treeW.write(treeRef);
+        treeW.dispose();
+        treeW.reset();
+        treeR.setInput(fil);
+        treeR.read(treeTest);
+        treeR.dispose();
+        treeR.reset();
+        testTree();
 
         setStarRTree();
         treeW.setOutput(fil);
@@ -139,8 +139,8 @@ public class ReaderWriterTest {
      * Affect (Basic) R-Tree on two tree test.
      */
     private void setBasicRTree() throws TransformException {
-        treeRef = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
-        treeTest = TreeFactory.createBasicRTree2D(SplitCase.LINEAR, 4);
+        treeRef = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR);
+        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR);
         insert();
     }
 

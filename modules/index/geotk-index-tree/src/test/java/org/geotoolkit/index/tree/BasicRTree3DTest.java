@@ -19,67 +19,68 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
-/**
- * Create (Basic) R-Tree test suite.
+/**Create R-Tree (basic) test suite in 3D.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BasicRTreeTest extends TreeTestShape {
+public class BasicRTree3DTest extends TreeTest{
 
-    public BasicRTreeTest() throws TransformException {
-        super(new BasicRTree(4, SplitCase.QUADRATIC));
+    public BasicRTree3DTest() throws TransformException {
+        super(new BasicRTree(4,DefaultEngineeringCRS.CARTESIAN_3D , SplitCase.QUADRATIC), DefaultEngineeringCRS.CARTESIAN_3D);
     }
-
-    /**
-     * Some elements inserted in Hilbert R-Tree.
+    
+    /**Some elements inserted Tree.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testInsert() throws TransformException {
         super.insertTest();
     }
 
+    /**Verify all boundary Node from its "children" Node.
+     * 
+     * @throws TransformException 
+     */
     @Test
-    public void testCheckBoundary() {
+    public void testCheckBoundary() throws TransformException {
         super.checkBoundaryTest();
     }
 
-    /**
-     * Test search query inside tree.
+    /**Test search query inside tree.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testQueryInside() throws TransformException {
         super.queryInsideTest();
     }
 
-    /**
-     * Test query outside of tree area.
+    /**Test query outside of tree area.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testQueryOutside() throws TransformException {
         super.queryOutsideTest();
     }
 
-    /**
-     * Test query on tree boundary border. 
+    /**Test query on tree boundary border. 
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testQueryOnBorder() throws TransformException {
         super.queryOnBorderTest();
     }
 
-    /**
-     * Test query with search area contain all tree boundary. 
-     */
-    @Test
-    public void testQueryAll() throws TransformException {
-        super.queryAllTest();
-    }
-
-    /**
-     * Test insertion and deletion in tree.
+    /**Test insertion and deletion in tree.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testInsertDelete() throws TransformException {

@@ -22,7 +22,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
-/**Create R*Tree test suite.
+/**Create R*Tree test suite in 3D.
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -31,45 +31,54 @@ public class StarRTree3DTest extends TreeTest{
         super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D), DefaultEngineeringCRS.CARTESIAN_3D);
     }
     
-    /**
-     * Some elements inserted in Hilbert R-Tree.
+    /**Some elements inserted Tree.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testInsert() throws TransformException {
         super.insertTest();
     }
 
+    /**Verify all boundary Node from its "children" Node.
+     * 
+     * @throws TransformException 
+     */
     @Test
     public void testCheckBoundary() throws TransformException {
         super.checkBoundaryTest();
     }
 
-    /**
-     * Test search query inside tree.
+    /**Test search query inside tree.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testQueryInside() throws TransformException {
         super.queryInsideTest();
     }
 
-    /**
-     * Test query outside of tree area.
+    /**Test query outside of tree area.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testQueryOutside() throws TransformException {
         super.queryOutsideTest();
     }
 
-    /**
-     * Test query on tree boundary border. 
+    /**Test query on tree boundary border. 
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testQueryOnBorder() throws TransformException {
         super.queryOnBorderTest();
     }
 
-    /**
-     * Test insertion and deletion in tree.
+    /**Test insertion and deletion in tree.
+     * 
+     * @throws TransformException 
      */
     @Test
     public void testInsertDelete() throws TransformException {

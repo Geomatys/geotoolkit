@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CartesianCS;
 
@@ -65,5 +66,13 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode, GeneralEn
     @Override
     public void setRoot(DefaultNode root) {
         this.root = root;
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public String toString() {
+        return Classes.getShortClassName(this) + "\n" + getRoot();
     }
 }
