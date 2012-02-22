@@ -29,6 +29,7 @@ import org.geotoolkit.index.tree.CoupleNode2D;
 import org.geotoolkit.index.tree.Node2D;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeUtils;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
@@ -740,7 +741,6 @@ public class HilbertRTree extends AbstractTree2D {
             listOfCentroidChild.add(new Point2D.Double(bound.getCenterX(), bound.getCenterY()));
             listN.add(createCell(candidate.getTree(), candidate, listOfCentroidChild.get(0), 0, null));
         }
-
     }
 
     /**Create subnode(s) centroid(s).
@@ -865,5 +865,10 @@ public class HilbertRTree extends AbstractTree2D {
     @Override
     public Node2D createNode(final Tree tree, final Node2D parent, final List<Node2D> listChildren, final List<Shape> listEntries, double ...coordinates) {
         return new HilbertNode2D(tree, parent, 0, listChildren, listEntries, coordinates);
+    }
+
+    @Override
+    public Calculator getCalculator() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

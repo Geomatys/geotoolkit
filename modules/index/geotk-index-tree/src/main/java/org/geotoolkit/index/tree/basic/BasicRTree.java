@@ -18,14 +18,13 @@
 package org.geotoolkit.index.tree.basic;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.DefaultAbstractTree;
-import org.geotoolkit.index.tree.DefaultNode;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
-import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeUtils;
+import org.geotoolkit.index.tree.*;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
@@ -41,14 +40,13 @@ public class BasicRTree extends DefaultAbstractTree {
 
     private SplitCase choice;
 
-    /**
-     * Create R-Tree.
+    /**Create R-Tree.
      * 
      * @param maxElements max value of elements per tree cell.
      * @param choice Split made "linear" or "quadratic".
      */
-    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice) {
-        super(maxElements, crs);
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, Calculator calculator) {
+        super(maxElements, crs, calculator);
         this.choice = choice;
         setRoot(new DefaultNode(this));
     }
@@ -97,8 +95,7 @@ public class BasicRTree extends DefaultAbstractTree {
         return this.choice;
     }
 
-    /**
-     * Find all {@code GeneralEnvelope} which intersect regionSearch parameter in {@code Tree}. 
+    /**Find all {@code GeneralEnvelope} which intersect regionSearch parameter in {@code Tree}. 
      * 
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
@@ -219,7 +216,9 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
         
-        organize_List_Elements_From_Left(indexSplit, null, listGlobale);
+        final Calculator calc = nodeA.getTree().getCalculator();
+        final Comparator comp = calc.sortFrom(indexSplit, true, false);
+        Collections.sort(listGlobale, comp);
         GeneralEnvelope envB;
         final GeneralEnvelope envA = new GeneralEnvelope(listGlobale.get(0));
         double overLapsRef = -1;
@@ -233,7 +232,7 @@ public class BasicRTree extends DefaultAbstractTree {
             for(int i = cut+1; i<size;i++){
                 envB.add(listGlobale.get(i));
             }
-            double overLapsTemp = getOverlapValue(envA, envB);
+            double overLapsTemp = calc.getOverlaps(envA, envB);
             if(overLapsTemp < overLapsRef || overLapsRef == -1){
                 overLapsRef = overLapsTemp;
                 index = cut;
@@ -253,16 +252,17 @@ public class BasicRTree extends DefaultAbstractTree {
      * @param candidate {@code DefaultNode} to Split.
      * @throws IllegalArgumentException if candidate is null.
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
-     * @return List<Node2D> which contains two {@code DefaultNode} (split result of candidate).
+     * @return {@code DefaultNode} List which contains two {@code DefaultNode} (split result of candidate).
      */
     private static List<DefaultNode> splitNode(final DefaultNode candidate) {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
-        if (countElements(candidate) < 2) {
+        if (DefaultTreeUtils.countElements(candidate) < 2) {
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         }
         
         final int dim = candidate.getBoundary().getDimension();
         final Tree tree = candidate.getTree();
+        Calculator calc = tree.getCalculator();
         final int maxElmnts = tree.getMaxElements();
         boolean leaf = candidate.isLeaf();
         List<?> ls;
@@ -287,8 +287,8 @@ public class BasicRTree extends DefaultAbstractTree {
             case LINEAR: {
                 for (int i = 0; i < ls.size() - 1; i++) {
                     for (int j = i + 1; j < ls.size(); j++) {
-                        tempValue = (leaf) ? getDistanceBetween2Envelop(((GeneralEnvelope) ls.get(i)), ((GeneralEnvelope) ls.get(j)))
-                                : getDistanceBetween2Envelop(((DefaultNode) ls.get(i)).getBoundary(), ((DefaultNode) ls.get(j)).getBoundary());
+                        tempValue = (leaf) ? calc.getDistance(((GeneralEnvelope) ls.get(i)), ((GeneralEnvelope) ls.get(j)))
+                                           : calc.getDistance(((DefaultNode) ls.get(i)).getBoundary(), ((DefaultNode) ls.get(j)).getBoundary());
                         if (tempValue > refValue) {
                             s1 = ls.get(i);
                             s2 = ls.get(j);
@@ -308,16 +308,15 @@ public class BasicRTree extends DefaultAbstractTree {
                         if (leaf) {
                             bound1 = ((GeneralEnvelope) ls.get(i));
                             bound2 = ((GeneralEnvelope) ls.get(j));
-                            rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) bound1, (GeneralEnvelope) bound2));
+                            rectGlobal = DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) bound1, (GeneralEnvelope) bound2));
 
                         } else {
                             bound1 = ((DefaultNode) ls.get(i)).getBoundary();
                             bound2 = ((DefaultNode) ls.get(j)).getBoundary();
-                            rectGlobal = getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) bound1, bound2));
+                            rectGlobal = DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) bound1, bound2));
 
                         }
-                        tempValue = (dim<=2) ? getGeneralEnvelopArea(rectGlobal)-getGeneralEnvelopArea(bound1)-getGeneralEnvelopArea(bound2)
-                                : getGeneralEnvelopBulk(rectGlobal)-getGeneralEnvelopBulk(bound1)-getGeneralEnvelopBulk(bound2);
+                        tempValue = calc.getSpace(rectGlobal)-calc.getSpace(bound1)-calc.getSpace(bound2);
                         if (tempValue > refValue) {
                             s1 = ls.get(i);
                             s2 = ls.get(j);
@@ -367,16 +366,16 @@ public class BasicRTree extends DefaultAbstractTree {
         demimaxE = Math.max(demimaxE, 1);
         
         for (Object ent : ls) {
-            r1Temp = (leaf) ? getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) s1, (GeneralEnvelope)ent))
-                            : getEnveloppeMin(UnmodifiableArrayList.wrap(((DefaultNode) s1).getBoundary(), ((DefaultNode)ent).getBoundary()));
-            r2Temp = (leaf) ? getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope)s2, (GeneralEnvelope)ent))
-                            : getEnveloppeMin(UnmodifiableArrayList.wrap(((DefaultNode) s2).getBoundary(), ((DefaultNode)ent).getBoundary()));
+            r1Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) s1, (GeneralEnvelope)ent))
+                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((DefaultNode) s1).getBoundary(), ((DefaultNode)ent).getBoundary()));
+            r2Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope)s2, (GeneralEnvelope)ent))
+                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((DefaultNode) s2).getBoundary(), ((DefaultNode)ent).getBoundary()));
 
 
-            double area1 = (dim<=2) ? getGeneralEnvelopArea(r1Temp) : getGeneralEnvelopBulk(r1Temp);
-            double area2 = (dim<=2) ? getGeneralEnvelopArea(r2Temp) : getGeneralEnvelopBulk(r2Temp);
-            int r1nbE = countElements(result1);
-            int r2nbE = countElements(result2);
+            double area1 = calc.getSpace(r1Temp);
+            double area2 = calc.getSpace(r2Temp);
+            int r1nbE = DefaultTreeUtils.countElements(result1);
+            int r2nbE = DefaultTreeUtils.countElements(result2);
             if (area1 < area2) {
                 if (r1nbE <= demimaxE && r2nbE > demimaxE) {
                     if(leaf){
@@ -540,7 +539,7 @@ public class BasicRTree extends DefaultAbstractTree {
     private static DefaultNode chooseSubtree(final DefaultNode candidate, final GeneralEnvelope entry) {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
         ArgumentChecks.ensureNonNull("chooseSubtree : GeneralEnvelope entry", entry);
-        
+        final Calculator calc = candidate.getTree().getCalculator();
         final List<DefaultNode> children = candidate.getChildren();
         if (children.isEmpty()) {
             throw new IllegalArgumentException("chooseSubtree : ln is empty");
@@ -558,20 +557,18 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
 
-        final GeneralEnvelope ge = n.getBoundary();
-        final int dim = ge.getDimension();
         final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
         for(DefaultNode dn : children){
             lGE.add(dn.getBoundary());
         }
-        double area = (dim<=2) ? getGeneralEnvelopArea(getEnveloppeMin(lGE)):getGeneralEnvelopBulk(getEnveloppeMin(lGE));
-        double nbElmt = countElements(n);
+        double area = calc.getSpace(DefaultTreeUtils.getEnveloppeMin(lGE));
+        double nbElmt = DefaultTreeUtils.countElements(n);
         double areaTemp;
         for (DefaultNode dn : children) {
             final GeneralEnvelope rnod = new GeneralEnvelope(dn.getBoundary());
             rnod.add(entry);
-            final int nbe = countElements(dn);
-            areaTemp = getEnlargementValue(dn.getBoundary(), rnod);
+            final int nbe = DefaultTreeUtils.countElements(dn);
+            areaTemp = calc.getEnlargement(dn.getBoundary(), rnod);
             if (areaTemp < area) {
                 n = dn;
                 area = areaTemp;

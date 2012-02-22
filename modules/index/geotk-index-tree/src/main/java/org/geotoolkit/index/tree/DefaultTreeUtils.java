@@ -1,21 +1,31 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.DefaultNode;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 
-/**
- * Some utils methods.
+/**Some utils methods.
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -24,7 +34,7 @@ public class DefaultTreeUtils {
     private DefaultTreeUtils() {
     }
     
-    /**To compare two {@code Node3D} from them boundary box minimum x axis coordinate. 
+    /**To compare two {@code DefaultNode} from them boundary box minimum x axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -38,7 +48,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code Node3D} from them boundary box minimum y axis coordinate. 
+    /**To compare two {@code DefaultNode} from them boundary box minimum y axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */

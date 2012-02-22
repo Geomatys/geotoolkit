@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -33,13 +34,16 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode, GeneralEn
     private DefaultNode root;
     private final int nbMaxElement;
     protected CoordinateReferenceSystem crs;
+    protected Calculator calculator;
 
-    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs) {
+    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
+        ArgumentChecks.ensureNonNull("Create Tree : Calculator", calculator);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
         if(!(crs.getCoordinateSystem() instanceof CartesianCS)){
             throw new IllegalArgumentException("Tree constructor : invalid crs");
         }
+        this.calculator = calculator;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
     }
@@ -66,6 +70,14 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode, GeneralEn
     @Override
     public void setRoot(DefaultNode root) {
         this.root = root;
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public Calculator getCalculator() {
+        return this.calculator;
     }
     
     /**

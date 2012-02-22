@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -72,6 +73,11 @@ public interface Tree<N extends Node<N,B>, B> {
      * @param root new root.
      */
     void setRoot(N root);
+    
+    /**
+     * @return Calculator to effectuate Tree compute.
+     */
+    Calculator getCalculator();
     
     /**Create a node in accordance with this RTree properties.
      *  

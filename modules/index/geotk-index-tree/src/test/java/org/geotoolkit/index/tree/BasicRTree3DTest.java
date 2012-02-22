@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
@@ -30,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
 public class BasicRTree3DTest extends TreeTest{
 
     public BasicRTree3DTest() throws TransformException {
-        super(new BasicRTree(4,DefaultEngineeringCRS.CARTESIAN_3D , SplitCase.QUADRATIC), DefaultEngineeringCRS.CARTESIAN_3D);
+        super(new BasicRTree(4,DefaultEngineeringCRS.CARTESIAN_3D , SplitCase.QUADRATIC, DefaultCalculator.CALCULATOR_3D), DefaultEngineeringCRS.CARTESIAN_3D);
     }
     
     /**Some elements inserted Tree.

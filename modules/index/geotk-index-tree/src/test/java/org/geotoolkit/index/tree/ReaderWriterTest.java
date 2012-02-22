@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -139,8 +140,8 @@ public class ReaderWriterTest {
      * Affect (Basic) R-Tree on two tree test.
      */
     private void setBasicRTree() throws TransformException {
-        treeRef = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR);
-        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR);
+        treeRef = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D);
+        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D);
         insert();
     }
 
@@ -148,8 +149,8 @@ public class ReaderWriterTest {
      * Affect R*Tree on two tree test.
      */
     private void setStarRTree() throws TransformException {
-        treeRef = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
-        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D);
+        treeRef = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D);
+        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D);
         insert();
     }
 

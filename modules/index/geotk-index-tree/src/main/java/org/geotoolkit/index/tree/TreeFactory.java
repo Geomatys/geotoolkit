@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -40,8 +41,8 @@ public final class TreeFactory {
      * @param maxElements_per_cells
      * @return Basic RTree.
      */
-    public static Tree createBasicRTree( final int maxElements_per_cells, final CoordinateReferenceSystem crs, final SplitCase splitMade) {
-        return new BasicRTree(maxElements_per_cells, crs, splitMade);
+    public static Tree createBasicRTree( final int maxElements_per_cells, final CoordinateReferenceSystem crs, final SplitCase splitMade, final Calculator calculator) {
+        return new BasicRTree(maxElements_per_cells, crs, splitMade, calculator);
     }
 
     /**
@@ -50,8 +51,8 @@ public final class TreeFactory {
      * @param maxElements_per_cells
      * @return R*Tree.
      */
-    public static Tree createStarRTree(final int maxElements_per_cells, final CoordinateReferenceSystem crs) {
-        return new StarRTree(maxElements_per_cells, crs);
+    public static Tree createStarRTree(final int maxElements_per_cells, final CoordinateReferenceSystem crs, final Calculator calculator) {
+        return new StarRTree(maxElements_per_cells, crs, calculator);
     }
 
     /**

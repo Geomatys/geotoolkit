@@ -18,12 +18,14 @@
 package org.geotoolkit.index.tree.star;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.*;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
@@ -50,8 +52,8 @@ public class StarRTree extends DefaultAbstractTree {
      * @param maxElements max elements number permit by cells. 
      * @param crs  
      */
-    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs) {
-        super(nbMaxElement, crs);
+    public StarRTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator) {
+        super(nbMaxElement, crs, calculator);
         setRoot(new DefaultNode(this));
     }
     
@@ -259,7 +261,7 @@ public class StarRTree extends DefaultAbstractTree {
         if (size == 1) {
             return childrenList.get(0);
         }
-        
+        final Calculator calc = parent.getTree().getCalculator();
         final int dim = parent.getBoundary().getDimension();
         if(childrenList.get(0).isLeaf()){
             final List<DefaultNode> listOverZero = new ArrayList<DefaultNode>();
@@ -272,7 +274,7 @@ public class StarRTree extends DefaultAbstractTree {
                 for(int j = 0; j < size; j++){
                     if(i != j){
                         final GeneralEnvelope gET = childrenList.get(j).getBoundary();
-                        overlapsTemp += getOverlapValue(gnTemp, gET);
+                        overlapsTemp += calc.getOverlaps(gnTemp, gET);
                     }
                 }
                 if(overlapsTemp == 0){
@@ -295,14 +297,9 @@ public class StarRTree extends DefaultAbstractTree {
                 int indexZero = -1;
                 double areaTemp;
                 for(int i = 0, s = listOverZero.size(); i<s;i++){
-                    final GeneralEnvelope GE = new GeneralEnvelope(listOverZero.get(i).getBoundary());
-                    GE.add(entry);
-                    if(dim<=2){
-                        areaTemp = getGeneralEnvelopPerimeter(GE);
-                    }else{
-                        areaTemp = getGeneralEnvelopArea(GE);
-                    }
-                    
+                    final GeneralEnvelope gE = new GeneralEnvelope(listOverZero.get(i).getBoundary());
+                    gE.add(entry);
+                    areaTemp = calc.getEdge(gE);
                     if(areaTemp<areaRef || areaRef == -1){
                         areaRef = areaTemp;
                         indexZero = i;
@@ -330,7 +327,7 @@ public class StarRTree extends DefaultAbstractTree {
             final GeneralEnvelope gEN = n3d.getBoundary();
             final GeneralEnvelope GE = new GeneralEnvelope(gEN);
             GE.add(entry);
-            double enlargTemp = getEnlargementValue(gEN, GE);
+            double enlargTemp = calc.getEnlargement(gEN, GE);
             if(enlargTemp<enlargRef || enlargRef == -1){
                 enlargRef = enlargTemp;
                 indexEnlarg = i;
@@ -351,9 +348,11 @@ public class StarRTree extends DefaultAbstractTree {
      * @return 0 to split in x axis, 1 to split in y axis, 2 to split in z axis.
      */
     private static List<DefaultNode> defaultNodeSplit(final DefaultNode candidate){
+        
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
         final Tree tree = candidate.getTree();
+        final Calculator calc = tree.getCalculator();
         List eltList;
         if(isLeaf){
             eltList = candidate.getEntries(); 
@@ -374,21 +373,22 @@ public class StarRTree extends DefaultAbstractTree {
         int index = 0;
         int lower_or_upper = 0;
         int cut2;
+        Comparator comp;
         for(int lu = 0; lu<2; lu++){
             if(isLeaf){
-                if(lu == 0){
-                    organize_List_Elements_From_Left(splitIndex, null, eltList);
+            if(lu == 0){
+                    comp = calc.sortFrom(splitIndex, true, false);
                 }else{
-                    organize_List_Elements_From_Right(splitIndex, null, eltList);
+                    comp = calc.sortFrom(splitIndex, false, false);
                 }
-                    
             }else{
                 if(lu == 0){
-                    organize_List_Elements_From_Left(splitIndex, eltList, null);
+                    comp = calc.sortFrom(splitIndex, true, true);
                 }else{
-                    organize_List_Elements_From_Right(splitIndex, eltList, null);
+                    comp = calc.sortFrom(splitIndex, false, true);
                 }
             }
+            Collections.sort(eltList, comp);
             
             for(int cut = demiSize; cut<=size - demiSize;cut++){
                 for(int i = 0;i<cut;i++){
@@ -448,18 +448,18 @@ public class StarRTree extends DefaultAbstractTree {
         
         if(isLeaf){
             if(lower_or_upper == 0){
-                organize_List_Elements_From_Left(splitIndex, null, eltList);
+                comp = calc.sortFrom(splitIndex, true, false);
             }else{
-                organize_List_Elements_From_Right(splitIndex, null, eltList);
+                comp = calc.sortFrom(splitIndex, false, false);
             }
-
         }else{
             if(lower_or_upper == 0){
-                organize_List_Elements_From_Left(splitIndex, eltList, null);
+                comp = calc.sortFrom(splitIndex, true, true);
             }else{
-                organize_List_Elements_From_Right(splitIndex, eltList, null);
+                comp = calc.sortFrom(splitIndex, false, true);
             }
         }
+        Collections.sort(eltList, comp);
         
         for(int i = 0;i<index;i++){
             splitListA.add(eltList.get(i));
@@ -502,7 +502,7 @@ public class StarRTree extends DefaultAbstractTree {
         }else{
             eltList = candidate.getChildren();
         }
-        
+        Calculator calc = candidate.getTree().getCalculator();
         final int dim = candidate.getBoundary().getDimension();
         final int size = eltList.size();
         final double size04 = size*0.4;
@@ -513,23 +513,24 @@ public class StarRTree extends DefaultAbstractTree {
         double bulkTemp, bulkRef = -1;
         int index = 0;
         int cut2;
-        
+        Comparator comp;
         for(int indOrg=0;indOrg<dim;indOrg++){
             bulkTemp = 0;
             for(int left_or_right = 0;left_or_right<2;left_or_right++){
                 if(isLeaf){
                     if(left_or_right == 0){
-                        organize_List_Elements_From_Left(indOrg, null, eltList);
+                        comp = calc.sortFrom(indOrg, true, false);
                     }else{
-                        organize_List_Elements_From_Right(indOrg, null, eltList);
+                        comp = calc.sortFrom(indOrg, false, false);
                     }
                 }else{
-                    if(left_or_right==0){
-                        organize_List_Elements_From_Left(indOrg, eltList, null);
+                    if(left_or_right == 0){
+                        comp = calc.sortFrom(indOrg, true, true);
                     }else{
-                        organize_List_Elements_From_Right(indOrg, eltList, null);
+                        comp = calc.sortFrom(indOrg, false, true);
                     }
                 }
+                Collections.sort(eltList, comp);
                 for(int cut = demiSize, sdem = size - demiSize; cut<=sdem;cut++){
                     splitListA.clear();
                     splitListB.clear();
@@ -559,13 +560,8 @@ public class StarRTree extends DefaultAbstractTree {
                             gESPLB.add(((DefaultNode)splitListB.get(i)).getBoundary());
                         }
                     }
-                    if(dim <=2){
-                        bulkTemp += getGeneralEnvelopPerimeter(gESPLA);
-                        bulkTemp += getGeneralEnvelopPerimeter(gESPLB);
-                    }else{
-                        bulkTemp += getGeneralEnvelopArea(gESPLA);
-                        bulkTemp += getGeneralEnvelopArea(gESPLB);
-                    }
+                    bulkTemp += calc.getEdge(gESPLA);
+                    bulkTemp += calc.getEdge(gESPLB);
                 }
             }
             if(indOrg == 0){
@@ -661,7 +657,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private static void branchGrafting(DefaultNode nodeA, DefaultNode nodeB ) throws TransformException{
+    private static void branchGrafting(final DefaultNode nodeA, final DefaultNode nodeB ) throws TransformException{
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("branchGrafting : not leaf");
         }
@@ -672,6 +668,7 @@ public class StarRTree extends DefaultAbstractTree {
         if(listGlobale.isEmpty()){
             throw new IllegalArgumentException("branchGrafting : empty list");
         }
+        final Calculator calc = nodeA.getTree().getCalculator();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int size = listGlobale.size();
         for(int i = 1;i<size; i++){
@@ -686,8 +683,8 @@ public class StarRTree extends DefaultAbstractTree {
                 indexSplit = i;
             }
         }
-        
-        organize_List_Elements_From_Left(indexSplit, null, listGlobale);
+        Comparator comp = calc.sortFrom(indexSplit, true, false);
+        Collections.sort(listGlobale, comp);
         GeneralEnvelope envB;
         final GeneralEnvelope envA = new GeneralEnvelope(listGlobale.get(0));
         double overLapsRef = -1;
@@ -701,7 +698,7 @@ public class StarRTree extends DefaultAbstractTree {
             for(int i = cut+1; i<size;i++){
                 envB.add(listGlobale.get(i));
             }
-            double overLapsTemp = getOverlapValue(envA, envB);
+            double overLapsTemp = calc.getOverlaps(envA, envB);
             if(overLapsTemp < overLapsRef || overLapsRef == -1){
                 overLapsRef = overLapsTemp;
                 index = cut;
@@ -730,20 +727,21 @@ public class StarRTree extends DefaultAbstractTree {
         this.insertAgain = insertAgain;
     }
     
-    /**Recover lesser 33% largest of {@code Node2D} candidate within it.
+    /**Recover lesser 33% largest of {@code DefaultNode} candidate within it.
      * 
      * @throws IllegalArgumentException if {@code Node2D} candidate is null.
      * @return all Entry within subNodes at more 33% largest of {@code this Node}.
      */
     private static List<GeneralEnvelope> getElementAtMore33PerCent(final DefaultNode candidate) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
+        final Calculator calc = candidate.getTree().getCalculator();
         final List<GeneralEnvelope> lsh = new ArrayList<GeneralEnvelope>();
         final GeneralEnvelope boundGE = candidate.getBoundary();
         final DirectPosition candidateCentroid = boundGE.getMedian();
-        final double distPermit = getDistanceBetween2DirectPosition(boundGE.getLowerCorner(), boundGE.getUpperCorner()) / 1.666666666;
+        final double distPermit = calc.getDistance(boundGE.getLowerCorner(), boundGE.getUpperCorner()) / 1.666666666;
         defaultNodeSearch(candidate, boundGE, lsh);
         for (int i = lsh.size() - 1; i >= 0; i--) {
-            if (getDistanceBetween2DirectPosition(candidateCentroid, lsh.get(i).getMedian()) < distPermit) {
+            if (calc.getDistance(candidateCentroid, lsh.get(i).getMedian()) < distPermit) {
                 lsh.remove(i);
             }
         }
