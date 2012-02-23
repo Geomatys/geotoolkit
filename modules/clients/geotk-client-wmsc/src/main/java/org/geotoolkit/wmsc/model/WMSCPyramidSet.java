@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.storage.DataStoreException;
@@ -42,7 +43,7 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     private final WebMapServerCached server;
     private final String layer;
     
-    public WMSCPyramidSet(final WebMapServerCached server, final String layer) {
+    public WMSCPyramidSet(final WebMapServerCached server, final String layer) throws CapabilitiesException {
         this.server = server;
         this.layer = layer;
         

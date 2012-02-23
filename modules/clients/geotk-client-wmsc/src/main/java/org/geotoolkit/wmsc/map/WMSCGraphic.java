@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wmsc.map;
 
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.AbstractPyramidGraphic;
 import org.geotoolkit.coverage.GridMosaic;
@@ -38,7 +39,7 @@ public class WMSCGraphic extends AbstractPyramidGraphic{
     private final WMSCMapLayer layer;
     private final PyramidSet pyramidset;
 
-    public WMSCGraphic(final J2DCanvas canvas, final WMSCMapLayer layer){
+    public WMSCGraphic(final J2DCanvas canvas, final WMSCMapLayer layer) throws CapabilitiesException{
         super(canvas,layer.getBounds().getCoordinateReferenceSystem(), SCALE_TOLERANCE);
         this.layer = layer;
         setSilentErrors(true);

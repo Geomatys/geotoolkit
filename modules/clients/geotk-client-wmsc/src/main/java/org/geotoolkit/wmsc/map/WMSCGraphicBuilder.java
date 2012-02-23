@@ -18,14 +18,13 @@ package org.geotoolkit.wmsc.map;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Logger;
-
+import java.util.logging.Level;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.map.WMSGraphicBuilder;
-
 import org.opengis.display.canvas.Canvas;
 
 /**
@@ -46,8 +45,13 @@ public class WMSCGraphicBuilder extends WMSGraphicBuilder {
     @Override
     public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
         if(layer instanceof WMSCMapLayer && canvas instanceof J2DCanvas){
-            return Collections.singleton((GraphicJ2D)
-                    new WMSCGraphic((J2DCanvas)canvas, (WMSCMapLayer)layer));
+            try {
+                return Collections.singleton((GraphicJ2D)
+                        new WMSCGraphic((J2DCanvas)canvas, (WMSCMapLayer)layer));
+            } catch (CapabilitiesException ex) {
+                Logging.getLogger(WMSCGraphicBuilder.class).log(Level.WARNING, ex.getMessage(), ex);
+                return Collections.emptyList();
+            }
         }else{
             return Collections.emptyList();
         }

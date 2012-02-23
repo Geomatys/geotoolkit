@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import org.geotoolkit.client.CapabilitiesException;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.Envelope2D;
@@ -385,7 +387,11 @@ public class WMSMapLayer extends AbstractMapLayer {
     @Override
     public Envelope getBounds() {
         if(env == null){
-            env = findEnvelope();
+            try {
+                env = findEnvelope();
+            } catch (CapabilitiesException ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
             if(env == null){
                 env = MAXEXTEND_ENV;
             }
@@ -402,7 +408,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws FactoryException
      */
     protected boolean supportCRS(final CoordinateReferenceSystem crs)
-            throws FactoryException {
+            throws FactoryException, CapabilitiesException {
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
         if(stack != null){
@@ -426,7 +432,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * Find the best original crs of the data in the capabilities.
      */
-    protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+    protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException, CapabilitiesException {
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
         if(stack != null){
@@ -455,7 +461,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * Search in the getCapabilities the closest date.
      */
-    Long findClosestDate(final long date) {
+    Long findClosestDate(final long date) throws CapabilitiesException {
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
 
         if(layer != null){
@@ -489,7 +495,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         return null;
     }
 
-    Envelope findEnvelope(){
+    Envelope findEnvelope() throws CapabilitiesException{
         final AbstractWMSCapabilities capa = server.getCapabilities();
         if(capa == null) return null;
         
@@ -499,7 +505,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         return layer.getEnvelope();
     }
 
-    public List<? extends Style> findStyleCandidates(){
+    public List<? extends Style> findStyleCandidates() throws CapabilitiesException{
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
          if(layer != null){
             return layer.getStyle();
@@ -548,8 +554,20 @@ public class WMSMapLayer extends AbstractMapLayer {
         GeneralEnvelope fakeEnv = new GeneralEnvelope(env);
 
         //check if we must make the  coverage reprojection ourself--------------
-        if (isUseLocalReprojection() && !supportCRS(crs2D)) {
-            crs2D = findOriginalCRS();
+        boolean supportCRS = false;
+        try {
+            supportCRS = supportCRS(crs2D);
+        } catch (CapabilitiesException ex) {
+            LOGGER.log(Level.WARNING, ex.toString(), ex);
+        }
+        
+        if (isUseLocalReprojection() && !supportCRS) {
+            try {
+                crs2D = findOriginalCRS();
+            } catch (CapabilitiesException ex) {
+                //we tryed
+                crs2D = null;
+            }
             if(crs2D == null){
                 //last chance use : EPSG:4326
                 crs2D = EPSG_4326;
@@ -680,7 +698,12 @@ public class WMSMapLayer extends AbstractMapLayer {
             if(index >= 0){
                 //there is a temporal axis
                 final double median = env.getMedian(index);
-                final Long closest = findClosestDate((long)median);
+                Long closest = null;
+                try {
+                    closest = findClosestDate((long)median);
+                } catch (CapabilitiesException ex) {
+                    //at least we tryed
+                }
                 if(closest != null){
                     final GeneralEnvelope adjusted = new GeneralEnvelope(env);
                     adjusted.setRange(index, closest, closest);

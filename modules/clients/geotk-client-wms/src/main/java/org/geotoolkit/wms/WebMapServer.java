@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
@@ -157,12 +157,17 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
      * request.
+     * @return
+     * @throws CapabilitiesException  
      */
-    public AbstractWMSCapabilities getCapabilities() {
+    public AbstractWMSCapabilities getCapabilities() throws CapabilitiesException{
 
         if (capabilities != null) {
             return capabilities;
         }
+        
+        final CapabilitiesException[] exception = new CapabilitiesException[1];
+        
         //Thread to prevent infinite request on a server
         final Thread thread = new Thread() {
             @Override
@@ -179,23 +184,29 @@ public class WebMapServer extends AbstractServer{
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
-                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                        exception[0] = new CapabilitiesException("Wrong URL, the server doesn't answer : " +
                                 createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
-                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                        exception[0] = new CapabilitiesException("Malformed URL, the server doesn't answer. ", ex);
                     }
                 }
             }
         };
+        
         thread.start();
         final long start = System.currentTimeMillis();
         try {
             thread.join(10000);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
+            throw new CapabilitiesException("The thread to obtain GetCapabilities doesn't answer.");
         }
+        
+        if(exception[0] != null){
+            throw exception[0];
+        }
+        
         if ((System.currentTimeMillis() - start) > 10000) {
-            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+            throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
         }
 
         return capabilities;

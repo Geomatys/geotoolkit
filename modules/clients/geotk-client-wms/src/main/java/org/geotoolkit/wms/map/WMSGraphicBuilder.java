@@ -24,15 +24,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
-
 import org.geotoolkit.client.map.AbstractTiledGraphic;
 import org.geotoolkit.client.map.TileReference;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -52,7 +46,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
-
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.DirectPosition;
