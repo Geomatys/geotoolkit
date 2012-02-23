@@ -130,5 +130,11 @@
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.opengis.wrapper</groupId>
+      <artifactId>geoapi-netcdf</artifactId>
+      <version>${geoapi.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

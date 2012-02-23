@@ -35,6 +35,7 @@ import javax.measure.converter.UnitConverter;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 
@@ -494,8 +495,7 @@ public final class Units extends Static {
             unit = Unit.valueOf(uom);
         } catch (IllegalArgumentException e) {
             // Provides a better error message than the default JSR-275 0.9.4 implementation.
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), e);
+            throw Exceptions.setMessage(e, Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), true);
         }
         return canonicalize(unit);
     }

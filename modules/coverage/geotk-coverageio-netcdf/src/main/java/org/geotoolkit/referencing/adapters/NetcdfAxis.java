@@ -52,7 +52,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * construction, since GeoAPI referencing objects are expected to be immutable.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.08
  * @module
@@ -196,6 +196,12 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public Comparable<?> getOrdinateAt(final int index) throws IndexOutOfBoundsException {
         if (axis instanceof CoordinateAxis1DTime) {
+            if (false) {
+                // Replacement of the following deprecated method call. Not yet used,
+                // because we wait for the ucar.nc2.time API to be published as public
+                // API. Maybe their API will evolve.
+                return ((CoordinateAxis1DTime) axis).getCalendarDate(index).toDate();
+            }
             return ((CoordinateAxis1DTime) axis).getTimeDate(index);
         } else if (axis.isNumeric()) {
             return axis.getCoordValue(index);
@@ -251,7 +257,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
                 final double b2 = bound2[i];
                 Comparable<?> c1, c2;
                 if (timeAxis != null) {
-                    final long time = timeAxis.getTimeDate(i).getTime();
+                    final long time = timeAxis.getTimeDate(i).getTime(); // See getOrdinateAt(i)
                     long t1 = time; // Usually the minimum value, but not necessarily.
                     long t2 = time; // Usually the maximum value, but not necessarily.
                     if (toMillis > 0) {
@@ -344,8 +350,12 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
         Unit<?> unit = this.unit;
         if (unit == null) {
             final String symbol = getUnitsString();
-            if (symbol != null) {
+            if (symbol != null) try {
                 this.unit = unit = Units.valueOf(symbol);
+            } catch (IllegalArgumentException e) {
+                // TODO: use Unit library in order to parse this kind of units.
+                // For now just report that the unit is unknown, which is compatible
+                // with the method contract.
             }
         }
         return unit;

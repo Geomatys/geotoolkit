@@ -31,7 +31,7 @@ import static org.geotoolkit.referencing.crs.DefaultGeocentricCRS.*;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.*;
 
 import org.junit.*;
-import org.opengis.test.Validators;
+import org.opengis.test.ValidatorContainer;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
@@ -48,22 +48,26 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 public final strictfp class CoordinateReferenceSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.
+     * <p>
+     * Note: ISO specification does not allow ellipsoidal height, so we have to relax
+     * the check for the {@code DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT} constant.
      */
     @Test
     public void validate() {
-        Validators.validate(WGS84);
-        Validators.validate(WGS84_3D);
-        Validators.validate(ELLIPSOIDAL_HEIGHT);
-        Validators.validate(GEOIDAL_HEIGHT);
-        Validators.validate(JULIAN);
-        Validators.validate(MODIFIED_JULIAN);
-        Validators.validate(TRUNCATED_JULIAN);
-        Validators.validate(DUBLIN_JULIAN);
-        Validators.validate(UNIX);
-        Validators.validate(SPHERICAL);
-        Validators.validate(CARTESIAN);
-        Validators.validate(CARTESIAN_2D);
-        Validators.validate(CARTESIAN_3D);
+        final ValidatorContainer validators = new ValidatorContainer();
+        validators.validate(WGS84);
+        validators.validate(WGS84_3D);           validators.crs.enforceStandardNames = false;
+        validators.validate(ELLIPSOIDAL_HEIGHT); validators.crs.enforceStandardNames = true;
+        validators.validate(GEOIDAL_HEIGHT);
+        validators.validate(JULIAN);
+        validators.validate(MODIFIED_JULIAN);
+        validators.validate(TRUNCATED_JULIAN);
+        validators.validate(DUBLIN_JULIAN);
+        validators.validate(UNIX);
+        validators.validate(SPHERICAL);
+        validators.validate(CARTESIAN);
+        validators.validate(CARTESIAN_2D);
+        validators.validate(CARTESIAN_3D);
     }
 
     /**

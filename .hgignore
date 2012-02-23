@@ -3,10 +3,11 @@
 syntax: regexp
 
 \.svn$
+\.git$
 \.project$
 \.classpath$
 \.settings$
-\.DS_Store
+\.DS_Store$
 target$
 ^tmp$
 derby.log$

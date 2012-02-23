@@ -40,7 +40,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Utilities methods for dealing with exceptions. Those methods can paint reformat the stack
+ * Utilities methods for dealing with exceptions. Those methods can reformat the stack
  * trace for console output, paint the stack trace in a {@link Graphics2D} handler, or show
  * the stack trace in a <cite>Swing</cite> component.
  * <p>
@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -67,6 +67,51 @@ public final class Exceptions extends Static {
      * Do not allow instantiation of this class.
      */
     private Exceptions() {
+    }
+
+    /**
+     * Returns an exception of the same kind and with the same stack trace than the given
+     * exception, but with a different message. This method simulates the functionality
+     * that we would had if {@link Throwable} defined a {@code setMessage(String)} method.
+     * We use this method when an external library throws an exception of the right type,
+     * but with too few details.
+     * <p>
+     * This method try to create a new exception using reflection. The exception class needs
+     * to provide a public constructor expecting a single {@link String} argument. If the
+     * exception class does not provide such constructor, then the given exception is returned
+     * unchanged.
+     *
+     * @param <T>       The type of the exception.
+     * @param exception The exception to copy with a different message.
+     * @param message   The message to set in the exception to be returned.
+     * @param append    If {@code true}, the existing message in the original exception (if any)
+     *                  will be happened after the provided message.
+     * @return A new exception with the given message, or the given exception if the exception
+     *         class does not provide public {@code Exception(String)} constructor.
+     *
+     * @since 3.20
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable> T setMessage(final T exception, String message, final boolean append) {
+        if (append) {
+            String em = exception.getLocalizedMessage();
+            if (em != null && !(em = em.trim()).isEmpty()) {
+                final StringBuilder buffer = new StringBuilder(message.trim());
+                final int length = buffer.length();
+                if (length != 0 && Character.isLetterOrDigit(buffer.charAt(length-1))) {
+                    buffer.append(". ");
+                }
+                message = buffer.append(em).toString();
+            }
+        }
+        final Throwable ne;
+        try {
+            ne = exception.getClass().getConstructor(String.class).newInstance(message);
+        } catch (Exception e) {
+            return exception;
+        }
+        ne.setStackTrace(exception.getStackTrace());
+        return (T) ne;
     }
 
     /**
