@@ -651,6 +651,13 @@ public class Concept implements Serializable {
         this.type = type;
     }
 
+    public void setDefaultTypeIfNone() {
+        if (this.type == null) {
+            final Concept defaultType = new Concept();
+            defaultType.setResource("http://www.w3.org/2004/02/skos/core#Concept");
+            this.type = defaultType;
+        }
+    }
     /**
      * @return the value
      */
