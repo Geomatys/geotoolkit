@@ -16,22 +16,17 @@
  */
 package org.geotoolkit.wms.map;
 
-import org.geotoolkit.wms.GetLegendRequest;
-import java.awt.geom.NoninvertibleTransformException;
-import java.net.MalformedURLException;
-import java.util.logging.Level;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import java.util.logging.Level;
 import org.geotoolkit.client.CapabilitiesException;
-
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -39,31 +34,21 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.IdentifiedObjects;
+import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.ArgumentChecks;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.wms.GetFeatureInfoRequest;
-import org.geotoolkit.wms.GetMapRequest;
-import org.geotoolkit.wms.WebMapServer;
-import org.geotoolkit.wms.xml.AbstractDimension;
-import org.geotoolkit.wms.xml.AbstractLayer;
-import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
-import org.geotoolkit.wms.xml.Style;
+import org.geotoolkit.wms.*;
 import org.geotoolkit.wms.xml.WMSVersion;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -399,122 +384,22 @@ public class WMSMapLayer extends AbstractMapLayer {
         return env;
     }
 
-    /**
-     * Verify if the server supports the given {@linkplain CoordinateReferenceSystem crs}.
-     *
-     * @param crs The {@linkplain CoordinateReferenceSystem crs} to test.
-     * @return {@code True} if the given {@linkplain CoordinateReferenceSystem crs} is present
-     *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
-     * @throws FactoryException
-     */
-    protected boolean supportCRS(final CoordinateReferenceSystem crs)
-            throws FactoryException, CapabilitiesException {
-        final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
-
-        if(stack != null){
-            final String srid = IdentifiedObjects.lookupIdentifier(crs, true);
-            //start by the most accurate layer
-            for(int i=stack.length-1; i>=0; i--){
-                for (String str : stack[i].getCRS()) {
-                    if (srid.equalsIgnoreCase(str)) {
-                        return true;
-                    }
-                }
-            }
-        }else{
-            LOGGER.log(Level.WARNING, "Layer : {0} could not be found in the getCapabilities. "
-                    + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.", layers[0]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Find the best original crs of the data in the capabilities.
-     */
-    protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException, CapabilitiesException {
-        final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
-
-        if(stack != null){
-            //start by the most accurate layer
-            for(int i=stack.length-1; i>=0; i--){
-                for (final String srid : stack[i].getCRS()) {
-                    //search and return the first crs that we succesfuly parsed.
-                    try{
-                        CoordinateReferenceSystem crs = CRS.decode(srid);
-                        if(crs != null){
-                            return crs;
-                        }
-                    }catch(FactoryException ex){
-                        LOGGER.log(Level.FINE, "Could not parse crs code : {0}", srid);
-                    }
-                }
-            }
-        }else{
-            LOGGER.log(Level.WARNING, "Layer : {0} could not be found in the getCapabilities. "
-                    + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.", layers[0]);
-        }
-
-        return null;
-    }
-
-    /**
-     * Search in the getCapabilities the closest date.
-     */
-    Long findClosestDate(final long date) throws CapabilitiesException {
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
-
-        if(layer != null){
-            for(AbstractDimension dim : layer.getAbstractDimension()){
-                if("time".equalsIgnoreCase(dim.getName())){
-                    //we found the temporal dimension
-                    final ISODateParser parser = new ISODateParser();
-                    final String[] dates = dim.getValue().split(",");
-
-                    final long d = date;
-                    Long closest = null;
-                    for(String str : dates){
-                        str = str.replaceAll("\n", "");
-                        str = str.trim();
-                        long candidate = parser.parseToMillis(str);
-                        if(closest == null){
-                            closest = candidate;
-                        }else if( Math.abs(d-candidate) < Math.abs(d-closest)){
-                            closest = candidate;
-                        }
-                    }
-
-                    return closest;
-                }
-            }
-        }else{
-            LOGGER.log(Level.WARNING, "Layer : {0} could not be found in the getCapabilities. "
-                    + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.", layers[0]);
-        }
-
-        return null;
-    }
-
-    Envelope findEnvelope() throws CapabilitiesException{
-        final AbstractWMSCapabilities capa = server.getCapabilities();
-        if(capa == null) return null;
-        
-        final AbstractLayer layer = capa.getLayerFromName(layers[0]);
-        if(layer == null) return null;
-        
-        return layer.getEnvelope();
-    }
-
-    public List<? extends Style> findStyleCandidates() throws CapabilitiesException{
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
-         if(layer != null){
-            return layer.getStyle();
-        }
-        return Collections.emptyList();
-    }
-
-
     /*************************  Queries functions *****************************/
+    protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException,CapabilitiesException {
+        return WMSUtilities.findOriginalCRS(server,layers[0]);
+    }
+
+    protected boolean supportCRS(CoordinateReferenceSystem crs2D) throws FactoryException, CapabilitiesException {
+        return WMSUtilities.supportCRS(server,layers[0],crs2D);
+    }
+
+    protected Envelope findEnvelope() throws CapabilitiesException {
+        return WMSUtilities.findEnvelope(server,layers[0]);
+    }
+
+    protected Long findClosestDate(long l) throws CapabilitiesException {
+        return WMSUtilities.findClosestDate(server,layers[0],(long)l);
+    }
 
     /**
      * Gives a {@linkplain GetMapRequest GetMap request} for the given envelope and

@@ -20,13 +20,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
@@ -36,9 +39,11 @@ import org.geotoolkit.wms.v130.GetCapabilities130;
 import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.geotoolkit.wms.v130.GetLegend130;
 import org.geotoolkit.wms.v130.GetMap130;
+import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
 import org.geotoolkit.wms.xml.WMSVersion;
+import org.opengis.feature.type.Name;
 
 
 /**
@@ -49,12 +54,13 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapServer extends AbstractServer{
+public class WebMapServer extends AbstractServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
     private final WMSVersion version;
     private AbstractWMSCapabilities capabilities;
+    private Set<Name> names = null;
 
     /**
      * The request header map for this server
@@ -214,6 +220,7 @@ public class WebMapServer extends AbstractServer{
 
     /**
      * Returns the request version.
+     * @return 
      */
     public WMSVersion getVersion() {
         return version;
@@ -222,6 +229,7 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetMapRequest createGetMap() {
@@ -238,6 +246,7 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
@@ -254,6 +263,7 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetLegendRequest createGetLegend(){
@@ -270,6 +280,7 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
@@ -291,6 +302,47 @@ public class WebMapServer extends AbstractServer{
         return requestHeaderMap;
     }
 
+    @Override
+    public synchronized Set<Name> getNames() throws DataStoreException {
+        if(names == null){
+            names = new HashSet<Name>();
+            final AbstractWMSCapabilities capa;
+            try {
+                capa = getCapabilities();
+            } catch (CapabilitiesException ex) {
+                throw new DataStoreException(ex);
+            }
+                        
+            final List<AbstractLayer> layers = capa.getLayers();
+            for(AbstractLayer al : layers){
+                final String name = al.getName();
+                if(name != null){
+                    names.add(DefaultName.valueOf(name));
+                }
+            }
+            
+            names = Collections.unmodifiableSet(names);
+        }
+        return names;
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(getNames().contains(name)){
+            return new WMSCoverageReference(this,name);
+        }
+        throw new DataStoreException("No layer for name : " + name);
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public CoverageReference create(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebMapServer[");

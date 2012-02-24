@@ -21,6 +21,7 @@ import java.net.URL;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
+import org.geotoolkit.client.CapabilitiesException;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -409,7 +410,7 @@ public class WMSMapLayerTest {
                 return false;
             }
             @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException,CapabilitiesException {
                 return CRS.decode("CRS:84");
             }
         };

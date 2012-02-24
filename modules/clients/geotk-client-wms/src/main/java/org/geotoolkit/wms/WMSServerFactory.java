@@ -16,9 +16,14 @@
  */
 package org.geotoolkit.wms;
 
+import java.io.Serializable;
 import java.net.URL;
+import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
@@ -33,7 +38,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSServerFactory extends AbstractServerFactory{
+public class WMSServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
 
     /**
      * Version, Mandatory.
@@ -50,7 +55,7 @@ public class WMSServerFactory extends AbstractServerFactory{
     }
 
     @Override
-    public Server create(ParameterValueGroup params) throws DataStoreException {
+    public WebMapServer create(ParameterValueGroup params) throws DataStoreException {
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         final WMSVersion version = (WMSVersion)Parameters.getOrCreate(VERSION, params).getValue();
         ClientSecurity security = null;
@@ -60,6 +65,25 @@ public class WMSServerFactory extends AbstractServerFactory{
         }catch(ParameterNotFoundException ex){}
         
         return new WebMapServer(url,security,version,null);
+    }
+
+    @Override
+    public WebMapServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebMapServer) super.create(params);
+    }
+
+    @Override
+    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+        try{
+            return createNew(FeatureUtilities.toParameter(params,getParametersDescriptor()));
+        }catch(InvalidParameterValueException ex){
+            throw new DataStoreException(ex);
+        }
+    }
+
+    @Override
+    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+        throw new DataStoreException("Can not create new WMS coverage store.");
     }
     
 }
