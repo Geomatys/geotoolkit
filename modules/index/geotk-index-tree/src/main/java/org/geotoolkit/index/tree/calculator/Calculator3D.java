@@ -24,16 +24,19 @@ import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 
-/**Define a three dimension Calculator.
+/**
+ * Define a three dimension {@code Calculator}.
  *
- * @author Rémi Maréchal       (Geomatys).
+ * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class Calculator3D implements Calculator{
+public class Calculator3D extends Calculator {
 
-    /**To compare two {@code DefaultNode} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code DefaultNode} from them boundary box minimum x axis
+     * coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<DefaultNode> nodeComparatorXLow = new Comparator<DefaultNode>() {
 
@@ -45,9 +48,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code DefaultNode} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code DefaultNode} from them boundary box minimum y axis
+     * coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<DefaultNode> nodeComparatorYLow = new Comparator<DefaultNode>() {
 
@@ -59,9 +64,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum z
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<DefaultNode> nodeComparatorZLow = new Comparator<DefaultNode>() {
 
@@ -73,9 +80,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum x
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<GeneralEnvelope> gEComparatorXLow = new Comparator<GeneralEnvelope>() {
 
@@ -87,9 +96,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum y
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<GeneralEnvelope> gEComparatorYLow = new Comparator<GeneralEnvelope>() {
 
@@ -101,9 +112,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum z
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<GeneralEnvelope> gEComparatorZLow = new Comparator<GeneralEnvelope>() {
 
@@ -115,9 +128,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code Node3D} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code Node3D} from them boundary box minimum x axis
+     * coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<DefaultNode> nodeComparatorXUpp = new Comparator<DefaultNode>() {
 
@@ -129,9 +144,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code Node3D} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code Node3D} from them boundary box minimum y axis
+     * coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<DefaultNode> nodeComparatorYUpp = new Comparator<DefaultNode>() {
 
@@ -143,9 +160,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate.
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum z
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<DefaultNode> nodeComparatorZUpp = new Comparator<DefaultNode>() {
 
@@ -157,9 +176,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum x
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<GeneralEnvelope> gEComparatorXUpp = new Comparator<GeneralEnvelope>() {
 
@@ -171,9 +192,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum y
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<GeneralEnvelope> gEComparatorYUpp = new Comparator<GeneralEnvelope>() {
 
@@ -185,9 +208,11 @@ public class Calculator3D implements Calculator{
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+    /**
+     * To compare two {@code GeneralEnvelope} from them boundary box minimum z
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private final Comparator<GeneralEnvelope> gEComparatorZUpp = new Comparator<GeneralEnvelope>() {
 
@@ -198,54 +223,52 @@ public class Calculator3D implements Calculator{
             return y1.compareTo(y2);
         }
     };
-    
+
     public Calculator3D() {
     }
 
-    
-    
-    /**Compute Euclidean 3D bulk.
-     * {@inheritDoc }
+    /**
+     * Compute Euclidean 3D bulk. {@inheritDoc }
      */
     @Override
     public double getSpace(final GeneralEnvelope envelop) {
         return DefaultTreeUtils.getGeneralEnvelopBulk(envelop);
     }
 
-    /**Compute Euclidean 3D area.
-     * {@inheritDoc }
+    /**
+     * Compute Euclidean 3D area. {@inheritDoc }
      */
     @Override
     public double getEdge(final GeneralEnvelope envelop) {
         return DefaultTreeUtils.getGeneralEnvelopArea(envelop);
     }
 
-    /**Compute Euclidean 3D distance.
-     * {@inheritDoc }
+    /**
+     * Compute Euclidean 3D distance. {@inheritDoc }
      */
     @Override
     public double getDistance(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB) {
         return DefaultTreeUtils.getDistanceBetween2Envelop(envelopA, envelopB);
     }
-    
-    /**Compute Euclidean 3D distance.
-     * {@inheritDoc }
+
+    /**
+     * Compute Euclidean 3D distance. {@inheritDoc }
      */
     @Override
     public double getDistance(DefaultNode nodeA, DefaultNode nodeB) {
         return getDistance(nodeA.getBoundary(), nodeB.getBoundary());
     }
-    
-    /**Compute Euclidean 3D distance.
-     * {@inheritDoc }
+
+    /**
+     * Compute Euclidean 3D distance. {@inheritDoc }
      */
     @Override
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
         return DefaultTreeUtils.getDistanceBetween2DirectPosition(positionA, positionB);
     }
 
-    /**Compute Euclidean overlaps 3D area.
-     * {@inheritDoc }
+    /**
+     * Compute Euclidean overlaps 3D area. {@inheritDoc }
      */
     @Override
     public double getOverlaps(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB) {
@@ -253,54 +276,85 @@ public class Calculator3D implements Calculator{
         ge.intersect(envelopB);
         return DefaultTreeUtils.getGeneralEnvelopBulk(ge);
     }
-    
-    /**Compute Euclidean enlargement 3D bulk.
-     * {@inheritDoc }
+
+    /**
+     * Compute Euclidean enlargement 3D bulk. {@inheritDoc }
      */
     @Override
     public double getEnlargement(final GeneralEnvelope envMin, final GeneralEnvelope envMax) {
         return DefaultTreeUtils.getGeneralEnvelopBulk(envMax) - DefaultTreeUtils.getGeneralEnvelopBulk(envMin);
     }
 
-    /**Comparator for 3D space axis.
-     * {@inheritDoc}
+    /**
+     * Comparator for 3D space axis. {@inheritDoc}
      */
     @Override
     public Comparator sortFrom(int index, boolean lowerOrUpper, boolean nodeOrGE) {
         ArgumentChecks.ensureBetween("sortFrom : index ", 0, 2, index);
-        if(lowerOrUpper){
-            if(nodeOrGE){
-                switch(index){
-                    case 0 : return nodeComparatorXLow;
-                    case 1 : return nodeComparatorYLow;
-                    case 2 : return nodeComparatorZLow;
-                    default : throw new IllegalStateException("no comparator finded");
+        if (lowerOrUpper) {
+            if (nodeOrGE) {
+                switch (index) {
+                    case 0:
+                        return nodeComparatorXLow;
+                    case 1:
+                        return nodeComparatorYLow;
+                    case 2:
+                        return nodeComparatorZLow;
+                    default:
+                        throw new IllegalStateException("no comparator finded");
                 }
-            }else{
-                switch(index){
-                    case 0 : return gEComparatorXLow;
-                    case 1 : return gEComparatorYLow;
-                    case 2 : return gEComparatorZLow;
-                    default : throw new IllegalStateException("no comparator finded");
+            } else {
+                switch (index) {
+                    case 0:
+                        return gEComparatorXLow;
+                    case 1:
+                        return gEComparatorYLow;
+                    case 2:
+                        return gEComparatorZLow;
+                    default:
+                        throw new IllegalStateException("no comparator finded");
                 }
             }
-        }else{
-            if(nodeOrGE){
-                switch(index){
-                    case 0 : return nodeComparatorXUpp;
-                    case 1 : return nodeComparatorYUpp;
-                    case 2 : return nodeComparatorZUpp;
-                    default : throw new IllegalStateException("no comparator finded");
+        } else {
+            if (nodeOrGE) {
+                switch (index) {
+                    case 0:
+                        return nodeComparatorXUpp;
+                    case 1:
+                        return nodeComparatorYUpp;
+                    case 2:
+                        return nodeComparatorZUpp;
+                    default:
+                        throw new IllegalStateException("no comparator finded");
                 }
-            }else{
-                switch(index){
-                    case 0 : return gEComparatorXUpp;
-                    case 1 : return gEComparatorYUpp;
-                    case 2 : return gEComparatorZUpp;
-                    default : throw new IllegalStateException("no comparator finded");
+            } else {
+                switch (index) {
+                    case 0:
+                        return gEComparatorXUpp;
+                    case 1:
+                        return gEComparatorYUpp;
+                    case 2:
+                        return gEComparatorZUpp;
+                    default:
+                        throw new IllegalStateException("no comparator finded");
                 }
             }
         }
     }
-    
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createBasicHL(DefaultNode candidate, int order, GeneralEnvelope bound) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getHVOfEntry(DefaultNode candidate, GeneralEnvelope entry) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

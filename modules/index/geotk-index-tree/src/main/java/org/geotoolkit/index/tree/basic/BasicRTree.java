@@ -23,7 +23,10 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.*;
+import org.geotoolkit.index.tree.DefaultAbstractTree;
+import org.geotoolkit.index.tree.DefaultNode;
+import org.geotoolkit.index.tree.DefaultTreeUtils;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -153,7 +156,7 @@ public class BasicRTree extends DefaultAbstractTree {
             }
             
             for(int i =0; i<size; i++){
-                if (TreeUtils.countElements(children.get(i)) > candidate.getTree().getMaxElements()) {
+                if (DefaultTreeUtils.countElements(children.get(i)) > candidate.getTree().getMaxElements()) {
                     final DefaultNode child = children.remove(i);
                     final List<DefaultNode> l = splitNode(child);
                     final DefaultNode l0 = l.get(0);
@@ -166,7 +169,7 @@ public class BasicRTree extends DefaultAbstractTree {
         }
         
         if (candidate.getParent() == null) {
-            if (TreeUtils.countElements(candidate) > candidate.getTree().getMaxElements()) {
+            if (DefaultTreeUtils.countElements(candidate) > candidate.getTree().getMaxElements()) {
                 List<DefaultNode> l = splitNode(candidate);
                 final DefaultNode l0 = l.get(0);
                 final DefaultNode l1 = l.get(1);

@@ -20,35 +20,40 @@ package org.geotoolkit.index.tree;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 
-/**Create a couple of two {@code GeneralEnvelope}.
+/**
+ * Create a couple of two {@code GeneralEnvelope}.
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class CoupleGE implements Couple<GeneralEnvelope>{
+public class CoupleGE implements Couple<GeneralEnvelope> {
 
     final private GeneralEnvelope gE1;
     final private GeneralEnvelope gE2;
+    final private Calculator calculator;
     private Map<String, Object> userProperties;
-    
-    
-    /**Create a {@code GeneralEnvelope} couple.
-     * 
+
+    /**
+     * Create a {@code GeneralEnvelope} couple.
+     *
      * @param gE1
-     * @param gE2 
+     * @param gE2
+     * @param calculator to compute all {@code Couple} properties.
      * @throws IllegalArgumentException if gE1 or gE2 are null.
      */
-    public CoupleGE(final GeneralEnvelope gE1, final GeneralEnvelope gE2) {
+    public CoupleGE(final GeneralEnvelope gE1, final GeneralEnvelope gE2, final Calculator calculator) {
         ArgumentChecks.ensureNonNull("coupleGE contructor : gE1", gE1);
         ArgumentChecks.ensureNonNull("coupleGE contructor : gE2", gE2);
+        ArgumentChecks.ensureNonNull("coupleGE contructor : calculator", calculator);
         this.gE1 = gE1;
         this.gE2 = gE2;
+        this.calculator = calculator;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public GeneralEnvelope getObject1() {
@@ -56,7 +61,7 @@ public class CoupleGE implements Couple<GeneralEnvelope>{
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public GeneralEnvelope getObject2() {
@@ -64,15 +69,7 @@ public class CoupleGE implements Couple<GeneralEnvelope>{
     }
 
     /**
-     * {@inheritDoc} 
-     */
-    @Override
-    public double getPerimeter() {
-        return getGeneralEnvelopPerimeter(getObject1()) + getGeneralEnvelopPerimeter(getObject2());
-    }
-
-    /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public boolean intersect() {
@@ -80,33 +77,43 @@ public class CoupleGE implements Couple<GeneralEnvelope>{
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public double getDistance() {
-        return getDistanceBetween2Envelop(getObject1(), getObject2());
+        return calculator.getDistance(getObject1(), getObject2());
     }
 
-    /**Remark : intersection area between object1 and object2 is not subtract. 
-     * 
+    /**
+     * Remark : intersection edge between object1 and object2 is not subtract.
+     *
      * @return two objects area som.
      */
     @Override
-    public double getArea() {
-        final GeneralEnvelope envelop1 = getObject1();
-        final GeneralEnvelope envelop2 = getObject2();
-        return getGeneralEnvelopArea(envelop1) + getGeneralEnvelopArea(envelop2);
+    public double getEdge() {
+        return calculator.getEdge(getObject1()) + calculator.getEdge(getObject2());
+    }
+
+    /**
+     * Remark : intersection space between object1 and object2 is not subtract.
+     *
+     * @return two objects space som.
+     */
+    @Override
+    public double getSpace() {
+        return calculator.getSpace(getObject1()) + calculator.getSpace(getObject2());
     }
 
     /**
      * {@inheritDoc}.
-     * @return Two objects intersection bulk.
+     *
+     * @return Two objects intersection space.
      */
     @Override
     public double getOverlaps() {
-        return getOverlapValue(getObject1(), getObject2());
+        return calculator.getOverlaps(getObject1(), getObject2());
     }
-   
+
     /**
      * @param key
      * @return user property for given key
@@ -117,10 +124,11 @@ public class CoupleGE implements Couple<GeneralEnvelope>{
         }
         return userProperties.get(key);
     }
-    
-    /**Add user property with key access.
-     * 
-     * @param key 
+
+    /**
+     * Add user property with key access.
+     *
+     * @param key
      * @param value Object will be stocked.
      */
     public void setUserProperty(final String key, final Object value) {

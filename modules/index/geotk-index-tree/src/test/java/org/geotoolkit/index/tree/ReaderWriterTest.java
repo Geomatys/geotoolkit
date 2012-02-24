@@ -34,8 +34,8 @@ import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Create test suite to test Tree writer and reader. 
- * 
+ * Create test suite to test Tree writer and reader.
+ *
  * @author Rémi Marechal (Geomatys).
  */
 public class ReaderWriterTest {
@@ -57,9 +57,9 @@ public class ReaderWriterTest {
 
     /**
      * Test suite on (Basic) R-Tree.
-     * 
+     *
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     @Test
     public void basicRTreeTest() throws IOException, ClassNotFoundException, TransformException {
@@ -71,9 +71,9 @@ public class ReaderWriterTest {
 
     /**
      * Test suite on R*Tree.
-     * 
+     *
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     @Test
     public void starRTreeTest() throws IOException, ClassNotFoundException, TransformException {
@@ -83,19 +83,19 @@ public class ReaderWriterTest {
         testTree();
     }
 
-//    /**
-//     * Test suite on Hilbert R-Tree.
-//     * 
-//     * @throws IOException
-//     * @throws ClassNotFoundException 
-//     */
-//    @Test
-//    public void hilbertRTreeTest() throws IOException, ClassNotFoundException, TransformException {
-//        setHilbertRTree();
-//        TreeWriter.write(treeRef, fil);
-//        TreeReader.read(treeTest, fil);
-//        testTree();
-//    }
+    /**
+     * Test suite on Hilbert R-Tree.
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    @Test
+    public void hilbertRTreeTest() throws IOException, ClassNotFoundException, TransformException {
+        setHilbertRTree();
+        TreeWriter.write(treeRef, fil);
+        TreeReader.read(treeTest, fil);
+        testTree();
+    }
 
     @Test
     public void multiTest() throws IOException, ClassNotFoundException, TransformException {
@@ -124,16 +124,16 @@ public class ReaderWriterTest {
         treeR.reset();
         testTree();
 
-//        setHilbertRTree();
-//        treeW.setOutput(fil);
-//        treeW.write(treeRef);
-//        treeW.dispose();
-//        treeW.reset();
-//        treeR.setInput(fil);
-//        treeR.read(treeTest);
-//        treeR.dispose();
-//        treeR.reset();
-//        testTree();
+        setHilbertRTree();
+        treeW.setOutput(fil);
+        treeW.write(treeRef);
+        treeW.dispose();
+        treeW.reset();
+        treeR.setInput(fil);
+        treeR.read(treeTest);
+        treeR.dispose();
+        treeR.reset();
+        testTree();
     }
 
     /**
@@ -158,8 +158,16 @@ public class ReaderWriterTest {
      * Affect Hilbert RTree on two tree test.
      */
     private void setHilbertRTree() throws TransformException {
-        treeRef = TreeFactory.createHilbertRTree2D(4, 2);
-        treeTest = TreeFactory.createHilbertRTree2D(4, 2);
+        treeRef = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D);
+        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D);
+        lData.clear();
+        for (int j = -120; j <= 120; j += 4) {
+            for (int i = -200; i <= 200; i += 4) {
+                final GeneralEnvelope ge = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
+                ge.setEnvelope(i, j, i, j);
+                lData.add(ge);
+            }
+        }
         insert();
     }
 
@@ -176,23 +184,21 @@ public class ReaderWriterTest {
 
     /**
      * Test suite to compare two RTree.
-     * 
-     * <blockquote><font size=-1>
-     * <strong>NOTE: Test criterion are : - same node number.
-     *                                    - trees contains same leafs.
-     *                                    - trees contains same entries.</strong> 
-     * </font></blockquote>
-     * 
+     *
+     * <blockquote><font size=-1> <strong>NOTE: Test criterion are : - same node
+     * number. - trees contains same leafs. - trees contains same
+     * entries.</strong> </font></blockquote>
+     *
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     private void testTree() throws IOException, ClassNotFoundException, TransformException {
         ArgumentChecks.ensureNonNull("testTree : treeRef", treeRef);
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
         final List<GeneralEnvelope> listSearchTreeRef = new ArrayList<GeneralEnvelope>();
         final List<GeneralEnvelope> listSearchTreeTest = new ArrayList<GeneralEnvelope>();
-        treeRef.search(((DefaultNode)treeRef.getRoot()).getBoundary(), listSearchTreeRef);
-        treeTest.search(((DefaultNode)treeTest.getRoot()).getBoundary(), listSearchTreeTest);
+        treeRef.search(((DefaultNode) treeRef.getRoot()).getBoundary(), listSearchTreeRef);
+        treeTest.search(((DefaultNode) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
         assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));
@@ -200,50 +206,50 @@ public class ReaderWriterTest {
 
     /**
      * Find and enumerate all tree node.
-     * 
+     *
      * @param tree
      * @return tree node number.
      */
     private int countAllNode(final Tree tree) {
         ArgumentChecks.ensureNonNull("countAllNode : tree", tree);
         int count = 0;
-        countNode((Node)tree.getRoot(), count);
+        countNode((Node) tree.getRoot(), count);
         return count;
     }
 
     /**
      * Increment count for each node parameter.
-     * 
+     *
      * @param node
-     * @param count 
+     * @param count
      */
     private void countNode(final Node node, int count) {
         ArgumentChecks.ensureNonNull("countNode : node", node);
         count++;
-        for (Node nod : (List<Node>)node.getChildren()) {
+        for (Node nod : (List<Node>) node.getChildren()) {
             countNode(nod, count);
         }
     }
 
     /**
      * Find all tree Leaf
-     * 
+     *
      * @param tree
      * @return leaf list.
      */
     private List<DefaultNode> getAllLeaf(final Tree tree) {
         ArgumentChecks.ensureNonNull("getAllLeaf : tree", tree);
         final List<DefaultNode> listLeaf = new ArrayList<DefaultNode>();
-        getLeaf((DefaultNode)tree.getRoot(), listLeaf);
+        getLeaf((DefaultNode) tree.getRoot(), listLeaf);
         return listLeaf;
     }
 
     /**
-     * Check if {@code node} passed in parameter is a leaf.
-     * if it is true node is added in parameter {@code listLeaf}.
-     * 
+     * Check if {@code node} passed in parameter is a leaf. if it is true node
+     * is added in parameter {@code listLeaf}.
+     *
      * @param node to study
-     * @param listLeaf 
+     * @param listLeaf
      */
     private void getLeaf(final DefaultNode node, final List<DefaultNode> listLeaf) {
         ArgumentChecks.ensureNonNull("getLeaf : node", node);
@@ -258,11 +264,10 @@ public class ReaderWriterTest {
 
     /**
      * Compare 2 {@code DefaultNode} lists.
-     * 
-     * <blockquote><font size=-1>
-     * <strong>NOTE: return {@code true} if listTreeRef and listTreeTest are empty.</strong> 
-     * </font></blockquote>
-     * 
+     *
+     * <blockquote><font size=-1> <strong>NOTE: return {@code true} if
+     * listTreeRef and listTreeTest are empty.</strong> </font></blockquote>
+     *
      * @param listTreeRef
      * @param listTreeTest
      * @throws IllegalArgumentException if listTreeRef or listTreeTest is null.
@@ -296,14 +301,12 @@ public class ReaderWriterTest {
 
     /**
      * Test suite to compare two "leaf" ({@DefaultNode}).
-     * 
-     * <blockquote><font size=-1>
-     * <strong>NOTE: Test based on this criterion : - same boundary.
-     *                                              - same entries (Shape) number within each of them.
-     *                                              - they contain same entries.
-     *                                              Moreover entries order is not compare.</strong> 
+     *
+     * <blockquote><font size=-1> <strong>NOTE: Test based on this criterion : -
+     * same boundary. - same entries (Shape) number within each of them. - they
+     * contain same entries. Moreover entries order is not compare.</strong>
      * </font></blockquote>
-     * 
+     *
      * @param nodeA
      * @param nodeB
      * @return true if 3 assertion are verified else false.
@@ -343,11 +346,10 @@ public class ReaderWriterTest {
 
     /**
      * Compare 2 lists elements.
-     * 
-     * <blockquote><font size=-1>
-     * <strong>NOTE: return {@code true} if listA and listB are empty.</strong> 
-     * </font></blockquote>
-     * 
+     *
+     * <blockquote><font size=-1> <strong>NOTE: return {@code true} if listA and
+     * listB are empty.</strong> </font></blockquote>
+     *
      * @param listA
      * @param listB
      * @throws IllegalArgumentException if listA or ListB is null.

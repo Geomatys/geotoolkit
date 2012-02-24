@@ -17,21 +17,15 @@
  */
 package org.geotoolkit.index.tree.io;
 
-import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.*;
+import org.geotoolkit.index.tree.AbstractNode;
+import org.geotoolkit.index.tree.DefaultNode;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**Create TreeWriter object.

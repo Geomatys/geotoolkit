@@ -26,7 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Create chosen tree.
- * 
+ *
  * @author Rémi Marechal (Géomatys).
  */
 public final class TreeFactory {
@@ -36,18 +36,18 @@ public final class TreeFactory {
 
     /**
      * Create a Basic R-Tree.
-     * 
+     *
      * @param splitMade made to split.
      * @param maxElements_per_cells
      * @return Basic RTree.
      */
-    public static Tree createBasicRTree( final int maxElements_per_cells, final CoordinateReferenceSystem crs, final SplitCase splitMade, final Calculator calculator) {
+    public static Tree createBasicRTree(final int maxElements_per_cells, final CoordinateReferenceSystem crs, final SplitCase splitMade, final Calculator calculator) {
         return new BasicRTree(maxElements_per_cells, crs, splitMade, calculator);
     }
 
     /**
      * Create a R*Tree.
-     * 
+     *
      * @param maxElements_per_cells
      * @return R*Tree.
      */
@@ -57,16 +57,16 @@ public final class TreeFactory {
 
     /**
      * Create Hilbert R-Tree.
-     * 
-     * <blockquote><font size=-1>
-     * <strong>NOTE: cells number per leaf = 2^(2*hilbertOrder).</strong> 
-     * </font></blockquote>
-     * 
+     *
+     * <blockquote><font size=-1> <strong>NOTE: cells number per leaf =
+     * 2^(dim*hilbertOrder). Moreother there are maxElements_per_cells * 2 ^
+     * (dim*hilbertOrder) elements per leaf.</strong> </font></blockquote>
+     *
      * @param maxElements_per_cells
      * @param hilbertOrder subdivision leaf order.
      * @return Hilbert R-Tree.
      */
-    public static Tree createHilbertRTree2D(final int maxElements_per_cells, final int hilbertOrder) {
-        return new HilbertRTree(maxElements_per_cells, hilbertOrder);
+    public static Tree createHilbertRTree(final int maxElements_per_cells, final int hilbertOrder, final CoordinateReferenceSystem crs, final Calculator calculator) {
+        return new HilbertRTree(maxElements_per_cells, hilbertOrder, crs, calculator);
     }
 }

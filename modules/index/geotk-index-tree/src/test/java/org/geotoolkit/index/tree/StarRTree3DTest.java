@@ -23,63 +23,71 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
-/**Create R*Tree test suite in 3D.
+/**
+ * Create R*Tree test suite in 3D Euclidean space.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class StarRTree3DTest extends TreeTest{
+public class StarRTree3DTest extends TreeTest {
+
     public StarRTree3DTest() throws TransformException {
         super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D), DefaultEngineeringCRS.CARTESIAN_3D);
     }
-    
-    /**Some elements inserted Tree.
-     * 
-     * @throws TransformException 
+
+    /**
+     * Some elements inserted Tree.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testInsert() throws TransformException {
         super.insertTest();
     }
 
-    /**Verify all boundary Node from its "children" Node.
-     * 
-     * @throws TransformException 
+    /**
+     * Verify all boundary Node from its "children" Node.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testCheckBoundary() throws TransformException {
         super.checkBoundaryTest();
     }
 
-    /**Test search query inside tree.
-     * 
-     * @throws TransformException 
+    /**
+     * Test search query inside tree.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testQueryInside() throws TransformException {
         super.queryInsideTest();
     }
 
-    /**Test query outside of tree area.
-     * 
-     * @throws TransformException 
+    /**
+     * Test query outside of tree area.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testQueryOutside() throws TransformException {
         super.queryOutsideTest();
     }
 
-    /**Test query on tree boundary border. 
-     * 
-     * @throws TransformException 
+    /**
+     * Test query on tree boundary border.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testQueryOnBorder() throws TransformException {
         super.queryOnBorderTest();
     }
 
-    /**Test insertion and deletion in tree.
-     * 
-     * @throws TransformException 
+    /**
+     * Test insertion and deletion in tree.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testInsertDelete() throws TransformException {

@@ -34,11 +34,6 @@ public interface Couple<B> {
     B getObject2();
 
     /**
-     * @return two object perimeter.
-     */
-    double getPerimeter();
-
-    /**
      * @return true if the two object intersect them.
      */
     boolean intersect();
@@ -49,9 +44,14 @@ public interface Couple<B> {
     double getDistance();
     
     /**
-     * @return two objects area.
+     * @return two object edge.
      */
-    double getArea();
+    double getEdge();
+    
+    /**
+     * @return two objects space.
+     */
+    double getSpace();
     
     /**
      * @return  Overlaps between two Object.

@@ -24,7 +24,6 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.index.tree.*;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -122,7 +121,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
         if(entries!=null)this.entries.addAll(entries);
         if(lowerCorner != null && upperCorner != null){
             if(lowerCorner.getDimension() != upperCorner.getDimension()){
-                throw new IllegalArgumentException("Node3D constructor : envelope corners are not in same dimension");
+                throw new IllegalArgumentException("DefaultNode constructor : envelope corners are not in same dimension");
             }
             this.boundary = new GeneralEnvelope(new GeneralDirectPosition(lowerCorner), new GeneralDirectPosition(upperCorner));
         }

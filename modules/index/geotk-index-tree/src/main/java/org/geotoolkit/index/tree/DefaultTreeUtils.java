@@ -434,7 +434,7 @@ public class DefaultTreeUtils {
         int area = 0;
         final int dim = envelope.getDimension();
         for(int i = 0; i<dim-1;i++){
-            for(int j = i;j<dim;j++){
+            for(int j = i+1;j<dim;j++){
                 area += envelope.getSpan(i)*envelope.getSpan(j);
             }
         }

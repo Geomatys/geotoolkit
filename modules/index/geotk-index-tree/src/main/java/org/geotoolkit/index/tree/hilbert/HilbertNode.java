@@ -17,61 +17,58 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.awt.Shape;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.index.tree.Node2D;
+import org.geotoolkit.index.tree.DefaultNode;
+import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.index.tree.TreeUtils;
-import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.geometry.DirectPosition;
 
 /**
- * Create an appropriate {@code Node2D} to {@code HilbertNode2D}.
+ * Create an appropriate Hilbert R-Tree {@code DefaultNode}, which named {@code HilbertNode}.
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class HilbertNode2D extends Node2D {
+public class HilbertNode extends DefaultNode {
 
     /**
-     * Create HilbertNode2D.
-     * 
+     * Create HilbertNode.
+     *
      * @param tree pointer on Tree.
-     * @param parent pointer on parent Node2D.
-     * @param hilbertOrder currently Node2D Hilbert order.
-     * @param children sub {@code Node2D}.
-     * @param entries {@code List<Shape>} to add in this node.
+     * @param parent pointer on parent {@code DefaultNode}.
+     * @param hilbertOrder currently {@code DefaultNode} Hilbert order.
+     * @param children sub {@code DefaultNode}.
+     * @param entries {@code GeneralEnvelope} List to add in this node.
      * @throws IllegalArgumentException if hilbertOrder < 0.
      */
-    public HilbertNode2D(final Tree tree, final Node2D parent, final int hilbertOrder, final List<Node2D> children, final List<Shape> entries, double ...coordinates) {
-        super(tree, parent, children, null, coordinates);
-        ArgumentChecks.ensurePositive("hilbertOrder", hilbertOrder);
+    public HilbertNode(final Tree tree, final DefaultNode parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<DefaultNode> children, final List<GeneralEnvelope> entries) {
+        super(tree, parent, lowerCorner, upperCorner, children, null);
         setUserProperty("isleaf", false);
         if (entries != null && !entries.isEmpty()) {
             setUserProperty("isleaf", true);
-            setUserProperty("centroids", new ArrayList<Point2D>());
-            setUserProperty("cells", new ArrayList<Node2D>());
-            Rectangle2D rect = TreeUtils.getEnveloppeMin(entries).getBounds2D();
-            HilbertRTree.createBasicHB(this, hilbertOrder, rect);
-            for (Shape sh : entries) {
-                HilbertRTree.insertNode(this, sh);
+            setUserProperty("centroids", new ArrayList<DirectPosition>());
+            setUserProperty("cells", new ArrayList<DefaultNode>());
+            final GeneralEnvelope bound = DefaultTreeUtils.getEnveloppeMin(entries);
+            tree.getCalculator().createBasicHL(this, 0, bound);
+            for (GeneralEnvelope ent : entries) {
+                HilbertRTree.insertNode(this, ent);
             }
         }
     }
 
     /**
-     * {@inheritDoc}. 
+     * {@inheritDoc}.
      */
     @Override
     public boolean isEmpty() {
-        List<Node2D> lC = (List<Node2D>) getUserProperty("cells");
+        final List<DefaultNode> lC = (List<DefaultNode>) getUserProperty("cells");
         boolean empty = true;
         if (lC != null && !lC.isEmpty()) {
-            for (Node2D hc : lC.toArray(new Node2D[lC.size()])) {
+            for (DefaultNode hc : lC.toArray(new DefaultNode[lC.size()])) {
                 if (!hc.isEmpty()) {
                     empty = false;
                     break;
@@ -84,19 +81,17 @@ public class HilbertNode2D extends Node2D {
     /**
      * @return boundary without re-compute of sub node boundary.
      */
-    public Rectangle2D getBound() {
-        return this.boundary.getBounds2D();
+    public GeneralEnvelope getBound() {
+        return this.boundary;
     }
 
-    
-    
     /**
      * Set new boundary.
-     * 
-     * @param rect future boundary.
+     *
+     * @param bound future boundary.
      */
-    public void setBound(final Rectangle2D rect) {
-        this.boundary = rect;
+    public void setBound(final GeneralEnvelope bound) {
+        this.boundary = bound;
     }
 
     /**
@@ -105,9 +100,9 @@ public class HilbertNode2D extends Node2D {
     @Override
     protected void calculateBounds() {
         if ((Boolean) getUserProperty("isleaf")) {
-            final List<Shape> lS = new ArrayList<Shape>();
-            final List<Node2D> listCells = new ArrayList<Node2D>((List<Node2D>) getUserProperty("cells"));
-            for (Node2D nod : listCells) {
+            final List<GeneralEnvelope> lS = new ArrayList<GeneralEnvelope>();
+            final List<DefaultNode> listCells = new ArrayList<DefaultNode>((List<DefaultNode>) getUserProperty("cells"));
+            for (DefaultNode nod : listCells) {
                 lS.addAll(nod.getEntries());
             }
 
@@ -120,19 +115,19 @@ public class HilbertNode2D extends Node2D {
                 hO--;
             }
 
-            HilbertRTree.createBasicHB(this, hO, TreeUtils.getEnveloppeMin(lS).getBounds2D());
-            for (Shape sh : lS) {
+            getTree().getCalculator().createBasicHL(this, hO, DefaultTreeUtils.getEnveloppeMin(lS));
+            for (GeneralEnvelope sh : lS) {
                 HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
             }
         } else {
-            for (Node2D nod : getChildren()) {
+            for (DefaultNode nod : getChildren()) {
                 addBound(nod.getBoundary());
             }
         }
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public boolean isLeaf() {
@@ -140,12 +135,12 @@ public class HilbertNode2D extends Node2D {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public boolean isFull() {
         if ((Boolean) getUserProperty("isleaf")) {
-            for (Node2D n2d : (List<Node2D>) getUserProperty("cells")) {
+            for (DefaultNode n2d : (List<DefaultNode>) getUserProperty("cells")) {
                 if (!n2d.isFull()) {
                     return false;
                 }
@@ -156,11 +151,11 @@ public class HilbertNode2D extends Node2D {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
-        final List<Node2D> cup = (List<Node2D>) getUserProperty("cells");
+        final List<DefaultNode> cup = (List<DefaultNode>) getUserProperty("cells");
         final Collection col = (cup != null) ? new ArrayList(cup) : new ArrayList();
         col.addAll(getChildren());
         String strparent = (getParent() == null) ? "null" : String.valueOf(getParent().hashCode());

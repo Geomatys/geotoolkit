@@ -17,12 +17,14 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -30,14 +32,16 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRTreeTest extends TreeTestShape {
+public class HilbertRTree2DTest extends TreeTest {
 
-    public HilbertRTreeTest() throws TransformException {
-        super(new HilbertRTree(4, 2));
+    public HilbertRTree2DTest() throws TransformException {
+        super(new HilbertRTree(4, 1, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D), DefaultEngineeringCRS.CARTESIAN_2D);
     }
 
     /**
      * Some elements inserted in Hilbert R-Tree.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testInsert() throws TransformException {
@@ -46,9 +50,11 @@ public class HilbertRTreeTest extends TreeTestShape {
 
     /**
      * Verify all node boundary from its subnode boundary.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testCheckBoundary() {
+    public void testCheckBoundary() throws TransformException {
         super.checkBoundaryTest();
     }
 
@@ -56,25 +62,27 @@ public class HilbertRTreeTest extends TreeTestShape {
      * {@inheritDoc}
      */
     @Override
-    public boolean checkBoundaryNode(final Node2D node) {
-        final List<Shape> lS = new ArrayList<Shape>();
+    public boolean checkBoundaryNode(final DefaultNode node) {
+        final List<GeneralEnvelope> lS = new ArrayList<GeneralEnvelope>();
         if (node.isLeaf()) {
-            for (Node2D no : (List<Node2D>) node.getUserProperty("cells")) {
+            for (DefaultNode no : (List<DefaultNode>) node.getUserProperty("cells")) {
                 if (!no.isEmpty()) {
                     assertTrue(super.checkBoundaryNode(no));
                     lS.add(no.getBoundary());
                 }
             }
         } else {
-            for (Node2D no : node.getChildren()) {
+            for (DefaultNode no : node.getChildren()) {
                 lS.add(no.getBoundary());
             }
         }
-        return (TreeUtils.getEnveloppeMin(lS).getBounds2D().equals(node.getBoundary().getBounds2D()));
+        return (DefaultTreeUtils.getEnveloppeMin(lS).equals(node.getBoundary()));
     }
 
     /**
      * Test search query inside tree.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testQueryInside() throws TransformException {
@@ -83,6 +91,8 @@ public class HilbertRTreeTest extends TreeTestShape {
 
     /**
      * Test query outside of tree area.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testQueryOutside() throws TransformException {
@@ -90,7 +100,9 @@ public class HilbertRTreeTest extends TreeTestShape {
     }
 
     /**
-     * Test query on tree boundary border. 
+     * Test query on tree boundary border.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testQueryOnBorder() throws TransformException {
@@ -98,15 +110,9 @@ public class HilbertRTreeTest extends TreeTestShape {
     }
 
     /**
-     * Test query with search area contain all tree boundary. 
-     */
-    @Test
-    public void testQueryAll() throws TransformException {
-        super.queryAllTest();
-    }
-
-    /**
      * Test insertion and deletion in tree.
+     *
+     * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testInsertDelete() throws TransformException {
