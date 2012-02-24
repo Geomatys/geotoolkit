@@ -105,6 +105,11 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         }
 
         while(graphics.hasNext()){
+
+            if(monitor.stopRequested()){
+                break;
+            }
+            
             final ProjectedObject projectedFeature = graphics.next();
             final Object feature = projectedFeature.getCandidate();
             final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
