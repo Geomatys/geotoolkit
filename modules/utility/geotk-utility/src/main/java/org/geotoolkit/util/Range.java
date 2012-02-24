@@ -327,7 +327,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
     }
 
     /**
-     * Returns {@code true} if this range contains fully the given range.
+     * Returns {@code true} if the supplied range is fully contained within this range.
      *
      * @param  range The range to check for inclusion in this range.
      * @return {@code true} if the given range is included in this range.
