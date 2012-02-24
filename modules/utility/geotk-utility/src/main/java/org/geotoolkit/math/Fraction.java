@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 1992-2009, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
