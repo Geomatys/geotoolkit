@@ -268,7 +268,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in longitude in
      * decimal degrees (positive east).
      *
-     * @return The western-most longitude between -180 and +180°.
+     * @return The western-most longitude between -180 and +180°,
+     *         or {@linkplain Double#NaN NaN} if undefined.
      */
     @Override
     @ValueRange(minimum=-180, maximum=180)
@@ -282,7 +283,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in longitude in
      * decimal degrees (positive east).
      *
-     * @param newValue The western-most longitude between -180 and +180°.
+     * @param newValue The western-most longitude between -180 and +180°,
+     *        or {@linkplain Double#NaN NaN} to undefine.
      */
     public synchronized void setWestBoundLongitude(final double newValue) {
         checkWritePermission();
@@ -294,7 +296,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in longitude in
      * decimal degrees (positive east).
      *
-     * @return The eastern-most longitude between -180 and +180°.
+     * @return The eastern-most longitude between -180 and +180°,
+     *         or {@linkplain Double#NaN NaN} if undefined.
      */
     @Override
     @ValueRange(minimum=-180, maximum=180)
@@ -308,7 +311,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in longitude in
      * decimal degrees (positive east).
      *
-     * @param newValue The eastern-most longitude between -180 and +180°.
+     * @param newValue The eastern-most longitude between -180 and +180°,
+     *        or {@linkplain Double#NaN NaN} to undefine.
      */
     public synchronized void setEastBoundLongitude(final double newValue) {
         checkWritePermission();
@@ -320,7 +324,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in latitude in
      * decimal degrees (positive north).
      *
-     * @return The southern-most latitude between -90 and +90°.
+     * @return The southern-most latitude between -90 and +90°,
+     *         or {@linkplain Double#NaN NaN} if undefined.
      */
     @Override
     @ValueRange(minimum=-90, maximum=90)
@@ -334,7 +339,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in latitude in
      * decimal degrees (positive north).
      *
-     * @param newValue The southern-most latitude between -90 and +90°.
+     * @param newValue The southern-most latitude between -90 and +90°,
+     *        or {@linkplain Double#NaN NaN} to undefine.
      */
     public synchronized void setSouthBoundLatitude(final double newValue) {
         checkWritePermission();
@@ -346,7 +352,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in latitude in
      * decimal degrees (positive north).
      *
-     * @return The northern-most latitude between -90 and +90°.
+     * @return The northern-most latitude between -90 and +90°,
+     *         or {@linkplain Double#NaN NaN} if undefined.
      */
     @Override
     @ValueRange(minimum=-90, maximum=90)
@@ -360,7 +367,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * dataset extent. The value is expressed in latitude in
      * decimal degrees (positive north).
      *
-     * @param newValue The northern-most latitude between -90 and +90°.
+     * @param newValue The northern-most latitude between -90 and +90°,
+     *        or {@linkplain Double#NaN NaN} to undefine.
      */
     public synchronized void setNorthBoundLatitude(final double newValue) {
         checkWritePermission();
@@ -519,24 +527,25 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     }
 
     /**
-     * Returns {@code true} if this bounding box is empty. A geographic bounding box is considered
-     * non-empty if the {@linkplain #getEastBoundLongitude() east bound longitude} is greater than
-     * the {@linkplain #getWestBoundLongitude() west bound longitude}, and the
-     * {@linkplain #getNorthBoundLatitude() north bound latitude} is greater than the
-     * {@linkplain #getSouthBoundLatitude() south bound latitude}.
+     * Returns {@code true} if this metadata is empty. This metadata is considered empty if
+     * every bound values are {@linkplain Double#NaN NaN}. Note that this is different than
+     * the <cite>Java2D</cite> or <cite>envelope</cite> definition of "emptiness", since we
+     * don't test if the area is greater than zero - this method is a metadata test, not a
+     * geometric test.
      *
-     * {@note This method does not test the <cite>inclusion</cite> property since it has no effect
-     *        on whatever the bounding box defines a non-empty (possibly exclusive) area.}
-     *
-     * @return {@code true} if this geographic bounding box defines an empty area
-     *         (no matter if inclusive or exclusive).
+     * @return {@code true} if this metadata does not define any bound value.
      *
      * @since 2.5
+     *
+     * @see org.geotoolkit.geometry.AbstractEnvelope#isEmpty()
+     * @see java.awt.geom.Rectangle2D#isEmpty()
      */
     @Override
     public synchronized boolean isEmpty() {
-        // Use '!' in order to catch NaN values.
-        return !(eastBoundLongitude > westBoundLongitude && northBoundLatitude > southBoundLatitude);
+        return Double.isNaN(eastBoundLongitude) &&
+               Double.isNaN(westBoundLongitude) &&
+               Double.isNaN(northBoundLatitude) &&
+               Double.isNaN(southBoundLatitude);
     }
 
     /**

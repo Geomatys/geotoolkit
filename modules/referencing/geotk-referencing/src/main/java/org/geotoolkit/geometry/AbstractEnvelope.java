@@ -483,6 +483,9 @@ public abstract class AbstractEnvelope implements Envelope {
      *
      * @return {@code true} if this envelope is empty.
      *
+     * @see org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox#isEmpty()
+     * @see java.awt.geom.Rectangle2D#isEmpty()
+     *
      * @since 3.20 (derived from 1.2)
      */
     public boolean isEmpty() {

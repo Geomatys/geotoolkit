@@ -422,6 +422,7 @@ scanNumber: while (++i < length) {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isEmpty() {
         final int dimension = ordinates.length >>> 1;
         if (dimension == 0) {
@@ -442,6 +443,7 @@ scanNumber: while (++i < length) {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isNull() {
         for (int i=0; i<ordinates.length; i++) {
             if (!Double.isNaN(ordinates[i])) {
