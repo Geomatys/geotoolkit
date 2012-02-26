@@ -20,6 +20,7 @@ package org.geotoolkit.util;
 import java.util.Arrays;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import static java.lang.Character.*;
 
 
 /**
@@ -27,6 +28,11 @@ import org.geotoolkit.resources.Errors;
  * defined in this class duplicate the functionalities already provided in the {@code String}
  * class, but works on a generic {@code CharSequence} instance instead than {@code String}.
  * Other methods perform their work directly on the provided {@link StringBuilder}.
+ *
+ * {@section Unicode support}
+ * Every methods defined in this class work on <cite>code points</cite> instead than characters
+ * when appropriate. Consequently those methods should behave correctly with characters outside
+ * the <cite>Basic Multilingual Plane</cite> (BMP).
  *
  * {@section Handling of null values}
  * Some methods accept a {@code null} argument, in particular the methods converting the
@@ -37,7 +43,7 @@ import org.geotoolkit.resources.Errors;
  * explicitly documented as throwing a {@link NullPointerException}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see Arrays#toString(Object[])
  * @see XArrays#containsIgnoreCase(String[], String)
@@ -80,6 +86,16 @@ public final class Strings extends Static {
      * Do not allow instantiation of this class.
      */
     private Strings() {
+    }
+
+    /**
+     * Returns the code point after the given index. This method completes
+     * {@link String#codePointBefore(int)} but is rarely used because slightly inefficient
+     * (in most cases, the code point at {@code index} and its the {@code charCount(int)}
+     * value are already known, so the method calls performed here would be unnecessary).
+     */
+    private static int codePointAfter(final CharSequence text, final int index) {
+        return codePointAt(text, index + charCount(codePointAt(text, index)));
     }
 
     /**
@@ -177,6 +193,7 @@ public final class Strings extends Static {
         }
         int n = 0;
         if (text != null) {
+            // No need to use the code point API here, since we are looking for exact matches.
             for (int i=text.length(); --i>=0;) {
                 if (text.charAt(i) == c) {
                     n++;
@@ -391,6 +408,38 @@ public final class Strings extends Static {
     }
 
     /**
+     * Replaces the characters in a substring of the buffer with characters in the specified array.
+     * The substring to be replaced begins at the specified {@code start} and extends to the
+     * character at index {@code end - 1}.
+     *
+     * @param buffer The buffer in which to perform the replacement.
+     * @param start  The beginning index in the {@code buffer}, inclusive.
+     * @param end    The ending index in the {@code buffer}, exclusive.
+     * @param chars  The array that will replace previous contents.
+     *
+     * @see StringBuilder#replace(int, int, String)
+     *
+     * @since 3.20
+     */
+    public static void replace(final StringBuilder buffer, int start, final int end, final char[] chars) {
+        int length = end - start;
+        if (start < 0 || length < 0) {
+            throw new StringIndexOutOfBoundsException(Errors.format(Errors.Keys.ILLEGAL_RANGE_$2, start, end));
+        }
+        final int remaining = chars.length - length;
+        if (remaining < 0) {
+            buffer.delete(end + remaining, end);
+            length = chars.length;
+        }
+        for (int i=0; i<length; i++) {
+            buffer.setCharAt(start++, chars[i]);
+        }
+        if (remaining > 0) {
+            buffer.insert(start, chars, length, remaining);
+        }
+    }
+
+    /**
      * Removes every occurrences of the given string in the given buffer. This method invokes
      * {@link StringBuilder#delete(int, int)} for each occurrence of {@code search} found in
      * the buffer.
@@ -410,7 +459,7 @@ public final class Strings extends Static {
 
     /**
      * Returns a string with leading and trailing white spaces omitted. White spaces are identified
-     * by the {@link Character#isWhitespace(char)} method.
+     * by the {@link Character#isWhitespace(int)} method.
      * <p>
      * This method is similar in purpose to {@link String#trim()}, except that the later considers
      * every ASCII control codes below 32 to be a whitespace. This have the effect of removing
@@ -425,9 +474,17 @@ public final class Strings extends Static {
     public static String trim(String text) {
         if (text != null) {
             int upper = text.length();
-            while (upper != 0 && Character.isWhitespace(text.charAt(upper-1))) upper--;
+            while (upper != 0) {
+                final int c = text.codePointBefore(upper);
+                if (!isWhitespace(c)) break;
+                upper -= charCount(c);
+            }
             int lower = 0;
-            while (lower < upper && Character.isWhitespace(text.charAt(lower))) lower++;
+            while (lower < upper) {
+                final int c = text.codePointAt(lower);
+                if (!isWhitespace(c)) break;
+                lower += charCount(c);
+            }
             text = text.substring(lower, upper);
         }
         return text;
@@ -459,8 +516,10 @@ public final class Strings extends Static {
      */
     public static String trimFractionalPart(final String value) {
         if (value != null) {
-            for (int i=value.length(); --i>=0;) {
-                switch (value.charAt(i)) {
+            for (int i=value.length(); i>0;) {
+                final int c = value.codePointBefore(i);
+                i -= charCount(c);
+                switch (c) {
                     case '0': continue;
                     case '.': return value.substring(0, i);
                     default : return value;
@@ -484,17 +543,19 @@ public final class Strings extends Static {
      */
     @SuppressWarnings("fallthrough")
     public static void trimFractionalPart(final StringBuilder buffer) {
-        for (int i=buffer.length(); --i>=0;) {
-            switch (buffer.charAt(i)) {
+        for (int i=buffer.length(); i > 0;) {
+            final int c = buffer.codePointBefore(i);
+            i -= charCount(c);
+            switch (c) {
                 case '0': continue;
-                case '.': buffer.setLength(i);
+                case '.': buffer.setLength(i); // Fall through
                 default : return;
             }
         }
     }
 
     /**
-     * Replaces some unicode characters by ASCII characters on a "best effort basis".
+     * Replaces some Unicode characters by ASCII characters on a "best effort basis".
      * For example the {@code 'é'} character is replaced by {@code 'e'} (without accent).
      * <p>
      * The current implementation replaces only the characters in the range {@code 00C0}
@@ -503,7 +564,7 @@ public final class Strings extends Static {
      * Note that if the given character sequence is an instance of {@link StringBuilder},
      * then the replacement will be performed in-place.
      *
-     * @param  text The text to scan for unicode characters to replace by ASCII characters.
+     * @param  text The text to scan for Unicode characters to replace by ASCII characters.
      * @return The given text with substitution applied, or {@code text} if no replacement
      *         has been applied.
      *
@@ -512,11 +573,11 @@ public final class Strings extends Static {
     public static CharSequence toASCII(CharSequence text) {
         StringBuilder buffer = null;
         final int length = text.length();
-        for (int i=0; i<length; i++) {
-            char c = text.charAt(i);
+        for (int i=0; i<length;) {
+            final int c = codePointAt(text, i);
             final int r = c - 0xC0;
             if (r >= 0 && r<ASCII.length()) {
-                c = ASCII.charAt(r);
+                final char ac = ASCII.charAt(r);
                 if (buffer == null) {
                     if (text instanceof StringBuilder) {
                         buffer = (StringBuilder) text;
@@ -525,8 +586,11 @@ public final class Strings extends Static {
                         text = buffer;
                     }
                 }
-                buffer.setCharAt(i, c);
+                // Nothing special do to about codepoint here, since 'c' is
+                // in the basic plane (verified by the r<ASCII.length() check).
+                buffer.setCharAt(i, ac);
             }
+            i += charCount(c);
         }
         return text;
     }
@@ -538,11 +602,15 @@ public final class Strings extends Static {
      * This method is used for identifying character strings that are likely to be code
      * like {@code "UTF-8"} or {@code "ISO-LATIN-1"}.
      *
+     * @see #isJavaIdentifier(CharSequence)
+     *
      * @since 3.18 (derived from 3.17)
      */
     private static boolean isCode(final CharSequence identifier) {
         for (int i=identifier.length(); --i>=0;) {
             final char c = identifier.charAt(i);
+            // No need to use the code point API here, since the conditions
+            // below are requiring the characters to be in the basic plane.
             if (!((c >= 'A' && c <= 'Z') || (c >= '-' && c <= ':') || c == '_')) {
                 return false;
             }
@@ -588,12 +656,17 @@ public final class Strings extends Static {
         final StringBuilder buffer = camelCaseToWords(identifier, true);
         final int length = buffer.length();
         for (int i=0; i<length; i++) {
+            // No need to use the code point API here, since we are looking for exact matches.
             if (buffer.charAt(i) == '_') {
                 buffer.setCharAt(i, ' ');
             }
         }
         if (length != 0) {
-            buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
+            final int c = buffer.codePointAt(0);
+            final int up = toUpperCase(c);
+            if (c != up) {
+                replace(buffer, 0, charCount(c), Character.toChars(up));
+            }
         }
         return buffer.toString().trim();
     }
@@ -607,9 +680,9 @@ public final class Strings extends Static {
      * <p>
      * If {@code toLowerCase} is {@code false}, then this method inserts spaces but does not change
      * the case of characters. If {@code toLowerCase} is {@code true}, then this method changes
-     * {@linkplain Character#toLowerCase(char) to lower case} the first character after each spaces
+     * {@linkplain Character#toLowerCase(int) to lower case} the first character after each spaces
      * inserted by this method (note that this intentionally exclude the very first character in
-     * the given string), except if the second character {@linkplain Character#isUpperCase(char)
+     * the given string), except if the second character {@linkplain Character#isUpperCase(int)
      * is upper case}, in which case the words is assumed an acronym.
      * <p>
      * The given string is usually a programmatic identifier like a class name or a method name.
@@ -624,26 +697,41 @@ public final class Strings extends Static {
     public static StringBuilder camelCaseToWords(final CharSequence identifier, final boolean toLowerCase) {
         final int length = identifier.length();
         final StringBuilder buffer = new StringBuilder(length + 8);
+        final int lastIndex = (length != 0) ? length - charCount(codePointBefore(identifier, length)) : 0;
         int last = 0;
-        for (int i=1; i<=length; i++) {
-            if (i == length ||
-                (Character.isUpperCase(identifier.charAt(i)) &&
-                 Character.isLowerCase(identifier.charAt(i-1))))
-            {
+        for (int i=1; i<=length;) {
+            final int cp;
+            final boolean doAppend;
+            if (i == length) {
+                cp = 0;
+                doAppend = true;
+            } else {
+                cp = codePointAt(identifier, i);
+                doAppend = isUpperCase(cp) && isLowerCase(codePointBefore(identifier, i));
+            }
+            if (doAppend) {
                 final int pos = buffer.length();
                 buffer.append(identifier, last, i).append(' ');
-                if (toLowerCase && pos!=0 && last<length-1 && Character.isLowerCase(identifier.charAt(last+1))) {
-                    buffer.setCharAt(pos, Character.toLowerCase(buffer.charAt(pos)));
+                if (toLowerCase && pos!=0 && last<lastIndex && isLowerCase(codePointAfter(identifier, last))) {
+                    final int c = buffer.codePointAt(pos);
+                    final int low = toLowerCase(c);
+                    if (c != low) {
+                        replace(buffer, pos, pos + charCount(c), Character.toChars(low));
+                    }
                 }
                 last = i;
             }
+            i += charCount(cp);
         }
         /*
          * Removes the trailing space, if any.
          */
-        int lg = buffer.length();
-        if (lg != 0 && Character.isSpaceChar(buffer.charAt(--lg))) {
-            buffer.setLength(lg);
+        final int lg = buffer.length();
+        if (lg != 0) {
+            final int cp = buffer.codePointBefore(lg);
+            if (isSpaceChar(cp)) {
+                buffer.setLength(lg - charCount(cp));
+            }
         }
         return buffer;
     }
@@ -653,7 +741,7 @@ public final class Strings extends Static {
      * case, then the text is returned unchanged on the assumption that it is already an acronym.
      * Otherwise this method returns a string containing the first character of each word, where
      * the words are separated by the camel case convention, the {@code '_'} character, or any
-     * character which is not a {@linkplain Character#isJavaIdentifierPart(char) java identifier
+     * character which is not a {@linkplain Character#isJavaIdentifierPart(int) java identifier
      * part} (including spaces).
      * <p>
      * <b>Examples:</b> given {@code "northEast"}, this method returns {@code "NE"}.
@@ -667,22 +755,23 @@ public final class Strings extends Static {
             final int length = text.length();
             final StringBuilder buffer = new StringBuilder();
             boolean wantChar = true;
-            for (int i=0; i<length; i++) {
-                final char c = text.charAt(i);
+            for (int i=0; i<length;) {
+                final int c = text.codePointAt(i);
                 if (wantChar) {
-                    if (Character.isJavaIdentifierStart(c)) {
-                        buffer.append(c);
+                    if (isJavaIdentifierStart(c)) {
+                        buffer.appendCodePoint(c);
                         wantChar = false;
                     }
-                } else if (!Character.isJavaIdentifierPart(c) || c == '_') {
+                } else if (!isJavaIdentifierPart(c) || c == '_') {
                     wantChar = true;
-                } else if (Character.isUpperCase(c)) {
+                } else if (isUpperCase(c)) {
                     // Test for mixed-case (e.g. "northEast").
                     // Note that the buffer is guaranteed to contain at least 1 character.
-                    if (Character.isLowerCase(buffer.charAt(buffer.length() - 1))) {
-                        buffer.append(c);
+                    if (isLowerCase(buffer.codePointBefore(buffer.length()))) {
+                        buffer.appendCodePoint(c);
                     }
                 }
+                i += charCount(c);
             }
             final int acrlg = buffer.length();
             if (acrlg != 0) {
@@ -692,7 +781,11 @@ public final class Strings extends Static {
                  * are compliant to Java-Beans convention (e.g. "northEast").
                  */
                 if (isUpperCase(buffer, 1, acrlg)) {
-                    buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
+                    final int c = buffer.codePointAt(0);
+                    final int up = toUpperCase(c);
+                    if (c != up) {
+                        replace(buffer, 0, charCount(c), Character.toChars(up));
+                    }
                 }
                 final String acronym = buffer.toString();
                 if (!text.equals(acronym)) {
@@ -705,7 +798,7 @@ public final class Strings extends Static {
 
     /**
      * Returns {@code true} if the first string is likely to be an acronym of the second string.
-     * An acronym is a sequence of {@linkplain Character#isLetterOrDigit letters or digits}
+     * An acronym is a sequence of {@linkplain Character#isLetterOrDigit(int) letters or digits}
      * built from at least one character of each word in the {@code words} string. More than
      * one character from the same word may appear in the acronym, but they must always
      * be the first consecutive characters. The comparison is case-insensitive.
@@ -721,14 +814,21 @@ public final class Strings extends Static {
      */
     public static boolean isAcronymForWords(final CharSequence acronym, final CharSequence words) {
         final int lgc = words.length();
-        final int lga = acronym .length();
+        final int lga = acronym.length();
         int ic=0, ia=0;
-        char ca, cc;
-        do if (ia >= lga) return false;
-        while (!Character.isLetterOrDigit(ca = acronym.charAt(ia++)));
-        do if (ic >= lgc) return false;
-        while (!Character.isLetterOrDigit(cc = words.charAt(ic++)));
-        if (Character.toUpperCase(ca) != Character.toUpperCase(cc)) {
+        int ca, cc;
+        do {
+            if (ia >= lga) return false;
+            ca = codePointAt(acronym, ia);
+            ia += charCount(ca);
+        } while (!isLetterOrDigit(ca));
+        do {
+            if (ic >= lgc) return false;
+            cc = codePointAt(words, ic);
+            ic += charCount(cc);
+        }
+        while (!isLetterOrDigit(cc));
+        if (toUpperCase(ca) != toUpperCase(cc)) {
             // The first letter must match.
             return false;
         }
@@ -737,10 +837,10 @@ cmp:    while (ia < lga) {
                 // There is more letters in the acronym than in the complete name.
                 return false;
             }
-            ca = acronym .charAt(ia++);
-            cc = words.charAt(ic++);
-            if (Character.isLetterOrDigit(ca)) {
-                if (Character.toUpperCase(ca) == Character.toUpperCase(cc)) {
+            ca = codePointAt(acronym, ia); ia += charCount(ca);
+            cc = codePointAt(words,   ic); ic += charCount(cc);
+            if (isLetterOrDigit(ca)) {
+                if (toUpperCase(ca) == toUpperCase(cc)) {
                     // Acronym letter matches the letter from the complete name.
                     // Continue the comparison with next letter of both strings.
                     continue;
@@ -748,22 +848,24 @@ cmp:    while (ia < lga) {
                 // Will search for the next word after the 'else' block.
             } else do {
                 if (ia >= lga) break cmp;
-                ca = acronym.charAt(ia++);
-            } while (!Character.isLetterOrDigit(ca));
+                ca = codePointAt(acronym, ia);
+                ia += charCount(ca);
+            } while (!isLetterOrDigit(ca));
             /*
              * At this point, 'ca' is the next acronym letter to compare and we
              * need to search for the next word in the complete name. We first
              * skip remaining letters, then we skip non-letter characters.
              */
             boolean skipLetters = true;
-            do while (Character.isLetterOrDigit(cc) == skipLetters) {
+            do while (isLetterOrDigit(cc) == skipLetters) {
                 if (ic >= lgc) {
                     return false;
                 }
-                cc = words.charAt(ic++);
+                cc = codePointAt(words, ic);
+                ic += charCount(cc);
             } while ((skipLetters = !skipLetters) == false);
             // Now that we are aligned on a new word, the first letter must match.
-            if (Character.toUpperCase(ca) != Character.toUpperCase(cc)) {
+            if (toUpperCase(ca) != toUpperCase(cc)) {
                 return false;
             }
         }
@@ -776,17 +878,65 @@ cmp:    while (ia < lga) {
         do {
             do {
                 if (ic >= lgc) return true;
-                cc = words.charAt(ic++);
-            } while (Character.isLetterOrDigit(cc) == skipLetters);
+                cc = codePointAt(words, ic);
+                ic += charCount(cc);
+            } while (isLetterOrDigit(cc) == skipLetters);
         } while ((skipLetters = !skipLetters) == false);
         return false;
     }
 
     /**
-     * Returns {@code true} if the two given strings are equal, ignoring case. This method assumes
-     * an ASCII character set, which is okay for simple needs like checking for a SQL keyword. For
-     * comparisons which need to be valid in a wider range of Unicode character set, use the Java
-     * {@link String#equalsIgnoreCase(String)} method instead.
+     * Returns {@code true} if the given identifier is a legal Java identifier.
+     * This method returns {@code true} if the identifier length is greater than zero,
+     * the first character is a {@linkplain Character#isJavaIdentifierStart(int) Java
+     * identifier start} and all remaining characters (if any) are
+     * {@linkplain Character#isJavaIdentifierPart(int) Java identifier parts}.
+     *
+     * @param identifier The character sequence to test.
+     * @return {@code true} if the given character sequence is a legal Java identifier.
+     *
+     * @since 3.20
+     */
+    public static boolean isJavaIdentifier(final CharSequence identifier) {
+        final int length = identifier.length();
+        if (length == 0) {
+            return false;
+        }
+        int c = codePointAt(identifier, 0);
+        if (!isJavaIdentifierStart(c)) {
+            return false;
+        }
+        for (int i=0; (i += charCount(c)) < length;) {
+            c = codePointAt(identifier, i);
+            if (!isJavaIdentifierPart(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if the given code points are equal, ignoring case.
+     * This method implements the same comparison algorithm than String#equalsIgnoreCase(String).
+     * <p>
+     * This method does not verify if {@code c1 == c2}. This check should have been done
+     * by the caller, since the caller code is a more optimal place for this check.
+     */
+    private static boolean equalsIgnoreCase(int c1, int c2) {
+        c1 = toUpperCase(c1);
+        c2 = toUpperCase(c2);
+        if (c1 == c2) {
+            return true;
+        }
+        // Need this check for Georgian alphabet.
+        return toLowerCase(c1) == toLowerCase(c2);
+    }
+
+    /**
+     * Returns {@code true} if the two given strings are equal, ignoring case.
+     * This method is similar to {@link String#equalsIgnoreCase(String)}, except
+     * it works on arbitrary character sequences and compares <cite>code points</cite>
+     * instead than characters.
      *
      * @param  s1 The first string to compare.
      * @param  s2 The second string to compare.
@@ -796,16 +946,19 @@ cmp:    while (ia < lga) {
      * @see String#equalsIgnoreCase(String)
      */
     public static boolean equalsIgnoreCase(final CharSequence s1, final CharSequence s2) {
-        final int length = s1.length();
-        if (s2.length() != length) {
-            return false;
-        }
-        for (int i=0; i<length; i++) {
-            if (Character.toUpperCase(s1.charAt(i)) != Character.toUpperCase(s2.charAt(i))) {
+        final int lg1 = s1.length();
+        final int lg2 = s2.length();
+        int i1 = 0, i2 = 0;
+        while (i1<lg1 && i2<lg2) {
+            final int c1 = codePointAt(s1, i1);
+            final int c2 = codePointAt(s2, i2);
+            if (c1 != c2 && !equalsIgnoreCase(c1, c2)) {
                 return false;
             }
+            i1 += charCount(c1);
+            i2 += charCount(c2);
         }
-        return true;
+        return i1 == i2;
     }
 
     /**
@@ -836,6 +989,7 @@ cmp:    while (ia < lga) {
             return false;
         }
         for (int i=0; i<length; i++) {
+            // No need to use the code point API here, since we are looking for exact matches.
             if (string.charAt(offset + i) != part.charAt(i)) {
                 return false;
             }
@@ -882,6 +1036,7 @@ cmp:    while (ia < lga) {
         final int stopAt = string.length() - length;
 search: for (; fromIndex <= stopAt; fromIndex++) {
             for (int i=0; i<length; i++) {
+                // No need to use the codePointAt API here, since we are looking for exact matches.
                 if (string.charAt(fromIndex + i) != part.charAt(i)) {
                     continue search;
                 }
@@ -893,7 +1048,7 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
 
     /**
      * Returns {@code true} if every characters in the given character sequence are
-     * {@linkplain Character#isUpperCase(char) upper-case}.
+     * {@linkplain Character#isUpperCase(int) upper-case}.
      *
      * @param  text The character sequence to test.
      * @return {@code true} if every character are upper-case.
@@ -910,10 +1065,11 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      */
     private static boolean isUpperCase(final CharSequence text, int lower, final int upper) {
         while (lower < upper) {
-            final char c = text.charAt(lower++);
-            if (!Character.isUpperCase(c)) {
+            final int c = codePointAt(text, lower);
+            if (!isUpperCase(c)) {
                 return false;
             }
+            lower += charCount(c);
         }
         return true;
     }
@@ -929,10 +1085,10 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      * <p>
      * <ul>
      *   <li>If <var>c</var> is a
-     *       {@linkplain Character#isJavaIdentifierStart(char) Java identifier start},
+     *       {@linkplain Character#isJavaIdentifierStart(int) Java identifier start},
      *       then any following character that are
-     *       {@linkplain Character#isJavaIdentifierPart(char) Java identifier part}.</li>
-     *   <li>Otherwise any character for which {@link Character#getType(char)} returns
+     *       {@linkplain Character#isJavaIdentifierPart(int) Java identifier part}.</li>
+     *   <li>Otherwise any character for which {@link Character#getType(int)} returns
      *       the same value than for <var>c</var>.</li>
      * </ul>
      *
@@ -950,21 +1106,25 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
          * Skip whitespaces. At the end of this loop,
          * 'c' will be the first non-blank character.
          */
-        char c;
-        do if (upper >= length) return "";
-        while (Character.isWhitespace(c = text.charAt(upper++)));
+        int c;
+        do {
+            if (upper >= length) return "";
+            c = codePointAt(text, upper);
+            offset = upper;
+            upper += charCount(c);
+        }
+        while (isWhitespace(c));
         /*
          * Advance over all characters "of the same type".
          */
-        offset = upper - 1;
-        if (Character.isJavaIdentifierStart(c)) {
-            while (upper<length && Character.isJavaIdentifierPart(text.charAt(upper))) {
-                upper++;
+        if (isJavaIdentifierStart(c)) {
+            while (upper<length && isJavaIdentifierPart(c = codePointAt(text, upper))) {
+                upper += charCount(c);
             }
         } else {
-            final int type = Character.getType(text.charAt(offset));
-            while (upper<length && Character.getType(text.charAt(upper)) == type) {
-                upper++;
+            final int type = getType(codePointAt(text, offset));
+            while (upper<length && getType(c = codePointAt(text, upper)) == type) {
+                upper += charCount(c);
             }
         }
         return text.subSequence(offset, upper);
@@ -995,6 +1155,7 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
         }
         int i = 0;
         while (i < length) {
+            // No need to use the codePointAt API here, since we are looking for exact matches.
             if (s1.charAt(i) != s2.charAt(i)) {
                 break;
             }
@@ -1027,6 +1188,7 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
         }
         int i = 0;
         while (++i <= length) {
+            // No need to use the codePointAt API here, since we are looking for exact matches.
             if (s1.charAt(lg1 - i) != s2.charAt(lg2 - i)) {
                 break;
             }
@@ -1045,23 +1207,21 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      * @throws NullPointerException if any of the arguments is null.
      */
     public static boolean startsWith(final CharSequence sequence, final CharSequence prefix, final boolean ignoreCase) {
-        final int length = prefix.length();
-        if (length > sequence.length()) {
-            return false;
-        }
-        for (int i=0; i<length; i++) {
-            char c1 = sequence.charAt(i);
-            char c2 = prefix.charAt(i);
-            if (c1 != c2) {
-                if (ignoreCase) {
-                    c1 = Character.toLowerCase(c1);
-                    c2 = Character.toLowerCase(c2);
-                    if (c1 == c2) {
-                        continue;
-                    }
-                }
+        final int lgs = sequence.length();
+        final int lgp = prefix  .length();
+        int is = 0;
+        int ip = 0;
+        while (ip < lgp) {
+            if (is >= lgs) {
                 return false;
             }
+            final int cs = codePointAt(sequence, is);
+            final int cp = codePointAt(prefix,   ip);
+            if (cs != cp && (!ignoreCase || !equalsIgnoreCase(cs, cp))) {
+                return false;
+            }
+            is += charCount(cs);
+            ip += charCount(cp);
         }
         return true;
     }
@@ -1076,25 +1236,19 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      * @throws NullPointerException if any of the arguments is null.
      */
     public static boolean endsWith(final CharSequence sequence, final CharSequence suffix, final boolean ignoreCase) {
-        int j = suffix.length();
-        int i = sequence.length();
-        if (j > i) {
-            return false;
-        }
-
-        while (--j >= 0) {
-            char c1 = sequence.charAt(--i);
-            char c2 = suffix.charAt(j);
-            if (c1 != c2) {
-                if (ignoreCase) {
-                    c1 = Character.toLowerCase(c1);
-                    c2 = Character.toLowerCase(c2);
-                    if (c1 == c2) {
-                        continue;
-                    }
-                }
+        int is = sequence.length();
+        int ip = suffix  .length();
+        while (ip > 0) {
+            if (is <= 0) {
                 return false;
             }
+            final int cs = codePointBefore(sequence, is);
+            final int cp = codePointBefore(suffix,   ip);
+            if (cs != cp && (!ignoreCase || !equalsIgnoreCase(cs, cp))) {
+                return false;
+            }
+            is -= charCount(cs);
+            ip -= charCount(cp);
         }
         return true;
     }
@@ -1115,6 +1269,8 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
         final int length = string.length();
         /*
          * Go backward if the number of lines is negative.
+         * No need to use the codePoint API because we are
+         * looking only for '\r' and '\n' characters.
          */
         if (numToSkip < 0) {
             do {

@@ -28,12 +28,38 @@
 
     <faq id="database-calendar">
       <question>
-        Use <code>ResultSet.getTimestamp(int, <em>Calendar</em>)</code>
+        Specify timezone with <code>ResultSet.getTimestamp(int, <em>Calendar</em>)</code>
       </question>
       <answer>
         <p>Geospatial data often cover a wide geographic area, spanning many time zones.
         When reading dates or timestamps from a <code>ResultSet</code>, always specify
         the expected time zone. It may not be the local time zone.</p>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="international">
+    <title>International</title>
+
+    <faq id="unicode-loop">
+      <question>
+        Loop over character sequences using code points
+      </question>
+      <answer>
+        <p>Since Java 1.5, characters are no longer restricted to 16 bits. Some "characters"
+        are actually represented using two consecutive <code>char</code> elements. Those
+        "characters" are called <cite>code points</cite>. Consequently, when iterating over
+        characters in a string, the following pattern shall be used:</p>
+
+        <table class="section"><tr><th>Do not use</th><th>Use instead</th></tr>
+        <tr valign="top"><td><source>for (int i=0; i&lt;string.length(); i++) {
+    char c = string.charAt(i);
+    // ... do some stuff ...
+}</source></td><td><source>for (int i=0; i&lt;string.length();) {
+    final int c = string.codePointAt(i);
+    // ... do some stuff ...
+    i += Character.charCount(c);
+}</source></td></tr></table>
       </answer>
     </faq>
   </part>
