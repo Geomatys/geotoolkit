@@ -25,6 +25,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -158,9 +159,9 @@ public abstract class TreeTest {
      * Compare boundary node from his children boundary.
      */
     protected boolean checkBoundaryNode(final DefaultNode node) {
-        final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> lGE = new ArrayList<Envelope>();
         if (node.isLeaf()) {
-            for (GeneralEnvelope gEnv : node.getEntries()) {
+            for (Envelope gEnv : node.getEntries()) {
                 lGE.add(gEnv);
             }
 

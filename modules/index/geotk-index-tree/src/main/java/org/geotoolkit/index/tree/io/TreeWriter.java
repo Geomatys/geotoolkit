@@ -27,6 +27,7 @@ import org.geotoolkit.index.tree.AbstractNode;
 import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.geometry.Envelope;
 
 /**Create TreeWriter object.
  *
@@ -123,7 +124,7 @@ public class TreeWriter {
      */
     private void nodeToBinary(final DefaultNode node, final DataOutputStream dops) throws IOException {
         final List<DefaultNode> listChild = node.getChildren();
-        final List<GeneralEnvelope> listEntries = new ArrayList<GeneralEnvelope>(node.getEntries());
+        final List<Envelope> listEntries = new ArrayList<Envelope>(node.getEntries());
         final int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
         final GeneralEnvelope bound = node.getBoundary();
@@ -148,7 +149,7 @@ public class TreeWriter {
             }
         }
         dops.writeInt(listEntries.size());
-        for (GeneralEnvelope gEnv : listEntries) {
+        for (Envelope gEnv : listEntries) {
             final ByteArrayOutputStream temp = new ByteArrayOutputStream();
             final ObjectOutputStream ost = new ObjectOutputStream(temp);
             ost.writeObject(gEnv);

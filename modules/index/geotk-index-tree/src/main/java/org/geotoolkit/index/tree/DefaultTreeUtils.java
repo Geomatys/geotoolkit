@@ -20,10 +20,12 @@ package org.geotoolkit.index.tree;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**Some utils methods.
  *
@@ -412,7 +414,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if {@code GeneralEnvelope} list lS is empty.
      * @return Shape which is general boundary.
      */
-    public static GeneralEnvelope getEnveloppeMin(final List<GeneralEnvelope> lGE){
+    public static GeneralEnvelope getEnveloppeMin(final List<? extends Envelope> lGE){
         ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
         if(lGE.isEmpty()){
             throw new IllegalArgumentException("impossible to get Enveloppe : empty list");
@@ -472,5 +474,24 @@ public class DefaultTreeUtils {
             case 3 : return getGeneralEnvelopBulk(envMax) - getGeneralEnvelopBulk(envMin);
             default : throw new IllegalArgumentException("dimension not conform.");
         }
-    }    
+    }
+    
+    /**
+     * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
+     * for each dimension for all points within the {@code Envelope}.
+     *
+     * @return The median coordinates.
+     * 
+     * @param env
+     */
+    public static DirectPosition getMedian(final Envelope env){
+        final GeneralDirectPosition position = new GeneralDirectPosition(env.getDimension());
+        for (int i=position.ordinates.length; --i>=0;) {
+            position.ordinates[i] = env.getMedian(i);
+        }
+        position.setCoordinateReferenceSystem(env.getCoordinateReferenceSystem());
+        return position;
+    }
+    
+    
 }

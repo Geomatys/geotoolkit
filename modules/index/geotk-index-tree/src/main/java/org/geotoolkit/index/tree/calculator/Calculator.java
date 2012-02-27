@@ -21,6 +21,7 @@ import java.util.Comparator;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.DefaultNode;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -116,5 +117,5 @@ public abstract class Calculator {
      * @throws IllegalArgumentException if entry is null.
      * @return integer the entry Hilbert order.
      */
-    public abstract int getHVOfEntry(final DefaultNode candidate, final GeneralEnvelope entry);
+    public abstract int getHVOfEntry(final DefaultNode candidate, final Envelope entry);
 }

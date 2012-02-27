@@ -27,6 +27,7 @@ import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**
  * Create an appropriate Hilbert R-Tree {@code DefaultNode}, which named {@code HilbertNode}.
@@ -45,7 +46,7 @@ public class HilbertNode extends DefaultNode {
      * @param entries {@code GeneralEnvelope} List to add in this node.
      * @throws IllegalArgumentException if hilbertOrder < 0.
      */
-    public HilbertNode(final Tree tree, final DefaultNode parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<DefaultNode> children, final List<GeneralEnvelope> entries) {
+    public HilbertNode(final Tree tree, final DefaultNode parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<DefaultNode> children, final List<Envelope> entries) {
         super(tree, parent, lowerCorner, upperCorner, children, null);
         setUserProperty("isleaf", false);
         if (entries != null && !entries.isEmpty()) {
@@ -54,7 +55,7 @@ public class HilbertNode extends DefaultNode {
             setUserProperty("cells", new ArrayList<DefaultNode>());
             final GeneralEnvelope bound = DefaultTreeUtils.getEnveloppeMin(entries);
             tree.getCalculator().createBasicHL(this, 0, bound);
-            for (GeneralEnvelope ent : entries) {
+            for (Envelope ent : entries) {
                 HilbertRTree.insertNode(this, ent);
             }
         }
@@ -100,7 +101,7 @@ public class HilbertNode extends DefaultNode {
     @Override
     protected void calculateBounds() {
         if ((Boolean) getUserProperty("isleaf")) {
-            final List<GeneralEnvelope> lS = new ArrayList<GeneralEnvelope>();
+            final List<Envelope> lS = new ArrayList<Envelope>();
             final List<DefaultNode> listCells = new ArrayList<DefaultNode>((List<DefaultNode>) getUserProperty("cells"));
             for (DefaultNode nod : listCells) {
                 lS.addAll(nod.getEntries());
@@ -116,7 +117,7 @@ public class HilbertNode extends DefaultNode {
             }
 
             getTree().getCalculator().createBasicHL(this, hO, DefaultTreeUtils.getEnveloppeMin(lS));
-            for (GeneralEnvelope sh : lS) {
+            for (Envelope sh : lS) {
                 HilbertRTree.chooseSubtree(this, sh).getEntries().add(sh);
             }
         } else {

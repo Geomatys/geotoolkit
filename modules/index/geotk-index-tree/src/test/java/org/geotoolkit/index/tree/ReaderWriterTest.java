@@ -31,6 +31,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -321,8 +322,8 @@ public class ReaderWriterTest {
         if (!nodeA.getBoundary().equals(nodeB.getBoundary(), 1E-9, false)) {
             return false;
         }
-        final List<GeneralEnvelope> listA = new ArrayList<GeneralEnvelope>();
-        final List<GeneralEnvelope> listB = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> listA = new ArrayList<Envelope>();
+        final List<Envelope> listB = new ArrayList<Envelope>();
 
         final List<DefaultNode> lupA = (List<DefaultNode>) nodeA.getUserProperty("cells");
         final List<DefaultNode> lupB = (List<DefaultNode>) nodeB.getUserProperty("cells");
@@ -355,7 +356,7 @@ public class ReaderWriterTest {
      * @throws IllegalArgumentException if listA or ListB is null.
      * @return true if listA contains same elements from listB.
      */
-    protected boolean compareList(final List<GeneralEnvelope> listA, final List<GeneralEnvelope> listB) {
+    protected boolean compareList(final List<? extends Envelope> listA, final List<? extends Envelope> listB) {
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
@@ -368,8 +369,10 @@ public class ReaderWriterTest {
         }
 
         boolean shapequals = false;
-        for (GeneralEnvelope shs : listA) {
-            for (GeneralEnvelope shr : listB) {
+        for (Envelope eshs : listA) {
+            final GeneralEnvelope shs = new GeneralEnvelope(eshs);
+            
+            for (Envelope shr : listB) {
                 if (shs.equals(shr, 1E-9, false)) {
                     shapequals = true;
                 }

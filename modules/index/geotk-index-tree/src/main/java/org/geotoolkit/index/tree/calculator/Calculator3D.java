@@ -23,6 +23,7 @@ import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**
  * Define a three dimension {@code Calculator}.
@@ -354,7 +355,7 @@ public class Calculator3D extends Calculator {
      * {@inheritDoc }
      */
     @Override
-    public int getHVOfEntry(DefaultNode candidate, GeneralEnvelope entry) {
+    public int getHVOfEntry(DefaultNode candidate, Envelope entry) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

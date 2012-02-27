@@ -19,13 +19,15 @@ package org.geotoolkit.index.tree;
 
 import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a generic Tree.
  *
  * @author Rémi Maréchal       (Geomatys).
- * @author Yohann Sorel        (Geomatys).
+ * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
 public interface Tree<N extends Node<N,B>, B> {
@@ -41,21 +43,23 @@ public interface Tree<N extends Node<N,B>, B> {
      * @param regionSearch Define the region to find Shape within tree.
      * @param result List of Entr(y)(ies).
      */
-    void search(B regionSearch, List<B> result) throws TransformException;
+    void search(B regionSearch, List<Envelope> result) throws TransformException;
 
     /**
      * Insert a {@code Entry} into Rtree.
      * 
      * @param Entry to insert into tree.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
      */
-    void insert(B entry)throws TransformException;
+    void insert(Envelope entry)throws MismatchedReferenceSystemException;
 
     /**
      * Find a {@code Entry} into the tree and delete it.
      * 
      * @param Entry to delete.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
      */
-    void delete(B entry)throws TransformException;
+    void delete(Envelope entry)throws MismatchedReferenceSystemException;
 
     /**
      * @return max number authorized by tree cells.
@@ -88,5 +92,5 @@ public interface Tree<N extends Node<N,B>, B> {
      * @param coordinates lower upper bounding box coordinates table. 
      * @return appropriate Node from tree.
      */
-    N createNode(Tree tree, N parent, List<N> listChildren, List<B> listEntries, double ...coordinates);
+    N createNode(Tree tree, N parent, List<N> listChildren, List<Envelope> listEntries, double ...coordinates);
 }

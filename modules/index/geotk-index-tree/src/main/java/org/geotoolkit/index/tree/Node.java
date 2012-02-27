@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree;
 
 import java.util.List;
+import org.opengis.geometry.Envelope;
 
 /**Create a {@code Node}.
  *
@@ -57,7 +58,7 @@ public interface Node<N extends Node<N,B>, B> {
     /**
      * @return entries.
      */
-    List<B> getEntries();
+    List<Envelope> getEntries();
 
     /**
      * @return {@code Node2D} parent pointer.

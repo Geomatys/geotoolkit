@@ -31,6 +31,7 @@ import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -478,9 +479,9 @@ public class Calculator2D extends Calculator {
      * {@inheritDoc }.
      */
     @Override
-    public int getHVOfEntry(final DefaultNode candidate, final GeneralEnvelope entry) {
+    public int getHVOfEntry(final DefaultNode candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
-        final DirectPosition ptCE = entry.getMedian();
+        final DirectPosition ptCE = DefaultTreeUtils.getMedian(entry);
         if (!((HilbertNode) candidate).getBound().contains(ptCE)) {
             throw new IllegalArgumentException("entry is out of this node boundary");
         }
