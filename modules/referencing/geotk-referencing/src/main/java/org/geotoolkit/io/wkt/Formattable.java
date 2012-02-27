@@ -36,9 +36,11 @@ package org.geotoolkit.io.wkt;
 public interface Formattable {
     /**
      * Formats the inner part of a <cite>Well Known Text</cite> (WKT) element. This method is
-     * automatically invoked by {@link Formatter#append(Formattable)}. Element name and authority
-     * code must not be formatted here. For example for a {@code GEOGCS} element, the formatter
-     * will invoke this method for completing the WKT at the insertion point show below:
+     * automatically invoked by {@link Formatter#append(Formattable)}.
+     * <p>
+     * Element name and authority code shall not be formatted here. For example for a {@code GEOGCS}
+     * element, the formatter will invoke this method for completing the WKT at the insertion point
+     * show below:
      *
      * {@preformat text
      *     GEOGCS["WGS 84", AUTHORITY["EPSG","4326"]]

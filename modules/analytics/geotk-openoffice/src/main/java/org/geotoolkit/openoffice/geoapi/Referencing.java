@@ -48,11 +48,11 @@ import org.opengis.openoffice.XReferencing;
 
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.io.wkt.FormattableObject;
+import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.openoffice.MethodInfo;
 import org.geotoolkit.openoffice.Formulas;
@@ -267,7 +267,8 @@ public final class Referencing extends Formulas implements XReferencing {
             authorityString = AnyConverter.toString(authority);
         }
         if (object instanceof FormattableObject) {
-            return ((FormattableObject) object).toWKT(Citations.fromName(authorityString), 2);
+            return ((FormattableObject) object).toWKT(
+                    Convention.forIdentifier(authorityString, Convention.OGC), 2);
         }
         if (object instanceof MathTransform) {
             return ((MathTransform) object).toWKT();

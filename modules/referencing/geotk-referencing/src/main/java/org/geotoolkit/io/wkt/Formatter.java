@@ -44,16 +44,17 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.util.CodeList;
-import org.opengis.util.GenericName;
 
 import org.geotoolkit.io.X364;
+import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Visitor;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.InternalUtilities;
+import org.geotoolkit.internal.Citations;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.resources.Errors;
 
 
@@ -61,13 +62,13 @@ import org.geotoolkit.resources.Errors;
  * Formats {@linkplain FormattableObject formattable objects} as <cite>Well Known Text</cite>
  * (WKT). A formatter is constructed with a specified set of {@linkplain Symbols symbols}.
  * The {@linkplain Locale locale} associated with the symbols is used for querying
- * {@linkplain org.opengis.metadata.citation.Citation#getTitle authority titles}.
+ * {@linkplain Citation#getTitle() authority titles}.
  * <p>
  * For example in order to format an object with {@linkplain Symbols#CURLY_BRACKETS curly brackets}
  * instead of square ones and the whole text on the same line (no indentation), use the following:
  *
  * {@preformat java
- *     Formatter formatter = new Formatter(Symbols.CURLY_BRACKETS, null, FormattableObject.SINGLE_LINE);
+ *     Formatter formatter = new Formatter(Symbols.CURLY_BRACKETS, null, WKTFormat.SINGLE_LINE);
  *     formatter.append(theObject);
  *     String wkt = formatter.toString();
  *
@@ -80,8 +81,8 @@ import org.geotoolkit.resources.Errors;
  * each thread. If multiple threads access a formatter concurrently, it must be synchronized
  * externally.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.0
  * @level advanced
@@ -97,15 +98,6 @@ public class Formatter {
     @SuppressWarnings({"unchecked","rawtypes"})
     private static final Class<? extends IdentifiedObject>[] AUTHORITY_EXCLUDES = new Class[] {
         CoordinateSystemAxis.class
-    };
-
-    /**
-     * Authorities for which to use US unit names instead of the international names.
-     * For example americans said [@code "meter"} instead of {@code "metre"}.
-     */
-    private static final Citation[] US_UNIT_NAMES = {
-        Citations.ESRI,
-        Citations.ORACLE
     };
 
     /**
@@ -127,12 +119,21 @@ public class Formatter {
     Colors colors;
 
     /**
+     * The preferred convention for objects or parameter names.
+     * This field should never be {@code null}.
+     *
+     * @see WKTFormat#getConvention()
+     * @see WKTFormat#setConvention(Convention)
+     */
+    private Convention convention = Convention.OGC;
+
+    /**
      * The preferred authority for objects or parameter names.
      *
      * @see WKTFormat#getAuthority
      * @see WKTFormat#setAuthority
      */
-    Citation authority = FormattableObject.OGC;
+    private Citation authority;
 
     /**
      * The unit for formatting measures, or {@code null} for the "natural" unit of each WKT
@@ -163,19 +164,20 @@ public class Formatter {
     private final FieldPosition dummy = new FieldPosition(0);
 
     /**
-     * The buffer in which to format. Consider this field as private final; the only
-     * method to set the buffer to a new value is {@link WKTFormat#format}.
+     * The buffer in which to format. Consider this field as private and final. The only method to
+     * change the value of this field is {@link WKTFormat#format(Object, StringBuffer, FieldPosition)}.
      */
     StringBuffer buffer;
 
     /**
-     * The starting point in the buffer. Always 0, except when used by {@link WKTFormat#format}.
+     * The starting point in the buffer. Always 0, except when used by
+     * {@link WKTFormat#format(Object, StringBuffer, FieldPosition)}.
      */
     int bufferBase;
 
     /**
      * The amount of spaces to use in indentation, or
-     * {@value org.geotoolkit.io.wkt.FormattableObject#SINGLE_LINE} if indentation is disabled.
+     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} if indentation is disabled.
      */
     int indentation;
 
@@ -217,31 +219,45 @@ public class Formatter {
     String warning;
 
     /**
-     * Creates a new instance of the formatter with the default symbols, no
-     * syntax coloring and no indentation.
+     * Creates a new instance of the formatter with the default symbols, no syntax coloring
+     * and the {@linkplain WKTFormat#getDefaultIndentation() default indentation}.
      */
     public Formatter() {
-        this(Symbols.DEFAULT, null, FormattableObject.SINGLE_LINE);
+        this(FormattableObject.defaultIndentation);
+    }
+
+    /**
+     * Creates a new instance of the formatter with the default symbols, no syntax coloring
+     * and the given indentation.
+     *
+     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
+     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
+     *         whole WKT on a single line.
+     *
+     * @since 3.20
+     */
+    public Formatter(final int indentation) {
+        this(Symbols.DEFAULT, null, indentation);
     }
 
     /**
      * Creates a new instance of the formatter with the specified indentation.
      * The WKT can be formatted on many lines, and the indentation will have
      * the value specified to this constructor. If the specified indentation
-     * is {@value org.geotoolkit.io.wkt.FormattableObject#SINGLE_LINE}, then the
+     * is {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE}, then the
      * whole WKT will be formatted on a single line.
      *
      * @param symbols The symbols.
      * @param colors  The syntax coloring, or {@code null} if none.
-     * @param indentation The amount of spaces to use in indentation. Typical values are 2 or 4.
+     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
+     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
+     *         whole WKT on a single line.
      *
      * @since 3.00
      */
     public Formatter(final Symbols symbols, final Colors colors, final int indentation) {
-        if (symbols == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "symbols"));
-        }
-        if (indentation < FormattableObject.SINGLE_LINE) {
+        ArgumentChecks.ensureNonNull("symbols", symbols);
+        if (indentation < WKTFormat.SINGLE_LINE) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "indentation", indentation));
         }
@@ -259,10 +275,24 @@ public class Formatter {
      */
     Formatter(final Symbols symbols, final NumberFormat numberFormat) {
         this.symbols      = symbols;
-        this.indentation  = FormattableObject.getDefaultIndentation();
+        this.indentation  = FormattableObject.defaultIndentation;
         this.numberFormat = numberFormat; // No clone needed.
         this.unitFormat   = UnitFormat.getInstance(symbols.locale);
         // Do not set the buffer. It will be set by WKTFormat.format(...).
+    }
+
+    /**
+     * Sets the convention and the authority to use for formatting WKT elements.
+     *
+     * @param convention The convention, or {@code null} for the default value.
+     * @param authority  The authority, or {@code null} for inferring it from the convention.
+     */
+    final void setConvention(Convention convention, final Citation authority) {
+        if (convention == null) {
+            convention = Convention.forCitation(authority, Convention.OGC);
+        }
+        this.convention = convention;
+        this.authority  = authority; // Will be inferred when first needed.
     }
 
     /**
@@ -327,7 +357,7 @@ public class Formatter {
             }
         } while (Character.isWhitespace(c) || c == symbols.space);
         buffer.append(symbols.separator).append(symbols.space);
-        if (newLine && indentation > FormattableObject.SINGLE_LINE) {
+        if (newLine && indentation > WKTFormat.SINGLE_LINE) {
             buffer.append(lineSeparator).append(Strings.spaces(margin));
             lineChanged = true;
         }
@@ -336,8 +366,8 @@ public class Formatter {
     /**
      * Appends the given {@code Formattable} object. This method will automatically append
      * the keyword (e.g. {@code "GEOCS"}), the name and the authority code, and will invokes
-     * <code>formattable.{@linkplain FormattableObject#formatWKT formatWKT}(this)</code> for
-     * completing the inner part of the WKT.
+     * <code>formattable.{@linkplain FormattableObject#formatWKT(Formatter) formatWKT}(this)</code>
+     * for completing the inner part of the WKT.
      *
      * @param formattable The formattable object to append to the WKT.
      */
@@ -627,15 +657,7 @@ public class Formatter {
             if (NonSI.DEGREE_ANGLE.equals(unit)) {
                 buffer.append("degree");
             } else if (SI.METRE.equals(unit)) {
-                final Citation authority = getEffectiveAuthority();
-                String name = "metre";
-                for (int i=0; i<US_UNIT_NAMES.length; i++) {
-                    if (Citations.identifierMatches(US_UNIT_NAMES[i], authority)) {
-                        name = "meter";
-                        break;
-                    }
-                }
-                buffer.append(name);
+                buffer.append(convention.unitUS ? "meter" : "metre");
             } else {
                 unitFormat.format(unit, buffer, dummy);
             }
@@ -713,8 +735,9 @@ public class Formatter {
     }
 
     /**
-     * Returns the preferred identifier for the specified object. If the specified object contains
-     * an identifier from the preferred authority (usually {@linkplain Citations#OGC Open Geospatial}),
+     * Returns the preferred identifier for the specified object.
+     * If the specified object contains an identifier from the preferred authority
+     * (usually {@linkplain org.geotoolkit.metadata.iso.citation.Citations#OGC Open Geospatial}),
      * then this identifier is returned. Otherwise, the first identifier is returned. If the specified
      * object contains no identifier, then this method returns {@code null}.
      *
@@ -726,11 +749,10 @@ public class Formatter {
     public Identifier getIdentifier(final IdentifiedObject info) {
         Identifier first = null;
         if (info != null) {
-            final Citation authority = getEffectiveAuthority();
             final Collection<? extends Identifier> identifiers = info.getIdentifiers();
             if (identifiers != null) {
                 for (final Identifier id : identifiers) {
-                    if (authorityMatches(authority, id.getAuthority())) {
+                    if (Citations.identifierMatches(getAuthority(), id.getAuthority())) {
                         return id;
                     }
                     if (first == null) {
@@ -743,27 +765,10 @@ public class Formatter {
     }
 
     /**
-     * Checks if the specified authority can be recognized as the expected authority.
-     * This implementation do not requires an exact matches. A matching title is enough.
-     *
-     * @param  expected  The value of {@link #getEffectiveAuthority}.
-     * @param  candidate The authority to test.
-     * @return {@code true} if the candidate matches the expected authority.
-     */
-    private static boolean authorityMatches(final Citation expected, final Citation candidate) {
-        if (expected == candidate) {
-            return true;
-        }
-        // The "null" locale argument is required for getting the unlocalized version.
-        return (candidate != null) &&
-               expected .getTitle().toString(null).equalsIgnoreCase(
-               candidate.getTitle().toString(null));
-    }
-
-    /**
-     * Returns the preferred name for the specified object. If the specified object contains a name
-     * from the preferred authority (usually {@linkplain Citations#OGC Open Geospatial}), then this
-     * name is returned. Otherwise, the first name found is returned.
+     * Returns the preferred name for the specified object.
+     * If the specified object contains a name from the preferred authority
+     * (usually {@linkplain org.geotoolkit.metadata.iso.citation.Citations#OGC Open Geospatial}),
+     * then this name is returned. Otherwise, the first name found is returned.
      * <p>
      * The preferred authority can be set by the {@link WKTFormat#setAuthority(Citation)} method.
      * This is not necessarily the authority of the given {@linkplain IdentifiedObject#getName()
@@ -778,42 +783,14 @@ public class Formatter {
      * @return The preferred name, or {@code null} if the given object has no name.
      *
      * @see WKTFormat#getAuthority()
+     * @see IdentifiedObjects#getName(IdentifiedObject, Citation)
      */
     public String getName(final IdentifiedObject info) {
-        final Identifier name = info.getName();
+        String name = IdentifiedObjects.getName(info, getAuthority());
         if (name == null) {
-            return null;
+            name = IdentifiedObjects.getName(info, null);
         }
-        final Citation authority = getEffectiveAuthority();
-        if (!authorityMatches(authority, name.getAuthority())) {
-            final Collection<GenericName> aliases = info.getAlias();
-            if (aliases != null) {
-                /*
-                 * The main name doesn't matches. Search in alias. We will first check
-                 if alias implements Identifier (this is the case of Geotk implementation).
-                 * Otherwise, we will look at the scope in generic name.
-                 */
-                for (final GenericName alias : aliases) {
-                    if (alias instanceof Identifier) {
-                        final Identifier candidate = (Identifier) alias;
-                        if (authorityMatches(authority, candidate.getAuthority())) {
-                            return candidate.getCode();
-                        }
-                    }
-                }
-                // The "null" locale argument is required for getting the unlocalized version.
-                final String title = authority.getTitle().toString(null);
-                for (final GenericName alias : aliases) {
-                    final GenericName scope = alias.scope().name();
-                    if (scope != null) {
-                        if (title.equalsIgnoreCase(scope.toString())) {
-                            return alias.tip().toString();
-                        }
-                    }
-                }
-            }
-        }
-        return name.getCode();
+        return name;
     }
 
     /**
@@ -865,8 +842,16 @@ public class Formatter {
      * Returns the authority to use for fetching the name to format.
      * The internal authority is replaced by the OGC one.
      */
-    private Citation getEffectiveAuthority() {
-        return isInternalWKT() ? FormattableObject.OGC : authority;
+    private Citation getAuthority() {
+        Citation result = authority;
+        if (result == null) {
+            Convention c = convention;
+            if (c == Convention.INTERNAL) {
+                c = Convention.OGC;
+            }
+            authority = result = c.getCitation();
+        }
+        return result;
     }
 
     /**
@@ -875,12 +860,13 @@ public class Formatter {
      *
      * @return {@code true} for formatting internal WKT.
      *
-     * @see FormattableObject#INTERNAL
+     * @see Convention#INTERNAL
      *
      * @since 3.00
      */
+    @Debug
     public boolean isInternalWKT() {
-        return FormattableObject.INTERNAL.equals(authority);
+        return convention == Convention.INTERNAL;
     }
 
     /**
@@ -888,8 +874,8 @@ public class Formatter {
      * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">WKT
      * specification</A>. This method returns {@code true} if {@link #setInvalidWKT} has
      * been invoked at least once. The action to take regarding invalid WKT is caller-dependent.
-     * For example {@link FormattableObject#toString} will accepts loose WKT formatting and ignore
-     * this flag, while {@link FormattableObject#toWKT} requires strict WKT formatting and will
+     * For example {@link FormattableObject#toString()} will accepts loose WKT formatting and ignore
+     * this flag, while {@link FormattableObject#toWKT()} requires strict WKT formatting and will
      * thrown an exception if this flag is set.
      *
      * @return {@code true} if the WKT is invalid.
@@ -912,11 +898,12 @@ public class Formatter {
     /**
      * Set a flag marking the current WKT as not strictly compliant to the
      * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">WKT
-     * specification</A>. This method is invoked by {@link FormattableObject#formatWKT} methods when
-     * the object to format is more complex than what the WKT specification allows. For example this
-     * method is invoked when an {@linkplain org.geotoolkit.referencing.crs.DefaultEngineeringCRS
-     * engineering CRS} uses different unit for each axis, An application can tests
-     * {@link #isInvalidWKT} later for checking WKT validity.
+     * specification</A>. This method is invoked by {@link FormattableObject#formatWKT(Formatter)}
+     * methods when the object to format is more complex than what the WKT specification allows.
+     * For example this method is invoked when an
+     * {@linkplain org.geotoolkit.referencing.crs.DefaultEngineeringCRS engineering CRS} uses
+     * different unit for each axis, An application can tests {@link #isInvalidWKT} later for
+     * checking WKT validity.
      *
      * @param unformattable The type of the component that can't be formatted,
      *        for example {@link org.opengis.referencing.crs.EngineeringCRS}.

@@ -25,9 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
-import java.util.Collections;
-import java.io.Serializable;
-import java.io.ObjectStreamException;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -196,7 +193,7 @@ public final class IdentifiedObjects extends Static {
      *
      * <ul>
      *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
-     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority
+     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority()
      *       identifier authority} against the specified citation using the
      *       {@link org.geotoolkit.metadata.iso.citation.Citations#identifierMatches(Citation,Citation)
      *       identifierMatches} method. If a matching is found, then this method returns the
@@ -595,77 +592,5 @@ public final class IdentifiedObjects extends Static {
             }
         }
         return false;
-    }
-}
-
-/**
- * {@link IdentifiedObjects#NAME_COMPARATOR} implementation as a named class (rather than anonymous)
- * for more predictable serialization.
- */
-final class NameComparator implements Comparator<IdentifiedObject>, Serializable {
-    /** For cross-version compatibility. */
-    private static final long serialVersionUID = -6605097017814062198L;
-
-    /** Compares the given identified objects for order. */
-    @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-        return IdentifiedObjects.doCompare(o1.getName().getCode(), o2.getName().getCode());
-    }
-
-    /** Canonicalizes to the singleton on deserialization. */
-    protected Object readResolve() throws ObjectStreamException {
-        return IdentifiedObjects.NAME_COMPARATOR;
-    }
-}
-
-/**
- * {@link IdentifiedObjects#IDENTIFIER_COMPARATOR} implementation as a named class (rather than anonymous)
- * for more predictable serialization.
- */
-final class IdentifierComparator implements Comparator<IdentifiedObject>, Serializable {
-    /** For cross-version compatibility. */
-    private static final long serialVersionUID = -7315726806679993522L;
-
-    /** Compares the given identified objects for order. */
-    @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-        Collection<ReferenceIdentifier> a1 = o1.getIdentifiers();
-        Collection<ReferenceIdentifier> a2 = o2.getIdentifiers();
-        if (a1 == null) a1 = Collections.emptySet();
-        if (a2 == null) a2 = Collections.emptySet();
-        final Iterator<ReferenceIdentifier> i1 = a1.iterator();
-        final Iterator<ReferenceIdentifier> i2 = a2.iterator();
-        boolean n1, n2;
-        while ((n1 = i1.hasNext()) & (n2 = i2.hasNext())) {  // NOSONAR: Really '&', not '&&'
-            final int c = IdentifiedObjects.doCompare(i1.next().getCode(), i2.next().getCode());
-            if (c != 0) {
-                return c;
-            }
-        }
-        if (n1) return +1;
-        if (n2) return -1;
-        return 0;
-    }
-
-    /** Canonicalizes to the singleton on deserialization. */
-    protected Object readResolve() throws ObjectStreamException {
-        return IdentifiedObjects.IDENTIFIER_COMPARATOR;
-    }
-}
-
-/**
- * {@link IdentifiedObjects#REMARKS_COMPARATOR} implementation as a named class (rather than anonymous)
- * for more predictable serialization.
- */
-final class RemarksComparator implements Comparator<IdentifiedObject>, Serializable {
-    /** For cross-version compatibility. */
-    private static final long serialVersionUID = -6675419613224162715L;
-
-    /** Compares the given identified objects for order. */
-    @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-        return IdentifiedObjects.doCompare(o1.getRemarks(), o2.getRemarks());
-    }
-
-    /** Canonicalizes to the singleton on deserialization. */
-    protected Object readResolve() throws ObjectStreamException {
-        return IdentifiedObjects.REMARKS_COMPARATOR;
     }
 }

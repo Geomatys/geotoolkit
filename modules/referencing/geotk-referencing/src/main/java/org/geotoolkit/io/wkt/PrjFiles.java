@@ -179,7 +179,7 @@ public final class PrjFiles extends Static {
     private static String format(final CoordinateReferenceSystem crs) throws ContentFormatException {
         try {
             if (crs instanceof FormattableObject) {
-                return ((FormattableObject) crs).toWKT(FormattableObject.SINGLE_LINE);
+                return ((FormattableObject) crs).toWKT(Convention.OGC, WKTFormat.SINGLE_LINE);
             } else {
                 return crs.toWKT();
             }

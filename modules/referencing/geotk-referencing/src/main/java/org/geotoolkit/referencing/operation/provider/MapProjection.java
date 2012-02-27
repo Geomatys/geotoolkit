@@ -83,7 +83,7 @@ public abstract class MapProjection extends MathTransformProvider {
                 new NamedIdentifier(Citations.ESRI, "Semi_Major"),
                 new NamedIdentifier(Citations.EPSG, "Semi-major axis"),
                 // EPSG does not specifically define the above parameter
-                new NamedIdentifier(PROJ4, "a")
+                new NamedIdentifier(Citations.PROJ4, "a")
             },
             Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE);
 
@@ -99,7 +99,7 @@ public abstract class MapProjection extends MathTransformProvider {
                 new NamedIdentifier(Citations.ESRI, "Semi_Minor"),
                 new NamedIdentifier(Citations.EPSG, "Semi-minor axis"),
                 // EPSG does not specifically define the above parameter
-                new NamedIdentifier(PROJ4, "b")
+                new NamedIdentifier(Citations.PROJ4, "b")
             },
             Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE);
 

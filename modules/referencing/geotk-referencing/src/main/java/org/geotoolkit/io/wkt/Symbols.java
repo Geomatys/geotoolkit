@@ -34,6 +34,9 @@ import org.geotoolkit.internal.InternalUtilities;
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
+ * @see WKTFormat#getSymbols()
+ * @see WKTFormat#setSymbols(Symbols)
+ *
  * @since 2.1
  * @level advanced
  * @module

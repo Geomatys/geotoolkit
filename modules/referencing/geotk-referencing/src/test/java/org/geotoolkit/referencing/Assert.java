@@ -26,6 +26,8 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.io.wkt.Convention;
+import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -161,7 +163,7 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
             assertNotNull(object);
             final String wkt;
             if (isSingleLine(expected) && (object instanceof FormattableObject)) {
-                wkt = ((FormattableObject) object).toWKT(FormattableObject.SINGLE_LINE);
+                wkt = ((FormattableObject) object).toWKT(Convention.OGC, WKTFormat.SINGLE_LINE);
             } else {
                 wkt = object.toWKT();
             }

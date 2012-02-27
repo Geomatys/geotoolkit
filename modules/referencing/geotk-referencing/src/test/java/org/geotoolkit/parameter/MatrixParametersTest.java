@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.test.referencing.ParameterTestBase;
@@ -83,7 +84,7 @@ public final strictfp class MatrixParametersTest extends ParameterTestBase {
      */
     @Test
     public void testFormatting() {
-        final Formatter  formatter = new Formatter();
+        final Formatter  formatter = new Formatter(WKTFormat.SINGLE_LINE);
         final GeneralMatrix matrix = new GeneralMatrix(4);
         matrix.setElement(0,2,  4);
         matrix.setElement(1,0, -2);

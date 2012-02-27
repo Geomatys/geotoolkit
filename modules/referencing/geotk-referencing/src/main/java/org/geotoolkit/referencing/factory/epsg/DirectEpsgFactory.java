@@ -2333,7 +2333,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      " FROM [Coordinate_Operation Method]" +
                     " WHERE COORD_OP_METHOD_CODE = ?");
             final ResultSet result = executeQuery(stmt, primaryKey);
-            OperationMethod method = null;
             while (result.next()) {
                 final String epsg    = getString(result, 1, code);
                 final String name    = getString(result, 2, code);
@@ -2346,6 +2345,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 if (formula != null) {
                     properties.put(OperationMethod.FORMULA_KEY, formula);
                 }
+                final OperationMethod method;
                 method = new DefaultOperationMethod(properties, dim[0], dim[1],
                          new DefaultParameterDescriptorGroup(properties, descriptors));
                 returnValue = ensureSingleton(method, returnValue, code);

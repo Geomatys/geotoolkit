@@ -29,10 +29,8 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
-import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
@@ -418,8 +416,7 @@ public class AffineTransform2D extends XAffineTransform
      */
     @Override
     public String toWKT() {
-        final int indentation = FormattableObject.getDefaultIndentation();
-        final Formatter formatter = new Formatter(Symbols.DEFAULT, null, indentation);
+        final Formatter formatter = new Formatter();
         formatter.append((Formattable) this);
         return formatter.toString();
     }

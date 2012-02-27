@@ -432,21 +432,14 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         /*
          * Stores the definitive reference to the attributes. Note that casts are performed only
          * there (not before). This is a wanted feature, since we want to catch ClassCastExceptions
-         * are rethrown them as more informative exceptions.
+         * are rethrown them as a more informative exception.
          */
         String key=null; Object value=null;
         try {
-            key = NAME_KEY;
-            this.name = (ReferenceIdentifier) (value = name);
-
-            key = ALIAS_KEY;
-            this.alias = nonEmptySet((GenericName[]) (value = alias));
-
-            key = IDENTIFIERS_KEY;
-            this.identifiers = nonEmptySet((ReferenceIdentifier[]) (value = identifiers));
-
-            key = REMARKS_KEY;
-            this.remarks = (InternationalString) (value = remarks);
+            key = NAME_KEY;        this.name        =             (ReferenceIdentifier)   (value = name);
+            key = ALIAS_KEY;       this.alias       = nonEmptySet((GenericName[])         (value = alias));
+            key = IDENTIFIERS_KEY; this.identifiers = nonEmptySet((ReferenceIdentifier[]) (value = identifiers));
+            key = REMARKS_KEY;     this.remarks     =             (InternationalString)   (value = remarks);
         } catch (ClassCastException exception) {
             throw new InvalidParameterValueException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, key, value), exception, key, value);
@@ -503,7 +496,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * <ul>
      *   <li><p>If the name or alias implements the {@link ReferenceIdentifier} interface,
-     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority
+     *       then this method compares the {@linkplain ReferenceIdentifier#getAuthority()
      *       identifier authority} against the specified citation using the
      *       {@link Citations#identifierMatches(Citation,Citation) identifierMatches}
      *       method. If a matching is found, then this method returns the

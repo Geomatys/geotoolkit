@@ -34,7 +34,6 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.factory.DatumAliasesTest;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
@@ -293,7 +292,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
                 "  AXIS[“Geocentric Z”, GEOCENTRIC_Z]]");
-        wktFormat.setAuthority(DefaultGeocentricCRS.INTERNAL);
+        wktFormat.setConvention(Convention.INTERNAL);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
         assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
         /*
@@ -309,7 +308,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“X”, OTHER],\n" +
                 "  AXIS[“Y”, EAST],\n" +
                 "  AXIS[“Z”, NORTH]]");
-        wktFormat.setAuthority(DefaultGeocentricCRS.OGC);
+        wktFormat.setConvention(Convention.OGC);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
         assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
     }
@@ -397,12 +396,12 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.OGC, 2));
+            crs.toWKT(Convention.OGC, 2));
         /*
          * Formats using GeoTiff identifiers. We should get different strings in PROJECTION[...]
          * and PARAMETER[...] elements, but the other ones (especially DATUM[...]) are unchanged.
          * The changes in UNIT[...] and AXIS[...] are related to the way those objects are built
-         * and are independents of the Citation argument.
+         * and are independents of the Convention argument.
          */
         assertMultilinesEquals(decodeQuotes(
             "PROJCS[“OSGB 1936 / British National Grid”,\n" +
@@ -423,7 +422,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.GEOTIFF, 2));
+            crs.toWKT(Convention.GEOTIFF, 2));
         /*
          * Formats using ESRI identifiers. The most important change we are looking for is
          * the name inside DATUM[...].
@@ -447,7 +446,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“meter”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.ESRI, 2));
+            crs.toWKT(Convention.ESRI, 2));
         /*
          * Formats using EPSG identifiers. We expect different names in
          * DATUM[...], PROJECTION[...] and PARAMETER[...].
@@ -471,6 +470,6 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.EPSG, 2));
+            crs.toWKT(Convention.EPSG, 2));
     }
 }

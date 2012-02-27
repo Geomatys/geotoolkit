@@ -42,10 +42,11 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Errors;
 
 
@@ -95,7 +96,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Eve (IRD)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -105,6 +106,14 @@ public class WKTFormat extends Format {
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -2909110214650709560L;
+
+    /**
+     * The indentation value to give to the {@link #setIndentation(int)}
+     * method for formatting the complete object on a single line.
+     *
+     * @since 3.30 (derived from 2.6)
+     */
+    public static final int SINGLE_LINE = -1;
 
     /**
      * The mapping between WKT element name and the object class to be created.
@@ -149,18 +158,26 @@ public class WKTFormat extends Format {
     private Colors colors = null;
 
     /**
-     * The preferred authority for objects or parameter names. The same object is also
-     * referenced in the {@linkplain #formatter}. It appears here for serialization purpose.
+     * The convention to use. The same object is also referenced in the {@linkplain #formatter}.
+     * It appears here for serialization purpose.
+     *
+     * @since 3.20
      */
-    private Citation authority = FormattableObject.OGC;
+    private Convention convention;
+
+    /**
+     * The preferred authority for objects or parameter names. A {@code null} value
+     * means that the authority shall be inferred from the {@linkplain #convention}.
+     */
+    private Citation authority;
 
     /**
      * The amount of spaces to use in indentation, or
-     * {@value org.geotoolkit.io.wkt.FormattableObject#SINGLE_LINE} if indentation is disabled.
+     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} if indentation is disabled.
      * The same value is also stored in the {@linkplain #formatter}. It appears here for
      * serialization purpose.
      */
-    private int indentation = FormattableObject.getDefaultIndentation();
+    private int indentation = FormattableObject.defaultIndentation;
 
     /**
      * The map of definitions. Will be created only if used.
@@ -211,10 +228,7 @@ public class WKTFormat extends Format {
      * @param symbols The new set of symbols to use for parsing and formatting WKT.
      */
     public void setSymbols(final Symbols symbols) {
-        if (symbols == null) {
-            throw new NullArgumentException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, "symbols"));
-        }
+        ArgumentChecks.ensureNonNull("symbols", symbols);
         if (!symbols.equals(this.symbols)) {
             this.symbols = symbols;
             formatter = null;
@@ -256,41 +270,84 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * Returns the preferred authority for formatting WKT entities. The {@link #format format}
-     * method will use the name specified by this authority, if available. See the
-     * {@link Formatter#getName(IdentifiedObject) Formatter} javadoc for more information.
+     * Returns the convention for formatting WKT entities.
+     * The default value is {@link Convention#OGC}.
      *
-     * @return The expected authority.
+     * @return The convention to use for formatting WKT entities (never {@code null}).
      *
-     * @see Formatter#getName(IdentifiedObject)
+     * @since 3.20
      */
-    public Citation getAuthority() {
-        return authority;
+    public Convention getConvention() {
+        Convention c = convention;
+        if (c == null) {
+            c = Convention.forCitation(authority, Convention.OGC);
+        }
+        return c;
     }
 
     /**
-     * Sets the preferred authority for formatting WKT entities. The {@link #format format}
-     * method will use the name specified by this authority, if available. See the
-     * {@link Formatter#getName(IdentifiedObject) Formatter} javadoc for more information.
+     * Sets the convention for formatting WKT entities.
+     * The convention given to this method can not be null.
      *
-     * @param authority The new authority.
+     * @param convention The new convention to use for formatting WKT entities.
+     *
+     * @since 3.20
+     */
+    public void setConvention(final Convention convention) {
+        ArgumentChecks.ensureNonNull("convention", convention);
+        this.convention = convention;
+        updateFormatter(formatter);
+    }
+
+    /**
+     * Returns the preferred authority for choosing the projection and parameter names.
+     * If no authority were {@linkplain #setAuthority(Citation) explicitely set}, then
+     * this method returns the authority associated to the {@linkplain #getConvention()
+     * convention}.
+     *
+     * @return The expected authority.
+     *
+     * @see Convention#getCitation()
+     * @see Formatter#getName(IdentifiedObject)
+     */
+    public Citation getAuthority() {
+        Citation result = authority;
+        if (result == null) {
+            result = convention.getCitation();
+        }
+        return result;
+    }
+
+    /**
+     * Sets the preferred authority for choosing the projection and parameter names.
+     * If non-null, the given priority will have precedence over the authority usually
+     * associated to the {@linkplain #getConvention() convention}. A {@code null} value
+     * restore the default behavior.
+     *
+     * @param authority The new authority, or {@code null} for inferring it from the
+     *        {@linkplain #getConvention() convention}
      *
      * @see Formatter#getName(IdentifiedObject)
      */
     public void setAuthority(final Citation authority) {
-        if (authority == null) {
-            throw new NullArgumentException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, "authority"));
-        }
         this.authority = authority;
+        updateFormatter(formatter);
+    }
+
+    /**
+     * Updates the formatter convention and authority according the current state of this
+     * {@code WKTFormat}. The authority may be null, in which case it will be inferred from
+     * the convention when first needed.
+     */
+    private void updateFormatter(final Formatter formatter) {
         if (formatter != null) {
-            formatter.authority = authority;
+            formatter.setConvention(convention, authority);
         }
     }
 
     /**
      * Returns the current indentation to be used for formatting objects. The
-     * {@value org.geotoolkit.io.wkt.FormattableObject#SINGLE_LINE} value means
+     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} value means
      * that the whole WKT is to be formatted on a single line.
      *
      * @return The current indentation.
@@ -301,8 +358,11 @@ public class WKTFormat extends Format {
 
     /**
      * Sets a new indentation to be used for formatting objects. The
-     * {@value org.geotoolkit.io.wkt.FormattableObject#SINGLE_LINE} value
+     * {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} value
      * means that the whole WKT is to be formatted on a single line.
+     * <p>
+     * If this method is never invoked, then the default value is
+     * {@link #getDefaultIndentation()}.
      *
      * @param indentation The new indentation to use.
      */
@@ -311,6 +371,31 @@ public class WKTFormat extends Format {
         if (formatter != null) {
             formatter.indentation = indentation;
         }
+    }
+
+    /**
+     * Returns the system-wide default indentation. The default value can be modified
+     * by a call to {@link #setDefaultIndentation(int)}.
+     *
+     * @return The system-wide default indentation.
+     *
+     * @since 3.20 (derived from 3.00)
+     */
+    public static int getDefaultIndentation() {
+        return FormattableObject.defaultIndentation;
+    }
+
+    /**
+     * Sets the system-wide default value for indentation.
+     *
+     * @param indentation The new system-wide default value for indentation.
+     *
+     * @since 3.20 (derived from 3.00)
+     */
+    @Configuration
+    public static void setDefaultIndentation(final int indentation) {
+        // No need to synchronize since setting a 32 bits integer is an atomic operation.
+        FormattableObject.defaultIndentation = indentation;
     }
 
     /**
@@ -375,7 +460,7 @@ public class WKTFormat extends Format {
     public <T> T parse(String text, final int offset, final Class<T> type) throws ParseException {
         Object value;
         text = text.substring(offset);
-        if (Definitions.isIdentifier(text)) {
+        if (Strings.isJavaIdentifier(text)) {
             if (definitions == null || (value = definitions.getParsed(text)) == null) {
                 throw new ParseException(Errors.format(
                         Errors.Keys.NO_SUCH_AUTHORITY_CODE_$2, type, text), 0);
@@ -462,6 +547,7 @@ public class WKTFormat extends Format {
      * Returns the formatter, creating it if needed.
      */
     private Formatter getFormatter() {
+        Formatter formatter = this.formatter;
         if (formatter == null) {
             if (Parser.SCIENTIFIC_NOTATION) {
                 // We do not want to expose the "scientific notation hack" to the formatter.
@@ -472,8 +558,9 @@ public class WKTFormat extends Format {
                 formatter = getParser().formatter();
             }
             formatter.colors      = colors;
-            formatter.authority   = authority;
             formatter.indentation = indentation;
+            updateFormatter(formatter);
+            this.formatter = formatter;
         }
         return formatter;
     }

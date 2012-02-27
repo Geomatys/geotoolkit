@@ -260,9 +260,10 @@ public final class Strings extends Static {
      * {@linkplain #split(String, char) Splits} the given string around the given character,
      * then {@linkplain Double#parseDouble(String) parses} each item as a {@code double}.
      *
-     * @param  values The strings containing the values to parse.
+     * @param  values The strings containing the values to parse, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
-     * @return The array of numbers parsed from the given string.
+     * @return The array of numbers parsed from the given string,
+     *         or an empty array if {@code values} was null.
      * @throws NumberFormatException If at least one number can not be parsed.
      *
      * @since 3.19
@@ -281,9 +282,10 @@ public final class Strings extends Static {
      * {@linkplain #split(String, char) Splits} the given string around the given character,
      * then {@linkplain Float#parseFloat(String) parses} each item as a {@code float}.
      *
-     * @param  values The strings containing the values to parse.
+     * @param  values The strings containing the values to parse, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
-     * @return The array of numbers parsed from the given string.
+     * @return The array of numbers parsed from the given string,
+     *         or an empty array if {@code values} was null.
      * @throws NumberFormatException If at least one number can not be parsed.
      *
      * @since 3.19
@@ -302,10 +304,11 @@ public final class Strings extends Static {
      * {@linkplain #split(String, char) Splits} the given string around the given character,
      * then {@linkplain Long#parseLong(String) parses} each item as a {@code long}.
      *
-     * @param  values The strings containing the values to parse.
+     * @param  values The strings containing the values to parse, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
      * @param  radix the radix to be used for parsing. This is usually 10.
-     * @return The array of numbers parsed from the given string.
+     * @return The array of numbers parsed from the given string,
+     *         or an empty array if {@code values} was null.
      * @throws NumberFormatException If at least one number can not be parsed.
      *
      * @since 3.19
@@ -323,10 +326,11 @@ public final class Strings extends Static {
      * {@linkplain #split(String, char) Splits} the given string around the given character,
      * then {@linkplain Integer#parseInt(String) parses} each item as an {@code int}.
      *
-     * @param  values The strings containing the values to parse.
+     * @param  values The strings containing the values to parse, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
      * @param  radix the radix to be used for parsing. This is usually 10.
-     * @return The array of numbers parsed from the given string.
+     * @return The array of numbers parsed from the given string,
+     *         or an empty array if {@code values} was null.
      * @throws NumberFormatException If at least one number can not be parsed.
      *
      * @since 3.19
@@ -344,10 +348,11 @@ public final class Strings extends Static {
      * {@linkplain #split(String, char) Splits} the given string around the given character,
      * then {@linkplain Short#parseShort(String) parses} each item as a {@code short}.
      *
-     * @param  values The strings containing the values to parse.
+     * @param  values The strings containing the values to parse, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
      * @param  radix the radix to be used for parsing. This is usually 10.
-     * @return The array of numbers parsed from the given string.
+     * @return The array of numbers parsed from the given string,
+     *         or an empty array if {@code values} was null.
      * @throws NumberFormatException If at least one number can not be parsed.
      *
      * @since 3.19
@@ -365,10 +370,11 @@ public final class Strings extends Static {
      * {@linkplain #split(String, char) Splits} the given string around the given character,
      * then {@linkplain Byte#parseByte(String) parses} each item as a {@code byte}.
      *
-     * @param  values The strings containing the values to parse.
+     * @param  values The strings containing the values to parse, or {@code null}.
      * @param  separator The delimiting character (typically the coma).
      * @param  radix the radix to be used for parsing. This is usually 10.
-     * @return The array of numbers parsed from the given string.
+     * @return The array of numbers parsed from the given string,
+     *         or an empty array if {@code values} was null.
      * @throws NumberFormatException If at least one number can not be parsed.
      *
      * @since 3.19
@@ -416,6 +422,7 @@ public final class Strings extends Static {
      * @param start  The beginning index in the {@code buffer}, inclusive.
      * @param end    The ending index in the {@code buffer}, exclusive.
      * @param chars  The array that will replace previous contents.
+     * @throws NullPointerException if the {@code buffer} or {@code chars} argument is null.
      *
      * @see StringBuilder#replace(int, int, String)
      *
@@ -466,8 +473,9 @@ public final class Strings extends Static {
      * {@linkplain org.geotoolkit.io.X364 X3.64} escape sequences as well. Users should invoke
      * this {@code Strings.trim} method instead if they need to preserve X3.64 escape sequences.
      *
-     * @param text The string from which to remove leading and trailing white spaces.
-     * @return A string with leading and trailing white spaces removed.
+     * @param text The string from which to remove leading and trailing white spaces, or {@code null}.
+     * @return A string with leading and trailing white spaces removed, or {@code null} is the given
+     *         string was null.
      *
      * @see String#trim()
      */
@@ -564,58 +572,38 @@ public final class Strings extends Static {
      * Note that if the given character sequence is an instance of {@link StringBuilder},
      * then the replacement will be performed in-place.
      *
-     * @param  text The text to scan for Unicode characters to replace by ASCII characters.
+     * @param  text The text to scan for Unicode characters to replace by ASCII characters,
+     *         or {@code null}.
      * @return The given text with substitution applied, or {@code text} if no replacement
      *         has been applied.
      *
      * @since 3.18
      */
     public static CharSequence toASCII(CharSequence text) {
-        StringBuilder buffer = null;
-        final int length = text.length();
-        for (int i=0; i<length;) {
-            final int c = codePointAt(text, i);
-            final int r = c - 0xC0;
-            if (r >= 0 && r<ASCII.length()) {
-                final char ac = ASCII.charAt(r);
-                if (buffer == null) {
-                    if (text instanceof StringBuilder) {
-                        buffer = (StringBuilder) text;
-                    } else {
-                        buffer = new StringBuilder(text);
-                        text = buffer;
+        if (text != null) {
+            StringBuilder buffer = null;
+            final int length = text.length();
+            for (int i=0; i<length;) {
+                final int c = codePointAt(text, i);
+                final int r = c - 0xC0;
+                if (r >= 0 && r<ASCII.length()) {
+                    final char ac = ASCII.charAt(r);
+                    if (buffer == null) {
+                        if (text instanceof StringBuilder) {
+                            buffer = (StringBuilder) text;
+                        } else {
+                            buffer = new StringBuilder(text);
+                            text = buffer;
+                        }
                     }
+                    // Nothing special do to about codepoint here, since 'c' is
+                    // in the basic plane (verified by the r<ASCII.length() check).
+                    buffer.setCharAt(i, ac);
                 }
-                // Nothing special do to about codepoint here, since 'c' is
-                // in the basic plane (verified by the r<ASCII.length() check).
-                buffer.setCharAt(i, ac);
+                i += charCount(c);
             }
-            i += charCount(c);
         }
         return text;
-    }
-
-    /**
-     * Returns {@code true} if the given string contains only upper case letters or digits.
-     * A few punctuation characters like {@code '_'} and {@code '.'} are also accepted.
-     * <p>
-     * This method is used for identifying character strings that are likely to be code
-     * like {@code "UTF-8"} or {@code "ISO-LATIN-1"}.
-     *
-     * @see #isJavaIdentifier(CharSequence)
-     *
-     * @since 3.18 (derived from 3.17)
-     */
-    private static boolean isCode(final CharSequence identifier) {
-        for (int i=identifier.length(); --i>=0;) {
-            final char c = identifier.charAt(i);
-            // No need to use the code point API here, since the conditions
-            // below are requiring the characters to be in the basic plane.
-            if (!((c >= 'A' && c <= 'Z') || (c >= '-' && c <= ':') || c == '_')) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -643,13 +631,17 @@ public final class Strings extends Static {
      * Note that those heuristic rules may be modified in future Geotk versions,
      * depending on the practical experience gained.
      *
-     * @param  identifier An identifier with no space, words begin with an upper-case character.
-     * @return The identifier with spaces inserted after what looks like words.
-     * @throws NullPointerException if the {@code identifier} argument is null.
+     * @param  identifier An identifier with no space, words begin with an upper-case character,
+     *         or {@code null}.
+     * @return The identifier with spaces inserted after what looks like words, or {@code null}
+     *         if the given argument was null.
      *
      * @since 3.18 (derived from 3.09)
      */
     public static String camelCaseToSentence(final CharSequence identifier) {
+        if (identifier == null) {
+            return null;
+        }
         if (isCode(identifier)) {
             return identifier.toString().replace('_', '-');
         }
@@ -886,6 +878,29 @@ cmp:    while (ia < lga) {
     }
 
     /**
+     * Returns {@code true} if the given string contains only upper case letters or digits.
+     * A few punctuation characters like {@code '_'} and {@code '.'} are also accepted.
+     * <p>
+     * This method is used for identifying character strings that are likely to be code
+     * like {@code "UTF-8"} or {@code "ISO-LATIN-1"}.
+     *
+     * @see #isJavaIdentifier(CharSequence)
+     *
+     * @since 3.18 (derived from 3.17)
+     */
+    private static boolean isCode(final CharSequence identifier) {
+        for (int i=identifier.length(); --i>=0;) {
+            final char c = identifier.charAt(i);
+            // No need to use the code point API here, since the conditions
+            // below are requiring the characters to be in the basic plane.
+            if (!((c >= 'A' && c <= 'Z') || (c >= '-' && c <= ':') || c == '_')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns {@code true} if the given identifier is a legal Java identifier.
      * This method returns {@code true} if the identifier length is greater than zero,
      * the first character is a {@linkplain Character#isJavaIdentifierStart(int) Java
@@ -894,6 +909,7 @@ cmp:    while (ia < lga) {
      *
      * @param identifier The character sequence to test.
      * @return {@code true} if the given character sequence is a legal Java identifier.
+     * @throws NullPointerException if the argument is null.
      *
      * @since 3.20
      */
@@ -911,6 +927,34 @@ cmp:    while (ia < lga) {
             if (!isJavaIdentifierPart(c)) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if every characters in the given character sequence are
+     * {@linkplain Character#isUpperCase(int) upper-case}.
+     *
+     * @param  text The character sequence to test.
+     * @return {@code true} if every character are upper-case.
+     * @throws NullPointerException if the argument is null.
+     *
+     * @see String#toUpperCase()
+     */
+    public static boolean isUpperCase(final CharSequence text) {
+        return isUpperCase(text, 0, text.length());
+    }
+
+    /**
+     * Same as {@link #isUpperCase(CharSequence)}, but on a sub-sequence.
+     */
+    private static boolean isUpperCase(final CharSequence text, int lower, final int upper) {
+        while (lower < upper) {
+            final int c = codePointAt(text, lower);
+            if (!isUpperCase(c)) {
+                return false;
+            }
+            lower += charCount(c);
         }
         return true;
     }
@@ -1013,6 +1057,7 @@ cmp:    while (ia < lga) {
      * @param  fromIndex The index from which to start the search.
      * @return The index within the string of the first occurrence of the specified part,
      *         starting at the specified index, or -1 if none.
+     * @throws NullPointerException if any of the arguments is null.
      *
      * @see String#indexOf(String, int)
      * @see StringBuilder#indexOf(String, int)
@@ -1047,34 +1092,6 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
     }
 
     /**
-     * Returns {@code true} if every characters in the given character sequence are
-     * {@linkplain Character#isUpperCase(int) upper-case}.
-     *
-     * @param  text The character sequence to test.
-     * @return {@code true} if every character are upper-case.
-     * @throws NullPointerException if the argument is null.
-     *
-     * @see String#toUpperCase()
-     */
-    public static boolean isUpperCase(final CharSequence text) {
-        return isUpperCase(text, 0, text.length());
-    }
-
-    /**
-     * Same as {@link #isUpperCase(CharSequence)}, but on a sub-sequence.
-     */
-    private static boolean isUpperCase(final CharSequence text, int lower, final int upper) {
-        while (lower < upper) {
-            final int c = codePointAt(text, lower);
-            if (!isUpperCase(c)) {
-                return false;
-            }
-            lower += charCount(c);
-        }
-        return true;
-    }
-
-    /**
      * Returns the token starting at the given offset in the given text. For the purpose of this
      * method, a "token" is any sequence of consecutive characters of the same type, as defined
      * below.
@@ -1096,6 +1113,7 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      * @param  offset Index of the fist character to consider in the given text.
      * @return A sub-sequence of {@code text} starting at the given offset, or an empty string
      *         if there is no non-blank character at or after the given offset.
+     * @throws NullPointerException if the {@code text} argument is null.
      *
      * @since 3.18 (derived from 3.06)
      */
@@ -1264,6 +1282,7 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      * @param numToSkip The number of lines to skip. Can be positive, zero or negative.
      * @param startAt   Index at which to start the search.
      * @return Index of the first character after the last skipped line.
+     * @throws NullPointerException if the {@code string} argument is null.
      */
     public static int skipLines(final CharSequence string, int numToSkip, int startAt) {
         final int length = string.length();

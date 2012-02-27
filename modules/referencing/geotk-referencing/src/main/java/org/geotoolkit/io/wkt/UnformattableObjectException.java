@@ -22,7 +22,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Thrown by {@link FormattableObject#toWKT} when an object can't be formatted as WKT.
+ * Thrown by {@link FormattableObject#toWKT()} when an object can't be formatted as WKT.
  * A formatting may fails because an object is too complex for the WKT format capability
  * (for example an {@linkplain org.geotoolkit.referencing.crs.DefaultEngineeringCRS
  * engineering CRS} with different unit for each axis), or because only some specific
@@ -31,7 +31,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @version 3.16
  *
- * @see Formatter#setInvalidWKT
+ * @see Formatter#setInvalidWKT(Class)
  *
  * @since 2.0
  * @module

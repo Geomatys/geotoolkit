@@ -27,11 +27,10 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.io.X364;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -47,10 +46,10 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
  * fail to format a particular object, in which case a {@link UnformattableObjectException} is
  * thrown. A formatting may fail because an object is too complex for the WKT format capability
  * (for example an {@link org.geotoolkit.referencing.crs.DefaultEngineeringCRS EngineeringCRS}
- * with different unit for each axis), or because only some specific implementations can be
+ * with different unit for different axis), or because only some specific implementations can be
  * formatted as WKT.
  * <p>
- * The default implementation of {@link #toString()} is like {@link #toWKT()} except that no
+ * The default {@link #toString()} implementation is like {@link #toWKT()} except that no
  * exception is thrown if the resulting WKT is not compliant with the specification. The
  * {@code toString()} method does not provide control over indentation and other features.
  * But if such control is desired, it can be obtained by using directly the {@link Formatter}
@@ -62,7 +61,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
  * if the terminal seems to support the {@link X364 X3.64} standard.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -78,7 +77,12 @@ public class FormattableObject implements Formattable {
      * object on a single line.
      *
      * @since 2.6
+     *
+     * @deprecated Moved to {@link WKTFormat#SINGLE_LINE} in order to reduce the amount
+     * of declarations in this base class. The raison is that {@code FormattableObject}
+     * is extended by a lot of objects, and those rarely-used WKT stuff are distracting.
      */
+    @Deprecated
     public static final int SINGLE_LINE = 0;
 
     /**
@@ -88,7 +92,10 @@ public class FormattableObject implements Formattable {
      * @see Citations#OGC
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@link Convention#OGC}.
      */
+    @Deprecated
     public static final Citation OGC = Citations.OGC;
 
     /**
@@ -98,7 +105,10 @@ public class FormattableObject implements Formattable {
      * @see Citations#EPSG
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@link Convention#EPSG}.
      */
+    @Deprecated
     public static final Citation EPSG = Citations.EPSG;
 
     /**
@@ -108,18 +118,11 @@ public class FormattableObject implements Formattable {
      * @see Citations#GEOTIFF
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@link Convention#GEOTIFF}.
      */
+    @Deprecated
     public static final Citation GEOTIFF = Citations.GEOTIFF;
-
-    /**
-     * Frequently used authority for formatting WKT. This is the same reference than
-     * the one declared in the {@link Citations} class, copied here for convenience.
-     *
-     * @see Citations#PROJ4
-     *
-     * @since 3.20
-     */
-    public static final Citation PROJ4 = Citations.PROJ4;
 
     /**
      * A special citation for formatting objects as stored internally by Geotk. This citation
@@ -133,8 +136,11 @@ public class FormattableObject implements Formattable {
      * @see Formatter#isInternalWKT()
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@link Convention#INTERNAL}.
      */
     @Debug
+    @Deprecated
     public static final Citation INTERNAL;
     static {
         final DefaultCitation c = new DefaultCitation("Internal WKT");
@@ -146,9 +152,9 @@ public class FormattableObject implements Formattable {
     /**
      * The default indentation value.
      *
-     * @see #setDefaultIndentation
+     * @see WKTFormat#setDefaultIndentation(int)
      */
-    private static volatile int defaultIndentation = 2;
+    static volatile int defaultIndentation = 2;
 
     /**
      * Default constructor.
@@ -178,7 +184,7 @@ public class FormattableObject implements Formattable {
             out = console.writer();
         }
         final boolean color = (out != null) && X364.isSupported();
-        final String wkt = formatWKT(OGC, defaultIndentation, color, false);
+        final String wkt = formatWKT(Convention.OGC, defaultIndentation, color, false);
         if (out != null) {
             out.println(wkt);
         } else {
@@ -196,18 +202,20 @@ public class FormattableObject implements Formattable {
      */
     @Override
     public String toString() {
-        return formatWKT(OGC, defaultIndentation, false, false);
+        return formatWKT(Convention.OGC, defaultIndentation, false, false);
     }
 
     /**
      * Returns a <cite>Well Known Text</cite> (WKT) using the
-     * {@linkplain #getDefaultIndentation default indentation}.
+     * {@linkplain WKTFormat#getDefaultIndentation default indentation}.
      *
      * @return The Well Know Text for this object.
      * @throws UnformattableObjectException If this object can't be formatted as WKT.
+     *
+     * @see org.opengis.referencing.IdentifiedObject#toWKT()
      */
     public String toWKT() throws UnformattableObjectException {
-        return formatWKT(OGC, defaultIndentation, false, true);
+        return formatWKT(Convention.OGC, defaultIndentation, false, true);
     }
 
     /**
@@ -215,12 +223,17 @@ public class FormattableObject implements Formattable {
      * indentation.
      *
      * @param  indentation The amount of spaces to use in indentation for WKT formatting,
-     *         or {@link #SINGLE_LINE} for formatting the whole WKT on a single line.
+     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
+     *         whole WKT on a single line.
      * @return The Well Know Text for this object.
      * @throws UnformattableObjectException If this object can't be formatted as WKT.
+     *
+     * @deprecated Replaced by {@link #toWKT(Convention, int)} with {@link Convention#OGC}.
+     *             This method will be removed in order to simplify the API.
      */
+    @Deprecated
     public String toWKT(final int indentation) throws UnformattableObjectException {
-        return formatWKT(OGC, indentation, false, true);
+        return formatWKT(Convention.OGC, indentation, false, true);
     }
 
     /**
@@ -231,25 +244,54 @@ public class FormattableObject implements Formattable {
      *
      * @param  authority The authority to prefer when choosing WKT entities names.
      * @param  indentation The amount of spaces to use in indentation for WKT formatting,
-     *         or {@link #SINGLE_LINE} for formatting the whole WKT on a single line.
+     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
+     *         whole WKT on a single line.
      * @return The Well Know Text for this object.
      * @throws UnformattableObjectException If this object can't be formatted as WKT.
+     *
+     * @deprecated Replaced by {@link #toWKT(Convention, int)}.
      */
+    @Deprecated
     public String toWKT(final Citation authority, final int indentation)
             throws UnformattableObjectException
     {
-        return formatWKT(authority, indentation, false, true);
+        return toWKT(Convention.forCitation(authority, Convention.OGC), indentation);
     }
 
     /**
-     * Returns a WKT for this object using the specified indentation and authority.
+     * Returns a <cite>Well Known Text</cite> (WKT) for this object using the specified
+     * convention and indentation. The convention is usually {@link Convention#OGC OGC},
+     * but other common conventions are {@link Convention#GEOTIFF GEOTIFF} and
+     * {@link Convention#EPSG EPSG}. The {@link Convention#INTERNAL INTERNAL}
+     * convention is a special value for debugging map projections.
+     *
+     * @param  convention The convention for choosing WKT entities names.
+     *         The default value is {@link #OGC}.
+     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
+     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
+     *         whole WKT on a single line.
+     * @return The Well Know Text for this object.
+     * @throws UnformattableObjectException If this object can't be formatted as WKT.
+     *
+     * @since 3.20 (derived from 3.00)
+     */
+    public String toWKT(final Convention convention, final int indentation)
+            throws UnformattableObjectException
+    {
+        ArgumentChecks.ensureNonNull("convention", convention);
+        return formatWKT(convention, indentation, false, true);
+    }
+
+    /**
+     * Returns a WKT for this object using the specified convention and indentation.
      * If {@code strict} is true, then an exception is thrown if the WKT contains
      * invalid keywords.
      *
-     * @param  authority The authority to prefer when choosing WKT entities names.
+     * @param  convention The convention for choosing WKT entities names.
      *         The default value is {@link #OGC}.
      * @param  indentation The amount of spaces to use in indentation for WKT formatting,
-     *         or {@link #SINGLE_LINE} for formatting the whole WKT on a single line.
+     *         or {@value org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE} for formatting the
+     *         whole WKT on a single line.
      * @param  color {@code true} for applying syntax coloring, or {@code false} otherwise.
      * @param  strict {@code true} if an exception should be thrown for unformattable objects,
      *         or {@code false} for providing a non-standard formatting instead. The default
@@ -258,22 +300,18 @@ public class FormattableObject implements Formattable {
      * @throws UnformattableObjectException If {@code strict} is {@code true} and this object
      *         can't be formatted as WKT.
      */
-    private String formatWKT(final Citation authority, final int indentation,
+    private String formatWKT(final Convention convention, final int indentation,
                              final boolean color, final boolean strict)
              throws UnformattableObjectException
     {
-        if (authority == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "authority"));
-        }
         Formatter formatter = FORMATTER.get();
         if (formatter == null) {
             formatter = new Formatter();
             FORMATTER.set(formatter);
         }
-        final Citation old = formatter.authority;
-        formatter.authority = authority;
         formatter.indentation = indentation;
         formatter.colors = color ? Colors.DEFAULT : null;
+        formatter.setConvention(convention, null);
         try {
             if (this instanceof GeneralParameterValue) {
                 // Special processing for parameter values, which is formatted
@@ -283,14 +321,13 @@ public class FormattableObject implements Formattable {
             } else {
                 formatter.append(this);
             }
-            if (strict && formatter.isInvalidWKT() && !INTERNAL.equals(authority)) {
+            if (strict && formatter.isInvalidWKT() && !formatter.isInternalWKT()) {
                 final Class<?> unformattable = formatter.getUnformattableClass();
                 throw new UnformattableObjectException(formatter.warning, unformattable);
             }
             return formatter.toString();
         } finally {
             formatter.clear();
-            formatter.authority = old; // Lets GC do its work if the citation was not a constant.
         }
     }
 
@@ -302,8 +339,8 @@ public class FormattableObject implements Formattable {
      * <strong>not</strong> invoke {@code super.formatWKT(formatter)} if they can
      * use a valid WKT syntax.
      *
-     * @see #toWKT
-     * @see #toString
+     * @see #toWKT()
+     * @see #toString()
      *
      * @level advanced
      */
@@ -329,7 +366,10 @@ public class FormattableObject implements Formattable {
      * @return The default indentation.
      *
      * @since 3.00
+     *
+     * @deprecated Moved to {@link WKTFormat#getDefaultIndentation()}.
      */
+    @Deprecated
     public static int getDefaultIndentation() {
         return defaultIndentation;
     }
@@ -340,7 +380,10 @@ public class FormattableObject implements Formattable {
      * @param indentation The new default value for indentation.
      *
      * @since 3.00
+     *
+     * @deprecated Moved to {@link WKTFormat#setDefaultIndentation(int)}.
      */
+    @Deprecated
     @Configuration
     public static void setDefaultIndentation(final int indentation) {
         // No need to synchronize since setting a 32 bits integer is an atomic operation.
