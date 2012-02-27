@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2002-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -50,6 +50,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.FormattableObject;
 
 import static java.lang.StrictMath.*;
@@ -320,7 +321,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
         table.write(wkt);
         table.nextColumn();
         if (transform instanceof FormattableObject) {
-            wkt = ((FormattableObject) transform).toWKT(FormattableObject.INTERNAL, 2);
+            wkt = ((FormattableObject) transform).toWKT(Convention.INTERNAL, 2);
         } else {
             wkt = transform.toString();
         }

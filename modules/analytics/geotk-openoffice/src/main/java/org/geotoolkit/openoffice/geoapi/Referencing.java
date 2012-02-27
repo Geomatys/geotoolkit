@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2011, Geomatys
+ *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -48,11 +48,11 @@ import org.opengis.openoffice.XReferencing;
 
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.io.wkt.FormattableObject;
+import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.openoffice.MethodInfo;
 import org.geotoolkit.openoffice.Formulas;
@@ -267,7 +267,8 @@ public final class Referencing extends Formulas implements XReferencing {
             authorityString = AnyConverter.toString(authority);
         }
         if (object instanceof FormattableObject) {
-            return ((FormattableObject) object).toWKT(Citations.fromName(authorityString), 2);
+            return ((FormattableObject) object).toWKT(
+                    Convention.forIdentifier(authorityString, Convention.OGC), 2);
         }
         if (object instanceof MathTransform) {
             return ((MathTransform) object).toWKT();

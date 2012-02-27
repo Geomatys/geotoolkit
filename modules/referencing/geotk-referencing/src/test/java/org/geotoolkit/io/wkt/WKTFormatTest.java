@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2002-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,10 +18,12 @@
 package org.geotoolkit.io.wkt;
 
 import java.text.ParseException;
+import javax.measure.unit.NonSI;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -32,9 +34,13 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.referencing.factory.DatumAliasesTest;
-import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
@@ -48,7 +54,7 @@ import static org.geotoolkit.referencing.Assert.*;
  * @author Yann Cézard (IRD)
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.0
  */
@@ -60,16 +66,9 @@ public final strictfp class WKTFormatTest {
      * @throws ParseException Should never happen.
      */
     @Test
-    public void testHardCoded() throws ParseException {
-        final WKTFormat wktFormat = new WKTFormat();
-        String              wkt1, wkt2;
-        DefaultProjectedCRS crs1, crs2;
-        ParameterValueGroup param;
-        /*
-         * First, rather simple Mercator projection.
-         * Uses standard units and axis order.
-         */
-        wkt1 = "PROJCS[“Mercator test”,\n" +
+    public void parseMercator() throws ParseException {
+        final String wkt1 = decodeQuotes(
+               "PROJCS[“Mercator test”,\n" +
                "  GEOGCS[“WGS84”,\n" +
                "    DATUM[“WGS84”,\n" +
                "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
@@ -84,13 +83,13 @@ public final strictfp class WKTFormatTest {
                "  PARAMETER[“false_northing”, 0.0],\n" +
                "  UNIT[“metre”, 1.0],\n" +
                "  AXIS[“x”, EAST],\n" +
-               "  AXIS[“y”, NORTH]]\n";
-        wkt1 = decodeQuotes(wkt1);
+               "  AXIS[“y”, NORTH]]\n");
         assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
-        crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
-        wkt2  = wktFormat.format(crs1);
-        crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
-        param = crs1.getConversionFromBase().getParameterValues();
+        final WKTFormat wktFormat = new WKTFormat();
+        final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
+        final String              wkt2  = wktFormat.format(crs1);
+        final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
+        final ParameterValueGroup param = crs1.getConversionFromBase().getParameterValues();
         assertEquals(crs1, crs2);
         assertEquals("Mercator_1SP", crs1.getConversionFromBase().getMethod().getName().getCode());
         assertTrue(crs1.getConversionFromBase().getMathTransform().toWKT().startsWith("PARAM_MT[\"Mercator_1SP\""));
@@ -102,11 +101,18 @@ public final strictfp class WKTFormatTest {
         assertEquals("scale_factor",       1.0, param.parameter("scale_factor"    ).doubleValue(), 1E-8);
         assertEquals("false_easting", 500000.0, param.parameter("false_easting"   ).doubleValue(), 1E-4);
         assertEquals("false_northing",     0.0, param.parameter("false_northing"  ).doubleValue(), 1E-4);
-        /*
-         * Same Mercator projection as above, but
-         * switch longitude and latitude axis.
-         */
-        wkt1 = "PROJCS[“Mercator test”,\n" +
+    }
+
+    /**
+     * Same Mercator projection as above, but
+     * with longitude and latitude axes swapped.
+     *
+     * @throws ParseException Should never happen.
+     */
+    @Test
+    public void parseMercatorφλ() throws ParseException {
+        final String wkt1 = decodeQuotes(
+               "PROJCS[“Mercator test”,\n" +
                "  GEOGCS[“WGS84”,\n" +
                "    DATUM[“WGS84”,\n" +
                "      SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
@@ -121,13 +127,13 @@ public final strictfp class WKTFormatTest {
                "  PARAMETER[“false_northing”, 0.0],\n" +
                "  UNIT[“metre”, 1.0],\n" +
                "  AXIS[“x”, EAST],\n" +
-               "  AXIS[“y”, NORTH]]\n";
-        wkt1 = decodeQuotes(wkt1);
+               "  AXIS[“y”, NORTH]]\n");
         assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
-        crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
-        wkt2  = wktFormat.format(crs1);
-        crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
-        param = crs1.getConversionFromBase().getParameterValues();
+        final WKTFormat wktFormat = new WKTFormat();
+        final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
+        final String              wkt2  = wktFormat.format(crs1);
+        final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
+        final ParameterValueGroup param = crs1.getConversionFromBase().getParameterValues();
         assertEquals(crs1, crs2);
         assertEquals("Mercator_1SP", crs1.getConversionFromBase().getMethod().getName().getCode());
         assertTrue(crs1.getConversionFromBase().getMathTransform().toWKT().startsWith("CONCAT_MT[PARAM_MT["));
@@ -139,10 +145,17 @@ public final strictfp class WKTFormatTest {
         assertEquals("scale_factor",       1.0, param.parameter("scale_factor"    ).doubleValue(), 1E-8);
         assertEquals("false_easting", 500000.0, param.parameter("false_easting"   ).doubleValue(), 1E-4);
         assertEquals("false_northing",     0.0, param.parameter("false_northing"  ).doubleValue(), 1E-4);
-        /*
-         * Try an other projection (Transverse Mercator).
-         */
-        wkt1 = "PROJCS[“OSGB 1936 / British National Grid”,\n" +
+    }
+
+    /**
+     * Try an other projection (Transverse Mercator).
+     *
+     * @throws ParseException Should never happen.
+     */
+    @Test
+    public void parseTransverseMercator() throws ParseException {
+        final String wkt1 = decodeQuotes(
+               "PROJCS[“OSGB 1936 / British National Grid”,\n" +
                "  GEOGCS[“OSGB 1936”,\n" +
                "    DATUM[“OSGB_1936”,\n" +
                "      SPHEROID[“Airy 1830”, 6377563.396, 299.3249646, AUTHORITY[“EPSG”,”7001”]],\n" +
@@ -160,13 +173,13 @@ public final strictfp class WKTFormatTest {
                "  UNIT[“metre”, 1.0, AUTHORITY[“EPSG”,”9001”]],\n" +
                "  AXIS[“E”,EAST],\n" +
                "  AXIS[“N”,NORTH],\n" +
-               "  AUTHORITY[“EPSG”,”27700”]]\n";
-        wkt1 = decodeQuotes(wkt1);
+               "  AUTHORITY[“EPSG”,”27700”]]\n");
         assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
-        crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
-        wkt2  = wktFormat.format(crs1);
-        crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
-        param = crs1.getConversionFromBase().getParameterValues();
+        final WKTFormat wktFormat = new WKTFormat();
+        final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
+        final String              wkt2  = wktFormat.format(crs1);
+        final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
+        final ParameterValueGroup param = crs1.getConversionFromBase().getParameterValues();
         assertEquals(crs1, crs2);
         assertFalse (wkt2.contains("semi_major"));
         assertFalse (wkt2.contains("semi_minor"));
@@ -178,10 +191,17 @@ public final strictfp class WKTFormatTest {
         assertEquals("scale_factor",      0.9996, param.parameter("scale_factor"      ).doubleValue(), 1E-5);
         assertEquals("false_easting",   400000.0, param.parameter("false_easting"     ).doubleValue(), 1E-4);
         assertEquals("false_northing", -100000.0, param.parameter("false_northing"    ).doubleValue(), 1E-4);
-        /*
-         * Try a projection with feet units.
-         */
-        wkt1 = "PROJCS[“TransverseMercator”,\n" +
+    }
+
+    /**
+     * Try a projection with feet units.
+     *
+     * @throws ParseException Should never happen.
+     */
+    @Test
+    public void parseTransverseMercatorUsingFeet() throws ParseException {
+        final String wkt1 = decodeQuotes(
+               "PROJCS[“TransverseMercator”,\n" +
                "  GEOGCS[“Sphere”,\n" +
                "    DATUM[“Sphere”,\n" +
                "      SPHEROID[“Sphere”, 6370997.0, 0.0],\n" +
@@ -199,13 +219,13 @@ public final strictfp class WKTFormatTest {
                "  PARAMETER[“false_northing”, 0.0],\n" +
                "  UNIT[“feet”, 0.304800609601219],\n" +
                "  AXIS[“x”, EAST],\n" +
-               "  AXIS[“y”, NORTH]]";
-        wkt1 = decodeQuotes(wkt1);
+               "  AXIS[“y”, NORTH]]");
         assertTrue(Symbols.DEFAULT.containsAxis(wkt1));
-        crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
-        wkt2  = wktFormat.format(crs1);
-        crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
-        param = crs1.getConversionFromBase().getParameterValues();
+        final WKTFormat wktFormat = new WKTFormat();
+        final DefaultProjectedCRS crs1  = (DefaultProjectedCRS) wktFormat.parseObject(wkt1);
+        final String              wkt2  = wktFormat.format(crs1);
+        final DefaultProjectedCRS crs2  = (DefaultProjectedCRS) wktFormat.parseObject(wkt2);
+        final ParameterValueGroup param = crs1.getConversionFromBase().getParameterValues();
         assertEquals(crs1, crs2);
         assertFalse (wkt2.contains("semi_major"));
         assertFalse (wkt2.contains("semi_minor"));
@@ -217,17 +237,24 @@ public final strictfp class WKTFormatTest {
         assertEquals("scale_factor",        0.95, param.parameter("scale_factor"      ).doubleValue(), 1E-8);
         assertEquals("false_easting",        0.0, param.parameter("false_easting"     ).doubleValue(), 1E-8);
         assertEquals("false_northing",       0.0, param.parameter("false_northing"    ).doubleValue(), 1E-8);
-        /*
-         * Try with a number using scientific notation.
-         */
-        wkt1 = "GEOGCS[“NAD83 / NFIS Seconds”,DATUM[“North_American_Datum_1983”,\n" +
+    }
+
+    /**
+     * Try with a number using scientific notation.
+     *
+     * @throws ParseException Should never happen.
+     */
+    @Test
+    public void parseScientificNotation() throws ParseException {
+        final String wkt1 = decodeQuotes(
+               "GEOGCS[“NAD83 / NFIS Seconds”,DATUM[“North_American_Datum_1983”,\n" +
                "  SPHEROID[“GRS 1980”, 6378137, 298.257222101]],\n" +
                "  PRIMEM[“Greenwich”, 0],\n" +
                "  UNIT[“Decimal_Second”, 4.84813681109536e-06],\n" +
-               "  AUTHORITY[“EPSG”, ”100001”]]";
-        wkt1 = decodeQuotes(wkt1);
+               "  AUTHORITY[“EPSG”, ”100001”]]");
         assertFalse(Symbols.DEFAULT.containsAxis(wkt1));
-        wkt2 = wktFormat.format(wktFormat.parseObject(wkt1));
+        final WKTFormat wktFormat = new WKTFormat();
+        final String wkt2 = wktFormat.format(wktFormat.parseObject(wkt1));
         assertFalse(wkt2.contains("semi_major"));
         assertFalse(wkt2.contains("semi_minor"));
     }
@@ -240,7 +267,7 @@ public final strictfp class WKTFormatTest {
      * @throws ParseException Should never happen.
      */
     @Test
-    public void testCustomAxisLength() throws FactoryException, ParseException {
+    public void parseAndFormatCustomAxisLength() throws FactoryException, ParseException {
         DefaultMathTransformFactory factory = new DefaultMathTransformFactory();
         ParameterValueGroup parameters = factory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
 
@@ -257,7 +284,7 @@ public final strictfp class WKTFormatTest {
 
         GeographicCRS base = DefaultGeographicCRS.WGS84;
         MathTransform mt   = factory.createParameterizedTransform(parameters);
-        CartesianCS cs = DefaultCartesianCS.PROJECTED;
+        CartesianCS   cs   = DefaultCartesianCS.PROJECTED;
         CoordinateReferenceSystem crs = new DefaultProjectedCRS("Lambert", base, mt, cs);
 
         final String wkt = crs.toWKT();
@@ -269,13 +296,13 @@ public final strictfp class WKTFormatTest {
     }
 
     /**
-     * Tests the Geocentric case, which requires a conversion of axis direction
+     * Tests the Geocentric case, which requires a conversion of axis directions
      * between ISO 19111 and OGC 01-009 values.
      *
      * @throws ParseException Should never happen.
      */
     @Test
-    public void testGeocentric() throws ParseException {
+    public void parseAndFormatGeocentric() throws ParseException {
         final WKTFormat wktFormat = new WKTFormat();
         /*
          * First try the formatting as internal WKT. Geotk
@@ -293,7 +320,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
                 "  AXIS[“Geocentric Z”, GEOCENTRIC_Z]]");
-        wktFormat.setAuthority(DefaultGeocentricCRS.INTERNAL);
+        wktFormat.setConvention(Convention.INTERNAL);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
         assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
         /*
@@ -309,7 +336,7 @@ public final strictfp class WKTFormatTest {
                 "  AXIS[“X”, OTHER],\n" +
                 "  AXIS[“Y”, EAST],\n" +
                 "  AXIS[“Z”, NORTH]]");
-        wktFormat.setAuthority(DefaultGeocentricCRS.OGC);
+        wktFormat.setConvention(Convention.OGC);
         assertMultilinesEquals(wkt, wktFormat.format(crs));
         assertEqualsIgnoreMetadata(crs, wktFormat.parseObject(wkt), false);
     }
@@ -326,7 +353,7 @@ public final strictfp class WKTFormatTest {
      * @throws ParseException Should never happen.
      */
     @Test
-    public void testEquidistantCylindrical() throws ParseException {
+    public void parseAndFormatEquidistantCylindrical() throws ParseException {
         final WKTFormat wktFormat = new WKTFormat();
         String wkt = decodeQuotes(
                 "PROJCS[“Equidistant Cylindrical”,\n" +
@@ -356,7 +383,7 @@ public final strictfp class WKTFormatTest {
      * @throws FactoryException Should never happen.
      */
     @Test
-    public void testAliases() throws FactoryException {
+    public void formatVariousConventions() throws FactoryException {
         final DefaultProjectedCRS crs = (DefaultProjectedCRS) CRS.parseWKT(decodeQuotes(
             "PROJCS[“OSGB 1936 / British National Grid”,\n" +
             "  GEOGCS[“OSGB 1936”,\n" +
@@ -397,12 +424,12 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.OGC, 2));
+            crs.toWKT(Convention.OGC, 2));
         /*
          * Formats using GeoTiff identifiers. We should get different strings in PROJECTION[...]
          * and PARAMETER[...] elements, but the other ones (especially DATUM[...]) are unchanged.
          * The changes in UNIT[...] and AXIS[...] are related to the way those objects are built
-         * and are independents of the Citation argument.
+         * and are independents of the Convention argument.
          */
         assertMultilinesEquals(decodeQuotes(
             "PROJCS[“OSGB 1936 / British National Grid”,\n" +
@@ -423,7 +450,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.GEOTIFF, 2));
+            crs.toWKT(Convention.GEOTIFF, 2));
         /*
          * Formats using ESRI identifiers. The most important change we are looking for is
          * the name inside DATUM[...].
@@ -447,7 +474,7 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“meter”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.ESRI, 2));
+            crs.toWKT(Convention.ESRI, 2));
         /*
          * Formats using EPSG identifiers. We expect different names in
          * DATUM[...], PROJECTION[...] and PARAMETER[...].
@@ -471,6 +498,44 @@ public final strictfp class WKTFormatTest {
             "  UNIT[“metre”, 1.0],\n" +
             "  AXIS[“Easting”, EAST],\n" +
             "  AXIS[“Northing”, NORTH]]"),
-            crs.toWKT(Citations.EPSG, 2));
+            crs.toWKT(Convention.EPSG, 2));
+    }
+
+    /**
+     * Formats a CRS using the Paris meridian.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void formatParisMeridian() {
+        final DefaultGeographicCRS crs = new DefaultGeographicCRS("NTF (Paris)",
+            new DefaultGeodeticDatum("Nouvelle Triangulation Francaise (Paris)",
+                DefaultEllipsoid.CLARKE_1866, // Actually Clark 1880, but we don't care for this test.
+                new DefaultPrimeMeridian("Paris", 2.5969213, NonSI.GRADE)),
+            new DefaultEllipsoidalCS("Using grade",
+                new DefaultCoordinateSystemAxis("λ", AxisDirection.EAST,  NonSI.GRADE),
+                new DefaultCoordinateSystemAxis("φ", AxisDirection.NORTH, NonSI.GRADE)));
+
+        // Standard formating
+        assertMultilinesEquals(decodeQuotes(
+            "GEOGCS[“NTF (Paris)”,\n" +
+            "  DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
+            "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”,“7008”]]],\n" +
+            "  PRIMEM[“Paris”, 2.5969213],\n" +
+            "  UNIT[“grade”, 0.015707963267948967],\n" +
+            "  AXIS[“λ”, EAST],\n" +
+            "  AXIS[“φ”, NORTH]]"),
+            crs.toWKT(Convention.OGC, 2));
+
+        // ESRI flavor: prime meridian in degrees.
+        assertMultilinesEquals(decodeQuotes(
+            "GEOGCS[“NTF (Paris)”,\n" +
+            "  DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
+            "    SPHEROID[“Clarke 1866”, 6378206.4, 294.9786982138982, AUTHORITY[“EPSG”,“7008”]]],\n" +
+            "  PRIMEM[“Paris”, 2.33722917],\n" +
+            "  UNIT[“grade”, 0.015707963267948967],\n" +
+            "  AXIS[“λ”, EAST],\n" +
+            "  AXIS[“φ”, NORTH]]"),
+            crs.toWKT(Convention.ESRI, 2));
     }
 }

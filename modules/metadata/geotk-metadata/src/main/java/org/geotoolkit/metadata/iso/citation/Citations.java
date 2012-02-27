@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -103,8 +103,8 @@ public final class Citations extends Static {
      * An {@linkplain Citation#getAlternateTitles alternate title} for this citation is "OGC"
      * (according ISO 19115, alternate titles often contain abbreviations).
      *
-     * @see DefaultResponsibleParty#OGC
      * @see #OPEN_GIS
+     * @see org.geotoolkit.io.wkt.Convention#OGC
      * @category Organisation
      */
     public static final Citation OGC;
@@ -123,7 +123,6 @@ public final class Citations extends Static {
      * {@linkplain Citation#getAlternateTitles Alternate titles} for this citation are
      * "OpenGIS" and "OGC" (according ISO 19115, alternate titles often contain abbreviations).
      *
-     * @see DefaultResponsibleParty#OPEN_GIS
      * @see #OGC
      * @category Organisation
      */
@@ -141,7 +140,7 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.esri.com">ESRI</A> organisation.
      *
-     * @see DefaultResponsibleParty#ESRI
+     * @see org.geotoolkit.io.wkt.Convention#ESRI
      * @category Organisation
      */
     public static final Citation ESRI;
@@ -154,7 +153,7 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.oracle.com">Oracle</A> organisation.
      *
-     * @see DefaultResponsibleParty#ORACLE
+     * @see org.geotoolkit.io.wkt.Convention#ORACLE
      * @category Organisation
      */
     public static final Citation ORACLE;
@@ -167,7 +166,6 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://postgis.refractions.net">PostGIS</A> project.
      *
-     * @see DefaultResponsibleParty#POSTGIS
      * @category Organisation
      *
      * @since 2.4
@@ -182,7 +180,6 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      *
-     * @see DefaultResponsibleParty#GEOTOOLKIT
      * @category Organisation
      */
     public static final Citation GEOTOOLKIT;
@@ -195,7 +192,6 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.geotools.org">GeoTools</A> project.
      *
-     * @see DefaultResponsibleParty#GEOTOOLS
      * @category Organisation
      */
     public static final Citation GEOTOOLS;
@@ -223,8 +219,6 @@ public final class Citations extends Static {
      * @see <A HREF="http://www.opengeospatial.org/">Open Geospatial Consortium</A>
      * @see <A HREF="http://www.opengis.org/docs/01-068r3.pdf">WMS 1.1.1 specification</A>
      * @see <A HREF="http://portal.opengis.org/files/?artifact_id=5316">WMS 1.3.0 specification</A>
-     * @see DefaultResponsibleParty#OGC
-     * @see DefaultOnlineResource#WMS
      * @category Specification
      */
     public static final Citation WMS;
@@ -252,7 +246,7 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</A> specification.
      *
-     * @see DefaultResponsibleParty#NETCDF
+     * @see org.geotoolkit.io.wkt.Convention#NETCDF
      * @category Specification
      *
      * @since 3.08
@@ -268,7 +262,7 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> specification.
      *
-     * @see DefaultResponsibleParty#GEOTIFF
+     * @see org.geotoolkit.io.wkt.Convention#GEOTIFF
      * @category Specification
      */
     public static final Citation GEOTIFF;
@@ -284,7 +278,6 @@ public final class Citations extends Static {
      * An {@linkplain Citation#getAlternateTitles alternate title} for this citation is "JAI"
      * (according ISO 19115, alternate titles often contain abbreviations).
      *
-     * @see DefaultResponsibleParty#SUN_MICROSYSTEMS
      * @category Specification
      */
     public static final Citation JAI;
@@ -319,10 +312,10 @@ public final class Citations extends Static {
      * title} and {@linkplain Citation#getAlternateTitles alternate titles} if there is no identifier)
      * using the {@link #identifierMatches(Citation,String) identifierMatches} method.
      *
-     * @see DefaultResponsibleParty#EPSG
      * @see #AUTO
      * @see #AUTO2
      * @see #CRS
+     * @see org.geotoolkit.io.wkt.Convention#EPSG
      * @category Code space
      */
     public static final IdentifierSpace<Integer> EPSG;
@@ -481,7 +474,7 @@ public final class Citations extends Static {
     /**
      * The <A HREF="http://trac.osgeo.org/proj/">Proj.4</A> project.
      *
-     * @see DefaultResponsibleParty#PROJ4
+     * @see org.geotoolkit.io.wkt.Convention#PROJ4
      * @category Specification
      *
      * @since 3.20

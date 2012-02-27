@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2003-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -531,7 +531,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     }
 
     /**
-     * Returns {@code true} if the supplied range is fully contained within this range.
+     * {@inheritDoc}
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
@@ -548,7 +548,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     }
 
     /**
-     * Returns {@code true} if this range intersects the given range.
+     * {@inheritDoc}
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
@@ -565,7 +565,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     }
 
     /**
-     * Returns the union of this range with the given range.
+     * {@inheritDoc}
      * Widening conversions will be applied as needed.
      */
     @Override
@@ -577,8 +577,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     }
 
     /**
-     * Returns the intersection of this range with the given range. Widening
-     * conversions will be applied as needed.
+     * {@inheritDoc}
+     * Widening conversions will be applied as needed.
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
@@ -598,7 +598,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     }
 
     /**
-     * Returns the range of values that are in this range but not in the given range.
+     * {@inheritDoc}
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})

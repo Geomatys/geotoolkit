@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2002-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.io.wkt;
 
+import java.util.Map;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
@@ -31,8 +32,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * Parsers also need a set of factories to be used for instantiating the parsed objects.
  * <p>
  * In current version, parsers are usually not intended to be subclassed outside this package.
- * A few exceptions exist, for example {@link ReferencingParser#alterProperties} is one of the
- * few hooks provided for overriding.
+ * A few exceptions exist, for example {@link ReferencingParser#alterProperties(Map)} is one
+ * of the few hooks provided for overriding.
  * <p>
  * Parsers are not synchronized. It is recommended to create separate parser instances for each
  * thread. If multiple threads access a parser concurrently, it must be synchronized externally.

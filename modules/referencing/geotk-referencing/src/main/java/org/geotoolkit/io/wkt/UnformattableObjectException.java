@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2004-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Thrown by {@link FormattableObject#toWKT} when an object can't be formatted as WKT.
+ * Thrown by {@link FormattableObject#toWKT()} when an object can't be formatted as WKT.
  * A formatting may fails because an object is too complex for the WKT format capability
  * (for example an {@linkplain org.geotoolkit.referencing.crs.DefaultEngineeringCRS
  * engineering CRS} with different unit for each axis), or because only some specific
@@ -31,7 +31,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @version 3.16
  *
- * @see Formatter#setInvalidWKT
+ * @see Formatter#setInvalidWKT(Class)
  *
  * @since 2.0
  * @module

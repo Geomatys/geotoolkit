@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2004-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,9 +31,10 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.Strings;
 
 import static java.lang.Character.isJavaIdentifierPart;
-import static java.lang.Character.isJavaIdentifierStart;
 
 
 /**
@@ -185,7 +186,8 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
         /*
          * Checks argument validity.
          */
-        if (!isIdentifier(identifier)) {
+        ArgumentChecks.ensureNonNull("identifier", identifier);
+        if (!Strings.isJavaIdentifier(identifier)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, identifier));
         }
         if (value == null || value.trim().isEmpty()) {
@@ -196,7 +198,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
          * identifier, then we will take that as an alias for an existing entry.
          */
         final Parsed previous;
-        if (isIdentifier(value)) {
+        if (Strings.isJavaIdentifier(value)) {
             final Parsed parsed = definitions.get(identifier);
             if (parsed != null) {
                 previous = definitions.put(identifier, parsed);
@@ -248,22 +250,6 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             entries = new Entries(definitions);
         }
         return entries;
-    }
-
-    /**
-     * Returns {@code true} if the specified text is a valid identifier.
-     */
-    static boolean isIdentifier(final String text) {
-        if (text == null) {
-            return false;
-        }
-        for (int i=text.length(); --i>=0;) {
-            final char c = text.charAt(i);
-            if (!(i == 0 ? isJavaIdentifierStart(c) : isJavaIdentifierPart(c))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

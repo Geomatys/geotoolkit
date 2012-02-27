@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2004-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,8 @@
  */
 package org.geotoolkit.referencing.crs;
 
-import org.geotoolkit.io.wkt.FormattableObject;
+import org.geotoolkit.io.wkt.WKTFormat;
+import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
@@ -109,7 +110,7 @@ public final strictfp class CoordinateReferenceSystemTest extends ReferencingTes
                 "UNIT[“degree”, 0.017453292519943295], " +
                 "AXIS[“Geodetic longitude”, EAST], " +
                 "AXIS[“Geodetic latitude”, NORTH]]"),
-                WGS84.toWKT(FormattableObject.SINGLE_LINE));
+                WGS84.toWKT(Convention.OGC, WKTFormat.SINGLE_LINE));
     }
 
     /**

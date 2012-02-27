@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 1999-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 1999-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -83,7 +83,7 @@ public abstract class MapProjection extends MathTransformProvider {
                 new NamedIdentifier(Citations.ESRI, "Semi_Major"),
                 new NamedIdentifier(Citations.EPSG, "Semi-major axis"),
                 // EPSG does not specifically define the above parameter
-                new NamedIdentifier(PROJ4, "a")
+                new NamedIdentifier(Citations.PROJ4, "a")
             },
             Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE);
 
@@ -99,7 +99,7 @@ public abstract class MapProjection extends MathTransformProvider {
                 new NamedIdentifier(Citations.ESRI, "Semi_Minor"),
                 new NamedIdentifier(Citations.EPSG, "Semi-minor axis"),
                 // EPSG does not specifically define the above parameter
-                new NamedIdentifier(PROJ4, "b")
+                new NamedIdentifier(Citations.PROJ4, "b")
             },
             Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE);
 

@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -326,7 +326,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
     }
 
     /**
-     * Returns {@code true} if this range contains fully the given range.
+     * Returns {@code true} if the supplied range is fully contained within this range.
      *
      * @param  range The range to check for inclusion in this range.
      * @return {@code true} if the given range is included in this range.

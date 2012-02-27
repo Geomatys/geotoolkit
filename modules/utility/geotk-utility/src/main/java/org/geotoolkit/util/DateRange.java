@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2007-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ import org.geotoolkit.resources.Errors;
  * Consequently the precision of {@code DateRange} objects is milliseconds.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @see org.geotoolkit.measure.RangeFormat
  *
@@ -96,6 +96,29 @@ public class DateRange extends Range<Date> {
     }
 
     /**
+     * Creates a new date range using the given values. This method is invoked by the
+     * parent class for creating the result of an intersection or union operation.
+     *
+     * @since 3.20
+     */
+    @Override
+    final DateRange create(final Date minValue, final boolean isMinIncluded,
+                           final Date maxValue, final boolean isMaxIncluded)
+    {
+        return new DateRange(minValue, isMinIncluded, maxValue, isMaxIncluded);
+    }
+
+    /**
+     * Returns an initially empty array of the given length.
+     *
+     * @since 3.20
+     */
+    @Override
+    final DateRange[] newArray(final int length) {
+        return new DateRange[length];
+    }
+
+    /**
      * Ensures that {@link #elementClass} is compatible with the type expected by this range class.
      * Invoked for argument checking by the super-class constructor.
      */
@@ -106,6 +129,19 @@ public class DateRange extends Range<Date> {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_CLASS_$2, elementClass, Date.class));
         }
+    }
+
+    /**
+     * Casts the given {@code Range} object to a {@code DateRange}. This method shall be invoked
+     * only in context where we have verified that the range element class is compatible. This
+     * verification is performed by {@link Range#ensureCompatible(Range)} method.
+     */
+    private static DateRange cast(final Range<?> range) {
+        if (range == null || range instanceof DateRange) {
+            return (DateRange) range;
+        }
+        return new DateRange((Date) ((Object) range.getMinValue()), range.isMinIncluded(),
+                             (Date) ((Object) range.getMaxValue()), range.isMaxIncluded());
     }
 
     /**
@@ -140,5 +176,37 @@ public class DateRange extends Range<Date> {
     @Override
     public Date getMaxValue() {
         return clone(super.getMaxValue());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.20
+     */
+    @Override
+    public DateRange union(final Range<?> range) throws IllegalArgumentException {
+        return cast(super.union(range));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.20
+     */
+    @Override
+    public DateRange intersect(final Range<?> range) throws IllegalArgumentException {
+        return cast(super.intersect(range));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.20
+     */
+    @Override
+    public DateRange[] subtract(final Range<?> range) throws IllegalArgumentException {
+        return (DateRange[]) super.subtract(range);
+        // Should never throw ClassCastException because super.subtract(Range) invokes newArray(int)
+        // and create(...), which are overridden in this class with DateRange return type.
     }
 }

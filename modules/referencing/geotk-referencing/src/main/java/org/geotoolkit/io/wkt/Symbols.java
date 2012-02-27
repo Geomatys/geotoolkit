@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2004-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,9 @@ import org.geotoolkit.internal.InternalUtilities;
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
+ *
+ * @see WKTFormat#getSymbols()
+ * @see WKTFormat#setSymbols(Symbols)
  *
  * @since 2.1
  * @level advanced

@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2001-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2001-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,7 @@ import org.geotoolkit.measure.Units;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import org.geotoolkit.io.wkt.Convention;
 
 
 /**
@@ -121,7 +122,8 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      * is assumed in {@linkplain NonSI#DEGREE_ANGLE decimal degrees}.
      *
      * @param name                The datum name.
-     * @param greenwichLongitude  The longitude value relative to the Greenwich Meridian.
+     * @param greenwichLongitude  The longitude value relative to the Greenwich Meridian,
+     *                            in decimal degrees.
      */
     public DefaultPrimeMeridian(final String name, final double greenwichLongitude) {
         this(name, greenwichLongitude, NonSI.DEGREE_ANGLE);
@@ -269,7 +271,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
     @Override
     public String formatWKT(final Formatter formatter) {
         Unit<Angle> context = formatter.getAngularUnit();
-        if (context == null) {
+        if (context == null || formatter.getConvention() == Convention.ESRI) {
             // If the PrimeMeridian is written inside a "GEOGCS",
             // then OpenGIS say that it must be written into the
             // unit of the enclosing geographic coordinate system.

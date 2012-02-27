@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,11 +23,11 @@
  * customize the WKT output. For example it is possible to:
  * <p>
  * <ul>
- *   <li>format parameter using the names of an other authority than OGC. For example we may want
+ *   <li>Format parameter using the names of an other authority than OGC. For example we may want
  *       to format using the GeoTIFF parameter names.</li>
  *   <li>Use curly brackets instead than square ones, as in {@code DATUM("WGS84")} instead than
  *       {@code DATUM["WGS84"]}. This is legal WKT, even if less frequent than square brackets.</li>
- *   <li>Apply syntactic coloring for output on X3.64 terminal</li>
+ *   <li>Apply syntactic coloring for output on X3.64 terminal.</li>
  * </ul>
  * <p>
  * Current implementation is primarily targeting parsing and formatting of referencing objects.
@@ -40,10 +40,10 @@
  * by the {@link org.geotoolkit.io.wkt.ReferencingParser} class. The parser provides
  * methods for:
  * <p>
- * </ul>
+ * <ul>
  *   <li>Specifying whatever the default axis names shall be ISO identifiers or the
  *       legacy identifiers specified in the WKT specification.</li>
- *   <li>Ignoring the {@code AXIS[...]} elements, which may be used as a way to force
+ *   <li>Ignoring the {@code AXIS[...]} elements. This approach can be used as a way to force
  *       the (<var>longitude</var>, <var>latitude</var>) axes order.</li>
  * </ul>
  *

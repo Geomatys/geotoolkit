@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2002-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -74,16 +74,15 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
 /**
  * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite> (WKT)</A> parser for referencing objects. This include, but is not limited too,
- * {@linkplain CoordinateReferenceSystem Coordinate Reference System} objects. This parser can parse
- * {@linkplain MathTransform Math Transform} objects as well because they are part of the WKT's
- * {@code "FITTED_CS"} element.
+ * {@linkplain CoordinateReferenceSystem Coordinate Reference System} and {@linkplain MathTransform
+ * Math Transform} objects. Note that math transforms are part of the WKT {@code "FITTED_CS"} element.
  *
- * {@code Default axis names}
+ * {@section Default axis names}
  * The default axis names differ depending on whatever the parsing shall be strictly compliant to
  * the legacy WKT specification, or whatever ISO 19111 identifiers shall be used instead. The
  * following table compares the names:
  *
- * <table>
+ * <table border="1">
  * <tr><th>CRS type</th>  <th>WKT defaults</th><th>ISO abbreviations</th></tr>
  * <tr><td>Geographic</td><td>Lon, Lat</td>    <td>&lambda;, &phi;</td></tr>
  * <tr><td>Vertical</td>  <td>H</td>           <td>h</td></tr>
@@ -91,12 +90,12 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  * <tr><td>Geocentric</td><td>X, Y, Z</td>     <td>X, Y, Z</td></tr>
  * </table>
  *
- * The default behavior is to use the legacy WKT identifiers, for compliance with the WKT
+ * <p>The default behavior is to use the legacy WKT identifiers, for compliance with the WKT
  * specification. This behavior can be changed by call to {@link #setISOConform(boolean)}.
  * Note that Geotk referencing factories like
  * {@link org.geotoolkit.referencing.factory.wkt.WKTParsingAuthorityFactory} perform the
  * above-cited {@code setISOConform(true)} method call on their internal parser instance,
- * for ISO compliance.
+ * for ISO compliance.</p>
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -111,7 +110,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  */
 public class ReferencingParser extends MathTransformParser {
     /**
-     * {@code true} in order to allows the non-standard Oracle syntax. Oracle put the Bursa-Wolf
+     * {@code true} in order to allows the non-standard Oracle syntax. Oracle puts the Bursa-Wolf
      * parameters straight into the {@code DATUM} elements, without enclosing them in a
      * {@code TOWGS84} element.
      */

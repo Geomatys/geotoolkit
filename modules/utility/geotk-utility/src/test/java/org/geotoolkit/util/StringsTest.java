@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2009-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,13 +28,13 @@ import static org.geotoolkit.util.Strings.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.09 (derived from 3.00).
  */
 public final strictfp class StringsTest {
     /**
-     * Tests {@link Strings#spaces}.
+     * Tests {@link Strings#spaces(int)}.
      */
     @Test
     public void testSpaces() {
@@ -44,7 +44,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests {@link Strings#count}.
+     * Tests {@link Strings#count(String, String)} and its variants.
      */
     @Test
     public void testCount() {
@@ -54,7 +54,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests {@link Strings#split}.
+     * Tests {@link Strings#split(String, char)}.
      *
      * @since 3.18
      */
@@ -65,7 +65,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests {@link Strings#parseFloats}.
+     * Tests {@link Strings#parseFloats(String, char)}.
      *
      * @since 3.19
      */
@@ -76,8 +76,8 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#indexOf} method. We test four time with
-     * different kind of character sequences.
+     * Tests the {@link Strings#indexOf(CharSequence, CharSequence, int)} method.
+     * We test four time with different kind of character sequences.
      *
      * @since 3.16
      */
@@ -101,7 +101,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#replace} method.
+     * Tests the {@link Strings#replace(StringBuilder, String, String)} method.
      */
     @Test
     public void testReplace() {
@@ -113,7 +113,23 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#remove} method.
+     * Tests the {@link Strings#replace(StringBuilder, int, int, char[])} method.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testReplaceChars() {
+        final StringBuilder buffer = new StringBuilder("ABCD1234EFGH");
+        replace(buffer, 4, 8, new char[] {'5','6','7','8'});
+        assertEquals("ABCD5678EFGH", buffer.toString());
+        replace(buffer, 4, 6, new char[] {'1','2','3','4'});
+        assertEquals("ABCD123478EFGH", buffer.toString());
+        replace(buffer, 8, 10, new char[] {'a','b','c','d'});
+        assertEquals("ABCD1234abcdEFGH", buffer.toString());
+    }
+
+    /**
+     * Tests the {@link Strings#remove(StringBuilder, String)} method.
      */
     @Test
     public void testRemove() {
@@ -123,7 +139,29 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link InternalUtilities#token} method.
+     * Tests the {@link Strings#trim(String)} method.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testTrim() {
+        assertEquals("A text.", trim("  A text. "));
+    }
+
+    /**
+     * Tests the {@link Strings#trimFractionalPart(String)} method.
+     */
+    @Test
+    public void testTrimFractionalPart() {
+        assertEquals("4",    trimFractionalPart("4"));
+        assertEquals("4",    trimFractionalPart("4."));
+        assertEquals("4",    trimFractionalPart("4.0"));
+        assertEquals("4",    trimFractionalPart("4.00"));
+        assertEquals("4.10", trimFractionalPart("4.10"));
+    }
+
+    /**
+     * Tests the {@link Strings#token(CharSequence, int)} method.
      *
      * @since 3.18
      */
@@ -134,7 +172,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#toASCII} method.
+     * Tests the {@link Strings#toASCII(CharSequence)} method.
      *
      * @since 3.18
      */
@@ -146,7 +184,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#camelCaseToWords} method.
+     * Tests the {@link Strings#camelCaseToWords(CharSequence, boolean)} method.
      */
     @Test
     public void testCamelCaseToWords() {
@@ -155,7 +193,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#getLinesFromMultilines} method.
+     * Tests the {@link Strings#getLinesFromMultilines(String)} method.
      */
     @Test
     public void testGetLinesFromMultilines() {
@@ -174,7 +212,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#camelCaseToAcronym} method.
+     * Tests the {@link Strings#camelCaseToAcronym(String)} method.
      */
     @Test
     public void testCamelCaseToAcronym() {
@@ -187,7 +225,7 @@ public final strictfp class StringsTest {
     }
 
     /**
-     * Tests the {@link Strings#isAcronymForWords} method.
+     * Tests the {@link Strings#isAcronymForWords(CharSequence, CharSequence)} method.
      */
     @Test
     public void testIsAcronymForWords() {

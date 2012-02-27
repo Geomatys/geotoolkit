@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2011, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2011, Geomatys
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.io.wkt.Convention;
+import org.geotoolkit.io.wkt.WKTFormat;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -159,7 +161,7 @@ public strictfp final class Assert extends org.geotoolkit.test.Assert {
             assertNotNull(object);
             final String wkt;
             if (isSingleLine(expected) && (object instanceof FormattableObject)) {
-                wkt = ((FormattableObject) object).toWKT(FormattableObject.SINGLE_LINE);
+                wkt = ((FormattableObject) object).toWKT(Convention.OGC, WKTFormat.SINGLE_LINE);
             } else {
                 wkt = object.toWKT();
             }
