@@ -135,16 +135,16 @@ public class MathTransformParser extends Parser {
         final Object key = element.peek();
         if (key instanceof Element) {
             final String keyword = keyword((Element) key);
-            switch (keyword.hashCode()) {
+            switch (keyword) {
                 /*
                  * Note: the following code is copied in ReferencingParser in order to take
                  * advantage of a single switch statement. If new cases are added there, we
                  * need to add them in ReferencingParser as well.
                  */
-                case  1954077369: if (      "PARAM_MT".equals(keyword)) return parseParamMT      (element); break;
-                case  1889286834: if (     "CONCAT_MT".equals(keyword)) return parseConcatMT     (element); break;
-                case -1910641354: if (    "INVERSE_MT".equals(keyword)) return parseInverseMT    (element); break;
-                case  -219294638: if ("PASSTHROUGH_MT".equals(keyword)) return parsePassThroughMT(element); break;
+                case "PARAM_MT":       return parseParamMT      (element);
+                case "CONCAT_MT":      return parseConcatMT     (element);
+                case "INVERSE_MT":     return parseInverseMT    (element);
+                case "PASSTHROUGH_MT": return parsePassThroughMT(element);
             }
         }
         if (required) {

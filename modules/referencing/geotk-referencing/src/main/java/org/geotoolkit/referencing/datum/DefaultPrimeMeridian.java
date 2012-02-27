@@ -45,6 +45,7 @@ import org.geotoolkit.measure.Units;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import org.geotoolkit.io.wkt.Convention;
 
 
 /**
@@ -122,7 +123,8 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      * is assumed in {@linkplain NonSI#DEGREE_ANGLE decimal degrees}.
      *
      * @param name                The datum name.
-     * @param greenwichLongitude  The longitude value relative to the Greenwich Meridian.
+     * @param greenwichLongitude  The longitude value relative to the Greenwich Meridian,
+     *                            in decimal degrees.
      */
     public DefaultPrimeMeridian(final String name, final double greenwichLongitude) {
         this(name, greenwichLongitude, NonSI.DEGREE_ANGLE);
@@ -270,7 +272,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
     @Override
     public String formatWKT(final Formatter formatter) {
         Unit<Angle> context = formatter.getAngularUnit();
-        if (context == null) {
+        if (context == null || formatter.getConvention() == Convention.ESRI) {
             // If the PrimeMeridian is written inside a "GEOGCS",
             // then OpenGIS say that it must be written into the
             // unit of the enclosing geographic coordinate system.

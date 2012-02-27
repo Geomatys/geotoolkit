@@ -340,19 +340,19 @@ public class ReferencingParser extends MathTransformParser {
         final Object key = element.peek();
         if (key instanceof Element) {
             final String keyword = keyword((Element) key);
-            switch (keyword.hashCode()) {
+            switch (keyword) {
                 /*
                  * Note: the following cases are copied in the parseObject(Element) method in
                  * order to take advantage of a single switch statement. If new cases are added
                  * here, then they must be added in parseObject(Element) as well.
                  */
-                case  2098816550: if (   "GEOGCS".equals(keyword)) return parseGeoGCS  (element); break;
-                case -1926479731: if (   "PROJCS".equals(keyword)) return parseProjCS  (element); break;
-                case  2098812706: if (   "GEOCCS".equals(keyword)) return parseGeoCCS  (element); break;
-                case  1069641278: if (  "VERT_CS".equals(keyword)) return parseVertCS  (element); break;
-                case -1611514396: if ( "LOCAL_CS".equals(keyword)) return parseLocalCS (element); break;
-                case   182967770: if ( "COMPD_CS".equals(keyword)) return parseCompdCS (element); break;
-                case   414930797: if ("FITTED_CS".equals(keyword)) return parseFittedCS(element); break;
+                case "GEOGCS":    return parseGeoGCS  (element);
+                case "PROJCS":    return parseProjCS  (element);
+                case "GEOCCS":    return parseGeoCCS  (element);
+                case "VERT_CS":   return parseVertCS  (element);
+                case "LOCAL_CS":  return parseLocalCS (element);
+                case "COMPD_CS":  return parseCompdCS (element);
+                case "FITTED_CS": return parseFittedCS(element);
             }
         }
         throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, key));
@@ -370,35 +370,35 @@ public class ReferencingParser extends MathTransformParser {
         final Object key = element.peek();
         if (key instanceof Element) {
             final String keyword = keyword((Element) key);
-            switch (keyword.hashCode()) {
-                case     2023329: if (       "AXIS".equals(keyword)) return parseAxis      (element, METRE, true); break;
-                case -1926655538: if (     "PRIMEM".equals(keyword)) return parsePrimem    (element, DEGREE_ANGLE); break;
-                case  -414856156: if (    "TOWGS84".equals(keyword)) return parseToWGS84   (element); break;
-                case -1262236878: if (   "SPHEROID".equals(keyword)) return parseSpheroid  (element); break;
-                case  1321414593: if ( "VERT_DATUM".equals(keyword)) return parseVertDatum (element); break;
-                case   519534171: if ("LOCAL_DATUM".equals(keyword)) return parseLocalDatum(element); break;
-                case    64819279: if (      "DATUM".equals(keyword)) return parseDatum     (element, GREENWICH); break;
+            switch (keyword) {
+                case "AXIS":        return parseAxis      (element, METRE, true);
+                case "PRIMEM":      return parsePrimem    (element, DEGREE_ANGLE);
+                case "TOWGS84":     return parseToWGS84   (element);
+                case "SPHEROID":    return parseSpheroid  (element);
+                case "VERT_DATUM":  return parseVertDatum (element);
+                case "LOCAL_DATUM": return parseLocalDatum(element);
+                case "DATUM":       return parseDatum     (element, GREENWICH);
                 /*
                  * Note: the following cases are copied from parseCoordinateReferenceSystem(Element)
                  * method in order to take advantage of a single switch statement. If new cases are
                  * added here, then they must be added in the above method first.
                  */
-                case  2098816550: if (   "GEOGCS".equals(keyword)) return parseGeoGCS  (element); break;
-                case -1926479731: if (   "PROJCS".equals(keyword)) return parseProjCS  (element); break;
-                case  2098812706: if (   "GEOCCS".equals(keyword)) return parseGeoCCS  (element); break;
-                case  1069641278: if (  "VERT_CS".equals(keyword)) return parseVertCS  (element); break;
-                case -1611514396: if ( "LOCAL_CS".equals(keyword)) return parseLocalCS (element); break;
-                case   182967770: if ( "COMPD_CS".equals(keyword)) return parseCompdCS (element); break;
-                case   414930797: if ("FITTED_CS".equals(keyword)) return parseFittedCS(element); break;
+                case "GEOGCS":    return parseGeoGCS  (element);
+                case "PROJCS":    return parseProjCS  (element);
+                case "GEOCCS":    return parseGeoCCS  (element);
+                case "VERT_CS":   return parseVertCS  (element);
+                case "LOCAL_CS":  return parseLocalCS (element);
+                case "COMPD_CS":  return parseCompdCS (element);
+                case "FITTED_CS": return parseFittedCS(element);
                 /*
                  * Note: the following cases are copied from MathTransformParser in order to take
                  * advantage of a single switch statement. If new cases are added there, then the
                  * superclass must be updated first.
                  */
-                case  1954077369: if (      "PARAM_MT".equals(keyword)) return parseParamMT      (element); break;
-                case  1889286834: if (     "CONCAT_MT".equals(keyword)) return parseConcatMT     (element); break;
-                case -1910641354: if (    "INVERSE_MT".equals(keyword)) return parseInverseMT    (element); break;
-                case  -219294638: if ("PASSTHROUGH_MT".equals(keyword)) return parsePassThroughMT(element); break;
+                case "PARAM_MT":       return parseParamMT      (element);
+                case "CONCAT_MT":      return parseConcatMT     (element);
+                case "INVERSE_MT":     return parseInverseMT    (element);
+                case "PASSTHROUGH_MT": return parsePassThroughMT(element);
             }
         }
         throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, key));

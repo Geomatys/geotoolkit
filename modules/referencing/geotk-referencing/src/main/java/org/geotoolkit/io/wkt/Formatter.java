@@ -855,6 +855,22 @@ public class Formatter {
     }
 
     /**
+     * Returns the convention to use for formatting the WKT. The default convention is
+     * {@link Convention#OGC OGC}. A different convention will usually result in different
+     * parameter names, but may also change the WKT syntax.
+     *
+     * @return The convention (never {@code null}).
+     *
+     * @see WKTFormat#setConvention(Convention)
+     * @see FormattableObject#toWKT(Convention, int)
+     *
+     * @since 3.20
+     */
+    public Convention getConvention() {
+        return convention;
+    }
+
+    /**
      * Returns {@code true} if the WKT should reflect the internal structure of the object.
      * This is usually {@code true} only when debugging map projections.
      *
@@ -863,8 +879,11 @@ public class Formatter {
      * @see Convention#INTERNAL
      *
      * @since 3.00
+     *
+     * @deprecated Replaced by {@code getConvention() == Convention.INTERNAL}.
      */
     @Debug
+    @Deprecated
     public boolean isInternalWKT() {
         return convention == Convention.INTERNAL;
     }
