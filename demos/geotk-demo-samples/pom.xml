@@ -18,7 +18,11 @@
 
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-index-tree</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>

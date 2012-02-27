@@ -64,8 +64,7 @@ public class TreeWriter {
     public TreeWriter() {
     }
 
-    /**
-     * Set the output for this writer.<br/>
+    /**Set the output for this writer.<br/>
      * Handle types are :<br/>
      * - java.io.File<br/>
      * - java.io.OutputStream<br/>
@@ -160,8 +159,7 @@ public class TreeWriter {
         }
     }
 
-    /**
-     * Find all tree node and affect an id for each them.
+    /**Find all tree node and affect an id for each them.
      * 
      * @param node tree root node.
      */
@@ -174,8 +172,7 @@ public class TreeWriter {
         }
     }
 
-    /**
-     * Release potential locks or opened stream.
+    /**Release potential locks or opened stream.
      * Must be called when the writer is not needed anymore.
      * It should not be used after this method has been called.
      */
@@ -186,8 +183,7 @@ public class TreeWriter {
         dataOPStream.close();
     }
 
-    /**
-     * close potential previous stream and cache if there are some.
+    /**Close potential previous stream and cache if there are some.
      * This way the writer can be reused for a different output later.
      * The underlying stax writer will be closed.
      */
@@ -199,8 +195,7 @@ public class TreeWriter {
         inc = 0;
     }
 
-    /**
-     * To write one time without TreeWriter re-utilization.
+    /**To write one time without TreeWriter re-utilization.
      * 
      * @param tree
      * @param output
