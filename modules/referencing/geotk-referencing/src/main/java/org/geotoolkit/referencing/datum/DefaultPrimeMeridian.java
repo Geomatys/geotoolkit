@@ -45,7 +45,6 @@ import org.geotoolkit.measure.Units;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
-import org.geotoolkit.io.wkt.Convention;
 
 
 /**
@@ -270,14 +269,18 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      * @return The WKT element name, which is {@code "PRIMEM"}.
      */
     @Override
+    @SuppressWarnings("fallthrough")
     public String formatWKT(final Formatter formatter) {
-        Unit<Angle> context = formatter.getAngularUnit();
-        if (context == null || formatter.getConvention() == Convention.ESRI) {
-            // If the PrimeMeridian is written inside a "GEOGCS",
-            // then OpenGIS say that it must be written into the
-            // unit of the enclosing geographic coordinate system.
-            // Otherwise, default to decimal degrees.
-            context = NonSI.DEGREE_ANGLE;
+        Unit<Angle> context;
+        switch (formatter.getConvention()) {
+            /*
+             * If the PrimeMeridian is written inside a "GEOGCS", then OGC say that it must be
+             * written into the unit of the enclosing geographic coordinate system. Otherwise,
+             * default to decimal degrees. Note that ESRI doesn't follow this rule.
+             */
+            default:    if ((context = formatter.getAngularUnit()) != null) break;
+            case ESRI:  // Fall through
+            case PROJ4: context = NonSI.DEGREE_ANGLE; break;
         }
         formatter.append(getGreenwichLongitude(context));
         return "PRIMEM";

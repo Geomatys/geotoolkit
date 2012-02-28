@@ -541,10 +541,14 @@ public class Formatter {
             final Unit<?> valueUnit = descriptor.getUnit();
             Unit<?> unit = valueUnit;
             if (unit!=null && !Unit.ONE.equals(unit)) {
-                if (linearUnit!=null && unit.isCompatible(linearUnit)) {
-                    unit = linearUnit;
-                } else if (angularUnit!=null && unit.isCompatible(angularUnit)) {
-                    unit = angularUnit;
+                Unit<?> contextUnit = linearUnit;
+                if (contextUnit!=null && unit.isCompatible(contextUnit)) {
+                    unit = contextUnit;
+                } else {
+                    contextUnit = angularUnit;
+                    if (contextUnit!=null && unit.isCompatible(contextUnit)) {
+                        unit = contextUnit;
+                    }
                 }
             }
             appendSeparator(true);
@@ -807,8 +811,10 @@ public class Formatter {
      * Sets the unit for formatting linear measures.
      *
      * @param unit The new unit, or {@code null}.
+     * @throws IllegalArgumentException If the given unit is not null and not a
+     *         {@linkplain Units#isLinear(Unit) linear unit}.
      */
-    public void setLinearUnit(final Unit<Length> unit) {
+    public void setLinearUnit(final Unit<Length> unit) throws IllegalArgumentException {
         if (unit != null && !Units.isLinear(unit)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
         }
@@ -830,8 +836,10 @@ public class Formatter {
      * Sets the angular unit for formatting measures.
      *
      * @param unit The new unit, or {@code null}.
+     * @throws IllegalArgumentException If the given unit is not null and not an
+     *         {@linkplain Units#isAngular(Unit) angular unit}.
      */
-    public void setAngularUnit(final Unit<Angle> unit) {
+    public void setAngularUnit(final Unit<Angle> unit) throws IllegalArgumentException {
         if (unit != null && !Units.isAngular(unit)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_ANGULAR_UNIT_$1, unit));
         }
