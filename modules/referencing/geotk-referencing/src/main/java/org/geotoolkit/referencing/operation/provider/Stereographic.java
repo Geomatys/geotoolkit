@@ -50,7 +50,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @see ObliqueStereographic
  * @see PolarStereographic
@@ -126,7 +126,9 @@ public class Stereographic extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
+            new NamedIdentifier(Citations.OGC,     "Stereographic"),
             new NamedIdentifier(Citations.ESRI,    "Stereographic"),
+            new NamedIdentifier(Citations.NETCDF,  "Stereographic"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_Stereographic"),
             new IdentifierCode (Citations.GEOTIFF,  14),
             new NamedIdentifier(Citations.PROJ4,   "stere"),
