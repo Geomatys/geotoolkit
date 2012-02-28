@@ -715,7 +715,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
 
         if (candidate.getParent() != null) {
-            trim(candidate.getParent());
+            trim((DefaultNode)candidate.getParent());
         }
     }
 

@@ -30,14 +30,14 @@ public interface Node<N extends Node<N,B>, B> {
     
     List<N> getChildren();
     
-    /**A leaf is a {@code Node2D} at extremity of {@code Tree} which contains only entries.
+    /**A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
      * 
      * @return true if it is  a leaf else false (branch).
      */
     boolean isLeaf();
     
     /**
-     * @return true if {@code Node2D} contains nothing else false.
+     * @return true if {@code Node} contains nothing else false.
      */
     boolean isEmpty();
     
@@ -61,9 +61,9 @@ public interface Node<N extends Node<N,B>, B> {
     List<Envelope> getEntries();
 
     /**
-     * @return {@code Node2D} parent pointer.
+     * @return {@code AbstractNode} parent pointer.
      */
-    N getParent();
+    Node getParent();
 
     /**
      * @return {@code Tree} pointer.

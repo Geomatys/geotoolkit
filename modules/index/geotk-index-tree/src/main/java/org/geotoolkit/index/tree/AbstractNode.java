@@ -62,7 +62,8 @@ public abstract class AbstractNode<N extends Node<N,B>, B> implements Node<N, B>
         listenerList.remove(PropertyChangeListener.class, l);
     }
     
-
+    public abstract void setParent(Node parent);
+    
     protected void fireCollectionEvent() {
 
         final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);

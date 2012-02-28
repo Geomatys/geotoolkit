@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.AbstractNode;
 import org.geotoolkit.index.tree.DefaultAbstractTree;
 import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.DefaultTreeUtils;
@@ -512,7 +513,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * @param candidate {@code DefaultNode} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final DefaultNode candidate) throws MismatchedReferenceSystemException {
+    private static void trim(final AbstractNode candidate) throws MismatchedReferenceSystemException {
         ArgumentChecks.ensureNonNull("trim : Node3D candidate", candidate);
         final List<DefaultNode> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
@@ -533,7 +534,7 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
         if(candidate.getParent()!=null){
-            trim(candidate.getParent());
+            trim((AbstractNode)candidate.getParent());
         }
         for(Envelope ent : reinsertList){
             tree.insert(ent);

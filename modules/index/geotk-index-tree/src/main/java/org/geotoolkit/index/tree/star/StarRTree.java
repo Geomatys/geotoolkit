@@ -633,7 +633,7 @@ public class StarRTree extends DefaultAbstractTree {
             }
         }
         if(candidate.getParent()!=null){
-            trim(candidate.getParent());
+            trim((DefaultNode)candidate.getParent());
         }
         for(Envelope ent : reinsertList){
             tree.insert(ent);

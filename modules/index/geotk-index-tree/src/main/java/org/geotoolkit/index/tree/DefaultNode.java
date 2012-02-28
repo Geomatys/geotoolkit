@@ -39,7 +39,7 @@ import org.opengis.geometry.Envelope;
 public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
     
     protected GeneralEnvelope boundary;
-    private DefaultNode parent;
+    private AbstractNode parent;
     private final Tree tree;
     
     private final List<DefaultNode> children = new CrossList<DefaultNode>(DefaultNode.class) {
@@ -213,7 +213,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * {@inheritDoc} 
      */
     @Override
-    public DefaultNode getParent() {
+    public AbstractNode getParent() {
         return parent;
     }
 
@@ -242,10 +242,6 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
         }
         for(DefaultNode n2D : getChildren()){
             if(!n2D.isEmpty()){
-                Object b = n2D.getBoundary();
-                if(b == null){
-                    System.out.println("");
-                }
                 addBound(n2D.getBoundary());
             }
         }
@@ -267,8 +263,9 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * 
      * @param parent 
      */
-    public void setParent(final DefaultNode parent){
-        this.parent = parent;
+    @Override
+    public void setParent(final Node parent){
+        this.parent = (AbstractNode) parent;
     }
     
     /**
