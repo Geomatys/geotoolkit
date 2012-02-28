@@ -217,7 +217,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
 
         //force throw CapabilitiesException if the returned capabilities object is null
         if(capabilities == null){
-            throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
+            throw new CapabilitiesException("The capabilities document is null.");
         }
 
         return capabilities;
