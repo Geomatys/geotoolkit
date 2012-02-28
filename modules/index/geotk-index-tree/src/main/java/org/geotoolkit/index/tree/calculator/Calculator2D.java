@@ -480,9 +480,9 @@ public class Calculator2D extends Calculator {
      * {@inheritDoc }.
      */
     @Override
-    public int getHVOfEntry(final DefaultNode candidate, final GeneralEnvelope entry) {
+    public int getHVOfEntry(final DefaultNode candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
-        final DirectPosition ptCE = entry.getMedian();
+        final DirectPosition ptCE = DefaultTreeUtils.getMedian(entry);
         if (! candidate.getBoundary().contains(ptCE)) {////////// attention
             throw new IllegalArgumentException("entry is out of this node boundary");
         }

@@ -122,8 +122,8 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }else{
             if(candidate.isLeaf()){
-                for(GeneralEnvelope gn : candidate.getEntries()){
-                    if(gn.intersects(regionSearch, true)){
+                for(Envelope gn : candidate.getEntries()){
+                    if(regionSearch.intersects(gn, true)){
                         resultList.add(gn);
                     }
                 }

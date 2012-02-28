@@ -202,8 +202,6 @@ public class ReaderWriterTest {
         treeTest.search(((DefaultNode) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
-        System.out.println("treeRef : "+treeRef);
-        System.out.println("treeTest : "+treeTest);
         assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));
     }
 

@@ -143,7 +143,7 @@ public class TreeWriter {
                 listEntries.addAll(no.getEntries());
             }
             dops.writeInt(listEntries.size());
-            for (GeneralEnvelope gEnv : listEntries) {
+            for (Envelope gEnv : listEntries) {
                 final ByteArrayOutputStream temp = new ByteArrayOutputStream();
                 final ObjectOutputStream ost = new ObjectOutputStream(temp);
                 ost.writeObject(gEnv);

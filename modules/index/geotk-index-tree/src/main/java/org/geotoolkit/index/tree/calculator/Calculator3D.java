@@ -31,7 +31,7 @@ import org.opengis.geometry.Envelope;
  * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class Calculator3D extends Calculator<GeneralEnvelope> {
+public class Calculator3D extends Calculator {
 
     /**
      * To compare two {@code DefaultNode} from them boundary box minimum x axis

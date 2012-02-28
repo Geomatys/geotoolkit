@@ -187,11 +187,12 @@ public class HilbertRTree extends DefaultAbstractTree {
                 GeneralEnvelope envelope = DefaultTreeUtils.getEnveloppeMin(lS);
                 candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty("hilbertOrder"), envelope);
                 for (Envelope sh : lS) {
+                    candidate.setBound(envelope);
                     chooseSubtree(candidate, entry).getEntries().add(sh);
                 }
             } else {
                 chooseSubtree(candidate, entry).getEntries().add(entry);
-
+                
             }
         } else {
             insertNode(chooseSubtree(candidate, entry), entry);
@@ -222,7 +223,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
             final GeneralEnvelope boundT = DefaultTreeUtils.getEnveloppeMin(lS);
             calc.createBasicHL(candidate, cHO + 1, boundT);
-            for (GeneralEnvelope sh : lS) {
+            for (Envelope sh : lS) {
                 candidate.setBound(boundT);
                 chooseSubtree(candidate, sh).getEntries().add(sh);
             }
@@ -707,8 +708,8 @@ public class HilbertRTree extends DefaultAbstractTree {
                 calc.createBasicHL(candidate, tree.getHilbertOrder(), bound);
                 candidate.setUserProperty("isleaf", true);
                 for (Envelope entry : lS) {
-                    DefaultNode n = chooseSubtree(candidate, entry);
-                    n.getEntries().add(entry);
+                    candidate.setBound(bound);
+                    chooseSubtree(candidate, entry).getEntries().add(entry);
                 }
             }
         }
@@ -775,7 +776,7 @@ public class HilbertRTree extends DefaultAbstractTree {
 //            setUserProperty("cells", new ArrayList<DefaultNode>());
             final GeneralEnvelope bound = DefaultTreeUtils.getEnveloppeMin(listEntries);
             getCalculator().createBasicHL(result, hOrder, bound);
-            for (GeneralEnvelope ent : listEntries) {
+            for (Envelope ent : listEntries) {
                 result.setBound(bound);
                 chooseSubtree(result, ent).getEntries().add(ent);
             }

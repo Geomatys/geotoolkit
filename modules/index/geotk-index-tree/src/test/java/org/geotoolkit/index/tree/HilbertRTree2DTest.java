@@ -25,6 +25,7 @@ import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -63,7 +64,7 @@ public class HilbertRTree2DTest extends TreeTest {
      */
     @Override
     public boolean checkBoundaryNode(final DefaultNode node) {
-        final List<GeneralEnvelope> lS = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> lS = new ArrayList<Envelope>();
         if (node.isLeaf()) {
             for (DefaultNode no : node.getChildren()) {
                 if (!no.isEmpty()) {
