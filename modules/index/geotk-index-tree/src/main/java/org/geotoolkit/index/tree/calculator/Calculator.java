@@ -18,8 +18,10 @@
 package org.geotoolkit.index.tree.calculator;
 
 import java.util.Comparator;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.DefaultNode;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -27,26 +29,26 @@ import org.opengis.geometry.DirectPosition;
  * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public abstract class Calculator<B> {
+public abstract class Calculator {
 
     /**
      * @param envelop
      * @return envelop bulk or area.
      */
-    public abstract double getSpace(final B envelop);
+    public abstract double getSpace(final GeneralEnvelope envelop);
 
     /**
      * @param envelop
      * @return evelop edge.
      */
-    public abstract double getEdge(final B envelop);
+    public abstract double getEdge(final GeneralEnvelope envelop);
 
     /**
      * @param envelopA
      * @param envelopB
      * @return distance between envelopA, envelopB.
      */
-    public abstract double getDistance(final B envelopA, final B envelopB);
+    public abstract double getDistance(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB);
 
     /**
      * @param positionA
@@ -67,7 +69,7 @@ public abstract class Calculator<B> {
      * @param envelopB
      * @return overlaps between envelopA, envelopB.
      */
-    public abstract double getOverlaps(final B envelopA, final B envelopB);
+    public abstract double getOverlaps(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB);
 
     /**
      * <blockquote><font size=-1> <strong>NOTE : In case of narrowing, negative
@@ -77,7 +79,7 @@ public abstract class Calculator<B> {
      * @param envMax
      * @return enlargement from envMin to envMax.
      */
-    public abstract double getEnlargement(final B envMin, final B envMax);
+    public abstract double getEnlargement(final GeneralEnvelope envMin, final GeneralEnvelope envMax);
 
     /**
      * Return a {@code Comparator} to sort list elements.
@@ -103,7 +105,7 @@ public abstract class Calculator<B> {
      * @throws IllegalArgumentException if param hl Hilbert order is larger than
      * them Hilbert RTree order.
      */
-    public abstract void createBasicHL(final DefaultNode candidate, final int order, final B bound);
+    public abstract void createBasicHL(final DefaultNode candidate, final int order, final GeneralEnvelope bound);
 
     /**
      * Find Hilbert order of an entry from candidate.
@@ -115,5 +117,5 @@ public abstract class Calculator<B> {
      * @throws IllegalArgumentException if entry is null.
      * @return integer the entry Hilbert order.
      */
-    public abstract int getHVOfEntry(final DefaultNode candidate, final B entry);
+    public abstract int getHVOfEntry(final DefaultNode candidate, final Envelope entry);
 }

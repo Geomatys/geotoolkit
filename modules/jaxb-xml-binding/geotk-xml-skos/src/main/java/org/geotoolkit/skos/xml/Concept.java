@@ -108,7 +108,7 @@ public class Concept implements Serializable {
     private List<Value> altLabel;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
-    private Concept related;
+    private List<Concept> related;
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> scopeNote;
@@ -379,7 +379,9 @@ public class Concept implements Serializable {
             }
         }
         if (related != null) {
-            response.put(related.resource, "http://www.w3.org/2004/02/skos/core#related");
+            for (Concept rel : related) {
+                response.put(rel.resource, "http://www.w3.org/2004/02/skos/core#related");
+            }
         }
         return response;
     }
@@ -409,7 +411,9 @@ public class Concept implements Serializable {
         }
         if ("http://www.w3.org/2004/02/skos/core#related".equals(property)) {
             if (related != null) {
-                result.add(related.resource);
+                for (Concept c : related) {
+                    result.add(c.resource);
+                }
             }
         }
         return result;
@@ -798,7 +802,7 @@ public class Concept implements Serializable {
     /**
      * @return the related
      */
-    public Concept getRelated() {
+    public List<Concept> getRelated() {
         return related;
     }
 
@@ -806,7 +810,26 @@ public class Concept implements Serializable {
      * @param related the related to set
      */
     public void setRelated(final Concept related) {
+        if (this.related == null) {
+            this.related = new ArrayList<Concept>();
+        }
+        this.related.add(related);
+    }
+    
+    public void setRelated(final List<Concept> related) {
         this.related = related;
+    }
+    
+     /**
+     * @param broader the broader to add
+     */
+    public void addRelated(final Concept related) {
+        if (this.related == null) {
+            this.related = new ArrayList<Concept>();
+        }
+        if (related != null) {
+            this.related.add(related);
+        }
     }
 
     /**

@@ -29,6 +29,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**Create a Node adapting with Euclidean dimensions datas.
  * 
@@ -73,21 +74,21 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
         }
     };
     
-    private final List<GeneralEnvelope> entries = new NotifiedCheckedList<GeneralEnvelope>(GeneralEnvelope.class) {
+    private final List<Envelope> entries = new NotifiedCheckedList<Envelope>(Envelope.class) {
         @Override
-        protected void notifyAdd(GeneralEnvelope e, int i) {
+        protected void notifyAdd(Envelope e, int i) {
             clearBounds();
         }
         @Override
-        protected void notifyAdd(Collection<? extends GeneralEnvelope> clctn, NumberRange<Integer> nr) {
+        protected void notifyAdd(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
             clearBounds();
         }
         @Override
-        protected void notifyRemove(GeneralEnvelope e, int i) {
+        protected void notifyRemove(Envelope e, int i) {
             clearBounds();
         }
         @Override
-        protected void notifyRemove(Collection<? extends GeneralEnvelope> clctn, NumberRange<Integer> nr) {
+        protected void notifyRemove(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
             clearBounds();
         }
     };
@@ -108,7 +109,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * @param entries data(s) to add.
      * @throws IllegalArgumentException if tree pointer is null.
      */
-    public DefaultNode(final Tree tree, final DefaultNode parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<DefaultNode> children, final List<GeneralEnvelope> entries) {
+    public DefaultNode(final Tree tree, final DefaultNode parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<DefaultNode> children, final List<Envelope> entries) {
         ArgumentChecks.ensureNonNull("tree", tree);
         this.tree = tree;
         this.parent = parent;
@@ -204,7 +205,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * {@inheritDoc} 
      */
     @Override
-    public List<GeneralEnvelope> getEntries() {
+    public List<Envelope> getEntries() {
         return entries;
     }
 
@@ -236,7 +237,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * Compute {@code DefaultNode} boundary. 
      */
     protected void calculateBounds(){
-        for(GeneralEnvelope ent2D : getEntries()){
+        for(Envelope ent2D : getEntries()){
             addBound(ent2D);
         }
         for(DefaultNode n2D : getChildren()){
@@ -254,7 +255,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * 
      * @param env {@code Node} or entry boundary.
      */
-    protected void addBound(final GeneralEnvelope env){
+    protected void addBound(final Envelope env){
         if(boundary==null){
             boundary = new GeneralEnvelope(env);
         }else{

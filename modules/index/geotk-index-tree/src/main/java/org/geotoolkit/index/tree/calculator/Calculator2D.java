@@ -30,6 +30,7 @@ import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -38,7 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class Calculator2D extends Calculator<GeneralEnvelope> {
+public class Calculator2D extends Calculator {
 
     /**
      * To compare two {@code DefaultNode} from them boundary box minimum x axis
