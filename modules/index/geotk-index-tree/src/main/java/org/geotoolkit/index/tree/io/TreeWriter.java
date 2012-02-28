@@ -136,27 +136,32 @@ public class TreeWriter {
         for(int i = 0; i<dim; i++){
             dops.writeDouble(bound.getUpper(i));
         }
-        dops.writeInt(nbrSubNode);
-
-        for (DefaultNode child : listChild) {
-            dops.writeInt(index.get(child));
-        }
-        final List<DefaultNode> listup = (List<DefaultNode>) node.getUserProperty("cells");
-        if (listup != null) {
-            for (DefaultNode n : listup) {
-                listEntries.addAll(n.getEntries());
+        if(node.isLeaf()){
+            dops.writeInt(0);
+            for(DefaultNode no : node.getChildren()){
+                listEntries.addAll(no.getEntries());
             }
+            dops.writeInt(listEntries.size());
+            for (GeneralEnvelope gEnv : listEntries) {
+                final ByteArrayOutputStream temp = new ByteArrayOutputStream();
+                final ObjectOutputStream ost = new ObjectOutputStream(temp);
+                ost.writeObject(gEnv);
+                temp.flush();
+                final byte[] array = temp.toByteArray();
+                dops.writeInt(array.length);
+                dops.write(array);
+            }
+        }else{
+            dops.writeInt(nbrSubNode);
+            for (DefaultNode child : listChild) {
+                dops.writeInt(index.get(child));
+            }
+            dops.writeInt(0);
         }
-        dops.writeInt(listEntries.size());
-        for (GeneralEnvelope gEnv : listEntries) {
-            final ByteArrayOutputStream temp = new ByteArrayOutputStream();
-            final ObjectOutputStream ost = new ObjectOutputStream(temp);
-            ost.writeObject(gEnv);
-            temp.flush();
-            final byte[] array = temp.toByteArray();
-            dops.writeInt(array.length);
-            dops.write(array);
-        }
+        
+
+            
+            
     }
 
     /**Find all tree node and affect an id for each them.

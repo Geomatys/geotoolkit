@@ -438,7 +438,7 @@ public class DefaultTreeUtils {
                 area += envelope.getSpan(i)*envelope.getSpan(j);
             }
         }
-        return 2*(area);
+        return (dim-1)*(area);
     }
     
     /**Compute enlargement difference between two {@code GeneralEnvelope}.

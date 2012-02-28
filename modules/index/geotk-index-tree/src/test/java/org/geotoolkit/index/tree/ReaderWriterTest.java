@@ -201,6 +201,8 @@ public class ReaderWriterTest {
         treeTest.search(((DefaultNode) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
+        System.out.println("treeRef : "+treeRef);
+        System.out.println("treeTest : "+treeTest);
         assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));
     }
 
@@ -256,9 +258,10 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("getLeaf : listLeaf", listLeaf);
         if (node.isLeaf()) {
             listLeaf.add(node);
-        }
-        for (DefaultNode nod : node.getChildren()) {
-            getLeaf(nod, listLeaf);
+        }else{
+            for (DefaultNode nod : node.getChildren()) {
+                getLeaf(nod, listLeaf);
+            }
         }
     }
 
@@ -289,6 +292,7 @@ public class ReaderWriterTest {
             for (DefaultNode no : listTreeTest) {
                 if (compareLeaf(nod, no)) {
                     test = true;
+                    break;
                 }
             }
             if (!test) {
@@ -324,8 +328,8 @@ public class ReaderWriterTest {
         final List<GeneralEnvelope> listA = new ArrayList<GeneralEnvelope>();
         final List<GeneralEnvelope> listB = new ArrayList<GeneralEnvelope>();
 
-        final List<DefaultNode> lupA = (List<DefaultNode>) nodeA.getUserProperty("cells");
-        final List<DefaultNode> lupB = (List<DefaultNode>) nodeB.getUserProperty("cells");
+        final List<DefaultNode> lupA = nodeA.getChildren();
+        final List<DefaultNode> lupB = nodeB.getChildren();
 
         if (lupA != null && !lupA.isEmpty()) {
             for (DefaultNode nod : lupA) {
@@ -370,7 +374,7 @@ public class ReaderWriterTest {
         boolean shapequals = false;
         for (GeneralEnvelope shs : listA) {
             for (GeneralEnvelope shr : listB) {
-                if (shs.equals(shr, 1E-9, false)) {
+                if (/*shs.equals(shr, 1E-9, false)*/shs.equals(shr)) {
                     shapequals = true;
                 }
             }

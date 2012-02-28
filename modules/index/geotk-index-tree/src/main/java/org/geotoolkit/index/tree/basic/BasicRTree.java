@@ -106,7 +106,7 @@ public class BasicRTree extends DefaultAbstractTree {
     private static void defaultNodeSearch(final DefaultNode candidate, final GeneralEnvelope regionSearch, final List<GeneralEnvelope> resultList){
         final GeneralEnvelope bound = candidate.getBoundary();
         if(bound != null){
-            if(bound.intersects(regionSearch, true)){
+            if(bound.intersects(regionSearch, true)){//appel avec region search == null retourn tous les enfants
                 if(candidate.isLeaf()){
                     for(GeneralEnvelope gn : candidate.getEntries()){
                         if(gn.intersects(regionSearch, true)){
@@ -117,6 +117,18 @@ public class BasicRTree extends DefaultAbstractTree {
                     for(DefaultNode child : candidate.getChildren()){
                         defaultNodeSearch(child, regionSearch, resultList);
                     }
+                }
+            }
+        }else{
+            if(candidate.isLeaf()){
+                for(GeneralEnvelope gn : candidate.getEntries()){
+                    if(gn.intersects(regionSearch, true)){
+                        resultList.add(gn);
+                    }
+                }
+            }else{
+                for(DefaultNode child : candidate.getChildren()){
+                    defaultNodeSearch(child, regionSearch, resultList);
                 }
             }
         }

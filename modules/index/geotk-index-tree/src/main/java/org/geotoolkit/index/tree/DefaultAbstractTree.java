@@ -23,6 +23,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.cs.CoordinateSystem;
 
 /**Create a "generic" Tree.
  *
@@ -43,6 +44,8 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode, GeneralEn
         if(!(crs.getCoordinateSystem() instanceof CartesianCS)){
             throw new IllegalArgumentException("Tree constructor : invalid crs");
         }
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        
         this.calculator = calculator;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;

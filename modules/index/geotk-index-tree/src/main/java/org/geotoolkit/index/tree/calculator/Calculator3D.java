@@ -30,7 +30,7 @@ import org.opengis.geometry.DirectPosition;
  * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class Calculator3D extends Calculator {
+public class Calculator3D extends Calculator<GeneralEnvelope> {
 
     /**
      * To compare two {@code DefaultNode} from them boundary box minimum x axis

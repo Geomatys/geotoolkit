@@ -127,6 +127,14 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
         }
     }
 
+    public void setBound(GeneralEnvelope bound){
+        this.boundary = bound;
+    }
+    
+    public GeneralEnvelope getBound(){
+        return this.boundary;
+    }
+    
     /**
      * {@inheritDoc} 
      */
@@ -140,6 +148,10 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      */
     @Override
     public boolean isLeaf() {
+        final Object userPropIsLeaf = getUserProperty("isleaf");
+        if(userPropIsLeaf != null){
+            return (Boolean)userPropIsLeaf;
+        }
         return getChildren().isEmpty();
     }
 
@@ -148,6 +160,15 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      */
     @Override
     public boolean isEmpty() {
+        final Object userPropIsLeaf = getUserProperty("isleaf");
+        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
+            for(DefaultNode cell : getChildren()){
+                if(!cell.isEmpty()){
+                    return false;
+                }
+            }
+            return true;
+        }
         return (getChildren().isEmpty() && getEntries().isEmpty());
     }
 
@@ -156,6 +177,15 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      */
     @Override
     public boolean isFull() {
+        final Object userPropIsLeaf = getUserProperty("isleaf");
+        if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
+            for(DefaultNode cell : getChildren()){
+                if(!cell.isFull()){
+                    return false;
+                }
+            }
+            return true;
+        }
         return (getChildren().size()+getEntries().size())>=getTree().getMaxElements();
     }
 
@@ -203,14 +233,20 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
     }
     
     /**
-     * Compute {@code Node2D} boundary. 
+     * Compute {@code DefaultNode} boundary. 
      */
     protected void calculateBounds(){
         for(GeneralEnvelope ent2D : getEntries()){
             addBound(ent2D);
         }
         for(DefaultNode n2D : getChildren()){
-            addBound(n2D.getBoundary());
+            if(!n2D.isEmpty()){
+                Object b = n2D.getBoundary();
+                if(b == null){
+                    System.out.println("");
+                }
+                addBound(n2D.getBoundary());
+            }
         }
     }
 
@@ -242,6 +278,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
         final Collection col = new ArrayList(entries);
         col.addAll(children);
         String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode()); 
-        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent, col);
+        return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
+                + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty("isleaf"), col);
     }
 }

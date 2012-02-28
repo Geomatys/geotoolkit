@@ -100,8 +100,10 @@ public abstract class TreeTest {
      */
     protected void checkNodeBoundaryTest(final DefaultNode node) {
         assertTrue(checkBoundaryNode(node));
-        for (DefaultNode no : node.getChildren()) {
-            checkNodeBoundaryTest(no);
+        if(!node.isLeaf()){
+            for (DefaultNode no : node.getChildren()) {
+                checkNodeBoundaryTest(no);
+            }
         }
     }
 
@@ -143,9 +145,15 @@ public abstract class TreeTest {
             }
             gR.setEnvelope(93, 18, 19, 130, 87, 21);
         }
-
+        
+        int i = 0;
         for (GeneralEnvelope ge : lGE) {
+            System.out.println("i = "+i);
+            if(i==63){
+                System.out.println("");
+            }
             tree.insert(ge);
+            i++;
         }
 
         final List<GeneralEnvelope> lGES = new ArrayList<GeneralEnvelope>();

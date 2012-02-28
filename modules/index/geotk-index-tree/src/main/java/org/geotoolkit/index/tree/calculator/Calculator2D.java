@@ -26,7 +26,6 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.DefaultTreeUtils;
-import org.geotoolkit.index.tree.hilbert.HilbertNode;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
@@ -39,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Rémi Maréchal (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class Calculator2D extends Calculator {
+public class Calculator2D extends Calculator<GeneralEnvelope> {
 
     /**
      * To compare two {@code DefaultNode} from them boundary box minimum x axis
@@ -284,8 +283,9 @@ public class Calculator2D extends Calculator {
         listOfCentroidChild.clear();
         candidate.setUserProperty("isleaf", true);
         candidate.setUserProperty("hilbertOrder", order);
-        ((HilbertNode) candidate).setBound(bound);
-        final List<DefaultNode> listN = (List<DefaultNode>) candidate.getUserProperty("cells");
+        candidate.setBound(bound);
+//        final List<DefaultNode> listN = (List<DefaultNode>) candidate.getUserProperty("cells");
+        final List<DefaultNode> listN = candidate.getChildren();
         listN.clear();
         if (order > 0) {
             final double width = bound.getSpan(0);
@@ -367,6 +367,7 @@ public class Calculator2D extends Calculator {
             listOfCentroidChild.add(new GeneralDirectPosition(bound.getMedian()));
             listN.add(HilbertRTree.createCell(candidate.getTree(), candidate, listOfCentroidChild.get(0), 0, null));
         }
+        candidate.setBound(bound);
     }
 
     /**
@@ -389,7 +390,7 @@ public class Calculator2D extends Calculator {
         final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) hl.getUserProperty("centroids");
         final CoordinateReferenceSystem crs = listOfCentroidChild.get(0).getCoordinateReferenceSystem();
         final List<DirectPosition> lPTemp2 = new ArrayList<DirectPosition>(listOfCentroidChild);
-        final GeneralEnvelope bound = ((HilbertNode) hl).getBound();
+        final GeneralEnvelope bound = hl.getBound();
         final DirectPosition centroid = new GeneralDirectPosition(bound.getMedian());
         final double centreX = centroid.getOrdinate(0);
         final double centreY = centroid.getOrdinate(1);
@@ -481,13 +482,13 @@ public class Calculator2D extends Calculator {
     public int getHVOfEntry(final DefaultNode candidate, final GeneralEnvelope entry) {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
         final DirectPosition ptCE = entry.getMedian();
-        if (!((HilbertNode) candidate).getBound().contains(ptCE)) {
+        if (! candidate.getBoundary().contains(ptCE)) {////////// attention
             throw new IllegalArgumentException("entry is out of this node boundary");
         }
-        final GeneralEnvelope bound = ((HilbertNode) candidate).getBound();
+        final GeneralEnvelope bound = candidate.getBound();
         final Calculator calc = candidate.getTree().getCalculator();
         final int order = (Integer) candidate.getUserProperty("hilbertOrder");
-        if (calc.getSpace(bound) <= 0) {
+        if (calc.getSpace(candidate.getBoundary()) <= 0) {
             final double w = bound.getSpan(0);
             final double h = bound.getSpan(1);
             final int ordinate = (w > h) ? 0 : 1;
