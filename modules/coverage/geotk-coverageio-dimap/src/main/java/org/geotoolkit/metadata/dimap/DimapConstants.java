@@ -141,6 +141,7 @@ public final class DimapConstants {
     public static final String TAG_SCENE_VIEWING_ANGLE = "VIEWING_ANGLE";
     public static final String TAG_SCENE_SUN_AZIMUTH = "SUN_AZIMUTH";
     public static final String TAG_SCENE_SUN_ELEVATION = "SUN_ELEVATION";
+    public static final String TAG_SCENE_GRID_REFERENCE = "GRID_REFERENCE";
     // ...
     //TAG quality assessment
 
@@ -189,6 +190,7 @@ public final class DimapConstants {
 
     // RASTER CS tag group -----------------------------------------------------
     public static final String TAG_RASTER_CS = "Raster_CS";
+    
 
     // Image display information -----------------------------------------------
     public static final String TAG_IMAGE_DISPLAY = "Image_Display";
@@ -235,10 +237,17 @@ public final class DimapConstants {
     public static final String TAG_DATA_PROCESSING_ALGORITHM_TYPE = "ALGORITHM_TYPE";
     public static final String TAG_DATA_PROCESSING_ALGORITHM_NAME = "ALGORITHM_NAME";
     public static final String TAG_DATA_PROCESSING_ALGORITHM_ACTIVATION = "ALGORITHM_ACTIVATION";
-
+    
     //Satellite_Time------------------------------------------------------------
     public static final String TAG_SATELLITE_TIME = "Satellite_Time";
-
+    
+    //Processing_Options
+    public static final String TAG_PROCESSING_OPTIONS = "Processing_Options";
+    public static final String TAG_DYNAMIC_STRETCH = "Dynamic_Stretch";
+    public static final String TAG_THRESHOLDS = "Thresholds";
+    public static final String TAG_LOW_THRESHOLD = "LOW_THRESHOLD";
+    public static final String TAG_HIGH_THRESHOLD = "HIGH_THRESHOLD";
+    
     private DimapConstants(){}
 
 }
