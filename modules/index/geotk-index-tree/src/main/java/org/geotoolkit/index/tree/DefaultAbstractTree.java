@@ -18,6 +18,8 @@
 package org.geotoolkit.index.tree;
 
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.calculator.Calculator2D;
+import org.geotoolkit.index.tree.calculator.Calculator3D;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -40,11 +42,20 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode>{
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create Tree : Calculator", calculator);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
-        if(!(crs.getCoordinateSystem() instanceof CartesianCS)){
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        if(!(cs instanceof CartesianCS)){
             throw new IllegalArgumentException("Tree constructor : invalid crs");
         }
-        final CoordinateSystem cs = crs.getCoordinateSystem();
-        
+        final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem dimension = "+cs.getDimension();
+        if(calculator instanceof Calculator2D){
+            if(cs.getDimension() !=2){
+                throw new IllegalArgumentException(strClash+" calculator dimension = 2");
+            }
+        }else if(calculator instanceof Calculator3D){
+            if(cs.getDimension() !=3){
+                throw new IllegalArgumentException(strClash+" calculator dimension = 3");
+            }
+        }
         this.calculator = calculator;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;

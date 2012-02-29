@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
@@ -99,6 +98,7 @@ public class StarRTree extends DefaultAbstractTree {
      */
     @Override
     public void delete(final Envelope entry) throws MismatchedReferenceSystemException{
+        ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
@@ -584,8 +584,8 @@ public class StarRTree extends DefaultAbstractTree {
      * @return true if entry is find and deleted else false.
      */
     private static boolean deleteNode(final DefaultNode candidate, final Envelope entry) throws MismatchedReferenceSystemException{
-        ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
-        ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : DefaultNode candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : DefaultNode candidate", candidate);
         if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
             if(candidate.isLeaf()){
                 final boolean removed = candidate.getEntries().remove(entry);
@@ -613,7 +613,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate is null.
      */
     private static void trim(final DefaultNode candidate) throws MismatchedReferenceSystemException {
-        ArgumentChecks.ensureNonNull("trim : Node3D candidate", candidate);
+        ArgumentChecks.ensureNonNull("trim : DefaultNode candidate", candidate);
         final List<DefaultNode> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
         final List<Envelope> reinsertList = new ArrayList<Envelope>();

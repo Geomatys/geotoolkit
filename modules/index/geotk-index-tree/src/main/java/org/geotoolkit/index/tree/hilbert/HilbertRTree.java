@@ -23,7 +23,12 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.*;
+import org.geotoolkit.index.tree.CoupleGE;
+import org.geotoolkit.index.tree.DefaultAbstractTree;
+import org.geotoolkit.index.tree.DefaultNode;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.countElements;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getEnveloppeMin;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
@@ -42,10 +47,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class HilbertRTree extends DefaultAbstractTree {
     
-    
-    private static final String PROP_LEAF = "isleaf";
-
     int hilbertOrder;
+    private static final String PROP_LEAF = "isleaf";
+    private static final String PROP_HO = "hilbertOrder";
     private static final double LN2 = 0.6931471805599453;
     /**
      * Create Hilbert RTree.
@@ -82,6 +86,8 @@ public class HilbertRTree extends DefaultAbstractTree {
      */
     @Override
     public void search(final Envelope regionSearch, final List<Envelope> result) throws TransformException {
+        ArgumentChecks.ensureNonNull("search : region search", regionSearch);
+        ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
@@ -96,6 +102,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      */
     @Override
     public void insert(final Envelope entry) throws MismatchedReferenceSystemException {
+        ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
@@ -116,6 +123,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      */
     @Override
     public void delete(final Envelope entry) throws MismatchedReferenceSystemException {
+        ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
@@ -133,7 +141,6 @@ public class HilbertRTree extends DefaultAbstractTree {
         final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
         if (rS.intersects(candidate.getBoundary(), true)) {
             if (candidate.isLeaf()) {
-//                final List<DefaultNode> lN = (List<DefaultNode>) candidate.getUserProperty("cells");
                 final List<DefaultNode> lN = candidate.getChildren();
                 for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
                     if (!n2d.isEmpty()) {
@@ -170,8 +177,8 @@ public class HilbertRTree extends DefaultAbstractTree {
                 final DefaultNode lsp1 = lSp.get(1);
                 ((List<DirectPosition>) candidate.getUserProperty("centroids")).clear();
                 candidate.getChildren().clear();
-                candidate.setUserProperty("isleaf", false);
-                candidate.setUserProperty("hilbertOrder", 0);
+                candidate.setUserProperty(PROP_LEAF, false);
+                candidate.setUserProperty(PROP_HO, 0);
                 lsp0.setParent(candidate);
                 lsp1.setParent(candidate);
                 candidate.getChildren().add(lSp.get(0));
@@ -184,7 +191,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                 List<Envelope> lS = new ArrayList<Envelope>();
                 searchHilbertNode(candidate, cB, lS);
                 lS.add(entry);
-                GeneralEnvelope envelope = DefaultTreeUtils.getEnveloppeMin(lS);
+                GeneralEnvelope envelope = getEnveloppeMin(lS);
                 candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty("hilbertOrder"), envelope);
                 for (Envelope sh : lS) {
                     candidate.setBound(envelope);
@@ -196,7 +203,6 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
         } else {
             insertNode(chooseSubtree(candidate, entry), entry);
-//            candidate.setBound(null);
         }
     }
 
@@ -209,7 +215,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      */
     public static List<DefaultNode> splitNode(final DefaultNode candidate) {
         boolean cleaf = candidate.isLeaf();
-        int cHO = (Integer) candidate.getUserProperty("hilbertOrder");
+        int cHO = (Integer) candidate.getUserProperty(PROP_HO);
         final Calculator calc = candidate.getTree().getCalculator();
         if (candidate.getChildren().size() < 2 && !cleaf) {
             throw new IllegalStateException("impossible to split node with lesser two subnode");
@@ -221,7 +227,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             if (lS.isEmpty()) {
                 throw new IllegalStateException("impossible to increase Hilbert order of a empty Node");
             }
-            final GeneralEnvelope boundT = DefaultTreeUtils.getEnveloppeMin(lS);
+            final GeneralEnvelope boundT = getEnveloppeMin(lS);
             calc.createBasicHL(candidate, cHO + 1, boundT);
             for (Envelope sh : lS) {
                 candidate.setBound(boundT);
@@ -257,7 +263,6 @@ public class HilbertRTree extends DefaultAbstractTree {
         final boolean isLeaf = candidate.isLeaf();
         List eltList;
         if (isLeaf) {
-//            final List<DefaultNode> ldf = ((List<DefaultNode>) candidate.getUserProperty("cells"));
             final List<DefaultNode> ldf = candidate.getChildren();
             eltList = new ArrayList();
             for (DefaultNode dn : ldf) {
@@ -363,7 +368,6 @@ public class HilbertRTree extends DefaultAbstractTree {
         final Calculator calc = tree.getCalculator();
         List eltList;
         if (isLeaf) {
-//            final List<DefaultNode> ldf = ((List<DefaultNode>) candidate.getUserProperty("cells"));
             final List<DefaultNode> ldf = candidate.getChildren();
             eltList = new ArrayList();
             for (DefaultNode dn : ldf) {
@@ -507,19 +511,16 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
         Calculator calc = candidate.getTree().getCalculator();
         if (candidate.isLeaf()) {
-            if ((Integer) candidate.getUserProperty("hilbertOrder") < 1) {
-//                return ((List<DefaultNode>) candidate.getUserProperty("cells")).get(0);
+            if ((Integer) candidate.getUserProperty(PROP_HO) < 1) {
                 return candidate.getChildren().get(0);
             }
             int index;
             index = calc.getHVOfEntry(candidate, entry);
-//            for (DefaultNode nod : (List<DefaultNode>) candidate.getUserProperty("cells")) {
             for (DefaultNode nod : candidate.getChildren()) {
                 if (index <= ((Integer) (nod.getUserProperty("hilbertValue"))) && !nod.isFull()) {
                     return nod;
                 }
             }
-//            return ((List<DefaultNode>) candidate.getUserProperty("cells")).get(findAnotherCell(index, candidate));
             return candidate.getChildren().get(findAnotherCell(index, candidate));
         } else {
             final List<DefaultNode> childrenList = candidate.getChildren();
@@ -545,7 +546,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                             overlapsRef = overlapsTemp;
                             index = i;
                         } else if (overlapsTemp == overlapsRef) {
-                            if (DefaultTreeUtils.countElements(childrenList.get(i)) < DefaultTreeUtils.countElements(childrenList.get(index))) {
+                            if (countElements(childrenList.get(i)) < countElements(childrenList.get(index))) {
                                 overlapsRef = overlapsTemp;
                                 index = i;
                             }
@@ -615,7 +616,6 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
         ArgumentChecks.ensureBetween("index to find another leaf is out of required limit",
                 0, (int) Math.pow(2, ((Integer)  candidate.getUserProperty("hilbertOrder") * 2)), index);
-//        final List<DefaultNode> listCells = (List<DefaultNode>) candidate.getUserProperty("cells");
         final List<DefaultNode> listCells = candidate.getChildren();
         int siz = listCells.size();
         boolean oneTime = false;
@@ -650,12 +650,11 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @return true if entry is find and deleted else false.
      */
     private static void deleteHilbertNode(final DefaultNode candidate, final Envelope entry) {
-        ArgumentChecks.ensureNonNull("deleteHilbertNode Node2D candidate : ", candidate);
+        ArgumentChecks.ensureNonNull("deleteHilbertNode DefaultNode candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Shape entry : ", entry);
         if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
             if (candidate.isLeaf()) {
                 boolean removed = false;
-//                final List<DefaultNode> lN = (List<DefaultNode>) candidate.getUserProperty("cells");
                 final List<DefaultNode> lN = candidate.getChildren();
                 for (DefaultNode nod : lN) {
                     if (nod.getEntries().remove(entry)) {
@@ -704,9 +703,9 @@ public class HilbertRTree extends DefaultAbstractTree {
             
             if (lS.size() <= tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2) && !lS.isEmpty()) {
                 
-                final GeneralEnvelope bound = DefaultTreeUtils.getEnveloppeMin(lS);
+                final GeneralEnvelope bound = getEnveloppeMin(lS);
                 calc.createBasicHL(candidate, tree.getHilbertOrder(), bound);
-                candidate.setUserProperty("isleaf", true);
+                candidate.setUserProperty(PROP_LEAF, true);
                 for (Envelope entry : lS) {
                     candidate.setBound(bound);
                     chooseSubtree(candidate, entry).getEntries().add(entry);
@@ -747,7 +746,6 @@ public class HilbertRTree extends DefaultAbstractTree {
         DefaultNode result;
         if (ddim == 0) {
             result = new DefaultNode(tree, parent, null, null, listChildren, null);
-//            return new HilbertNode(tree, parent, null, null, listChildren, listEntries);
         }else{
             final int dim = coordinates.length / 2;
             final double[] dp1Coords = new double[dim];
@@ -764,17 +762,16 @@ public class HilbertRTree extends DefaultAbstractTree {
             result = new DefaultNode(tree, parent, dp1, dp2, listChildren, null);
         }
         
-        result.setUserProperty("isleaf", false);
+        result.setUserProperty(PROP_LEAF, false);
         if (listEntries != null && !listEntries.isEmpty()) {
             final int diment = listEntries.get(0).getDimension();
             final int size = listEntries.size();
             final int maxElts = tree.getMaxElements();
-            final int hOrder = (size<=maxElts) ? 0 : (int)((Math.log(size-1)-Math.log(maxElts))/(diment*Math.log(2))) + 1;
-            assert hOrder<=hilbertOrder : "too much elements to stock in tree leaf";
-            result.setUserProperty("isleaf", true);
+            final int hOrder = (size <= maxElts) ? 0 : (int)((Math.log(size-1)-Math.log(maxElts))/(diment*LN2)) + 1;
+            assert hOrder <= getHilbertOrder() : "too much elements to stock in tree leaf : hilbertOrder computed = "+hOrder;
+            result.setUserProperty(PROP_LEAF, true);
             result.setUserProperty("centroids", new ArrayList<DirectPosition>());
-//            setUserProperty("cells", new ArrayList<DefaultNode>());
-            final GeneralEnvelope bound = DefaultTreeUtils.getEnveloppeMin(listEntries);
+            final GeneralEnvelope bound = getEnveloppeMin(listEntries);
             getCalculator().createBasicHL(result, hOrder, bound);
             for (Envelope ent : listEntries) {
                 result.setBound(bound);

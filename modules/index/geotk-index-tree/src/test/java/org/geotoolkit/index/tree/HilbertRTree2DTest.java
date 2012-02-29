@@ -19,11 +19,9 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -68,7 +66,6 @@ public class HilbertRTree2DTest extends TreeTest {
         if (node.isLeaf()) {
             for (DefaultNode no : node.getChildren()) {
                 if (!no.isEmpty()) {
-//                    assertTrue(super.checkBoundaryNode(no));
                     lS.addAll(no.getEntries());
                 }
             }

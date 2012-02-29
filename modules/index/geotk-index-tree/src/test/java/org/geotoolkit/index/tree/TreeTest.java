@@ -149,10 +149,6 @@ public abstract class TreeTest {
         
         int i = 0;
         for (GeneralEnvelope ge : lGE) {
-            System.out.println("i = "+i);
-            if(i==63){
-                System.out.println("");
-            }
             tree.insert(ge);
             i++;
         }

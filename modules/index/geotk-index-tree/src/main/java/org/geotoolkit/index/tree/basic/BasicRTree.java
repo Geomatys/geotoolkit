@@ -23,11 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.AbstractNode;
-import org.geotoolkit.index.tree.DefaultAbstractTree;
-import org.geotoolkit.index.tree.DefaultNode;
-import org.geotoolkit.index.tree.DefaultTreeUtils;
-import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
@@ -62,6 +58,8 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     @Override
     public void search(final Envelope regionSearch, final List<Envelope> result) {
+        ArgumentChecks.ensureNonNull("search : region search", regionSearch);
+        ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
@@ -76,6 +74,7 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     @Override
     public void insert(final Envelope entry) throws MismatchedReferenceSystemException {
+        ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
@@ -94,6 +93,7 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     @Override
     public void delete(final Envelope entry) throws MismatchedReferenceSystemException {
+        ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
