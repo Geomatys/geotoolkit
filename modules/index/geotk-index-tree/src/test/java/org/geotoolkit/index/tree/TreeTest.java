@@ -26,6 +26,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -67,7 +68,7 @@ public abstract class TreeTest {
      * @throws TransformException if lData entries can't be transform into tree
      * crs.
      */
-    private void insert() throws TransformException {
+    private void insert() throws MismatchedReferenceSystemException {
         for (GeneralEnvelope gEnv : lData) {
             tree.insert(gEnv);
         }
@@ -78,11 +79,11 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    protected void insertTest() throws TransformException {
+    protected void insertTest() throws MismatchedReferenceSystemException {
         final Envelope gr = ((Node) tree.getRoot()).getBoundary();
         final GeneralEnvelope gem = DefaultTreeUtils.getEnveloppeMin(lData);
         assertTrue(gem.equals(gr, 1E-9, false));
-        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(gr, listSearch);
         assertTrue(listSearch.size() == lData.size());
     }
@@ -92,7 +93,7 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    protected void checkBoundaryTest() throws TransformException {
+    protected void checkBoundaryTest() throws MismatchedReferenceSystemException {
         checkNodeBoundaryTest((Node) tree.getRoot());
     }
 
@@ -113,7 +114,7 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    public void queryOnBorderTest() throws TransformException {
+    public void queryOnBorderTest() throws MismatchedReferenceSystemException {
         final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
         for (GeneralEnvelope ge : lData) {
             tree.delete(ge);
@@ -181,7 +182,7 @@ public abstract class TreeTest {
     /**
      * Test search query inside tree.
      */
-    protected void queryInsideTest() throws TransformException {
+    protected void queryInsideTest() throws MismatchedReferenceSystemException {
         final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
         tree.search(DefaultTreeUtils.getEnveloppeMin(lData), listSearch);
         assertTrue(compareList(lData, listSearch));
@@ -192,7 +193,7 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    protected void queryOutsideTest() throws TransformException {
+    protected void queryOutsideTest() throws MismatchedReferenceSystemException {
         final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
         for (int i = 0; i < dimension; i++) {
             areaSearch.setRange(i, 1600, 2000);
@@ -207,7 +208,7 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    protected void insertDelete() throws TransformException {
+    protected void insertDelete() throws MismatchedReferenceSystemException {
         Collections.shuffle(lData);
         for (GeneralEnvelope env : lData) {
             tree.delete(env);

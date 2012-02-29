@@ -33,7 +33,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**Create R*Tree in Euclidean space.
@@ -64,7 +63,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void search(final Envelope regionSearch, final List<Envelope> result) throws TransformException{
+    public void search(final Envelope regionSearch, final List<Envelope> result) throws MismatchedReferenceSystemException{
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
@@ -72,7 +71,7 @@ public class StarRTree extends DefaultAbstractTree {
         }
         final Node root = this.getRoot();
         if(root != null){
-            defaultNodeSearch(root, regionSearch, result);
+            nodeSearch(root, regionSearch, result);
         }
     }
 
@@ -89,7 +88,7 @@ public class StarRTree extends DefaultAbstractTree {
         if (root.isEmpty()) {
             root.getEntries().add(entry);
         } else {
-            defaultNodeInsert(root, entry);
+            nodeInsert(root, entry);
         }
     }
 
@@ -135,13 +134,13 @@ public class StarRTree extends DefaultAbstractTree {
         return new DefaultNode(tree, parent, dp1, dp2, listChildren, listEntries);
     }
     
-    /**Find all {@code GeneralEnvelope} which intersect regionSearch parameter in {@code Node}. 
+    /**Find all {@code Envelope} which intersect regionSearch parameter in {@code Node}. 
      * 
      * @param candidate current Node
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static void defaultNodeSearch(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList){
+    private static void nodeSearch(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList){
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){
@@ -149,13 +148,13 @@ public class StarRTree extends DefaultAbstractTree {
                     resultList.addAll(candidate.getEntries());
                 }else{
                     for(Node nod : candidate.getChildren()){
-                        defaultNodeSearch(nod, null, resultList);
+                        nodeSearch(nod, null, resultList);
                     }
                 }
             }else{
                 final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
                 if(rS.contains(bound, true)){
-                    defaultNodeSearch(candidate, null, resultList);
+                    nodeSearch(candidate, null, resultList);
                 }else if(rS.intersects(bound, true)){
                     if(candidate.isLeaf()){
                         for(Envelope gn : candidate.getEntries()){
@@ -165,7 +164,7 @@ public class StarRTree extends DefaultAbstractTree {
                         }
                     }else{
                         for(Node child : candidate.getChildren()){
-                            defaultNodeSearch(child, regionSearch, resultList);
+                            nodeSearch(child, regionSearch, resultList);
                         }
                     }
                 }
@@ -173,7 +172,7 @@ public class StarRTree extends DefaultAbstractTree {
         }
     }
     
-    /**Insert new {@code Entry} in branch and re-organize {@code AbstractNode} if it's necessary.
+    /**Insert new {@code Entry} in branch and re-organize {@code Node} if it's necessary.
      * 
      * <blockquote><font size=-1>
      * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong> 
@@ -181,14 +180,14 @@ public class StarRTree extends DefaultAbstractTree {
      * 
      * @param candidate where to insert entry.
      * @param entry to add.
-     * @throws IllegalArgumentException if {@code AbstractNode} candidate is null.
-     * @throws IllegalArgumentException if {@code GeneralEnvelope} entry is null.
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void defaultNodeInsert(final Node candidate, final Envelope entry) throws MismatchedReferenceSystemException{
+    private static void nodeInsert(final Node candidate, final Envelope entry) {
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
-            defaultNodeInsert(chooseSubTree(candidate, entry), entry);
+            nodeInsert(chooseSubTree(candidate, entry), entry);
         }
         
         final StarRTree tree = (StarRTree) candidate.getTree();
@@ -223,7 +222,7 @@ public class StarRTree extends DefaultAbstractTree {
             for(int i =0; i<size; i++){
                 if (DefaultTreeUtils.countElements(children.get(i)) > candidate.getTree().getMaxElements()) {
                     final Node child = children.remove(i);
-                    final List<Node> l = defaultNodeSplit(child);
+                    final List<Node> l = nodeSplit(child);
                     final Node l0 = l.get(0);
                     final Node l1 = l.get(1);
                     l0.setParent(candidate);
@@ -235,7 +234,7 @@ public class StarRTree extends DefaultAbstractTree {
         
         if (candidate.getParent() == null) {
             if (DefaultTreeUtils.countElements(candidate) > candidate.getTree().getMaxElements()) {
-                List<Node> l = defaultNodeSplit(candidate);
+                List<Node> l = nodeSplit(candidate);
                 final Node l0 = l.get(0);
                 final Node l1 = l.get(1);
                 l0.setParent(candidate);
@@ -247,18 +246,18 @@ public class StarRTree extends DefaultAbstractTree {
         }
     }
     
-    /**Find appropriate {@code AbstractNode} to insert {@code GeneralEnvelope}.
+    /**Find appropriate {@code Node} to insert {@code Envelope} entry.
      * <blockquote><font size=-1>
      * <strong>To define appropriate Node, R*Tree criterion are : 
-     *      - require minimum area enlargement to cover GeneralEnvelope.
+     *      - require minimum area enlargement to cover {@code Envelope} entry.
      *      - or put into Node with lesser elements number in case area equals.
      * </strong> 
      * </font></blockquote>
      * 
-     * @param parent Find in its children {@code AbstractNode}.
-     * @param entry {@code GeneralEnvelope} to add.
-     * @throws IllegalArgumentException if {@code AbstractNode} listSubnode is empty.
-     * @return {@code AbstractNode} which will be appropriate to contain entry.
+     * @param parent Find in its children {@code Node}.
+     * @param entry {@code Envelope} to add.
+     * @throws IllegalArgumentException if {@code Node} listSubnode is empty.
+     * @return {@code Node} which will be appropriate to contain entry.
      */
     private static Node chooseSubTree(final Node parent, final Envelope entry) {
         
@@ -353,9 +352,9 @@ public class StarRTree extends DefaultAbstractTree {
      *               Two {@code Node} resulting, is the final division which has the minimum overlaps between them.</strong> 
      * </font></blockquote>
      * 
-     * @return Two appropriate {@code AbstractNode} in List in accordance with R*Tree split properties.
+     * @return Two appropriate {@code Node} in List in accordance with R*Tree split properties.
      */
-    private static List<Node> defaultNodeSplit(final Node candidate){
+    private static List<Node> nodeSplit(final Node candidate){
         
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
@@ -406,13 +405,13 @@ public class StarRTree extends DefaultAbstractTree {
                 }
                 cut2 = size - cut;
                 if(isLeaf){
-                    gESPLA = new GeneralEnvelope((GeneralEnvelope)splitListA.get(0));
-                    gESPLB = new GeneralEnvelope((GeneralEnvelope)splitListB.get(0));
+                    gESPLA = new GeneralEnvelope((Envelope)splitListA.get(0));
+                    gESPLB = new GeneralEnvelope((Envelope)splitListB.get(0));
                     for(int i = 1; i<cut;i++){
-                        gESPLA.add((GeneralEnvelope)splitListA.get(i));
+                        gESPLA.add((Envelope)splitListA.get(i));
                     }
                     for(int i = 1; i<cut2;i++){
-                        gESPLB.add((GeneralEnvelope)splitListB.get(i));
+                        gESPLB.add((Envelope)splitListB.get(i));
                     }
                 }else{
                     gESPLA = new GeneralEnvelope(((Node)splitListA.get(0)).getBoundary());
@@ -549,13 +548,13 @@ public class StarRTree extends DefaultAbstractTree {
                     }
                     cut2 = size - cut;
                     if(isLeaf){
-                        gESPLA = new GeneralEnvelope((GeneralEnvelope)splitListA.get(0));
-                        gESPLB = new GeneralEnvelope((GeneralEnvelope)splitListB.get(0));
+                        gESPLA = new GeneralEnvelope((Envelope)splitListA.get(0));
+                        gESPLB = new GeneralEnvelope((Envelope)splitListB.get(0));
                         for(int i = 1; i<cut;i++){
-                            gESPLA.add((GeneralEnvelope)splitListA.get(i));
+                            gESPLA.add((Envelope)splitListA.get(i));
                         }
                         for(int i = 1; i<cut2;i++){
-                            gESPLB.add((GeneralEnvelope)splitListB.get(i));
+                            gESPLB.add((Envelope)splitListB.get(i));
                         }
                     }else{
                         gESPLA = new GeneralEnvelope(((Node)splitListA.get(0)).getBoundary());
@@ -585,20 +584,20 @@ public class StarRTree extends DefaultAbstractTree {
     }
         
     /**
-     * Travel {@code Tree}, find {@code Entry} if it exist and delete it.
+     * Travel {@code Tree}, find {@code Envelope} entry if it exist and delete it.
      * 
      * <blockquote><font size=-1>
      * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong> 
      * </font></blockquote>
      * 
-     * @param candidate {@code AbstractNode}  where to delete.
-     * @param entry {@code GeneralEnvelope} to delete.
+     * @param candidate {@code Node}  where to delete.
+     * @param entry {@code Envelope} to delete.
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
     private static boolean deleteNode(final Node candidate, final Envelope entry) throws MismatchedReferenceSystemException{
-        ArgumentChecks.ensureNonNull("DeleteNode : AbstractNode candidate", candidate);
-        ArgumentChecks.ensureNonNull("DeleteNode : AbstractNode candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
             if(candidate.isLeaf()){
                 final boolean removed = candidate.getEntries().remove(entry);
@@ -622,11 +621,11 @@ public class StarRTree extends DefaultAbstractTree {
      * 
      * Condense made, travel up from leaf to tree trunk.
      * 
-     * @param candidate {@code AbstractNode} to begin condense.
+     * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
     private static void trim(final Node candidate) throws MismatchedReferenceSystemException {
-        ArgumentChecks.ensureNonNull("trim : AbstractNode candidate", candidate);
+        ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         final List<Node> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
         final List<Envelope> reinsertList = new ArrayList<Envelope>();
@@ -657,10 +656,10 @@ public class StarRTree extends DefaultAbstractTree {
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
      * Also branchGrafting will be able to avoid splitting node.
      * 
-     * @param nodeA AbstractNode
-     * @param nodeB AbstractNode
+     * @param nodeA Node
+     * @param nodeB Node
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
-     * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
+     * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Envelope} entry(ies).
      */
     private static void branchGrafting(final Node nodeA, final Node nodeB ) throws MismatchedReferenceSystemException{
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
@@ -710,10 +709,10 @@ public class StarRTree extends DefaultAbstractTree {
             }
         }
         for(int i = 0; i<index;i++){
-            defaultNodeInsert(nodeA, listGlobale.get(i));
+            nodeInsert(nodeA, listGlobale.get(i));
         }
         for(int i = index; i<size;i++){
-            defaultNodeInsert(nodeB, listGlobale.get(i));
+            nodeInsert(nodeB, listGlobale.get(i));
         }
     }
     
@@ -732,10 +731,10 @@ public class StarRTree extends DefaultAbstractTree {
         this.insertAgain = insertAgain;
     }
     
-    /**Recover lesser 33% largest of {@code AbstractNode} candidate within it.
+    /**Recover lesser 33% largest of {@code Node} candidate within it.
      * 
-     * @throws IllegalArgumentException if {@code Node2D} candidate is null.
-     * @return all Entry within subNodes at more 33% largest of {@code this Node}.
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @return all Entry within subNodes at more 33% largest of this {@code Node}.
      */
     private static List<Envelope> getElementAtMore33PerCent(final Node candidate) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
@@ -744,7 +743,7 @@ public class StarRTree extends DefaultAbstractTree {
         final Envelope boundGE = candidate.getBoundary();
         final DirectPosition candidateCentroid = getMedian(boundGE);
         final double distPermit = calc.getDistance(boundGE.getLowerCorner(), boundGE.getUpperCorner()) / 1.666666666;
-        defaultNodeSearch(candidate, boundGE, lsh);
+        nodeSearch(candidate, boundGE, lsh);
         for (int i = lsh.size() - 1; i >= 0; i--) {
             if (calc.getDistance(candidateCentroid, DefaultTreeUtils.getMedian(lsh.get(i))) < distPermit) {
                 lsh.remove(i);

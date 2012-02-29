@@ -36,7 +36,7 @@ public class DefaultTreeUtils {
     private DefaultTreeUtils() {
     }
     
-    /**To compare two {@code AbstractNode} from them boundary box minimum x axis coordinate. 
+    /**To compare two {@code Node} from them boundary box minimum x axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -50,7 +50,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code AbstractNode} from them boundary box minimum y axis coordinate. 
+    /**To compare two {@code Node} from them boundary box minimum y axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -64,7 +64,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate. 
+    /**To compare two {@code Node} from them boundary box minimum z axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -78,7 +78,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum x axis coordinate. 
+    /**To compare two {@code Envelope} from them boundary box minimum x axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -92,7 +92,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum y axis coordinate. 
+    /**To compare two {@code Envelope} from them boundary box minimum y axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -106,7 +106,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate. 
+    /**To compare two {@code Envelope} from them boundary box minimum z axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -120,7 +120,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code Node3D} from them boundary box minimum x axis coordinate. 
+    /**To compare two {@code Node} from them boundary box minimum x axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -134,7 +134,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code Node3D} from them boundary box minimum y axis coordinate. 
+    /**To compare two {@code Node} from them boundary box minimum y axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -148,7 +148,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate.
+    /**To compare two {@code Node} from them boundary box minimum z axis coordinate.
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -162,7 +162,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum x axis coordinate. 
+    /**To compare two {@code Envelope} from them boundary box maximum x axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -176,7 +176,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum y axis coordinate. 
+    /**To compare two {@code Envelope} from them boundary box maximum y axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -190,7 +190,7 @@ public class DefaultTreeUtils {
         }
     };
     
-    /**To compare two {@code GeneralEnvelope} from them boundary box minimum z axis coordinate. 
+    /**To compare two {@code Envelope} from them boundary box maximum z axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
@@ -212,9 +212,9 @@ public class DefaultTreeUtils {
         return node.getChildren().size()+node.getEntries().size();
     }
     
-    /**Compute {@code GeneralEnvelop} bulk.
+    /**Compute {@code Envelop} bulk.
      * 
-     * @param envelope {@code GeneralEnvelope}.
+     * @param envelope {@code Envelope}.
      * @return bulk value.
      */
     public static double getGeneralEnvelopBulk(final Envelope envelope){
@@ -235,9 +235,9 @@ public class DefaultTreeUtils {
         return bulk;
     }
     
-    /**Compute {@code GeneralEnvelop} perimeter.
+    /**Compute {@code Envelope} perimeter.
      * 
-     * @param envelope {@code Generale Envelop}.
+     * @param envelope {@code Envelope}.
      * @throws IllegalArgumentException if envelope is null.
      * @throws IllegalArgumentException if envelope dimension > 2.
      * @return perimeter value.
@@ -256,10 +256,10 @@ public class DefaultTreeUtils {
     }
     
     
-    /**Compute overlaps between two {@code GeneralEnvelop}.
+    /**Compute overlaps between two {@code Envelop}.
      * 
      * <blockquote><font size=-1>
-     * <strong>NOTE: In first time : compute intersection {@code GeneralEnvelope} between envelopA and envelopB.
+     * <strong>NOTE: In first time : compute intersection {@code Envelope} between envelopA and envelopB.
      *                               - If intersection dimension is 2 compute its area.
      *                               - If intersection dimension is 3 compute its bulk.</strong> 
      * </font></blockquote>
@@ -304,7 +304,7 @@ public class DefaultTreeUtils {
         return XMath.magnitude(tab);
     }
     
-    /**Compute Euclidean distance between two {@code GeneralEnvelope} in dimension n.
+    /**Compute Euclidean distance between two {@code Envelope} in dimension n.
      * 
      * @param envelopA
      * @param envelopB
@@ -321,7 +321,7 @@ public class DefaultTreeUtils {
         return getDistanceBetween2DirectPosition(getMedian(envelopA), getMedian(envelopB));
     }
     
-    /**Organize all elements from {@code AbstractNode} List and {@code GeneralEnvelope} List by differents criterion.
+    /**Organize all elements from {@code Node} List and {@code Envelope} List by differents criterion.
      * Compare left boundary coordinates elements.
      * 
      * @param index : - 0 : organize all List by smallest left boundary x value to tallest.
@@ -364,7 +364,7 @@ public class DefaultTreeUtils {
         }
     }
     
-    /**Organize all elements from {@code AbstractNode} List and {@code GeneralEnvelope} List by differents criterion.
+    /**Organize all elements from {@code Node} List and {@code Envelope} List by differents criterion.
      * Compare right boundary coordinates elements.
      * 
      * @param index : - 0 : organize all List by smallest right boundary x value to tallest.
@@ -373,7 +373,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if index is out of required limits.
      * @throws IllegalArgumentException if listNode and listEntries are null.
      */
-    public static void organize_List_Elements_From_Right(int index, final List<Node> listNode, final List<GeneralEnvelope> listEntries) {
+    public static void organize_List_Elements_From_Right(int index, final List<Node> listNode, final List<Envelope> listEntries) {
         ArgumentChecks.ensureBetween("organize_List3DElements_From_Right : index", 0, 2, index);
         if(listNode==null&&listEntries==null){
             throw new IllegalArgumentException("organize_List3DElements_From_Right : impossible to organize empty lists");
@@ -407,12 +407,12 @@ public class DefaultTreeUtils {
         }
     }
     
-    /**Compute general boundary of all shapes passed in parameter.
+    /**Compute general boundary of all {@code Envelope} passed in parameter.
      * 
      * @param lS GeneralEnvelope List.
-     * @throws IllegalArgumentException if {@code GeneralEnvelope} list lS is null.
-     * @throws IllegalArgumentException if {@code GeneralEnvelope} list lS is empty.
-     * @return Shape which is general boundary.
+     * @throws IllegalArgumentException if {@code Envelope} list lS is null.
+     * @throws IllegalArgumentException if {@code Envelope} list lS is empty.
+     * @return GeneralEnvelope which is general boundary.
      */
     public static GeneralEnvelope getEnveloppeMin(final List<? extends Envelope> lGE){
         ArgumentChecks.ensureNonNull("getEnveloppeMin : lGE", lGE);
@@ -426,7 +426,7 @@ public class DefaultTreeUtils {
         return envlop;
     }
     
-    /**Compute {@code GeneralEnvelope} area in euclidean cartesian space.
+    /**Compute {@code Envelope} area in euclidean cartesian space.
      * 
      * @param envelope
      * @return candidate area.
@@ -443,38 +443,38 @@ public class DefaultTreeUtils {
         return (dim-1)*(area);
     }
     
-    /**Compute enlargement difference between two {@code GeneralEnvelope}.
-     * 
-     * <blockquote><font size=-1>
-     * <strong>NOTE: - If dimension is 1 : compute their perimeter difference.
-     *               - If dimension is 2 : compute their area difference.
-     *               - If dimension is 3 : compute their bulk difference.
-     * 
-     * Moreover in case of narrowing, negative value is returned.</strong> 
-     * </font></blockquote>
-     * 
-     * @param envMin smallest boundary before enlargement.
-     * @param envMax largest boundary after enlargement.
-     * @throws IllegalArgumentException if envMin or envMax are null.
-     * @throws IllegalArgumentException if dimension envMin != dimension envMax.
-     * @throws IllegalArgumentException if dimension is differente of 1 or 2 or 3.
-     * @return enlargement or narrowing between envMin envMax.
-     */
-    public static double getEnlargementValue(final Envelope envMin, final Envelope envMax){
-        ArgumentChecks.ensureNonNull("getEnlargementValue : envelop", envMin);
-        ArgumentChecks.ensureNonNull("getEnlargementValue : envelop", envMax);
-        final int dimEnvMin = envMin.getDimension();
-        final int dimEnvMax = envMax.getDimension();
-        if(dimEnvMax != dimEnvMin){
-            throw new IllegalArgumentException("getEnlargementValue : not same dimension. Dim envMin = "+dimEnvMin+" dim envMax = "+dimEnvMax);
-        }
-        switch(dimEnvMin){
-            case 1 : return envMax.getSpan(0) - envMin.getSpan(0);
-            case 2 : return getGeneralEnvelopArea(envMax) - getGeneralEnvelopArea(envMin);
-            case 3 : return getGeneralEnvelopBulk(envMax) - getGeneralEnvelopBulk(envMin);
-            default : throw new IllegalArgumentException("dimension not conform.");
-        }
-    }
+//    /**Compute enlargement difference between two {@code Envelope}.
+//     * 
+//     * <blockquote><font size=-1>
+//     * <strong>NOTE: - If dimension is 1 : compute their perimeter difference.
+//     *               - If dimension is 2 : compute their area difference.
+//     *               - If dimension is 3 : compute their bulk difference.
+//     * 
+//     * Moreover in case of narrowing, negative value is returned.</strong> 
+//     * </font></blockquote>
+//     * 
+//     * @param envMin smallest boundary before enlargement.
+//     * @param envMax largest boundary after enlargement.
+//     * @throws IllegalArgumentException if envMin or envMax are null.
+//     * @throws IllegalArgumentException if dimension envMin != dimension envMax.
+//     * @throws IllegalArgumentException if dimension is differente of 1 or 2 or 3.
+//     * @return enlargement or narrowing between envMin envMax.
+//     */
+//    public static double getEnlargementValue(final Envelope envMin, final Envelope envMax){
+//        ArgumentChecks.ensureNonNull("getEnlargementValue : envelop", envMin);
+//        ArgumentChecks.ensureNonNull("getEnlargementValue : envelop", envMax);
+//        final int dimEnvMin = envMin.getDimension();
+//        final int dimEnvMax = envMax.getDimension();
+//        if(dimEnvMax != dimEnvMin){
+//            throw new IllegalArgumentException("getEnlargementValue : not same dimension. Dim envMin = "+dimEnvMin+" dim envMax = "+dimEnvMax);
+//        }
+//        switch(dimEnvMin){
+//            case 1 : return envMax.getSpan(0) - envMin.getSpan(0);
+//            case 2 : return getGeneralEnvelopArea(envMax) - getGeneralEnvelopArea(envMin);
+//            case 3 : return getGeneralEnvelopBulk(envMax) - getGeneralEnvelopBulk(envMin);
+//            default : throw new IllegalArgumentException("dimension not conform.");
+//        }
+//    }
     
     /**
      * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
@@ -492,6 +492,4 @@ public class DefaultTreeUtils {
         position.setCoordinateReferenceSystem(env.getCoordinateReferenceSystem());
         return position;
     }
-    
-    
 }

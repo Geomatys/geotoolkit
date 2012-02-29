@@ -18,9 +18,7 @@
 package org.geotoolkit.index.tree.calculator;
 
 import java.util.Comparator;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.DefaultNode;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
@@ -63,7 +61,7 @@ public abstract class Calculator {
      * @param nodeB
      * @return distance between nodeA, nodeB.
      */
-    public abstract double getDistance(final DefaultNode nodeA, final DefaultNode nodeB);
+    public abstract double getDistance(final Node nodeA, final Node nodeB);
 
     /**
      * @param envelopA
@@ -88,8 +86,8 @@ public abstract class Calculator {
      * @param index : ordinate choosen to compare.
      * @param lowerOrUpper : true to sort from "lower boundary", false from
      * "upper boundary"
-     * @param nodeOrGE : true to sort {@code DefaultNode} type elements, false
-     * to sort {@code GeneralEnvelope}.
+     * @param nodeOrGE : true  to sort {@code Node} type elements, 
+     *                   false to sort {@code Envelope} type elements.
      */
     public abstract Comparator sortFrom(final int index, final boolean lowerOrUpper, final boolean nodeOrGE);
 
@@ -97,7 +95,7 @@ public abstract class Calculator {
      * Method exclusively used by {@code HilbertRTree}.
      *
      * Create subnode(s) centroid(s). These centroids define Hilbert curve.
-     * Increase the Hilbert order of {@code AbstractNode} passed in parameter by
+     * Increase the Hilbert order of {@code Node} passed in parameter by
      * one unity.
      *
      * @param candidate HilbertLeaf to increase Hilbert order.

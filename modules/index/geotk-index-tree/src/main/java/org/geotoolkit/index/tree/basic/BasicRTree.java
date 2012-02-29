@@ -57,7 +57,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void search(final Envelope regionSearch, final List<Envelope> result) {
+    public void search(final Envelope regionSearch, final List<Envelope> result) throws MismatchedReferenceSystemException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
@@ -65,7 +65,7 @@ public class BasicRTree extends DefaultAbstractTree {
         }
         final Node root = getRoot();
         if (root != null) {
-            defaultNodeSearch(root, regionSearch, result);
+            nodeSearch(root, regionSearch, result);
         }
     }
 
@@ -83,7 +83,7 @@ public class BasicRTree extends DefaultAbstractTree {
             if (root.isEmpty()) {
                 root.getEntries().add(entry);
             } else {
-                defaultNodeInsert(root, entry);
+                nodeInsert(root, entry);
             }
         }
     }
@@ -110,12 +110,12 @@ public class BasicRTree extends DefaultAbstractTree {
         return this.choice;
     }
 
-    /**Find all {@code GeneralEnvelope} which intersect regionSearch parameter in {@code Tree}. 
+    /**Find all {@code Envelope} entries which intersect regionSearch parameter in {@code Tree}. 
      * 
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static void defaultNodeSearch(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList){
+    private static void nodeSearch(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList){
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){
@@ -123,13 +123,13 @@ public class BasicRTree extends DefaultAbstractTree {
                     resultList.addAll(candidate.getEntries());
                 }else{
                     for(Node nod : candidate.getChildren()){
-                        defaultNodeSearch(nod, null, resultList);
+                        nodeSearch(nod, null, resultList);
                     }
                 }
             }else{
                 final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
                 if(rS.contains(bound, true)){
-                    defaultNodeSearch(candidate, null, resultList);
+                    nodeSearch(candidate, null, resultList);
                 }else if(rS.intersects(bound, true)){
                     if(candidate.isLeaf()){
                         for(Envelope gn : candidate.getEntries()){
@@ -139,7 +139,7 @@ public class BasicRTree extends DefaultAbstractTree {
                         }
                     }else{
                         for(Node child : candidate.getChildren()){
-                            defaultNodeSearch(child, regionSearch, resultList);
+                            nodeSearch(child, regionSearch, resultList);
                         }
                     }
                 }
@@ -147,7 +147,7 @@ public class BasicRTree extends DefaultAbstractTree {
         }
     }
     
-    /**Insert new {@code Envelope} in branch and re-organize {@code DefaultNode} if it's necessary.
+    /**Insert new {@code Envelope} in branch and re-organize {@code Node} if it's necessary.
      * 
      * <blockquote><font size=-1>
      * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong> 
@@ -155,14 +155,14 @@ public class BasicRTree extends DefaultAbstractTree {
      * 
      * @param candidate where to insert entry.
      * @param entry to add.
-     * @throws IllegalArgumentException if {@code DefaultNode} candidate is null.
-     * @throws IllegalArgumentException if {@code GeneralEnvelope} entry is null.
+     * @throws IllegalArgumentException if {@code Node} candidate is null.
+     * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void defaultNodeInsert(final Node candidate, final Envelope entry) throws MismatchedReferenceSystemException{
+    private static void nodeInsert(final Node candidate, final Envelope entry){
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
-            defaultNodeInsert(chooseSubtree(candidate, entry), entry);
+            nodeInsert(chooseSubtree(candidate, entry), entry);
         }
         
         if(!candidate.isLeaf()){
@@ -211,14 +211,14 @@ public class BasicRTree extends DefaultAbstractTree {
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
      * Also branchGrafting will be able to avoid splitting node.
      * 
-     * @param nodeA DefaultNode
-     * @param nodeB DefaultNode
+     * @param nodeA Node
+     * @param nodeB Node
      * @throws IllegalArgumentException if nodeA or nodeB are null.
      * @throws IllegalArgumentException if nodeA and nodeB have different "parent".
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws MismatchedReferenceSystemException{
+    private static void branchGrafting(final Node nodeA, final Node nodeB ) {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("branchGrafting : not leaf");
         }
@@ -267,20 +267,20 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
         for(int i = 0; i<index;i++){
-            defaultNodeInsert(nodeA, listGlobale.get(i));
+            nodeInsert(nodeA, listGlobale.get(i));
         }
         for(int i = index; i<size;i++){
-            defaultNodeInsert(nodeB, listGlobale.get(i));
+            nodeInsert(nodeB, listGlobale.get(i));
         }
     }
     
     /**
-     * Split a overflow {@code DefaultNode} in accordance with R-Tree properties.
+     * Split a overflow {@code Node} in accordance with R-Tree properties.
      * 
-     * @param candidate {@code DefaultNode} to Split.
+     * @param candidate {@code Node} to Split.
      * @throws IllegalArgumentException if candidate is null.
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
-     * @return {@code DefaultNode} List which contains two {@code DefaultNode} (split result of candidate).
+     * @return {@code Node} List which contains two {@code Node} (split result of candidate).
      */
     private static List<Node> splitNode(final Node candidate) {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
@@ -315,8 +315,8 @@ public class BasicRTree extends DefaultAbstractTree {
             case LINEAR: {
                 for (int i = 0; i < ls.size() - 1; i++) {
                     for (int j = i + 1; j < ls.size(); j++) {
-                        tempValue = (leaf) ? calc.getDistance(((GeneralEnvelope) ls.get(i)), ((GeneralEnvelope) ls.get(j)))
-                                           : calc.getDistance(((Node) ls.get(i)).getBoundary(), ((DefaultNode) ls.get(j)).getBoundary());
+                        tempValue = (leaf) ? calc.getDistance(((Envelope) ls.get(i)), ((Envelope) ls.get(j)))
+                                           : calc.getDistance(((Node) ls.get(i)).getBoundary(), ((Node) ls.get(j)).getBoundary());
                         if (tempValue > refValue) {
                             s1 = ls.get(i);
                             s2 = ls.get(j);
@@ -334,16 +334,13 @@ public class BasicRTree extends DefaultAbstractTree {
                 for (int i = 0; i < ls.size() - 1; i++) {
                     for (int j = i + 1; j < ls.size(); j++) {
                         if (leaf) {
-                            bound1 = ((GeneralEnvelope) ls.get(i));
-                            bound2 = ((GeneralEnvelope) ls.get(j));
-                            rectGlobal = DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) bound1, (GeneralEnvelope) bound2));
-
+                            bound1 = ((Envelope) ls.get(i));
+                            bound2 = ((Envelope) ls.get(j));
                         } else {
                             bound1 = ((Node) ls.get(i)).getBoundary();
                             bound2 = ((Node) ls.get(j)).getBoundary();
-                            rectGlobal = DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) bound1, bound2));
-
                         }
+                        rectGlobal = DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(bound1, bound2));
                         tempValue = calc.getSpace(rectGlobal)-calc.getSpace(bound1)-calc.getSpace(bound2);
                         if (tempValue > refValue) {
                             s1 = ls.get(i);
@@ -360,13 +357,13 @@ public class BasicRTree extends DefaultAbstractTree {
 
         ls.remove(Math.max(index1, index2));
         ls.remove(Math.min(index1, index2));
-        GeneralEnvelope r1Temp, r2Temp;
+        Envelope r1Temp, r2Temp;
         Envelope boundS1, boundS2;
         Node result1, result2;
         
         if(leaf){
-            boundS1 = ((GeneralEnvelope)s1);
-            boundS2 = ((GeneralEnvelope)s2);
+            boundS1 = ((Envelope)s1);
+            boundS2 = ((Envelope)s2);
         }else{
             boundS1 = ((Node)s1).getBoundary();
             boundS2 = ((Node)s2).getBoundary();
@@ -383,8 +380,8 @@ public class BasicRTree extends DefaultAbstractTree {
         }
         
         if(leaf){
-            result1 = (Node)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((GeneralEnvelope) s1), tabS1); 
-            result2 = (Node)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((GeneralEnvelope) s2), tabS2);
+            result1 = (Node)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1); 
+            result2 = (Node)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2);
         }else{
             result1 = (Node)tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1); 
             result2 = (Node)tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
@@ -394,10 +391,10 @@ public class BasicRTree extends DefaultAbstractTree {
         demimaxE = Math.max(demimaxE, 1);
         
         for (Object ent : ls) {
-            r1Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope) s1, (GeneralEnvelope)ent))
-                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((DefaultNode) s1).getBoundary(), ((DefaultNode)ent).getBoundary()));
-            r2Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((GeneralEnvelope)s2, (GeneralEnvelope)ent))
-                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((DefaultNode) s2).getBoundary(), ((DefaultNode)ent).getBoundary()));
+            r1Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Envelope) s1, (Envelope)ent))
+                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s1).getBoundary(), ((Node)ent).getBoundary()));
+            r2Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Envelope)s2, (Envelope)ent))
+                            : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s2).getBoundary(), ((Node)ent).getBoundary()));
 
 
             double area1 = calc.getSpace(r1Temp);
@@ -407,20 +404,20 @@ public class BasicRTree extends DefaultAbstractTree {
             if (area1 < area2) {
                 if (r1nbE <= demimaxE && r2nbE > demimaxE) {
                     if(leaf){
-                        result1.getEntries().add((GeneralEnvelope)ent);
+                        result1.getEntries().add((Envelope)ent);
                     }else{
                         result1.getChildren().add((Node)ent);
                     }
 
                 } else if (r2nbE <= demimaxE && r1nbE > demimaxE) {
                     if(leaf){
-                        result2.getEntries().add((GeneralEnvelope)ent);
+                        result2.getEntries().add((Envelope)ent);
                     }else{
                         result2.getChildren().add((Node)ent);
                     }
                 } else {
                     if(leaf){
-                        result1.getEntries().add((GeneralEnvelope)ent);
+                        result1.getEntries().add((Envelope)ent);
                     }else{
                         result1.getChildren().add((Node)ent);
                     }
@@ -428,13 +425,13 @@ public class BasicRTree extends DefaultAbstractTree {
             } else if (area1 == area2) {
                 if (r1nbE < r2nbE) {
                     if(leaf){
-                        result1.getEntries().add((GeneralEnvelope)ent);
+                        result1.getEntries().add((Envelope)ent);
                     }else{
                         result1.getChildren().add((Node)ent);
                     }
                 } else {
                     if(leaf){
-                        result2.getEntries().add((GeneralEnvelope)ent);
+                        result2.getEntries().add((Envelope)ent);
                     }else{
                         result2.getChildren().add((Node)ent);
                     }
@@ -442,19 +439,19 @@ public class BasicRTree extends DefaultAbstractTree {
             } else {
                 if (r1nbE <= demimaxE && r2nbE > demimaxE) {
                     if(leaf){
-                        result1.getEntries().add((GeneralEnvelope)ent);
+                        result1.getEntries().add((Envelope)ent);
                     }else{
                         result1.getChildren().add((Node)ent);
                     }
                 } else if (r2nbE <= demimaxE && r1nbE > demimaxE) {
                     if(leaf){
-                        result2.getEntries().add((GeneralEnvelope)ent);
+                        result2.getEntries().add((Envelope)ent);
                     }else{
                         result2.getChildren().add((Node)ent);
                     }
                 } else {
                     if(leaf){
-                        result2.getEntries().add((GeneralEnvelope)ent);
+                        result2.getEntries().add((Envelope)ent);
                     }else{
                         result2.getChildren().add((Node)ent);
                     }
@@ -490,8 +487,8 @@ public class BasicRTree extends DefaultAbstractTree {
      * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong> 
      * </font></blockquote>
      * 
-     * @param candidate {@code DefaultNode}  where to delete.
-     * @param entry {@code GeneralEnvelope} to delete.
+     * @param candidate {@code Node}  where to delete.
+     * @param entry {@code Envelope} to delete.
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
@@ -521,7 +518,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * 
      * Condense made, travel up from leaf to tree trunk.
      * 
-     * @param candidate {@code DefaultNode} to begin condense.
+     * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
     private static void trim(final Node candidate) throws MismatchedReferenceSystemException {
@@ -553,20 +550,20 @@ public class BasicRTree extends DefaultAbstractTree {
     }
     
     /**
-     * Find appropriate {@code DefaultNode} to insert {@code GeneralEnvelope}.
+     * Find appropriate {@code Node} to insert {@code Envelope} entry.
      * To define appropriate Node, criterion are : 
      *      - require minimum area enlargement to cover shape.
-     *      - or put into {@code DefaultNode} with lesser elements number in case of area equals.
+     *      - or put into {@code Node} with lesser elements number in case of area equals.
      * 
-     * @param children List of {@code DefaultNode}.
-     * @param entry {@code GeneralEnvelope} to add.
+     * @param children List of {@code Node}.
+     * @param entry {@code Envelope} to add.
      * @throws IllegalArgumentException if children or entry are null.
      * @throws IllegalArgumentException if children is empty.
-     * @return {@code DefaultNode} which is appropriate to contain shape.
+     * @return {@code Node} which is appropriate to contain shape.
      */
     private static Node chooseSubtree(final Node candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("chooseSubtree : candidate", candidate);
-        ArgumentChecks.ensureNonNull("chooseSubtree : GeneralEnvelope entry", entry);
+        ArgumentChecks.ensureNonNull("chooseSubtree : Envelope entry", entry);
         final Calculator calc = candidate.getTree().getCalculator();
         final List<Node> children = candidate.getChildren();
         if (children.isEmpty()) {
@@ -585,9 +582,9 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
 
-        final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> lGE = new ArrayList<Envelope>();
         for(Node dn : children){
-            lGE.add(new GeneralEnvelope(dn.getBoundary()));
+            lGE.add(dn.getBoundary());
         }
         double area = calc.getSpace(DefaultTreeUtils.getEnveloppeMin(lGE));
         double nbElmt = DefaultTreeUtils.countElements(n);

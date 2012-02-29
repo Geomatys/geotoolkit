@@ -89,10 +89,10 @@ public abstract class Node {
     }
     
     /**<blockquote><font size=-1>
-     * <strong>NOTE: It is possible that return null.</strong> 
+     * <strong>NOTE: Null value can be return.</strong> 
      * </font></blockquote>
      * 
-     * @return {@code Node} boundary without re-computing subnode boundary.
+     * @return {@code Node} boundary without re-computing sub-node boundary.
      */
     public Envelope getBound(){
         return this.boundary;
@@ -111,7 +111,7 @@ public abstract class Node {
     
     /**A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
      * 
-     * @return true if it is  a leaf else false (branch).
+     * @return true if it is a leaf else false (branch).
      */
     public abstract boolean isLeaf();
     
@@ -140,7 +140,7 @@ public abstract class Node {
     public abstract List<Envelope> getEntries();
 
     /**
-     * @return {@code AbstractNode} parent pointer.
+     * @return {@code Node} parent pointer.
      */
     public abstract Node getParent();
 

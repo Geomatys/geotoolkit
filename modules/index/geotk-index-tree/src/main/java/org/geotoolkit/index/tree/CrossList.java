@@ -26,7 +26,7 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
  * A subclass of NotifiedCheckedList which listen to it's contained Node.
  * This allow to automatically forward events.
  *
- * @param <T> 
+ * @param <T> Type {@code Node} used.
  * @author Johann Sorel (Geomatys)
  */
 public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> implements PropertyChangeListener {

@@ -24,9 +24,8 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.DefaultNode;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
@@ -43,122 +42,122 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class Calculator2D extends Calculator {
 
     /**
-     * To compare two {@code DefaultNode} from them boundary box minimum x axis
+     * To compare two {@code Node} from them boundary box minimum x axis
      * coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<DefaultNode> nodeComparatorXLow = new Comparator<DefaultNode>() {
+    private final Comparator<Node> nodeComparatorXLow = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(0));
             java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
     /**
-     * To compare two {@code DefaultNode} from them boundary box minimum y axis
+     * To compare two {@code Node} from them boundary box minimum y axis
      * coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<DefaultNode> nodeComparatorYLow = new Comparator<DefaultNode>() {
+    private final Comparator<Node> nodeComparatorYLow = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(1));
             java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
     /**
-     * To compare two {@code GeneralEnvelope} from them boundary box minimum x
+     * To compare two {@code Envelope} from them boundary box minimum x
      * axis coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorXLow = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorXLow = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getLower(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getLower(0));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
     /**
-     * To compare two {@code GeneralEnvelope} from them boundary box minimum y
+     * To compare two {@code Envelope} from them boundary box minimum y
      * axis coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorYLow = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorYLow = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLower(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getLower(1));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
     /**
-     * To compare two {@code Node3D} from them boundary box minimum x axis
+     * To compare two {@code Node} from them boundary box minimum x axis
      * coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<DefaultNode> nodeComparatorXUpp = new Comparator<DefaultNode>() {
+    private final Comparator<Node> nodeComparatorXUpp = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(0));
             java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
     /**
-     * To compare two {@code Node3D} from them boundary box minimum y axis
+     * To compare two {@code Node} from them boundary box minimum y axis
      * coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<DefaultNode> nodeComparatorYUpp = new Comparator<DefaultNode>() {
+    private final Comparator<Node> nodeComparatorYUpp = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(1));
             java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
     /**
-     * To compare two {@code GeneralEnvelope} from them boundary box minimum x
+     * To compare two {@code Envelope} from them boundary box minimum x
      * axis coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorXUpp = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorXUpp = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getUpper(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getUpper(0));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
     /**
-     * To compare two {@code GeneralEnvelope} from them boundary box minimum y
+     * To compare two {@code Envelope} from them boundary box minimum y
      * axis coordinate.
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorYUpp = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorYUpp = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpper(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpper(1));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -202,7 +201,7 @@ public class Calculator2D extends Calculator {
      * Compute Euclidean 2D distance. {@inheritDoc }
      */
     @Override
-    public double getDistance(final DefaultNode nodeA, final DefaultNode nodeB) {
+    public double getDistance(final Node nodeA, final Node nodeB) {
         return getDistance(nodeA.getBoundary(), nodeB.getBoundary());
     }
 
@@ -228,7 +227,7 @@ public class Calculator2D extends Calculator {
      * Comparator for 2D space axis. {@inheritDoc }
      */
     @Override
-    public Comparator sortFrom(int index, boolean lowerOrUpper, boolean nodeOrGE) {
+    public Comparator sortFrom(final int index, final boolean lowerOrUpper, final boolean nodeOrGE) {
         ArgumentChecks.ensureBetween("sortFrom : index ", 0, 1, index);
         if (lowerOrUpper) {
             if (nodeOrGE) {
@@ -277,7 +276,7 @@ public class Calculator2D extends Calculator {
      * {@inheritDoc }.
      */
     @Override
-    public void createBasicHL(Node candidate, int order, Envelope bound) {
+    public void createBasicHL(final Node candidate, final int order, final Envelope bound) {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
         candidate.getChildren().clear();
         final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
@@ -461,7 +460,7 @@ public class Calculator2D extends Calculator {
      * @throws IllegalArgumentException if parameter dPt is null.
      * @return int[] table of length 2 which contains two coordinates.
      */
-    public static int[] getHilbCoord(Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
+    public static int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
         ArgumentChecks.ensureNonNull("DirectPosition dPt : ", dPt);
         if (!new GeneralEnvelope(envelop).contains(dPt)) {
             throw new IllegalArgumentException("Point is out of this node boundary");

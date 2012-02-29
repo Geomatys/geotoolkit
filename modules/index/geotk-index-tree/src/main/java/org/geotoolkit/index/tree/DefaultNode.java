@@ -89,7 +89,7 @@ public class DefaultNode extends Node {
         }
     };
     
-    /**Create an empty {@code Node3D}.
+    /**Create an empty {@code DefaultNode}.
      * 
      * @param tree 
      */
@@ -97,10 +97,10 @@ public class DefaultNode extends Node {
         this(tree, null, null, null, null, null);
     }
     
-    /**Create {@code Node3D}.
+    /**Create {@code DefaultNode}.
      * 
      * @param tree pointer on {@code Tree}.
-     * @param parent pointer on {@code Node3D} parent.
+     * @param parent pointer on {@code Node} parent.
      * @param children subNode.
      * @param entries data(s) to add.
      * @throws IllegalArgumentException if tree pointer is null.
@@ -223,7 +223,7 @@ public class DefaultNode extends Node {
     }
     
     /**
-     * Compute {@code DefaultNode} boundary. 
+     * Compute {@code Node} boundary from stocked sub-node or entries . 
      */
     protected void calculateBounds(){
         for(Envelope ent2D : getEntries()){
@@ -236,7 +236,7 @@ public class DefaultNode extends Node {
         }
     }
 
-    /**Update boundary size from {@code GeneralEnvelope}.
+    /**Update boundary size from {@code Envelope}.
      * 
      * @param env {@code Node} or entry boundary.
      */

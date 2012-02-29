@@ -21,7 +21,6 @@ import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a generic Tree.
@@ -42,8 +41,9 @@ public interface Tree<N> {
      * 
      * @param regionSearch Define the region to find Shape within tree.
      * @param result List of Entr(y)(ies).
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
      */
-    void search(Envelope regionSearch, List<Envelope> result) throws TransformException;
+    void search(Envelope regionSearch, List<Envelope> result) throws MismatchedReferenceSystemException;
 
     /**
      * Insert a {@code Entry} into Rtree.
@@ -51,7 +51,7 @@ public interface Tree<N> {
      * @param Entry to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
      */
-    void insert(Envelope entry)throws MismatchedReferenceSystemException;
+    void insert(Envelope entry) throws MismatchedReferenceSystemException;
 
     /**
      * Find a {@code Entry} into the tree and delete it.
@@ -59,7 +59,7 @@ public interface Tree<N> {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
      */
-    void delete(Envelope entry)throws MismatchedReferenceSystemException;
+    void delete(Envelope entry) throws MismatchedReferenceSystemException;
 
     /**
      * @return max number authorized by tree cells.
