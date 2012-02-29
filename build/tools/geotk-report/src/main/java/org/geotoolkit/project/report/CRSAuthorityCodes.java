@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.factory.epsg;
+package org.geotoolkit.project.report;
 
 import java.io.*;
 import java.util.List;
@@ -37,27 +37,23 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
 
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.test.ReportGenerator;
 
 import static java.lang.StrictMath.*;
+import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
 
 /**
- * Generated a list of supported CRS in the current directory. This class is not really a test,
- * but failure to execute it would be an indication of problem. This class is for manual execution
+ * Generates a list of supported CRS in the current directory. This class is for manual execution
  * after the EPSG database has been updated, or the projection implementations changed.
- * <p>
- * The result are formatted in the HTML format.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
  *
  * @since 3.16
  */
-public final strictfp class SupportedListGenerator extends ReportGenerator {
+public final class CRSAuthorityCodes extends ReportGenerator {
     /**
      * The symbol to write in from of EPSG code of CRS having an axis order different
      * then the (longitude, latitude) one.
@@ -92,7 +88,7 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
     /**
      * For internal usage only.
      */
-    private SupportedListGenerator(final String code, final InternationalString description) {
+    private CRSAuthorityCodes(final String code, final InternationalString description) {
         this.code = code;
         this.description = (description != null) ? description.toString(LOCALE) : null;
     }
@@ -103,7 +99,7 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
     private void write(final Writer out, final boolean highlight) throws IOException {
         out.write("<tr");
         if (highlight) {
-            out.write(" bgcolor=\"lavender\"");
+            out.write(" bgcolor=\"" + TABLE_HIGHLIGHT + "\"");
         }
         out.write("><td>");
         if (!isLongitudeFirst) {
@@ -172,11 +168,11 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
     public static void main(final String[] args) throws Exception {
         int numValids = 0, numYX = 0;
         Locale.setDefault(LOCALE);
-        final List<SupportedListGenerator> list = new ArrayList<>();
+        final List<CRSAuthorityCodes> list = new ArrayList<>();
         final CRSAuthorityFactory factory = CRS.getAuthorityFactory(false);
         final CRSAuthorityFactory xyOrder = CRS.getAuthorityFactory(true);
         for (final String code : factory.getAuthorityCodes(CoordinateReferenceSystem.class)) {
-            final SupportedListGenerator element = new SupportedListGenerator(code, factory.getDescriptionText(code));
+            final CRSAuthorityCodes element = new CRSAuthorityCodes(code, factory.getDescriptionText(code));
             if (code.startsWith("AUTO2:")) {
                 element.message = "Projected";
                 element.isSupported = true;
@@ -189,7 +185,7 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
                 element.isSupported = true;
                 numValids++;
             } catch (FactoryException exception) {
-                String message = message = exception.getMessage();
+                String message = exception.getMessage();
                 if (message.contains("Unable to format units in UCUM")) {
                     // Simplify a very long and badly formatted message.
                     message = "Unable to format units in UCUM";
@@ -202,19 +198,14 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
             list.add(element);
         }
         int n = 0;
-        try (Writer out = openHTML(new File("supported-codes.html"), "Authority codes for Coordinate Reference Systems")) {
+        try (final Writer out = openHTML(new File("supported-codes.html"), "Authority codes for Coordinate Reference Systems")) {
             out.write("<p>This list is generated from the EPSG database version ");
-            out.write(ThreadedEpsgFactory.VERSION);
+            out.write(EPSG_VERSION);
             out.write(", together with other sources.\n");
             out.write("All those <cite>Coordinate Reference Systems</cite> (CRS) are supported by the " +
                       "<a href=\"http://www.geotoolkit.org/modules/referencing/index.html\">" +
                       "Geotoolkit.org referencing module</a> version ");
-            String version = Version.GEOTOOLKIT.toString();
-            final int snapshot = version.lastIndexOf('-');
-            if (snapshot >= 2) {
-                version = version.substring(0, snapshot);
-            }
-            out.write(version);
+            out.write(getGeotkVersion());
             out.write(", except those with a red text in the last column.\nThere is ");
             out.write(String.valueOf(list.size()));
             out.write(" codes, ");
@@ -228,17 +219,13 @@ public final strictfp class SupportedListGenerator extends ReportGenerator {
                       "(<var>easting</var>, <var>northing</var>).</li>\n" +
                       "</ul>");
 
-            out.write("<table bgcolor=\"aliceblue\" cellpadding=\"0\" cellspacing=\"0\">\n");
-            out.write("<tr bgcolor=\"lightskyblue\" align=\"left\">"
-                    + "<th height=\"24\"></th>"
-                    + "<th>Code</th>"
-                    + "<th>Description</th>"
-                    + "<th>Type, or reason for unsupport</th>\n");
-            for (final SupportedListGenerator element : list) {
+            openTable(out);
+            writeTableHeader(out, "", "Code", "Description", "Type, or reason for unsupport");
+            for (final CRSAuthorityCodes element : list) {
                 element.write(out, (n & 2) != 0);
                 n++;
             }
-            out.write("</table>\n");
+            closeTable(out);
             closeHTML(out);
         }
         System.exit(0);

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.test;
+package org.geotoolkit.project.report;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,13 +25,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Locale;
 
+import org.geotoolkit.util.Version;
+
 
 /**
  * Base class for tools generating reports. Those tools are not really tests, but failure to
  * execute those tools would be an indication of problem. The report generators are executed
- * manually. For example {@link org.geotoolkit.referencing.factory.epsg.SupportedListGenerator}
- * is executed after the EPSG database has been upgraded, or the map projection implementations
- * changed.
+ * manually. For example {@link CRSAuthorityCodes} is executed after the EPSG database has
+ * been upgraded, or the map projection implementations changed.
  * <p>
  * This class provides only static utility methods. The instance fields are left to subclasses.
  *
@@ -52,9 +53,39 @@ public abstract strictfp class ReportGenerator {
     protected static final String ENCODING = "UTF-8";
 
     /**
+     * The background color of table headers.
+     */
+    static final String TABLE_HEADER_BACKGROUND = "lightskyblue";
+
+    /**
+     * The background color of table content (not the header).
+     */
+    static final String TABLE_BACKGROUND = "aliceblue";
+
+    /**
+     * The background color of highlighted content in the table.
+     */
+    static final String TABLE_HIGHLIGHT = "lavender";
+
+    /**
      * Creates a new report generator.
      */
     protected ReportGenerator() {
+    }
+
+    /**
+     * Returns the current Geotoolkit.org version, with the {@code -SNAPSHOT} trailing
+     * part omitted.
+     *
+     * @return The current Geotk version.
+     */
+    static String getGeotkVersion() {
+        String version = Version.GEOTOOLKIT.toString();
+        final int snapshot = version.lastIndexOf('-');
+        if (snapshot >= 2) {
+            version = version.substring(0, snapshot);
+        }
+        return version;
     }
 
     /**
@@ -66,7 +97,7 @@ public abstract strictfp class ReportGenerator {
      * @return The stream to use for writing.
      * @throws IOException If an error occurred while opening the file or writing to it.
      */
-    protected static Writer openHTML(final File file, final String title) throws IOException {
+    static Writer openHTML(final File file, final String title) throws IOException {
         final Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
         out.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" +
                   "<HTML>\n" +
@@ -86,8 +117,45 @@ public abstract strictfp class ReportGenerator {
      * @param  out The stream to close.
      * @throws IOException If an error occurred while writing the elements.
      */
-    protected static void closeHTML(final Writer out) throws IOException {
+    static void closeHTML(final Writer out) throws IOException {
         out.write("  </BODY>\n</HTML>\n");
         out.close();
+    }
+
+    /**
+     * Opens a {@code <table>} element.
+     *
+     * @param  out The stream where to write.
+     * @throws IOException If an error occurred while writing the elements.
+     */
+    static void openTable(final Writer out) throws IOException {
+        out.write("<table bgcolor=\"" + TABLE_BACKGROUND + "\" cellpadding=\"0\" cellspacing=\"0\">\n");
+    }
+
+    /**
+     * Writes the given column headers inside a {@code <table>} element.
+     *
+     * @param  out The stream where to write.
+     * @param  headers The column headers.
+     * @throws IOException If an error occurred while writing the elements.
+     */
+    static void writeTableHeader(final Writer out, final String... headers) throws IOException {
+        out.write("<tr bgcolor=\"" + TABLE_HEADER_BACKGROUND + "\" align=\"left\">");
+        for (final String header : headers) {
+            out.write("<th height=\"24\">");
+            out.write(header);
+            out.write("</th>");
+        }
+        out.write("</tr>\n");
+    }
+
+    /**
+     * Closes a {@code <table>} element.
+     *
+     * @param  out The stream where to write.
+     * @throws IOException If an error occurred while writing the elements.
+     */
+    static void closeTable(final Writer out) throws IOException {
+        out.write("</table>\n");
     }
 }

@@ -60,6 +60,8 @@ import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.io.Installation;
 
+import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
+
 
 /**
  * The EPSG factory registered in {@link AuthorityFactoryFinder}.
@@ -105,14 +107,6 @@ import org.geotoolkit.internal.io.Installation;
 public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {
-    /**
-     * Version of the embedded database. This string must be updated when
-     * the SQL scripts in the {@code geotk-epsg} module are updated.
-     *
-     * @see http://www.geotoolkit.org/build/tools/geotk-epsg-pack/index.html
-     */
-    static final String VERSION = "7.09";
-
     /**
      * The user configuration file, which is {@value}. This file is used if no {@link DataSource}
      * object were specified explicitly to the constructor, either directly or as a hint. In such
@@ -346,7 +340,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         }
         final StringBuilder buffer = new StringBuilder("jdbc:").append(driver).append(':')
                 .append(directory.getPath().replace(File.separatorChar, '/'))
-                .append('/').append(VERSION);
+                .append('/').append(EPSG_VERSION);
         if (create) {
             // Allow the creation of the database only if the needed scripts are available.
             buffer.append(";create=true");

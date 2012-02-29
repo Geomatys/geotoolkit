@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.project</groupId>
-    <artifactId>build</artifactId>
+    <artifactId>tools</artifactId>
     <version>3.x-SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,15 @@
            Module Description
        =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
-  <artifactId>tools</artifactId>
-  <packaging>pom</packaging>
-  <name>Tools</name>
+  <artifactId>geotk-report</artifactId>
+  <packaging>jar</packaging>
+  <name>Reports generator</name>
 
   <description>
-    Projects group for miscellaneous tools that are not Maven plugins.
+    Generates some HTML reports for the Geotk library. The classes in this module
+    iterate over some kind of services declared by the Geotk library (for example
+    the list of map projections) and produce HTML reports to be copied on the web
+    server. The reports are for example the list of all supported EPSG codes.
   </description>
 
 
@@ -43,48 +46,46 @@
       <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
       </roles>
     </developer>
   </developers>
 
 
+
   <!-- ===========================================================
-           Modules included in the build
-
-       We don't include "geotk-provided" in the list because we
-       don't want it to be processed in the aggregated javadoc.
-       We can't use the javadoc "exclude package" option since
-       we don't want to exclude the real classes defined in an
-       other module. Consequently "geotk-provided" needs to be
-       deployed manually. Hopefully the changes in that module
-       are exceptional enough.
-
-       See: http://jira.codehaus.org/browse/MJAVADOC-134
-            http://jira.codehaus.org/browse/MJAVADOC-227
+           Dependencies
        =========================================================== -->
-  <modules>
-    <module>geotk-test</module>
-    <module>geotk-stressor</module>
-    <module>geotk-report</module>
-    <module>geotk-migrate</module>
-    <module>geotk-epsg-pack</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-epsg-javadb</artifactId>
+      <classifier>${project.classifier}</classifier>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
-  <!--
-    The modules excluded from the above list. We will keep them when
-    we are not generating the web site, in order to reduce the risk
-    of build failure for users just running "mvn install".
-  -->
-  <profiles>
-    <profile>
-      <id>no-site</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>geotk-provided</module>
-      </modules>
-    </profile>
-  </profiles>
+
+  <!-- ===========================================================
+           JAR packaging
+       =========================================================== -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <index>false</index>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <packageName>org.geotoolkit.internal.report</packageName>
+              <mainClass>org.geotoolkit.internal.report.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
