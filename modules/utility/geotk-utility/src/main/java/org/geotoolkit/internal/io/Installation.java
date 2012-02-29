@@ -116,16 +116,6 @@ public enum Installation {
     private static final File DEFAULT_ROOT = root();
 
     /**
-     * Whatever we are allowed to use preferences. This can be set to {@code false} for
-     * disabling any usage of preferences API by this class, both system and user preferences.
-     * Sometime useful for testing purpose, but should generally not be used by applications.
-     *
-     * @since 3.20
-     */
-    @Workaround(library="JDK", version="1.7-ea")
-    private static final boolean allowPreferences = !Boolean.getBoolean("org.geotoolkit.disablePreferences");
-
-    /**
      * Whatever we are allowed to check for system preferences. This can be set to {@code false}
      * for avoiding the "<cite>can not flush system preferences in {@code /etc/.java/}</cite>"
      * warning on Linux.
@@ -168,16 +158,14 @@ public enum Installation {
      * @param value The preference value, or {@code null} for removing it.
      */
     public final void set(final boolean userSpecific, final String value) {
-        if (allowPreferences) {
-            final Preferences prefs = preference(userSpecific);
-            if (value != null) {
-                prefs.put(key, value);
-            } else {
-                prefs.remove(key);
-            }
-            if (!userSpecific) {
-                preference(true).remove(key);
-            }
+        final Preferences prefs = preference(userSpecific);
+        if (value != null) {
+            prefs.put(key, value);
+        } else {
+            prefs.remove(key);
+        }
+        if (!userSpecific) {
+            preference(true).remove(key);
         }
     }
 
@@ -188,7 +176,7 @@ public enum Installation {
      * @return The preference value, or {@code null} if none.
      */
     public final String get(final boolean userSpecific) {
-        if (allowPreferences && key != null) {
+        if (key != null) {
             if (userSpecific || allowSystemPreferences) {
                 return preference(userSpecific).get(key, null);
             }
@@ -198,16 +186,27 @@ public enum Installation {
 
     /**
      * Returns the default root directory, ignoring user's preferences.
+     * This method is used only for the initialization of the {@link #DEFAULT_ROOT}
+     * static constant.
      *
      * @return The default installation root directory.
      */
     private static File root() {
         try {
+            final OS system = OS.current();
+            if (system == OS.WINDOWS) {
+                final String app = System.getenv("APPDATA");
+                if (app != null) {
+                    final File file = new File(app);
+                    if (file.isDirectory()) {
+                        return new File(file, "Geotoolkit.org");
+                    }
+                }
+            }
             final String directory = System.getProperty("user.home");
             if (directory != null) {
                 File file = new File(directory);
                 String name = ".geotoolkit.org";
-                final OS system = OS.current();
                 switch (system) {
                     case WINDOWS: {
                         file = new File(file, "Application Data");
