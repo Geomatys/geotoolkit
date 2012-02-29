@@ -22,9 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.AbstractNode;
-import org.geotoolkit.index.tree.DefaultNode;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
@@ -60,7 +58,7 @@ public class TreeWriter {
     private boolean closeOnDispose = false;
     private OutputStream sourceStream = null;
     private DataOutputStream dataOPStream = null;
-    private Map<AbstractNode, Integer> index = null;
+    private Map<Node, Integer> index = null;
 
     public TreeWriter() {
     }
@@ -74,7 +72,7 @@ public class TreeWriter {
      * @throws IOException
      */
     public void setOutput(final Object output) throws IOException {
-        index = new HashMap<AbstractNode, Integer>();
+        index = new HashMap<Node, Integer>();
         if (output instanceof OutputStream) {
             sourceStream = (OutputStream) output;
             dataOPStream = new DataOutputStream(sourceStream);
@@ -98,7 +96,7 @@ public class TreeWriter {
      * @throws IOException 
      */
     public void write(final Tree tree) throws IOException {
-        final DefaultNode root = (DefaultNode)tree.getRoot();
+        final Node root = (Node)tree.getRoot();
         createIndex(root);
         serializeNode(root, dataOPStream);
     }
@@ -109,9 +107,9 @@ public class TreeWriter {
      * @param dops
      * @throws IOException 
      */
-    private void serializeNode(final DefaultNode root, final DataOutputStream dops) throws IOException {
+    private void serializeNode(final Node root, final DataOutputStream dops) throws IOException {
         nodeToBinary(root, dops);
-        for (DefaultNode child : root.getChildren()) {
+        for (Node child : root.getChildren()) {
             serializeNode(child, dops);
         }
     }
@@ -122,8 +120,8 @@ public class TreeWriter {
      * @param dops
      * @throws IOException 
      */
-    private void nodeToBinary(final DefaultNode node, final DataOutputStream dops) throws IOException {
-        final List<DefaultNode> listChild = node.getChildren();
+    private void nodeToBinary(final Node node, final DataOutputStream dops) throws IOException {
+        final List<Node> listChild = node.getChildren();
         final List<Envelope> listEntries = new ArrayList<Envelope>(node.getEntries());
         final int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
@@ -139,7 +137,7 @@ public class TreeWriter {
         }
         if(node.isLeaf()){
             dops.writeInt(0);
-            for(DefaultNode no : node.getChildren()){
+            for(Node no : node.getChildren()){
                 listEntries.addAll(no.getEntries());
             }
             dops.writeInt(listEntries.size());
@@ -154,7 +152,7 @@ public class TreeWriter {
             }
         }else{
             dops.writeInt(nbrSubNode);
-            for (DefaultNode child : listChild) {
+            for (Node child : listChild) {
                 dops.writeInt(index.get(child));
             }
             dops.writeInt(0);
@@ -169,10 +167,10 @@ public class TreeWriter {
      * 
      * @param node tree root node.
      */
-    private void createIndex(final DefaultNode node) {
+    private void createIndex(final Node node) {
         ArgumentChecks.ensureNonNull("createIndex : tree", node);
         index.put(node, inc);
-        for (DefaultNode child : node.getChildren()) {
+        for (Node child : node.getChildren()) {
             inc++;
             createIndex(child);
         }

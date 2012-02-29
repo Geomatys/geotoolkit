@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree.calculator;
 
 import java.util.Comparator;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.DefaultNode;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.util.ArgumentChecks;
@@ -347,7 +348,7 @@ public class Calculator3D extends Calculator {
      * {@inheritDoc }
      */
     @Override
-    public void createBasicHL(DefaultNode candidate, int order, GeneralEnvelope bound) {
+    public void createBasicHL(Node candidate, int order, Envelope bound) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -355,7 +356,7 @@ public class Calculator3D extends Calculator {
      * {@inheritDoc }
      */
     @Override
-    public int getHVOfEntry(DefaultNode candidate, Envelope entry) {
+    public int getHVOfEntry(Node candidate, Envelope entry) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

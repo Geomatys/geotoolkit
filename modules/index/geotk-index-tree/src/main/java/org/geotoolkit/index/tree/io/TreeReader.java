@@ -25,8 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.AbstractNode;
-import org.geotoolkit.index.tree.DefaultNode;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
 
@@ -120,20 +119,20 @@ public class TreeReader {
      */
     public void read(final Tree tree) throws IOException, ClassNotFoundException {
         ArgumentChecks.ensureNonNull("read : tree", tree);
-        final List<DefaultNode> listNodes = new ArrayList<DefaultNode>();
-        final Map<Integer, AbstractNode> index = new HashMap<Integer, AbstractNode>();
+        final List<Node> listNodes = new ArrayList<Node>();
+        final Map<Integer, Node> index = new HashMap<Integer, Node>();
         readNode(tree, dataIPStream, listNodes, index);
 
-        for (DefaultNode node : listNodes) {
+        for (Node node : listNodes) {
             final int[] tabC = (int[]) node.getUserProperty("tabidchildren");
-            final List<DefaultNode> children = node.getChildren();
+            final List<Node> children = node.getChildren();
             for (int i = 0; i < tabC.length; i++) {
-                final DefaultNode child = (DefaultNode) index.get(tabC[i]);
+                final Node child = (Node) index.get(tabC[i]);
                 child.setParent(node);
                 children.add(child);
             }
         }
-        tree.setRoot((DefaultNode) index.get(0));
+        tree.setRoot((Node) index.get(0));
     }
 
     /**
@@ -146,7 +145,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    private void readNode(final Tree tree, final DataInputStream dips, final List<DefaultNode> listNodes, final Map<Integer, AbstractNode> index) throws IOException, ClassNotFoundException {
+    private void readNode(final Tree tree, final DataInputStream dips, final List<Node> listNodes, final Map<Integer, Node> index) throws IOException, ClassNotFoundException {
         ArgumentChecks.ensureNonNull("readNode : tree", tree);
         ArgumentChecks.ensureNonNull("readNode : dips", dips);
         ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
@@ -174,7 +173,7 @@ public class TreeReader {
                 ObjectInputStream oins = new ObjectInputStream(bis);
                 listEntries.add((GeneralEnvelope) oins.readObject());
             }
-            final DefaultNode result = (DefaultNode)tree.createNode(tree, null, null, listEntries, coordinates);
+            final Node result = (Node)tree.createNode(tree, null, null, listEntries, coordinates);
             result.setUserProperty("tabidchildren", tabChild);
             index.put(id, result);
             listNodes.add(result);

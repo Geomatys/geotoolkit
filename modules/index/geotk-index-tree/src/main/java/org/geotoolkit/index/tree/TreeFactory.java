@@ -58,9 +58,10 @@ public final class TreeFactory {
     /**
      * Create Hilbert R-Tree.
      *
-     * <blockquote><font size=-1> <strong>NOTE: cells number per leaf =
-     * 2^(dim*hilbertOrder). Moreother there are maxElements_per_cells * 2 ^
-     * (dim*hilbertOrder) elements per leaf.</strong> </font></blockquote>
+     * <blockquote><font size=-1> <strong>
+     * NOTE: cells number per leaf = 2 ^ (dim*hilbertOrder). 
+     * Moreother there are maxElements_per_cells * 2 ^(dim*hilbertOrder) elements per leaf.
+     * </strong> </font></blockquote>
      *
      * @param maxElements_per_cells
      * @param hilbertOrder subdivision leaf order.

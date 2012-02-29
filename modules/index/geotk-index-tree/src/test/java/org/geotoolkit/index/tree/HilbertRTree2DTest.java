@@ -61,16 +61,16 @@ public class HilbertRTree2DTest extends TreeTest {
      * {@inheritDoc}
      */
     @Override
-    public boolean checkBoundaryNode(final DefaultNode node) {
+    public boolean checkBoundaryNode(final Node node) {
         final List<Envelope> lS = new ArrayList<Envelope>();
         if (node.isLeaf()) {
-            for (DefaultNode no : node.getChildren()) {
+            for (Node no : node.getChildren()) {
                 if (!no.isEmpty()) {
                     lS.addAll(no.getEntries());
                 }
             }
         } else {
-            for (DefaultNode no : node.getChildren()) {
+            for (Node no : node.getChildren()) {
                 lS.add(no.getBoundary());
             }
         }

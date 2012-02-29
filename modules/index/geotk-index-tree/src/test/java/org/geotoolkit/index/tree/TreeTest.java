@@ -79,7 +79,7 @@ public abstract class TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     protected void insertTest() throws TransformException {
-        final Envelope gr = ((DefaultNode) tree.getRoot()).getBoundary();
+        final Envelope gr = ((Node) tree.getRoot()).getBoundary();
         final GeneralEnvelope gem = DefaultTreeUtils.getEnveloppeMin(lData);
         assertTrue(gem.equals(gr, 1E-9, false));
         final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
@@ -93,16 +93,16 @@ public abstract class TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     protected void checkBoundaryTest() throws TransformException {
-        checkNodeBoundaryTest((DefaultNode) tree.getRoot());
+        checkNodeBoundaryTest((Node) tree.getRoot());
     }
 
     /**
      * Compare boundary node from its children boundary.
      */
-    protected void checkNodeBoundaryTest(final DefaultNode node) {
+    protected void checkNodeBoundaryTest(final Node node) {
         assertTrue(checkBoundaryNode(node));
         if(!node.isLeaf()){
-            for (DefaultNode no : node.getChildren()) {
+            for (Node no : node.getChildren()) {
                 checkNodeBoundaryTest(no);
             }
         }
@@ -162,7 +162,7 @@ public abstract class TreeTest {
     /**
      * Compare boundary node from his children boundary.
      */
-    protected boolean checkBoundaryNode(final DefaultNode node) {
+    protected boolean checkBoundaryNode(final Node node) {
         final List<Envelope> lGE = new ArrayList<Envelope>();
         if (node.isLeaf()) {
             for (Envelope gEnv : node.getEntries()) {
@@ -170,7 +170,7 @@ public abstract class TreeTest {
             }
 
         } else {
-            for (DefaultNode no : node.getChildren()) {
+            for (Node no : node.getChildren()) {
                 lGE.add(no.getBoundary());
             }
         }

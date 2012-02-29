@@ -19,6 +19,7 @@ package org.geotoolkit.index.tree.calculator;
 
 import java.util.Comparator;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.DefaultNode;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -96,7 +97,7 @@ public abstract class Calculator {
      * Method exclusively used by {@code HilbertRTree}.
      *
      * Create subnode(s) centroid(s). These centroids define Hilbert curve.
-     * Increase the Hilbert order of {@code HilbertNode} passed in parameter by
+     * Increase the Hilbert order of {@code AbstractNode} passed in parameter by
      * one unity.
      *
      * @param candidate HilbertLeaf to increase Hilbert order.
@@ -105,7 +106,7 @@ public abstract class Calculator {
      * @throws IllegalArgumentException if param hl Hilbert order is larger than
      * them Hilbert RTree order.
      */
-    public abstract void createBasicHL(final DefaultNode candidate, final int order, final GeneralEnvelope bound);
+    public abstract void createBasicHL(final Node candidate, final int order, final Envelope bound);
 
     /**
      * Find Hilbert order of an entry from candidate.
@@ -117,5 +118,5 @@ public abstract class Calculator {
      * @throws IllegalArgumentException if entry is null.
      * @return integer the entry Hilbert order.
      */
-    public abstract int getHVOfEntry(final DefaultNode candidate, final Envelope entry);
+    public abstract int getHVOfEntry(final Node candidate, final Envelope entry);
 }

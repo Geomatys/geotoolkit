@@ -17,35 +17,114 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.swing.event.EventListenerList;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
 
-/**Create a {@code Node}.
+/**Create "generic" Node.
  *
- * <B> : Entries type stocked in {@code Node}.
- * 
- * @author Rémi Marechal (Geomatys).
+ * @author Johann Sorel (Geomatys)
  */
-public interface Node<N extends Node<N>> {
+public abstract class Node {
+
+    protected GeneralEnvelope boundary;
+    protected Node parent;
+    protected Tree tree;
+    private final EventListenerList listenerList = new EventListenerList();
+    private Map<String, Object> userProperties;
     
-    List<N> getChildren();
+    /**
+     * @param key
+     * @return user property for given key
+     */
+    public Object getUserProperty(final String key) {
+        if (userProperties == null) {
+            return null;
+        }
+        return userProperties.get(key);
+    }
+
+    /**Add user property with key access.
+     * 
+     * @param key 
+     * @param value Object will be stocked.
+     */
+    public void setUserProperty(final String key, final Object value) {
+        if (userProperties == null) {
+            userProperties = new HashMap<String, Object>();
+        }
+        userProperties.put(key, value);
+    }
+
+    public void addListener(PropertyChangeListener l) {
+        listenerList.add(PropertyChangeListener.class, l);
+    }
+
+    public void removeListener(PropertyChangeListener l) {
+        listenerList.remove(PropertyChangeListener.class, l);
+    }
+    
+    protected void fireCollectionEvent() {
+
+        final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
+
+        for (PropertyChangeListener l : listeners) {
+            l.propertyChange(null);
+        }
+    }
+    
+    /**
+     * Affect a {@code Node} boundary.
+     */
+    public void setBound(Envelope bound){
+        if(bound == null){
+            boundary = null;
+        }else{
+            boundary = new GeneralEnvelope(bound);
+        }
+    }
+    
+    /**<blockquote><font size=-1>
+     * <strong>NOTE: It is possible that return null.</strong> 
+     * </font></blockquote>
+     * 
+     * @return {@code Node} boundary without re-computing subnode boundary.
+     */
+    public Envelope getBound(){
+        return this.boundary;
+    }
+    
+    /**Affect a new {@code Node} parent.
+     * 
+     * @param parent {@code Node} parent pointer.
+     */
+    public abstract void setParent(Node parent);
+    
+    /**
+     * @return subNodes.
+     */
+    public abstract List<Node> getChildren();
     
     /**A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
      * 
      * @return true if it is  a leaf else false (branch).
      */
-    boolean isLeaf();
+    public abstract boolean isLeaf();
     
     /**
      * @return true if {@code Node} contains nothing else false.
      */
-    boolean isEmpty();
+    public abstract boolean isEmpty();
     
     /**
      * @return true if node elements number equals or overflow max elements
      *         number autorized by {@code Tree} else false. 
      */
-    boolean isFull();
+    public abstract boolean isFull();
     
     /**
      * <blockquote><font size=-1>
@@ -53,20 +132,21 @@ public interface Node<N extends Node<N>> {
      * </font></blockquote>
      * @return boundary.
      */
-    Envelope getBoundary();
+    public abstract Envelope getBoundary();
     
     /**
      * @return entries.
      */
-    List<Envelope> getEntries();
+    public abstract List<Envelope> getEntries();
 
     /**
      * @return {@code AbstractNode} parent pointer.
      */
-    Node getParent();
+    public abstract Node getParent();
 
     /**
      * @return {@code Tree} pointer.
      */
-    Tree getTree();
+    public abstract Tree getTree();
+    
 }

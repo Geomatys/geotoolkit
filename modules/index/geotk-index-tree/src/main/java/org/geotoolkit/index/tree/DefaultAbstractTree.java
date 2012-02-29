@@ -31,9 +31,9 @@ import org.opengis.referencing.cs.CoordinateSystem;
  * @author Rémi Marechal (Geomatys).
  * @author Johann Sorel  (Geomatys).
  */
-public abstract class DefaultAbstractTree implements Tree<DefaultNode>{
+public abstract class DefaultAbstractTree implements Tree<Node>{
 
-    private DefaultNode root;
+    private Node root;
     private final int nbMaxElement;
     protected CoordinateReferenceSystem crs;
     protected Calculator calculator;
@@ -73,7 +73,7 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode>{
      * {@inheritDoc} 
      */
     @Override
-    public DefaultNode getRoot() {
+    public Node getRoot() {
         return this.root;
     }
 
@@ -81,7 +81,7 @@ public abstract class DefaultAbstractTree implements Tree<DefaultNode>{
      * {@inheritDoc} 
      */
     @Override
-    public void setRoot(DefaultNode root) {
+    public void setRoot(Node root) {
         this.root = root;
     }
     

@@ -36,28 +36,28 @@ public class DefaultTreeUtils {
     private DefaultTreeUtils() {
     }
     
-    /**To compare two {@code DefaultNode} from them boundary box minimum x axis coordinate. 
+    /**To compare two {@code AbstractNode} from them boundary box minimum x axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<DefaultNode> NODE3D_COMPARATOR_X_LEFT = new Comparator<DefaultNode>() {
+    private static final Comparator<Node> NODE3D_COMPARATOR_X_LEFT = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(0));
             java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
     
-    /**To compare two {@code DefaultNode} from them boundary box minimum y axis coordinate. 
+    /**To compare two {@code AbstractNode} from them boundary box minimum y axis coordinate. 
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<DefaultNode> NODE3D_COMPARATOR_Y_LEFT = new Comparator<DefaultNode>() {
+    private static final Comparator<Node> NODE3D_COMPARATOR_Y_LEFT = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(1));
             java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
@@ -68,10 +68,10 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<DefaultNode> NODE3D_COMPARATOR_Z_LEFT = new Comparator<DefaultNode>() {
+    private static final Comparator<Node> NODE3D_COMPARATOR_Z_LEFT = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(2));
             java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(2));
             return y1.compareTo(y2);
@@ -124,10 +124,10 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<DefaultNode> NODE3D_COMPARATOR_X_RIGHT = new Comparator<DefaultNode>() {
+    private static final Comparator<Node> NODE3D_COMPARATOR_X_RIGHT = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(0));
             java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
@@ -138,10 +138,10 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<DefaultNode> NODE3D_COMPARATOR_Y_RIGHT = new Comparator<DefaultNode>() {
+    private static final Comparator<Node> NODE3D_COMPARATOR_Y_RIGHT = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(1));
             java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
@@ -152,10 +152,10 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<DefaultNode> NODE3D_COMPARATOR_Z_RIGHT = new Comparator<DefaultNode>() {
+    private static final Comparator<Node> NODE3D_COMPARATOR_Z_RIGHT = new Comparator<Node>() {
 
         @Override
-        public int compare(DefaultNode o1, DefaultNode o2) {
+        public int compare(Node o1, Node o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(2));
             java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(2));
             return y1.compareTo(y2);
@@ -321,7 +321,7 @@ public class DefaultTreeUtils {
         return getDistanceBetween2DirectPosition(getMedian(envelopA), getMedian(envelopB));
     }
     
-    /**Organize all elements from {@code DefaultNode} List and {@code GeneralEnvelope} List by differents criterion.
+    /**Organize all elements from {@code AbstractNode} List and {@code GeneralEnvelope} List by differents criterion.
      * Compare left boundary coordinates elements.
      * 
      * @param index : - 0 : organize all List by smallest left boundary x value to tallest.
@@ -330,7 +330,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if index is out of required limits.
      * @throws IllegalArgumentException if listNode and listEntries are null.
      */
-    public static void organize_List_Elements_From_Left(int index, final List<DefaultNode> listNode, final List<Envelope> listEntries) {
+    public static void organize_List_Elements_From_Left(int index, final List<Node> listNode, final List<Envelope> listEntries) {
         ArgumentChecks.ensureBetween("organize_List3DElements_From_Left : index", 0, 2, index);
         if(listNode==null&&listEntries==null){
             throw new IllegalArgumentException("organize_List3DElements_From_Left : impossible to organize empty lists");
@@ -364,7 +364,7 @@ public class DefaultTreeUtils {
         }
     }
     
-    /**Organize all elements from {@code DefaultNode} List and {@code GeneralEnvelope} List by differents criterion.
+    /**Organize all elements from {@code AbstractNode} List and {@code GeneralEnvelope} List by differents criterion.
      * Compare right boundary coordinates elements.
      * 
      * @param index : - 0 : organize all List by smallest right boundary x value to tallest.
@@ -373,7 +373,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if index is out of required limits.
      * @throws IllegalArgumentException if listNode and listEntries are null.
      */
-    public static void organize_List_Elements_From_Right(int index, final List<DefaultNode> listNode, final List<GeneralEnvelope> listEntries) {
+    public static void organize_List_Elements_From_Right(int index, final List<Node> listNode, final List<GeneralEnvelope> listEntries) {
         ArgumentChecks.ensureBetween("organize_List3DElements_From_Right : index", 0, 2, index);
         if(listNode==null&&listEntries==null){
             throw new IllegalArgumentException("organize_List3DElements_From_Right : impossible to organize empty lists");

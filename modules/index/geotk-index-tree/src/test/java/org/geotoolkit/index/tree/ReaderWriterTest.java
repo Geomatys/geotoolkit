@@ -198,8 +198,8 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
         final List<GeneralEnvelope> listSearchTreeRef = new ArrayList<GeneralEnvelope>();
         final List<GeneralEnvelope> listSearchTreeTest = new ArrayList<GeneralEnvelope>();
-        treeRef.search(((DefaultNode) treeRef.getRoot()).getBoundary(), listSearchTreeRef);
-        treeTest.search(((DefaultNode) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
+        treeRef.search(((Node) treeRef.getRoot()).getBoundary(), listSearchTreeRef);
+        treeTest.search(((Node) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
         assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));
@@ -227,7 +227,7 @@ public class ReaderWriterTest {
     private void countNode(final Node node, int count) {
         ArgumentChecks.ensureNonNull("countNode : node", node);
         count++;
-        for (Node nod : (List<Node>) node.getChildren()) {
+        for (Node nod : node.getChildren()) {
             countNode(nod, count);
         }
     }
@@ -238,10 +238,10 @@ public class ReaderWriterTest {
      * @param tree
      * @return leaf list.
      */
-    private List<DefaultNode> getAllLeaf(final Tree tree) {
+    private List<Node> getAllLeaf(final Tree tree) {
         ArgumentChecks.ensureNonNull("getAllLeaf : tree", tree);
-        final List<DefaultNode> listLeaf = new ArrayList<DefaultNode>();
-        getLeaf((DefaultNode) tree.getRoot(), listLeaf);
+        final List<Node> listLeaf = new ArrayList<Node>();
+        getLeaf((Node) tree.getRoot(), listLeaf);
         return listLeaf;
     }
 
@@ -252,20 +252,20 @@ public class ReaderWriterTest {
      * @param node to study
      * @param listLeaf
      */
-    private void getLeaf(final DefaultNode node, final List<DefaultNode> listLeaf) {
+    private void getLeaf(final Node node, final List<Node> listLeaf) {
         ArgumentChecks.ensureNonNull("getLeaf : node", node);
         ArgumentChecks.ensureNonNull("getLeaf : listLeaf", listLeaf);
         if (node.isLeaf()) {
             listLeaf.add(node);
         }else{
-            for (DefaultNode nod : node.getChildren()) {
+            for (Node nod : node.getChildren()) {
                 getLeaf(nod, listLeaf);
             }
         }
     }
 
     /**
-     * Compare 2 {@code DefaultNode} lists.
+     * Compare 2 {@code AbstractNode} lists.
      *
      * <blockquote><font size=-1> <strong>NOTE: return {@code true} if
      * listTreeRef and listTreeTest are empty.</strong> </font></blockquote>
@@ -275,7 +275,7 @@ public class ReaderWriterTest {
      * @throws IllegalArgumentException if listTreeRef or listTreeTest is null.
      * @return true if listTreeRef contains same elements from listTreeTest.
      */
-    private boolean compareListLeaf(final List<DefaultNode> listTreeRef, final List<DefaultNode> listTreeTest) {
+    private boolean compareListLeaf(final List<Node> listTreeRef, final List<Node> listTreeTest) {
         ArgumentChecks.ensureNonNull("compareListLeaf : listTreeRef", listTreeRef);
         ArgumentChecks.ensureNonNull("compareListLeaf : listTreeTest", listTreeTest);
 
@@ -287,8 +287,8 @@ public class ReaderWriterTest {
             return false;
         }
         boolean test = false;
-        for (DefaultNode nod : listTreeRef) {
-            for (DefaultNode no : listTreeTest) {
+        for (Node nod : listTreeRef) {
+            for (Node no : listTreeTest) {
                 if (compareLeaf(nod, no)) {
                     test = true;
                     break;
@@ -303,7 +303,7 @@ public class ReaderWriterTest {
     }
 
     /**
-     * Test suite to compare two "leaf" ({@DefaultNode}).
+     * Test suite to compare two "leaf" ({@AbstractNode}).
      *
      * <blockquote><font size=-1> <strong>NOTE: Test based on this criterion : -
      * same boundary. - same entries (Shape) number within each of them. - they
@@ -314,7 +314,7 @@ public class ReaderWriterTest {
      * @param nodeB
      * @return true if 3 assertion are verified else false.
      */
-    private boolean compareLeaf(final DefaultNode nodeA, final DefaultNode nodeB) {
+    private boolean compareLeaf(final Node nodeA, final Node nodeB) {
         ArgumentChecks.ensureNonNull("compareLeaf : nodeA", nodeA);
         ArgumentChecks.ensureNonNull("compareLeaf : nodeB", nodeB);
         if (!nodeA.isLeaf() || !nodeB.isLeaf()) {
@@ -326,17 +326,17 @@ public class ReaderWriterTest {
         final List<Envelope> listA = new ArrayList<Envelope>();
         final List<Envelope> listB = new ArrayList<Envelope>();
 
-        final List<DefaultNode> lupA = nodeA.getChildren();
-        final List<DefaultNode> lupB = nodeB.getChildren();
+        final List<Node> lupA = nodeA.getChildren();
+        final List<Node> lupB = nodeB.getChildren();
 
         if (lupA != null && !lupA.isEmpty()) {
-            for (DefaultNode nod : lupA) {
+            for (Node nod : lupA) {
                 listA.addAll(nod.getEntries());
             }
         }
 
         if (lupB != null && !lupB.isEmpty()) {
-            for (DefaultNode nod : lupB) {
+            for (Node nod : lupB) {
                 listB.addAll(nod.getEntries());
             }
         }

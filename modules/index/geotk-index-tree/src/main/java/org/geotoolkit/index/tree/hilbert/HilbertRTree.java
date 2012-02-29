@@ -20,12 +20,9 @@ package org.geotoolkit.index.tree.hilbert;
 import java.util.*;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.index.tree.CoupleGE;
-import org.geotoolkit.index.tree.DefaultAbstractTree;
-import org.geotoolkit.index.tree.DefaultNode;
+import org.geotoolkit.index.tree.*;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.countElements;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getEnveloppeMin;
-import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
@@ -88,7 +85,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
-        final DefaultNode root = getRoot();
+        final Node root = getRoot();
         if (!root.isEmpty() && root != null) {
             searchHilbertNode(root, regionSearch, result);
         }
@@ -103,7 +100,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
-        final DefaultNode root = getRoot();
+        final Node root = getRoot();
         final int dim = entry.getDimension();
         final double[] coords = new double[2 * dim];
         System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
@@ -134,20 +131,20 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static void searchHilbertNode(final DefaultNode candidate, final Envelope regionSearch, final List<Envelope> resultList) {
+    public static void searchHilbertNode(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList) {
         
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){
                 if(candidate.isLeaf()){
-                    final List<DefaultNode> lN = candidate.getChildren();
-                    for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
+                    final List<Node> lN = candidate.getChildren();
+                    for (Node n2d : lN.toArray(new Node[lN.size()])) {
                         if (!n2d.isEmpty()) {
                             resultList.addAll(Arrays.asList(n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])));
                         }
                     }
                 }else{
-                    for(DefaultNode nod : candidate.getChildren()){
+                    for(Node nod : candidate.getChildren()){
                         searchHilbertNode(nod, null, resultList);
                     }
                 }
@@ -157,8 +154,8 @@ public class HilbertRTree extends DefaultAbstractTree {
                     searchHilbertNode(candidate, null, resultList);
                 }else if(rS.intersects(bound, true)){
                     if(candidate.isLeaf()){
-                        final List<DefaultNode> lN = candidate.getChildren();
-                        for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
+                        final List<Node> lN = candidate.getChildren();
+                        for (Node n2d : lN.toArray(new Node[lN.size()])) {
                             if (!n2d.isEmpty()) {
                                 if (rS.intersects(n2d.getBoundary(), true)) {
                                     for (Envelope sh : n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])) {
@@ -170,7 +167,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                             }
                         }
                     }else{
-                        for(DefaultNode child : candidate.getChildren()){
+                        for(Node child : candidate.getChildren()){
                             searchHilbertNode(child, regionSearch, resultList);
                         }
                     }
@@ -180,19 +177,19 @@ public class HilbertRTree extends DefaultAbstractTree {
     }
 
     /**
-     * Insert entry in {@code DefaultNode} in accordance with R-Tree properties.
+     * Insert entry in {@code AbstractNode} in accordance with R-Tree properties.
      *
-     * @param candidate {@code DefaultNode} where user want insert data.
+     * @param candidate {@code AbstractNode} where user want insert data.
      * @param entry to insert.
      * @throws IllegalArgumentException if candidate or entry are null.
      */
-    public static void insertNode(final DefaultNode candidate, final Envelope entry) {
+    public static void insertNode(final Node candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to insert a null entry", entry);
         if (candidate.isFull()) {
-            List<DefaultNode> lSp = splitNode(candidate);
+            List<Node> lSp = splitNode(candidate);
             if (lSp != null) {
-                final DefaultNode lsp0 = lSp.get(0);
-                final DefaultNode lsp1 = lSp.get(1);
+                final Node lsp0 = lSp.get(0);
+                final Node lsp1 = lSp.get(1);
                 ((List<DirectPosition>) candidate.getUserProperty("centroids")).clear();
                 candidate.getChildren().clear();
                 candidate.setUserProperty(PROP_LEAF, false);
@@ -231,7 +228,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * subnode.
      * @throws IllegalArgumentException if this {@code Node} doesn't contains {@code Entry}.
      */
-    public static List<DefaultNode> splitNode(final DefaultNode candidate) {
+    public static List<Node> splitNode(final Node candidate) {
         boolean cleaf = candidate.isLeaf();
         int cHO = (Integer) candidate.getUserProperty(PROP_HO);
         final Calculator calc = candidate.getTree().getCalculator();
@@ -253,7 +250,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
             return null;
         } else {
-            final List<DefaultNode> lS = hilbertNodeSplit(candidate);
+            final List<Node> lS = hilbertNodeSplit(candidate);
             return lS;
         }
     }
@@ -276,14 +273,14 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate is null.
      * @return prefered ordinate index to split.
      */
-    private static int defineSplitAxis(final DefaultNode candidate) {
+    private static int defineSplitAxis(final Node candidate) {
         ArgumentChecks.ensureNonNull("defineSplitAxis : ", candidate);
         final boolean isLeaf = candidate.isLeaf();
         List eltList;
         if (isLeaf) {
-            final List<DefaultNode> ldf = candidate.getChildren();
+            final List<Node> ldf =  candidate.getChildren();
             eltList = new ArrayList();
-            for (DefaultNode dn : ldf) {
+            for (Node dn : ldf) {
                 eltList.addAll(dn.getEntries());
             }
         } else {
@@ -338,13 +335,13 @@ public class HilbertRTree extends DefaultAbstractTree {
                             gESPLB.add((GeneralEnvelope) splitListB.get(i));
                         }
                     } else {
-                        gESPLA = new GeneralEnvelope(((DefaultNode) splitListA.get(0)).getBoundary());
-                        gESPLB = new GeneralEnvelope(((DefaultNode) splitListB.get(0)).getBoundary());
+                        gESPLA = new GeneralEnvelope(((Node) splitListA.get(0)).getBoundary());
+                        gESPLB = new GeneralEnvelope(((Node) splitListB.get(0)).getBoundary());
                         for (int i = 1; i < cut; i++) {
-                            gESPLA.add(((DefaultNode) splitListA.get(i)).getBoundary());
+                            gESPLA.add(((Node) splitListA.get(i)).getBoundary());
                         }
                         for (int i = 1; i < cut2; i++) {
-                            gESPLB.add(((DefaultNode) splitListB.get(i)).getBoundary());
+                            gESPLB.add(((Node) splitListB.get(i)).getBoundary());
                         }
                     }
                     bulkTemp += calc.getEdge(gESPLA);
@@ -375,10 +372,10 @@ public class HilbertRTree extends DefaultAbstractTree {
      * the minimum overlaps between them.</strong> </font></blockquote>
      *
      * @throws IllegalArgumentException if candidate is null.
-     * @return Two appropriate {@code DefaultNode} in List in accordance with
+     * @return Two appropriate {@code AbstractNode} in List in accordance with
      * R*Tree split properties.
      */
-    private static List<DefaultNode> hilbertNodeSplit(final DefaultNode candidate) {
+    private static List<Node> hilbertNodeSplit(final Node candidate) {
 
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
@@ -386,9 +383,9 @@ public class HilbertRTree extends DefaultAbstractTree {
         final Calculator calc = tree.getCalculator();
         List eltList;
         if (isLeaf) {
-            final List<DefaultNode> ldf = candidate.getChildren();
+            final List<Node> ldf = candidate.getChildren();
             eltList = new ArrayList();
-            for (DefaultNode dn : ldf) {
+            for (Node dn : ldf) {
                 eltList.addAll(dn.getEntries());
             }
         } else {
@@ -442,13 +439,13 @@ public class HilbertRTree extends DefaultAbstractTree {
                         gESPLB.add((GeneralEnvelope) splitListB.get(i));
                     }
                 } else {
-                    gESPLA = new GeneralEnvelope(((DefaultNode) splitListA.get(0)).getBoundary());
-                    gESPLB = new GeneralEnvelope(((DefaultNode) splitListB.get(0)).getBoundary());
+                    gESPLA = new GeneralEnvelope(((Node) splitListA.get(0)).getBoundary());
+                    gESPLB = new GeneralEnvelope(((Node) splitListB.get(0)).getBoundary());
                     for (int i = 1; i < cut; i++) {
-                        gESPLA.add(((DefaultNode) splitListA.get(i)).getBoundary());
+                        gESPLA.add(((Node) splitListA.get(i)).getBoundary());
                     }
                     for (int i = 1; i < cut2; i++) {
-                        gESPLB.add(((DefaultNode) splitListB.get(i)).getBoundary());
+                        gESPLB.add(((Node) splitListB.get(i)).getBoundary());
                     }
                 }
                 coupleGE = new CoupleGE(gESPLA, gESPLB, calc);
@@ -503,11 +500,11 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
 
         if (isLeaf) {
-            return UnmodifiableArrayList.wrap((DefaultNode) tree.createNode(tree, null, null, splitListA),
-                    (DefaultNode) tree.createNode(tree, null, null, splitListB));
+            return UnmodifiableArrayList.wrap((Node) tree.createNode(tree, null, null, splitListA),
+                    (Node) tree.createNode(tree, null, null, splitListB));
         } else {
-            final DefaultNode resultA = (DefaultNode) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
-            final DefaultNode resultB = (DefaultNode) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
+            final Node resultA = (Node) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
+            final Node resultB = (Node) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
             return UnmodifiableArrayList.wrap(resultA, resultB);
         }
     }
@@ -521,9 +518,8 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if entry is null.
      * @return subnode chosen.
      */
-    public static DefaultNode chooseSubtree(final DefaultNode candidate, final Envelope entry) {
+    public static Node chooseSubtree(final Node candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
-
         if (candidate.isLeaf() && candidate.isFull()) {
             throw new IllegalStateException("impossible to choose subtree in overflow node");
         }
@@ -534,17 +530,17 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
             int index;
             index = calc.getHVOfEntry(candidate, entry);
-            for (DefaultNode nod : candidate.getChildren()) {
+            for (Node nod : candidate.getChildren()) {
                 if (index <= ((Integer) (nod.getUserProperty("hilbertValue"))) && !nod.isFull()) {
                     return nod;
                 }
             }
             return candidate.getChildren().get(findAnotherCell(index, candidate));
         } else {
-            final List<DefaultNode> childrenList = candidate.getChildren();
+            final List<Node> childrenList = candidate.getChildren();
             final int size = childrenList.size();
             if (childrenList.get(0).isLeaf()) {
-                final List<DefaultNode> listOverZero = new ArrayList<DefaultNode>();
+                final List<Node> listOverZero = new ArrayList<Node>();
                 double overlapsRef = -1;
                 int index = -1;
                 double overlapsTemp = 0;
@@ -593,7 +589,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                 return childrenList.get(index);
             }
 
-            for (DefaultNode no : childrenList) {
+            for (Node no : childrenList) {
                 final GeneralEnvelope ge = new GeneralEnvelope(no.getBoundary());
                 if (ge.contains(entry, true)) {
                     return no;
@@ -603,7 +599,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             double enlargRef = -1;
             int indexEnlarg = -1;
             for (int i = 0, s = childrenList.size(); i < s; i++) {
-                final DefaultNode n3d = childrenList.get(i);
+                final Node n3d = childrenList.get(i);
                 final Envelope gEN = n3d.getBoundary();
                 final GeneralEnvelope GE = new GeneralEnvelope(gEN);
                 GE.add(entry);
@@ -628,13 +624,13 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalStateException if no another cell is find.
      * @return index of another subnode.
      */
-    private static int findAnotherCell(int index, final DefaultNode candidate) {
+    private static int findAnotherCell(int index, final Node candidate) {
         if (!candidate.isLeaf()) {
             throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
         }
         ArgumentChecks.ensureBetween("index to find another leaf is out of required limit",
                 0, (int) Math.pow(2, ((Integer)  candidate.getUserProperty("hilbertOrder") * 2)), index);
-        final List<DefaultNode> listCells = candidate.getChildren();
+        final List<Node> listCells = candidate.getChildren();
         int siz = listCells.size();
         boolean oneTime = false;
         int indexTemp1 = index;
@@ -662,19 +658,19 @@ public class HilbertRTree extends DefaultAbstractTree {
      * condensate after a deletion to stay conform about R-Tree
      * properties.</strong> </font></blockquote>
      *
-     * @param candidate {@code DefaultNode} where to delete.
+     * @param candidate {@code AbstractNode} where to delete.
      * @param entry {@code GeneralEnvelope} to delete.
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static void deleteHilbertNode(final DefaultNode candidate, final Envelope entry) {
-        ArgumentChecks.ensureNonNull("deleteHilbertNode DefaultNode candidate : ", candidate);
+    private static void deleteHilbertNode(final Node candidate, final Envelope entry) {
+        ArgumentChecks.ensureNonNull("deleteHilbertNode AbstractNode candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Shape entry : ", entry);
         if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
             if (candidate.isLeaf()) {
                 boolean removed = false;
-                final List<DefaultNode> lN = candidate.getChildren();
-                for (DefaultNode nod : lN) {
+                final List<Node> lN = candidate.getChildren();
+                for (Node nod : lN) {
                     if (nod.getEntries().remove(entry)) {
                         removed = true;
                     }
@@ -684,7 +680,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                     trim(candidate);
                 }
             } else {
-                for (DefaultNode nod : candidate.getChildren().toArray(new DefaultNode[candidate.getChildren().size()])) {
+                for (Node nod : candidate.getChildren().toArray(new Node[candidate.getChildren().size()])) {
                     deleteHilbertNode(nod, entry);
                 }
             }
@@ -695,19 +691,19 @@ public class HilbertRTree extends DefaultAbstractTree {
      * Method which permit to condense R-Tree. Condense made begin by leaf and
      * travel up to tree trunk.
      *
-     * @param candidate {@code DefaultNode} to begin condense.
+     * @param candidate {@code AbstractNode} to begin condense.
      */
-    public static void trim(final DefaultNode candidate) {
+    public static void trim(final Node candidate) {
 
         if (!candidate.isLeaf()) {
-            final List<DefaultNode> children = candidate.getChildren();
+            final List<Node> children = candidate.getChildren();
             for (int i = children.size() - 1; i >= 0; i--) {
-                final DefaultNode child = children.get(i);
+                final Node child = children.get(i);
                 if (child.isEmpty()) {
                     children.remove(i);
                 } else if (child.getChildren().size() == 1 && !child.isLeaf()) {
                     children.remove(i);
-                    for (DefaultNode dn : child.getChildren()) {
+                    for (Node dn : child.getChildren()) {
                         dn.setParent(candidate);
                     }
                     children.addAll(child.getChildren());
@@ -732,7 +728,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
 
         if (candidate.getParent() != null) {
-            trim((DefaultNode)candidate.getParent());
+            trim(candidate.getParent());
         }
     }
 
@@ -747,7 +743,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @return appropriate Node from tree.
      * @return
      */
-    public static DefaultNode createCell(final Tree tree, final DefaultNode parent, final DirectPosition centroid, final int hilbertValue, final List<Envelope> entries, double... coordinates) {
+    public static Node createCell(final Tree tree, final Node parent, final DirectPosition centroid, final int hilbertValue, final List<Envelope> entries, double... coordinates) {
         final DefaultNode cell = new DefaultNode(tree, parent, centroid, centroid, null, entries);
         cell.setUserProperty("hilbertValue", hilbertValue);
         cell.setUserProperty("centroid", centroid);
@@ -758,7 +754,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc }
      */
     @Override
-    public DefaultNode createNode(Tree tree, DefaultNode parent, List<DefaultNode> listChildren, List<Envelope> listEntries, double... coordinates) {
+    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) {
         final int ddim = coordinates.length;
         assert (ddim % 2) == 0 : "coordinate dimension is not correct";
         DefaultNode result;
@@ -779,7 +775,6 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
             result = new DefaultNode(tree, parent, dp1, dp2, listChildren, null);
         }
-        
         result.setUserProperty(PROP_LEAF, false);
         if (listEntries != null && !listEntries.isEmpty()) {
             final int diment = listEntries.get(0).getDimension();

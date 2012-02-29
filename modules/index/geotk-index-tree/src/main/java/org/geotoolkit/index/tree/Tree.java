@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree<N extends Node<N>> {
+public interface Tree<N> {
 
     /**
      * Find some {@code Entry} which intersect regionSearch parameter 

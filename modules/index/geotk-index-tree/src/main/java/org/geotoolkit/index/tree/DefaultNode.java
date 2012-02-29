@@ -36,34 +36,30 @@ import org.opengis.geometry.Envelope;
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel  (Geomatys)
  */
-public class DefaultNode extends AbstractNode<DefaultNode> {
+public class DefaultNode extends Node {
     
-    protected GeneralEnvelope boundary;
-    private AbstractNode parent;
-    private final Tree tree;
-    
-    private final List<DefaultNode> children = new CrossList<DefaultNode>(DefaultNode.class) {
+    private final List<Node> children = new CrossList<Node>(Node.class) {
 
         @Override
-        protected void notifyAdd(DefaultNode e, int i) {
+        protected void notifyAdd(Node e, int i) {
             super.notifyAdd(e, i);
             clearBounds();
         }
 
         @Override
-        protected void notifyAdd(Collection<? extends DefaultNode> clctn, NumberRange<Integer> nr) {
+        protected void notifyAdd(Collection<? extends Node> clctn, NumberRange<Integer> nr) {
             super.notifyAdd(clctn, nr);
             clearBounds();
         }
 
         @Override
-        protected void notifyRemove(DefaultNode e, int i) {
+        protected void notifyRemove(Node e, int i) {
             super.notifyRemove(e, i);
             clearBounds();
         }
 
         @Override
-        protected void notifyRemove(Collection<? extends DefaultNode> clctn, NumberRange<Integer> nr) {
+        protected void notifyRemove(Collection<? extends Node> clctn, NumberRange<Integer> nr) {
             super.notifyRemove(clctn, nr);
             clearBounds();
         }
@@ -109,12 +105,12 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
      * @param entries data(s) to add.
      * @throws IllegalArgumentException if tree pointer is null.
      */
-    public DefaultNode(final Tree tree, final DefaultNode parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<DefaultNode> children, final List<Envelope> entries) {
+    public DefaultNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries) {
         ArgumentChecks.ensureNonNull("tree", tree);
         this.tree = tree;
         this.parent = parent;
         if(children!=null){
-            for(DefaultNode n3d : children){
+            for(Node n3d : children){
                 n3d.setParent(this);
             }
             this.children.addAll(children);
@@ -128,19 +124,12 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
         }
     }
 
-    public void setBound(GeneralEnvelope bound){
-        this.boundary = bound;
-    }
-    
-    public GeneralEnvelope getBound(){
-        return this.boundary;
-    }
     
     /**
      * {@inheritDoc} 
      */
     @Override
-    public List<DefaultNode> getChildren() {
+    public List<Node> getChildren() {
         return children;
     }
 
@@ -163,7 +152,7 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
     public boolean isEmpty() {
         final Object userPropIsLeaf = getUserProperty("isleaf");
         if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(DefaultNode cell : getChildren()){
+            for(Node cell : getChildren()){
                 if(!cell.isEmpty()){
                     return false;
                 }
@@ -180,7 +169,7 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
     public boolean isFull() {
         final Object userPropIsLeaf = getUserProperty("isleaf");
         if(userPropIsLeaf != null && ((Boolean)userPropIsLeaf)){
-            for(DefaultNode cell : getChildren()){
+            for(Node cell : getChildren()){
                 if(!cell.isFull()){
                     return false;
                 }
@@ -213,7 +202,7 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
      * {@inheritDoc} 
      */
     @Override
-    public AbstractNode getParent() {
+    public Node getParent() {
         return parent;
     }
 
@@ -240,7 +229,7 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
         for(Envelope ent2D : getEntries()){
             addBound(ent2D);
         }
-        for(DefaultNode n2D : getChildren()){
+        for(Node n2D : getChildren()){
             if(!n2D.isEmpty()){
                 addBound(n2D.getBoundary());
             }
@@ -265,7 +254,7 @@ public class DefaultNode extends AbstractNode<DefaultNode> {
      */
     @Override
     public void setParent(final Node parent){
-        this.parent = (AbstractNode) parent;
+        this.parent = parent;
     }
     
     /**
