@@ -142,18 +142,30 @@ public class StarRTree extends DefaultAbstractTree {
      */
     private static void defaultNodeSearch(final DefaultNode candidate, final Envelope regionSearch, final List<Envelope> resultList){
         final Envelope bound = candidate.getBoundary();
-        final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
         if(bound != null){
-            if(rS.intersects(bound, true)){
+            if(regionSearch == null){
                 if(candidate.isLeaf()){
-                    for(Envelope gn : candidate.getEntries()){
-                        if(rS.intersects(gn, true)){
-                            resultList.add(gn);
-                        }
-                    }
+                    resultList.addAll(candidate.getEntries());
                 }else{
-                    for(DefaultNode child : candidate.getChildren()){
-                        defaultNodeSearch(child, regionSearch, resultList);
+                    for(DefaultNode nod : candidate.getChildren()){
+                        defaultNodeSearch(nod, null, resultList);
+                    }
+                }
+            }else{
+                final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
+                if(rS.contains(bound, true)){
+                    defaultNodeSearch(candidate, null, resultList);
+                }else if(rS.intersects(bound, true)){
+                    if(candidate.isLeaf()){
+                        for(Envelope gn : candidate.getEntries()){
+                            if(rS.intersects(gn, true)){
+                                resultList.add(gn);
+                            }
+                        }
+                    }else{
+                        for(DefaultNode child : candidate.getChildren()){
+                            defaultNodeSearch(child, regionSearch, resultList);
+                        }
                     }
                 }
             }

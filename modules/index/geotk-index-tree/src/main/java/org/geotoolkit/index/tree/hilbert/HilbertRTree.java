@@ -17,10 +17,7 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.CoupleGE;
@@ -137,25 +134,46 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static void searchHilbertNode(final DefaultNode candidate, final Envelope regionSearch, final List<Envelope> result) {
-        final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
-        if (rS.intersects(candidate.getBoundary(), true)) {
-            if (candidate.isLeaf()) {
-                final List<DefaultNode> lN = candidate.getChildren();
-                for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
-                    if (!n2d.isEmpty()) {
-                        if (rS.intersects(n2d.getBoundary(), true)) {
-                            for (GeneralEnvelope sh : n2d.getEntries().toArray(new GeneralEnvelope[n2d.getEntries().size()])) {
-                                if (sh.intersects(regionSearch, true)) {
-                                    result.add(sh);
+    public static void searchHilbertNode(final DefaultNode candidate, final Envelope regionSearch, final List<Envelope> resultList) {
+        
+        final Envelope bound = candidate.getBoundary();
+        if(bound != null){
+            if(regionSearch == null){
+                if(candidate.isLeaf()){
+                    final List<DefaultNode> lN = candidate.getChildren();
+                    for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
+                        if (!n2d.isEmpty()) {
+                            resultList.addAll(Arrays.asList(n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])));
+                        }
+                    }
+                }else{
+                    for(DefaultNode nod : candidate.getChildren()){
+                        searchHilbertNode(nod, null, resultList);
+                    }
+                }
+            }else{
+                final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
+                if(rS.contains(bound, true)){
+                    searchHilbertNode(candidate, null, resultList);
+                }else if(rS.intersects(bound, true)){
+                    if(candidate.isLeaf()){
+                        final List<DefaultNode> lN = candidate.getChildren();
+                        for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
+                            if (!n2d.isEmpty()) {
+                                if (rS.intersects(n2d.getBoundary(), true)) {
+                                    for (Envelope sh : n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])) {
+                                        if (rS.intersects(sh, true)) {
+                                            resultList.add(sh);
+                                        }
+                                    }
                                 }
                             }
                         }
+                    }else{
+                        for(DefaultNode child : candidate.getChildren()){
+                            searchHilbertNode(child, regionSearch, resultList);
+                        }
                     }
-                }
-            } else {
-                for (DefaultNode nod : candidate.getChildren()) {
-                    searchHilbertNode(nod, regionSearch, result);
                 }
             }
         }
