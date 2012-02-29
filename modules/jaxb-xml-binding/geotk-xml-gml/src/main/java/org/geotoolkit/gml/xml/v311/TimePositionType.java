@@ -39,17 +39,17 @@ import org.opengis.util.InternationalString;
 
 
 /**
- * Direct representation of a temporal position. 
- *       Indeterminate time values are also allowed, as described in ISO 19108. The indeterminatePosition 
- *       attribute can be used alone or it can qualify a specific value for temporal position (e.g. before 
- *       2002-12, after 1019624400). 
- *       For time values that identify position within a calendar, the calendarEraName attribute provides 
+ * Direct representation of a temporal position.
+ *       Indeterminate time values are also allowed, as described in ISO 19108. The indeterminatePosition
+ *       attribute can be used alone or it can qualify a specific value for temporal position (e.g. before
+ *       2002-12, after 1019624400).
+ *       For time values that identify position within a calendar, the calendarEraName attribute provides
  *       the name of the calendar era to which the date is referenced (e.g. the Meiji era of the Japanese calendar).
- * 
+ *
  * <p>Java class for TimePositionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="TimePositionType">
  *   &lt;simpleContent>
@@ -61,8 +61,8 @@ import org.opengis.util.InternationalString;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -81,7 +81,7 @@ public class TimePositionType implements Position, Serializable {
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
 
-    private static DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * empty constructor used by JAXB.
      */
@@ -95,9 +95,11 @@ public class TimePositionType implements Position, Serializable {
     public TimePositionType(final String value){
         this.value = value;
     }
-    
+
     public TimePositionType(final Position value){
-        this.value = formatter.format(value.getDate());
+        synchronized (formatter) {
+            this.value = formatter.format(value.getDate());
+        }
     }
 
     /**
@@ -124,7 +126,9 @@ public class TimePositionType implements Position, Serializable {
      * @param value a date.
      */
     public TimePositionType(final Date time){
-        this.value = formatter.format(time);
+        synchronized (formatter) {
+            this.value = formatter.format(time);
+        }
     }
 
     /**
@@ -145,18 +149,20 @@ public class TimePositionType implements Position, Serializable {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     public void setValue(Date value) {
-        this.value = formatter.format(value);
+        synchronized (formatter) {
+            this.value = formatter.format(value);
+        }
     }
 
     /**
      * Gets the value of the frame property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFrame() {
         return frame;
@@ -164,11 +170,11 @@ public class TimePositionType implements Position, Serializable {
 
     /**
      * Sets the value of the frame property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFrame(final String value) {
         this.frame = value;
@@ -176,11 +182,11 @@ public class TimePositionType implements Position, Serializable {
 
     /**
      * Gets the value of the calendarEraName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCalendarEraName() {
         return calendarEraName;
@@ -188,11 +194,11 @@ public class TimePositionType implements Position, Serializable {
 
     /**
      * Sets the value of the calendarEraName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCalendarEraName(final String value) {
         this.calendarEraName = value;
@@ -200,11 +206,11 @@ public class TimePositionType implements Position, Serializable {
 
     /**
      * Gets the value of the indeterminatePosition property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TimeIndeterminateValueType }
-     *     
+     *
      */
     public TimeIndeterminateValueType getIndeterminatePosition() {
         return indeterminatePosition;
@@ -212,11 +218,11 @@ public class TimePositionType implements Position, Serializable {
 
     /**
      * Sets the value of the indeterminatePosition property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TimeIndeterminateValueType }
-     *     
+     *
      */
     public void setIndeterminatePosition(final TimeIndeterminateValueType value) {
         this.indeterminatePosition = value;
@@ -231,9 +237,11 @@ public class TimePositionType implements Position, Serializable {
     public Date getDate() {
         if (value != null && !value.isEmpty()) {
             try {
-                return formatter.parse(value);
+                synchronized (formatter) {
+                    return formatter.parse(value);
+                }
             } catch (ParseException ex) {
-                Logger.getLogger(TimePositionType.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
             }
         }
         return null;
@@ -248,7 +256,7 @@ public class TimePositionType implements Position, Serializable {
     public InternationalString getDateTime() {
         return new SimpleInternationalString(value);
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -281,7 +289,7 @@ public class TimePositionType implements Position, Serializable {
     public String toString() {
         final StringBuilder s = new StringBuilder();
         try {
-            
+
             if (calendarEraName != null) {
                 s.append("calendarEraName:").append(calendarEraName).append('\n');
             }
@@ -291,16 +299,18 @@ public class TimePositionType implements Position, Serializable {
             if (indeterminatePosition != null) {
                 s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
             }
-            
+
             final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
-            final Date date = formatter.parse(value);
-            
+            final Date date;
+            synchronized (formatter) {
+                date = formatter.parse(value);
+            }
             s.append(sdf.format(date));
 
         } catch (ParseException ex) {
             Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
         }
-        
+
         return s.toString();
     }
 
