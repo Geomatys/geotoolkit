@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.*;
@@ -82,10 +81,9 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final GeneralEnvelope regionSearch, final List<Envelope> result) throws TransformException {
-        final CoordinateReferenceSystem entryCRS = regionSearch.getCoordinateReferenceSystem();
-        if (!entryCRS.equals(crs)) {
-            regionSearch.setEnvelope(Envelopes.transform(regionSearch, crs));
+    public void search(final Envelope regionSearch, final List<Envelope> result) throws TransformException {
+        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
+            throw new MismatchedReferenceSystemException();
         }
         final DefaultNode root = getRoot();
         if (!root.isEmpty() && root != null) {
@@ -131,14 +129,15 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static void searchHilbertNode(final DefaultNode candidate, final GeneralEnvelope regionSearch, final List<Envelope> result) {
-        if (regionSearch.intersects(candidate.getBoundary(), true)) {
+    public static void searchHilbertNode(final DefaultNode candidate, final Envelope regionSearch, final List<Envelope> result) {
+        final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
+        if (rS.intersects(candidate.getBoundary(), true)) {
             if (candidate.isLeaf()) {
 //                final List<DefaultNode> lN = (List<DefaultNode>) candidate.getUserProperty("cells");
                 final List<DefaultNode> lN = candidate.getChildren();
                 for (DefaultNode n2d : lN.toArray(new DefaultNode[lN.size()])) {
                     if (!n2d.isEmpty()) {
-                        if (n2d.getBoundary().intersects(regionSearch, true)) {
+                        if (rS.intersects(n2d.getBoundary(), true)) {
                             for (GeneralEnvelope sh : n2d.getEntries().toArray(new GeneralEnvelope[n2d.getEntries().size()])) {
                                 if (sh.intersects(regionSearch, true)) {
                                     result.add(sh);
@@ -180,9 +179,10 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
         }
         if (candidate.isLeaf()) {
-            if ((!candidate.getBoundary().contains(entry, true))) {
+            final GeneralEnvelope cB = new GeneralEnvelope(candidate.getBoundary());
+            if ((!cB.contains(entry, true))) {
                 List<Envelope> lS = new ArrayList<Envelope>();
-                searchHilbertNode(candidate, candidate.getBoundary(), lS);
+                searchHilbertNode(candidate, cB, lS);
                 lS.add(entry);
                 GeneralEnvelope envelope = DefaultTreeUtils.getEnveloppeMin(lS);
                 candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty("hilbertOrder"), envelope);
@@ -534,7 +534,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                     gnTemp.add(entry);
                     for (int j = 0; j < size; j++) {
                         if (i != j) {
-                            final GeneralEnvelope gET = childrenList.get(j).getBoundary();
+                            final Envelope gET = childrenList.get(j).getBoundary();
                             overlapsTemp += calc.getOverlaps(gnTemp, gET);
                         }
                     }
@@ -575,7 +575,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             }
 
             for (DefaultNode no : childrenList) {
-                final GeneralEnvelope ge = no.getBoundary();
+                final GeneralEnvelope ge = new GeneralEnvelope(no.getBoundary());
                 if (ge.contains(entry, true)) {
                     return no;
                 }
@@ -585,7 +585,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             int indexEnlarg = -1;
             for (int i = 0, s = childrenList.size(); i < s; i++) {
                 final DefaultNode n3d = childrenList.get(i);
-                final GeneralEnvelope gEN = n3d.getBoundary();
+                final Envelope gEN = n3d.getBoundary();
                 final GeneralEnvelope GE = new GeneralEnvelope(gEN);
                 GE.add(entry);
                 double enlargTemp = calc.getEnlargement(gEN, GE);
@@ -652,7 +652,7 @@ public class HilbertRTree extends DefaultAbstractTree {
     private static void deleteHilbertNode(final DefaultNode candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node2D candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Shape entry : ", entry);
-        if (candidate.getBoundary().intersects(entry, true)) {
+        if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
             if (candidate.isLeaf()) {
                 boolean removed = false;
 //                final List<DefaultNode> lN = (List<DefaultNode>) candidate.getUserProperty("cells");

@@ -29,6 +29,7 @@ import org.geotoolkit.index.tree.DefaultNode;
 import org.geotoolkit.index.tree.DefaultTreeUtils;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
@@ -60,7 +61,10 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void search(final GeneralEnvelope regionSearch, final List<Envelope> result) {
+    public void search(final Envelope regionSearch, final List<Envelope> result) {
+        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
+            throw new MismatchedReferenceSystemException();
+        }
         final DefaultNode root = getRoot();
         if (root != null) {
             defaultNodeSearch(root, regionSearch, result);
@@ -72,6 +76,9 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     @Override
     public void insert(final Envelope entry) throws MismatchedReferenceSystemException {
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
+            throw new MismatchedReferenceSystemException();
+        }
         final DefaultNode root = getRoot();
         if (root != null) {
             if (root.isEmpty()) {
@@ -87,6 +94,9 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     @Override
     public void delete(final Envelope entry) throws MismatchedReferenceSystemException {
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
+            throw new MismatchedReferenceSystemException();
+        }
         final DefaultNode root = getRoot();
         if (root != null) {
             deleteNode(root, entry);
@@ -105,13 +115,15 @@ public class BasicRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static void defaultNodeSearch(final DefaultNode candidate, final GeneralEnvelope regionSearch, final List<Envelope> resultList){
-        final GeneralEnvelope bound = candidate.getBoundary();
+    private static void defaultNodeSearch(final DefaultNode candidate, final Envelope regionSearch, final List<Envelope> resultList){
+        
+        final Envelope bound = candidate.getBoundary();
+        final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
         if(bound != null){
-            if(bound.intersects(regionSearch, true)){//appel avec region search == null retourn tous les enfants
+            if(rS.intersects(bound, true)){//appel avec region search == null retourn tous les enfants
                 if(candidate.isLeaf()){
                     for(Envelope gn : candidate.getEntries()){
-                        if(regionSearch.intersects(gn, true)){
+                        if(rS.intersects(gn, true)){
                             resultList.add(gn);
                         }
                     }
@@ -121,22 +133,10 @@ public class BasicRTree extends DefaultAbstractTree {
                     }
                 }
             }
-        }else{
-            if(candidate.isLeaf()){
-                for(Envelope gn : candidate.getEntries()){
-                    if(regionSearch.intersects(gn, true)){
-                        resultList.add(gn);
-                    }
-                }
-            }else{
-                for(DefaultNode child : candidate.getChildren()){
-                    defaultNodeSearch(child, regionSearch, resultList);
-                }
-            }
         }
     }
     
-    /**Insert new {@code Entry} in branch and re-organize {@code DefaultNode} if it's necessary.
+    /**Insert new {@code Envelope} in branch and re-organize {@code DefaultNode} if it's necessary.
      * 
      * <blockquote><font size=-1>
      * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong> 
@@ -162,7 +162,7 @@ public class BasicRTree extends DefaultAbstractTree {
                     for(int j = i+1; j<size; j++){
                         final DefaultNode nodeA = children.get(i);
                         final DefaultNode nodeB = children.get(j);
-                        if(nodeA.getBoundary().intersects(nodeB.getBoundary(), false) && nodeA.isLeaf() && nodeB.isLeaf()){
+                        if(new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false) && nodeA.isLeaf() && nodeB.isLeaf()){
                             branchGrafting(nodeA, nodeB);
                         }
                     }
@@ -319,7 +319,7 @@ public class BasicRTree extends DefaultAbstractTree {
             break;
 
             case QUADRATIC: {
-                GeneralEnvelope rectGlobal, bound1, bound2;
+                Envelope rectGlobal, bound1, bound2;
                 for (int i = 0; i < ls.size() - 1; i++) {
                     for (int j = i + 1; j < ls.size(); j++) {
                         if (leaf) {
@@ -350,7 +350,7 @@ public class BasicRTree extends DefaultAbstractTree {
         ls.remove(Math.max(index1, index2));
         ls.remove(Math.min(index1, index2));
         GeneralEnvelope r1Temp, r2Temp;
-        GeneralEnvelope boundS1, boundS2;
+        Envelope boundS1, boundS2;
         DefaultNode result1, result2;
         
         if(leaf){
@@ -363,12 +363,12 @@ public class BasicRTree extends DefaultAbstractTree {
         double[] tabS1 = new double[2*dim];
         double[] tabS2 = new double[2*dim];
         for(int i = 0; i<dim;i++){
-            tabS1[i] = boundS1.getLower(i);
-            tabS2[i] = boundS2.getLower(i);
+            tabS1[i] = boundS1.getLowerCorner().getOrdinate(i);
+            tabS2[i] = boundS2.getLowerCorner().getOrdinate(i);
         }
         for(int i = 0; i<dim;i++){
-            tabS1[i] = boundS1.getUpper(i);
-            tabS2[i] = boundS2.getUpper(i);
+            tabS1[i] = boundS1.getUpperCorner().getOrdinate(i);
+            tabS2[i] = boundS2.getUpperCorner().getOrdinate(i);
         }
         
         if(leaf){
@@ -487,7 +487,7 @@ public class BasicRTree extends DefaultAbstractTree {
     private static boolean deleteNode(final DefaultNode candidate, final Envelope entry) throws MismatchedReferenceSystemException{
         ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
-        if(candidate.getBoundary().intersects(entry, true)){
+        if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
             if(candidate.isLeaf()){
                 final boolean removed = candidate.getEntries().remove(entry);
                 if(removed){
@@ -569,14 +569,14 @@ public class BasicRTree extends DefaultAbstractTree {
         DefaultNode n = children.get(0);
 
         for (DefaultNode nod : children) {
-            if (nod.getBoundary().contains(entry, true)) {
+            if (new GeneralEnvelope(nod.getBoundary()).contains(entry, true)) {
                 return nod;
             }
         }
 
         final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
         for(DefaultNode dn : children){
-            lGE.add(dn.getBoundary());
+            lGE.add(new GeneralEnvelope(dn.getBoundary()));
         }
         double area = calc.getSpace(DefaultTreeUtils.getEnveloppeMin(lGE));
         double nbElmt = DefaultTreeUtils.countElements(n);

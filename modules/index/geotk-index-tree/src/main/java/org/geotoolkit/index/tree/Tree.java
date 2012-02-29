@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree<N extends Node<N,B>, B> {
+public interface Tree<N extends Node<N>> {
 
     /**
      * Find some {@code Entry} which intersect regionSearch parameter 
@@ -43,7 +43,7 @@ public interface Tree<N extends Node<N,B>, B> {
      * @param regionSearch Define the region to find Shape within tree.
      * @param result List of Entr(y)(ies).
      */
-    void search(B regionSearch, List<Envelope> result) throws TransformException;
+    void search(Envelope regionSearch, List<Envelope> result) throws TransformException;
 
     /**
      * Insert a {@code Entry} into Rtree.

@@ -25,7 +25,7 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.DefaultNode;
-import org.geotoolkit.index.tree.DefaultTreeUtils;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
@@ -51,8 +51,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLower(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLower(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -66,8 +66,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLower(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLower(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -111,8 +111,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpper(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpper(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -126,8 +126,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpper(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpper(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -169,24 +169,24 @@ public class Calculator2D extends Calculator {
      * Compute Euclidean 2D area. {@inheritDoc }
      */
     @Override
-    public double getSpace(final GeneralEnvelope envelop) {
-        return DefaultTreeUtils.getGeneralEnvelopArea(envelop);
+    public double getSpace(final Envelope envelop) {
+        return getGeneralEnvelopArea(envelop);
     }
 
     /**
      * Compute Euclidean 2D perimeter. {@inheritDoc }
      */
     @Override
-    public double getEdge(final GeneralEnvelope envelop) {
-        return DefaultTreeUtils.getGeneralEnvelopPerimeter(envelop);
+    public double getEdge(final Envelope envelop) {
+        return getGeneralEnvelopPerimeter(envelop);
     }
 
     /**
      * Compute Euclidean 2D distance. {@inheritDoc }
      */
     @Override
-    public double getDistance(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB) {
-        return DefaultTreeUtils.getDistanceBetween2Envelop(envelopA, envelopB);
+    public double getDistance(final Envelope envelopA, final Envelope envelopB) {
+        return getDistanceBetween2DirectPosition(getMedian(envelopA), getMedian(envelopB));
     }
 
     /**
@@ -194,7 +194,7 @@ public class Calculator2D extends Calculator {
      */
     @Override
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
-        return DefaultTreeUtils.getDistanceBetween2DirectPosition(positionA, positionB);
+        return getDistanceBetween2DirectPosition(positionA, positionB);
     }
 
     /**
@@ -209,18 +209,18 @@ public class Calculator2D extends Calculator {
      * Compute Euclidean overlaps 2D area. {@inheritDoc }
      */
     @Override
-    public double getOverlaps(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB) {
+    public double getOverlaps(final Envelope envelopA, final Envelope envelopB) {
         final GeneralEnvelope ge = new GeneralEnvelope(envelopA);
         ge.intersect(envelopB);
-        return DefaultTreeUtils.getGeneralEnvelopArea(ge);
+        return getGeneralEnvelopArea(ge);
     }
 
     /**
      * Compute Euclidean enlargement 2D area. {@inheritDoc }
      */
     @Override
-    public double getEnlargement(final GeneralEnvelope envMin, final GeneralEnvelope envMax) {
-        return DefaultTreeUtils.getGeneralEnvelopArea(envMax) - DefaultTreeUtils.getGeneralEnvelopArea(envMin);
+    public double getEnlargement(final Envelope envMin, final Envelope envMax) {
+        return getGeneralEnvelopArea(envMax) - getGeneralEnvelopArea(envMin);
     }
 
     /**
@@ -482,14 +482,15 @@ public class Calculator2D extends Calculator {
     @Override
     public int getHVOfEntry(final DefaultNode candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
-        final DirectPosition ptCE = DefaultTreeUtils.getMedian(entry);
-        if (! candidate.getBoundary().contains(ptCE)) {////////// attention
+        final DirectPosition ptCE = getMedian(entry);
+//        final GeneralEnvelope bound = candidate.getBound();
+        final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
+        if (! bound.contains(ptCE)) {////////// attention
             throw new IllegalArgumentException("entry is out of this node boundary");
         }
-        final GeneralEnvelope bound = candidate.getBound();
         final Calculator calc = candidate.getTree().getCalculator();
         final int order = (Integer) candidate.getUserProperty("hilbertOrder");
-        if (calc.getSpace(candidate.getBoundary()) <= 0) {
+        if (calc.getSpace(bound) <= 0) {
             final double w = bound.getSpan(0);
             final double h = bound.getSpan(1);
             final int ordinate = (w > h) ? 0 : 1;

@@ -26,7 +26,7 @@ import org.opengis.geometry.Envelope;
  * 
  * @author Rémi Marechal (Geomatys).
  */
-public interface Node<N extends Node<N,B>, B> {
+public interface Node<N extends Node<N>> {
     
     List<N> getChildren();
     
@@ -53,7 +53,7 @@ public interface Node<N extends Node<N,B>, B> {
      * </font></blockquote>
      * @return boundary.
      */
-    B getBoundary();
+    Envelope getBoundary();
     
     /**
      * @return entries.

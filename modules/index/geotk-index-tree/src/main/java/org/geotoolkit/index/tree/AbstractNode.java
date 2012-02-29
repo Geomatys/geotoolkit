@@ -26,7 +26,7 @@ import javax.swing.event.EventListenerList;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractNode<N extends Node<N,B>, B> implements Node<N, B>{
+public abstract class AbstractNode<N extends Node<N>> implements Node<N>{
 
     private final EventListenerList listenerList = new EventListenerList();
     private Map<String, Object> userProperties;

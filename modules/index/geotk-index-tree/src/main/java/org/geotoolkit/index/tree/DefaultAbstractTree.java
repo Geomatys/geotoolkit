@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
@@ -30,7 +29,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
  * @author Rémi Marechal (Geomatys).
  * @author Johann Sorel  (Geomatys).
  */
-public abstract class DefaultAbstractTree implements Tree<DefaultNode, GeneralEnvelope>{
+public abstract class DefaultAbstractTree implements Tree<DefaultNode>{
 
     private DefaultNode root;
     private final int nbMaxElement;

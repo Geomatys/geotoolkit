@@ -20,7 +20,7 @@ package org.geotoolkit.index.tree.calculator;
 import java.util.Comparator;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.DefaultNode;
-import org.geotoolkit.index.tree.DefaultTreeUtils;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -43,8 +43,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLower(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLower(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -59,8 +59,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLower(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLower(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -75,8 +75,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLower(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLower(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -87,12 +87,12 @@ public class Calculator3D extends Calculator {
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorXLow = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorXLow = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getLower(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getLower(0));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -103,12 +103,12 @@ public class Calculator3D extends Calculator {
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorYLow = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorYLow = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLower(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getLower(1));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -119,12 +119,12 @@ public class Calculator3D extends Calculator {
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorZLow = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorZLow = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLower(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getLower(2));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -139,8 +139,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpper(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpper(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -155,8 +155,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpper(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpper(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -171,8 +171,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpper(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpper(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -183,12 +183,12 @@ public class Calculator3D extends Calculator {
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorXUpp = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorXUpp = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getUpper(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getUpper(0));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -199,12 +199,12 @@ public class Calculator3D extends Calculator {
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorYUpp = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorYUpp = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpper(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpper(1));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -215,12 +215,12 @@ public class Calculator3D extends Calculator {
      *
      * @see StarNode#organizeFrom(int)
      */
-    private final Comparator<GeneralEnvelope> gEComparatorZUpp = new Comparator<GeneralEnvelope>() {
+    private final Comparator<Envelope> gEComparatorZUpp = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpper(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpper(2));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -232,24 +232,24 @@ public class Calculator3D extends Calculator {
      * Compute Euclidean 3D bulk. {@inheritDoc }
      */
     @Override
-    public double getSpace(final GeneralEnvelope envelop) {
-        return DefaultTreeUtils.getGeneralEnvelopBulk(envelop);
+    public double getSpace(final Envelope envelop) {
+        return getGeneralEnvelopBulk(envelop);
     }
 
     /**
      * Compute Euclidean 3D area. {@inheritDoc }
      */
     @Override
-    public double getEdge(final GeneralEnvelope envelop) {
-        return DefaultTreeUtils.getGeneralEnvelopArea(envelop);
+    public double getEdge(final Envelope envelop) {
+        return getGeneralEnvelopArea(envelop);
     }
 
     /**
      * Compute Euclidean 3D distance. {@inheritDoc }
      */
     @Override
-    public double getDistance(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB) {
-        return DefaultTreeUtils.getDistanceBetween2Envelop(envelopA, envelopB);
+    public double getDistance(final Envelope envelopA, final Envelope envelopB) {
+        return getDistanceBetween2Envelop(envelopA, envelopB);
     }
 
     /**
@@ -265,25 +265,25 @@ public class Calculator3D extends Calculator {
      */
     @Override
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
-        return DefaultTreeUtils.getDistanceBetween2DirectPosition(positionA, positionB);
+        return getDistanceBetween2DirectPosition(positionA, positionB);
     }
 
     /**
      * Compute Euclidean overlaps 3D area. {@inheritDoc }
      */
     @Override
-    public double getOverlaps(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB) {
+    public double getOverlaps(final Envelope envelopA, final Envelope envelopB) {
         final GeneralEnvelope ge = new GeneralEnvelope(envelopA);
         ge.intersect(envelopB);
-        return DefaultTreeUtils.getGeneralEnvelopBulk(ge);
+        return getGeneralEnvelopBulk(ge);
     }
 
     /**
      * Compute Euclidean enlargement 3D bulk. {@inheritDoc }
      */
     @Override
-    public double getEnlargement(final GeneralEnvelope envMin, final GeneralEnvelope envMax) {
-        return DefaultTreeUtils.getGeneralEnvelopBulk(envMax) - DefaultTreeUtils.getGeneralEnvelopBulk(envMin);
+    public double getEnlargement(final Envelope envMin, final Envelope envMax) {
+        return getGeneralEnvelopBulk(envMax) - getGeneralEnvelopBulk(envMin);
     }
 
     /**

@@ -44,8 +44,8 @@ public class DefaultTreeUtils {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLower(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLower(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -58,8 +58,8 @@ public class DefaultTreeUtils {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLower(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLower(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -72,8 +72,8 @@ public class DefaultTreeUtils {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLower(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLower(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -82,12 +82,12 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<GeneralEnvelope> GE_COMPARATOR_X_LEFT = new Comparator<GeneralEnvelope>() {
+    private static final Comparator<Envelope> GE_COMPARATOR_X_LEFT = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getLower(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getLower(0));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -96,12 +96,12 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<GeneralEnvelope> GE_COMPARATOR_Y_LEFT = new Comparator<GeneralEnvelope>() {
+    private static final Comparator<Envelope> GE_COMPARATOR_Y_LEFT = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLower(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getLower(1));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -110,12 +110,12 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<GeneralEnvelope> GE_COMPARATOR_Z_LEFT = new Comparator<GeneralEnvelope>() {
+    private static final Comparator<Envelope> GE_COMPARATOR_Z_LEFT = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLower(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getLower(2));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -128,8 +128,8 @@ public class DefaultTreeUtils {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpper(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpper(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -142,8 +142,8 @@ public class DefaultTreeUtils {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpper(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpper(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -156,8 +156,8 @@ public class DefaultTreeUtils {
 
         @Override
         public int compare(DefaultNode o1, DefaultNode o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpper(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpper(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -166,12 +166,12 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<GeneralEnvelope> GE_COMPARATOR_X_RIGHT = new Comparator<GeneralEnvelope>() {
+    private static final Comparator<Envelope> GE_COMPARATOR_X_RIGHT = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getUpper(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getUpper(0));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(0));
+            java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(0));
             return x1.compareTo(x2);
         }
     };
@@ -180,12 +180,12 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<GeneralEnvelope> GE_COMPARATOR_Y_RIGHT = new Comparator<GeneralEnvelope>() {
+    private static final Comparator<Envelope> GE_COMPARATOR_Y_RIGHT = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpper(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpper(1));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(1));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(1));
             return y1.compareTo(y2);
         }
     };
@@ -194,12 +194,12 @@ public class DefaultTreeUtils {
      * 
      * @see StarNode#organizeFrom(int) 
      */
-    private static final Comparator<GeneralEnvelope> GE_COMPARATOR_Z_RIGHT = new Comparator<GeneralEnvelope>() {
+    private static final Comparator<Envelope> GE_COMPARATOR_Z_RIGHT = new Comparator<Envelope>() {
 
         @Override
-        public int compare(GeneralEnvelope o1, GeneralEnvelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpper(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpper(2));
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(2));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(2));
             return y1.compareTo(y2);
         }
     };
@@ -217,7 +217,7 @@ public class DefaultTreeUtils {
      * @param envelope {@code GeneralEnvelope}.
      * @return bulk value.
      */
-    public static double getGeneralEnvelopBulk(final GeneralEnvelope envelope){
+    public static double getGeneralEnvelopBulk(final Envelope envelope){
         ArgumentChecks.ensureNonNull("getGeneralEnvelopBulk : gn", envelope);
         final DirectPosition lower = envelope.getLowerCorner();
         final DirectPosition upper = envelope.getUpperCorner();
@@ -242,7 +242,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if envelope dimension > 2.
      * @return perimeter value.
      */
-    public static double getGeneralEnvelopPerimeter(final GeneralEnvelope envelope){
+    public static double getGeneralEnvelopPerimeter(final Envelope envelope){
         ArgumentChecks.ensureNonNull("getGeneralEnvelopPerimeter : gn", envelope);
         int dim = envelope.getDimension();
         if(dim>2){
@@ -268,7 +268,7 @@ public class DefaultTreeUtils {
      * @param envelopB
      * @return intersection between envelopA, envelopB bulk, or area from area dimension.
      */
-    public static double getOverlapValue(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB){
+    public static double getOverlapValue(final Envelope envelopA, final Envelope envelopB){
         ArgumentChecks.ensureNonNull("getOverlapValue : envelopA", envelopA);
         ArgumentChecks.ensureNonNull("getOverlapValue : envelopB", envelopB);
         final GeneralEnvelope intersectionGN = new GeneralEnvelope(envelopA);
@@ -312,13 +312,13 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if envelopA or envelopB are not in same dimension.
      * @return distance between envelopA and envelopB centroids.
      */
-    public static double getDistanceBetween2Envelop(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB){
+    public static double getDistanceBetween2Envelop(final Envelope envelopA, final Envelope envelopB){
         ArgumentChecks.ensureNonNull("getDistanceBetween2Envelop : envelopA", envelopA);
         ArgumentChecks.ensureNonNull("getDistanceBetween2Envelop : envelopB", envelopB);
         if(envelopA.getDimension() != envelopB.getDimension()){
             throw new IllegalArgumentException("getDistanceBetween2Envelop : envelopA and envelopB are not in same dimension");
         }
-        return getDistanceBetween2DirectPosition(envelopA.getMedian(), envelopB.getMedian());
+        return getDistanceBetween2DirectPosition(getMedian(envelopA), getMedian(envelopB));
     }
     
     /**Organize all elements from {@code DefaultNode} List and {@code GeneralEnvelope} List by differents criterion.
@@ -330,7 +330,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if index is out of required limits.
      * @throws IllegalArgumentException if listNode and listEntries are null.
      */
-    public static void organize_List_Elements_From_Left(int index, final List<DefaultNode> listNode, final List<GeneralEnvelope> listEntries) {
+    public static void organize_List_Elements_From_Left(int index, final List<DefaultNode> listNode, final List<Envelope> listEntries) {
         ArgumentChecks.ensureBetween("organize_List3DElements_From_Left : index", 0, 2, index);
         if(listNode==null&&listEntries==null){
             throw new IllegalArgumentException("organize_List3DElements_From_Left : impossible to organize empty lists");
@@ -431,7 +431,7 @@ public class DefaultTreeUtils {
      * @param envelope
      * @return candidate area.
      */
-    public static double getGeneralEnvelopArea(final GeneralEnvelope envelope){
+    public static double getGeneralEnvelopArea(final Envelope envelope){
         ArgumentChecks.ensureNonNull("getArea : envelop", envelope);
         int area = 0;
         final int dim = envelope.getDimension();
@@ -460,7 +460,7 @@ public class DefaultTreeUtils {
      * @throws IllegalArgumentException if dimension is differente of 1 or 2 or 3.
      * @return enlargement or narrowing between envMin envMax.
      */
-    public static double getEnlargementValue(final GeneralEnvelope envMin, final GeneralEnvelope envMax){
+    public static double getEnlargementValue(final Envelope envMin, final Envelope envMax){
         ArgumentChecks.ensureNonNull("getEnlargementValue : envelop", envMin);
         ArgumentChecks.ensureNonNull("getEnlargementValue : envelop", envMax);
         final int dimEnvMin = envMin.getDimension();

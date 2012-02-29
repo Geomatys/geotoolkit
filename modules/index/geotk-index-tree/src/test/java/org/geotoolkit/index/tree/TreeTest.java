@@ -79,9 +79,9 @@ public abstract class TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     protected void insertTest() throws TransformException {
-        final GeneralEnvelope gr = ((DefaultNode) tree.getRoot()).getBoundary();
+        final Envelope gr = ((DefaultNode) tree.getRoot()).getBoundary();
         final GeneralEnvelope gem = DefaultTreeUtils.getEnveloppeMin(lData);
-        assertTrue(gr.equals(gem, 1E-9, false));
+        assertTrue(gem.equals(gr, 1E-9, false));
         final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
         tree.search(gr, listSearch);
         assertTrue(listSearch.size() == lData.size());

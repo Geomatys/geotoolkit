@@ -320,8 +320,7 @@ public class ReaderWriterTest {
         if (!nodeA.isLeaf() || !nodeB.isLeaf()) {
             throw new IllegalArgumentException("compareLeaf : you must compare two leaf");
         }
-
-        if (!nodeA.getBoundary().equals(nodeB.getBoundary(), 1E-9, false)) {
+        if (!new GeneralEnvelope(nodeA.getBoundary()).equals(nodeB.getBoundary(), 1E-9, false)) {
             return false;
         }
         final List<Envelope> listA = new ArrayList<Envelope>();

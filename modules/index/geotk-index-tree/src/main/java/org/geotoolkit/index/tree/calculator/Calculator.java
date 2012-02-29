@@ -35,20 +35,20 @@ public abstract class Calculator {
      * @param envelop
      * @return envelop bulk or area.
      */
-    public abstract double getSpace(final GeneralEnvelope envelop);
+    public abstract double getSpace(final Envelope envelop);
 
     /**
      * @param envelop
      * @return evelop edge.
      */
-    public abstract double getEdge(final GeneralEnvelope envelop);
+    public abstract double getEdge(final Envelope envelop);
 
     /**
      * @param envelopA
      * @param envelopB
      * @return distance between envelopA, envelopB.
      */
-    public abstract double getDistance(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB);
+    public abstract double getDistance(final Envelope envelopA, final Envelope envelopB);
 
     /**
      * @param positionA
@@ -69,7 +69,7 @@ public abstract class Calculator {
      * @param envelopB
      * @return overlaps between envelopA, envelopB.
      */
-    public abstract double getOverlaps(final GeneralEnvelope envelopA, final GeneralEnvelope envelopB);
+    public abstract double getOverlaps(final Envelope envelopA, final Envelope envelopB);
 
     /**
      * <blockquote><font size=-1> <strong>NOTE : In case of narrowing, negative
@@ -79,7 +79,7 @@ public abstract class Calculator {
      * @param envMax
      * @return enlargement from envMin to envMax.
      */
-    public abstract double getEnlargement(final GeneralEnvelope envMin, final GeneralEnvelope envMax);
+    public abstract double getEnlargement(final Envelope envMin, final Envelope envMax);
 
     /**
      * Return a {@code Comparator} to sort list elements.

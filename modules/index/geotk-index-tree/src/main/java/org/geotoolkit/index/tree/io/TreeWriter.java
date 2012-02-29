@@ -127,15 +127,15 @@ public class TreeWriter {
         final List<Envelope> listEntries = new ArrayList<Envelope>(node.getEntries());
         final int nbrSubNode = listChild.size();
         dops.writeInt(index.get(node));
-        final GeneralEnvelope bound = node.getBoundary();
+        final Envelope bound = node.getBoundary();
         final int dim = bound.getDimension();
         dops.writeInt(dim);
         
         for(int i = 0; i<dim; i++){
-            dops.writeDouble(bound.getLower(i));
+            dops.writeDouble(bound.getLowerCorner().getOrdinate(i));
         }
         for(int i = 0; i<dim; i++){
-            dops.writeDouble(bound.getUpper(i));
+            dops.writeDouble(bound.getUpperCorner().getOrdinate(i));
         }
         if(node.isLeaf()){
             dops.writeInt(0);

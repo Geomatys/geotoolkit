@@ -36,7 +36,7 @@ import org.opengis.geometry.Envelope;
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel  (Geomatys)
  */
-public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
+public class DefaultNode extends AbstractNode<DefaultNode> {
     
     protected GeneralEnvelope boundary;
     private AbstractNode parent;
@@ -194,7 +194,7 @@ public class DefaultNode extends AbstractNode<DefaultNode, GeneralEnvelope> {
      * {@inheritDoc} 
      */
     @Override
-    public GeneralEnvelope getBoundary() {
+    public Envelope getBoundary() {
         if(boundary==null){
             calculateBounds();
         }
