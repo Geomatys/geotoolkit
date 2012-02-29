@@ -39,9 +39,9 @@
     <developer>
       <name>Martin Desruisseaux</name>
       <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <email>martin.desruisseaux@geomatys.fr</email>
       <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Module Maintainer</role>

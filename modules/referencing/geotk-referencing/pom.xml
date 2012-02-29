@@ -39,9 +39,9 @@
     <developer>
       <name>Martin Desruisseaux</name>
       <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <email>martin.desruisseaux@geomatys.fr</email>
       <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Module Maintainer</role>
@@ -142,7 +142,7 @@
     <contributor>
       <name>Simon Reynard</name>
       <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Java Developer</role>
@@ -152,7 +152,7 @@
       <name>Rémi Maréchal</name>
       <email>r.marechal79@laposte.net</email>
       <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Java Developer</role>
