@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -67,10 +67,11 @@ public class LambertConformal2SP extends MapProjection {
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             Identifiers.CENTRAL_MERIDIAN.select(
-                "central_meridian",           // OGC
-                "Central_Meridian",           // ESRI
-                "Longitude of false origin",  // EPSG
-                "FalseOriginLong");           // GeoTIFF
+                "central_meridian",              // OGC
+                "Central_Meridian",              // ESRI
+                "Longitude of false origin",     // EPSG
+                "longitude_of_central_meridian", // NetCDF
+                "FalseOriginLong");              // GeoTIFF
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -148,6 +149,7 @@ public class LambertConformal2SP extends MapProjection {
             new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_2SP"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (2SP)"),
             new IdentifierCode (Citations.EPSG,     9802),
+            new NamedIdentifier(Citations.NETCDF,  "LambertConformal"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_2SP"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic"),
             new IdentifierCode (Citations.GEOTIFF,  9), // The same code is used for 1SP.

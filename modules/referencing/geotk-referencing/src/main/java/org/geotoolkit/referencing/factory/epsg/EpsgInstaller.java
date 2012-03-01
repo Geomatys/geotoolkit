@@ -42,6 +42,8 @@ import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.HSQL;
 import org.geotoolkit.util.NullArgumentException;
 
+import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
+
 
 /**
  * Installs the EPSG database. By default this class performs the following operations:
@@ -418,7 +420,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
              * is the opposite of the other case which occurs as a result of explicit call.
              */
             final LogRecord log = Loggings.format(Level.INFO,
-                    Loggings.Keys.CREATING_CACHED_EPSG_DATABASE_$1, ThreadedEpsgFactory.VERSION);
+                    Loggings.Keys.CREATING_CACHED_EPSG_DATABASE_$1, EPSG_VERSION);
             log.setSourceMethodName("call");
             log.setSourceClassName(EpsgInstaller.class.getName());
             log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());

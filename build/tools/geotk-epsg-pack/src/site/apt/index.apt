@@ -73,6 +73,6 @@ mvn clean install
 mvn test
 -----------------
 
-  [[10]] Run <<<org.geotoolkit.referencing.factory.epsg.SupportedListGenerator>>> (available
-         in the test directory of the <<<geotk-referencing>>> module) and copy the generated
-         <<<supported-codes.html>>> file on the web server.
+  [[10]] Run <<<org.geotoolkit.project.report.CRSAuthorityCodes>>> (available in the <<<geotk-report>>>
+         module) and copy the generated <<<supported-codes.html>>> file in the <<<modules/referencing>>>
+         site directory on the web server.

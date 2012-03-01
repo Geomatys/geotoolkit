@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
+import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
@@ -106,6 +107,14 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
     private GeocentricToEllipsoid(final GeocentricToEllipsoid complement) {
         super(3, 2, PARAMETERS);
         this.complement = complement;
+    }
+
+    /**
+     * Returns the operation type.
+     */
+    @Override
+    public Class<Conversion> getOperationType() {
+        return Conversion.class;
     }
 
     /**

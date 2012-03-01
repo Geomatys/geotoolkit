@@ -48,7 +48,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Beate Stollberg
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -73,6 +73,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
                 "longitude_of_center",            // OGC
                 "Longitude of natural origin",    // EPSG
                 "Central_Meridian",               // ESRI
+                "longitude_of_projection_origin", // NetCDF
                 "ProjCenterLong");                // GeoTIFF
 
     /**
@@ -120,6 +121,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area (Spherical)"),
             new IdentifierCode (Citations.EPSG,     9820),
             new IdentifierCode (Citations.EPSG,     1027),
+            new NamedIdentifier(Citations.NETCDF,  "LambertAzimuthalEqualArea"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  10),
             new NamedIdentifier(Citations.PROJ4,    "laea"),

@@ -525,7 +525,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @since 2.2
      */
     public String getName(final Citation authority) {
-        return IdentifiedObjects.name(this, authority);
+        return IdentifiedObjects.name(this, authority, null);
     }
 
     /**

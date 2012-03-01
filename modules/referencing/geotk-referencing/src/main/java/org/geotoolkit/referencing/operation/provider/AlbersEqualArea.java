@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -72,10 +72,11 @@ public class AlbersEqualArea extends MapProjection {
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             Identifiers.CENTRAL_MERIDIAN.select(
-                "central_meridian",             // OGC
-                "Central_Meridian",             // ESRI
-                "Longitude of false origin",    // EPSG
-                "NatOriginLong");               // GeoTIFF
+                "central_meridian",              // OGC
+                "Central_Meridian",              // ESRI
+                "Longitude of false origin",     // EPSG
+                "longitude_of_central_meridian", // NetCDF
+                "NatOriginLong");                // GeoTIFF
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -92,10 +93,10 @@ public class AlbersEqualArea extends MapProjection {
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
             Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_origin",           // OGC
-                "Latitude_Of_Origin",           // ESRI
-                "Latitude of false origin",     // EPSG
-                "NatOriginLat");                // GeoTIFF
+                "latitude_of_origin",            // OGC
+                "Latitude_Of_Origin",            // ESRI
+                "Latitude of false origin",      // EPSG
+                "NatOriginLat");                 // GeoTIFF
 
     /**
      * The operation parameter descriptor for the first {@linkplain
@@ -157,6 +158,7 @@ public class AlbersEqualArea extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.ESRI,    "Albers"),
             new NamedIdentifier(Citations.ESRI,    "Albers_Equal_Area_Conic"),
+            new NamedIdentifier(Citations.NETCDF,  "AlbersEqualArea"),
             new NamedIdentifier(Citations.PROJ4,   "aea"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))

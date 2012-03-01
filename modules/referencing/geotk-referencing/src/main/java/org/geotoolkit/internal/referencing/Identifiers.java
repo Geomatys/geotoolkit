@@ -56,14 +56,14 @@ import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
  * <p>
  * As a convenience for projection providers creating the descriptors to be exposed in public API,
  * this class can produces arrays of {@link NamedIdentifier} where only one name is selected for
- * each authority. If there is more than one name for the same authority, the only a given name
+ * each authority. If there is more than one name for the same authority, then only a given name
  * is retained and the other ones are removed.
  * <p>
  * This class is used as helper methods for Geotk implementation of math transform provider.
  * The current approach is too specific to deserve a public API.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.16
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -99,6 +99,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Longitude of natural origin"),
             new NamedIdentifier(EPSG,    "Spherical longitude of origin"),
             new NamedIdentifier(EPSG,    "Longitude of projection centre"),
+            new NamedIdentifier(NETCDF,  "longitude_of_projection_origin"),
+            new NamedIdentifier(NETCDF,  "longitude_of_central_meridian"),
             new NamedIdentifier(GEOTIFF, "NatOriginLong"),
             new NamedIdentifier(GEOTIFF, "FalseOriginLong"),
             new NamedIdentifier(GEOTIFF, "ProjCenterLong"),
@@ -145,6 +147,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Latitude of natural origin"),
             new NamedIdentifier(EPSG,    "Spherical latitude of origin"),
             new NamedIdentifier(EPSG,    "Latitude of projection centre"), epsg,
+            new NamedIdentifier(NETCDF,  "latitude_of_projection_origin"),
             new NamedIdentifier(GEOTIFF, "NatOriginLat"),
             new NamedIdentifier(GEOTIFF, "FalseOriginLat"),
             new NamedIdentifier(GEOTIFF, "ProjCenterLat"),
@@ -158,6 +161,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"), esri,
             new NamedIdentifier(EPSG,    "Latitude of standard parallel"), epsg,
             new NamedIdentifier(EPSG,    "Latitude of pseudo standard parallel"),
+            new NamedIdentifier(NETCDF,  "standard_parallel[1]"),
             new NamedIdentifier(GEOTIFF, "StdParallel1"),
             new NamedIdentifier(PROJ4,   "lat_1")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
@@ -171,6 +175,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(OGC,     "standard_parallel_2"),
             new NamedIdentifier(ESRI,    "Standard_Parallel_2"),
             new NamedIdentifier(EPSG,    "Latitude of 2nd standard parallel"),
+            new NamedIdentifier(NETCDF,  "standard_parallel[2]"),
             new NamedIdentifier(GEOTIFF, "StdParallel2"),
             new NamedIdentifier(PROJ4,   "lat_2")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
@@ -250,6 +255,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Scale factor at natural origin"),
             new NamedIdentifier(EPSG,    "Scale factor on initial line"),
             new NamedIdentifier(EPSG,    "Scale factor on pseudo standard parallel"),
+            new NamedIdentifier(NETCDF,  "scale_factor_at_projection_origin"),
+            new NamedIdentifier(NETCDF,  "scale_factor_at_central_meridian"),
             new NamedIdentifier(GEOTIFF, "ScaleAtNatOrigin"),
             new NamedIdentifier(GEOTIFF, "ScaleAtCenter"),
             new NamedIdentifier(PROJ4,   "k")

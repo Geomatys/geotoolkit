@@ -903,6 +903,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_SUCH_ATTRIBUTE_$1 = 163;
 
         /**
+         * No attribute named “{0}” has been found in “{1}”.
+         */
+        public static final int NO_SUCH_ATTRIBUTE_$2 = 264;
+
+        /**
          * No object of type ‘{0}’ has been found for code “{1}”.
          */
         public static final int NO_SUCH_AUTHORITY_CODE_$2 = 164;

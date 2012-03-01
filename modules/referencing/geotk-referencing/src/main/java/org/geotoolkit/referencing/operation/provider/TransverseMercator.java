@@ -65,7 +65,13 @@ public class TransverseMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN = Mercator1SP.CENTRAL_MERIDIAN;
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
+            Identifiers.CENTRAL_MERIDIAN.select(
+                "central_meridian",               // OGC
+                "Central_Meridian",               // ESRI
+                "Longitude of natural origin",    // EPSG
+                "longitude_of_central_meridian",  // NetCDF
+                "NatOriginLong");                 // GeoTIFF
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -85,7 +91,11 @@ public class TransverseMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is 1.
      */
-    public static final ParameterDescriptor<Double> SCALE_FACTOR = Mercator1SP.SCALE_FACTOR;
+    public static final ParameterDescriptor<Double> SCALE_FACTOR =
+            Identifiers.SCALE_FACTOR.select(
+                "Scale factor at natural origin",   // EPSG
+                "scale_factor_at_central_meridian", // NetCDF
+                "ScaleAtNatOrigin");                // GeoTIFF
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -131,6 +141,7 @@ public class TransverseMercator extends MapProjection {
             new NamedIdentifier(Citations.EPSG,     "Gauss-Boaga"),
             new NamedIdentifier(Citations.EPSG,     "TM"),
             new IdentifierCode (Citations.EPSG,      9807),
+            new NamedIdentifier(Citations.NETCDF,   "TransverseMercator"),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
             new IdentifierCode (Citations.GEOTIFF,   1),
             new NamedIdentifier(Citations.PROJ4,    "tmerc"),

@@ -22,6 +22,8 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
@@ -223,7 +225,26 @@ public final class IdentifiedObjects extends Static {
             // Gives a chances to subclasses to get their overridden method invoked.
             return ((AbstractIdentifiedObject) info).getName(authority);
         }
-        return name(info, authority);
+        return name(info, authority, null);
+    }
+
+    /**
+     * Returns every object names and aliases according the given authority. This method performs
+     * the same work than {@link #getName(IdentifiedObject, Citation)}, except that it doesn't
+     * stop at the first match. This method is useful in the rare cases where the same authority
+     * declare more than one name, and all those names are of interest.
+     *
+     * @param  info The object to get the names and aliases from, or {@code null}.
+     * @param  authority The authority for the names to return, or {@code null} for any authority.
+     * @return The object names and aliases, or an empty set if no name or alias matching the
+     *         specified authority was found.
+     *
+     * @since 3.20
+     */
+    public static Set<String> getNames(final IdentifiedObject info, final Citation authority) {
+        final Set<String> names = new LinkedHashSet<String>(8);
+        name(info, authority, names);
+        return names;
     }
 
     /**
@@ -233,53 +254,77 @@ public final class IdentifiedObjects extends Static {
      *
      * @param  info The object to get the name from, or {@code null}.
      * @param  authority The authority for the name to return, or {@code null} for any authority.
+     * @param  addTo If non-null, the collection where to add all names found.
      * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
      *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
      *         specified authority was found.
      */
-    static String name(final IdentifiedObject info, final Citation authority) {
-        String name = null;
+    static String name(final IdentifiedObject info, final Citation authority, final Collection<String> addTo) {
         if (info != null) {
             Identifier identifier = info.getName();
             if (authority == null) {
                 if (identifier != null) {
-                    name = identifier.getCode();
+                    final String name = identifier.getCode();
+                    if (name != null) {
+                        if (addTo == null) {
+                            return name;
+                        }
+                        addTo.add(name);
+                    }
                 }
-                if (name == null) {
-                    final Iterator<GenericName> it = iterator(info.getAlias());
-                    if (it != null) while (it.hasNext()) {
-                        final GenericName alias = it.next();
-                        if (alias != null) {
-                            name = (alias instanceof Identifier) ? ((Identifier) alias).getCode() : alias.toString();
-                            if (name != null) break;
+                final Iterator<GenericName> it = iterator(info.getAlias());
+                if (it != null) while (it.hasNext()) {
+                    final GenericName alias = it.next();
+                    if (alias != null) {
+                        final String name = (alias instanceof Identifier) ?
+                                ((Identifier) alias).getCode() : alias.toString();
+                        if (name != null) {
+                            if (addTo == null) {
+                                return name;
+                            }
+                            addTo.add(name);
                         }
                     }
                 }
             } else {
                 if (identifier != null) {
                     if (identifierMatches(authority, identifier.getAuthority())) {
-                        name = identifier.getCode();
+                        final String name = identifier.getCode();
+                        if (name != null) {
+                            if (addTo == null) {
+                                return name;
+                            }
+                            addTo.add(name);
+                        }
                     }
                 }
-                if (name == null) {
-                    final Iterator<GenericName> it = iterator(info.getAlias());
-                    if (it != null) while (it.hasNext()) {
-                        final GenericName alias = it.next();
-                        if (alias != null) {
-                            if (alias instanceof Identifier) {
-                                identifier = (Identifier) alias;
-                                if (identifierMatches(authority, identifier.getAuthority())) {
-                                    name = identifier.getCode();
-                                    if (name != null) break;
+                final Iterator<GenericName> it = iterator(info.getAlias());
+                if (it != null) while (it.hasNext()) {
+                    final GenericName alias = it.next();
+                    if (alias != null) {
+                        if (alias instanceof Identifier) {
+                            identifier = (Identifier) alias;
+                            if (identifierMatches(authority, identifier.getAuthority())) {
+                                final String name = identifier.getCode();
+                                if (name != null) {
+                                    if (addTo == null) {
+                                        return name;
+                                    }
+                                    addTo.add(name);
                                 }
-                            } else {
-                                final NameSpace ns = alias.scope();
-                                if (ns != null) {
-                                    final GenericName scope = ns.name();
-                                    if (scope != null) {
-                                        if (identifierMatches(authority, scope.toString())) {
-                                            name = alias.toString();
-                                            if (name != null) break;
+                            }
+                        } else {
+                            final NameSpace ns = alias.scope();
+                            if (ns != null) {
+                                final GenericName scope = ns.name();
+                                if (scope != null) {
+                                    if (identifierMatches(authority, scope.toString())) {
+                                        final String name = alias.toString();
+                                        if (name != null) {
+                                            if (addTo == null) {
+                                                return name;
+                                            }
+                                            addTo.add(name);
                                         }
                                     }
                                 }
@@ -289,7 +334,7 @@ public final class IdentifiedObjects extends Static {
                 }
             }
         }
-        return name;
+        return null;
     }
 
     /**

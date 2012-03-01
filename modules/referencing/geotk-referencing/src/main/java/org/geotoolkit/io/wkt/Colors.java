@@ -28,6 +28,8 @@ import org.geotoolkit.io.X364;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
  *
+ * @see X364
+ *
  * @since 3.00
  * @module
  */

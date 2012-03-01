@@ -88,7 +88,7 @@ public enum Convention {
      * This convention differs from other conventions in three aspects:
      * <p>
      * <ul>
-     *   <li>The Bursa-Wolf parameters are inserted straight into the {@code DATUM} elements,
+     *   <li>The Bursa-Wolf parameters are inserted straight into the {@code DATUM} element,
      *       without enclosing them in a {@code TOWGS84} element.</li>
      *   <li>The {@code PROJECTION} names are {@linkplain CoordinateOperation Coordinate
      *       Operation} names rather than {@linkplain OperationMethod Operation Method} names.</li>
@@ -119,6 +119,12 @@ public enum Convention {
     /**
      * The <A HREF="http://trac.osgeo.org/proj/">Proj.4</A> convention.
      * This convention uses very short parameter and projection names.
+     * Other differences are:
+     * <p>
+     * <ul>
+     *   <li>The units of {@code PRIMEM} elements are always degrees, no matter the units of
+     *       the enclosing {@code GEOGCS} element.</li>
+     * </ul>
      *
      * @see Citations#PROJ4
      */

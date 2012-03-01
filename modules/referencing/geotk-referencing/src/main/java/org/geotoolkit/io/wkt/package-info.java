@@ -23,14 +23,19 @@
  * customize the WKT output. For example it is possible to:
  * <p>
  * <ul>
- *   <li>Format parameter using the names of an other authority than OGC. For example we may want
- *       to format using the GeoTIFF parameter names.</li>
- *   <li>Use curly brackets instead than square ones, as in {@code DATUM("WGS84")} instead than
- *       {@code DATUM["WGS84"]}. This is legal WKT, even if less frequent than square brackets.</li>
- *   <li>Apply syntactic coloring for output on X3.64 terminal.</li>
+ *   <li>{@linkplain org.geotoolkit.io.wkt.WKTFormat#setConvention Format the parameters using the
+ *       names of an other authority than OGC}. For example we may want to format using the
+ *       {@linkplain org.geotoolkit.io.wkt.Convention#GEOTIFF GeoTIFF} parameter names.</li>
+ *   <li>{@linkplain org.geotoolkit.io.wkt.WKTFormat#setSymbols Use curly brackets instead than
+ *       square ones}, as in {@code DATUM("WGS84")} instead than {@code DATUM["WGS84"]}. This is
+ *       legal WKT, while less frequently used than square brackets.</li>
+ *   <li>{@linkplain org.geotoolkit.io.wkt.WKTFormat#setColors Apply syntactic coloring} for output
+ *       on X3.64 terminal.</li>
+ *   <li>{@linkplain org.geotoolkit.io.wkt.WKTFormat#setIndentation Use a different indentation}, or
+ *       format the whole WKT on a {@linkplain org.geotoolkit.io.wkt.WKTFormat#SINGLE_LINE single line}.</li>
  * </ul>
  * <p>
- * Current implementation is primarily targeting parsing and formatting of referencing objects.
+ * Current implementation is primarily targeting the parsing and formatting of referencing objects.
  * However other WKT formats (especially the one for geometric objects) are expected to be
  * provided here in future versions.
  *
@@ -62,7 +67,7 @@
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Eve (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module

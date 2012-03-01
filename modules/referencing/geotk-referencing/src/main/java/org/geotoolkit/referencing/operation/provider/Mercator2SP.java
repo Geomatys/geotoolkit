@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -92,6 +92,7 @@ public class Mercator2SP extends MapProjection {
             Identifiers.STANDARD_PARALLEL_1.select(true,
                 "standard_parallel_1",                  // OGC
                 "Standard_Parallel_1",                  // ESRI
+                "standard_parallel[1]",                 // NetCDF
                 "Latitude of 1st standard parallel");   // EPSG
 
     /**
@@ -119,11 +120,12 @@ public class Mercator2SP extends MapProjection {
      */
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.OGC,  "Mercator_2SP"),
-            new NamedIdentifier(Citations.EPSG, "Mercator (variant B)"), // Starting from 7.6
-            new NamedIdentifier(Citations.EPSG, "Mercator (2SP)"), // Prior to EPSG version 7.6
-            new IdentifierCode (Citations.EPSG,  9805),
-            new NamedIdentifier(Citations.ESRI, "Mercator"),
+            new NamedIdentifier(Citations.OGC,    "Mercator_2SP"),
+            new NamedIdentifier(Citations.EPSG,   "Mercator (variant B)"), // Starting from 7.6
+            new NamedIdentifier(Citations.EPSG,   "Mercator (2SP)"), // Prior to EPSG version 7.6
+            new IdentifierCode (Citations.EPSG,    9805),
+            new NamedIdentifier(Citations.NETCDF, "Mercator"),
+            new NamedIdentifier(Citations.ESRI,   "Mercator"),
                      sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.PROJ4,      Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)

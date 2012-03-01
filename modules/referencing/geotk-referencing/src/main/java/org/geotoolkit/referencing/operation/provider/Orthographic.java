@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -70,6 +70,7 @@ public class Orthographic extends MapProjection {
                 "central_meridian",                 // OGC
                 "Longitude_Of_Center",              // ESRI
                 "Longitude of natural origin",      // EPSG
+                "longitude_of_projection_origin",   // NetCDF
                 "ProjCenterLong");                  // GeoTIFF
 
     /**
@@ -130,6 +131,7 @@ public class Orthographic extends MapProjection {
             new NamedIdentifier(Citations.ESRI,    "Orthographic"),
             new NamedIdentifier(Citations.EPSG,    "Orthographic"),
             new IdentifierCode (Citations.EPSG,     9840),
+            new NamedIdentifier(Citations.NETCDF,  "Orthographic"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_Orthographic"),
             new IdentifierCode (Citations.GEOTIFF,  21),
             new NamedIdentifier(Citations.PROJ4,   "ortho"),
