@@ -17,22 +17,14 @@
  */
 package org.geotoolkit.gml;
 
+import java.util.logging.Logger;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.gml.xml.v311.CurveType;
-import org.geotoolkit.gml.xml.v311.LineStringType;
-import org.geotoolkit.gml.xml.v311.MultiCurveType;
-import org.geotoolkit.gml.xml.v311.MultiGeometryType;
-import org.geotoolkit.gml.xml.v311.MultiLineStringType;
-import org.geotoolkit.gml.xml.v311.MultiPointType;
-import org.geotoolkit.gml.xml.v311.MultiPolygonType;
-import org.geotoolkit.gml.xml.v311.MultiSolidType;
-import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
-import org.geotoolkit.gml.xml.v311.ObjectFactory;
-import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.v311.*;
 
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
 import org.geotoolkit.internal.jaxb.geometry.GM_Object;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Geometry;
 
 
@@ -48,6 +40,8 @@ import org.opengis.geometry.Geometry;
  */
 public final class GmlGeometryAdapter extends GM_Object implements RegisterableAdapter {
 
+    private static final Logger LOGGER = Logging.getLogger(GmlGeometryAdapter.class);
+    
     /**
      * Empty constructor for JAXB only.
      */
@@ -93,7 +87,20 @@ public final class GmlGeometryAdapter extends GM_Object implements RegisterableA
 
         } else if (metadata instanceof MultiPolygonType) {
             this.geometry = factory.createMultiPolygon((MultiPolygonType) metadata);
-        }
+        
+        } else if (metadata instanceof MultiPolygonType) {
+            this.geometry = factory.createMultiPolygon((MultiPolygonType) metadata);
+            
+        } else if (metadata instanceof PolygonType) {
+            this.geometry = factory.createPolygon((PolygonType) metadata);
+        
+        } else if (metadata instanceof SurfaceType) {
+            this.geometry = factory.createSurface((SurfaceType) metadata);
+            
+        
+        } else if (metadata != null){
+            LOGGER.warning("Unexpected geometry class in geometryAdpater:" + metadata.getClass().getName());
+        } 
     }
 
     /**
