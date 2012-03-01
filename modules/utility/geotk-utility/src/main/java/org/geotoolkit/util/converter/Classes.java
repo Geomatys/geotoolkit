@@ -35,14 +35,42 @@ import org.geotoolkit.util.XArrays;
 
 /**
  * Miscellaneous static methods working on {@link Class} objects.
+ * This class defines helper methods for working with reflection.
+ * Some functionalities are:
+ * <p>
+ * <ul>
+ *   <li>Add or remove dimension to an array type
+ *       ({@link #changeArrayDimension(Class, int) changeArrayDimension})</li>
+ *   <li>Find the common parent of two or more classes
+ *       ({@link #findCommonClass(Class, Class) findCommonClass},
+ *       ({@link #findCommonInterfaces(Class, Class) findCommonInterfaces})</li>
+ *   <li>Getting the bounds of a parameterized field or method
+ *       ({@link #boundOfParameterizedAttribute(Method) boundOfParameterizedAttribute})</li>
+ *   <li>Getting a short class name ({@link #getShortName(Class) getShortName},
+ *       {@link #getShortClassName(Object) getShortClassName})</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.5
  * @module
  */
 public final class Classes extends Static {
+    /**
+     * Methods to be rejected by {@link #isGetter(Method)}. They are mostly methods inherited
+     * from {@link Object}. Only no-argument methods having a non-void return value need to be
+     * declared in this list.
+     * <p>
+     * Note that testing {@code type.getDeclaringClass().equals(Object.class)}
+     * is not sufficient because those methods may be overridden in subclasses.
+     *
+     * @since 3.20
+     */
+    private static final String[] EXCLUDES = {
+        "clone", "getClass", "hashCode", "toString", "toWKT"
+    };
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -628,5 +656,42 @@ compare:for (int i=0; i<c1.length; i++) {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns {@code true} if the given method may possibly be the getter method for an attribute.
+     * This method implements the algorithm used by Geotk in order to identify getter methods in
+     * {@linkplain org.opengis.metadata metadata} interfaces. We do not rely on naming convention
+     * (method names starting with "{@code get}" or "{@code is}" prefixes) because not every methods
+     * follow such convention (e.g. {@link org.opengis.metadata.quality.ConformanceResult#pass()}).
+     *
+     * <p>The current implementation returns {@code true} if the given method meets all the
+     * following conditions. Note that a {@code true} value is not a guaranteed that the given
+     * method is really a getter. The caller is encouraged to perform additional checks if
+     * possible.</p>
+     *
+     * <ul>
+     *   <li>The method does no expect any argument.</li>
+     *   <li>The method returns a value (anything except {@code void}).</li>
+     *   <li>The method name is not {@link Object#clone() clone}, {@link Object#getClass() getClass},
+     *       {@link Object#hashCode() hashCode}, {@link Object#toString() toString} or
+     *       {@link org.opengis.referencing.IdentifiedObject#toWKT() toWKT}.</li>
+     *   <li>The method is not {@linkplain Method#isSynthetic() synthetic}.</li>
+     *   <li>The method is not {@linkplain Deprecated deprecated}.</li>
+     * </ul>
+     *
+     * <p>Those conditions may be updated in any future Geotk version.</p>
+     *
+     * @param  method The method to inspect.
+     * @return {@code true} if the given method may possibly be a non-deprecated getter method.
+     *
+     * @since 3.20
+     */
+    public static boolean isPossibleGetter(final Method method) {
+        return method.getReturnType() != Void.TYPE &&
+               method.getParameterTypes().length == 0 &&
+              !method.isSynthetic() &&
+              !method.isAnnotationPresent(Deprecated.class) &&
+              !XArrays.contains(EXCLUDES, method.getName());
     }
 }

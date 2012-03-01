@@ -32,6 +32,7 @@ import org.opengis.metadata.Identifier;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.converter.Numbers;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.jaxb.IdentifierMapAdapter;
 
@@ -208,8 +209,7 @@ final class NilObjectHandler implements InvocationHandler {
             return false;
         }
         for (final Method getter : type.getMethods()) {
-            // Note: Class.getMethods() on interface does return Object methods.
-            if ((getter.getReturnType() != Void.TYPE) && getter.getParameterTypes().length == 0) {
+            if (Classes.isPossibleGetter(getter)) {
                 final Object value;
                 try {
                     value = getter.invoke(other, (Object[]) null);

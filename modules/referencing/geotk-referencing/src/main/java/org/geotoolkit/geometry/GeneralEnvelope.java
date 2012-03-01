@@ -40,7 +40,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
@@ -295,7 +294,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
             transformed = Envelopes.transform(gridToCRS, this);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
-                    Classes.getClass(gridToCRS)), exception);
+                    gridToCRS.getClass()), exception);
         }
         assert transformed.ordinates.length == this.ordinates.length;
         System.arraycopy(transformed.ordinates, 0, this.ordinates, 0, ordinates.length);

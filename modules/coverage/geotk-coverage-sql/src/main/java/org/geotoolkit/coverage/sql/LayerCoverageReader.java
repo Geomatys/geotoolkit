@@ -39,7 +39,6 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.factory.FactoryFinder;
@@ -194,7 +193,7 @@ public class LayerCoverageReader extends GridCoverageReader {
                 input = database.getLayer(input.toString());
             } else if (!(input instanceof Layer)) {
                 throw new IllegalArgumentException(errors().getString(Errors.Keys.ILLEGAL_CLASS_$2,
-                        Classes.getClass(input), Layer.class));
+                        input.getClass(), Layer.class));
             }
         }
         clearCache();

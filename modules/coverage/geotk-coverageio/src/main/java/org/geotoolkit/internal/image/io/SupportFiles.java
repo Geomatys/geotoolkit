@@ -25,7 +25,6 @@ import java.net.URI;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.ContentFormatException;
 
@@ -232,7 +231,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      *
      * @since 3.07
      */
-    public static Object changeExtension(Object path, String extension) throws IOException {
+    public static Object changeExtension(final Object path, String extension) throws IOException {
         if (path != null) {
             boolean isTFW = extension.equals("tfw");
             if (isTFW) {
@@ -241,10 +240,11 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
             if (path instanceof File) {
                 return toSupportFile((File) path, extension, isTFW);
             }
-            path = IOUtilities.changeExtension(path, extension);
-            if (path == null) {
-                throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, Classes.getClass(path)));
+            final Object renamed = IOUtilities.changeExtension(path, extension);
+            if (renamed != null) {
+                return renamed;
             }
+            throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, path.getClass()));
         }
         return path;
     }

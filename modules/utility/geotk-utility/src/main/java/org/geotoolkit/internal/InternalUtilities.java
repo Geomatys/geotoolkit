@@ -69,7 +69,7 @@ public final class InternalUtilities extends Static {
     public static final double COMPARISON_THRESHOLD = 1E-14;
 
     /**
-     * Default tolerance thershold for comparing ordinate values in a projected CRS,
+     * Default tolerance threshold for comparing ordinate values in a projected CRS,
      * assuming that the unit of measurement is metre. This is not a tolerance for
      * testing map projection accuracy.
      *

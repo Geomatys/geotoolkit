@@ -30,7 +30,7 @@ import java.util.Objects;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.resources.Errors;
@@ -636,6 +636,7 @@ public class AngleFormat extends Format {
     public StringBuffer format(final Object obj, StringBuffer toAppendTo, final FieldPosition pos)
             throws IllegalArgumentException
     {
+        ArgumentChecks.ensureNonNull("obj", obj);
         if (obj instanceof Latitude) {
             return format(((Latitude) obj).degrees(), toAppendTo, pos, NORTH, SOUTH);
         }
@@ -650,8 +651,7 @@ public class AngleFormat extends Format {
             InternalUtilities.configure(numberFormat, ((Number) obj).doubleValue(), 6);
             return numberFormat.format(obj, toAppendTo, (pos!=null) ? pos : dummy);
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_ANGLE_OBJECT_$1,
-                Classes.getClass(obj)));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_ANGLE_OBJECT_$1, obj.getClass()));
     }
 
     /**
@@ -1266,6 +1266,6 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
      */
     @Override
     public String toString() {
-        return Classes.getShortClassName(this) + '[' + toPattern() + ']';
+        return getClass().getSimpleName() + '[' + toPattern() + ']';
     }
 }

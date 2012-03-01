@@ -46,7 +46,6 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 
 
@@ -662,7 +661,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             return gridToCRS2D.inverse();
         } catch (NoninvertibleTransformException exception) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
-                    Classes.getClass(gridToCRS2D)), exception);
+                    gridToCRS2D.getClass()), exception);
         }
     }
 
