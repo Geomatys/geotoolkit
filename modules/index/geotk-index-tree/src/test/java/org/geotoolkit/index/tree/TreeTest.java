@@ -38,7 +38,7 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class TreeTest {
 
     protected final Tree tree;
-    protected final List<GeneralEnvelope> lData = new ArrayList<GeneralEnvelope>();
+    protected final List<Envelope> lData = new ArrayList<Envelope>();
     protected final CoordinateReferenceSystem crs;
     protected final int dimension;
 
@@ -69,7 +69,7 @@ public abstract class TreeTest {
      * crs.
      */
     private void insert() throws MismatchedReferenceSystemException {
-        for (GeneralEnvelope gEnv : lData) {
+        for (Envelope gEnv : lData) {
             tree.insert(gEnv);
         }
     }
@@ -116,10 +116,10 @@ public abstract class TreeTest {
      */
     public void queryOnBorderTest() throws MismatchedReferenceSystemException {
         final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
-        for (GeneralEnvelope ge : lData) {
+        for (Envelope ge : lData) {
             tree.delete(ge);
         }
-        final List<GeneralEnvelope> lGERef = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> lGERef = new ArrayList<Envelope>();
         final GeneralEnvelope gR = new GeneralEnvelope(crs);
 
         if (dimension == 2) {
@@ -154,7 +154,7 @@ public abstract class TreeTest {
             i++;
         }
 
-        final List<GeneralEnvelope> lGES = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> lGES = new ArrayList<Envelope>();
         tree.search(gR, lGES);
 
         assertTrue(compareList(lGERef, lGES));
@@ -183,7 +183,7 @@ public abstract class TreeTest {
      * Test search query inside tree.
      */
     protected void queryInsideTest() throws MismatchedReferenceSystemException {
-        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(DefaultTreeUtils.getEnveloppeMin(lData), listSearch);
         assertTrue(compareList(lData, listSearch));
     }
@@ -198,7 +198,7 @@ public abstract class TreeTest {
         for (int i = 0; i < dimension; i++) {
             areaSearch.setRange(i, 1600, 2000);
         }
-        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, listSearch);
         assertTrue(listSearch.isEmpty());
     }
@@ -210,14 +210,14 @@ public abstract class TreeTest {
      */
     protected void insertDelete() throws MismatchedReferenceSystemException {
         Collections.shuffle(lData);
-        for (GeneralEnvelope env : lData) {
+        for (Envelope env : lData) {
             tree.delete(env);
         }
         final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
         for (int i = 0; i < dimension; i++) {
             areaSearch.setRange(i, -1500, 1500);
         }
-        final List<GeneralEnvelope> listSearch = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, listSearch);
         assertTrue(listSearch.isEmpty());
         insert();
@@ -236,7 +236,7 @@ public abstract class TreeTest {
      * @throws IllegalArgumentException if listA or ListB is null.
      * @return true if listA contains same elements from listB.
      */
-    protected boolean compareList(final List<GeneralEnvelope> listA, final List<GeneralEnvelope> listB) {
+    protected boolean compareList(final List<Envelope> listA, final List<Envelope> listB) {
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
@@ -249,9 +249,9 @@ public abstract class TreeTest {
         }
 
         boolean shapequals = false;
-        for (GeneralEnvelope shs : listA) {
-            for (GeneralEnvelope shr : listB) {
-                if (shs.equals(shr, 1E-9, false)) {
+        for (Envelope shs : listA) {
+            for (Envelope shr : listB) {
+                if (new GeneralEnvelope(shs).equals(shr, 1E-9, false)) {
                     shapequals = true;
                 }
             }

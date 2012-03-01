@@ -25,6 +25,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -47,10 +48,10 @@ public class BasicRTree extends DefaultAbstractTree {
      * @param maxElements max value of elements per tree cell.
      * @param choice Split made "linear" or "quadratic".
      */
-    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, Calculator calculator) {
-        super(maxElements, crs, calculator);
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, Calculator calculator, NodeFactory nodefactory) {
+        super(maxElements, crs, calculator, nodefactory);
         this.choice = choice;
-        setRoot(new DefaultNode(this));
+        setRoot(null);
     }
 
     /**
@@ -78,13 +79,16 @@ public class BasicRTree extends DefaultAbstractTree {
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
+        
         final Node root = getRoot();
-        if (root != null) {
-            if (root.isEmpty()) {
-                root.getEntries().add(entry);
-            } else {
-                nodeInsert(root, entry);
-            }
+        final int dim = entry.getDimension();
+        final double[] coords = new double[2 * dim];
+        System.arraycopy(entry.getLowerCorner().getCoordinate(), 0, coords, 0, dim);
+        System.arraycopy(entry.getUpperCorner().getCoordinate(), 0, coords, dim, dim);
+        if (root == null || root.isEmpty()) {
+            setRoot(createNode(this, null, null, UnmodifiableArrayList.wrap(entry), coords));
+        } else {
+            nodeInsert(root, entry);
         }
     }
 
@@ -290,7 +294,7 @@ public class BasicRTree extends DefaultAbstractTree {
         
         final int dim = candidate.getBoundary().getDimension();
         final Tree tree = candidate.getTree();
-        Calculator calc = tree.getCalculator();
+        final Calculator calc = tree.getCalculator();
         final int maxElmnts = tree.getMaxElements();
         boolean leaf = candidate.isLeaf();
         List<?> ls;
@@ -380,11 +384,11 @@ public class BasicRTree extends DefaultAbstractTree {
         }
         
         if(leaf){
-            result1 = (Node)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1); 
-            result2 = (Node)tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2);
+            result1 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1); 
+            result2 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2);
         }else{
-            result1 = (Node)tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1); 
-            result2 = (Node)tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
+            result1 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1); 
+            result2 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
         }
         
         double demimaxE = maxElmnts / 3;
@@ -613,13 +617,13 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public Node createNode(final Tree tree, final Node parent, final List<Node> listChildren, final List<Envelope> listEntries, final double... coordinates) {
+    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) {
         final int ddim = coordinates.length;
         if((ddim % 2) != 0){
             throw new IllegalArgumentException("coordinate dimension is not correct");
         }
         if(ddim == 0){
-            return new DefaultNode(tree, parent, null, null, listChildren, listEntries);
+            return nodefactory.createNode(tree, parent, null, null,listChildren, listEntries);
         }
         final int dim = coordinates.length/2;
         final double[] dp1Coords = new double[dim];
@@ -627,18 +631,12 @@ public class BasicRTree extends DefaultAbstractTree {
         System.arraycopy(coordinates, 0, dp1Coords, 0, dim);
         System.arraycopy(coordinates, dim, dp2Coords, 0, dim);
         
-        final DirectPosition dp1, dp2;
-        if(crs != null){
-            dp1 = new GeneralDirectPosition(crs);
-            dp2 = new GeneralDirectPosition(crs);
-            for(int i =0; i<dim; i++){
-                dp1.setOrdinate(i, dp1Coords[i]);
-                dp2.setOrdinate(i, dp2Coords[i]);
-            }
-        }else{
-            dp1 = new GeneralDirectPosition(dp1Coords);
-            dp2 = new GeneralDirectPosition(dp2Coords);
+        final DirectPosition dp1 = new GeneralDirectPosition(crs);
+        final DirectPosition dp2 = new GeneralDirectPosition(crs);
+        for(int i =0; i<dim; i++){
+            dp1.setOrdinate(i, dp1Coords[i]);
+            dp2.setOrdinate(i, dp2Coords[i]);
         }
-        return new DefaultNode(tree, parent, dp1, dp2, listChildren, listEntries);
+        return nodefactory.createNode(tree, parent, dp1, dp2,listChildren, listEntries);
     }
 }

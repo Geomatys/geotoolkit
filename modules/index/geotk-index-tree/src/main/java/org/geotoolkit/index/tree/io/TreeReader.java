@@ -28,6 +28,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.geometry.Envelope;
 
 /**Create TreeReader object.
  *
@@ -164,16 +165,16 @@ public class TreeReader {
                 tabChild[i] = dips.readInt();
             }
             final int nbrEntries = dips.readInt();
-            final List<GeneralEnvelope> listEntries = new ArrayList<GeneralEnvelope>();
+            final List<Envelope> listEntries = new ArrayList<Envelope>();
             for (int i = 0; i < nbrEntries; i++) {
                 final int arrayLength = dips.readInt();
                 final byte[] tabB = new byte[arrayLength];
                 dips.read(tabB, 0, arrayLength);
                 final ByteArrayInputStream bis = new ByteArrayInputStream(tabB);
                 ObjectInputStream oins = new ObjectInputStream(bis);
-                listEntries.add((GeneralEnvelope) oins.readObject());
+                listEntries.add((Envelope) oins.readObject());
             }
-            final Node result = (Node)tree.createNode(tree, null, null, listEntries, coordinates);
+            final Node result = tree.createNode(tree, null, null, listEntries, coordinates);
             result.setUserProperty("tabidchildren", tabChild);
             index.put(id, result);
             listNodes.add(result);

@@ -15,23 +15,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.index.tree.calculator;
+package org.geotoolkit.index.tree.nodefactory;
 
-/**
- * Create chosen Calculator.
- * 
- * @author Rémi Marechal       (Geomatys).
- * @author Martin Desruisseaux (Geomatys).
+/**Create choosen {@code NodeFactory}.
+ *
+ * @author Rémi Marechal (Geomatys).
  */
-public class DefaultCalculator {
-
-    /**
-     * Calculator to 2D cartesian space.
-     */
-    public static final Calculator CALCULATOR_2D = new Calculator2D();
+public class TreeNodeFactory {
     
     /**
-     * Calculator to 3D cartesian space.
+     * Adapted default {@code Node} factory to R-Tree.
      */
-    public static final Calculator CALCULATOR_3D = new Calculator3D();
+    public static final NodeFactory DEFAULT_FACTORY = new DefaultNodeFactory();
+    
 }

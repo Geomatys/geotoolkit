@@ -19,8 +19,10 @@ package org.geotoolkit.index.tree;
 
 import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Define a generic Tree.
@@ -29,7 +31,7 @@ import org.opengis.geometry.MismatchedReferenceSystemException;
  * @author Johann Sorel        (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public interface Tree<N> {
+public interface Tree {
 
     /**
      * Find some {@code Entry} which intersect regionSearch parameter 
@@ -54,7 +56,7 @@ public interface Tree<N> {
     void insert(Envelope entry) throws MismatchedReferenceSystemException;
 
     /**
-     * Find a {@code Entry} into the tree and delete it.
+     * Find a {@code Envelope} (entry) into the tree and delete it.
      * 
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
@@ -69,21 +71,31 @@ public interface Tree<N> {
     /**
      * @return tree trunk.
      */
-    N getRoot();
+    Node getRoot();
     
     /**
-     * Affect a new root {@Node}.
+     * Affect a new root {@code Node}.
      * 
      * @param root new root.
      */
-    void setRoot(N root);
+    void setRoot(Node root);
+    
+    /**
+     * @return associate crs.
+     */
+    CoordinateReferenceSystem getCrs();
     
     /**
      * @return Calculator to effectuate Tree compute.
      */
     Calculator getCalculator();
     
-    /**Create a node in accordance with this RTree properties.
+    /**
+     * @return Calculator to effectuate Tree compute.
+     */
+    NodeFactory getNodeFactory();
+    
+    /**Create a node in accordance with this properties.
      *  
      * @param tree pointer on Tree.
      * @param parent pointer on parent {@code Node}.
@@ -92,5 +104,5 @@ public interface Tree<N> {
      * @param coordinates lower upper bounding box coordinates table. 
      * @return appropriate Node from tree.
      */
-    N createNode(Tree tree, N parent, List<N> listChildren, List<Envelope> listEntries, double ...coordinates);
+    Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double ...coordinates);
 }

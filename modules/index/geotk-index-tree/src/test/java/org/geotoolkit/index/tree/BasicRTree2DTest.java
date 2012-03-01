@@ -20,6 +20,7 @@ package org.geotoolkit.index.tree;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.calculator.DefaultCalculator;
+import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
@@ -32,7 +33,8 @@ import org.opengis.referencing.operation.TransformException;
 public class BasicRTree2DTest extends TreeTest {
 
     public BasicRTree2DTest() throws TransformException {
-        super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_2D, SplitCase.QUADRATIC, DefaultCalculator.CALCULATOR_2D), DefaultEngineeringCRS.CARTESIAN_2D);
+        super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_2D, SplitCase.QUADRATIC, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY)
+                , DefaultEngineeringCRS.CARTESIAN_2D);
     }
 
     /**

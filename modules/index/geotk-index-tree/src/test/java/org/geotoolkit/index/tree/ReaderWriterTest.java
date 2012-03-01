@@ -27,6 +27,7 @@ import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
+import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
@@ -141,8 +142,8 @@ public class ReaderWriterTest {
      * Affect (Basic) R-Tree on two tree test.
      */
     private void setBasicRTree() throws TransformException {
-        treeRef = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D);
-        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D);
+        treeRef  = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
         insert();
     }
 
@@ -150,8 +151,8 @@ public class ReaderWriterTest {
      * Affect R*Tree on two tree test.
      */
     private void setStarRTree() throws TransformException {
-        treeRef = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D);
-        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D);
+        treeRef  = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
         insert();
     }
 
@@ -159,8 +160,8 @@ public class ReaderWriterTest {
      * Affect Hilbert RTree on two tree test.
      */
     private void setHilbertRTree() throws TransformException {
-        treeRef = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D);
-        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D);
+        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY);
         lData.clear();
         for (int j = -120; j <= 120; j += 4) {
             for (int i = -200; i <= 200; i += 4) {
@@ -196,8 +197,8 @@ public class ReaderWriterTest {
     private void testTree() throws IOException, ClassNotFoundException, TransformException {
         ArgumentChecks.ensureNonNull("testTree : treeRef", treeRef);
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
-        final List<GeneralEnvelope> listSearchTreeRef = new ArrayList<GeneralEnvelope>();
-        final List<GeneralEnvelope> listSearchTreeTest = new ArrayList<GeneralEnvelope>();
+        final List<Envelope> listSearchTreeRef = new ArrayList<Envelope>();
+        final List<Envelope> listSearchTreeTest = new ArrayList<Envelope>();
         treeRef.search(((Node) treeRef.getRoot()).getBoundary(), listSearchTreeRef);
         treeTest.search(((Node) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));

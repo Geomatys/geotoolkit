@@ -355,7 +355,7 @@ public class Calculator2D extends Calculator {
                 }
 
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
-                    DirectPosition ptCTemp = listOfCentroidChild.get(i);
+                    final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                     ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
                     int[] tabTemp = getHilbCoord(candidate, ptCTemp, bound, order);
                     tabHV[tabTemp[0]][tabTemp[1]] = i;

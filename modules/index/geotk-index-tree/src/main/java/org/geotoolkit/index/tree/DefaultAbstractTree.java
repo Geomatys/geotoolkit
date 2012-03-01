@@ -20,6 +20,7 @@ package org.geotoolkit.index.tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.calculator.Calculator2D;
 import org.geotoolkit.index.tree.calculator.Calculator3D;
+import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -31,31 +32,35 @@ import org.opengis.referencing.cs.CoordinateSystem;
  * @author Rémi Marechal (Geomatys).
  * @author Johann Sorel  (Geomatys).
  */
-public abstract class DefaultAbstractTree implements Tree<Node>{
+public abstract class DefaultAbstractTree implements Tree{
 
+    protected NodeFactory nodefactory;
     private Node root;
     private final int nbMaxElement;
     protected CoordinateReferenceSystem crs;
     protected Calculator calculator;
 
-    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator) {
+    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator, NodeFactory nodefactory) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create Tree : Calculator", calculator);
+        ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
         final CoordinateSystem cs = crs.getCoordinateSystem();
         if(!(cs instanceof CartesianCS)){
             throw new IllegalArgumentException("Tree constructor : invalid crs");
         }
-        final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem dimension = "+cs.getDimension();
+        final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem : "+cs.getClass().getName()
+                                +" Calculator : "+calculator.getClass().getName();
         if(calculator instanceof Calculator2D){
             if(cs.getDimension() !=2){
-                throw new IllegalArgumentException(strClash+" calculator dimension = 2");
+                throw new IllegalArgumentException(strClash);
             }
         }else if(calculator instanceof Calculator3D){
             if(cs.getDimension() !=3){
-                throw new IllegalArgumentException(strClash+" calculator dimension = 3");
+                throw new IllegalArgumentException(strClash);
             }
         }
+        this.nodefactory = nodefactory;
         this.calculator = calculator;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
@@ -84,6 +89,13 @@ public abstract class DefaultAbstractTree implements Tree<Node>{
     public void setRoot(Node root) {
         this.root = root;
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CoordinateReferenceSystem getCrs(){
+        return crs;
+    }
     
     /**
      * {@inheritDoc} 
@@ -91,6 +103,14 @@ public abstract class DefaultAbstractTree implements Tree<Node>{
     @Override
     public Calculator getCalculator() {
         return this.calculator;
+    }
+    
+    /**
+     * {@inheritDoc} 
+     */
+    @Override
+    public NodeFactory getNodeFactory() {
+        return this.nodefactory;
     }
     
     /**

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
@@ -34,7 +35,8 @@ import org.opengis.referencing.operation.TransformException;
 public class HilbertRTree2DTest extends TreeTest {
 
     public HilbertRTree2DTest() throws TransformException {
-        super(new HilbertRTree(4, 1, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D), DefaultEngineeringCRS.CARTESIAN_2D);
+        super(new HilbertRTree(4, 1, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY),
+                                     DefaultEngineeringCRS.CARTESIAN_2D);
     }
 
     /**
