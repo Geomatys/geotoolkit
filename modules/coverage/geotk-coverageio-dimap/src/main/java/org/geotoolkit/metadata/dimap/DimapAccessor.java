@@ -522,24 +522,24 @@ public final class DimapAccessor extends Static {
      * @param sensorCode
      * @return 
      */
-    public static String findTypeProduct(final String missionIndex, final String sensorCode) {
+    public static String findTypeProduct(final int missionIndex, final String sensorCode) {
         
-        if (("2".equals(missionIndex) && "P".equals(sensorCode))
-                || ("4".equals(missionIndex) && "M".equals(sensorCode))
-                || ("5".equals(missionIndex) && "A".equals(sensorCode))
-                || ("5".equals(missionIndex) && "B".equals(sensorCode))) 
+        if ((missionIndex == 2 && "P".equals(sensorCode))
+                || (missionIndex == 4 && "M".equals(sensorCode))
+                || (missionIndex == 5 && "A".equals(sensorCode))
+                || (missionIndex == 5 && "B".equals(sensorCode))) 
             return "Black and White";
         
-        if (("2".equals(missionIndex) && "X".equals(sensorCode))
-                || ("4".equals(missionIndex) && "X".equals(sensorCode))
-                || ("5".equals(missionIndex) && "X".equals(sensorCode))) 
+        if ((missionIndex == 2 && "X".equals(sensorCode))
+                || (missionIndex == 4 && "X".equals(sensorCode))
+                || (missionIndex == 5 && "X".equals(sensorCode))) 
             return "Color";
         
-        if (("4".equals(missionIndex) && "I".equals(sensorCode))
-                || ("5".equals(missionIndex) && "J".equals(sensorCode)))
+        if ((missionIndex == 4 && "I".equals(sensorCode))
+                || (missionIndex == 5 && "J".equals(sensorCode)))
             return "Color with SWIR";
         
-        if ("5".equals(missionIndex) && "T".equals(sensorCode)) 
+        if (missionIndex == 5 && "T".equals(sensorCode)) 
             return "Black White or Color";
         
         return null;
@@ -551,25 +551,25 @@ public final class DimapAccessor extends Static {
      * @param sensorCode
      * @return 
      */
-    public static Double findResolution(final String missionIndex, final String sensorCode) {
+    public static Double findResolution(final int missionIndex, final String sensorCode) {
         
-        if (("2".equals(missionIndex) && "P".equals(sensorCode))
-                || ("4".equals(missionIndex) && "M".equals(sensorCode))
-                || ("5".equals(missionIndex) && "X".equals(sensorCode))
-                || ("5".equals(missionIndex) && "J".equals(sensorCode))) 
-            return Double.valueOf("10");
+        if ((missionIndex == 2 && "P".equals(sensorCode))
+                || (missionIndex == 4 && "M".equals(sensorCode))
+                || (missionIndex == 5 && "X".equals(sensorCode))
+                || (missionIndex == 5 && "J".equals(sensorCode))) 
+            return 10.0;
         
-        if (("2".equals(missionIndex) && "X".equals(sensorCode))
-                || ("4".equals(missionIndex) && "I".equals(sensorCode))
-                || ("4".equals(missionIndex) && "X".equals(sensorCode))) 
-            return Double.valueOf("20");
+        if ((missionIndex == 2 && "X".equals(sensorCode))
+                || (missionIndex == 4 && "I".equals(sensorCode))
+                || (missionIndex == 4 && "X".equals(sensorCode))) 
+            return 20.0;
         
-        if (("5".equals(missionIndex) && "A".equals(sensorCode))
-                || ("5".equals(missionIndex) && "B".equals(sensorCode)))
-            return Double.valueOf("5");
+        if ((missionIndex == 5 && "A".equals(sensorCode))
+                || (missionIndex == 5 && "B".equals(sensorCode)))
+            return 5.0;
         
-        if ("5".equals(missionIndex) && "T".equals(sensorCode)) 
-            return Double.valueOf("2.5");
+        if (missionIndex == 5 && "T".equals(sensorCode)) 
+            return 2.5;
         
         return null;
     }
@@ -906,13 +906,13 @@ public final class DimapAccessor extends Static {
                     for (int i = 0, len = thresholds.size(); i < len; i++) {
                         final Element threshold = (Element) thresholds.get(i);
                         
-                        final String bandIndex = textValueSafe(threshold, TAG_BAND_INDEX, String.class);
+                        final int bandIndex = textValueSafe(threshold, TAG_BAND_INDEX, Integer.class);
                         final Double lowThreshold = textValueSafe(threshold, TAG_LOW_THRESHOLD, Double.class);
                         final Double highThreshold = textValueSafe(threshold, TAG_HIGH_THRESHOLD, Double.class);
                         
                         final DefaultNameFactory factory = new DefaultNameFactory();
                         final TypeName tname = factory.createTypeName(null, "BAND_INDEX");
-                        final MemberName memberName = factory.createMemberName(null, bandIndex, tname);
+                        final MemberName memberName = factory.createMemberName(null, String.valueOf(bandIndex), tname);
 
                         final DefaultBand dimension = getBandDimension(metadata, bandIndex);
                         dimension.setMinValue(lowThreshold);
@@ -993,7 +993,7 @@ public final class DimapAccessor extends Static {
                 for (int i = 0, len = spectrals.size(); i < len; i++) {
                     final Element spectre = (Element) spectrals.get(i);
                     
-                    final String bandIndex = textValueSafe(spectre, TAG_BAND_INDEX, String.class);
+                    final int bandIndex = textValueSafe(spectre, TAG_BAND_INDEX, Integer.class);
                     final String bandDesc = textValueSafe(spectre, TAG_BAND_DESCRIPTION, String.class);
                     final Double physicalGain = textValueSafe(spectre, TAG_PHYSICAL_GAIN, Double.class);
                     final Double physicalBias = textValueSafe(spectre, TAG_PHYSICAL_BIAS, Double.class);
@@ -1098,9 +1098,9 @@ public final class DimapAccessor extends Static {
                     final String imagingDate = textValueSafe(sceneSource, TAG_SCENE_IMAGING_DATE, String.class);
                     final String imagingTime = textValueSafe(sceneSource, TAG_SCENE_IMAGING_TIME, String.class);
                     final String missionName = textValueSafe(sceneSource, TAG_SCENE_MISSION, String.class);
-                    final String missionIndex = textValueSafe(sceneSource, TAG_SCENE_MISSION_INDEX, String.class);
+                    final int missionIndex = textValueSafe(sceneSource, TAG_SCENE_MISSION_INDEX, Integer.class);
                     final String instrumentName = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT, String.class);
-                    final String instrumentIndex = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT_INDEX, String.class);
+                    final int instrumentIndex = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT_INDEX, Integer.class);
                     final String sensorCode = textValueSafe(sceneSource, TAG_SCENE_SENSOR_CODE, String.class);
                     final String processingLevel = textValueSafe(sceneSource, TAG_SCENE_PROCESSING_LEVEL, String.class);
                     final Double incidenceAngle = textValueSafe(sceneSource, TAG_SCENE_INCIDENCE_ANGLE, Double.class);
@@ -1116,18 +1116,21 @@ public final class DimapAccessor extends Static {
                     //MetaData > IdentificationInfo (DataIdentification) > GraphicOverviews
                     final DefaultDataIdentification dataIdentification = (DefaultDataIdentification) getIdentificationInfo(metadata);
                     if (thumbnail != null && thumbnail.contains(".")) {
-                        dataIdentification.getGraphicOverviews().add(new DefaultBrowseGraphic(generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
+                        dataIdentification.getGraphicOverviews().add(new DefaultBrowseGraphic(
+                                generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
                     }
 
                     //MetaData > IdentificationInfo (DataIdentification) > Abstract
-                    dataIdentification.setAbstract(new SimpleInternationalString(missionName + " " + missionIndex + " " + sourceDesc));
+                    dataIdentification.setAbstract(new SimpleInternationalString(
+                            missionName + " " + missionIndex + " " + sourceDesc));
                     
                     //MetaData > IdentificationInfo (DataIdentification) > Citation
                     final DefaultCitation citation = new DefaultCitation();
                     final ISODateParser dateParser = new ISODateParser();
                     final Date date = dateParser.parseToDate(imagingDate + "T" + imagingTime);
                     citation.setDates(Collections.singleton(new DefaultCitationDate(date, DateType.CREATION)));
-                    citation.setTitle(new SimpleInternationalString(missionName + " " + missionIndex + " " + sourceType + " " + findTypeProduct(missionIndex, sensorCode)));
+                    citation.setTitle(new SimpleInternationalString(
+                            missionName + " " + missionIndex + " " + sourceType + " " + findTypeProduct(missionIndex, sensorCode)));
                     
                     dataIdentification.setCitation(citation);
                     
@@ -1145,7 +1148,7 @@ public final class DimapAccessor extends Static {
 
                     //MetaData > AcquisitionInfo > Operations
                     final DefaultOperation operation = new DefaultOperation();
-                    operation.setIdentifier(new DefaultIdentifier(missionIndex));
+                    operation.setIdentifier(new DefaultIdentifier(String.valueOf(missionIndex)));
                     operation.setDescription(new SimpleInternationalString(missionName));
                     
                     acquisitionInfo.getOperations().add(operation);
@@ -1324,7 +1327,7 @@ public final class DimapAccessor extends Static {
 
     }
 
-    private static DefaultBand getBandDimension(final DefaultMetadata metadata, final String bandId) {
+    private static DefaultBand getBandDimension(final DefaultMetadata metadata, final int bandIndex) {
         final DefaultImageDescription imageDescr = (DefaultImageDescription) getContentInfo(metadata);
 
         final Collection<RangeDimension> dimensions = imageDescr.getDimensions();
@@ -1333,9 +1336,9 @@ public final class DimapAccessor extends Static {
         for (final RangeDimension dimension : dimensions) {
 
             if (dimension instanceof DefaultBand) {
-                final String bandDescr = dimension.getSequenceIdentifier().toString();
+                final String bandIdentifier = dimension.getSequenceIdentifier().toString();
 
-                if (bandId.equals(bandDescr)) {
+                if (bandIndex == Integer.parseInt(bandIdentifier)) {
                     return (DefaultBand) dimension;
                 }
             }
