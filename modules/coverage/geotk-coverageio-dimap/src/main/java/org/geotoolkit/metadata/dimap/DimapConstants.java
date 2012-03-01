@@ -136,6 +136,7 @@ public final class DimapConstants {
     public static final String TAG_SCENE_MISSION_INDEX = "MISSION_INDEX";
     public static final String TAG_SCENE_INSTRUMENT = "INSTRUMENT";
     public static final String TAG_SCENE_INSTRUMENT_INDEX = "INSTRUMENT_INDEX";
+    public static final String TAG_SCENE_SENSOR_CODE = "SENSOR_CODE";
     public static final String TAG_SCENE_PROCESSING_LEVEL = "SCENE_PROCESSING_LEVEL";
     public static final String TAG_SCENE_INCIDENCE_ANGLE = "INCIDENCE_ANGLE";
     public static final String TAG_SCENE_THEORETICAL_RESOLUTION = "THEORETICAL_RESOLUTION";

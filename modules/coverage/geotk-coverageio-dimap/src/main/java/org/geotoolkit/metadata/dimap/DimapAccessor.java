@@ -88,6 +88,7 @@ import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT_
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_MISSION;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_MISSION_INDEX;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_PROCESSING_LEVEL;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SENSOR_CODE;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SOURCE;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SUN_AZIMUTH;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_SUN_ELEVATION;
@@ -97,6 +98,7 @@ import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_GRID_REFERE
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SKIP_BYTES;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_DESCRIPTION;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_INFORMATION;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SOURCE_TYPE;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SPECTRAL_BAND_INFO;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_LIN_MAX;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_STX_LIN_MIN;
@@ -167,6 +169,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
 import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.metadata.iso.identification.DefaultResolution;
 import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
@@ -175,6 +178,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
+import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.ISODateParser;
@@ -185,7 +189,6 @@ import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
-import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.constraint.Restriction;
@@ -204,6 +207,8 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+import org.opengis.util.MemberName;
+import org.opengis.util.TypeName;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -509,6 +514,64 @@ public final class DimapAccessor extends Static {
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
         final String name = textAttributeValueSafe(datasetID, TAG_DATASET_QL_PATH, ATTRIBUTE_HREF, String.class);
         return name.toLowerCase();
+    }
+    
+    /**
+     * Return the TypeProduct according the missionIndex and the sensorCode
+     * @param missionIndex
+     * @param sensorCode
+     * @return 
+     */
+    public static String findTypeProduct(final String missionIndex, final String sensorCode) {
+        
+        if (("2".equals(missionIndex) && "P".equals(sensorCode))
+                || ("4".equals(missionIndex) && "M".equals(sensorCode))
+                || ("5".equals(missionIndex) && "A".equals(sensorCode))
+                || ("5".equals(missionIndex) && "B".equals(sensorCode))) 
+            return "Black and White";
+        
+        if (("2".equals(missionIndex) && "X".equals(sensorCode))
+                || ("4".equals(missionIndex) && "X".equals(sensorCode))
+                || ("5".equals(missionIndex) && "X".equals(sensorCode))) 
+            return "Color";
+        
+        if (("4".equals(missionIndex) && "I".equals(sensorCode))
+                || ("5".equals(missionIndex) && "J".equals(sensorCode)))
+            return "Color with SWIR";
+        
+        if ("5".equals(missionIndex) && "T".equals(sensorCode)) 
+            return "Black White or Color";
+        
+        return null;
+    }
+    
+    /**
+     * Return the Resolution according the missionIndex and the sensorCode
+     * @param missionIndex
+     * @param sensorCode
+     * @return 
+     */
+    public static Double findResolution(final String missionIndex, final String sensorCode) {
+        
+        if (("2".equals(missionIndex) && "P".equals(sensorCode))
+                || ("4".equals(missionIndex) && "M".equals(sensorCode))
+                || ("5".equals(missionIndex) && "X".equals(sensorCode))
+                || ("5".equals(missionIndex) && "J".equals(sensorCode))) 
+            return Double.valueOf("10");
+        
+        if (("2".equals(missionIndex) && "X".equals(sensorCode))
+                || ("4".equals(missionIndex) && "I".equals(sensorCode))
+                || ("4".equals(missionIndex) && "X".equals(sensorCode))) 
+            return Double.valueOf("20");
+        
+        if (("5".equals(missionIndex) && "A".equals(sensorCode))
+                || ("5".equals(missionIndex) && "B".equals(sensorCode)))
+            return Double.valueOf("5");
+        
+        if ("5".equals(missionIndex) && "T".equals(sensorCode)) 
+            return Double.valueOf("2.5");
+        
+        return null;
     }
 
     /**
@@ -846,11 +909,15 @@ public final class DimapAccessor extends Static {
                         final String bandIndex = textValueSafe(threshold, TAG_BAND_INDEX, String.class);
                         final Double lowThreshold = textValueSafe(threshold, TAG_LOW_THRESHOLD, Double.class);
                         final Double highThreshold = textValueSafe(threshold, TAG_HIGH_THRESHOLD, Double.class);
+                        
+                        final DefaultNameFactory factory = new DefaultNameFactory();
+                        final TypeName tname = factory.createTypeName(null, "BAND_INDEX");
+                        final MemberName memberName = factory.createMemberName(null, bandIndex, tname);
 
                         final DefaultBand dimension = getBandDimension(metadata, bandIndex);
                         dimension.setMinValue(lowThreshold);
                         dimension.setMaxValue(highThreshold);
-                        dimension.setDescriptor(new SimpleInternationalString(bandIndex));
+                        dimension.setSequenceIdentifier(memberName);
                     }
                 }
             }
@@ -909,14 +976,15 @@ public final class DimapAccessor extends Static {
             
             final List<Element> spectrals = getListElements(imageInter, TAG_SPECTRAL_BAND_INFO);
             if (spectrals != null) {
+                final Element physicalUnitElem = firstElement(imageInter, TAG_PHYSICAL_UNIT);
                 
                 final int nbits = readNBits(doc);
             
                 //MetaData > ImageDescription > RecordType
-                //if (physicalUnit != null) {
-                //    // TODO: how to build an attribute description
-                //    //final RecordType recordType = new DefaultRecordType();
-                //
+                //if (physicalUnitElem != null) {
+                //     TODO: how to build an attribute description
+                //    final RecordType recordType = new DefaultRecordType();
+                //    
                 //    final DefaultImageDescription contentInfo = (DefaultImageDescription) getContentInfo(metadata);
                 //    contentInfo.setAttributeDescription(null);
                 //}
@@ -932,20 +1000,14 @@ public final class DimapAccessor extends Static {
                     String physicalUnit = textValueSafe(spectre, TAG_PHYSICAL_UNIT, String.class);
                     
                     physicalUnit = physicalUnit.substring(physicalUnit.indexOf("(") + 1, physicalUnit.indexOf(")"));
-
-                    //final DefaultNameFactory factory = new DefaultNameFactory();
-                    //final TypeName tname = factory.createTypeName(null, bandIndex);
-                    //final MemberName memberName = factory.createMemberName(null, "BAND_INDEX", tname);
                     
                     //final Unit unit = Unit.valueOf(physicalUnit);
 
                     final DefaultBand dimension = getBandDimension(metadata, bandIndex);
                     dimension.setBitsPerValue(nbits);
-                    dimension.setDescriptor(new SimpleInternationalString(bandIndex));
+                    dimension.setDescriptor(new SimpleInternationalString(bandDesc));
                     dimension.setScaleFactor(1 / physicalGain);
                     dimension.setOffset(physicalBias);
-                    //dimension.setSequenceIdentifier(memberName);
-                    //dimension.setDescriptor(new SimpleInternationalString(bandDesc));
                     //dimension.setUnits(unit);
                 }
             } 
@@ -974,15 +1036,24 @@ public final class DimapAccessor extends Static {
             //    </Source_Frame>
             //    <Scene_Source>                         Occurs : 0 to 1
             //        <MISSION/>                         → MetaData.acquisitionInformation > AcquisitionInformation.operations > Operations.description 
-            //                                           AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.identifier > Identifier.code
-            //                                           AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.Citation > Citation.title
-            //                                           AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.description
+            //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.identifier > Identifier.code
+            //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.Citation > Citation.title
+            //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.description
+            //                                             AND Metadata.identificationInfo > DataIdentification.abstract
+            //                                             AND Metadata.identificationInfo > DataIdentification.citation > Citation.title
+            //
             //        <MISSION_INDEX/>                   → MetaData.acquisitionInformation > AcquisitionInformation.operations > Operations.identifier > Identifier.code
-            //                                           AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.identifier > Identifier.code
-            //                                           AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.description
+            //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.identifier > Identifier.code
+            //                                             AND MetaData.acquisitionInformation > AcquisitionInformation.plateforms > Platform.description
+            //                                             AND Metadata.identificationInfo > DataIdentification.abstract
+            //                                             AND Metadata.identificationInfo > DataIdentification.citation > Citation.title
+            //                                             AND Metadata.identificationInfo > DataIdentification.spatialResolutions > Resolution.distance
+            //
             //        <INSTRUMENT/>                      → MetaData.acquisitionInformation > AcquisitionInformation.instruments > Instrument.description
             //        <INSTRUMENT_INDEX/>                → MetaData.acquisitionInformation > AcquisitionInformation.instruments > Instrument.identifier > Identifier.code
-            //        <SENSOR_CODE/>                     → ?
+            //        <SENSOR_CODE/>                     → Metadata.identificationInfo > DataIdentification.abstract
+            //                                             AND Metadata.identificationInfo > DataIdentification.resolution > Resolution.
+            //
             //        <IMAGING_DATE/>                    → MetaData.identificationInfo > DataIdentification.citation > Citation.dates > CitationDate
             //        <IMAGING_TIME/>                    → MetaData.identificationInfo > DataIdentification.citation > Citation.dates > CitationDate
             //        <GRID_REFERENCE/>                  → ?
@@ -1016,19 +1087,7 @@ public final class DimapAccessor extends Static {
             final Element sourceInfo = firstElement(datasetSources, TAG_SOURCE_INFORMATION);
             if (sourceInfo != null) {
                 final String sourceDesc = textValueSafe(sourceInfo, TAG_SOURCE_DESCRIPTION, String.class);
-                
-                /**
-                 * Fills IdentificationInfo
-                 */
-                
-                //MetaData > IdentificationInfo (DataIdentification) > GraphicOverviews
-                final DefaultDataIdentification dataIdentification = (DefaultDataIdentification) getIdentificationInfo(metadata);
-                if (thumbnail != null && thumbnail.contains(".")) {
-                    dataIdentification.getGraphicOverviews().add(new DefaultBrowseGraphic(generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
-                }
-                
-                //MetaData > IdentificationInfo (DataIdentification) > Abstract
-                dataIdentification.setAbstract(new SimpleInternationalString(sourceDesc));
+                final String sourceType = textValueSafe(sourceInfo, TAG_SOURCE_TYPE, String.class);
                 
                 /**
                  * Fills IdentificationInfo, AcquisitionInfo and ContentInfo
@@ -1042,6 +1101,7 @@ public final class DimapAccessor extends Static {
                     final String missionIndex = textValueSafe(sceneSource, TAG_SCENE_MISSION_INDEX, String.class);
                     final String instrumentName = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT, String.class);
                     final String instrumentIndex = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT_INDEX, String.class);
+                    final String sensorCode = textValueSafe(sceneSource, TAG_SCENE_SENSOR_CODE, String.class);
                     final String processingLevel = textValueSafe(sceneSource, TAG_SCENE_PROCESSING_LEVEL, String.class);
                     final Double incidenceAngle = textValueSafe(sceneSource, TAG_SCENE_INCIDENCE_ANGLE, Double.class);
                     final Double theoreticalResolution = textValueSafe(sceneSource, TAG_SCENE_THEORETICAL_RESOLUTION, Double.class);
@@ -1053,12 +1113,29 @@ public final class DimapAccessor extends Static {
                      * Fills IdentificationInfo
                      */
                     
+                    //MetaData > IdentificationInfo (DataIdentification) > GraphicOverviews
+                    final DefaultDataIdentification dataIdentification = (DefaultDataIdentification) getIdentificationInfo(metadata);
+                    if (thumbnail != null && thumbnail.contains(".")) {
+                        dataIdentification.getGraphicOverviews().add(new DefaultBrowseGraphic(generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
+                    }
+
+                    //MetaData > IdentificationInfo (DataIdentification) > Abstract
+                    dataIdentification.setAbstract(new SimpleInternationalString(missionName + " " + missionIndex + " " + sourceDesc));
+                    
                     //MetaData > IdentificationInfo (DataIdentification) > Citation
                     final DefaultCitation citation = new DefaultCitation();
                     final ISODateParser dateParser = new ISODateParser();
                     final Date date = dateParser.parseToDate(imagingDate + "T" + imagingTime);
                     citation.setDates(Collections.singleton(new DefaultCitationDate(date, DateType.CREATION)));
+                    citation.setTitle(new SimpleInternationalString(missionName + " " + missionIndex + " " + sourceType + " " + findTypeProduct(missionIndex, sensorCode)));
+                    
                     dataIdentification.setCitation(citation);
+                    
+                    //MetaData > IdentificationInfo (DataIdentification) > Resolution
+                    final DefaultResolution resolution = new DefaultResolution();
+                    resolution.setDistance(findResolution(missionIndex, sensorCode));
+
+                    dataIdentification.setSpatialResolutions(Collections.singleton(resolution));
                     
                     /**
                      * Fills AcquisitionInfo
@@ -1069,7 +1146,6 @@ public final class DimapAccessor extends Static {
                     //MetaData > AcquisitionInfo > Operations
                     final DefaultOperation operation = new DefaultOperation();
                     operation.setIdentifier(new DefaultIdentifier(missionIndex));
-//                    operation.setCitation(citation);
                     operation.setDescription(new SimpleInternationalString(missionName));
                     
                     acquisitionInfo.getOperations().add(operation);
@@ -1257,7 +1333,7 @@ public final class DimapAccessor extends Static {
         for (final RangeDimension dimension : dimensions) {
 
             if (dimension instanceof DefaultBand) {
-                final String bandDescr = dimension.getDescriptor().toString();
+                final String bandDescr = dimension.getSequenceIdentifier().toString();
 
                 if (bandId.equals(bandDescr)) {
                     return (DefaultBand) dimension;

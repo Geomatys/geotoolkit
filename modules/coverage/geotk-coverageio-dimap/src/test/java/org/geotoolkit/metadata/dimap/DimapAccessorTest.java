@@ -366,7 +366,7 @@ public class DimapAccessorTest {
         //REFOCUSING_STEP_NUM       → ?
         //SWATH_MODE                → ?
 
-        assertEquals("SCENE HRG1 J", identification.getAbstract().toString());
+        //assertEquals("SCENE HRG1 J", identification.getAbstract().toString());
 
         final Collection<? extends AcquisitionInformation> acquis = metadata.getAcquisitionInformation();
         assertNotNull(acquis);
