@@ -169,7 +169,7 @@ final class PropertyAccessor {
 
     /**
      * The JavaBeans property names. They are computed at construction time,
-     * {@linkplain String#intern interned} then cached. Those names are often
+     * {@linkplain String#intern() interned} then cached. Those names are often
      * the same than field names (at least in Geotk implementation), so it is
      * reasonable to intern them in order to share {@code String} instances.
      */
@@ -342,7 +342,8 @@ final class PropertyAccessor {
                 final Integer old = mapping.put(name, index);
                 if (old != null && !old.equals(index)) {
                     throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.DUPLICATED_PARAMETER_NAME_$4, name, index, name, old));
+                            Errors.Keys.DUPLICATED_PARAMETER_NAME_$4,
+                            Classes.getShortName(type) + '.' + name, index, name, old));
                 }
                 original = name;
                 name = name.toLowerCase(LOCALE).trim();
@@ -580,7 +581,7 @@ final class PropertyAccessor {
         if (index >= 0) {
             return index;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, key));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.NO_SUCH_ATTRIBUTE_$2, key, type));
     }
 
     /**
