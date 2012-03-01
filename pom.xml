@@ -168,7 +168,7 @@
        =========================================================== -->
   <properties>
     <javadoc.exclude>
-      org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
+      org.geotoolkit.build:org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:org.opengis:com
     </javadoc.exclude>
     <geoapi.version>3.1-SNAPSHOT</geoapi.version>
     <derby.version>10.8.2.2</derby.version> <!-- If updated, need to search occurrences in APT files. -->
