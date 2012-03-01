@@ -131,6 +131,7 @@ public final class DimapConstants {
     // Scene tags
     public static final String TAG_SCENE_SOURCE = "Scene_Source";
     public static final String TAG_SCENE_IMAGING_DATE = "IMAGING_DATE";
+    public static final String TAG_SCENE_IMAGING_TIME = "IMAGING_TIME";
     public static final String TAG_SCENE_MISSION = "MISSION";
     public static final String TAG_SCENE_MISSION_INDEX = "MISSION_INDEX";
     public static final String TAG_SCENE_INSTRUMENT = "INSTRUMENT";

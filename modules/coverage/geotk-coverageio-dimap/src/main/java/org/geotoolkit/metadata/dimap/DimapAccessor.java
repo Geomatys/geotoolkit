@@ -81,6 +81,7 @@ import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_DIMENSIONS
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RASTER_ENCODING;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_RED_CHANNEL;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_IMAGING_DATE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_IMAGING_TIME;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INCIDENCE_ANGLE;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_SCENE_INSTRUMENT_INDEX;
@@ -176,6 +177,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
@@ -183,6 +185,7 @@ import org.opengis.coverage.SampleDimensionType;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.constraint.Restriction;
@@ -980,8 +983,8 @@ public final class DimapAccessor extends Static {
             //        <INSTRUMENT/>                      → MetaData.acquisitionInformation > AcquisitionInformation.instruments > Instrument.description
             //        <INSTRUMENT_INDEX/>                → MetaData.acquisitionInformation > AcquisitionInformation.instruments > Instrument.identifier > Identifier.code
             //        <SENSOR_CODE/>                     → ?
-            //        <IMAGING_DATE/>                    → MetaData.acquisitionInformation > AcquisitionInformation.operations > Operations.citation > Citation.dates > CitationDate
-            //        <IMAGING_TIME/>                    → ?
+            //        <IMAGING_DATE/>                    → MetaData.identificationInfo > DataIdentification.citation > Citation.dates > CitationDate
+            //        <IMAGING_TIME/>                    → MetaData.identificationInfo > DataIdentification.citation > Citation.dates > CitationDate
             //        <GRID_REFERENCE/>                  → ?
             //        <SHIFT_VALUE/>                     → ?
             //        <INCIDENCE_ANGLE/>                 → ?
@@ -1023,16 +1026,18 @@ public final class DimapAccessor extends Static {
                 if (thumbnail != null && thumbnail.contains(".")) {
                     dataIdentification.getGraphicOverviews().add(new DefaultBrowseGraphic(generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
                 }
+                
                 //MetaData > IdentificationInfo (DataIdentification) > Abstract
                 dataIdentification.setAbstract(new SimpleInternationalString(sourceDesc));
                 
                 /**
-                 * Fills AcquisitionInfo and ContentInfo
+                 * Fills IdentificationInfo, AcquisitionInfo and ContentInfo
                  */
 
                 final Element sceneSource = firstElement(sourceInfo, TAG_SCENE_SOURCE);
                 if (sceneSource != null) {
-                    final Date imagingDate = textValueSafe(sceneSource, TAG_SCENE_IMAGING_DATE, Date.class);
+                    final String imagingDate = textValueSafe(sceneSource, TAG_SCENE_IMAGING_DATE, String.class);
+                    final String imagingTime = textValueSafe(sceneSource, TAG_SCENE_IMAGING_TIME, String.class);
                     final String missionName = textValueSafe(sceneSource, TAG_SCENE_MISSION, String.class);
                     final String missionIndex = textValueSafe(sceneSource, TAG_SCENE_MISSION_INDEX, String.class);
                     final String instrumentName = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT, String.class);
@@ -1043,20 +1048,28 @@ public final class DimapAccessor extends Static {
                     final String viewingAngle = textValueSafe(sceneSource, TAG_SCENE_VIEWING_ANGLE, String.class);
                     final Double sunAzimuth = textValueSafe(sceneSource, TAG_SCENE_SUN_AZIMUTH, Double.class);
                     final Double sunElevation = textValueSafe(sceneSource, TAG_SCENE_SUN_ELEVATION, Double.class);
-
+                    
+                    /**
+                     * Fills IdentificationInfo
+                     */
+                    
+                    //MetaData > IdentificationInfo (DataIdentification) > Citation
+                    final DefaultCitation citation = new DefaultCitation();
+                    final ISODateParser dateParser = new ISODateParser();
+                    final Date date = dateParser.parseToDate(imagingDate + "T" + imagingTime);
+                    citation.setDates(Collections.singleton(new DefaultCitationDate(date, DateType.CREATION)));
+                    dataIdentification.setCitation(citation);
+                    
                     /**
                      * Fills AcquisitionInfo
                      */
                     
                     final DefaultAcquisitionInformation acquisitionInfo = getAcquisitionInfo(metadata);
 
-                    //MetaData > AcquisitionInfor > Operations
-                    final DefaultCitation citation = new DefaultCitation();
-                    citation.getDates().add(new DefaultCitationDate(imagingDate, DateType.CREATION));
-
+                    //MetaData > AcquisitionInfo > Operations
                     final DefaultOperation operation = new DefaultOperation();
                     operation.setIdentifier(new DefaultIdentifier(missionIndex));
-                    operation.setCitation(citation);
+//                    operation.setCitation(citation);
                     operation.setDescription(new SimpleInternationalString(missionName));
                     
                     acquisitionInfo.getOperations().add(operation);
@@ -1076,7 +1089,6 @@ public final class DimapAccessor extends Static {
                     platform.setIdentifier(new DefaultIdentifier(missionName + missionIndex));
                     platform.setCitation(platformCitation);
                     platform.setDescription(new SimpleInternationalString(missionName + missionIndex));
-                    ;
                     acquisitionInfo.getPlatforms().add(platform);
 
                     /**
