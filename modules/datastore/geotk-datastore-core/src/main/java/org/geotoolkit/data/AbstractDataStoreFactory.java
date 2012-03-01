@@ -28,6 +28,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -115,7 +116,16 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      */
     @Override
     public boolean canProcess(final ParameterValueGroup params) {
-        final ConformanceResult result = Parameters.isValid(params, getParametersDescriptor());
+        if(params == null){
+            return false;
+        }
+        
+        final ParameterDescriptorGroup desc = getParametersDescriptor();
+        if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
+            return false;
+        }
+        
+        final ConformanceResult result = Parameters.isValid(params, desc);
         return (result != null) && Boolean.TRUE.equals(result.pass());
     }
 
