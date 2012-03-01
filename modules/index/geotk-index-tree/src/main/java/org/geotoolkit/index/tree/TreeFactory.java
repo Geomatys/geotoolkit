@@ -40,6 +40,7 @@ public final class TreeFactory {
      * @param crs                   : associate coordinate system.
      * @param splitMade             : made to split.
      * @param calculator            : calculator associate to define internal computing.
+     *                                If calculator is null an appropriate calculator is define.
      * @param nodefactory           : made to create tree {@code Node}. 
      * @return Basic RTree.
      */
@@ -53,6 +54,7 @@ public final class TreeFactory {
      * @param maxElements_per_leaf : max elements number within each tree Node.
      * @param crs                   : associate coordinate system.
      * @param calculator            : calculator associate to define internal computing.
+     *                                If calculator is null an appropriate calculator is define.
      * @param nodefactory           : made to create tree {@code Node}. 
      * @return R*Tree.
      */
@@ -73,6 +75,7 @@ public final class TreeFactory {
      * @param maxElements_per_cells : max elements number within each tree leaf cells.
      * @param crs                   : associate coordinate system.
      * @param calculator            : calculator associate to define internal computing.
+     *                                If calculator is null an appropriate calculator is define.
      * @param nodefactory           : made to create tree {@code Node}.
      * @return Hilbert R-Tree.
      */

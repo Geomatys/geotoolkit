@@ -20,6 +20,7 @@ package org.geotoolkit.index.tree;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.calculator.Calculator2D;
 import org.geotoolkit.index.tree.calculator.Calculator3D;
+import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
@@ -40,6 +41,9 @@ public abstract class DefaultAbstractTree implements Tree{
     protected CoordinateReferenceSystem crs;
     protected Calculator calculator;
 
+    /**
+     * To create an R-Tree use {@linkplain TreeFactory}.
+     */
     protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator, NodeFactory nodefactory) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create Tree : Calculator", calculator);
@@ -49,19 +53,28 @@ public abstract class DefaultAbstractTree implements Tree{
         if(!(cs instanceof CartesianCS)){
             throw new IllegalArgumentException("Tree constructor : invalid crs");
         }
-        final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem : "+cs.getClass().getName()
-                                +" Calculator : "+calculator.getClass().getName();
-        if(calculator instanceof Calculator2D){
-            if(cs.getDimension() !=2){
-                throw new IllegalArgumentException(strClash);
+        
+        if(calculator == null){
+            switch(cs.getDimension()){
+                case 2 : this.calculator = DefaultCalculator.CALCULATOR_2D;break;
+                case 3 : this.calculator = DefaultCalculator.CALCULATOR_3D;break;
+                default : throw new IllegalArgumentException("CoordinateSystem from CRS is not Cartesian");
             }
-        }else if(calculator instanceof Calculator3D){
-            if(cs.getDimension() !=3){
-                throw new IllegalArgumentException(strClash);
+        }else{
+            final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem : "+cs.getClass().getName()
+                                    +" Calculator : "+calculator.getClass().getName();
+            if(calculator instanceof Calculator2D){
+                if(cs.getDimension() !=2){
+                    throw new IllegalArgumentException(strClash);
+                }
+            }else if(calculator instanceof Calculator3D){
+                if(cs.getDimension() !=3){
+                    throw new IllegalArgumentException(strClash);
+                }
             }
+            this.calculator = calculator;
         }
         this.nodefactory = nodefactory;
-        this.calculator = calculator;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
     }

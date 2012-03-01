@@ -740,8 +740,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param children sub {@code Node}.
      * @param entries entries {@code List} to add in this node.
      * @param coordinates lower upper bounding box coordinates table.
-     * @return appropriate Node from tree.
-     * @return
+     * @return appropriate Node from tree to Hilbert RTree leaf.
      */
     public static Node createCell(final Tree tree, final Node parent, final DirectPosition centroid, final int hilbertValue, final List<Envelope> entries) {
         final Node cell = tree.getNodeFactory().createNode(tree, parent, centroid, centroid, null, entries);
