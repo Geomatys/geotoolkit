@@ -38,7 +38,6 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.collection.BackingStoreException;
@@ -744,6 +743,7 @@ public class TreeFormat extends Format {
      */
     @Override
     public StringBuffer format(final Object tree, final StringBuffer toAppendTo, final FieldPosition pos) {
+        ArgumentChecks.ensureNonNull("tree", tree);
         try {
             if (tree instanceof TreeModel) {
                 format((TreeModel) tree, toAppendTo);
@@ -752,8 +752,8 @@ public class TreeFormat extends Format {
             } else if (tree instanceof Iterable<?>) {
                 format((Iterable<?>) tree, toAppendTo);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
-                        "tree", Classes.getClass(tree), TreeModel.class));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_CLASS_$3,
+                        "tree", tree.getClass(), TreeModel.class));
             }
         } catch (IOException e) {
             // Should never happen when writing into a StringBuffer.

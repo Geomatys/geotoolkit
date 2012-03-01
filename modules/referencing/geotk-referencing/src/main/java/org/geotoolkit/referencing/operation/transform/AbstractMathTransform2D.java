@@ -33,7 +33,6 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
@@ -162,14 +161,8 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * Unwraps the given object if it is expected to be an inverse transform.
      * This is used for assertions only.
      */
-    private static Object unwrap(Object object, final boolean inverse) {
-        if (inverse) {
-            if (!(object instanceof Inverse)) {
-                throw new AssertionError(Classes.getClass(object));
-            }
-            object = ((Inverse) object).inverse();
-        }
-        return object;
+    private static Object unwrap(final Object object, final boolean inverse) {
+        return inverse ? ((Inverse) object).inverse() : object;
     }
 
     /**
@@ -583,7 +576,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
         }
         if (true) { // This condition is just for isolating the local variables in this block.
             final Object old = transforms.set(index, parameters.new WKT(inverse));
-            assert unwrap(old, inverse) == this : Classes.getClass(old);
+            assert unwrap(old, inverse) == this : old.getClass();
         }
         if (after == null) {
             if (hasAfter) {

@@ -122,7 +122,7 @@ public final class ArgumentChecks extends Static {
                 final int key;
                 final Object[] args;
                 if (name != null) {
-                    key = Errors.Keys.ILLEGAL_CLASS_$3;
+                    key = Errors.Keys.ILLEGAL_ARGUMENT_CLASS_$3;
                     args = new Object[] {name, valueClass, expectedType};
                 } else {
                     key = Errors.Keys.ILLEGAL_CLASS_$2;

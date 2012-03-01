@@ -85,6 +85,10 @@ final class FactoryMethod {
     static FactoryMethod find(final Class<?> type, final Object[] factories) {
         for (final Object factory : factories) {
             for (final Method method : factory.getClass().getMethods()) {
+                if (method.isSynthetic() || method.isAnnotationPresent(Deprecated.class)) {
+                    // Ignores synthetic and deprecated methods.
+                    continue;
+                }
                 final String name = method.getName();
                 if (!name.startsWith("create")) {
                     continue;

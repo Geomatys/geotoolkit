@@ -28,7 +28,6 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -161,7 +160,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
                 // Do not define closeOnReset since we don't want to close user-provided output.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
-                        Errors.Keys.ILLEGAL_CLASS_$2, Classes.getClass(output), OutputStream.class));
+                        Errors.Keys.ILLEGAL_CLASS_$2, output.getClass(), OutputStream.class));
             }
         }
         return stream;

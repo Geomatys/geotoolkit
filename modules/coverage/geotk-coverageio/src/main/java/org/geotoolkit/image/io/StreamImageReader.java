@@ -28,7 +28,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -217,7 +216,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
                 // Do not define closeOnReset since we don't want to close user-provided input.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
-                        Errors.Keys.ILLEGAL_CLASS_$2, Classes.getClass(input), InputStream.class));
+                        Errors.Keys.ILLEGAL_CLASS_$2, input.getClass(), InputStream.class));
             }
         }
         return stream;

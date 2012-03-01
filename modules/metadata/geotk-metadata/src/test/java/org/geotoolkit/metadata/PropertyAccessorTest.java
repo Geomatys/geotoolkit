@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.ComparisonMode;
@@ -45,7 +46,7 @@ import static org.geotoolkit.metadata.KeyNamePolicy.*;
  * by {@link MetadataStandard}).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.4
  */
@@ -75,7 +76,23 @@ public final strictfp class PropertyAccessorTest {
     }
 
     /**
-     * Tests the {@code indexOf} and {@code name} methods.
+     * Tests the constructor with a method which override an other method with covariant
+     * return type.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-205">GEOTK-205</a>
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testConstructorWithCovariantReturnType() {
+        final Class<?> type = GeographicCRS.class;
+        final PropertyAccessor accessor = new PropertyAccessor(type, type);
+        assertTrue("Count of 'get' methods.", accessor.count() >= 8);
+    }
+
+    /**
+     * Tests the {@link PropertyAccessor#indexOf(String)} and
+     * {@link PropertyAccessor#name(int, KeyNamePolicy)} methods.
      */
     @Test
     public void testName() {
@@ -109,7 +126,7 @@ public final strictfp class PropertyAccessorTest {
     }
 
     /**
-     * Tests the {@link PropertyAccessor#get} method.
+     * Tests the {@link PropertyAccessor#get(int, Object)} method.
      */
     @Test
     public void testGet() {
@@ -138,7 +155,7 @@ public final strictfp class PropertyAccessorTest {
     }
 
     /**
-     * Tests the {@link PropertyAccessor#set} method.
+     * Tests the {@link PropertyAccessor#set(int, Object, Object, boolean)} method.
      */
     @Test
     public void testSet() {

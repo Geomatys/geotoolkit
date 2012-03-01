@@ -42,7 +42,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -129,7 +128,7 @@ public abstract class AbstractParameter extends FormattableObject
          */
         final Class<T> type = descriptor.getValueClass();
         if (!type.isInstance(value)) {
-            error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, Classes.getClass(value));
+            error = Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, value.getClass());
         } else {
             final T typedValue = type.cast(value);
             final Comparable<T> minimum = descriptor.getMinimumValue();

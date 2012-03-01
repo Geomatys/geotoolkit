@@ -30,7 +30,6 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Numbers;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -440,7 +439,7 @@ public class Category implements Serializable {
      * ARGB codes.
      */
     private Category(final CharSequence name, final int[] ARGB, final NumberRange<?> range,
-            MathTransform1D sampleToGeophysics) throws IllegalArgumentException
+            final MathTransform1D sampleToGeophysics) throws IllegalArgumentException
     {
         ensureNonNull("name",  name);
         ensureNonNull("range", range);
@@ -495,7 +494,7 @@ public class Category implements Serializable {
             cause = exception;
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
-                Classes.getClass(sampleToGeophysics)), cause);
+                sampleToGeophysics.getClass()), cause);
     }
 
     /**
@@ -909,7 +908,7 @@ public class Category implements Serializable {
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
+        final StringBuilder buffer = new StringBuilder(getClass().getSimpleName());
         buffer.append("(“").append(name).append("”:[");
         if (Double.isNaN(minimum) && Double.isNaN(maximum)) {
             buffer.append("NaN(").append(Math.round(inverse.minimum))

@@ -41,7 +41,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -216,7 +215,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                 expand(cops.toArray(new CoordinateOperation[cops.size()]), target, factory, false);
             } else {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                        Classes.getClass(op), SingleOperation.class));
+                        op.getClass(), SingleOperation.class));
             }
             /*
              * Checks the CRS dimensions.

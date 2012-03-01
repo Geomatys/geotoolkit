@@ -35,7 +35,6 @@ import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.ImmutableEnvelope;
@@ -369,7 +368,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
             transformed = Envelopes.transform(gridToCRS.inverse(), envelope);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
-                    Classes.getClass(gridToCRS)), exception);
+                    gridToCRS.getClass()), exception);
         }
         extent = new GeneralGridEnvelope(transformed, anchor, false);
     }
@@ -712,6 +711,6 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      */
     @Override
     public String toString() {
-        return Classes.getShortClassName(this) + '[' + extent + ", " + gridToCRS + ']';
+        return getClass().getSimpleName() + '[' + extent + ", " + gridToCRS + ']';
     }
 }

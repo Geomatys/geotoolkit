@@ -98,15 +98,6 @@ final class PropertyAccessor {
     private static final String SET = "set";
 
     /**
-     * Methods to exclude from {@link #getGetters}. They are mostly methods inherited from
-     * {@link Object} which may be declared explicitly in interfaces with a formal contract.
-     * Only no-argument methods having a non-void return value need to be declared in this list.
-     */
-    private static final String[] EXCLUDES = {
-        "clone", "getClass", "hashCode", "toString", "toWKT"
-    };
-
-    /**
      * Getters shared between many instances of this class. Two different implementations
      * may share the same getters but different setters.
      */
@@ -217,7 +208,7 @@ final class PropertyAccessor {
     /**
      * Creates a new property accessor for the specified metadata implementation.
      *
-     * @param  metadata The metadata implementation to wrap.
+     * @param  implementation The type of metadata implementations to wrap.
      * @param  type The interface implemented by the metadata.
      *         Shall be the value returned by {@link #getStandardType}.
      */
@@ -341,9 +332,8 @@ final class PropertyAccessor {
             do {
                 final Integer old = mapping.put(name, index);
                 if (old != null && !old.equals(index)) {
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.DUPLICATED_PARAMETER_NAME_$4,
-                            Classes.getShortName(type) + '.' + name, index, name, old));
+                    throw new IllegalStateException(Errors.format(Errors.Keys.DUPLICATED_VALUE_$1,
+                            Classes.getShortName(type) + '.' + name));
                 }
                 original = name;
                 name = name.toLowerCase(LOCALE).trim();
@@ -430,28 +420,36 @@ final class PropertyAccessor {
             Method[] getters = SHARED_GETTERS.get(type);
             if (getters == null) {
                 getters = type.getMethods();
+                // Following is similar in purpose to the PropertyAccessor.mapping field,
+                // but index values are different because of the call to Arrays.sort(...).
+                final Map<String,Integer> mapping = new HashMap<String,Integer>(XCollections.hashMapCapacity(getters.length));
                 boolean hasExtraGetter = false;
                 int count = 0;
                 for (final Method candidate : getters) {
-                    if (candidate.isAnnotationPresent(Deprecated.class)) {
-                        // Ignores deprecated methods.
-                        continue;
-                    }
-                    if (candidate.getReturnType() != Void.TYPE &&
-                        candidate.getParameterTypes().length == 0)
-                    {
-                        /*
-                         * We do not require a name starting with "get" or "is" prefix because some
-                         * methods do not begin with such prefix, as in "ConformanceResult.pass()".
-                         * Consequently we must provide special cases for no-arg methods inherited
-                         * from java.lang.Object because some interfaces declare explicitly the
-                         * contract for those methods.
-                         *
-                         * Note that testing candidate.getDeclaringClass().equals(Object.class)
-                         * is not sufficient because the method may be overridden in a subclass.
-                         */
+                    if (Classes.isPossibleGetter(candidate)) {
                         final String name = candidate.getName();
-                        if (!name.startsWith(SET) && !XArrays.contains(EXCLUDES, name)) {
+                        if (!name.startsWith(SET)) { // Paranoiac check.
+                            /*
+                             * At this point, we are ready to accept the method. Before doing so,
+                             * check if the method override an other method defined in a parent
+                             * class with a covariant return type. The JVM consider such cases
+                             * as two different methods, while from a Java developer point of
+                             * view this is the same method (GEOTK-205).
+                             */
+                            final Integer pi = mapping.put(name, count);
+                            if (pi != null) {
+                                final Class<?> pt = getters[pi].getReturnType();
+                                final Class<?> ct = candidate  .getReturnType();
+                                if (ct.isAssignableFrom(pt)) {
+                                    continue; // Previous type was more accurate.
+                                }
+                                if (pt.isAssignableFrom(ct)) {
+                                    getters[pi] = candidate;
+                                    continue;
+                                }
+                                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
+                                        Classes.getShortName(type) + '.' + name, pt, ct));
+                            }
                             getters[count++] = candidate;
                             if (!hasExtraGetter) {
                                 hasExtraGetter = name.equals(EXTRA_GETTER.getName());

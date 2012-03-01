@@ -255,7 +255,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DUPLICATED_PARAMETER_NAME_$4 = 182;
 
         /**
-         * The {0} record is defined more than once.
+         * The “{0}” record is defined more than once.
          */
         public static final int DUPLICATED_RECORD_$1 = 53;
 
@@ -270,7 +270,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DUPLICATED_VALUES_FOR_KEY_$1 = 55;
 
         /**
-         * The {0} value is specified more than once.
+         * The “{0}” value is specified more than once.
          */
         public static final int DUPLICATED_VALUE_$1 = 56;
 
@@ -365,6 +365,12 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_ARGUMENT_$2 = 73;
 
         /**
+         * Argument ‘{0}’ can not be an instance of ‘{1}’. Expected an instance of ‘{2}’ or derived
+         * type.
+         */
+        public static final int ILLEGAL_ARGUMENT_CLASS_$3 = 256;
+
+        /**
          * Illegal array length for {0} dimensional points.
          */
         public static final int ILLEGAL_ARRAY_LENGTH_FOR_DIMENSION_$1 = 74;
@@ -385,10 +391,9 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_CLASS_$2 = 76;
 
         /**
-         * Argument ‘{0}’ can not be an instance of ‘{1}’. Expected an instance of ‘{2}’ or derived
-         * type.
+         * ‘{0}’ can not be an instance of ‘{1}’. Expected an instance of ‘{2}’ or derived type.
          */
-        public static final int ILLEGAL_CLASS_$3 = 256;
+        public static final int ILLEGAL_CLASS_$3 = 265;
 
         /**
          * Illegal coordinate: {0}
